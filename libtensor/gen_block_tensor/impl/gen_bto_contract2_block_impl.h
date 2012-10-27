@@ -48,25 +48,17 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     //  Prepare contraction list
     gen_bto_contract2_block::start_timer("contract_block::clst");
 
-    block_list<NA> blsta(m_bta.get_bis().get_block_index_dims());
-    for (typename orbit_list<NA, element_type>::iterator iol = m_ola.begin();
-            iol != m_ola.end(); iol++) {
-        if (ca.req_is_zero_block(m_ola.get_index(iol))) continue;
-
-        blsta.add(m_ola.get_abs_index(iol));
-    }
-
-    block_list<NB> blstb(m_btb.get_bis().get_block_index_dims());
-    for (typename orbit_list<NB, element_type>::iterator iol = m_olb.begin();
-            iol != m_olb.end(); iol++) {
-        if (cb.req_is_zero_block(m_olb.get_index(iol))) continue;
-
-        blstb.add(m_olb.get_abs_index(iol));
-    }
+    std::vector<size_t> blsta_v, blstb_v;
+    ca.req_nonzero_blocks(blsta_v);
+    cb.req_nonzero_blocks(blstb_v);
+    block_list<NA> blsta(m_bta.get_bis().get_block_index_dims(), blsta_v);
+    block_list<NB> blstb(m_btb.get_bis().get_block_index_dims(), blstb_v);
+    blsta_v.clear();
+    blstb_v.clear();
 
     gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-            ca.req_const_symmetry(), cb.req_const_symmetry(),
-            blsta, blstb, m_bidimsc, idxc);
+        ca.req_const_symmetry(), cb.req_const_symmetry(), blsta, blstb,
+        m_bidimsc, idxc);
 
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
@@ -90,10 +82,6 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         index<NB> ib;
         abs_index<NA>::get_index(i->get_abs_index_a(), m_bidimsa, ia);
         abs_index<NB>::get_index(i->get_abs_index_b(), m_bidimsb, ib);
-
-        bool zeroa = ca.req_is_zero_block(ia);
-        bool zerob = cb.req_is_zero_block(ib);
-        if(zeroa || zerob) continue;
 
         if(coba.find(i->get_abs_index_a()) == coba.end()) {
             rd_block_a_type &blka = ca.req_const_block(ia);

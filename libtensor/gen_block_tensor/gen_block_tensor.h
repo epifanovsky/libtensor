@@ -66,6 +66,7 @@ protected:
     virtual wr_block_type &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
     //@}

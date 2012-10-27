@@ -113,6 +113,17 @@ bool gen_block_tensor<N, BtTraits>::on_req_is_zero_block(const index<N> &idx) {
 
 
 template<size_t N, typename BtTraits>
+void gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    libutil::auto_lock<libutil::mutex> lock(m_lock);
+
+    update_orblst();
+    m_map.get_all(nzlst);
+}
+
+
+template<size_t N, typename BtTraits>
 void gen_block_tensor<N, BtTraits>::on_req_zero_block(const index<N> &idx) {
 
     static const char *method = "on_req_zero_block(const index<N>&)";

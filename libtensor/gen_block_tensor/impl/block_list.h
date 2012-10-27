@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_BLOCK_LIST_H
 #define LIBTENSOR_BLOCK_LIST_H
 
+#include <cstring> // for size_t
 #include <set>
-#include <libtensor/defs.h>
-#include <libtensor/exception.h>
+#include <vector>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/dimensions.h>
 #include <libtensor/core/index.h>
@@ -31,9 +31,19 @@ private:
 
 public:
     /** \brief Initializes an empty list
-        \param bidims Block index dimensions
+        \param bidims Block index dimensions.
      **/
-    block_list(const dimensions<N> &bidims) : m_dims(bidims) { }
+    block_list(const dimensions<N> &bidims) :
+        m_dims(bidims)
+    { }
+
+    /** \brief Initializes and fills the list
+        \param bidims Block index dimensions.
+        \param blst Vector of block indexes.
+     **/
+    block_list(const dimensions<N> &bidims, const std::vector<size_t> &blst) :
+        m_dims(bidims), m_blks(blst.begin(), blst.end())
+    { }
 
     /** \brief Add a block to the list
         \param absidx Absolute index of block
