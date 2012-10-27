@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/block_tensor/block_factory.h>
