@@ -94,18 +94,16 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         rd_block_a_type &blka = *coba[i->get_abs_index_a()];
         rd_block_b_type &blkb = *cobb[i->get_abs_index_b()];
 
-        tensor_transf<NA, element_type> trainv(i->get_transf_a());
-        trainv.invert();
-        tensor_transf<NB, element_type> trbinv(i->get_transf_b());
-        trbinv.invert();
+        tensor_transf<NA, element_type> tra(i->get_transf_a());
+        tensor_transf<NB, element_type> trb(i->get_transf_b());
 
         contraction2<N, M, K> contr(m_contr);
-        contr.permute_a(trainv.get_perm());
-        contr.permute_b(trbinv.get_perm());
+        contr.permute_a(tra.get_perm());
+        contr.permute_b(trb.get_perm());
         contr.permute_c(trc.get_perm());
 
-        scalar_transf<element_type> ka(trainv.get_scalar_tr());
-        scalar_transf<element_type> kb(trbinv.get_scalar_tr());
+        scalar_transf<element_type> ka(tra.get_scalar_tr());
+        scalar_transf<element_type> kb(trb.get_scalar_tr());
         scalar_transf<element_type> kc(m_kc);
 
         ka.transform(m_ka);

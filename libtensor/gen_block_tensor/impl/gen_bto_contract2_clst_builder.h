@@ -44,17 +44,26 @@ public:
             contr_list;
 
 private:
+    contraction2<N, M, K> m_contr; //!< Contraction
     contr_list m_clst; //!< List of contractions
 
 public:
-    /** \brief Default constructor
+    /** \brief Initializes the builder
      **/
-    gen_bto_contract2_clst_builder_base() { }
+    gen_bto_contract2_clst_builder_base(const contraction2<N, M, K> &contr) :
+        m_contr(contr)
+    { }
 
     /** \brief Returns true if the list of contractions is empty
      **/
     bool is_empty() const {
         return m_clst.empty();
+    }
+
+    /** \brief Returns the contraction
+     **/
+    const contraction2<N, M, K> &get_contr() const {
+        return m_contr;
     }
 
     /** \brief Returns the list of contractions
@@ -106,7 +115,6 @@ public:
             contr_list;
 
 private:
-    contraction2<N, M, K> m_contr; //!< Contraction descriptor
     const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
     const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
     const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
@@ -127,6 +135,7 @@ public:
     void build_list(bool testzero);
 
 protected:
+    using gen_bto_contract2_clst_builder_base<N, M, K, Traits>::get_contr;
     using gen_bto_contract2_clst_builder_base<N, M, K, Traits>::coalesce;
     using gen_bto_contract2_clst_builder_base<N, M, K, Traits>::merge;
 
@@ -168,7 +177,6 @@ public:
             contr_list;
 
 private:
-    contraction2<N, M, 0> m_contr; //!< Contraction descriptor
     const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
     const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
     const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
@@ -189,6 +197,7 @@ public:
     void build_list(bool testzero);
 
 protected:
+    using gen_bto_contract2_clst_builder_base<N, M, 0, Traits>::get_contr;
     using gen_bto_contract2_clst_builder_base<N, M, 0, Traits>::coalesce;
     using gen_bto_contract2_clst_builder_base<N, M, 0, Traits>::merge;
 
