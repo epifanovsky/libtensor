@@ -48,8 +48,10 @@ public:
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
+    gen_block_tensor_rd_i<NA, bti_traits> &m_bta2; //!< A with broken symmetry
     scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
+    gen_block_tensor_rd_i<NB, bti_traits> &m_btb2; //!< B with broken symmetry
     scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     block_index_space<NC> m_bisc; //!< Block index space of result (C)
     scalar_transf<element_type> m_kc; //!< Scalar transformation of C
@@ -58,8 +60,10 @@ public:
     /** \brief Initializes the contraction operation
         \param contr Contraction.
         \param bta First block tensor (A).
+        \param bta2 A with broken symmetry.
         \param ka Scalar transform of A.
         \param btb Second block tensor (B).
+        \param btb2 B with broken symmetry.
         \param kb Scalar transform of B.
         \param bisc Block index space of result (C).
         \param kc Scalar transform of C.
@@ -67,8 +71,10 @@ public:
     gen_bto_contract2_batch(
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        gen_block_tensor_rd_i<NA, bti_traits> &bta2,
         const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb2,
         const scalar_transf<element_type> &kb,
         const block_index_space<NC> &bisc,
         const scalar_transf<element_type> &kc);
