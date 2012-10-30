@@ -116,9 +116,9 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
         const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
         gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr,
-                m_bta, syma, m_ka, m_btb, symb, m_kb, m_bisc, m_kc);
+            m_bta, m_bta2, syma, m_ka, m_btb, m_btb2, symb, m_kb, m_bisc, m_kc);
         gen_bto_contract2_task_iterator<N, M, K, Traits, Timed> ti(bto,
-                btc, blst, out);
+            btc, blst, out);
         gen_bto_contract2_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
 

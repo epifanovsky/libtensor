@@ -31,7 +31,7 @@ public:
     typedef T element_type;
 
 private:
-    size_t m_aia, m_aib;
+    size_t m_aia, m_acia, m_aib, m_acib;
     tensor_transf<NA, element_type> m_tra;
     tensor_transf<NB, element_type> m_trb;
 
@@ -43,11 +43,12 @@ public:
         \param trb Transformation of block in B.
      **/
     gen_bto_contract2_pair(
-            size_t aia, const tensor_transf<NA, element_type> &tra,
-            size_t aib, const tensor_transf<NB, element_type> &trb) :
-        m_aia(aia), m_aib(aib), m_tra(tra), m_trb(trb) {
+        size_t aia, size_t acia, const tensor_transf<NA, element_type> &tra,
+        size_t aib, size_t acib, const tensor_transf<NB, element_type> &trb) :
 
-    }
+        m_aia(aia), m_acia(acia), m_aib(aib), m_acib(acib),
+        m_tra(tra), m_trb(trb)
+    { }
 
     //! \name Manipulators ("Setters")
     //@{
@@ -73,13 +74,29 @@ public:
     //! \name Read access functions ("Getters")
     //@{
 
+    /** \brief Return the absolute canonical index of block in A
+     **/
+    size_t get_acindex_a() const {
+        return m_acia;
+    }
+
+    /** \brief Return the absolute canonical index of block in B
+     **/
+    size_t get_acindex_b() const {
+        return m_acib;
+    }
+
     /** \brief Return the absolute index of block in A
      **/
-    size_t get_abs_index_a() const { return m_aia; }
+    size_t get_aindex_a() const {
+        return m_aia;
+    }
 
     /** \brief Return the absolute index of block in B
      **/
-    size_t get_abs_index_b() const { return m_aib; }
+    size_t get_aindex_b() const {
+        return m_aib;
+    }
 
     /** \brief Return the transformation of block in A
      **/

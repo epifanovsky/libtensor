@@ -142,10 +142,9 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
             }
             if(!ic1.equals(ic)) continue;
             if(!zero) {
-                tensor_transf<NA, element_type> tra(oa.get_transf(ja), true);
-                tensor_transf<NB, element_type> trb(ob.get_transf(jb), true);
-                clst.push_back(contr_pair(oa.get_acindex(), tra,
-                    ob.get_acindex(), trb));
+                clst.push_back(contr_pair(
+                    oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+                    ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
             }
             ikset.erase(abs_index<K>::get_abs_index(ika, bidimsk));
         }
@@ -218,8 +217,9 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(
         }
         if(!ic1.equals(ic)) continue;
         if(!zero) {
-            clst.push_back(contr_pair(oa.get_acindex(), oa.get_transf(ja),
-                    ob.get_acindex(), ob.get_transf(jb)));
+            clst.push_back(contr_pair(
+                oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+                ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
         }
     }
 

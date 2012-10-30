@@ -65,15 +65,18 @@ public:
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
+    gen_block_tensor_rd_i<NA, bti_traits> &m_bta2; //!< A with broken symmetry
     dimensions<NA> m_bidimsa; //!< Block index dims in A
     orbit_list<NA, element_type> m_ola; //!< List of orbits in A
     scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
+    gen_block_tensor_rd_i<NB, bti_traits> &m_btb2; //!< B with broken symmetry
     dimensions<NB> m_bidimsb; //!< Block index dims in B
     orbit_list<NB, element_type> m_olb; //!< List of orbits in B
     scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     dimensions<NC> m_bidimsc; //!< Block index dims in C
     scalar_transf<element_type> m_kc; //!< Scalar transformation of C
+    bool m_use_broken_sym; //!< Whether to use broken symmetry
 
 public:
     /** \brief Initializes the contraction operation
@@ -91,6 +94,30 @@ public:
         const symmetry<NA, element_type> &syma,
         const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
+        const symmetry<NB, element_type> &symb,
+        const scalar_transf<element_type> &kb,
+        const block_index_space<NC> &bisc,
+        const scalar_transf<element_type> &kc);
+
+    /** \brief Initializes the contraction operation
+        \param contr Contraction.
+        \param bta First block tensor (A).
+        \param bta2 A with broken symmetry.
+        \param ka Scalar transform of A.
+        \param btb Second block tensor (B).
+        \param btb2 B with broken symmetry.
+        \param kb Scalar transform of B.
+        \param bisc Block index space of result (C).
+        \param kc Scalar transform of C.
+     **/
+    gen_bto_contract2_block(
+        const contraction2<N, M, K> &contr,
+        gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        gen_block_tensor_rd_i<NA, bti_traits> &bta2,
+        const symmetry<NA, element_type> &syma,
+        const scalar_transf<element_type> &ka,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb2,
         const symmetry<NB, element_type> &symb,
         const scalar_transf<element_type> &kb,
         const block_index_space<NC> &bisc,

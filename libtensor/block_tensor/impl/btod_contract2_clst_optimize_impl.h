@@ -61,8 +61,8 @@ inline bool btod_contract2_clst_optimize<N, M, K>::check_same_blocks(
     const iterator &i1, const iterator &i2) {
 
     return
-        i1->get_abs_index_a() == i2->get_abs_index_a() &&
-        i1->get_abs_index_b() == i2->get_abs_index_b();
+        i1->get_acindex_a() == i2->get_acindex_a() &&
+        i1->get_acindex_b() == i2->get_acindex_b();
 }
 
 

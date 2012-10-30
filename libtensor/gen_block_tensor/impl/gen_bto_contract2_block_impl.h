@@ -20,11 +20,37 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
     const scalar_transf<element_type> &kc) :
 
     m_contr(contr),
-    m_bta(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
+    m_bta(bta), m_bta2(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
     m_ola(syma), m_ka(ka),
-    m_btb(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
+    m_btb(btb), m_btb2(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
     m_olb(symb), m_kb(kb),
-    m_bidimsc(bisc.get_block_index_dims()), m_kc(kc) {
+    m_bidimsc(bisc.get_block_index_dims()), m_kc(kc),
+    m_use_broken_sym(false) {
+
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
+gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
+    const contraction2<N, M, K> &contr,
+    gen_block_tensor_rd_i<NA, bti_traits> &bta,
+    gen_block_tensor_rd_i<NA, bti_traits> &bta2,
+    const symmetry<NA, element_type> &syma,
+    const scalar_transf<element_type> &ka,
+    gen_block_tensor_rd_i<NB, bti_traits> &btb,
+    gen_block_tensor_rd_i<NB, bti_traits> &btb2,
+    const symmetry<NB, element_type> &symb,
+    const scalar_transf<element_type> &kb,
+    const block_index_space<NC> &bisc,
+    const scalar_transf<element_type> &kc) :
+
+    m_contr(contr),
+    m_bta(bta), m_bta2(bta2), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
+    m_ola(syma), m_ka(ka),
+    m_btb(btb), m_btb2(btb2), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
+    m_olb(symb), m_kb(kb),
+    m_bidimsc(bisc.get_block_index_dims()), m_kc(kc),
+    m_use_broken_sym(true) {
 
 }
 
@@ -42,8 +68,11 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         to_contract2;
     typedef typename Traits::template to_set_type<NC>::type to_set;
 
-    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
-    gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta), ca2(m_bta2);
+    gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb), cb2(m_btb2);
+
+    const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
+    const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
     //  Prepare contraction list
     gen_bto_contract2_block::start_timer("contract_block::clst");
@@ -57,8 +86,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     blstb_v.clear();
 
     gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-        ca.req_const_symmetry(), cb.req_const_symmetry(), blsta, blstb,
-        m_bidimsc, idxc);
+        syma, symb, blsta, blstb, m_bidimsc, idxc);
 
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
@@ -78,28 +106,39 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     for(typename contr_list::const_iterator i = clst.begin();
         i != clst.end(); ++i) {
 
+        size_t aia, aib;
         index<NA> ia;
         index<NB> ib;
-        abs_index<NA>::get_index(i->get_abs_index_a(), m_bidimsa, ia);
-        abs_index<NB>::get_index(i->get_abs_index_b(), m_bidimsb, ib);
 
-        if(coba.find(i->get_abs_index_a()) == coba.end()) {
-            rd_block_a_type &blka = ca.req_const_block(ia);
-            coba[i->get_abs_index_a()] = &blka;
+        if(m_use_broken_sym) {
+            aia = i->get_aindex_a();
+            aib = i->get_aindex_b();
+        } else {
+            aia = i->get_acindex_a();
+            aib = i->get_acindex_b();
         }
-        if(cobb.find(i->get_abs_index_b()) == cobb.end()) {
-            rd_block_b_type &blkb = cb.req_const_block(ib);
-            cobb[i->get_abs_index_b()] = &blkb;
+        abs_index<NA>::get_index(aia, m_bidimsa, ia);
+        abs_index<NB>::get_index(aib, m_bidimsb, ib);
+
+        if(coba.find(aia) == coba.end()) {
+            rd_block_a_type &blka = ca2.req_const_block(ia);
+            coba[aia] = &blka;
         }
-        rd_block_a_type &blka = *coba[i->get_abs_index_a()];
-        rd_block_b_type &blkb = *cobb[i->get_abs_index_b()];
+        if(cobb.find(aib) == cobb.end()) {
+            rd_block_b_type &blkb = cb2.req_const_block(ib);
+            cobb[aib] = &blkb;
+        }
+        rd_block_a_type &blka = *coba[aia];
+        rd_block_b_type &blkb = *cobb[aib];
 
         tensor_transf<NA, element_type> tra(i->get_transf_a());
         tensor_transf<NB, element_type> trb(i->get_transf_b());
 
         contraction2<N, M, K> contr(m_contr);
-        contr.permute_a(tra.get_perm());
-        contr.permute_b(trb.get_perm());
+        if(!m_use_broken_sym) {
+            contr.permute_a(permutation<NA>(tra.get_perm(), true));
+            contr.permute_b(permutation<NB>(trb.get_perm(), true));
+        }
         contr.permute_c(trc.get_perm());
 
         scalar_transf<element_type> ka(tra.get_scalar_tr());
@@ -129,12 +168,12 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     for(typename coba_map::iterator i = coba.begin(); i != coba.end(); ++i) {
         index<NA> ia;
         abs_index<NA>::get_index(i->first, m_bidimsa, ia);
-        ca.ret_const_block(ia);
+        ca2.ret_const_block(ia);
     }
     for(typename cobb_map::iterator i = cobb.begin(); i != cobb.end(); ++i) {
         index<NB> ib;
         abs_index<NB>::get_index(i->first, m_bidimsb, ib);
-        cb.ret_const_block(ib);
+        cb2.ret_const_block(ib);
     }
 }
 

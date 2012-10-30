@@ -97,8 +97,8 @@ void gen_bto_contract2_clst_builder_test::test_1() {
     std::set<size_t> s;
     for(clst_type::const_iterator i = contr_lst.begin(); i != contr_lst.end();
         ++i) {
-        abs_index<4> aidxa(i->get_abs_index_a(), bidims),
-            aidxb(i->get_abs_index_b(), bidims);
+        abs_index<4> aidxa(i->get_acindex_a(), bidims),
+            aidxb(i->get_acindex_b(), bidims);
         if(!aidxa.get_index().equals(i0101) ||
             !aidxb.get_index().equals(i0101)) {
             fail_test(testname, __FILE__, __LINE__, "Wrong blocks contracted.");
@@ -200,8 +200,8 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     std::set<size_t> s;
     for(clst_type::const_iterator i = contr_lst.begin(); i != contr_lst.end();
         ++i) {
-        abs_index<4> aidxa(i->get_abs_index_a(), bidims),
-            aidxb(i->get_abs_index_b(), bidims);
+        abs_index<4> aidxa(i->get_acindex_a(), bidims),
+            aidxb(i->get_acindex_b(), bidims);
         if(!aidxa.get_index().equals(aidxb.get_index()) ||
             (!aidxa.get_index().equals(i0302) &&
             !aidxa.get_index().equals(i0303) &&
