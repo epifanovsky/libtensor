@@ -131,14 +131,23 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         rd_block_a_type &blka = *coba[aia];
         rd_block_b_type &blkb = *cobb[aib];
 
-        tensor_transf<NA, element_type> tra(i->get_transf_a());
-        tensor_transf<NB, element_type> trb(i->get_transf_b());
+        tensor_transf<NA, element_type> tra;
+        tensor_transf<NB, element_type> trb;
+
+        if(m_use_broken_sym) {
+            orbit<NA, element_type> oa(syma, aia);
+            orbit<NB, element_type> ob(symb, aib);
+            tra.transform(tensor_transf<NA, element_type>(
+                oa.get_transf(aia), true));
+            trb.transform(tensor_transf<NB, element_type>(
+                ob.get_transf(aib), true));
+        }
+        tra.transform(i->get_transf_a());
+        trb.transform(i->get_transf_b());
 
         contraction2<N, M, K> contr(m_contr);
-        if(!m_use_broken_sym) {
-            contr.permute_a(permutation<NA>(tra.get_perm(), true));
-            contr.permute_b(permutation<NB>(trb.get_perm(), true));
-        }
+        contr.permute_a(permutation<NA>(tra.get_perm(), true));
+        contr.permute_b(permutation<NB>(trb.get_perm(), true));
         contr.permute_c(trc.get_perm());
 
         scalar_transf<element_type> ka(tra.get_scalar_tr());
