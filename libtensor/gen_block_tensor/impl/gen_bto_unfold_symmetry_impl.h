@@ -62,15 +62,34 @@ public:
 
 
 template<size_t N, typename Traits>
+class gen_bto_unfold_symmetry_task_observer : public libutil::task_observer_i {
+public:
+    virtual void notify_start_task(libutil::task_i *t) { }
+    virtual void notify_finish_task(libutil::task_i *t);
+
+};
+
+
+template<size_t N, typename Traits>
 void gen_bto_unfold_symmetry<N, Traits>::perform(
     gen_block_tensor_i<N, bti_traits> &bt) {
 
-    symmetry<N, element_type> symcopy(bt.get_bis());
+    try {
 
-    {
-        gen_block_tensor_ctrl<N, bti_traits> ctrl(bt);
-        so_copy<N, element_type>(ctrl.req_const_symmetry()).perform(symcopy);
-        ctrl.req_symmetry().clear();
+        symmetry<N, element_type> symcopy(bt.get_bis());
+
+        {
+            gen_block_tensor_ctrl<N, bti_traits> ctrl(bt);
+            so_copy<N, element_type>(ctrl.req_const_symmetry()).perform(symcopy);
+            ctrl.req_symmetry().clear();
+        }
+
+        gen_bto_unfold_symmetry_task_iterator<N, Traits> ti(bt, symcopy);
+        gen_bto_unfold_symmetry_task_observer<N, Traits> to;
+        libutil::thread_pool::submit(ti, to);
+
+    } catch(...) {
+        throw;
     }
 }
 
@@ -144,6 +163,14 @@ libutil::task_i *gen_bto_unfold_symmetry_task_iterator<N, Traits>::get_next() {
             *m_i);
     ++m_i;
     return t;
+}
+
+
+template<size_t N, typename Traits>
+void gen_bto_unfold_symmetry_task_observer<N, Traits>::notify_finish_task(
+    libutil::task_i *t) {
+
+    delete t;
 }
 
 
