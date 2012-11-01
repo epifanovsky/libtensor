@@ -108,7 +108,7 @@ void cuda_tod_contract2_test::perform() throw(libtest::test_exception) {
     test_ij_j_i(3, 3, 3.7);
     test_ij_j_i(3, 5, 1.0);
     test_ij_j_i(16, 16, 0.7);
-
+#endif
     test_ij_pi_pj(1, 1, 1);
     test_ij_pi_pj(1, 1, 2);
     test_ij_pi_pj(1, 2, 1);
@@ -123,7 +123,7 @@ void cuda_tod_contract2_test::perform() throw(libtest::test_exception) {
     test_ij_pi_pj(3, 3, 3, 1.0);
     test_ij_pi_pj(3, 5, 7, -1.2);
     test_ij_pi_pj(16, 16, 16, 0.7);
-
+#if 0
     test_ij_pi_jp(1, 1, 1);
     test_ij_pi_jp(1, 1, 2);
     test_ij_pi_jp(1, 2, 1);
@@ -1153,6 +1153,7 @@ void cuda_tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
 
     cuda_tod_copy_h2d<1>(ta).perform(cuta);
     cuda_tod_copy_h2d<2>(tb).perform(cutb);
+    cuda_tod_copy_h2d<1>(tc).perform(cutc);
 
     //    Invoke the contraction routine
 
@@ -1622,6 +1623,9 @@ void cuda_tod_contract2_test::test_ij_pi_pj(
         << ", " << np << ", " << d << ")";
     std::string tns = tnss.str();
 
+    typedef std_allocator<double> allocator_type;
+    typedef cuda_allocator<double> cuda_allocator_type;
+
     try {
 
     index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
@@ -1630,21 +1634,23 @@ void cuda_tod_contract2_test::test_ij_pi_pj(
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
-    size_t sza = dima.get_size(), szb = dimb.get_size(),
-        szc = dimc.get_size();
+    size_t sza = dima.get_size(), szb = dimb.get_size(), szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator_type> ta(dima);
+    dense_tensor<2, double, allocator_type> tb(dimb);
+    dense_tensor<2, double, allocator_type> tc(dimc);
+    dense_tensor<2, double, allocator_type> tc_ref(dimc);
+    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
     {
-    dense_tensor_ctrl<2, double> tca(ta);
-    dense_tensor_ctrl<2, double> tcb(tb);
-    dense_tensor_ctrl<2, double> tcc(tc);
-    dense_tensor_ctrl<2, double> tcc_ref(tc_ref);
+    dense_tensor_wr_ctrl<2, double> tca(ta);
+    dense_tensor_wr_ctrl<2, double> tcb(tb);
+    dense_tensor_wr_ctrl<2, double> tcc(tc);
+    dense_tensor_wr_ctrl<2, double> tcc_ref(tc_ref);
     double *dta = tca.req_dataptr();
     double *dtb = tcb.req_dataptr();
     double *dtc1 = tcc.req_dataptr();
@@ -1683,12 +1689,25 @@ void cuda_tod_contract2_test::test_ij_pi_pj(
     tcc_ref.ret_dataptr(dtc2); dtc2 = 0; tc_ref.set_immutable();
     }
 
+    //    Copy input from host to device
+
+    cuda_tod_copy_h2d<2>(ta).perform(cuta);
+    cuda_tod_copy_h2d<2>(tb).perform(cutb);
+    cuda_tod_copy_h2d<2>(tc).perform(cutc);
+
     //    Invoke the contraction routine
 
     contraction2<1, 1, 1> contr;
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) {
+        cuda_tod_contract2<1, 1, 1>(contr, cuta, cutb, 1.0).perform(true, cutc);
+    } else {
+        cuda_tod_contract2<1, 1, 1>(contr, cuta, cutb, d).perform(false, cutc);
+    }
+
+    //    Copy result from device to host
+
+    cuda_tod_copy_d2h<2>(cutc).perform(tc);
 
     //    Compare against the reference
 

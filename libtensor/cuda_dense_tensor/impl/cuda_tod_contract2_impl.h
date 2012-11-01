@@ -14,7 +14,6 @@
 #include <libtensor/tod/bad_dimensions.h>
 #include <libtensor/tod/contraction2_list_builder.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/tod_set_cuda.h>
 #include "../local_cublas_handle.h"
 #include "../cuda_tod_contract2.h"
 
@@ -130,17 +129,17 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
         }
         cuda_tod_contract2::stop_timer("align");
 
+        dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
+        double *pc = cc.req_dataptr();
+        const dimensions<k_orderc> &dimsc = tc.get_dims();
+
         //  Special case when no calculation is required
 
         if(argslst.empty() && zero) {
             cuda_tod_contract2::start_timer("zeroc");
-            tod_set_cuda<k_orderc>().perform(tc);
+            cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
             cuda_tod_contract2::stop_timer("zeroc");
         }
-
-        dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
-        double *pc = cc.req_dataptr();
-        const dimensions<k_orderc> &dimsc = tc.get_dims();
 
         //  Compute the contractions grouping them by the permutation of C
 
@@ -167,9 +166,9 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                 }
             } else {
                 pc2 = pc1;
-                cuda_tod_contract2<N, M, K>::start_timer("zeroc1");
-                cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
-                cuda_tod_contract2<N, M, K>::stop_timer("zeroc1");
+                cuda_tod_contract2::start_timer("zeroc1");
+                cudaMemset(pc1, 0, sizeof(double) * dimsc.get_size());
+                cuda_tod_contract2::stop_timer("zeroc1");
             }
 
             do {
