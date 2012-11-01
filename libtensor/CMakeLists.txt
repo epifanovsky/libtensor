@@ -18,6 +18,8 @@ set(SRC
 set(SRC_CUDA
     cuda_dense_tensor/local_cublas_handle.C
     cuda_dense_tensor/impl/cuda_tod_contract2.C
+    cuda_dense_tensor/impl/cuda_tod_copy_d2h.C
+    cuda_dense_tensor/impl/cuda_tod_copy_h2d.C
     dense_tensor/impl/dense_tensor_cuda.C
     tod/kernels/cuda_kern_copy_2d.cu
     tod/kernels/cuda_kern_copy_4d.cu
