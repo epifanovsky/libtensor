@@ -193,6 +193,9 @@ set(SRC_LINALG
 set(SRC_LINALG_CUBLAS
     linalg_cublas/libtensor_linalg_cublas_tests.C
     linalg_cublas/libtensor_linalg_cublas_suite.C
+    linalg_cublas/linalg_cublas_add1_ij_ij_x_test.C
+    linalg_cublas/linalg_cublas_add1_ij_ji_x_test.C
+    linalg_cublas/linalg_cublas_copy_ij_ij_x_test.C
     linalg_cublas/linalg_cublas_copy_ij_ji_x_test.C
     linalg_cublas/linalg_cublas_mul1_i_x_test.C
     linalg_cublas/linalg_cublas_mul2_x_p_p_test.C

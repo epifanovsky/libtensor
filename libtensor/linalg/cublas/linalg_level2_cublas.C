@@ -39,8 +39,16 @@ void linalg_level2_cublas::copy_ij_ij_x(
     double b,
     double *c, size_t sic) {
 
-    start_timer("copy_ij_ij_x");
-    stop_timer("copy_ij_ij_x");
+    cublasStatus_t ec;
+    start_timer("dcopy+dscal");
+    for(size_t i = 0; i < ni; i++) {
+        ec = cublasDcopy(h, nj, a + i * sia, 1, c + i * sic, 1);
+        ec = cublasDscal(h, nj, &b, c + i * sic, 1);
+    }
+    cudaStream_t stream;
+    ec = cublasGetStream(h, &stream);
+    cudaStreamSynchronize(stream);
+    stop_timer("dcopy+dscal");
 }
 
 

@@ -5,6 +5,10 @@ namespace libtensor {
 libtensor_linalg_cublas_suite::libtensor_linalg_cublas_suite() :
     libtest::test_suite("libtensor_linalg_cublas") {
 
+    add_test("linalg_cublas_add1_ij_ij_x", m_utf_linalg_cublas_add1_ij_ij_x);
+    add_test("linalg_cublas_add1_ij_ji_x", m_utf_linalg_cublas_add1_ij_ji_x);
+
+    add_test("linalg_cublas_copy_ij_ij_x", m_utf_linalg_cublas_copy_ij_ij_x);
     add_test("linalg_cublas_copy_ij_ji_x", m_utf_linalg_cublas_copy_ij_ji_x);
 
     add_test("linalg_cublas_mul1_i_x", m_utf_linalg_cublas_mul1_i_x);

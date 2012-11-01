@@ -2,6 +2,9 @@
 #define LIBTENSOR_LIBTENSOR_LINALG_CUBLAS_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "linalg_cublas_add1_ij_ij_x_test.h"
+#include "linalg_cublas_add1_ij_ji_x_test.h"
+#include "linalg_cublas_copy_ij_ij_x_test.h"
 #include "linalg_cublas_copy_ij_ji_x_test.h"
 #include "linalg_cublas_mul1_i_x_test.h"
 #include "linalg_cublas_mul2_x_p_p_test.h"
@@ -29,6 +32,9 @@ namespace libtensor {
     \ingroup libtensor_tests
 
     This suite runs the following tests:
+     - libtensor::linalg_cublas_add1_ij_ij_x_test
+     - libtensor::linalg_cublas_add1_ij_ji_x_test
+     - libtensor::linalg_cublas_copy_ij_ij_x_test
      - libtensor::linalg_cublas_copy_ij_ji_x_test
      - libtensor::linalg_cublas_mul1_i_x_test
      - libtensor::linalg_cublas_mul2_x_p_p_test
@@ -44,6 +50,12 @@ namespace libtensor {
  **/
 class libtensor_linalg_cublas_suite : public libtest::test_suite {
 private:
+    unit_test_factory<linalg_cublas_add1_ij_ij_x_test>
+        m_utf_linalg_cublas_add1_ij_ij_x;
+    unit_test_factory<linalg_cublas_add1_ij_ji_x_test>
+        m_utf_linalg_cublas_add1_ij_ji_x;
+    unit_test_factory<linalg_cublas_copy_ij_ij_x_test>
+        m_utf_linalg_cublas_copy_ij_ij_x;
     unit_test_factory<linalg_cublas_copy_ij_ji_x_test>
         m_utf_linalg_cublas_copy_ij_ji_x;
     unit_test_factory<linalg_cublas_mul1_i_x_test>
