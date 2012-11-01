@@ -87,6 +87,12 @@ set(SRC_KERNELS
     kernels/dmuladd1/kern_dmuladd1.C
 )
 
+set(SRC_KERNELS_CUBLAS
+    kernels/dadd1/cublas_kern_dadd1.C
+    kernels/dcopy/cublas_kern_dcopy.C
+    kernels/dmul2/cublas_kern_dmul2.C
+)
+
 set(SRC_INST
     dense_tensor/impl/dense_tensor.C
     dense_tensor/impl/to_contract2_dims.C
@@ -219,8 +225,8 @@ endif(USE_ACML)
 
 if(CUDA_FOUND)
     cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG}
-        ${SRC_LINALG_CUBLAS} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
-        ${SRC_INST} ${SRC_MP})
+        ${SRC_LINALG_CUBLAS} ${SRC_KERNELS} ${SRC_KERNELS_CUBLAS}
+        ${SRC_GEN_BTOD} ${SRC_BTOD} ${SRC_INST} ${SRC_MP})
 else(CUDA_FOUND)
     add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
         ${SRC_BTOD} ${SRC_INST} ${SRC_MP})

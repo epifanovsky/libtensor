@@ -8,6 +8,42 @@ namespace libtensor {
 const char *linalg_level2_cublas::k_clazz = "cublas";
 
 
+void linalg_level2_cublas::add1_ij_ij_x(
+    cublasHandle_t h,
+    size_t ni, size_t nj,
+    const double *a, size_t sia,
+    double b,
+    double *c, size_t sic) {
+
+    start_timer("add1_ij_ij_x");
+    stop_timer("add1_ij_ij_x");
+}
+
+
+void linalg_level2_cublas::add1_ij_ji_x(
+    cublasHandle_t h,
+    size_t ni, size_t nj,
+    const double *a, size_t sja,
+    double b,
+    double *c, size_t sic) {
+
+    start_timer("add1_ij_ji_x");
+    stop_timer("add1_ij_ji_x");
+}
+
+
+void linalg_level2_cublas::copy_ij_ij_x(
+    cublasHandle_t h,
+    size_t ni, size_t nj,
+    const double *a, size_t sia,
+    double b,
+    double *c, size_t sic) {
+
+    start_timer("copy_ij_ij_x");
+    stop_timer("copy_ij_ij_x");
+}
+
+
 void linalg_level2_cublas::copy_ij_ji_x(
     cublasHandle_t h,
     size_t ni, size_t nj,
@@ -80,6 +116,19 @@ void linalg_level2_cublas::mul2_ij_i_j_x(
     ec = cublasGetStream(h, &stream);
     cudaStreamSynchronize(stream);
     stop_timer("dger");
+}
+
+
+double linalg_level2_cublas::mul2_x_pq_qp(
+    cublasHandle_t h,
+    size_t np, size_t nq,
+    const double *a, size_t spa,
+    const double *b, size_t sqb) {
+
+    start_timer("mul2_x_pq_qp");
+    double c = 0.0;
+    stop_timer("mul2_x_pq_qp");
+    return c;
 }
 
 

@@ -251,14 +251,16 @@ add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 if(CUDA_FOUND)
-    set(TARGETS
-        ${TARGETS}
+    set(CUDA_TARGETS
         libtensor_linalg_cublas_tests
         libtensor_cuda_dense_tensor_tests)
     add_executable(libtensor_linalg_cublas_tests ${SRC_LINALG_CUBLAS})
     cuda_add_executable(libtensor_cuda_dense_tensor_tests
         ${SRC_CUDA_DENSE_TENSOR})
-    cuda_add_cublas_to_target(libtensor_linalg_cublas_tests)
+    foreach(TARGET ${CUDA_TARGETS})
+        cuda_add_cublas_to_target(${TARGET})
+    endforeach(TARGET)
+    set(TARGETS ${TARGETS} ${CUDA_TARGETS})
 endif(CUDA_FOUND)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY

@@ -15,6 +15,12 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
+    static void copy_i_i(
+        cublasHandle_t h,
+        size_t ni,
+        const double *a, size_t sia,
+        double *c, size_t sic);
+
     static void mul1_i_x(
         cublasHandle_t h,
         size_t ni,
@@ -33,6 +39,14 @@ public:
         const double *a, size_t sia,
         double b,
         double *c, size_t sic);
+
+    static void mul2_i_i_i_x(
+        cublasHandle_t h,
+        size_t ni,
+        const double *a, size_t sia,
+        const double *b, size_t sib,
+        double *c, size_t sic,
+        double d);
 
 };
 
