@@ -4,6 +4,7 @@
 #include <libtest/test_suite.h>
 #include "cuda_tod_contract2_test.h"
 #include "tod_cuda_copy_test.h"
+#include "cuda_tod_copy_hd_test.h"
 #include "tod_set_cuda_test.h"
 #include "tod_add_cuda_test.h"
 
@@ -30,6 +31,7 @@ class libtensor_cuda_dense_tensor_suite : public libtest::test_suite {
 private:
     unit_test_factory<cuda_tod_contract2_test> m_utf_cuda_tod_contract2;
     unit_test_factory<tod_cuda_copy_test> m_utf_tod_cuda_copy;
+    unit_test_factory<cuda_tod_copy_hd_test> m_utf_cuda_tod_copy_hd;
     unit_test_factory<tod_set_cuda_test> m_utf_tod_set_cuda;
     unit_test_factory<tod_add_cuda_test> m_utf_tod_add_cuda;
 
