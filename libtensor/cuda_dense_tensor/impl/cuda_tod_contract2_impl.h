@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_CUDA_TOD_CONTRACT2_IMPL_H
 #define LIBTENSOR_CUDA_TOD_CONTRACT2_IMPL_H
 
-#include <cstring> // for memset
 #include <memory>
+#include <cuda_runtime.h>
 #include <libvmm/cuda_allocator.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/linalg/cublas/linalg_cublas.h>
@@ -161,16 +161,14 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                 pc2 = pc;
                 if(zero1) {
                     cuda_tod_contract2::start_timer("zeroc");
-                    //memset(pc, 0, sizeof(double) * dimsc.get_size());
-                    std::cout << "memset req'd" << std::endl;
+                    cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
                     zero1 = false;
                     cuda_tod_contract2::stop_timer("zeroc");
                 }
             } else {
                 pc2 = pc1;
                 cuda_tod_contract2<N, M, K>::start_timer("zeroc1");
-                //memset(pc1, 0, sizeof(double) * dimsc1.get_size());
-                std::cout << "memset req'd" << std::endl;
+                cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
                 cuda_tod_contract2<N, M, K>::stop_timer("zeroc1");
             }
 
