@@ -15,8 +15,15 @@ void linalg_level2_cublas::add1_ij_ij_x(
     double b,
     double *c, size_t sic) {
 
-    start_timer("add1_ij_ij_x");
-    stop_timer("add1_ij_ij_x");
+    cublasStatus_t ec;
+    start_timer("daxpy");
+    for(size_t i = 0; i < ni; i++) {
+        ec = cublasDaxpy(h, nj, &b, a + i * sia, 1, c + i * sic, 1);
+    }
+    cudaStream_t stream;
+    ec = cublasGetStream(h, &stream);
+    cudaStreamSynchronize(stream);
+    stop_timer("daxpy");
 }
 
 
@@ -27,8 +34,15 @@ void linalg_level2_cublas::add1_ij_ji_x(
     double b,
     double *c, size_t sic) {
 
-    start_timer("add1_ij_ji_x");
-    stop_timer("add1_ij_ji_x");
+    cublasStatus_t ec;
+    start_timer("daxpy");
+    for(size_t i = 0; i < ni; i++) {
+        ec = cublasDaxpy(h, nj, &b, a + i, sja, c + i * sic, 1);
+    }
+    cudaStream_t stream;
+    ec = cublasGetStream(h, &stream);
+    cudaStreamSynchronize(stream);
+    stop_timer("daxpy");
 }
 
 
