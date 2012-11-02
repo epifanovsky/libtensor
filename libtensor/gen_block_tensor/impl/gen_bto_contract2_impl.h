@@ -57,22 +57,19 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         out.open();
 
-        gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
-        gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
-
         //  Compute the number of blocks in A and B
 
-        size_t nblka = 0, nblkb = 0, nblkc = 0;
-        orbit_list<NA, element_type> ola(ca.req_const_symmetry());
-        for(typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
-                ioa != ola.end(); ++ioa) {
-            if(!ca.req_is_zero_block(ola.get_index(ioa))) nblka++;
+        std::vector<size_t> blsta, blstb;
+
+        {
+            gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+            gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+            ca.req_nonzero_blocks(blsta);
+            cb.req_nonzero_blocks(blstb);
         }
-        orbit_list<NB, element_type> olb(cb.req_const_symmetry());
-        for(typename orbit_list<NB, element_type>::iterator iob = olb.begin();
-                iob != olb.end(); ++iob) {
-            if(!cb.req_is_zero_block(olb.get_index(iob))) nblkb++;
-        }
+
+        size_t nblka = blsta.size(), nblkb = blstb.size(), nblkc = 0;
+
         for(typename assignment_schedule<NC, element_type>::iterator i =
                 m_sch.begin(); i != m_sch.end(); ++i) {
             nblkc++;
@@ -111,20 +108,20 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         block_index_space<NC> bisct(m_symc.get_bis());
         bisct.permute(permc);
 
-        symmetry<NA, element_type> symat(bisat);
-        symmetry<NB, element_type> symbt(bisbt);
-        symmetry<NC, element_type> symct(bisct);
-        so_permute<NA, element_type>(ca.req_const_symmetry(), perma).
-            perform(symat);
-        so_permute<NB, element_type>(cb.req_const_symmetry(), permb).
-            perform(symbt);
-        so_permute<NC, element_type>(m_symc.get_symmetry(), permc).
-            perform(symct);
+//        symmetry<NA, element_type> symat(bisat);
+//        symmetry<NB, element_type> symbt(bisbt);
+//        symmetry<NC, element_type> symct(bisct);
+//        so_permute<NA, element_type>(ca.req_const_symmetry(), perma).
+//            perform(symat);
+//        so_permute<NB, element_type>(cb.req_const_symmetry(), permb).
+//            perform(symbt);
+//        so_permute<NC, element_type>(m_symc.get_symmetry(), permc).
+//            perform(symct);
 
         //  Temporary partial A, B, and C
 
-        temp_block_tensor_a_type btat(bisat);
-        temp_block_tensor_b_type btbt(bisbt);
+//        temp_block_tensor_a_type btat(bisat);
+//        temp_block_tensor_b_type btbt(bisbt);
         temp_block_tensor_c_type btct(bisct);
 
         gen_block_tensor_rd_ctrl<NC, bti_traits> cct(btct);
@@ -169,16 +166,16 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                 perma.is_identity());
             first_batch_a = false;
 
-            if(!use_orig_a) {
-                gen_bto_contract2::start_timer("copy_a");
-                tensor_transf<NA, element_type> tra(perma);
-                gen_bto_aux_copy<NA, Traits> cpaout(symat, btat);
-                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
-                gen_bto_contract2::stop_timer("copy_a");
-            }
+//            if(!use_orig_a) {
+//                gen_bto_contract2::start_timer("copy_a");
+//                tensor_transf<NA, element_type> tra(perma);
+//                gen_bto_aux_copy<NA, Traits> cpaout(symat, btat);
+//                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
+//                gen_bto_contract2::stop_timer("copy_a");
+//            }
 
-            gen_block_tensor_rd_i<NA, bti_traits> &bta =
-                (use_orig_a ? m_bta : btat);
+            gen_block_tensor_rd_i<NA, bti_traits> &bta = m_bta;
+//                (use_orig_a ? m_bta : btat);
 
             if(batcha.size() == 0) continue;
 
@@ -209,16 +206,16 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                         iob == olb.end() && permb.is_identity());
                 first_batch_b = false;
 
-                if(!use_orig_b) {
-                    gen_bto_contract2::start_timer("copy_b");
-                    tensor_transf<NB, element_type> trb(permb);
-                    gen_bto_aux_copy<NB, Traits> cpbout(symbt, btbt);
-                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
-                    gen_bto_contract2::stop_timer("copy_b");
-                }
+//                if(!use_orig_b) {
+//                    gen_bto_contract2::start_timer("copy_b");
+//                    tensor_transf<NB, element_type> trb(permb);
+//                    gen_bto_aux_copy<NB, Traits> cpbout(symbt, btbt);
+//                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
+//                    gen_bto_contract2::stop_timer("copy_b");
+//                }
 
-                gen_block_tensor_rd_i<NB, bti_traits> &btb =
-                        (use_orig_b ? m_btb : btbt);
+                gen_block_tensor_rd_i<NB, bti_traits> &btb = m_btb;
+//                        (use_orig_b ? m_btb : btbt);
 
                 if(batchb.size() == 0) continue;
 
@@ -244,8 +241,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     //  in some cases, e.g. self-contraction
                     gen_bto_aux_copy<NC, Traits> ctcout(symct, btct);
                     gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr, bta,
-                        m_ka, btb, m_kb, symct.get_bis(), m_kc).
-                        perform(batchc1, ctcout);
+                        perma, m_ka, batcha, btb, permb, m_kb, batchb,
+                        symct.get_bis(), m_kc).perform(batchc1, ctcout);
 
                     gen_bto_contract2::start_timer("copy_c");
                     for(size_t i = 0; i < batchc1.size(); i++) {
@@ -283,17 +280,25 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
     const tensor_transf<NC, double> &trc,
     wr_block_type &blkc) {
 
+    dimensions<NA> bidimsa = m_bta.get_bis().get_block_index_dims();
+    dimensions<NB> bidimsb = m_btb.get_bis().get_block_index_dims();
+
     gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
     gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+
+    std::vector<size_t> blsta, blstb;
+    ca.req_nonzero_blocks(blsta);
+    cb.req_nonzero_blocks(blstb);
+    block_list<NA> bla(bidimsa, blsta);
+    block_list<NB> blb(bidimsb, blstb);
 
     const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
     const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
     gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
-        syma, m_ka, m_btb, symb, m_kb, m_symc.get_bis(), m_kc);
+        syma, bla, m_ka, m_btb, symb, blb, m_kb, m_symc.get_bis(), m_kc);
 
     bto.compute_block(zero, idxc, trc, blkc);
-
 }
 
 

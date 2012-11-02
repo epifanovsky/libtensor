@@ -31,6 +31,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_bis_4();
     test_bis_5();
 
+std::cout << __FILE__ << ": " << __LINE__ << std::endl;
     //  Tests for zero block structure
     test_zeroblk_1();
     test_zeroblk_2();
@@ -41,6 +42,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
 
     //  Tests for contractions
 
+    std::cout << __FILE__ << ": " << __LINE__ << std::endl;
     test_contr_1();
     test_contr_2();
     test_contr_3();
@@ -50,6 +52,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_7();
     test_contr_8();
     test_contr_9();
+    std::cout << __FILE__ << ": " << __LINE__ << std::endl;
     test_contr_10();
     test_contr_11();
     test_contr_12();
@@ -65,6 +68,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_16(-2.2);
     test_contr_17(0.0);
     test_contr_17(1.5);
+    std::cout << __FILE__ << ": " << __LINE__ << std::endl;
     test_contr_18(0.0);
     test_contr_18(-1.5);
     test_contr_19();
@@ -73,6 +77,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_21();
     test_contr_22();
     test_contr_23();
+    std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
     //  Tests for the contraction of a block tensor with itself
 

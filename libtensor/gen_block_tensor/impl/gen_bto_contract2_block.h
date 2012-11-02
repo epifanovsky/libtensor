@@ -68,11 +68,13 @@ private:
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta2; //!< A with broken symmetry
     dimensions<NA> m_bidimsa; //!< Block index dims in A
     orbit_list<NA, element_type> m_ola; //!< List of orbits in A
+    block_list<NA> m_bla; //!< List of non-zero blocks in A
     scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb2; //!< B with broken symmetry
     dimensions<NB> m_bidimsb; //!< Block index dims in B
     orbit_list<NB, element_type> m_olb; //!< List of orbits in B
+    block_list<NB> m_blb; //!< List of non-zero blocks in B
     scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     dimensions<NC> m_bidimsc; //!< Block index dims in C
     scalar_transf<element_type> m_kc; //!< Scalar transformation of C
@@ -92,9 +94,11 @@ public:
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
         const symmetry<NA, element_type> &syma,
+        const block_list<NA> &bla,
         const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
         const symmetry<NB, element_type> &symb,
+        const block_list<NB> &blb,
         const scalar_transf<element_type> &kb,
         const block_index_space<NC> &bisc,
         const scalar_transf<element_type> &kc);
@@ -115,10 +119,12 @@ public:
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
         gen_block_tensor_rd_i<NA, bti_traits> &bta2,
         const symmetry<NA, element_type> &syma,
+        const block_list<NA> &bla,
         const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
         gen_block_tensor_rd_i<NB, bti_traits> &btb2,
         const symmetry<NB, element_type> &symb,
+        const block_list<NB> &blb,
         const scalar_transf<element_type> &kb,
         const block_index_space<NC> &bisc,
         const scalar_transf<element_type> &kc);

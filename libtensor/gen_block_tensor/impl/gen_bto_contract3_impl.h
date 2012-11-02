@@ -231,7 +231,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
             bool use_orig_ab = permab.is_identity();
             if (! use_orig_ab) {
-                gen_bto_contract3::start_timer("copy_ab");
+//                gen_bto_contract3::start_timer("copy_ab");
                 for (size_t i = 0; i < batchab1.size(); i++) {
                     index<NAB> iab;
                     abs_index<NAB>::get_index(batchab1[i], bidimsab1, iab);
@@ -241,23 +241,23 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         batchab2.push_back(oab.get_acindex());
                     }
                 }
-                tensor_transf<NAB, element_type> trab(permab);
-                gen_bto_aux_copy<NAB, Traits> ab2cout(symab2, btab2);
-                gen_bto_copy_ab_type(btab1, trab).perform(batchab2, ab2cout);
-                cab.req_zero_all_blocks();
-                gen_bto_contract3::stop_timer("copy_ab");
+//                tensor_transf<NAB, element_type> trab(permab);
+//                gen_bto_aux_copy<NAB, Traits> ab2cout(symab2, btab2);
+//                gen_bto_copy_ab_type(btab1, trab).perform(batchab2, ab2cout);
+//                cab.req_zero_all_blocks();
+//                gen_bto_contract3::stop_timer("copy_ab");
             }
 
-            gen_block_tensor_rd_i<NAB, bti_traits> &btabx =
-                (use_orig_ab ? btab1 : btab2);
+            gen_block_tensor_rd_i<NAB, bti_traits> &btabx = btab1;
+//                (use_orig_ab ? btab1 : btab2);
 
             {
-                gen_bto_contract3::start_timer("copy_ab_2");
-                tensor_transf<NAB, element_type> trab0;
-                gen_bto_aux_copy<NAB, Traits> ab3cout(symab2, btab3);
-                gen_bto_copy_ab_type(btabx, trab0).perform(ab3cout);
-                gen_bto_unfold_symmetry<NAB, Traits>().perform(btab3);
-                gen_bto_contract3::stop_timer("copy_ab_2");
+//                gen_bto_contract3::start_timer("copy_ab_2");
+//                tensor_transf<NAB, element_type> trab0;
+//                gen_bto_aux_copy<NAB, Traits> ab3cout(symab2, btab3);
+//                gen_bto_copy_ab_type(btabx, trab0).perform(ab3cout);
+//                gen_bto_unfold_symmetry<NAB, Traits>().perform(btab3);
+//                gen_bto_contract3::stop_timer("copy_ab_2");
             }
 
             typename orbit_list<NC, element_type>::iterator ioc = olc.begin();
@@ -288,23 +288,23 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                 first_batch_c = false;
 
                 if (! use_orig_c) {
-                    gen_bto_contract3::start_timer("copy_c");
-                    tensor_transf<NC, element_type> trc(permc);
-                    gen_bto_aux_copy<NC, Traits> cpcout(symct, btct);
-                    gen_bto_copy_c_type(m_btc, trc).perform(batchc, cpcout);
-                    gen_bto_contract3::stop_timer("copy_c");
+//                    gen_bto_contract3::start_timer("copy_c");
+//                    tensor_transf<NC, element_type> trc(permc);
+//                    gen_bto_aux_copy<NC, Traits> cpcout(symct, btct);
+//                    gen_bto_copy_c_type(m_btc, trc).perform(batchc, cpcout);
+//                    gen_bto_contract3::stop_timer("copy_c");
                 }
 
-                gen_block_tensor_rd_i<NC, bti_traits> &btc =
-                        (use_orig_c ? m_btc : btct);
+                gen_block_tensor_rd_i<NC, bti_traits> &btc = m_btc;
+//                        (use_orig_c ? m_btc : btct);
 
                 {
-                    gen_bto_contract3::start_timer("copy_c_2");
-                    tensor_transf<NC, element_type> trc0;
-                    gen_bto_aux_copy<NC, Traits> c3cout(symct, btct3);
-                    gen_bto_copy_c_type(btc, trc0).perform(c3cout);
-                    gen_bto_unfold_symmetry<NC, Traits>().perform(btct3);
-                    gen_bto_contract3::stop_timer("copy_c_2");
+//                    gen_bto_contract3::start_timer("copy_c_2");
+//                    tensor_transf<NC, element_type> trc0;
+//                    gen_bto_aux_copy<NC, Traits> c3cout(symct, btct3);
+//                    gen_bto_copy_c_type(btc, trc0).perform(c3cout);
+//                    gen_bto_unfold_symmetry<NC, Traits>().perform(btct3);
+//                    gen_bto_contract3::stop_timer("copy_c_2");
                 }
 
                 if(batchc.size() == 0) continue;
@@ -331,8 +331,8 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     //  in some cases, e.g. self-contraction
                     gen_bto_aux_copy<ND, Traits> dtcout(symdt, btdt);
                     gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
-                        contr2, btabx, kab, btc, m_kc,
-                        symdt.get_bis(), m_kd).perform(batchd1, dtcout);
+                        contr2, btabx, permutation<NAB>(), kab, batchab2, btc, permc, m_kc,
+                        batchc, symdt.get_bis(), m_kd).perform(batchd1, dtcout);
 
                     gen_bto_contract3::start_timer("copy_d");
                     for(size_t i = 0; i < batchd1.size(); i++) {
@@ -429,24 +429,24 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                 perma.is_identity());
             first_batch_a = false;
 
-            if (!use_orig_a) {
-                gen_bto_contract3::start_timer("copy_a");
-                tensor_transf<NA, element_type> tra(perma);
-                gen_bto_aux_copy<NA, Traits> cpaout(syma, btat);
-                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
-                gen_bto_contract3::stop_timer("copy_a");
-            }
+//            if (!use_orig_a) {
+//                gen_bto_contract3::start_timer("copy_a");
+//                tensor_transf<NA, element_type> tra(perma);
+//                gen_bto_aux_copy<NA, Traits> cpaout(syma, btat);
+//                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
+//                gen_bto_contract3::stop_timer("copy_a");
+//            }
 
-            gen_block_tensor_rd_i<NA, bti_traits> &bta =
-                    (use_orig_a ? m_bta : btat);
+            gen_block_tensor_rd_i<NA, bti_traits> &bta = m_bta;
+//                    (use_orig_a ? m_bta : btat);
 
             {
-                gen_bto_contract3::start_timer("copy_a_2");
-                tensor_transf<NA, element_type> tra0;
-                gen_bto_aux_copy<NA, Traits> cpa2out(syma, btat2);
-                gen_bto_copy_a_type(bta, tra0).perform(cpa2out);
-                gen_bto_unfold_symmetry<NA, Traits>().perform(btat2);
-                gen_bto_contract3::stop_timer("copy_a_2");
+//                gen_bto_contract3::start_timer("copy_a_2");
+//                tensor_transf<NA, element_type> tra0;
+//                gen_bto_aux_copy<NA, Traits> cpa2out(syma, btat2);
+//                gen_bto_copy_a_type(bta, tra0).perform(cpa2out);
+//                gen_bto_unfold_symmetry<NA, Traits>().perform(btat2);
+//                gen_bto_contract3::stop_timer("copy_a_2");
             }
 
             if (batcha.size() == 0) continue;
@@ -478,24 +478,24 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                         iob == olb.end() && permb.is_identity());
                 first_batch_b = false;
 
-                if(!use_orig_b) {
-                    gen_bto_contract3::start_timer("copy_b");
-                    tensor_transf<NB, element_type> trb(permb);
-                    gen_bto_aux_copy<NB, Traits> cpbout(symb, btbt);
-                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
-                    gen_bto_contract3::stop_timer("copy_b");
-                }
+//                if(!use_orig_b) {
+//                    gen_bto_contract3::start_timer("copy_b");
+//                    tensor_transf<NB, element_type> trb(permb);
+//                    gen_bto_aux_copy<NB, Traits> cpbout(symb, btbt);
+//                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
+//                    gen_bto_contract3::stop_timer("copy_b");
+//                }
 
-                gen_block_tensor_rd_i<NB, bti_traits> &btb =
-                        (use_orig_b ? m_btb : btbt);
+                gen_block_tensor_rd_i<NB, bti_traits> &btb = m_btb;
+//                        (use_orig_b ? m_btb : btbt);
 
                 {
-                    gen_bto_contract3::start_timer("copy_b_2");
-                    tensor_transf<NB, element_type> trb0;
-                    gen_bto_aux_copy<NB, Traits> cpb2out(symb, btbt2);
-                    gen_bto_copy_b_type(btb, trb0).perform(cpb2out);
-                    gen_bto_unfold_symmetry<NB, Traits>().perform(btbt2);
-                    gen_bto_contract3::stop_timer("copy_b_2");
+//                    gen_bto_contract3::start_timer("copy_b_2");
+//                    tensor_transf<NB, element_type> trb0;
+//                    gen_bto_aux_copy<NB, Traits> cpb2out(symb, btbt2);
+//                    gen_bto_copy_b_type(btb, trb0).perform(cpb2out);
+//                    gen_bto_unfold_symmetry<NB, Traits>().perform(btbt2);
+//                    gen_bto_contract3::stop_timer("copy_b_2");
                 }
 
                 if(batchb.size() == 0) continue;
@@ -503,7 +503,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                 //  Calling this may break the symmetry of final result
                 //  in some cases, e.g. self-contraction
                 gen_bto_contract2_batch<N1, N2 + K2, K1, Traits, Timed>(contr,
-                    bta, m_ka, btb, m_kb, bisab, kab).
+                    bta, perma, m_ka, batcha, btb, permb, m_kb, batchb, bisab, kab).
                     perform(blst, out);
 
             }
