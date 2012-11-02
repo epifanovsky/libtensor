@@ -180,14 +180,14 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             gen_block_tensor_rd_i<NA, bti_traits> &bta =
                 (use_orig_a ? m_bta : btat);
 
-            {
-                gen_bto_contract2::start_timer("copy_a_2");
-                tensor_transf<NA, element_type> tra0;
-                gen_bto_aux_copy<NA, Traits> cpa2out(symat, btat2);
-                gen_bto_copy_a_type(bta, tra0).perform(cpa2out);
-                gen_bto_unfold_symmetry<NA, Traits>().perform(btat2);
-                gen_bto_contract2::stop_timer("copy_a_2");
-            }
+//            {
+//                gen_bto_contract2::start_timer("copy_a_2");
+//                tensor_transf<NA, element_type> tra0;
+//                gen_bto_aux_copy<NA, Traits> cpa2out(symat, btat2);
+//                gen_bto_copy_a_type(bta, tra0).perform(cpa2out);
+//                gen_bto_unfold_symmetry<NA, Traits>().perform(btat2);
+//                gen_bto_contract2::stop_timer("copy_a_2");
+//            }
 
             if(batcha.size() == 0) continue;
 
@@ -229,14 +229,14 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                 gen_block_tensor_rd_i<NB, bti_traits> &btb =
                         (use_orig_b ? m_btb : btbt);
 
-                {
-                    gen_bto_contract2::start_timer("copy_b_2");
-                    tensor_transf<NB, element_type> trb0;
-                    gen_bto_aux_copy<NB, Traits> cpb2out(symbt, btbt2);
-                    gen_bto_copy_b_type(btb, trb0).perform(cpb2out);
-                    gen_bto_unfold_symmetry<NB, Traits>().perform(btbt2);
-                    gen_bto_contract2::stop_timer("copy_b_2");
-                }
+//                {
+//                    gen_bto_contract2::start_timer("copy_b_2");
+//                    tensor_transf<NB, element_type> trb0;
+//                    gen_bto_aux_copy<NB, Traits> cpb2out(symbt, btbt2);
+//                    gen_bto_copy_b_type(btb, trb0).perform(cpb2out);
+//                    gen_bto_unfold_symmetry<NB, Traits>().perform(btbt2);
+//                    gen_bto_contract2::stop_timer("copy_b_2");
+//                }
 
                 if(batchb.size() == 0) continue;
 
