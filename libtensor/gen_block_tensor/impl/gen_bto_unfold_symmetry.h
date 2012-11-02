@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_UNFOLD_SYMMETRY_H
 #define LIBTENSOR_GEN_BTO_UNFOLD_SYMMETRY_H
 
+#include <vector>
 #include <libtensor/core/noncopyable.h>
 #include "../gen_block_tensor_i.h"
 
@@ -24,7 +25,12 @@ public:
     typedef typename Traits::bti_traits bti_traits;
 
 public:
-    void perform(gen_block_tensor_i<N, bti_traits> &bt);
+    void perform(
+        gen_block_tensor_i<N, bti_traits> &bt);
+
+    void perform(
+        const std::vector<size_t> &blst,
+        gen_block_tensor_i<N, bti_traits> &bt);
 
 };
 
