@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 
+#include <iterator>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_impl.h"
@@ -38,7 +39,7 @@ gen_bto_contract2<N, M, K, Traits, Timed>::gen_bto_contract2(
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
-        gen_block_stream_i<NC, bti_traits> &out) {
+    gen_block_stream_i<NC, bti_traits> &out) {
 
     typedef typename Traits::template temp_block_tensor_type<NA>::type
         temp_block_tensor_a_type;
@@ -57,7 +58,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
         out.open();
 
-        //  Compute the number of blocks in A and B
+        //  Compute the number of non-zero blocks in A and B
 
         std::vector<size_t> blsta, blstb;
 
@@ -69,11 +70,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         }
 
         size_t nblka = blsta.size(), nblkb = blstb.size(), nblkc = 0;
-
-        for(typename assignment_schedule<NC, element_type>::iterator i =
-                m_sch.begin(); i != m_sch.end(); ++i) {
-            nblkc++;
-        }
+        nblkc = std::distance(m_sch.begin(), m_sch.end());
 
         //  Quit if either one of the arguments is zero
 
@@ -82,9 +79,6 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             gen_bto_contract2::stop_timer();
             return;
         }
-
-        gen_bto_contract2_batching_policy<N, M, K> bp(m_contr,
-                nblka, nblkb, nblkc);
 
         //  Compute optimal permutations of A, B, and C
 
@@ -108,114 +102,78 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         block_index_space<NC> bisct(m_symc.get_bis());
         bisct.permute(permc);
 
-//        symmetry<NA, element_type> symat(bisat);
-//        symmetry<NB, element_type> symbt(bisbt);
-//        symmetry<NC, element_type> symct(bisct);
-//        so_permute<NA, element_type>(ca.req_const_symmetry(), perma).
-//            perform(symat);
-//        so_permute<NB, element_type>(cb.req_const_symmetry(), permb).
-//            perform(symbt);
-//        so_permute<NC, element_type>(m_symc.get_symmetry(), permc).
-//            perform(symct);
+        symmetry<NA, element_type> symat(bisat);
+        symmetry<NB, element_type> symbt(bisbt);
+        symmetry<NC, element_type> symct(bisct);
+        {
+            gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+            gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+            so_permute<NA, element_type>(ca.req_const_symmetry(), perma).
+                perform(symat);
+            so_permute<NB, element_type>(cb.req_const_symmetry(), permb).
+                perform(symbt);
+            so_permute<NC, element_type>(m_symc.get_symmetry(), permc).
+                perform(symct);
+        }
 
-        //  Temporary partial A, B, and C
+        //  Temporary C
 
-//        temp_block_tensor_a_type btat(bisat);
-//        temp_block_tensor_b_type btbt(bisbt);
         temp_block_tensor_c_type btct(bisct);
-
         gen_block_tensor_rd_ctrl<NC, bti_traits> cct(btct);
 
         //  Batching loops
 
+        dimensions<NA> bidimsa(m_bta.get_bis().get_block_index_dims());
+        dimensions<NB> bidimsb(m_btb.get_bis().get_block_index_dims());
         dimensions<NC> bidimsc(m_symc.get_bis().get_block_index_dims());
         dimensions<NC> bidimsct(bisct.get_block_index_dims());
 
-        std::vector<size_t> batcha, batchb, batchc1, batchc2;
-        batcha.reserve(bp.get_bsz_a());
-        batchb.reserve(bp.get_bsz_b());
-        batchc1.reserve(bp.get_bsz_c());
-        batchc2.reserve(bp.get_bsz_c());
+        gen_bto_contract2_batching_policy<N, M, K> bp(m_contr,
+            nblka, nblkb, nblkc);
+        size_t batchsza = bp.get_bsz_a(), batchszb = bp.get_bsz_b(),
+            batchszc = bp.get_bsz_c();
 
-        typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
-        bool first_batch_a = true;
-        while(ioa != ola.end()) {
+        std::vector<size_t> batcha, batchb, batchc1, batchc2;
+        batcha.reserve(batchsza);
+        batchb.reserve(batchszb);
+        batchc1.reserve(batchszc);
+        batchc2.reserve(batchszc);
+
+        for(size_t iba = 0; iba < nblka;) {
 
             batcha.clear();
             if(perma.is_identity()) {
-                for(; ioa != ola.end() && batcha.size() < bp.get_bsz_a();
-                        ++ioa) {
-                    const index<NA> &ia = ola.get_index(ioa);
-                    if(ca.req_is_zero_block(ia)) continue;
-                    batcha.push_back(ola.get_abs_index(ioa));
+                for(; iba < nblka && batcha.size() < batchsza; iba++) {
+                    batcha.push_back(blsta[iba]);
                 }
             } else {
-                for(; ioa != ola.end() && batcha.size() < bp.get_bsz_a();
-                        ++ioa) {
-                    index<NA> ia = ola.get_index(ioa);
-                    if(ca.req_is_zero_block(ia)) continue;
+                for(; iba < nblka && batcha.size() < batchsza; iba++) {
+                    index<NA> ia;
+                    abs_index<NA>::get_index(blsta[iba], bidimsa, ia);
                     ia.permute(perma);
                     orbit<NA, element_type> oat(symat, ia, false);
                     batcha.push_back(oat.get_acindex());
                 }
             }
 
-            //  If A need not be permuted and fits in one batch entirely,
-            //  do not make a copy; use the original tensor
-            bool use_orig_a = (first_batch_a && ioa == ola.end() &&
-                perma.is_identity());
-            first_batch_a = false;
-
-//            if(!use_orig_a) {
-//                gen_bto_contract2::start_timer("copy_a");
-//                tensor_transf<NA, element_type> tra(perma);
-//                gen_bto_aux_copy<NA, Traits> cpaout(symat, btat);
-//                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
-//                gen_bto_contract2::stop_timer("copy_a");
-//            }
-
-            gen_block_tensor_rd_i<NA, bti_traits> &bta = m_bta;
-//                (use_orig_a ? m_bta : btat);
-
             if(batcha.size() == 0) continue;
 
-            typename orbit_list<NB, element_type>::iterator iob = olb.begin();
-            bool first_batch_b = true;
-            while(iob != olb.end()) {
+            for(size_t ibb = 0; ibb < nblkb;) {
 
                 batchb.clear();
                 if(permb.is_identity()) {
-                    for(; iob != olb.end() && batchb.size() < bp.get_bsz_b();
-                            ++iob) {
-                        const index<NB> &ib = olb.get_index(iob);
-                        if(cb.req_is_zero_block(ib)) continue;
-                        batchb.push_back(olb.get_abs_index(iob));
+                    for(; ibb < nblkb && batchb.size() < batchszb; ibb++) {
+                        batchb.push_back(blstb[ibb]);
                     }
                 } else {
-                    for(; iob != olb.end() && batchb.size() < bp.get_bsz_b();
-                            ++iob) {
-                        index<NB> ib = olb.get_index(iob);
-                        if(cb.req_is_zero_block(ib)) continue;
+                    for(; ibb < nblkb && batchb.size() < batchszb; ibb++) {
+                        index<NB> ib;
+                        abs_index<NB>::get_index(blstb[ibb], bidimsb, ib);
                         ib.permute(permb);
                         orbit<NB, element_type> obt(symbt, ib, false);
                         batchb.push_back(obt.get_acindex());
                     }
                 }
-
-                bool use_orig_b = (first_batch_b &&
-                        iob == olb.end() && permb.is_identity());
-                first_batch_b = false;
-
-//                if(!use_orig_b) {
-//                    gen_bto_contract2::start_timer("copy_b");
-//                    tensor_transf<NB, element_type> trb(permb);
-//                    gen_bto_aux_copy<NB, Traits> cpbout(symbt, btbt);
-//                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
-//                    gen_bto_contract2::stop_timer("copy_b");
-//                }
-
-                gen_block_tensor_rd_i<NB, bti_traits> &btb = m_btb;
-//                        (use_orig_b ? m_btb : btbt);
 
                 if(batchb.size() == 0) continue;
 
@@ -226,7 +184,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     batchc1.clear();
                     batchc2.clear();
 
-                    for(; ibc != m_sch.end() && batchc1.size() < bp.get_bsz_c();
+                    for(; ibc != m_sch.end() && batchc1.size() < batchszc;
                             ++ibc) {
                         index<NC> ic;
                         abs_index<NC>::get_index(m_sch.get_abs_index(ibc),
@@ -240,8 +198,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     //  Calling this may break the symmetry of final result
                     //  in some cases, e.g. self-contraction
                     gen_bto_aux_copy<NC, Traits> ctcout(symct, btct);
-                    gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr, bta,
-                        perma, m_ka, batcha, btb, permb, m_kb, batchb,
+                    gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr,
+                        m_bta, perma, m_ka, batcha, m_btb, permb, m_kb, batchb,
                         symct.get_bis(), m_kc).perform(batchc1, ctcout);
 
                     gen_bto_contract2::start_timer("copy_c");
@@ -250,8 +208,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                         abs_index<NC>::get_index(batchc1[i], bidimsct, ic);
                         if(!cct.req_is_zero_block(ic)) {
                             ic.permute(permcinv);
-                            orbit<NC, element_type> oc(
-                                    m_symc.get_symmetry(), ic, false);
+                            orbit<NC, element_type> oc(m_symc.get_symmetry(),
+                                ic, false);
                             batchc2.push_back(oc.get_acindex());
                         }
                     }

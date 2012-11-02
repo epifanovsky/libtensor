@@ -23,9 +23,9 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
 
     m_contr(contr),
     m_bta(bta), m_bta2(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
-    m_ola(syma), m_bla(bla), m_ka(ka),
+    m_syma(syma), m_ola(syma), m_bla(bla), m_ka(ka),
     m_btb(btb), m_btb2(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-    m_olb(symb), m_blb(blb), m_kb(kb),
+    m_symb(symb), m_olb(symb), m_blb(blb), m_kb(kb),
     m_bidimsc(bisc.get_block_index_dims()), m_kc(kc),
     m_use_broken_sym(false) {
 
@@ -49,10 +49,10 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
     const scalar_transf<element_type> &kc) :
 
     m_contr(contr),
-    m_bta(bta), m_bta2(bta2), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
-    m_ola(syma), m_bla(bla), m_ka(ka),
-    m_btb(btb), m_btb2(btb2), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-    m_olb(symb), m_blb(blb), m_kb(kb),
+    m_bta(bta), m_bta2(bta2), m_bidimsa(m_bta2.get_bis().get_block_index_dims()),
+    m_syma(syma), m_ola(syma), m_bla(bla), m_ka(ka),
+    m_btb(btb), m_btb2(btb2), m_bidimsb(m_btb2.get_bis().get_block_index_dims()),
+    m_symb(symb), m_olb(symb), m_blb(blb), m_kb(kb),
     m_bidimsc(bisc.get_block_index_dims()), m_kc(kc),
     m_use_broken_sym(true) {
 
@@ -75,31 +75,11 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta), ca2(m_bta2);
     gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb), cb2(m_btb2);
 
-    const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
-    const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
-
     //  Prepare contraction list
     gen_bto_contract2_block::start_timer("contract_block::clst");
 
-    block_list<NA> blsta(m_bidimsa);
-    block_list<NB> blstb(m_bidimsb);
-    if(!m_use_broken_sym) {
-        std::vector<size_t> blsta_v, blstb_v;
-        ca.req_nonzero_blocks(blsta_v);
-        cb.req_nonzero_blocks(blstb_v);
-        blsta_v.clear();
-        blstb_v.clear();
-        for(typename std::vector<size_t>::const_iterator i = blsta_v.begin();
-            i != blsta_v.end(); ++i) blsta.add(*i);
-        for(typename std::vector<size_t>::const_iterator i = blstb_v.begin();
-            i != blstb_v.end(); ++i) blstb.add(*i);
-    }
-    const block_list<NA> blsta0 = m_use_broken_sym ? m_bla : blsta;
-    const block_list<NB> blstb0 = m_use_broken_sym ? m_blb : blstb;
-
     gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-        syma, symb, blsta0, blstb0, m_bidimsc, idxc);
-
+        m_syma, m_symb, m_bla, m_blb, m_bidimsc, idxc);
     clstop.build_list(false); // Build full contraction list
     const contr_list &clst = clstop.get_clst();
 
@@ -147,8 +127,8 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         tensor_transf<NB, element_type> trb;
 
         if(m_use_broken_sym) {
-            orbit<NA, element_type> oa(syma, aia);
-            orbit<NB, element_type> ob(symb, aib);
+            orbit<NA, element_type> oa(m_syma, aia);
+            orbit<NB, element_type> ob(m_symb, aib);
             tra.transform(tensor_transf<NA, element_type>(
                 oa.get_transf(aia), true));
             trb.transform(tensor_transf<NB, element_type>(
