@@ -255,7 +255,7 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
         }
         permutation_builder<N + N> pb(seq2b, seq1b);
 
-        block_index_space_product_builder<N, N> bbx(m_bisb, m_bisb,
+        block_index_space_product_builder<N, N> bbx(m_bisb, bta.get_bis(),
             pb.get_perm());
 
         symmetry<N + N, element_type> symx(bbx.get_bis());
@@ -264,8 +264,8 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
         mask<N + N> msk;
         sequence<N + N, size_t> seq;
         for(size_t i = 0; i < N; i++) {
-            msk[i] = msk[seq2a[i]] = true;
-            seq[i] = seq[seq2a[i]] = i;
+            msk[i] = msk[i + N] = true;
+            seq[i] = seq[i + N] = i;
         }
         so_merge<N + N, N, element_type>(symx, msk, seq).perform(m_symb);
 
