@@ -331,7 +331,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     //  in some cases, e.g. self-contraction
                     gen_bto_aux_copy<ND, Traits> dtcout(symdt, btdt);
                     gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
-                        contr2, btabx, btab3, kab, btc, btct3, m_kc,
+                        contr2, btabx, kab, btc, m_kc,
                         symdt.get_bis(), m_kd).perform(batchd1, dtcout);
 
                     gen_bto_contract3::start_timer("copy_d");
@@ -503,7 +503,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                 //  Calling this may break the symmetry of final result
                 //  in some cases, e.g. self-contraction
                 gen_bto_contract2_batch<N1, N2 + K2, K1, Traits, Timed>(contr,
-                    bta, btat2, m_ka, btb, btbt2, m_kb, bisab, kab).
+                    bta, m_ka, btb, m_kb, bisab, kab).
                     perform(blst, out);
 
             }
