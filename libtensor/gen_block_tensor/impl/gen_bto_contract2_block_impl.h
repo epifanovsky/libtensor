@@ -61,13 +61,12 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
+    const contr_list_type &clst,
     bool zero,
     const index<NC> &idxc,
     const tensor_transf<NC, element_type> &trc,
     wr_block_c_type &blkc) {
 
-    typedef typename gen_bto_contract2_clst<N, M, K, element_type>::list_type
-        contr_list;
     typedef typename Traits::template to_contract2_type<N, M, K>::type
         to_contract2;
     typedef typename Traits::template to_set_type<NC>::type to_set;
@@ -76,14 +75,14 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb), cb2(m_btb2);
 
     //  Prepare contraction list
-    gen_bto_contract2_block::start_timer("contract_block::clst");
+//    gen_bto_contract2_block::start_timer("contract_block::clst");
 
-    gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-        m_syma, m_symb, m_bla, m_blb, m_bidimsc, idxc);
-    clstop.build_list(false); // Build full contraction list
-    const contr_list &clst = clstop.get_clst();
+//    gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
+//        m_syma, m_symb, m_bla, m_blb, m_bidimsc, idxc);
+//    clstop.build_list(false); // Build full contraction list
+//    const contr_list &clst = clstop.get_clst();
 
-    gen_bto_contract2_block::stop_timer("contract_block::clst");
+//    gen_bto_contract2_block::stop_timer("contract_block::clst");
 
     //  Keep track of checked out blocks
     typedef std::map<size_t, rd_block_a_type*> coba_map;
@@ -95,7 +94,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     std::auto_ptr<to_contract2> op;
 
     //  Go through the contraction list and prepare the contraction
-    for(typename contr_list::const_iterator i = clst.begin();
+    for(typename contr_list_type::const_iterator i = clst.begin();
         i != clst.end(); ++i) {
 
         size_t aia, aib;

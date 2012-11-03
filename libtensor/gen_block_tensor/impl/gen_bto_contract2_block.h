@@ -6,6 +6,7 @@
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/tensor_transf.h>
+#include "../gen_bto_contract2_clst.h"
 
 namespace libtensor {
 
@@ -61,6 +62,10 @@ public:
     //! Type of write-only block (C)
     typedef typename bti_traits::template wr_block_type<NC>::type
         wr_block_c_type;
+
+    //! Type of a list of contractions
+    typedef typename gen_bto_contract2_clst<N, M, K, element_type>::list_type
+        contr_list_type;
 
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
@@ -132,6 +137,7 @@ public:
         const scalar_transf<element_type> &kc);
 
     void compute_block(
+        const contr_list_type &clst,
         bool zero,
         const index<NC> &idxc,
         const tensor_transf<NC, element_type> &trc,

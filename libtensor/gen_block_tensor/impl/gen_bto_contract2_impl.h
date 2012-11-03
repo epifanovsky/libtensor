@@ -240,6 +240,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
 
     dimensions<NA> bidimsa = m_bta.get_bis().get_block_index_dims();
     dimensions<NB> bidimsb = m_btb.get_bis().get_block_index_dims();
+    dimensions<NC> bidimsc = m_symc.get_bis().get_block_index_dims();
 
     gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
     gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
@@ -256,7 +257,11 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
     gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
         syma, bla, m_ka, m_btb, symb, blb, m_kb, m_symc.get_bis(), m_kc);
 
-    bto.compute_block(zero, idxc, trc, blkc);
+    gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
+        syma, symb, bla, blb, bidimsc, idxc);
+    clstop.build_list(false); // Build full contraction list
+
+    bto.compute_block(clstop.get_clst(), zero, idxc, trc, blkc);
 }
 
 
