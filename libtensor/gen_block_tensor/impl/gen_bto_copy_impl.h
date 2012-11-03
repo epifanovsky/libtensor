@@ -275,16 +275,16 @@ void gen_bto_copy<N, Traits, Timed>::make_schedule() {
 
         bool noperm = m_tra.get_perm().is_identity();
 
-        orbit_list<N, element_type> ola(ca.req_const_symmetry());
-        for(typename orbit_list<N, element_type>::iterator ioa = ola.begin();
-            ioa != ola.end(); ++ioa) {
+        std::vector<size_t> nzorba;
+        ca.req_nonzero_blocks(nzorba);
 
-            if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
+        for(size_t i = 0; i < nzorba.size(); i++) {
 
             if(noperm) {
-                m_schb.insert(ola.get_abs_index(ioa));
+                m_schb.insert(nzorba[i]);
             } else {
-                index<N> bib(ola.get_index(ioa));
+                index<N> bib;
+                abs_index<N>::get_index(nzorba[i], bidimsa, bib);
                 bib.permute(m_tra.get_perm());
                 orbit<N, element_type> ob(m_symb, bib, false);
                 m_schb.insert(ob.get_abs_canonical_index());
