@@ -74,16 +74,6 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta), ca2(m_bta2);
     gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb), cb2(m_btb2);
 
-    //  Prepare contraction list
-//    gen_bto_contract2_block::start_timer("contract_block::clst");
-
-//    gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-//        m_syma, m_symb, m_bla, m_blb, m_bidimsc, idxc);
-//    clstop.build_list(false); // Build full contraction list
-//    const contr_list &clst = clstop.get_clst();
-
-//    gen_bto_contract2_block::stop_timer("contract_block::clst");
-
     //  Keep track of checked out blocks
     typedef std::map<size_t, rd_block_a_type*> coba_map;
     typedef std::map<size_t, rd_block_b_type*> cobb_map;

@@ -225,7 +225,6 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             gen_bto_contract2_clst_builder<N, M, K, Traits> *clstop =
                 new gen_bto_contract2_clst_builder<N, M, K, Traits>(m_contr,
                     syma2, symb2, bla, blb, bidimsc, idxc);
-//            clstop->build_list(false);
             clstb.insert(std::make_pair(*i, clstop));
         }
         {
