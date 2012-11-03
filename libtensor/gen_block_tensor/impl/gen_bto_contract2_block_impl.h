@@ -23,9 +23,9 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
 
     m_contr(contr),
     m_bta(bta), m_bta2(bta), m_bidimsa(m_bta.get_bis().get_block_index_dims()),
-    m_syma(syma), m_ola(syma), m_bla(bla), m_ka(ka),
+    m_syma(syma), m_bla(bla), m_ka(ka),
     m_btb(btb), m_btb2(btb), m_bidimsb(m_btb.get_bis().get_block_index_dims()),
-    m_symb(symb), m_olb(symb), m_blb(blb), m_kb(kb),
+    m_symb(symb), m_blb(blb), m_kb(kb),
     m_bidimsc(bisc.get_block_index_dims()), m_kc(kc),
     m_use_broken_sym(false) {
 
@@ -50,9 +50,9 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
 
     m_contr(contr),
     m_bta(bta), m_bta2(bta2), m_bidimsa(m_bta2.get_bis().get_block_index_dims()),
-    m_syma(syma), m_ola(syma), m_bla(bla), m_ka(ka),
+    m_syma(syma), m_bla(bla), m_ka(ka),
     m_btb(btb), m_btb2(btb2), m_bidimsb(m_btb2.get_bis().get_block_index_dims()),
-    m_symb(symb), m_olb(symb), m_blb(blb), m_kb(kb),
+    m_symb(symb), m_blb(blb), m_kb(kb),
     m_bidimsc(bisc.get_block_index_dims()), m_kc(kc),
     m_use_broken_sym(true) {
 

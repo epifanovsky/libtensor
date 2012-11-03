@@ -73,14 +73,12 @@ private:
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta2; //!< A with broken symmetry
     dimensions<NA> m_bidimsa; //!< Block index dims in A
     const symmetry<NA, element_type> &m_syma;
-    orbit_list<NA, element_type> m_ola; //!< List of orbits in A
     block_list<NA> m_bla; //!< List of non-zero blocks in A
     scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb2; //!< B with broken symmetry
     dimensions<NB> m_bidimsb; //!< Block index dims in B
     const symmetry<NB, element_type> &m_symb;
-    orbit_list<NB, element_type> m_olb; //!< List of orbits in B
     block_list<NB> m_blb; //!< List of non-zero blocks in B
     scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     dimensions<NC> m_bidimsc; //!< Block index dims in C
