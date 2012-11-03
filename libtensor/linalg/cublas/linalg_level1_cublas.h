@@ -37,7 +37,7 @@ public:
         cublasHandle_t h,
         size_t ni,
         const double *a, size_t sia,
-        double b,
+        const double &b,
         double *c, size_t sic);
 
     static void mul2_i_i_i_x(

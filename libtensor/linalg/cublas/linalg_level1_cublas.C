@@ -56,7 +56,7 @@ void linalg_level1_cublas::mul2_i_i_x(
     cublasHandle_t h,
     size_t ni,
     const double *a, size_t sia,
-    double b,
+    const double &b,
     double *c, size_t sic) {
 
     start_timer("daxpy");
