@@ -197,25 +197,33 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
                     //  Calling this may break the symmetry of final result
                     //  in some cases, e.g. self-contraction
-                    gen_bto_aux_copy<NC, Traits> ctcout(symct, btct);
-                    gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr,
-                        m_bta, perma, m_ka, batcha, m_btb, permb, m_kb, batchb,
-                        symct.get_bis(), m_kc).perform(batchc1, ctcout);
+                    if(!permcinv.is_identity()) {
+                        gen_bto_aux_copy<NC, Traits> ctcout(symct, btct);
+                        gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr,
+                            m_bta, perma, m_ka, batcha, m_btb, permb, m_kb,
+                            batchb, symct.get_bis(), m_kc).
+                            perform(batchc1, ctcout);
 
-                    gen_bto_contract2::start_timer("copy_c");
-                    for(size_t i = 0; i < batchc1.size(); i++) {
-                        index<NC> ic;
-                        abs_index<NC>::get_index(batchc1[i], bidimsct, ic);
-                        if(!cct.req_is_zero_block(ic)) {
-                            ic.permute(permcinv);
-                            orbit<NC, element_type> oc(m_symc.get_symmetry(),
-                                ic, false);
-                            batchc2.push_back(oc.get_acindex());
+                        gen_bto_contract2::start_timer("copy_c");
+                        for(size_t i = 0; i < batchc1.size(); i++) {
+                            index<NC> ic;
+                            abs_index<NC>::get_index(batchc1[i], bidimsct, ic);
+                            if(!cct.req_is_zero_block(ic)) {
+                                ic.permute(permcinv);
+                                orbit<NC, element_type> oc(m_symc.get_symmetry(),
+                                    ic, false);
+                                batchc2.push_back(oc.get_acindex());
+                            }
                         }
+                        tensor_transf<NC, element_type> trc(permcinv);
+                        gen_bto_copy_c_type(btct, trc).perform(batchc2, out);
+                        gen_bto_contract2::stop_timer("copy_c");
+                    } else {
+                        gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr,
+                            m_bta, perma, m_ka, batcha, m_btb, permb, m_kb,
+                            batchb, symct.get_bis(), m_kc).
+                            perform(batchc1, out);
                     }
-                    tensor_transf<NC, element_type> trc(permcinv);
-                    gen_bto_copy_c_type(btct, trc).perform(batchc2, out);
-                    gen_bto_contract2::stop_timer("copy_c");
                 }
             }
         }
