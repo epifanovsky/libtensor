@@ -22,8 +22,9 @@ private:
     gen_block_tensor_rd_i<N, bti_traits> &m_bta;
     const tensor_transf<N, element_type> &m_tra;
     const symmetry<N, element_type> &m_symb;
+    const dimensions<N> &m_bidimsa;
     const dimensions<N> &m_bidimsb;
-    index<N> m_ia;
+    size_t m_aia;
     gen_block_stream_i<N, bti_traits> &m_out;
 
 public:
@@ -31,8 +32,9 @@ public:
         gen_block_tensor_rd_i<N, bti_traits> &bta,
         const tensor_transf<N, element_type> &tra,
         const symmetry<N, element_type> &symb,
+        const dimensions<N> &bidimsa,
         const dimensions<N> &bidimsb,
-        const index<N> &ia,
+        size_t aia,
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_full_copy_task() { }
@@ -81,10 +83,11 @@ private:
     const tensor_transf<N, element_type> &m_tra;
     const symmetry<N, element_type> &m_symb;
     gen_block_stream_i<N, bti_traits> &m_out;
+    dimensions<N> m_bidimsa;
     dimensions<N> m_bidimsb;
     gen_block_tensor_rd_ctrl<N, bti_traits> m_ca;
-    orbit_list<N, element_type> m_ola;
-    typename orbit_list<N, element_type>::iterator m_ioa;
+    std::vector<size_t> m_blsta;
+    typename std::vector<size_t>::const_iterator m_ioa;
 
 public:
     gen_bto_full_copy_task_iterator(
@@ -95,9 +98,6 @@ public:
 
     virtual bool has_more() const;
     virtual libutil::task_i *get_next();
-
-private:
-    void skip_zero_blocks();
 
 };
 
@@ -305,12 +305,13 @@ gen_bto_full_copy_task<N, Traits>::gen_bto_full_copy_task(
     gen_block_tensor_rd_i<N, bti_traits> &bta,
     const tensor_transf<N, element_type> &tra,
     const symmetry<N, element_type> &symb,
+    const dimensions<N> &bidimsa,
     const dimensions<N> &bidimsb,
-    const index<N> &ia,
+    size_t aia,
     gen_block_stream_i<N, bti_traits> &out) :
 
-    m_bta(bta), m_tra(tra), m_bidimsb(bidimsb), m_symb(symb), m_ia(ia),
-    m_out(out) {
+    m_bta(bta), m_tra(tra), m_bidimsa(bidimsa), m_bidimsb(bidimsb),
+    m_symb(symb), m_aia(aia), m_out(out) {
 
 }
 
@@ -320,13 +321,16 @@ void gen_bto_full_copy_task<N, Traits>::perform() {
 
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
 
+    index<N> ia;
+    abs_index<N>::get_index(m_aia, m_bidimsa, ia);
+
     gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta);
 
-    rd_block_type &ba = ca.req_const_block(m_ia);
+    rd_block_type &ba = ca.req_const_block(ia);
     if(m_tra.get_perm().is_identity()) {
-        m_out.put(m_ia, ba, m_tra);
+        m_out.put(ia, ba, m_tra);
     } else {
-        index<N> ib(m_ia);
+        index<N> ib(ia);
         ib.permute(m_tra.get_perm());
         orbit<N, element_type> ob(m_symb, ib, false);
         abs_index<N> acib(ob.get_acindex(), m_bidimsb);
@@ -336,7 +340,7 @@ void gen_bto_full_copy_task<N, Traits>::perform() {
         tra.transform(trb);
         m_out.put(acib.get_index(), ba, tra);
     }
-    ca.ret_const_block(m_ia);
+    ca.ret_const_block(ia);
 }
 
 
@@ -393,17 +397,19 @@ gen_bto_full_copy_task_iterator<N, Traits>::gen_bto_full_copy_task_iterator(
     gen_block_stream_i<N, bti_traits> &out) :
 
     m_bta(bta), m_tra(tra), m_symb(symb), m_out(out),
+    m_bidimsa(m_bta.get_bis().get_block_index_dims()),
     m_bidimsb(m_symb.get_bis().get_block_index_dims()),
-    m_ca(m_bta), m_ola(m_ca.req_const_symmetry()), m_ioa(m_ola.begin()) {
+    m_ca(m_bta) {
 
-    skip_zero_blocks();
+    m_ca.req_nonzero_blocks(m_blsta);
+    m_ioa = m_blsta.begin();
 }
 
 
 template<size_t N, typename Traits>
 bool gen_bto_full_copy_task_iterator<N, Traits>::has_more() const {
 
-    return m_ioa != m_ola.end();
+    return m_ioa != m_blsta.end();
 }
 
 
@@ -411,21 +417,10 @@ template<size_t N, typename Traits>
 libutil::task_i *gen_bto_full_copy_task_iterator<N, Traits>::get_next() {
 
     gen_bto_full_copy_task<N, Traits> *t =
-        new gen_bto_full_copy_task<N, Traits>(m_bta, m_tra, m_symb, m_bidimsb,
-            m_ola.get_index(m_ioa), m_out);
+        new gen_bto_full_copy_task<N, Traits>(m_bta, m_tra, m_symb, m_bidimsa,
+            m_bidimsb, *m_ioa, m_out);
     ++m_ioa;
-    skip_zero_blocks();
     return t;
-}
-
-
-template<size_t N, typename Traits>
-void gen_bto_full_copy_task_iterator<N, Traits>::skip_zero_blocks() {
-
-    while(m_ioa != m_ola.end()) {
-        if(!m_ca.req_is_zero_block(m_ola.get_index(m_ioa))) break;
-        ++m_ioa;
-    }
 }
 
 
