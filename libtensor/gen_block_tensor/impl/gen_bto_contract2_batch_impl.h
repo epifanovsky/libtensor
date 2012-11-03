@@ -15,6 +15,40 @@
 namespace libtensor {
 
 
+template<size_t N, size_t M, size_t K, typename Traits>
+class gen_bto_contract2_prepare_clst_task : public libutil::task_i {
+private:
+    gen_bto_contract2_clst_builder<N, M, K, Traits> &m_bto;
+
+public:
+    gen_bto_contract2_prepare_clst_task(
+        gen_bto_contract2_clst_builder<N, M, K, Traits> &bto);
+
+    virtual ~gen_bto_contract2_prepare_clst_task() { }
+    virtual void perform();
+
+};
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+class gen_bto_contract2_prepare_clst_task_iterator :
+    public libutil::task_iterator_i {
+
+private:
+    std::map<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*> &m_clstb;
+    typename std::map<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*>::iterator m_i;
+
+public:
+    gen_bto_contract2_prepare_clst_task_iterator(
+        std::map<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*> &clstb);
+
+    virtual ~gen_bto_contract2_prepare_clst_task_iterator() { }
+    virtual bool has_more() const;
+    virtual libutil::task_i *get_next();
+
+};
+
+
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 class gen_bto_contract2_task : public libutil::task_i {
 public:
@@ -191,14 +225,22 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             gen_bto_contract2_clst_builder<N, M, K, Traits> *clstop =
                 new gen_bto_contract2_clst_builder<N, M, K, Traits>(m_contr,
                     syma2, symb2, bla, blb, bidimsc, idxc);
-            clstop->build_list(false);
-            const contr_list &clst = clstop->get_clst();
+//            clstop->build_list(false);
+            clstb.insert(std::make_pair(*i, clstop));
+        }
+        {
+            gen_bto_contract2_prepare_clst_task_iterator<N, M, K, Traits> ti(clstb);
+            gen_bto_contract2_task_observer<N, M, K> to;
+            libutil::thread_pool::submit(ti, to);
+        }
+        for(typename std::map<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*>::iterator i = clstb.begin();
+            i != clstb.end(); ++i) {
+            const contr_list &clst = i->second->get_clst();
             for(typename contr_list::const_iterator j = clst.begin();
                 j != clst.end(); ++j) {
                 blsta2.insert(j->get_aindex_a());
                 blstb2.insert(j->get_aindex_b());
             }
-            clstb.insert(std::make_pair(*i, clstop));
         }
         blsta.clear();
         blstb.clear();
@@ -233,6 +275,53 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
     }
 
     gen_bto_contract2_batch::stop_timer();
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+gen_bto_contract2_prepare_clst_task<N, M, K, Traits>::
+gen_bto_contract2_prepare_clst_task(
+    gen_bto_contract2_clst_builder<N, M, K, Traits> &bto) :
+
+    m_bto(bto) {
+
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+void gen_bto_contract2_prepare_clst_task<N, M, K, Traits>::perform() {
+
+    m_bto.build_list(false);
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+gen_bto_contract2_prepare_clst_task_iterator<N, M, K, Traits>::
+gen_bto_contract2_prepare_clst_task_iterator(
+    std::map<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*> &clstb) :
+
+    m_clstb(clstb), m_i(m_clstb.begin()) {
+
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+bool gen_bto_contract2_prepare_clst_task_iterator<N, M, K, Traits>::
+has_more() const {
+
+    return m_i != m_clstb.end();
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+libutil::task_i *
+gen_bto_contract2_prepare_clst_task_iterator<N, M, K, Traits>::get_next() {
+
+    gen_bto_contract2_prepare_clst_task<N, M, K, Traits> *t =
+        new gen_bto_contract2_prepare_clst_task<N, M, K, Traits>(
+            *m_i->second);
+    ++m_i;
+    return t;
 }
 
 
