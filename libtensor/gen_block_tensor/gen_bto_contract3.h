@@ -137,12 +137,12 @@ public:
 private:
     void compute_batch_ab(
             const contraction2<N1, N2 + K2, K1> &contr,
-            const orbit_list<NA, element_type> &ola,
+            const dimensions<NA> &bidimsa,
             const permutation<NA> &perma,
-            const symmetry<NA, element_type> &syma, size_t batchsza,
-            const orbit_list<NB, element_type> &olb,
+            const symmetry<NA, element_type> &symat, size_t batchsza,
+            const dimensions<NB> &bidimsb,
             const permutation<NB> &permb,
-            const symmetry<NB, element_type> &symb, size_t batchszb,
+            const symmetry<NB, element_type> &symbt, size_t batchszb,
             const block_index_space<NAB> &bisab,
             const std::vector<size_t> &blst,
             gen_block_stream_i<NAB, bti_traits> &out);

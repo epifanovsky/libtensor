@@ -1,0 +1,250 @@
+#include "btod_contract2_clst_optimize_impl.h"
+
+namespace libtensor {
+
+
+template class btod_contract2_clst_optimize<0, 1, 1>;
+template class btod_contract2_clst_optimize<0, 1, 2>;
+template class btod_contract2_clst_optimize<0, 1, 3>;
+template class btod_contract2_clst_optimize<0, 1, 4>;
+template class btod_contract2_clst_optimize<0, 1, 5>;
+template class btod_contract2_clst_optimize<0, 1, 6>;
+template class btod_contract2_clst_optimize<0, 1, 7>;
+template class btod_contract2_clst_optimize<1, 0, 1>;
+template class btod_contract2_clst_optimize<1, 0, 2>;
+template class btod_contract2_clst_optimize<1, 0, 3>;
+template class btod_contract2_clst_optimize<1, 0, 4>;
+template class btod_contract2_clst_optimize<1, 0, 5>;
+template class btod_contract2_clst_optimize<1, 0, 6>;
+template class btod_contract2_clst_optimize<1, 0, 7>;
+
+template class btod_contract2_clst_optimize<0, 2, 1>;
+template class btod_contract2_clst_optimize<0, 2, 2>;
+template class btod_contract2_clst_optimize<0, 2, 3>;
+template class btod_contract2_clst_optimize<0, 2, 4>;
+template class btod_contract2_clst_optimize<0, 2, 5>;
+template class btod_contract2_clst_optimize<0, 2, 6>;
+template class btod_contract2_clst_optimize<1, 1, 0>;
+template class btod_contract2_clst_optimize<1, 1, 1>;
+template class btod_contract2_clst_optimize<1, 1, 2>;
+template class btod_contract2_clst_optimize<1, 1, 3>;
+template class btod_contract2_clst_optimize<1, 1, 4>;
+template class btod_contract2_clst_optimize<1, 1, 5>;
+template class btod_contract2_clst_optimize<1, 1, 6>;
+template class btod_contract2_clst_optimize<1, 1, 7>;
+template class btod_contract2_clst_optimize<2, 0, 1>;
+template class btod_contract2_clst_optimize<2, 0, 2>;
+template class btod_contract2_clst_optimize<2, 0, 3>;
+template class btod_contract2_clst_optimize<2, 0, 4>;
+template class btod_contract2_clst_optimize<2, 0, 5>;
+template class btod_contract2_clst_optimize<2, 0, 6>;
+
+template class btod_contract2_clst_optimize<0, 3, 1>;
+template class btod_contract2_clst_optimize<0, 3, 2>;
+template class btod_contract2_clst_optimize<0, 3, 3>;
+template class btod_contract2_clst_optimize<0, 3, 4>;
+template class btod_contract2_clst_optimize<0, 3, 5>;
+template class btod_contract2_clst_optimize<1, 2, 0>;
+template class btod_contract2_clst_optimize<1, 2, 1>;
+template class btod_contract2_clst_optimize<1, 2, 2>;
+template class btod_contract2_clst_optimize<1, 2, 3>;
+template class btod_contract2_clst_optimize<1, 2, 4>;
+template class btod_contract2_clst_optimize<1, 2, 5>;
+template class btod_contract2_clst_optimize<1, 2, 6>;
+template class btod_contract2_clst_optimize<2, 1, 0>;
+template class btod_contract2_clst_optimize<2, 1, 1>;
+template class btod_contract2_clst_optimize<2, 1, 2>;
+template class btod_contract2_clst_optimize<2, 1, 3>;
+template class btod_contract2_clst_optimize<2, 1, 4>;
+template class btod_contract2_clst_optimize<2, 1, 5>;
+template class btod_contract2_clst_optimize<2, 1, 6>;
+template class btod_contract2_clst_optimize<3, 0, 1>;
+template class btod_contract2_clst_optimize<3, 0, 2>;
+template class btod_contract2_clst_optimize<3, 0, 3>;
+template class btod_contract2_clst_optimize<3, 0, 4>;
+template class btod_contract2_clst_optimize<3, 0, 5>;
+
+template class btod_contract2_clst_optimize<0, 4, 1>;
+template class btod_contract2_clst_optimize<0, 4, 2>;
+template class btod_contract2_clst_optimize<0, 4, 3>;
+template class btod_contract2_clst_optimize<0, 4, 4>;
+template class btod_contract2_clst_optimize<1, 3, 0>;
+template class btod_contract2_clst_optimize<1, 3, 1>;
+template class btod_contract2_clst_optimize<1, 3, 2>;
+template class btod_contract2_clst_optimize<1, 3, 3>;
+template class btod_contract2_clst_optimize<1, 3, 4>;
+template class btod_contract2_clst_optimize<1, 3, 5>;
+template class btod_contract2_clst_optimize<2, 2, 0>;
+template class btod_contract2_clst_optimize<2, 2, 1>;
+template class btod_contract2_clst_optimize<2, 2, 2>;
+template class btod_contract2_clst_optimize<2, 2, 3>;
+template class btod_contract2_clst_optimize<2, 2, 4>;
+template class btod_contract2_clst_optimize<2, 2, 5>;
+template class btod_contract2_clst_optimize<2, 2, 6>;
+template class btod_contract2_clst_optimize<3, 1, 0>;
+template class btod_contract2_clst_optimize<3, 1, 1>;
+template class btod_contract2_clst_optimize<3, 1, 2>;
+template class btod_contract2_clst_optimize<3, 1, 3>;
+template class btod_contract2_clst_optimize<3, 1, 4>;
+template class btod_contract2_clst_optimize<3, 1, 5>;
+template class btod_contract2_clst_optimize<4, 0, 1>;
+template class btod_contract2_clst_optimize<4, 0, 2>;
+template class btod_contract2_clst_optimize<4, 0, 3>;
+template class btod_contract2_clst_optimize<4, 0, 4>;
+
+template class btod_contract2_clst_optimize<0, 5, 1>;
+template class btod_contract2_clst_optimize<0, 5, 2>;
+template class btod_contract2_clst_optimize<0, 5, 3>;
+template class btod_contract2_clst_optimize<1, 4, 0>;
+template class btod_contract2_clst_optimize<1, 4, 1>;
+template class btod_contract2_clst_optimize<1, 4, 2>;
+template class btod_contract2_clst_optimize<1, 4, 3>;
+template class btod_contract2_clst_optimize<1, 4, 4>;
+template class btod_contract2_clst_optimize<2, 3, 0>;
+template class btod_contract2_clst_optimize<2, 3, 1>;
+template class btod_contract2_clst_optimize<2, 3, 2>;
+template class btod_contract2_clst_optimize<2, 3, 3>;
+template class btod_contract2_clst_optimize<2, 3, 4>;
+template class btod_contract2_clst_optimize<2, 3, 5>;
+template class btod_contract2_clst_optimize<3, 2, 0>;
+template class btod_contract2_clst_optimize<3, 2, 1>;
+template class btod_contract2_clst_optimize<3, 2, 2>;
+template class btod_contract2_clst_optimize<3, 2, 3>;
+template class btod_contract2_clst_optimize<3, 2, 4>;
+template class btod_contract2_clst_optimize<3, 2, 5>;
+template class btod_contract2_clst_optimize<4, 1, 0>;
+template class btod_contract2_clst_optimize<4, 1, 1>;
+template class btod_contract2_clst_optimize<4, 1, 2>;
+template class btod_contract2_clst_optimize<4, 1, 3>;
+template class btod_contract2_clst_optimize<4, 1, 4>;
+template class btod_contract2_clst_optimize<5, 0, 1>;
+template class btod_contract2_clst_optimize<5, 0, 2>;
+template class btod_contract2_clst_optimize<5, 0, 3>;
+
+template class btod_contract2_clst_optimize<0, 6, 1>;
+template class btod_contract2_clst_optimize<0, 6, 2>;
+template class btod_contract2_clst_optimize<1, 5, 0>;
+template class btod_contract2_clst_optimize<1, 5, 1>;
+template class btod_contract2_clst_optimize<1, 5, 2>;
+template class btod_contract2_clst_optimize<1, 5, 3>;
+template class btod_contract2_clst_optimize<2, 4, 0>;
+template class btod_contract2_clst_optimize<2, 4, 1>;
+template class btod_contract2_clst_optimize<2, 4, 2>;
+template class btod_contract2_clst_optimize<2, 4, 3>;
+template class btod_contract2_clst_optimize<2, 4, 4>;
+template class btod_contract2_clst_optimize<3, 3, 0>;
+template class btod_contract2_clst_optimize<3, 3, 1>;
+template class btod_contract2_clst_optimize<3, 3, 2>;
+template class btod_contract2_clst_optimize<3, 3, 3>;
+template class btod_contract2_clst_optimize<3, 3, 4>;
+template class btod_contract2_clst_optimize<3, 3, 5>;
+template class btod_contract2_clst_optimize<4, 2, 0>;
+template class btod_contract2_clst_optimize<4, 2, 1>;
+template class btod_contract2_clst_optimize<4, 2, 2>;
+template class btod_contract2_clst_optimize<4, 2, 3>;
+template class btod_contract2_clst_optimize<4, 2, 4>;
+template class btod_contract2_clst_optimize<5, 1, 0>;
+template class btod_contract2_clst_optimize<5, 1, 1>;
+template class btod_contract2_clst_optimize<5, 1, 2>;
+template class btod_contract2_clst_optimize<5, 1, 3>;
+template class btod_contract2_clst_optimize<6, 0, 1>;
+template class btod_contract2_clst_optimize<6, 0, 2>;
+
+template class btod_contract2_clst_optimize<0, 7, 1>;
+template class btod_contract2_clst_optimize<1, 6, 0>;
+template class btod_contract2_clst_optimize<1, 6, 1>;
+template class btod_contract2_clst_optimize<1, 6, 2>;
+template class btod_contract2_clst_optimize<2, 5, 0>;
+template class btod_contract2_clst_optimize<2, 5, 1>;
+template class btod_contract2_clst_optimize<2, 5, 2>;
+template class btod_contract2_clst_optimize<2, 5, 3>;
+template class btod_contract2_clst_optimize<3, 4, 0>;
+template class btod_contract2_clst_optimize<3, 4, 1>;
+template class btod_contract2_clst_optimize<3, 4, 2>;
+template class btod_contract2_clst_optimize<3, 4, 3>;
+template class btod_contract2_clst_optimize<3, 4, 4>;
+template class btod_contract2_clst_optimize<4, 3, 0>;
+template class btod_contract2_clst_optimize<4, 3, 1>;
+template class btod_contract2_clst_optimize<4, 3, 2>;
+template class btod_contract2_clst_optimize<4, 3, 3>;
+template class btod_contract2_clst_optimize<4, 3, 4>;
+template class btod_contract2_clst_optimize<5, 2, 0>;
+template class btod_contract2_clst_optimize<5, 2, 1>;
+template class btod_contract2_clst_optimize<5, 2, 2>;
+template class btod_contract2_clst_optimize<5, 2, 3>;
+template class btod_contract2_clst_optimize<6, 1, 0>;
+template class btod_contract2_clst_optimize<6, 1, 1>;
+template class btod_contract2_clst_optimize<6, 1, 2>;
+template class btod_contract2_clst_optimize<7, 0, 1>;
+
+template class btod_contract2_clst_optimize<1, 7, 0>;
+template class btod_contract2_clst_optimize<1, 7, 1>;
+template class btod_contract2_clst_optimize<2, 6, 0>;
+template class btod_contract2_clst_optimize<2, 6, 1>;
+template class btod_contract2_clst_optimize<2, 6, 2>;
+template class btod_contract2_clst_optimize<3, 5, 0>;
+template class btod_contract2_clst_optimize<3, 5, 1>;
+template class btod_contract2_clst_optimize<3, 5, 2>;
+template class btod_contract2_clst_optimize<3, 5, 3>;
+template class btod_contract2_clst_optimize<4, 4, 0>;
+template class btod_contract2_clst_optimize<4, 4, 1>;
+template class btod_contract2_clst_optimize<4, 4, 2>;
+template class btod_contract2_clst_optimize<4, 4, 3>;
+template class btod_contract2_clst_optimize<4, 4, 4>;
+template class btod_contract2_clst_optimize<5, 3, 0>;
+template class btod_contract2_clst_optimize<5, 3, 1>;
+template class btod_contract2_clst_optimize<5, 3, 2>;
+template class btod_contract2_clst_optimize<5, 3, 3>;
+template class btod_contract2_clst_optimize<6, 2, 0>;
+template class btod_contract2_clst_optimize<6, 2, 1>;
+template class btod_contract2_clst_optimize<6, 2, 2>;
+template class btod_contract2_clst_optimize<7, 1, 0>;
+template class btod_contract2_clst_optimize<7, 1, 1>;
+
+template class btod_contract2_clst_optimize<1, 8, 0>;
+template class btod_contract2_clst_optimize<2, 7, 0>;
+template class btod_contract2_clst_optimize<3, 6, 0>;
+template class btod_contract2_clst_optimize<4, 5, 0>;
+template class btod_contract2_clst_optimize<5, 4, 0>;
+template class btod_contract2_clst_optimize<6, 3, 0>;
+template class btod_contract2_clst_optimize<7, 2, 0>;
+template class btod_contract2_clst_optimize<8, 1, 0>;
+
+template class btod_contract2_clst_optimize<2, 8, 0>;
+template class btod_contract2_clst_optimize<3, 7, 0>;
+template class btod_contract2_clst_optimize<4, 6, 0>;
+template class btod_contract2_clst_optimize<5, 5, 0>;
+template class btod_contract2_clst_optimize<6, 4, 0>;
+template class btod_contract2_clst_optimize<7, 3, 0>;
+template class btod_contract2_clst_optimize<8, 2, 0>;
+
+template class btod_contract2_clst_optimize<3, 8, 0>;
+template class btod_contract2_clst_optimize<4, 7, 0>;
+template class btod_contract2_clst_optimize<5, 6, 0>;
+template class btod_contract2_clst_optimize<6, 5, 0>;
+template class btod_contract2_clst_optimize<7, 4, 0>;
+template class btod_contract2_clst_optimize<8, 3, 0>;
+
+template class btod_contract2_clst_optimize<4, 8, 0>;
+template class btod_contract2_clst_optimize<5, 7, 0>;
+template class btod_contract2_clst_optimize<6, 6, 0>;
+template class btod_contract2_clst_optimize<7, 5, 0>;
+template class btod_contract2_clst_optimize<8, 4, 0>;
+
+template class btod_contract2_clst_optimize<5, 8, 0>;
+template class btod_contract2_clst_optimize<6, 7, 0>;
+template class btod_contract2_clst_optimize<7, 6, 0>;
+template class btod_contract2_clst_optimize<8, 5, 0>;
+
+template class btod_contract2_clst_optimize<6, 8, 0>;
+template class btod_contract2_clst_optimize<7, 7, 0>;
+template class btod_contract2_clst_optimize<8, 6, 0>;
+
+template class btod_contract2_clst_optimize<7, 8, 0>;
+template class btod_contract2_clst_optimize<8, 7, 0>;
+
+template class btod_contract2_clst_optimize<8, 8, 0>;
+
+
+} // namespace libtensor
+

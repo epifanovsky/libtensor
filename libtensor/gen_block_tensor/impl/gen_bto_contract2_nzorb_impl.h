@@ -129,21 +129,11 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     so_copy<NB, element_type>(cb.req_const_symmetry()).perform(m_symb);
     so_copy<NC, element_type>(symc).perform(m_symc);
 
-    orbit_list<NA, element_type> ola(m_syma);
-    for (typename orbit_list<NA, element_type>::iterator iol = ola.begin();
-            iol != ola.end(); iol++) {
-        if (ca.req_is_zero_block(ola.get_index(iol))) continue;
-
-        m_blsta.add(ola.get_abs_index(iol));
-    }
-
-    orbit_list<NB, element_type> olb(m_symb);
-    for (typename orbit_list<NB, element_type>::iterator iol = olb.begin();
-            iol != olb.end(); iol++) {
-        if (cb.req_is_zero_block(olb.get_index(iol))) continue;
-
-        m_blstb.add(olb.get_abs_index(iol));
-    }
+    std::vector<size_t> blst;
+    ca.req_nonzero_blocks(blst);
+    for(size_t i = 0; i < blst.size(); i++) m_blsta.add(blst[i]);
+    cb.req_nonzero_blocks(blst);
+    for(size_t i = 0; i < blst.size(); i++) m_blstb.add(blst[i]);
 }
 
 
