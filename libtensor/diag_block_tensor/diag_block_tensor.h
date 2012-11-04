@@ -60,13 +60,11 @@ protected:
     virtual void on_ret_const_block(const index<N> &idx);
     virtual diag_tensor_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
     virtual void on_set_immutable();
-
-private:
-    void update_orblst(auto_rwlock &lock);
 
 };
 
@@ -148,6 +146,14 @@ template<size_t N, typename T, typename Alloc>
 void diag_block_tensor<N, T, Alloc>::on_ret_block(const index<N> &idx) {
 
     m_ctrl.ret_block(idx);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void diag_block_tensor<N, T, Alloc>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    m_ctrl.req_nonzero_blocks(nzlst);
 }
 
 
