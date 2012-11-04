@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::block_map class
 
     \ingroup libtensor_tests_core
@@ -14,9 +15,12 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_create() throw(libtest::test_exception);
-    void test_immutable() throw(libtest::test_exception);
+    void test_create();
+    void test_immutable();
+    void test_get_all_1();
+
 };
+
 
 } // namespace libtensor
 

@@ -22,6 +22,9 @@ namespace libtensor {
  **/
 template<size_t N, typename T = double, typename Traits = btensor_traits<T> >
 class direct_btensor : public btensor_i<N, T> {
+public:
+    typedef block_tensor_i_traits<T> bti_traits;
+
 private:
     typedef struct {
         labeled_btensor_expr::expr_i<N, T> *m_pexpr;
@@ -33,7 +36,7 @@ private:
     letter_expr<N> m_label;
     ptrs_t m_ptrs;
     direct_block_tensor<N, T, typename Traits::allocator_t> m_bt;
-    block_tensor_rd_ctrl<N, T> m_ctrl;
+    gen_block_tensor_rd_ctrl<N, bti_traits> m_ctrl;
 
 public:
     //!    \name Construction and destruction
@@ -76,6 +79,7 @@ protected:
     virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     //@}
 
     //!    \name Implementation of block_tensor_wr_i<N, T>
@@ -180,6 +184,14 @@ template<size_t N, typename T, typename Traits>
 bool direct_btensor<N, T, Traits>::on_req_is_zero_block(const index<N> &idx) {
 
     return m_ctrl.req_is_zero_block(idx);
+}
+
+
+template<size_t N, typename T, typename Traits>
+void direct_btensor<N, T, Traits>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    m_ctrl.req_nonzero_blocks(nzlst);
 }
 
 

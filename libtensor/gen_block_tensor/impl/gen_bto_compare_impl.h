@@ -172,10 +172,12 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
     gen_block_tensor_rd_ctrl<N, bti_traits> &ctrl1,
     gen_block_tensor_rd_ctrl<N, bti_traits> &ctrl2) {
 
-    typedef typename Traits::template to_compare_type<N>::type to_compare;
     typedef typename Traits::template temp_block_tensor_type<N>::type
             temp_block_tensor_type;
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
+    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
+    typedef typename Traits::template to_compare_type<N>::type to_compare;
+    typedef typename Traits::template to_set_type<N>::type to_set;
 
 
     const index<N> &idx = aidx.get_index();
@@ -197,10 +199,15 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
                     (zero2 ? ctrl1 : ctrl2);
             rd_block_type &blka = ca.req_const_block(idx);
 
-            bool z;
-
             temp_block_tensor_type btc(m_bt1.get_bis());
+            {
+            gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
+            wr_block_type &blkb = cb.req_block(aidx.get_index());
+            to_set().perform(blkb);
+            cb.ret_block(aidx.get_index());
+            }
 
+            bool z;
             {
             gen_block_tensor_rd_ctrl<N, bti_traits> cb(btc);
             rd_block_type &blkb = cb.req_const_block(aidx.get_index());

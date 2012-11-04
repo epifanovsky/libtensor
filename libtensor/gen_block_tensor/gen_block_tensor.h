@@ -1,11 +1,12 @@
 #ifndef LIBTENSOR_GEN_BLOCK_TENSOR_H
 #define LIBTENSOR_GEN_BLOCK_TENSOR_H
 
+#include <libutil/threads/auto_lock.h>
+#include <libutil/threads/mutex.h>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/immutable.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit_list.h>
-#include "auto_rwlock.h"
 #include "block_map.h"
 #include "gen_block_tensor_i.h"
 
@@ -41,7 +42,7 @@ public:
     symmetry<N, element_type> m_symmetry; //!< Block tensor symmetry
     orbit_list<N, element_type> *m_orblst; //!< Orbit list
     block_map<N, BtTraits> m_map; //!< Block map
-    libutil::rwlock m_lock; //!< Read-write lock
+    libutil::mutex m_lock; //!< Read-write lock
 
 public:
     //!    \name Construction and destruction
@@ -65,6 +66,7 @@ protected:
     virtual wr_block_type &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
     //@}
@@ -75,8 +77,9 @@ protected:
     //@}
 
 private:
-    void update_orblst(auto_rwlock &lock);
+    void update_orblst();
     block_type &get_block(const index<N> &idx);
+
 };
 
 

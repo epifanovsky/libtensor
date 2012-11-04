@@ -31,8 +31,9 @@ gen_bto_contract2_clst_builder<N, M, K, Traits>::gen_bto_contract2_clst_builder(
     const dimensions<NC> &bidimsc,
     const index<NC> &ic) :
 
-    m_contr(contr), m_syma(syma), m_symb(symb), m_blka(blka), m_blkb(blkb),
-    m_bidimsc(bidimsc), m_ic(ic) {
+    gen_bto_contract2_clst_builder_base<N, M, K, Traits>(contr),
+    m_syma(syma), m_symb(symb), m_blka(blka), m_blkb(blkb), m_bidimsc(bidimsc),
+    m_ic(ic) {
 
 }
 
@@ -47,14 +48,16 @@ gen_bto_contract2_clst_builder<N, M, 0, Traits>::gen_bto_contract2_clst_builder(
     const dimensions<NC> &bidimsc,
     const index<NC> &ic) :
 
-    m_contr(contr), m_syma(syma), m_symb(symb), m_blka(blka), m_blkb(blkb),
-    m_bidimsc(bidimsc), m_ic(ic) {
+    gen_bto_contract2_clst_builder_base<N, M, 0, Traits>(contr),
+    m_syma(syma), m_symb(symb), m_blka(blka), m_blkb(blkb), m_bidimsc(bidimsc),
+    m_ic(ic) {
 
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
-void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(bool testzero) {
+void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
+    bool testzero) {
 
     //  For a specified block in the result block tensor (C),
     //  this algorithm makes a list of contractions of the blocks
@@ -64,7 +67,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(bool testzero) 
     //  as soon as it is clear that at least one contraction is required
     //  and therefore the block in C is non-zero.)
 
-    const sequence<NA + NB + NC, size_t> &conn = m_contr.get_conn();
+    const sequence<NA + NB + NC, size_t> &conn = get_contr().get_conn();
     const dimensions<NA> &bidimsa = m_blka.get_dims();
     const dimensions<NB> &bidimsb = m_blkb.get_dims();
 
@@ -139,8 +142,9 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(bool testzero) 
             }
             if(!ic1.equals(ic)) continue;
             if(!zero) {
-                clst.push_back(contr_pair(oa.get_acindex(), oa.get_transf(ja),
-                        ob.get_acindex(), ob.get_transf(jb)));
+                clst.push_back(contr_pair(
+                    oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+                    ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
             }
             ikset.erase(abs_index<K>::get_abs_index(ika, bidimsk));
         }
@@ -158,7 +162,8 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(bool testzero) 
 
 
 template<size_t N, size_t M, typename Traits>
-void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(bool testzero) {
+void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(
+    bool testzero) {
 
     //  For a specified block in the result block tensor (C),
     //  this algorithm makes a list of contractions of the blocks
@@ -168,7 +173,7 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(bool testzero) 
     //  as soon as it is clear that at least one contraction is required
     //  and therefore the block in C is non-zero.)
 
-    const sequence<NA + NB + NC, size_t> &conn = m_contr.get_conn();
+    const sequence<NA + NB + NC, size_t> &conn = get_contr().get_conn();
     const dimensions<NA> &bidimsa = m_blka.get_dims();
     const dimensions<NB> &bidimsb = m_blkb.get_dims();
 
@@ -212,8 +217,9 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(bool testzero) 
         }
         if(!ic1.equals(ic)) continue;
         if(!zero) {
-            clst.push_back(contr_pair(oa.get_acindex(), oa.get_transf(ja),
-                    ob.get_acindex(), ob.get_transf(jb)));
+            clst.push_back(contr_pair(
+                oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+                ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
         }
     }
 
@@ -224,18 +230,18 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(bool testzero) 
 
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_clst_builder_base<N, M, K, Traits>::coalesce(
-        contr_list &clst) {
+    contr_list &clst) {
 
-    typedef typename Traits::template to_contract2_type<N, M, K>::clst_optimize_type
-            coalesce_type;
+    typedef typename Traits::template
+        to_contract2_type<N, M, K>::clst_optimize_type coalesce_type;
 
-    coalesce_type().perform(clst);
+    coalesce_type(m_contr).perform(clst);
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_clst_builder_base<N, M, K, Traits>::merge(
-        contr_list &clst) {
+    contr_list &clst) {
 
     m_clst.splice(m_clst.end(), clst);
 }

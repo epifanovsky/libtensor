@@ -68,6 +68,7 @@ protected:
         return get_op().get_symmetry();
     }
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual rd_block_type &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
 
