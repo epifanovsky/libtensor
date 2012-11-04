@@ -5,10 +5,10 @@
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "../gen_bto_aux_copy.h"
-#include "../gen_bto_copy.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "gen_bto_contract2_block_impl.h"
 #include "gen_bto_contract2_clst_builder.h"
+#include "gen_bto_copy_impl.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "gen_bto_contract2_batch.h"
 
