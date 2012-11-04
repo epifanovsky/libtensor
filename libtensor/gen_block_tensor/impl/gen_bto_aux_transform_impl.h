@@ -64,7 +64,7 @@ void gen_bto_aux_transform<N, Traits>::put(
         idxb.permute(m_tra.get_perm());
         orbit<N, element_type> ob(m_symb, idxb, false);
         tra1.transform(tensor_transf_type(ob.get_transf(idxb), true));
-        m_out.put(idxb, blk, tra1);
+        m_out.put(ob.get_cindex(), blk, tra1);
     }
 }
 
