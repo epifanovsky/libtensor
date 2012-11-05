@@ -15,6 +15,7 @@
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_aux_add.h"
 #include "../gen_bto_aux_copy.h"
+#include "../gen_bto_aux_transform.h"
 #include "../gen_bto_contract3.h"
 
 namespace libtensor {
@@ -191,12 +192,11 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
             batchszab = bp.get_bsz_ab(), batchszc = bp.get_bsz_c(),
             batchszd = bp.get_bsz_d();
 
-        std::vector<size_t> batchab1, batchab2, batchc, batchd1, batchd2;
+        std::vector<size_t> batchab1, batchab2, batchc, batchd;
         batchab1.reserve(batchszab);
         batchab2.reserve(batchszab);
         batchc.reserve(batchszc);
-        batchd1.reserve(batchszd);
-        batchd2.reserve(batchszd);
+        batchd.reserve(batchszd);
 
         typename assignment_schedule<NAB, element_type>::iterator ibab =
             m_schab.begin();
@@ -268,49 +268,26 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     m_schd.begin();
                 while(ibd != m_schd.end()) {
 
-                    batchd1.clear();
-                    batchd2.clear();
+                    batchd.clear();
 
-                    for(; ibd != m_schd.end() && batchd1.size() < batchszd;
+                    for(; ibd != m_schd.end() && batchd.size() < batchszd;
                             ++ibd) {
                         index<ND> id;
                         abs_index<ND>::get_index(m_schd.get_abs_index(ibd),
                             bidimsd, id);
                         id.permute(permd);
                         orbit<ND, element_type> odt(symdt, id, false);
-                        batchd1.push_back(odt.get_acindex());
+                        batchd.push_back(odt.get_acindex());
                     }
-                    if(batchd1.size() == 0) continue;
+                    if(batchd.size() == 0) continue;
 
-                    //  Calling this may break the symmetry of final result
-                    //  in some cases, e.g. self-contraction
-                    if(!permdinv.is_identity()) {
-                        gen_bto_aux_copy<ND, Traits> dtcout(symdt, btdt);
-                        gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
-                            contr2, btab1, permab, kab, batchab2,
-                            m_btc, permc, m_kc, batchc,
-                            symdt.get_bis(), m_kd).perform(batchd1, dtcout);
-
-                        gen_bto_contract3::start_timer("copy_d");
-                        for(size_t i = 0; i < batchd1.size(); i++) {
-                            index<ND> id;
-                            abs_index<ND>::get_index(batchd1[i], bidimsdt, id);
-                            if(!cdt.req_is_zero_block(id)) {
-                                id.permute(permdinv);
-                                orbit<ND, element_type> od(
-                                        m_symd.get_symmetry(), id, false);
-                                batchd2.push_back(od.get_acindex());
-                            }
-                        }
-                        tensor_transf<ND, element_type> trd(permdinv);
-                        gen_bto_copy_d_type(btdt, trd).perform(batchd2, out);
-                        gen_bto_contract3::stop_timer("copy_d");
-                    } else {
-                        gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
-                            contr2, btab1, permab, kab, batchab2,
-                            m_btc, permc, m_kc, batchc,
-                            symdt.get_bis(), m_kd).perform(batchd1, out);
-                    }
+                    tensor_transf<ND, element_type> trd(permdinv);
+                    gen_bto_aux_transform<ND, Traits> out2(trd,
+                        m_symd.get_symmetry(), out);
+                    gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
+                        contr2, btab1, permab, kab, batchab2,
+                        m_btc, permc, m_kc, batchc,
+                        symdt.get_bis(), m_kd).perform(batchd, out2);
                 }
             }
         }
@@ -413,8 +390,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
 
                 if(batchb.size() == 0) continue;
 
-                //  Calling this may break the symmetry of final result
-                //  in some cases, e.g. self-contraction
                 gen_bto_contract2_batch<N1, N2 + K2, K1, Traits, Timed>(contr,
                     m_bta, perma, m_ka, batcha,
                     m_btb, permb, m_kb, batchb, bisab, kab).
