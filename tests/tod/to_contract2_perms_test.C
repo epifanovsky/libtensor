@@ -7,6 +7,8 @@ namespace libtensor {
 
 void to_contract2_perms_test::perform() throw(libtest::test_exception) {
 
+    test_i_pi_p(1, 1);
+
     test_ij_i_j(1, 1);
     test_ij_i_j(5, 7);
 
@@ -28,6 +30,69 @@ void to_contract2_perms_test::perform() throw(libtest::test_exception) {
     test_ijab_lijk_klab(5, 6, 7, 4, 20, 30);
 }
 
+
+void to_contract2_perms_test::test_i_pi_p(size_t ni, size_t np)
+    throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "to_contract2_perms_test::test_i_pi_p(" << ni << ", " << np << ")";
+    std::string tn = tnss.str();
+
+    try {
+
+    const size_t ordera =2;
+    const size_t orderb =1;
+    const size_t orderc =1;
+/*
+    index<ordera> ia1, ia2;
+    ia2[0] = np - 1; ia2[1] = ni - 1;
+    dimensions<ordera> dimsa(index_range<ordera>(ia1, ia2));
+
+    index<orderb> ib1, ib2;
+    ib2[0] = np - 1;
+    dimensions<orderb> dimsb(index_range<orderb>(ib1, ib2));
+
+    index<orderc> ic1, ic2;
+    ic2[0] = ni - 1;
+    dimensions<orderc> dimsc(index_range<orderc>(ic1, ic2));//*/
+
+    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
+    index<1> ib1, ib2; ib2[0] = np - 1;
+    index<1> ic1, ic2; ic2[0] = ni - 1;
+    dimensions<2> dimsa(index_range<2>(ia1, ia2));
+    dimensions<1> dimsb(index_range<1>(ib1, ib2));
+    dimensions<1> dimsc(index_range<1>(ic1, ic2));
+
+    contraction2<1, 0, 1> contr;
+
+    to_contract2_perms<1, 0, 1> tocp(contr, dimsa, dimsb, dimsc);
+
+    permutation<ordera> perma; //!< Permutation of the first input %tensor (a)
+    permutation<orderb> permb; //!< Permutation of the second input %tensor (b)
+    permutation<orderc> permc; //!< Permutation of the output %tensor (c)
+
+    perma.permute(0, 1);
+
+
+
+//    permutation<ordera> perma_calc = tocp.get_perma(); //!< Permutation of the first input %tensor (a)
+//    for (int i = 0; i < ordera; i++) {
+//    	std::cout << "perma[" << i << "] = " << perma_calc[i] << "\n";
+//    }
+
+//    permutation<orderc> permc_calc = tocp.get_permc(); //!< Permutation of the first input %tensor (a)
+//      for (int i = 0; i < orderc; i++) {
+//      	std::cout << "permc[" << i << "] = " << permc_calc[i] << "\n";
+//      }
+
+    if(!tocp.get_perma().equals(perma) || !tocp.get_permb().equals(permb) || !tocp.get_permc().equals(permc)) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
+    }
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
 
 void to_contract2_perms_test::test_ij_i_j(size_t ni, size_t nj)
     throw(libtest::test_exception) {
@@ -81,7 +146,6 @@ void to_contract2_perms_test::test_ij_i_j(size_t ni, size_t nj)
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
 }
-
 
 void to_contract2_perms_test::test_ij_j_i(size_t ni, size_t nj)
     throw(libtest::test_exception) {
