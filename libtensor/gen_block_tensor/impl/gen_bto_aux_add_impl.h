@@ -6,9 +6,14 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
+#include "../block_stream_exception.h"
 #include "../gen_bto_aux_add.h"
 
 namespace libtensor {
+
+
+template<size_t N, typename Traits>
+const char *gen_bto_aux_add<N, Traits>::k_clazz = "gen_bto_aux_add<N, Traits>";
 
 
 template<size_t N, typename Traits>
@@ -29,14 +34,17 @@ gen_bto_aux_add<N, Traits>::gen_bto_aux_add(
 template<size_t N, typename Traits>
 gen_bto_aux_add<N, Traits>::~gen_bto_aux_add() {
 
-    close();
+    if(m_open) close();
 }
 
 
 template<size_t N, typename Traits>
 void gen_bto_aux_add<N, Traits>::open() {
 
-    if(m_open) return;
+    if(m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "open()",
+            __FILE__, __LINE__, "Stream is already open.");
+    }
 
     //  Compute the symmetry of the result of the addition
 
@@ -73,7 +81,10 @@ void gen_bto_aux_add<N, Traits>::close() {
     typedef typename schedule_type::node schedule_node;
     typedef typename std::list<schedule_node>::const_iterator group_iterator;
 
-    if(!m_open) return;
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "close()",
+            __FILE__, __LINE__, "Stream is already closed.");
+    }
 
     //  Touch untouched orbits
 
@@ -134,6 +145,11 @@ void gen_bto_aux_add<N, Traits>::put(
     typedef typename schedule_type::schedule_group schedule_group;
     typedef typename schedule_type::node schedule_node;
     typedef typename std::list<schedule_node>::const_iterator group_iterator;
+
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "put()",
+            __FILE__, __LINE__, "Stream is not ready.");
+    }
 
     abs_index<N> aia(idx, m_bidims);
 

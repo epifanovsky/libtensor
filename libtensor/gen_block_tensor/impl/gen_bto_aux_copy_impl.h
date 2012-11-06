@@ -2,9 +2,15 @@
 #define LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
 
 #include <libtensor/symmetry/so_copy.h>
+#include "../block_stream_exception.h"
 #include "../gen_bto_aux_copy.h"
 
 namespace libtensor {
+
+
+template<size_t N, typename Traits>
+const char *gen_bto_aux_copy<N, Traits>::k_clazz =
+    "gen_bto_aux_copy<N, Traits>";
 
 
 template<size_t N, typename Traits>
@@ -28,20 +34,26 @@ gen_bto_aux_copy<N, Traits>::~gen_bto_aux_copy() {
 template<size_t N, typename Traits>
 void gen_bto_aux_copy<N, Traits>::open() {
 
-    if(!m_open) {
-        m_ctrl.req_zero_all_blocks();
-        so_copy<N, element_type>(m_sym).perform(m_ctrl.req_symmetry());
-        m_open = true;
+    if(m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "open()",
+            __FILE__, __LINE__, "Stream is already open.");
     }
+
+    m_ctrl.req_zero_all_blocks();
+    so_copy<N, element_type>(m_sym).perform(m_ctrl.req_symmetry());
+    m_open = true;
 }
 
 
 template<size_t N, typename Traits>
 void gen_bto_aux_copy<N, Traits>::close() {
 
-    if(m_open) {
-        m_open = false;
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "close()",
+            __FILE__, __LINE__, "Stream is already closed.");
     }
+
+    m_open = false;
 }
 
 
@@ -52,6 +64,11 @@ void gen_bto_aux_copy<N, Traits>::put(
     const tensor_transf<N, element_type> &tr) {
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
+
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "put()",
+            __FILE__, __LINE__, "Stream is not ready.");
+    }
 
     wr_block_type &blk_tgt = m_ctrl.req_block(idx);
     to_copy_type(blk, tr).perform(true, blk_tgt);

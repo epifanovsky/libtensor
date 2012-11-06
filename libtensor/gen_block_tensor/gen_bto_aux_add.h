@@ -34,6 +34,9 @@ class gen_bto_aux_add :
     public gen_block_stream_i<N, typename Traits::bti_traits> {
 
 public:
+    static const char *k_clazz; //!< Class name
+
+public:
     //! Type of tensor elements
     typedef typename Traits::element_type element_type;
 
