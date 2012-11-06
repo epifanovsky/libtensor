@@ -45,8 +45,6 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         //  Compute the number of non-zero blocks in A and B
 
         std::vector<size_t> blsta, blstb;
@@ -64,7 +62,6 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         //  Quit if either one of the arguments is zero
 
         if(nblka == 0 || nblkb == 0) {
-            out.close();
             gen_bto_contract2::stop_timer();
             return;
         }
@@ -187,8 +184,6 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                 }
             }
         }
-
-        out.close();
 
     } catch(...) {
         gen_bto_contract2::stop_timer();

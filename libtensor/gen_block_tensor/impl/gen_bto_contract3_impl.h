@@ -65,8 +65,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         //  Compute the number of blocks in A, B, C, and D
 
         std::vector<size_t> blsta, blstb, blstc;
@@ -88,7 +86,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
         //  Quit if either one of the arguments is zero
 
         if(nblka == 0 || nblkb == 0 || nblkc == 0 || nblkab == 0) {
-            out.close();
             gen_bto_contract3::stop_timer();
             return;
         }
@@ -292,8 +289,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
             }
         }
 
-        out.close();
-
     } catch(...) {
         gen_bto_contract3::stop_timer();
         throw;
@@ -327,8 +322,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
     gen_bto_contract3::start_timer("compute_batch_ab");
 
     try {
-
-        out.open();
 
         //  Compute the number of non-zero blocks in A and B
 
@@ -396,8 +389,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                     perform(blst, out);
             }
         }
-
-        out.close();
 
     } catch(...) {
         gen_bto_contract3::stop_timer("compute_batch_ab");
