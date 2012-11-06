@@ -16,8 +16,12 @@ void kern_dmul2_i_x_i<LA>::run(
     device_context_ref ctx,
     const loop_registers<2, 1> &r) {
 
-    LA::mul2_i_i_x(ctx, m_ni, r.m_ptra[1], m_sib, r.m_ptra[0][0] * m_d,
-        r.m_ptrb[0], m_sic);
+    //  Replace vector multiply with matrix multiply to prevent
+    //  dereferencing of r.m_ptra[0]
+    LA::mul2_ij_ip_jp_x(ctx, m_ni, 1, 1, r.m_ptra[1], m_sib, r.m_ptra[0], 1,
+        r.m_ptrb[0], m_sic, m_d);
+//    LA::mul2_i_i_x(ctx, m_ni, r.m_ptra[1], m_sib, r.m_ptra[0][0] * m_d,
+//        r.m_ptrb[0], m_sic);
 }
 
 
