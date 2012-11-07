@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
 #define LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
 
+#include <libtensor/core/abs_index.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../block_stream_exception.h"
 #include "../gen_bto_aux_copy.h"
@@ -18,7 +19,8 @@ gen_bto_aux_copy<N, Traits>::gen_bto_aux_copy(
     const symmetry<N, element_type> &sym,
     gen_block_tensor_wr_i<N, bti_traits> &bt) :
 
-    m_sym(sym.get_bis()), m_bt(bt), m_ctrl(m_bt), m_open(false) {
+    m_sym(sym.get_bis()), m_bt(bt), m_ctrl(m_bt),
+    m_bidims(m_bt.get_bis().get_block_index_dims()), m_open(false) {
 
     so_copy<N, element_type>(sym).perform(m_sym);
 }
@@ -42,6 +44,7 @@ void gen_bto_aux_copy<N, Traits>::open() {
     m_ctrl.req_zero_all_blocks();
     so_copy<N, element_type>(m_sym).perform(m_ctrl.req_symmetry());
     m_open = true;
+    m_nzlst.clear();
 }
 
 
@@ -54,6 +57,7 @@ void gen_bto_aux_copy<N, Traits>::close() {
     }
 
     m_open = false;
+    m_nzlst.clear();
 }
 
 
@@ -70,9 +74,14 @@ void gen_bto_aux_copy<N, Traits>::put(
             __FILE__, __LINE__, "Stream is not ready.");
     }
 
+    size_t aidx = abs_index<N>::get_abs_index(idx, m_bidims);
+    bool zero = m_nzlst.find(aidx) == m_nzlst.end();
+
     wr_block_type &blk_tgt = m_ctrl.req_block(idx);
-    to_copy_type(blk, tr).perform(true, blk_tgt);
+    to_copy_type(blk, tr).perform(zero, blk_tgt);
     m_ctrl.ret_block(idx);
+
+    if(zero) m_nzlst.insert(aidx);
 }
 
 
