@@ -103,24 +103,10 @@ void btod_sum<N>::compute_block(
 template<size_t N>
 void btod_sum<N>::perform(gen_block_tensor_i<N, bti_traits> &btb) {
 
-/*
-    bool first = true;
-    for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) {
-
-        if(first) {
-            iop->get_op().perform(bt);
-            if(iop->get_coeff() != 1.0) {
-                btod_scale<N>(bt, iop->get_coeff()).perform();
-            }
-            first = false;
-        } else {
-            iop->get_op().perform(bt, iop->get_coeff());
-        }
-    }
- */
     gen_bto_aux_copy<N, btod_traits> out(m_sym, btb);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -135,7 +121,9 @@ void btod_sum<N>::perform(gen_block_tensor_i<N, bti_traits> &btb,
     asch.build(get_schedule(), cb);
 
     gen_bto_aux_add<N, btod_traits> out(m_sym, asch, btb, c);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
