@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_GEN_BTO_AUX_COPY_H
 #define LIBTENSOR_GEN_BTO_AUX_COPY_H
 
-#include <set>
+#include <map>
+#include <libutil/threads/mutex.h>
 #include "block_stream_exception.h"
 #include "gen_block_stream_i.h"
 #include "gen_block_tensor_i.h"
@@ -51,7 +52,8 @@ private:
     dimensions<N> m_bidims; //!< Block index dims
     gen_block_tensor_wr_ctrl<N, bti_traits> m_ctrl; //!< Block tensor control
     bool m_open; //!< Open state
-    std::set<size_t> m_nzlst; //!< List of non-zero blocks
+    libutil::mutex m_mtx; //!< Global mutex
+    std::map<size_t, libutil::mutex*> m_blkmtx; //!< Per-block mutexes
 
 public:
     /** \brief Constructs the operation

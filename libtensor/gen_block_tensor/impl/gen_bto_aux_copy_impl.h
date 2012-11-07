@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
 #define LIBTENSOR_GEN_BTO_AUX_COPY_IMPL_H
 
+#include <libutil/threads/auto_lock.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../block_stream_exception.h"
@@ -44,7 +45,6 @@ void gen_bto_aux_copy<N, Traits>::open() {
     m_ctrl.req_zero_all_blocks();
     so_copy<N, element_type>(m_sym).perform(m_ctrl.req_symmetry());
     m_open = true;
-    m_nzlst.clear();
 }
 
 
@@ -57,7 +57,9 @@ void gen_bto_aux_copy<N, Traits>::close() {
     }
 
     m_open = false;
-    m_nzlst.clear();
+    for(typename std::map<size_t, libutil::mutex*>::iterator imtx =
+        m_blkmtx.begin(); imtx != m_blkmtx.end(); ++imtx) delete imtx->second;
+    m_blkmtx.clear();
 }
 
 
@@ -75,13 +77,28 @@ void gen_bto_aux_copy<N, Traits>::put(
     }
 
     size_t aidx = abs_index<N>::get_abs_index(idx, m_bidims);
-    bool zero = m_nzlst.find(aidx) == m_nzlst.end();
+    bool touched = false;
+    libutil::mutex *blkmtx = 0;
 
-    wr_block_type &blk_tgt = m_ctrl.req_block(idx);
-    to_copy_type(blk, tr).perform(zero, blk_tgt);
-    m_ctrl.ret_block(idx);
+    {
+        libutil::auto_lock<libutil::mutex> lock(m_mtx);
+        typename std::map<size_t, libutil::mutex*>::iterator imtx =
+            m_blkmtx.find(aidx);
+        if(imtx == m_blkmtx.end()) {
+            blkmtx = new libutil::mutex;
+            m_blkmtx.insert(std::make_pair(aidx, blkmtx));
+        } else {
+            touched = true;
+            blkmtx = imtx->second;
+        }
+    }
 
-    if(zero) m_nzlst.insert(aidx);
+    {
+        libutil::auto_lock<libutil::mutex> lock(*blkmtx);
+        wr_block_type &blk_tgt = m_ctrl.req_block(idx);
+        to_copy_type(blk, tr).perform(!touched, blk_tgt);
+        m_ctrl.ret_block(idx);
+    }
 }
 
 
