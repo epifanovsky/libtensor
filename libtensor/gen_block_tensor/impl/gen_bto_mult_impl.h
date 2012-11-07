@@ -147,16 +147,12 @@ void gen_bto_mult<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btc(m_bisc);
         gen_block_tensor_ctrl<N, bti_traits> cc(btc);
 
         gen_bto_mult_task_iterator<N, Traits, Timed> ti(*this, btc, out);
         gen_bto_mult_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_mult::stop_timer();

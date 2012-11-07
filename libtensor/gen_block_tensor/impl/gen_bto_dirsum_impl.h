@@ -102,15 +102,11 @@ void gen_bto_dirsum<N, M, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btc(m_symc.get_bis());
 
         gen_bto_dirsum_task_iterator<N, M, Traits, Timed> ti(*this, btc, out);
         gen_bto_dirsum_task_observer<N, M, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_dirsum::stop_timer();

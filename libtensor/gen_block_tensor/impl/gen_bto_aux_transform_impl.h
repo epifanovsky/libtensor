@@ -42,7 +42,6 @@ void gen_bto_aux_transform<N, Traits>::open() {
             __FILE__, __LINE__, "Stream is already open.");
     }
 
-    m_out.open();
     m_open = true;
 }
 
@@ -55,7 +54,6 @@ void gen_bto_aux_transform<N, Traits>::close() {
             __FILE__, __LINE__, "Stream is already closed.");
     }
 
-    m_out.close();
     m_open = false;
 }
 

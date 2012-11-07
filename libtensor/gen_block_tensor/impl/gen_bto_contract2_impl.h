@@ -12,8 +12,6 @@
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "../gen_block_tensor_ctrl.h"
-#include "../gen_bto_aux_add.h"
-#include "../gen_bto_aux_copy.h"
 #include "../gen_bto_aux_transform.h"
 #include "../gen_bto_contract2.h"
 
@@ -177,10 +175,12 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     tensor_transf<NC, element_type> trc(permcinv);
                     gen_bto_aux_transform<NC, Traits> out2(trc,
                         m_symc.get_symmetry(), out);
+                    out2.open();
                     gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr,
                         m_bta, perma, m_ka, batcha, m_btb, permb, m_kb,
                         batchb, symct.get_bis(), m_kc).
                         perform(batchc, out2);
+                    out2.close();
                 }
             }
         }

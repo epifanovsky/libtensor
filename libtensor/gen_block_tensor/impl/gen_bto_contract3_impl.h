@@ -13,7 +13,6 @@
 #include "gen_bto_contract3_batching_policy.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "../gen_block_tensor_ctrl.h"
-#include "../gen_bto_aux_add.h"
 #include "../gen_bto_aux_copy.h"
 #include "../gen_bto_aux_transform.h"
 #include "../gen_bto_contract3.h"
@@ -222,10 +221,12 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
             // Compute batch of AB
             gen_bto_aux_copy<NAB, Traits> ab1cout(symab1, btab1);
+            ab1cout.open();
             compute_batch_ab(contr1,
                     bidimsa, perma, symat, batchsza,
                     bidimsb, permb, symbt, batchszb,
                     m_symab.get_bis(), batchab1, ab1cout);
+            ab1cout.close();
 
             if(!permab.is_identity()) {
                 gen_block_tensor_rd_ctrl<NAB, bti_traits> cab1(btab1);
@@ -281,10 +282,12 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     tensor_transf<ND, element_type> trd(permdinv);
                     gen_bto_aux_transform<ND, Traits> out2(trd,
                         m_symd.get_symmetry(), out);
+                    out2.open();
                     gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
                         contr2, btab1, permab, kab, batchab2,
                         m_btc, permc, m_kc, batchc,
                         symdt.get_bis(), m_kd).perform(batchd, out2);
+                    out2.close();
                 }
             }
         }

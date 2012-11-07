@@ -168,14 +168,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         gen_bto_full_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_copy::stop_timer();
@@ -195,14 +191,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         gen_bto_part_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             blst, out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_copy::stop_timer();

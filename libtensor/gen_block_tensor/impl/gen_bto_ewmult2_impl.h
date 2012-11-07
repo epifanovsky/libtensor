@@ -108,16 +108,12 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btc(m_bisc);
 
         gen_bto_ewmult2_task_iterator<N, M, K, Traits, Timed> ti(*this,
                 btc, out);
         gen_bto_ewmult2_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_ewmult2::stop_timer();

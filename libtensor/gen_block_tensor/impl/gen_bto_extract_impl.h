@@ -124,15 +124,11 @@ void gen_bto_extract<N, M, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btb(m_bis);
 
         gen_bto_extract_task_iterator<N, M, Traits, Timed> ti(*this, btb, out);
         gen_bto_extract_task_observer<N, M, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_extract::stop_timer();

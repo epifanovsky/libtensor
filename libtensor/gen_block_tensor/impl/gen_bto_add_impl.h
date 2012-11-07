@@ -134,15 +134,11 @@ void gen_bto_add<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btb(m_bisb);
 
         gen_bto_add_task_iterator<N, Traits, Timed> ti(*this, btb, out);
         gen_bto_add_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_add::stop_timer();

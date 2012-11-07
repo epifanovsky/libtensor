@@ -110,8 +110,6 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         // TODO: replace with temporary block tensor from traits
         temp_block_tensor_type btb(m_bis);
 
@@ -119,8 +117,6 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
                 btb, out);
         gen_bto_apply_task_observer<N, Functor, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_apply::stop_timer();
