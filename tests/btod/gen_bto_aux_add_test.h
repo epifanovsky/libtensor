@@ -17,7 +17,10 @@ public:
 private:
     void test_1a();
     void test_1b();
+    void test_1c();
     void test_2();
+    void test_3a();
+    void test_3b();
 
 };
 
