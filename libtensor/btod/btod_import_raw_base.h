@@ -101,6 +101,15 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
         }
     }
 
+    abs_index<N> ai(bidims);
+    do {
+        if (ol.contains(ai.get_abs_index())) continue;
+
+        orbit<N, double> o(sym, ai.get_index());
+        verify_zero_orbit(ctrl, bidims, o);
+
+    } while (ai.inc());
+
     so_copy<N, double>(sym).perform(ctrl.req_symmetry());
 }
 
