@@ -114,6 +114,13 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
         bool zero = !m_blka.contains(oa.get_acindex()) ||
             !m_blkb.contains(ob.get_acindex());
 
+        //  When scanning for the first non-zero term, it is faster
+        //  to quit here than to go through the orbits
+        if(testzero && zero) {
+            ikset.erase(ikset.begin());
+            continue;
+        }
+
         contr_list clst;
 
         //  Build the list of contractions for the current orbits A, B
