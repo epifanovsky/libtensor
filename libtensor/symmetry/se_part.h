@@ -218,15 +218,6 @@ bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
 }
 
 
-template<size_t N, typename T>
-inline
-void se_part<N, T>::apply(index<N> &idx) const {
-
-    tensor_transf<N, T> tr;
-    apply(idx, tr);
-}
-
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_SE_PART_H

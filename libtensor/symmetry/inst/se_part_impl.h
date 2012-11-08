@@ -339,22 +339,44 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
 
 template<size_t N, typename T>
-void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
+void se_part<N, T>::apply(index<N> &idx) const {
 
     //  Determine partition index and offset within partition
     //
-    index<N> pidx1;
+    index<N> pidx1, pidx2;
     for(register size_t i = 0; i < N; i++) {
         pidx1[i] = idx[i] / m_bipdims[i];
     }
 
     //  Map the partition index
     //
-    abs_index<N> apidx(pidx1, m_pdims);
-    if (m_fmap[apidx.get_abs_index()] == (size_t) -1) return;
+    size_t apidx = abs_index<N>::get_abs_index(pidx1, m_pdims);
+    if (m_fmap[apidx] == size_t(-1)) return;
+    abs_index<N>::get_index(m_fmap[apidx], m_pdims, pidx2);
 
-    abs_index<N> apidx_mapped(m_fmap[apidx.get_abs_index()], m_pdims);
-    const index<N> &pidx2 = apidx_mapped.get_index();
+    //  Construct a mapped block index
+    //
+    for(register size_t i = 0; i < N; i++) {
+        idx[i] -= (pidx1[i] - pidx2[i]) * m_bipdims[i];
+    }
+}
+
+
+template<size_t N, typename T>
+void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
+
+    //  Determine partition index and offset within partition
+    //
+    index<N> pidx1, pidx2;
+    for(register size_t i = 0; i < N; i++) {
+        pidx1[i] = idx[i] / m_bipdims[i];
+    }
+
+    //  Map the partition index
+    //
+    size_t apidx = abs_index<N>::get_abs_index(pidx1, m_pdims);
+    if (m_fmap[apidx] == size_t(-1)) return;
+    abs_index<N>::get_index(m_fmap[apidx], m_pdims, pidx2);
 
     //  Construct a mapped block index
     //
@@ -362,7 +384,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
         idx[i] -= (pidx1[i] - pidx2[i]) * m_bipdims[i];
     }
 
-    tr.transform(m_ftr[apidx.get_abs_index()]);
+    tr.transform(m_ftr[apidx]);
 }
 
 
