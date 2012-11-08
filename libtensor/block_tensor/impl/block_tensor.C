@@ -1,4 +1,5 @@
 #include <libtensor/core/allocator.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/impl/gen_block_tensor_impl.h>
 #include <libtensor/gen_block_tensor/impl/block_map_impl.h>
 #include "../block_tensor_traits.h"
