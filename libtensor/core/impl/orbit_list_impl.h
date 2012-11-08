@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ORBIT_LIST_IMPL_H
 #define LIBTENSOR_ORBIT_LIST_IMPL_H
 
+#include <cstring> // for memchr
 #include <libtensor/core/abs_index.h>
 #include "../orbit_list.h"
 
@@ -18,16 +19,19 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
 
     orbit_list::start_timer();
 
-    std::vector<char> chk(m_dims.get_size(), 0);
-    abs_index<N> aidx(m_dims);
-    do {
-        size_t absidx = aidx.get_abs_index();
-        if(chk[absidx] == 0) {
-            if(mark_orbit(sym, aidx.get_index(), chk)) {
-                m_orb.insert(std::make_pair(absidx, aidx.get_index()));
-            }
+    index<N> idx;
+    size_t aidx = 0, n = m_dims.get_size();
+    std::vector<char> chk(n, 0);
+    const char *p0 = &chk[0];
+    while(aidx < n) {
+        const char *p = (const char*)::memchr(p0 + aidx, 0, n - aidx);
+        if(p == 0) break;
+        aidx = p - p0;
+        abs_index<N>::get_index(aidx, m_dims, idx);
+        if(mark_orbit(sym, idx, chk)) {
+            m_orb.insert(std::make_pair(aidx, idx));
         }
-    } while(aidx.inc());
+    }
 
     orbit_list::stop_timer();
 }
