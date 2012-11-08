@@ -106,6 +106,14 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
         if (ol.contains(ai.get_abs_index())) continue;
 
         orbit<N, double> o(sym, ai.get_index());
+	if (ai.get_abs_index() != o.get_abs_canonical_index()) continue;
+
+        if (! ctrl.req_is_zero_block(o.get_cindex())) {
+            std::ostringstream ss;
+            ss << "Non-zero block " << o.get_cindex() << ".";
+            throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+                ss.str().c_str());
+        }
         verify_zero_orbit(ctrl, bidims, o);
 
     } while (ai.inc());
