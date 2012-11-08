@@ -14,6 +14,7 @@
 #include "../gen_block_tensor_ctrl.h"
 #include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_nzorb.h"
+#include "gen_bto_unfold_block_list_impl.h"
 
 namespace libtensor {
 
@@ -157,17 +158,15 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     so_copy<NB, element_type>(cb.req_const_symmetry()).perform(m_symb);
     so_copy<NC, element_type>(symc).perform(m_symc);
 
-    for (typename assignment_schedule<NA, element_type>::iterator ia =
-            scha.begin(); ia != scha.end(); ia++) {
-
+    for(typename assignment_schedule<NA, element_type>::iterator ia =
+        scha.begin(); ia != scha.end(); ++ia) {
         m_blsta.add(scha.get_abs_index(ia));
     }
 
     orbit_list<NB, element_type> olb(m_symb);
-    for (typename orbit_list<NB, element_type>::iterator iol = olb.begin();
-            iol != olb.end(); iol++) {
-        if (cb.req_is_zero_block(olb.get_index(iol))) continue;
-
+    for(typename orbit_list<NB, element_type>::iterator iol = olb.begin();
+        iol != olb.end(); ++iol) {
+        if(cb.req_is_zero_block(olb.get_index(iol))) continue;
         m_blstb.add(olb.get_abs_index(iol));
     }
 }
@@ -194,16 +193,14 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     so_copy<NC, element_type>(symc).perform(m_symc);
 
     orbit_list<NA, element_type> ola(m_syma);
-    for (typename orbit_list<NA, element_type>::iterator iol = ola.begin();
-            iol != ola.end(); iol++) {
-        if (ca.req_is_zero_block(ola.get_index(iol))) continue;
-
+    for(typename orbit_list<NA, element_type>::iterator iol = ola.begin();
+        iol != ola.end(); ++iol) {
+        if(ca.req_is_zero_block(ola.get_index(iol))) continue;
         m_blsta.add(ola.get_abs_index(iol));
     }
 
-    for (typename assignment_schedule<NB, element_type>::iterator isch =
-            schb.begin(); isch != schb.end(); isch++) {
-
+    for(typename assignment_schedule<NB, element_type>::iterator isch =
+        schb.begin(); isch != schb.end(); ++isch) {
         m_blstb.add(schb.get_abs_index(isch));
     }
 }
@@ -228,15 +225,13 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     so_copy<NB, element_type>(symb).perform(m_symb);
     so_copy<NC, element_type>(symc).perform(m_symc);
 
-    for (typename assignment_schedule<NA, element_type>::iterator isch =
-            scha.begin(); isch != scha.end(); isch++) {
-
+    for(typename assignment_schedule<NA, element_type>::iterator isch =
+        scha.begin(); isch != scha.end(); ++isch) {
         m_blsta.add(scha.get_abs_index(isch));
     }
 
-    for (typename assignment_schedule<NB, element_type>::iterator isch =
-            schb.begin(); isch != schb.end(); isch++) {
-
+    for(typename assignment_schedule<NB, element_type>::iterator isch =
+        schb.begin(); isch != schb.end(); ++isch) {
         m_blstb.add(schb.get_abs_index(isch));
     }
 }
@@ -249,10 +244,16 @@ void gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::build() {
 
     try {
 
+        block_list<NA> blstax(m_syma.get_bis().get_block_index_dims());
+        block_list<NB> blstbx(m_symb.get_bis().get_block_index_dims());
+
+        gen_bto_unfold_block_list<NA, Traits>(m_syma, m_blsta).build(blstax);
+        gen_bto_unfold_block_list<NB, Traits>(m_symb, m_blstb).build(blstbx);
+
         orbit_list<NC, element_type> olc(m_symc);
 
         gen_bto_contract2_nzorb_task_iterator<N, M, K, Traits> ti(m_contr,
-            m_syma, m_symb, m_blsta, m_blstb, olc, m_blstc);
+            m_syma, m_symb, blstax, blstbx, olc, m_blstc);
         gen_bto_contract2_nzorb_task_observer<N, M, K> to;
         libutil::thread_pool::submit(ti, to);
 

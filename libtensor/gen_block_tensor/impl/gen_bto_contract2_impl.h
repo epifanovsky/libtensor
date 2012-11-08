@@ -10,6 +10,7 @@
 #include "gen_bto_contract2_clst_builder_impl.h"
 #include "gen_bto_contract2_nzorb_impl.h"
 #include "gen_bto_contract2_sym_impl.h"
+#include "gen_bto_unfold_block_list_impl.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_aux_transform.h"
@@ -211,17 +212,20 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::compute_block(
     std::vector<size_t> blsta, blstb;
     ca.req_nonzero_blocks(blsta);
     cb.req_nonzero_blocks(blstb);
-    block_list<NA> bla(bidimsa, blsta);
-    block_list<NB> blb(bidimsb, blstb);
+    block_list<NA> bla(bidimsa, blsta), blax(bidimsa);
+    block_list<NB> blb(bidimsb, blstb), blbx(bidimsb);
 
     const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
     const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
+
+    gen_bto_unfold_block_list<NA, Traits>(syma, bla).build(blax);
+    gen_bto_unfold_block_list<NB, Traits>(symb, blb).build(blbx);
 
     gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr, m_bta,
         syma, bla, m_ka, m_btb, symb, blb, m_kb, m_symc.get_bis(), m_kc);
 
     gen_bto_contract2_clst_builder<N, M, K, Traits> clstop(m_contr,
-        syma, symb, bla, blb, bidimsc, idxc);
+        syma, symb, blax, blbx, bidimsc, idxc);
     clstop.build_list(false); // Build full contraction list
 
     bto.compute_block(clstop.get_clst(), zero, idxc, trc, blkc);

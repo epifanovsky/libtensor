@@ -108,18 +108,15 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
             }
         }
 
-        orbit<NA, element_type> oa(m_syma, ia, false);
-        orbit<NB, element_type> ob(m_symb, ib, false);
-
-        bool zero = !m_blka.contains(oa.get_acindex()) ||
-            !m_blkb.contains(ob.get_acindex());
-
-        //  When scanning for the first non-zero term, it is faster
-        //  to quit here than to go through the orbits
-        if(testzero && zero) {
+        size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
+        size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
+        if(!m_blka.contains(aia) || !m_blkb.contains(aib)) {
             ikset.erase(ikset.begin());
             continue;
         }
+
+        orbit<NA, element_type> oa(m_syma, ia, false);
+        orbit<NB, element_type> ob(m_symb, ib, false);
 
         contr_list clst;
 
@@ -148,11 +145,9 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
                 }
             }
             if(!ic1.equals(ic)) continue;
-            if(!zero) {
-                clst.push_back(contr_pair(
-                    oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
-                    ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
-            }
+            clst.push_back(contr_pair(
+                oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+                ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
             ikset.erase(abs_index<K>::get_abs_index(ika, bidimsk));
         }
 
@@ -196,11 +191,10 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(
         ib[i] = ic[conn[NC + NA + i]];
     }
 
+    if(!m_blka.contains(ia) || !m_blkb.contains(ib)) return;
+
     orbit<NA, element_type> oa(m_syma, ia, false);
     orbit<NB, element_type> ob(m_symb, ib, false);
-
-    bool zero = !m_blka.contains(oa.get_acindex()) ||
-            !m_blkb.contains(ob.get_acindex());
 
     contr_list clst;
 
@@ -223,11 +217,9 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(
             }
         }
         if(!ic1.equals(ic)) continue;
-        if(!zero) {
-            clst.push_back(contr_pair(
-                oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
-                ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
-        }
+        clst.push_back(contr_pair(
+            oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+            ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
     }
 
     coalesce(clst);

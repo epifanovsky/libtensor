@@ -86,7 +86,7 @@ protected:
     \tparam K Order of contraction.
     \tparam Traits Traits class.
 
-    \sa gen_bto_contract2_clst_builder_base
+    \sa gen_bto_contract2_clst_builder_base, gen_bto_unfold_block_list
 
     \ingroup libtensor_gen_bto
  **/
@@ -117,8 +117,8 @@ public:
 private:
     const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
     const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
-    const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
-    const block_list<NB> &m_blkb; //!< Non-zero canonical blocks in B
+    const block_list<NA> &m_blka; //!< All non-zero blocks in A
+    const block_list<NB> &m_blkb; //!< All non-zero blocks in B
     dimensions<NC> m_bidimsc; //!< Block index dimensions (C)
     index<NC> m_ic; //!< Index in C
 
@@ -148,7 +148,7 @@ protected:
     \tparam M Order of second tensor less degree of contraction.
     \tparam Traits Traits class.
 
-    \sa gen_bto_contract2_clst_builder_base
+    \sa gen_bto_contract2_clst_builder_base, gen_bto_unfold_block_list
 
     \ingroup libtensor_gen_bto
  **/
@@ -179,8 +179,8 @@ public:
 private:
     const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
     const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
-    const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
-    const block_list<NB> &m_blkb; //!< Non-zero canonical blocks in B
+    const block_list<NA> &m_blka; //!< All non-zero blocks in A
+    const block_list<NB> &m_blkb; //!< All non-zero blocks in B
     dimensions<NC> m_bidimsc; //!< Block index dimensions (C)
     index<NC> m_ic; //!< Index in C
 
