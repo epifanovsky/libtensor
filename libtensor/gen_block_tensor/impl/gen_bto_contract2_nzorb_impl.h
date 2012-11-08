@@ -166,7 +166,9 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     orbit_list<NB, element_type> olb(m_symb);
     for(typename orbit_list<NB, element_type>::iterator iol = olb.begin();
         iol != olb.end(); ++iol) {
-        if(cb.req_is_zero_block(olb.get_index(iol))) continue;
+        index<NB> idx;
+        olb.get_index(iol, idx);
+        if(cb.req_is_zero_block(idx)) continue;
         m_blstb.add(olb.get_abs_index(iol));
     }
 }
@@ -195,7 +197,9 @@ gen_bto_contract2_nzorb<N, M, K, Traits, Timed>::gen_bto_contract2_nzorb(
     orbit_list<NA, element_type> ola(m_syma);
     for(typename orbit_list<NA, element_type>::iterator iol = ola.begin();
         iol != ola.end(); ++iol) {
-        if(ca.req_is_zero_block(ola.get_index(iol))) continue;
+        index<NA> idx;
+        ola.get_index(iol, idx);
+        if(ca.req_is_zero_block(idx)) continue;
         m_blsta.add(ola.get_abs_index(iol));
     }
 
@@ -322,10 +326,11 @@ template<size_t N, size_t M, size_t K, typename Traits>
 libutil::task_i*
 gen_bto_contract2_nzorb_task_iterator<N, M, K, Traits>::get_next() {
 
+    index<N + M> idxc;
+    m_olc.get_index(m_ioc, idxc);
     gen_bto_contract2_nzorb_task<N, M, K, Traits> *t =
         new gen_bto_contract2_nzorb_task<N, M, K, Traits>(m_contr,
-                m_syma, m_symb, m_blsta, m_blstb, m_olc.get_index(m_ioc),
-                m_blstc, m_mtx);
+            m_syma, m_symb, m_blsta, m_blstb, idxc, m_blstc, m_mtx);
     ++m_ioc;
     return t;
 }

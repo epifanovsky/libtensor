@@ -295,7 +295,8 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() const {
 
                 gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
 
-                index<N> ia(olb.get_index(iob));
+                index<N> ia;
+                olb.get_index(iob, ia);
                 ia.permute(trainv.get_perm());
                 orbit<N, element_type> oa(ca.req_const_symmetry(), ia);
                 if(!oa.is_allowed()) continue;

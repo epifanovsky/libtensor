@@ -28,9 +28,7 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
         if(p == 0) break;
         aidx = p - p0;
         abs_index<N>::get_index(aidx, m_dims, idx);
-        if(mark_orbit(sym, idx, chk)) {
-            m_orb.insert(std::make_pair(aidx, idx));
-        }
+        if(mark_orbit(sym, idx, chk)) m_orb.push_back(aidx);
     }
 
     orbit_list::stop_timer();
@@ -38,28 +36,14 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
 
 
 template<size_t N, typename T>
-bool orbit_list<N, T>::contains(const index<N> &idx) const {
-
-    return contains(abs_index<N>::get_abs_index(idx, m_dims));
-}
-
-
-template<size_t N, typename T>
-bool orbit_list<N, T>::contains(size_t aidx) const {
-
-    return m_orb.find(aidx) != m_orb.end();
-}
-
-
-template<size_t N, typename T>
 bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
     const index<N> &idx, std::vector<char> &chk) {
 
-    size_t absidx = abs_index<N>::get_abs_index(idx, m_dims);
-    if(chk[absidx]) return true;
+    size_t aidx = abs_index<N>::get_abs_index(idx, m_dims);
+    if(chk[aidx]) return true;
 
     bool allowed = true;
-    chk[absidx] = 1;
+    chk[aidx] = 1;
 
     for(typename symmetry<N, T>::iterator iset = sym.begin();
         iset != sym.end(); ++iset) {

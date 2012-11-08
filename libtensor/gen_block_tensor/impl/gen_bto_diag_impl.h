@@ -292,7 +292,8 @@ void gen_bto_diag<N, M, Traits, Timed>::make_schedule() {
             iob != olb.end(); iob++) {
 
         index<N> idxa;
-        index<N - M + 1> idxb(olb.get_index(iob));
+        index<N - M + 1> idxb;
+        olb.get_index(iob, idxb);
         idxb.permute(pinv);
 
         for(size_t i = 0; i < N; i++) idxa[i] = idxb[map[i]];

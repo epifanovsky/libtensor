@@ -91,7 +91,7 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
     for(typename orbit_list<N, double>::iterator io = ol.begin();
         io != ol.end(); ++io) {
 
-        orbit<N, double> o(sym, ol.get_index(io));
+        orbit<N, double> o(sym, ol.get_abs_index(io));
         abs_index<N> aci(o.get_abs_canonical_index(), bidims);
 
         if(ctrl.req_is_zero_block(aci.get_index())) {

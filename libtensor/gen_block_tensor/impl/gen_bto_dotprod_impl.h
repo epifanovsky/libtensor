@@ -215,8 +215,10 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
             for(typename orbit_list<N, element_type>::iterator io = ol.begin();
                     io != ol.end(); io++) {
 
+                index<N> idx;
+                ol.get_index(io, idx);
                 task_type *t = new task_type(j->bt1, ol1, j->tr1,
-                        j->bt2, ol2, j->tr2, *sym[i], bidims, ol.get_index(io));
+                        j->bt2, ol2, j->tr2, *sym[i], bidims, idx);
                 tasklist.push_back(t);
             }
 

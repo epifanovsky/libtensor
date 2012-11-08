@@ -256,7 +256,9 @@ void gen_bto_apply<N, Functor, Traits, Timed>::make_schedule() {
         // If m_fn(0.0) yields 0.0 only non-zero blocks of tensor A need to
         // be considered
         if (m_fn.keep_zero()) {
-            index<N> ia(ol.get_index(io)); ia.permute(pinv);
+            index<N> ia;
+            ol.get_index(io, ia);
+            ia.permute(pinv);
 
             orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
             if (! oa.is_allowed()) continue;

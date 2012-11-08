@@ -221,19 +221,21 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
     for(typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
             ioa != ola.end(); ioa++) {
 
-        bool zeroa = ca.req_is_zero_block(ola.get_index(ioa));
+        index<NA> idxa;
+        ola.get_index(ioa, idxa);
+        bool zeroa = ca.req_is_zero_block(idxa);
 
-        orbit<NA, element_type> oa(ca.req_const_symmetry(),
-                ola.get_index(ioa));
+        orbit<NA, element_type> oa(ca.req_const_symmetry(), idxa);
 
         for(typename orbit_list<NB, element_type>::iterator iob = olb.begin();
                 iob != olb.end(); iob++) {
 
-            bool zerob = cb.req_is_zero_block(olb.get_index(iob));
+            index<NB> idxb;
+            olb.get_index(iob, idxb);
+            bool zerob = cb.req_is_zero_block(idxb);
             if(zeroa && zerob) continue;
 
-            orbit<NB, element_type> ob(cb.req_const_symmetry(),
-                    olb.get_index(iob));
+            orbit<NB, element_type> ob(cb.req_const_symmetry(), idxb);
 
             make_schedule(oa, zeroa, ob, zerob, olc);
         }
@@ -247,7 +249,8 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
         if (m_sch.contains(olc.get_abs_index(ioc))) continue;
 
         // identify index of A and index of B
-        index<NC> idxc(olc.get_index(ioc));
+        index<NC> idxc;
+        olc.get_index(ioc, idxc);
         idxc.permute(trc_inv.get_perm());
         index<NA> idxa;
         for (register size_t i = 0; i < NA; i++) idxa[i] = idxc[i];

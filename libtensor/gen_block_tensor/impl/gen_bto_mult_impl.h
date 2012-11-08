@@ -245,7 +245,8 @@ void gen_bto_mult<N, Traits, Timed>::make_schedule() {
     for (typename orbit_list<N, element_type>::iterator iol = ol.begin();
             iol != ol.end(); iol++) {
 
-        index<N> idx(ol.get_index(iol));
+        index<N> idx;
+        ol.get_index(iol, idx);
         index<N> idxa(idx), idxb(idx);
         permutation<N> pinva(m_tra.get_perm(), true),
                 pinvb(m_trb.get_perm(), true);

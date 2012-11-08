@@ -307,8 +307,9 @@ void gen_bto_extract<N, M, Traits, Timed>::make_schedule() {
             iob != olb.end(); iob++) {
 
         index<NA> idxa;
-        index<NB> idxb(olb.get_index(iob));
+        index<NB> idxb;
 
+        olb.get_index(iob, idxb);
         idxb.permute(pinv);
 
         for(size_t i = 0, j = 0; i < NA; i++) {

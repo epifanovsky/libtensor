@@ -53,8 +53,9 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
     typename orbit_list<N, double>::iterator iorbit = orblst.begin();
     for(; iorbit != orblst.end(); iorbit++) {
 
-        orbit<N, double> orb(src_ctrl.req_const_symmetry(),
-            orblst.get_index(iorbit));
+        index<N> idx;
+        orblst.get_index(iorbit, idx);
+        orbit<N, double> orb(src_ctrl.req_const_symmetry(), idx);
         abs_index<N> abidx(orb.get_abs_canonical_index(), bidims);
         if(src_ctrl.req_is_zero_block(abidx.get_index())) continue;
 

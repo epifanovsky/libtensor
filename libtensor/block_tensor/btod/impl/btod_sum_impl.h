@@ -195,7 +195,7 @@ void btod_sum<N>::make_schedule() const {
 
             if(!(*iol)->contains(ol.get_abs_index(io))) {
                 orbit<N, double> o(iop->get_op().get_symmetry(),
-                    ol.get_index(io));
+                    ol.get_abs_index(io));
                 if(!o.is_allowed()) continue;
                 if(iop->get_op().get_schedule().contains(
                     o.get_abs_canonical_index())) {

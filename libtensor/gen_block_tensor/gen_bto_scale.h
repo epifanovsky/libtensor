@@ -87,7 +87,8 @@ void gen_bto_scale<N, Traits, Timed>::perform() {
         for(typename orbit_list<N, element_type>::iterator io = ol.begin();
                 io != ol.end(); io++) {
 
-            index<N> idx(ol.get_index(io));
+            index<N> idx;
+            ol.get_index(io, idx);
             if(ctrl.req_is_zero_block(idx)) continue;
 
             if(m_c.is_zero()) {

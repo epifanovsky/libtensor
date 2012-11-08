@@ -158,7 +158,8 @@ void gen_bto_mult1<N, Traits, Timed>::perform(bool zero,
         for(typename orbit_list<N, element_type>::iterator io = ol.begin();
                 io != ol.end(); io++) {
 
-            const index<N> &idxa = ol.get_index(io);
+            index<N> idxa;
+            ol.get_index(io, idxa);
 
             orbit<N, element_type> oa(syma, idxa);
             index<N> idxa0;
@@ -181,7 +182,8 @@ void gen_bto_mult1<N, Traits, Timed>::perform(bool zero,
         for(typename orbit_list<N, element_type>::iterator io = ol.begin();
                 io != ol.end(); io++) {
 
-            const index<N> &idxa = ol.get_index(io);
+            index<N> idxa;
+            ol.get_index(io, idxa);
             if (ca.req_is_zero_block(idxa)) continue;
 
             index<N> idxb(idxa);

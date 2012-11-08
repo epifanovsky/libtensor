@@ -218,7 +218,7 @@ void btod_symmetrize3<N>::make_schedule() {
     for(typename orbit_list<N, double>::iterator io = ol.begin();
         io != ol.end(); io++) {
 
-        abs_index<N> ai(ol.get_index(io), bidims);
+        abs_index<N> ai(ol.get_abs_index(io), bidims);
         sym_schedule_t sch;
         make_schedule_blk(ai, sch);
         if(!sch.empty()) m_sch.insert(ai.get_abs_index());

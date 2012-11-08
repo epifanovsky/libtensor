@@ -382,7 +382,8 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::make_schedule() {
 
         index<NA> bidxa;
         index<NB> bidxb;
-        index<NC> bidxstd(ol.get_index(io));
+        index<NC> bidxstd;
+        ol.get_index(io, bidxstd);
         bidxstd.permute(permutation<NC>(m_trc.get_perm(), true));
         for(size_t i = 0; i < N; i++) bidxa[i] = bidxstd[i];
         for(size_t i = 0; i < M; i++) bidxb[i] = bidxstd[N + i];
