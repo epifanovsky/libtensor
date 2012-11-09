@@ -57,8 +57,10 @@ void cuda_tod_contract2_test::perform() throw(libtest::test_exception) {
     test_i_p_ip(3, 3, 3.7);
     test_i_p_ip(3, 5, 1.0);
     test_i_p_ip(16, 16, 0.7);
-#if 0
+
+
     test_i_pi_p(1, 1);
+#if 0
     test_i_pi_p(1, 2);
     test_i_pi_p(2, 1);
     test_i_pi_p(3, 3);
@@ -70,7 +72,8 @@ void cuda_tod_contract2_test::perform() throw(libtest::test_exception) {
     test_i_pi_p(3, 3, 3.7);
     test_i_pi_p(3, 5, 1.0);
     test_i_pi_p(16, 16, 0.7);
-
+#endif
+#if 0
     test_i_ip_p(1, 1);
     test_i_ip_p(1, 2);
     test_i_ip_p(2, 1);

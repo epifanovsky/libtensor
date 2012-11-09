@@ -29,6 +29,9 @@ private:
     void test_ijk_jil_kl(size_t ni, size_t nj, size_t nk, size_t nl)
         throw(libtest::test_exception);
 
+    void test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np)
+        throw(libtest::test_exception);
+
     void test_ijab_ijkl_klab(size_t ni, size_t nj, size_t nk, size_t nl, size_t na, size_t nb)
         throw(libtest::test_exception);
     void test_ijab_lijk_klab(size_t ni, size_t nj, size_t nk, size_t nl, size_t na, size_t nb)

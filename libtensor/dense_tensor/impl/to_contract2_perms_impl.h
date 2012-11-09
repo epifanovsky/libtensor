@@ -26,6 +26,13 @@ void to_contract2_perms<N, M, K>::make_perms(
 
 	size_t permute_zone_a, permute_zone_b, permute_zone_c;
 	permute_zone_a = permute_zone_b = permute_zone_c = 0;
+	int local_ordera = k_ordera;
+	int local_orderb = k_orderb;
+	int local_orderc = k_orderc;
+	int lN = N;
+	int lM = M;
+	int lK = K;
+
 	//first we have to separate contracted and non-contracted indexes
 	//let's start from A
 	//Is the last index in A a non-contracted index (index from C)?
@@ -33,11 +40,11 @@ void to_contract2_perms<N, M, K>::make_perms(
 		//now all non-contracted indexes in A should be moved to the right and contracted - to the left.
 
 		//let's find which index has to be moved to the right and define permuted zone
-		for(size_t i = k_orderc+k_ordera-1; i > k_orderc ; i--) {
+		for(size_t i = k_orderc+k_ordera-1; i > k_orderc && i < k_maxconn; i--) {
 			//find first contracted index
 			if( new_conn[i] >= k_orderc ) {
 				//now find if there are any non-contracted indexes left
-				for(size_t j = i - 1; j >= k_orderc; j-- ) {
+				for(size_t j = i - 1; j >= k_orderc && j < k_maxconn; j-- ) {
 					if( new_conn[j] < k_orderc ) {
 						//move non-contracted index to the right by permuting it with the right most contracted index
 						m_perma.permute(i-k_orderc, j-k_orderc);
@@ -59,11 +66,11 @@ void to_contract2_perms<N, M, K>::make_perms(
 
 	} else { //the last index in A is a contracted index (from B)
 		//let's find which index has to be moved to the right and define permuted zone
-		for(size_t i = k_orderc+k_ordera-1; i > k_orderc ; i--) {
+		for(size_t i = k_orderc+k_ordera-1; i > k_orderc && i < k_maxconn; i--) {
 			//find first contracted index (from C)
 			if( new_conn[i] < k_orderc ) {
 				//now find if there are any contracted (from B) indexes left
-				for(size_t j = i - 1; j >= k_orderc; j-- ) {
+				for(size_t j = i - 1; j >= k_orderc && j < k_maxconn; j-- ) {
 					if( new_conn[j] >= k_orderc ) {
 						//move non-contracted index to the right by permuting it with the right most contracted index
 						m_perma.permute(i-k_orderc, j-k_orderc);
@@ -95,14 +102,14 @@ void to_contract2_perms<N, M, K>::make_perms(
 	if (new_conn[k_orderc -1] < k_orderc + k_ordera) { //last index is from A
 		//last indexes in A and C are already compared - no need to check
 		//let's find which index has to be moved to the right and define permuted zone
-		for(size_t i = k_orderc-1; i > 0 ; i--) {
+		for(size_t i = k_orderc-1; i > 0 && i < k_maxconn; i--) {
 			//find first index from B
 			if( new_conn[i] >= k_orderc + k_ordera ) {
 				//now find if there are any indexes from A left
-				for(size_t j = i - 1; j >= 0; j-- ) {
+				for(int j = i - 1; j >= 0; j-- ) {
 					if( new_conn[j] < k_orderc + k_ordera ) {
 						//move non-contracted index to the right by permuting it with the right most contracted index
-						m_perma.permute(i, j);
+						m_permc.permute(i, j);
 						//!!!!HERE WE HAVE TO CHANGE THE CONNECTION IN CONN
 						permute_conn(new_conn, i, j);
 						//define permuted zone if it was not define
@@ -122,7 +129,7 @@ void to_contract2_perms<N, M, K>::make_perms(
 	} else {// if last index is from B
 		//let's find which index has to be moved to the right and define permuted zone
 //		std::cout << "TEST1\n";
-		for(size_t i = k_orderc-1; i > 0 ; i--) {
+		for(size_t i = k_orderc-1; i > 0 && i < k_maxconn; i--) {
 			//find first index from A
 			if( new_conn[i] < k_orderc + k_ordera ) {
 				//now find if there are any indexes from B left
@@ -131,7 +138,7 @@ void to_contract2_perms<N, M, K>::make_perms(
 //						std::cout << "TEST2\n";
 //						std::cout << "i = " << i << ", j = " << j << ", new_conn[j] = " << new_conn[j] << "\n";
 						//move non-contracted index to the right by permuting it with the right most contracted index
-						m_perma.permute(i, j);
+						m_permc.permute(i, j);
 						//CHANGE THE CONNECTION IN CONN
 						permute_conn(new_conn, i, j);
 						//define permuted zone if it was not define
@@ -161,14 +168,14 @@ void to_contract2_perms<N, M, K>::make_perms(
 		//now all non-contracted indexes in B should be moved to the right and contracted - to the left.
 
 		//let's find which index has to be moved to the right and define permuted zone
-		for(size_t i = k_maxconn-1; i > k_orderc + k_ordera ; i--) {
+		for(size_t i = k_maxconn-1; i > k_orderc + k_ordera && i < k_maxconn; i--) {
 			//find first contracted index
 			if( new_conn[i] >= k_orderc ) {
 				//now find if there are any non-contracted indexes left
-				for(size_t j = i - 1; j >= k_orderc + k_ordera; j-- ) {
+				for(size_t j = i - 1; j >= k_orderc + k_ordera && i < k_maxconn; j-- ) {
 					if( new_conn[j] < k_orderc ) {
 						//move non-contracted index to the right by permuting it with the right most contracted index
-						m_perma.permute(i-k_orderc-k_ordera, j-k_orderc-k_ordera);
+						m_permb.permute(i-k_orderc-k_ordera, j-k_orderc-k_ordera);
 						//!!!!HERE WE HAVE TO CHANGE THE CONNECTION IN CONN
 						permute_conn(new_conn, i, j);
 						//define permuted zone if it was not define
@@ -187,14 +194,14 @@ void to_contract2_perms<N, M, K>::make_perms(
 
 	} else { //the last index in B a contracted index (from A)
 		//let's find which index has to be moved to the right and define permuted zone
-		for(size_t i = k_maxconn-1; i > k_orderc + k_ordera ; i--) {
+		for(size_t i = k_maxconn-1; i > k_orderc + k_ordera && i < k_maxconn; i--) {
 			//find first contracted index (from C)
 			if( new_conn[i] < k_orderc ) {
 				//now find if there are any contracted (from A) indexes left
-				for(size_t j = i - 1; j >= k_orderc + k_ordera; j-- ) {
+				for(size_t j = i - 1; j >= k_orderc + k_ordera && j < k_maxconn; j-- ) {
 					if( new_conn[j] >= k_orderc ) {
 						//move non-contracted index to the right by permuting it with the right most contracted index
-						m_perma.permute(i-k_orderc-k_ordera, j-k_orderc-k_ordera);
+						m_permb.permute(i-k_orderc-k_ordera, j-k_orderc-k_ordera);
 						//!!!!HERE WE HAVE TO CHANGE THE CONNECTION IN CONN
 						permute_conn(new_conn, i, j);
 						//define permuted zone if it was not define
@@ -226,9 +233,10 @@ void to_contract2_perms<N, M, K>::make_perms(
 	//difference between corresponding indexes in A and C, depends on the last index from C
 	//if last index in A is from C shift_a = 0, otherwise K (number of indexes from B in A)
 	size_t shift_a = (new_conn[k_orderc + k_ordera - 1] < k_orderc) ? 0 : K;
-	//difference between corresponding indexes in A and C, depends on the last index from C
+	//difference between corresponding indexes in C and A, depends on the last index from C
+	//if last index in C is from A shift_c = k_ordera - shift_a, otherwise k_ordera + M - shift_a (+ number of indexes from B in C)
 	size_t shift_c = (new_conn[k_orderc-1] < k_orderc+k_ordera) ? k_ordera - shift_a: k_ordera + M - shift_a;
-	for (size_t i = k_orderc+k_ordera - shift_a - 1; i > k_orderc+ K - shift_a; i--) {
+	for (size_t i = k_orderc+k_ordera - shift_a - 1; i > k_orderc+ K - shift_a && i < k_maxconn; i--) {
 		if(new_conn[i] != i - shift_c) { //index in C doesn't correspond to index in A
 			//which is easier to permute: A or C?
 			if( does_permute_first(dimsa, dimsc, i - k_orderc, i - shift_c, permute_zone_a, permute_zone_b)) { //A
@@ -258,7 +266,7 @@ void to_contract2_perms<N, M, K>::make_perms(
 	//difference between corresponding indexes in A and B, depends on the last index from B
 	//if last index in B is from A then shift_b = k_orderb + shift_ab
 	size_t shift_b = (new_conn[k_maxconn-1] >= k_orderc) ? k_orderb + shift_ab: k_orderb + shift_ab - M;
-	for (size_t i = k_orderc + k_ordera - shift_ab - 1; i > k_orderc + N - shift_ab; i--) {
+	for (size_t i = k_orderc + k_ordera - shift_ab - 1; i > k_orderc + N - shift_ab && i < k_maxconn ; i--) {
 		if(new_conn[i] != i + shift_b) { //index in B doesn't correspond to index in A
 			//which is easier to permute: A or B?
 			if( does_permute_first(dimsa, dimsb, i - k_orderc, i + shift_b - k_ordera -k_orderc, permute_zone_a, permute_zone_b )) { //A
@@ -286,9 +294,9 @@ void to_contract2_perms<N, M, K>::make_perms(
 	//if last index in C is from B shift_cb = 0, otherwise N (number of indexes from A in C)
 	size_t shift_cb = (new_conn[k_orderc - 1] >= k_orderc + k_ordera) ? 0 : N;
 	//difference between corresponding indexes in C and B, depends on the last index from B
-	//if last index in B is from C then shift_b = - k_order_b
-	shift_b = (new_conn[k_maxconn-1] < k_orderc) ? k_ordera + k_orderb + shift_cb: k_ordera + k_orderb + shift_a - K;
-	for (size_t i = k_orderc - shift_cb - 1; i > N - shift_cb; i--) {
+	//if last index in B is from C then shift_b = k_ordera + k_orderb + shift_cb
+	shift_b = (new_conn[k_maxconn-1] < k_orderc) ? k_ordera + k_orderb + shift_cb: k_ordera + k_orderb + shift_cb - K;
+	for (size_t i = k_orderc - shift_cb - 1; i > N - shift_cb && i < k_maxconn; i--) {
 		if(new_conn[i] != i + shift_b) { //index in B doesn't correspond to index in C
 			//which is easier to permute: C or B?
 			if( does_permute_first(dimsc, dimsb, i , i + shift_b - k_ordera -k_orderc, permute_zone_a, permute_zone_b )) { //A

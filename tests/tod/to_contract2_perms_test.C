@@ -26,6 +26,9 @@ void to_contract2_perms_test::perform() throw(libtest::test_exception) {
     test_ijk_jil_kl(5, 6, 70, 2);
     test_ijk_jil_kl(5, 6, 7, 20);
 
+    test_ijk_pik_pj(5, 6, 70, 2);
+    test_ijk_pik_pj(5, 6, 7, 20);
+
     test_ijab_ijkl_klab(5, 6, 7, 4, 6, 4);
     test_ijab_lijk_klab(5, 6, 7, 4, 20, 30);
 }
@@ -64,14 +67,13 @@ void to_contract2_perms_test::test_i_pi_p(size_t ni, size_t np)
     dimensions<1> dimsc(index_range<1>(ic1, ic2));
 
     contraction2<1, 0, 1> contr;
+    contr.contract(0, 0);
 
     to_contract2_perms<1, 0, 1> tocp(contr, dimsa, dimsb, dimsc);
 
     permutation<ordera> perma; //!< Permutation of the first input %tensor (a)
     permutation<orderb> permb; //!< Permutation of the second input %tensor (b)
     permutation<orderc> permc; //!< Permutation of the output %tensor (c)
-
-    perma.permute(0, 1);
 
 
 
@@ -380,6 +382,67 @@ void to_contract2_perms_test::test_ijk_jil_kl(size_t ni, size_t nj, size_t nk, s
 		if ( nk > nl)
 			perma.permute(0,1);
 		else
+			permc.permute(0,1);
+
+//	permutation<ordera> perma_calc = tocp.get_perma(); //!< Permutation of the first input %tensor (a)
+//		    for (int i = 0; i < ordera; i++) {
+//		    	std::cout << "perma[" << i << "] = " << perma_calc[i] << "\n";
+//		    }
+//		permutation<orderc> permc_calc = tocp.get_permc(); //!< Permutation of the first input %tensor (a)
+//		for (int i = 0; i < orderc; i++) {
+//		      	std::cout << "permc[" << i << "] = " << permc_calc[i] << "\n";
+//		}
+//			std::cout << "Test2";
+
+		if(!tocp.get_perma().equals(perma) || !tocp.get_permb().equals(permb) || !tocp.get_permc().equals(permc)) {
+			fail_test(tn.c_str(), __FILE__, __LINE__, "Bad perms.");
+		}
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+void to_contract2_perms_test::test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np)
+    throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "to_contract2_perms_test::test_ijk_pik_pj(" << ni << ", " << nj << ", "
+        << nk << ", " << np << ")";
+    std::string tn = tnss.str();
+
+    try {
+
+        const size_t ordera =3;
+        const size_t orderb =2;
+        const size_t orderc =3;
+
+
+		index<ordera> ia1, ia2;
+		ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nk - 1;
+		dimensions<ordera> dimsa(index_range<ordera>(ia1, ia2));
+
+
+		index<orderb> ib1, ib2;
+		ib2[0] = np - 1; ib2[1] = nj - 1;
+		dimensions<orderb> dimsb(index_range<orderb>(ib1, ib2));
+
+		index<orderc> ic1, ic2;
+		ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+		dimensions<orderc> dimsc(index_range<orderc>(ic1, ic2));
+
+	    permutation<3> permc_in;
+	    permc_in.permute(1, 2);
+	    contraction2<2, 1, 1> contr(permc_in);
+	    contr.contract(0,0);
+
+//		std::cout << "Test0 ";
+		to_contract2_perms<2, 1, 1> tocp(contr, dimsa, dimsb, dimsc);
+		permutation<ordera> perma; //!< Permutation of the first input %tensor (a)
+		permutation<orderb> permb; //!< Permutation of the second input %tensor (b)
+		permutation<orderc> permc; //!< Permutation of the output %tensor (c)
+//		std::cout << "Test1";
+
 			permc.permute(0,1);
 
 //	permutation<ordera> perma_calc = tocp.get_perma(); //!< Permutation of the first input %tensor (a)

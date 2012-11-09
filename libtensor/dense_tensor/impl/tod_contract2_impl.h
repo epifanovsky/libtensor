@@ -17,6 +17,7 @@
 #include "../dense_tensor_ctrl.h"
 #include "../tod_contract2.h"
 
+#include "../to_contract2_perms.h"
 
 namespace libtensor {
 
@@ -126,7 +127,12 @@ void tod_contract2<N, M, K>::perform(bool zero,
         for(typename std::list<args>::iterator i = m_argslst.begin();
             i != m_argslst.end(); ++i) {
             aligned_args ar(*i);
-            align(i->contr.get_conn(), ar.perma, ar.permb, ar.permc);
+
+            to_contract2_perms<N, M, K> tocp(i->contr, ar.ta.get_dims(), ar.tb.get_dims(), dimsc);
+            ar.perma.permute( tocp.get_perma() );
+            ar.permb.permute( tocp.get_permb() );
+            ar.permc.permute( tocp.get_permc() );
+//            align(i->contr.get_conn(), ar.perma, ar.permb, ar.permc);
             if(ar.d != 0.0) argslst.push_back(ar);
         }
         tod_contract2<N, M, K>::stop_timer("align");

@@ -16,6 +16,7 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../local_cublas_handle.h"
 #include "../cuda_tod_contract2.h"
+#include "../../dense_tensor/to_contract2_perms.h"
 
 
 namespace libtensor {
@@ -117,21 +118,28 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
 
     try {
 
+        dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
+        double *pc = cc.req_dataptr();
+        const dimensions<k_orderc> &dimsc = tc.get_dims();
+
         //  Pre-process the arguments by aligning indexes
 
-        cuda_tod_contract2::start_timer("align");
+    	cuda_tod_contract2::start_timer("align");
         std::list<aligned_args> argslst;
         for(typename std::list<args>::iterator i = m_argslst.begin();
             i != m_argslst.end(); ++i) {
             aligned_args ar(*i);
-            align(i->contr.get_conn(), ar.perma, ar.permb, ar.permc);
+            to_contract2_perms<N, M, K> tocp(i->contr, ar.ta.get_dims(), ar.tb.get_dims(), dimsc);
+            ar.perma.permute( tocp.get_perma() );
+            ar.permb.permute( tocp.get_permb() );
+            ar.permc.permute( tocp.get_permc() );
+
+            //align(i->contr.get_conn(), ar.perma, ar.permb, ar.permc);
             if(ar.d != 0.0) argslst.push_back(ar);
         }
         cuda_tod_contract2::stop_timer("align");
 
-        dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
-        double *pc = cc.req_dataptr();
-        const dimensions<k_orderc> &dimsc = tc.get_dims();
+
 
         //  Special case when no calculation is required
 
