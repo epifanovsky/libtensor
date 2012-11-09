@@ -1,11 +1,32 @@
 #ifndef LIBTENSOR_ORBIT_LIST_IMPL_H
 #define LIBTENSOR_ORBIT_LIST_IMPL_H
 
-#include <cstring> // for memchr
+#include <cstring>
+#include <libutil/threads/tls.h>
 #include <libtensor/core/abs_index.h>
 #include "../orbit_list.h"
 
 namespace libtensor {
+
+
+/** \brief Preallocated buffer for the orbit_list algorithm
+
+    This is a per-thread buffer that helps reduce the load on malloc/free,
+    one of the hotspots in the orbit_list algorithm.
+
+    \ingroup libtensor_core
+ **/
+class orbit_list_buffer {
+private:
+    std::vector<char> m_v;
+
+public:
+    orbit_list_buffer() { }
+
+    static std::vector<char> &get() {
+        return libutil::tls<orbit_list_buffer>::get_instance().get().m_v;
+    }
+};
 
 
 template<size_t N, typename T>
@@ -21,7 +42,12 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
 
     index<N> idx;
     size_t aidx = 0, n = m_dims.get_size();
-    std::vector<char> chk(n, 0);
+
+    std::vector<char> &chk = orbit_list_buffer::get();
+    if(chk.capacity() < n) chk.reserve(n);
+    chk.resize(n, 0);
+    ::memset(&chk[0], 0, n);
+
     const char *p0 = &chk[0];
     while(aidx < n) {
         const char *p = (const char*)::memchr(p0 + aidx, 0, n - aidx);
