@@ -153,88 +153,91 @@ void gen_bto_aux_add<N, Traits>::put(
 
     abs_index<N> aia(idx, m_bidims);
 
-    for(schedule_iterator igrp = m_asch.begin(); igrp != m_asch.end(); ++igrp) {
-
+    schedule_iterator igrp = m_asch.begin();
+    while(igrp != m_asch.end()) {
         const schedule_group &grp = m_asch.get_node(igrp);
-
-        bool contains = false;
-        for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
-            if(!inode->zeroa && inode->cia == aia.get_abs_index()) {
-                contains = true;
-                break;
-            }
+        group_iterator inode = grp.begin();
+        while(inode != grp.end()) {
+            if(!inode->zeroa && inode->cia == aia.get_abs_index()) break;
+            ++inode;
         }
-        if(!contains) continue;
+        if(inode != grp.end()) break;
+        ++igrp;
+    }
+    if(igrp == m_asch.end()) {
+        throw block_stream_exception(g_ns, k_clazz, "put()",
+            __FILE__, __LINE__, "Unexpected input block.");
+    }
 
-        bool touch = false;
-        libutil::mutex *mtx = 0;
-        {
-            libutil::auto_lock<libutil::mutex> lock(m_mtx);
+    const schedule_group &grp = m_asch.get_node(igrp);
 
-            if(m_grpmap.find(aia.get_abs_index()) == m_grpmap.end()) {
-                size_t grpnum = m_grpcount++;
-                for(group_iterator inode = grp.begin(); inode != grp.end();
-                    ++inode) if(!inode->zeroa) m_grpmap[inode->cia] = grpnum;
-                mtx = new libutil::mutex;
-                m_grpmtx.push_back(mtx);
-                touch = true;
-                mtx->lock();
-            } else {
-                size_t grpnum = m_grpmap[aia.get_abs_index()];
-                mtx = m_grpmtx[grpnum];
-            }
+    bool touch = false;
+    libutil::mutex *mtx = 0;
+    {
+        libutil::auto_lock<libutil::mutex> lock(m_mtx);
+
+        if(m_grpmap.find(aia.get_abs_index()) == m_grpmap.end()) {
+            size_t grpnum = m_grpcount++;
+            for(group_iterator inode = grp.begin(); inode != grp.end();
+                ++inode) if(!inode->zeroa) m_grpmap[inode->cia] = grpnum;
+            mtx = new libutil::mutex;
+            m_grpmtx.push_back(mtx);
+            touch = true;
+            mtx->lock();
+        } else {
+            size_t grpnum = m_grpmap[aia.get_abs_index()];
+            mtx = m_grpmtx[grpnum];
         }
+    }
 
-        //  Touch the group if necessary; group mutex is locked already
-        if(touch) {
+    //  Touch the group if necessary; group mutex is locked already
+    if(touch) {
 
-            try {
-                for(group_iterator inode = grp.begin(); inode != grp.end();
-                    ++inode) {
-
-                    //  Skip the canonical block in B
-                    if(inode->cib == inode->cic) continue;
-
-                    abs_index<N> aib(inode->cib, m_bidims),
-                        aic(inode->cic, m_bidims);
-
-                    //  Skip zero blocks
-                    if(m_cb.req_is_zero_block(aib.get_index())) continue;
-
-                    rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
-                    wr_block_type &blkc = m_cb.req_block(aic.get_index());
-                    to_copy_type(blkb, inode->trb).perform(true, blkc);
-                    m_cb.ret_const_block(aib.get_index());
-                    m_cb.ret_block(aic.get_index());
-                }
-            } catch(...) {
-                mtx->unlock();
-                throw;
-            }
-
-            mtx->unlock();
-        }
-
-        //  Add contribution from A
-        {
-            libutil::auto_lock<libutil::mutex> lock(*mtx);
-
+        try {
             for(group_iterator inode = grp.begin(); inode != grp.end();
                 ++inode) {
 
-                //  Skip non-pertinent nodes
-                if(inode->zeroa || inode->cia != aia.get_abs_index()) continue;
+                //  Skip the canonical block in B
+                if(inode->cib == inode->cic) continue;
 
-                abs_index<N> aic(inode->cic, m_bidims);
-                bool zeroc = m_cb.req_is_zero_block(aic.get_index());
+                abs_index<N> aib(inode->cib, m_bidims),
+                    aic(inode->cic, m_bidims);
 
+                //  Skip zero blocks
+                if(m_cb.req_is_zero_block(aib.get_index())) continue;
+
+                rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
                 wr_block_type &blkc = m_cb.req_block(aic.get_index());
-                tensor_transf<N, element_type> tra(tr);
-                tra.transform(inode->tra);
-                tra.transform(m_c);
-                to_copy_type(blk, tra).perform(zeroc, blkc);
+                to_copy_type(blkb, inode->trb).perform(true, blkc);
+                m_cb.ret_const_block(aib.get_index());
                 m_cb.ret_block(aic.get_index());
             }
+        } catch(...) {
+            mtx->unlock();
+            throw;
+        }
+
+        mtx->unlock();
+    }
+
+    //  Add contribution from A
+    {
+        libutil::auto_lock<libutil::mutex> lock(*mtx);
+
+        for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
+
+            //  Skip non-pertinent nodes
+            if(inode->zeroa || inode->cia != aia.get_abs_index()) continue;
+
+            abs_index<N> aic(inode->cic, m_bidims);
+            bool zeroc = m_cb.req_is_zero_block(aic.get_index());
+
+            wr_block_type &blkc = m_cb.req_block(aic.get_index());
+            tensor_transf<N, element_type> tra(tr);
+            tra.transform(inode->tra);
+            tra.transform(m_c);
+            to_copy_type(blk, tra).perform(zeroc, blkc);
+            m_cb.ret_block(aic.get_index());
         }
     }
 }
