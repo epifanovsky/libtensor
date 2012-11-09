@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_SE_PART_H
 #define LIBTENSOR_SE_PART_H
 
-#include <libtensor/core/symmetry_element_i.h>
+#include <vector>
 #include <libtensor/core/abs_index.h>
+#include <libtensor/core/symmetry_element_i.h>
 
 namespace libtensor {
 
@@ -38,9 +39,10 @@ private:
     dimensions<N> m_bidims; //!< Block %index space dimensions
     dimensions<N> m_bipdims; //!< Block %index space dimensions of one partition
     dimensions<N> m_pdims; //!< Partition dimensions
-    size_t *m_fmap; //!< Forward mapping
-    size_t *m_rmap; //!< Reverse mapping
-    scalar_transf<T> *m_ftr; //!< Transforms of the mappings
+    std::vector< size_t > m_fmap; //!< Forward mapping
+    std::vector< index<N> > m_fmapi; //!< Forward mapping copy (index version)
+    std::vector< size_t > m_rmap; //!< Reverse mapping
+    std::vector< scalar_transf<T> > m_ftr; //!< Transforms of the mappings
 
 public:
     //!    \name Construction and destruction / assignment
@@ -121,7 +123,7 @@ public:
         \param idx Start index of map.
         \return End index of the direct map.
     **/
-    index<N> get_direct_map(const index<N> &idx) const;
+    const index<N> &get_direct_map(const index<N> &idx) const;
 
     /** \brief Returns the sign of the map between the two indexes.
         \param from First index.
@@ -210,11 +212,9 @@ private:
 
 
 template<size_t N, typename T>
-inline
-bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
+inline bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
 
-    abs_index<N> apidx(idx, m_pdims);
-    return (m_fmap[apidx.get_abs_index()] == (size_t) -1);
+    return (m_fmap[abs_index<N>::get_abs_index(idx, m_pdims)] == size_t(-1));
 }
 
 
