@@ -53,8 +53,7 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
         const char *p = (const char*)::memchr(p0 + aidx, 0, n - aidx);
         if(p == 0) break;
         aidx = p - p0;
-        abs_index<N>::get_index(aidx, m_dims, idx);
-        if(mark_orbit(sym, idx, chk)) m_orb.push_back(aidx);
+        if(mark_orbit(sym, aidx, chk)) m_orb.push_back(aidx);
     }
 
     orbit_list::stop_timer();
@@ -62,30 +61,43 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
 
 
 template<size_t N, typename T>
-bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym,
-    const index<N> &idx, std::vector<char> &chk) {
+bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
+    std::vector<char> &chk) {
 
-    size_t aidx = abs_index<N>::get_abs_index(idx, m_dims);
-    if(chk[aidx]) return true;
+    std::vector<size_t> q;
+    q.reserve(32);
 
     bool allowed = true;
-    chk[aidx] = 1;
+    q.push_back(aidx0);
+    chk[aidx0] = 1;
 
-    for(typename symmetry<N, T>::iterator iset = sym.begin();
-        iset != sym.end(); ++iset) {
+    index<N> idx;
+    while(!q.empty()) {
 
-        const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
-        for(typename symmetry_element_set<N, T>::const_iterator ielem =
-            eset.begin(); ielem != eset.end(); ++ielem) {
+        size_t aidx = q.back();
+        q.pop_back();
+        abs_index<N>::get_index(aidx, m_dims, idx);
 
-            const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
-            if(allowed) allowed = elem.is_allowed(idx);
-            index<N> idx2(idx);
-            elem.apply(idx2);
-            bool allowed2 = mark_orbit(sym, idx2, chk);
-            allowed = allowed && allowed2;
+        for(typename symmetry<N, T>::iterator iset = sym.begin();
+            iset != sym.end(); ++iset) {
+
+            const symmetry_element_set<N, T> &eset = sym.get_subset(iset);
+            for(typename symmetry_element_set<N, T>::const_iterator ielem =
+                eset.begin(); ielem != eset.end(); ++ielem) {
+
+                const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
+                if(allowed) allowed = elem.is_allowed(idx);
+                index<N> idx2(idx);
+                elem.apply(idx2);
+                size_t aidx2 = abs_index<N>::get_abs_index(idx2, m_dims);
+                if(chk[aidx2] == 0) {
+                    q.push_back(aidx2);
+                    chk[aidx2] = 1;
+                }
+            }
         }
     }
+
     return allowed;
 }
 

@@ -91,7 +91,7 @@ public:
     }
 
 private:
-    bool mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
+    bool mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
         std::vector<char> &chk);
 
 };
