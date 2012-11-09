@@ -66,6 +66,20 @@ void gen_bto_aux_add<N, Traits>::open() {
     so_merge<N + N, N, element_type>(symx, msk, seq).
         perform(m_cb.req_symmetry());
 
+    //  Prepare group lookup table
+
+    m_schgrp.clear();
+    for(schedule_iterator igrp = m_asch.begin(); igrp != m_asch.end(); ++igrp) {
+
+        const schedule_group &grp = m_asch.get_node(igrp);
+
+        for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
+            if(!inode->zeroa) {
+                m_schgrp.insert(std::make_pair(inode->cia, &grp));
+            }
+        }
+    }
+
     m_open = true;
 }
 
@@ -140,12 +154,6 @@ void gen_bto_aux_add<N, Traits>::put(
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
-    typedef addition_schedule<N, Traits> schedule_type;
-    typedef typename schedule_type::iterator schedule_iterator;
-    typedef typename schedule_type::schedule_group schedule_group;
-    typedef typename schedule_type::node schedule_node;
-    typedef typename std::list<schedule_node>::const_iterator group_iterator;
-
     if(!m_open) {
         throw block_stream_exception(g_ns, k_clazz, "put()",
             __FILE__, __LINE__, "Stream is not ready.");
@@ -153,23 +161,13 @@ void gen_bto_aux_add<N, Traits>::put(
 
     abs_index<N> aia(idx, m_bidims);
 
-    schedule_iterator igrp = m_asch.begin();
-    while(igrp != m_asch.end()) {
-        const schedule_group &grp = m_asch.get_node(igrp);
-        group_iterator inode = grp.begin();
-        while(inode != grp.end()) {
-            if(!inode->zeroa && inode->cia == aia.get_abs_index()) break;
-            ++inode;
-        }
-        if(inode != grp.end()) break;
-        ++igrp;
-    }
-    if(igrp == m_asch.end()) {
+    typename std::map<size_t, const schedule_group*>::const_iterator igrp =
+        m_schgrp.find(aia.get_abs_index());
+    if(igrp == m_schgrp.end()) {
         throw block_stream_exception(g_ns, k_clazz, "put()",
             __FILE__, __LINE__, "Unexpected input block.");
     }
-
-    const schedule_group &grp = m_asch.get_node(igrp);
+    const schedule_group &grp = *igrp->second;
 
     bool touch = false;
     libutil::mutex *mtx = 0;
