@@ -2,6 +2,7 @@
 #define LIBTENSOR_SE_PART_IMPL_H
 
 #include <algorithm>
+#include <libtensor/core/impl/magic_dimensions_impl.h>
 #include "../bad_symmetry.h"
 #include "../se_part.h"
 
