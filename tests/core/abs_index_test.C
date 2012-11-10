@@ -417,8 +417,6 @@ void abs_index_test::test_get_index_1() throw(libtest::test_exception) {
     i_ref[0] = 2; i_ref[1] = 3;
     abs_index<2>::get_index(25, dims, i1);
     abs_index<2>::get_index(25, mdims, i2);
-    std::cout << i1 << std::endl;
-    std::cout << i2 << std::endl;
 
     if(!i1.equals(i_ref)) {
         fail_test(testname, __FILE__, __LINE__, "!i1.equals(i_ref)");
