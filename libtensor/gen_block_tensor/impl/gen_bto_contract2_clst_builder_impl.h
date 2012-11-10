@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_CLST_BUILDER_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_CLST_BUILDER_IMPL_H
 
-#include <set>
+#include <cstring>
+#include <libutil/threads/tls.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
@@ -9,6 +10,19 @@
 #include "gen_bto_contract2_clst_builder.h"
 
 namespace libtensor {
+
+
+class gen_bto_contract2_clst_builder_buffer {
+private:
+    std::vector<char> m_v;
+
+public:
+    static std::vector<char> &get_v() {
+        return libutil::tls<gen_bto_contract2_clst_builder_buffer>::
+            get_instance().get().m_v;
+    }
+
+};
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
@@ -78,17 +92,24 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
         }
     }
     dimensions<K> bidimsk(index_range<K>(ik1, ik2));
-    std::set<size_t> ikset;
     size_t nk = bidimsk.get_size();
-    for(size_t i = 0; i < nk; i++) ikset.insert(i);
+    std::vector<char> &chk = gen_bto_contract2_clst_builder_buffer::get_v();
+    chk.resize(nk, 0);
+    ::memset(&chk[0], 1, nk);
 
-    while(!ikset.empty()) {
+    size_t aik = 0;
+    const char *p0 = &chk[0];
+    while(aik < nk) {
+
+        const char *p = (const char*)::memchr(p0 + aik, 1, nk - aik);
+        if(p == 0) break;
+        aik = p - p0;
 
         index<NA> ia;
         index<NB> ib;
         const index<NC> &ic = m_ic;
         index<K> ik;
-        abs_index<K>::get_index(*ikset.begin(), bidimsk, ik);
+        abs_index<K>::get_index(aik, bidimsk, ik);
         sequence<K, size_t> ka(0), kb(0);
 
         //  Determine ia, ib from ic, ik
@@ -111,7 +132,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
         size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
         size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
         if(!m_blka.contains(aia) || !m_blkb.contains(aib)) {
-            ikset.erase(ikset.begin());
+            chk[aik] = 0;
             continue;
         }
 
@@ -148,7 +169,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
             clst.push_back(contr_pair(
                 oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
                 ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
-            ikset.erase(abs_index<K>::get_abs_index(ika, bidimsk));
+            chk[abs_index<K>::get_abs_index(ika, bidimsk)] = 0;
         }
 
         coalesce(clst);
