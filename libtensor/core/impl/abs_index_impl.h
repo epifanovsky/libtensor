@@ -2,7 +2,7 @@
 #define LIBTENSOR_ABS_INDEX_IMPL_H
 
 #include <libtensor/core/out_of_bounds.h>
-#include "libdivide.h"
+#include "magic_dimensions_impl.h"
 #include "../abs_index.h"
 
 namespace libtensor {
@@ -107,13 +107,34 @@ void abs_index<N>::get_index(size_t aidx, const dimensions<N> &dims,
     }
 #endif // LIBTENSOR_DEBUG
 
-    uint64_t a = aidx;
+    size_t a = aidx;
     size_t imax = N - 1;
     for(register size_t i = 0; i < imax; i++) {
-        uint64_t dinc = dims.get_increment(i);
-        libdivide::divider<uint64_t> dinc_div(dinc);
-        idx[i] = a / dinc_div;
-        a -= idx[i] * dinc;
+        idx[i] = a / dims.get_increment(i);
+        a %= dims.get_increment(i);
+    }
+    idx[N - 1] = a;
+}
+
+
+template<size_t N>
+void abs_index<N>::get_index(size_t aidx, const magic_dimensions<N> &mdims,
+    index<N> &idx) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method =
+        "get_index(size_t, const dimensions<N>&, index<N>&)";
+
+    if(aidx >= mdims.get_dims().get_size()) {
+        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "aidx");
+    }
+#endif // LIBTENSOR_DEBUG
+
+    uint64_t a = aidx;
+    for(register size_t i = 0; i < N - 1; i++) {
+        idx[i] = a / mdims[i];
+        std::cout << a << "/" << mdims.get_dims().get_increment(i) << " = " << idx[i] << std::endl;
+        a -= idx[i] * mdims.get_dims().get_increment(i);
     }
     idx[N - 1] = a;
 }

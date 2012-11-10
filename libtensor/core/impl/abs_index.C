@@ -22,4 +22,12 @@ template class abs_index<15>;
 template class abs_index<16>;
 
 
+template class magic_dimensions<1>;
+template class magic_dimensions<2>;
+template class magic_dimensions<3>;
+template class magic_dimensions<4>;
+template class magic_dimensions<5>;
+template class magic_dimensions<6>;
+
+
 } // namespace libtensor

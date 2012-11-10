@@ -3,6 +3,7 @@
 
 #include "index.h"
 #include "dimensions.h"
+#include "magic_dimensions.h"
 
 namespace libtensor {
 
@@ -120,13 +121,22 @@ public:
      **/
     static size_t get_abs_index(const index<N> &idx, const dimensions<N> &dims);
 
-    /** \brief Computes the %index from its absolute value within the given
-            %dimensions
+    /** \brief Computes the index from its absolute value within the given
+            dimensions
         \param aidx Absolute value of the %index.
         \param dims Dimensions.
         \param[out] idx Index within the %dimensions.
      **/
     static void get_index(size_t aidx, const dimensions<N> &dims,
+        index<N> &idx);
+
+    /** \brief Computes the index from its absolute value within the given
+            dimensions
+        \param aidx Absolute value of the index.
+        \param mdims Magic dimensions.
+        \param[out] idx Index within the dimensions.
+     **/
+    static void get_index(size_t aidx, const magic_dimensions<N> &mdims,
         index<N> &idx);
 
     //@}

@@ -16,6 +16,7 @@ void abs_index_test::perform() throw(libtest::test_exception) {
     test_inc_3();
     test_inc_4();
     test_last_1();
+    test_get_index_1();
 }
 
 
@@ -393,6 +394,37 @@ void abs_index_test::test_last_1() throw(libtest::test_exception) {
     if(!ii2.is_last()) {
         fail_test(testname, __FILE__, __LINE__,
             "[1,1,1,1] returns is_last() = false in [2,2,2,2]");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void abs_index_test::test_get_index_1() throw(libtest::test_exception) {
+
+    static const char *testname = "abs_index_test::test_get_index_1()";
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 5; i2[1] = 10;
+    dimensions<2> dims(index_range<2>(i1, i2));
+    magic_dimensions<2> mdims(dims);
+
+    index<2> i_ref;
+    i_ref[0] = 2; i_ref[1] = 3;
+    abs_index<2>::get_index(25, dims, i1);
+    abs_index<2>::get_index(25, mdims, i2);
+    std::cout << i1 << std::endl;
+    std::cout << i2 << std::endl;
+
+    if(!i1.equals(i_ref)) {
+        fail_test(testname, __FILE__, __LINE__, "!i1.equals(i_ref)");
+    }
+    if(!i2.equals(i_ref)) {
+        fail_test(testname, __FILE__, __LINE__, "!i2.equals(i_ref)");
     }
 
     } catch(exception &e) {
