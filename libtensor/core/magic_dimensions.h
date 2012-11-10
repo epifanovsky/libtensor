@@ -13,7 +13,13 @@ namespace libtensor {
     a bottleneck in calculations with small blocks. The hotspot is integer
     divisions. This class uses libdivide to alleviate the problem.
 
-    \sa dimensions
+    Magic dimensions are created based on regular dimensions with one parameter:
+     - incs = true: use tensor modes' linear increments (can be used to convert
+       absolute indexes to multi-indexes via abs_index<N>::get_index).
+     - incs = false: use tensor dimensions (can be used to find to which block
+       an index belongs).
+
+    \sa abs_index, dimensions, index
 
     \ingroup libtensor_core
  **/
@@ -24,7 +30,7 @@ private:
     sequence<N, libdivide::divider<uint64_t> > m_magic;
 
 public:
-    magic_dimensions(const dimensions<N> &dims);
+    magic_dimensions(const dimensions<N> &dims, bool incs);
 
     const dimensions<N> &get_dims() const {
         return m_dims;

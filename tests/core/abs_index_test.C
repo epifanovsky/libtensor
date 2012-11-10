@@ -411,7 +411,7 @@ void abs_index_test::test_get_index_1() throw(libtest::test_exception) {
     index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
-    magic_dimensions<2> mdims(dims);
+    magic_dimensions<2> mdims(dims, true);
 
     index<2> i_ref;
     i_ref[0] = 2; i_ref[1] = 3;

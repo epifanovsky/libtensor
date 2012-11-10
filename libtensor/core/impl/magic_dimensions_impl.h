@@ -7,12 +7,18 @@ namespace libtensor {
 
 
 template<size_t N>
-magic_dimensions<N>::magic_dimensions(const dimensions<N> &dims) :
+magic_dimensions<N>::magic_dimensions(const dimensions<N> &dims, bool incs) :
 
     m_dims(dims) {
 
-    for(size_t i = 0; i < N; i++) {
-        m_magic[i] = libdivide::divider<uint64_t>(m_dims.get_increment(i));
+    if(incs) {
+        for(size_t i = 0; i < N; i++) {
+            m_magic[i] = libdivide::divider<uint64_t>(m_dims.get_increment(i));
+        }
+    } else {
+        for(size_t i = 0; i < N; i++) {
+            m_magic[i] = libdivide::divider<uint64_t>(m_dims.get_dim(i));
+        }
     }
 }
 

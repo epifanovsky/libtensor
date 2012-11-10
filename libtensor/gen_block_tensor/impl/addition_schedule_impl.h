@@ -132,7 +132,7 @@ void addition_schedule<N, Traits>::mark_orbits(
     std::vector<char> &o) {
 
     dimensions<N> bidims = sym.get_bis().get_block_index_dims();
-    magic_dimensions<N> mbidims(bidims);
+    magic_dimensions<N> mbidims(bidims, true);
 
     std::vector<size_t> q, q2;
     q.reserve(32);

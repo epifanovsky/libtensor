@@ -36,8 +36,9 @@ public:
 
 private:
     block_index_space<N> m_bis; //!< Block %index space
-    dimensions<N> m_bidims; //!< Block %index space dimensions
-    dimensions<N> m_bipdims; //!< Block %index space dimensions of one partition
+    dimensions<N> m_bidims; //!< Block index space dimensions
+    dimensions<N> m_bipdims; //!< Block index space dimensions of one partition
+    magic_dimensions<N> m_mbipdims; //!< Magic m_bipdims
     dimensions<N> m_pdims; //!< Partition dimensions
     std::vector< size_t > m_fmap; //!< Forward mapping
     std::vector< index<N> > m_fmapi; //!< Forward mapping copy (index version)

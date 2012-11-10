@@ -25,7 +25,7 @@ namespace libtensor {
     This class provides methods to work with the full index and its absolute
     value simultaneously, as well as static methods to perform conversion.
 
-    \sa index, dimensions
+    \sa index, dimensions, magic_dimensions
 
     \ingroup libtensor_core
  **/
@@ -133,7 +133,7 @@ public:
     /** \brief Computes the index from its absolute value within the given
             dimensions
         \param aidx Absolute value of the index.
-        \param mdims Magic dimensions.
+        \param mdims Magic dimensions (must have been created with incs = true).
         \param[out] idx Index within the dimensions.
      **/
     static void get_index(size_t aidx, const magic_dimensions<N> &mdims,

@@ -27,6 +27,7 @@ se_part<N, T>::se_part(
     m_pdims(make_pdims(bis, msk, npart)),
     m_bipdims(make_bipdims(
         m_bis.get_block_index_dims(), make_pdims(bis, msk, npart))),
+    m_mbipdims(m_bipdims, false),
     m_fmap(m_pdims.get_size()),
     m_fmapi(m_pdims.get_size()),
     m_rmap(m_pdims.get_size()),
@@ -49,6 +50,7 @@ se_part<N, T>::se_part(
     m_bidims(m_bis.get_block_index_dims()),
     m_pdims(pdims),
     m_bipdims(make_bipdims(m_bis.get_block_index_dims(), pdims)),
+    m_mbipdims(m_bipdims, false),
     m_fmap(m_pdims.get_size()),
     m_fmapi(m_pdims.get_size()),
     m_rmap(m_pdims.get_size()),
@@ -78,6 +80,7 @@ se_part<N, T>::se_part(const se_part<N, T> &elem) :
     m_bidims(elem.m_bidims),
     m_pdims(elem.m_pdims),
     m_bipdims(elem.m_bipdims),
+    m_mbipdims(elem.m_mbipdims),
     m_fmap(elem.m_fmap),
     m_fmapi(elem.m_fmapi),
     m_rmap(elem.m_rmap),
@@ -287,7 +290,7 @@ bool se_part<N, T>::is_allowed(const index<N> &idx) const {
 
     index<N> pidx;
     for(register size_t i = 0; i < N; i++) {
-        pidx[i] = idx[i] / m_bipdims[i];
+        pidx[i] = idx[i] / m_mbipdims[i];
     }
 
     return !is_forbidden(pidx);
@@ -302,6 +305,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
     m_bis.permute(perm);
     m_bidims.permute(perm);
     m_bipdims.permute(perm);
+    m_mbipdims = magic_dimensions<N>(m_bipdims, false);
 
     bool affects_map = false;
     for(size_t i = 0; i < N; i++) {
@@ -356,7 +360,7 @@ void se_part<N, T>::apply(index<N> &idx) const {
     //
     index<N> pidx1;
     for(register size_t i = 0; i < N; i++) {
-        pidx1[i] = idx[i] / m_bipdims[i];
+        pidx1[i] = idx[i] / m_mbipdims[i];
     }
 
     //  Map the partition index
@@ -380,7 +384,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
     //
     index<N> pidx1;
     for(register size_t i = 0; i < N; i++) {
-        pidx1[i] = idx[i] / m_bipdims[i];
+        pidx1[i] = idx[i] / m_mbipdims[i];
     }
 
     //  Map the partition index
