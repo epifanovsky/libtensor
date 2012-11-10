@@ -2,9 +2,43 @@
 #define LIBTENSOR_ORBIT_IMPL_H
 
 #include <vector>
+#include <libutil/threads/tls.h>
 #include "../orbit.h"
 
 namespace libtensor {
+
+
+template<size_t N, typename T>
+class orbit_buffer {
+private:
+    std::vector< index<N> > m_qi, m_ti;
+    std::vector< tensor_transf<N, T> > m_qt, m_tt;
+
+public:
+    orbit_buffer() {
+        m_qi.reserve(32);
+        m_ti.reserve(32);
+        m_qt.reserve(32);
+        m_tt.reserve(32);
+    }
+
+    static std::vector< index<N> > &get_qi() {
+        return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_qi;
+    }
+
+    static std::vector< index<N> > &get_ti() {
+        return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_ti;
+    }
+
+    static std::vector< tensor_transf<N, T> >&get_qt() {
+        return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_qt;
+    }
+
+    static std::vector< tensor_transf<N, T> > &get_tt() {
+        return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_tt;
+    }
+
+};
 
 
 template<size_t N, typename T>
@@ -120,22 +154,21 @@ const tensor_transf<N, T> &orbit<N, T>::get_transf(const iterator &i) const {
 
 template<size_t N, typename T>
 void orbit<N, T>::build_orbit(const symmetry<N, T> &sym,
-const abs_index<N> &aidx) {
+    const abs_index<N> &aidx) {
 
     typedef index<N> index_type;
 
     //  Queue
-    std::vector<index_type> qi;
-    std::vector<tensor_transf_type> qt;
+    std::vector<index_type> &qi = orbit_buffer<N, T>::get_qi();
+    std::vector<tensor_transf_type> &qt = orbit_buffer<N, T>::get_qt();
+    qi.clear();
+    qt.clear();
 
     //  Current indexes
-    std::vector<index_type> ti;
-    std::vector<tensor_transf_type> tt;
-
-    qi.reserve(32);
-    qt.reserve(32);
-    ti.reserve(32);
-    tt.reserve(32);
+    std::vector<index_type> &ti = orbit_buffer<N, T>::get_ti();
+    std::vector<tensor_transf_type> &tt = orbit_buffer<N, T>::get_tt();
+    ti.clear();
+    tt.clear();
 
     tensor_transf_type tr1; // Identity transformation
 
