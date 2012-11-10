@@ -132,6 +132,7 @@ void addition_schedule<N, Traits>::mark_orbits(
     std::vector<char> &o) {
 
     dimensions<N> bidims = sym.get_bis().get_block_index_dims();
+    magic_dimensions<N> mbidims(bidims);
 
     std::vector<size_t> q, q2;
     q.reserve(32);
@@ -155,7 +156,7 @@ void addition_schedule<N, Traits>::mark_orbits(
 
             size_t aidx = q.back();
             q.pop_back();
-            abs_index<N>::get_index(aidx, bidims, idx);
+            abs_index<N>::get_index(aidx, mbidims, idx);
 
             for(typename symmetry<N, element_type>::iterator iset = sym.begin();
                 iset != sym.end(); ++iset) {

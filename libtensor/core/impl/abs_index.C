@@ -28,6 +28,8 @@ template class magic_dimensions<3>;
 template class magic_dimensions<4>;
 template class magic_dimensions<5>;
 template class magic_dimensions<6>;
+template class magic_dimensions<7>;
+template class magic_dimensions<8>;
 
 
 } // namespace libtensor

@@ -72,6 +72,7 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
     chk[aidx0] = 1;
 
     index<N> idx;
+    magic_dimensions<N> mdims(m_dims);
     while(!q.empty()) {
 
         size_t aidx = q.back();
