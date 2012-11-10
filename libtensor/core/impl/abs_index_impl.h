@@ -72,15 +72,20 @@ template<size_t N>
 size_t abs_index<N>::get_abs_index(const index<N> &idx,
     const dimensions<N> &dims) {
 
+#ifdef LIBTENSOR_DEBUG
     static const char *method =
         "get_abs_index(const index<N>&, const dimensions<N>&)";
 
-    size_t aidx = 0;
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(idx[i] >= dims[i]) {
             throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "idx");
         }
+    }
+#endif // LIBTENSOR_DEBUG
+
+    size_t aidx = 0;
+    for(register size_t i = 0; i < N; i++) {
         aidx += dims.get_increment(i) * idx[i];
     }
 
@@ -92,12 +97,14 @@ template<size_t N>
 void abs_index<N>::get_index(size_t aidx, const dimensions<N> &dims,
     index<N> &idx) {
 
+#ifdef LIBTENSOR_DEBUG
     static const char *method =
         "get_index(size_t, const dimensions<N>&, index<N>&)";
 
     if(aidx >= dims.get_size()) {
         throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "aidx");
     }
+#endif // LIBTENSOR_DEBUG
 
     size_t a = aidx;
     size_t imax = N - 1;
