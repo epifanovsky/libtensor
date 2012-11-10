@@ -2,6 +2,7 @@
 #define LIBTENSOR_ABS_INDEX_IMPL_H
 
 #include <libtensor/core/out_of_bounds.h>
+#include "libdivide.h"
 #include "../abs_index.h"
 
 namespace libtensor {
@@ -106,11 +107,13 @@ void abs_index<N>::get_index(size_t aidx, const dimensions<N> &dims,
     }
 #endif // LIBTENSOR_DEBUG
 
-    size_t a = aidx;
+    uint64_t a = aidx;
     size_t imax = N - 1;
     for(register size_t i = 0; i < imax; i++) {
-        idx[i] = a / dims.get_increment(i);
-        a %= dims.get_increment(i);
+        uint64_t dinc = dims.get_increment(i);
+        libdivide::divider<uint64_t> dinc_div(dinc);
+        idx[i] = a / dinc_div;
+        a -= idx[i] * dinc;
     }
     idx[N - 1] = a;
 }
