@@ -19,13 +19,21 @@ namespace libtensor {
 class orbit_list_buffer {
 private:
     std::vector<char> m_v;
+    std::vector<size_t> m_q;
 
 public:
-    orbit_list_buffer() { }
+    orbit_list_buffer() {
+        m_q.reserve(32);
+    }
 
-    static std::vector<char> &get() {
+    static std::vector<char> &get_v() {
         return libutil::tls<orbit_list_buffer>::get_instance().get().m_v;
     }
+
+    static std::vector<size_t> &get_q() {
+        return libutil::tls<orbit_list_buffer>::get_instance().get().m_q;
+    }
+
 };
 
 
@@ -43,7 +51,7 @@ orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
     index<N> idx;
     size_t aidx = 0, n = m_dims.get_size();
 
-    std::vector<char> &chk = orbit_list_buffer::get();
+    std::vector<char> &chk = orbit_list_buffer::get_v();
     if(chk.capacity() < n) chk.reserve(n);
     chk.resize(n, 0);
     ::memset(&chk[0], 0, n);
@@ -64,10 +72,10 @@ template<size_t N, typename T>
 bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
     std::vector<char> &chk) {
 
-    std::vector<size_t> q;
-    q.reserve(32);
+    std::vector<size_t> &q = orbit_list_buffer::get_q();
 
     bool allowed = true;
+    q.clear();
     q.push_back(aidx0);
     chk[aidx0] = 1;
 
