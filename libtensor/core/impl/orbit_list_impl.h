@@ -77,7 +77,7 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
 
         size_t aidx = q.back();
         q.pop_back();
-        abs_index<N>::get_index(aidx, m_dims, idx);
+        abs_index<N>::get_index(aidx, mdims, idx);
 
         for(typename symmetry<N, T>::iterator iset = sym.begin();
             iset != sym.end(); ++iset) {
