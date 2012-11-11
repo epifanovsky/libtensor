@@ -44,7 +44,8 @@ const char *orbit_list<N, T>::k_clazz = "orbit_list<N, T>";
 template<size_t N, typename T>
 orbit_list<N, T>::orbit_list(const symmetry<N, T> &sym) :
 
-    m_dims(sym.get_bis().get_block_index_dims()) {
+    m_dims(sym.get_bis().get_block_index_dims()),
+    m_mdims(m_dims, true) {
 
     orbit_list::start_timer();
 
@@ -80,12 +81,11 @@ bool orbit_list<N, T>::mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
     chk[aidx0] = 1;
 
     index<N> idx;
-    magic_dimensions<N> mdims(m_dims, true);
     while(!q.empty()) {
 
         size_t aidx = q.back();
         q.pop_back();
-        abs_index<N>::get_index(aidx, mdims, idx);
+        abs_index<N>::get_index(aidx, m_mdims, idx);
 
         for(typename symmetry<N, T>::iterator iset = sym.begin();
             iset != sym.end(); ++iset) {
