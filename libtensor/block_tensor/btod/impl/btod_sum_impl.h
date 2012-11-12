@@ -7,6 +7,7 @@
 #include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
+#include <libtensor/core/subgroup_orbits.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
@@ -176,45 +177,26 @@ void btod_sum<N>::make_schedule() const {
     delete m_sch;
     m_sch = new assignment_schedule<N, double>(m_bidims);
 
-    orbit_list<N, double> ol(m_sym);
-    std::list< orbit_list<N, double>* > op_ol;
     for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); iop++) {
-        op_ol.push_back(new orbit_list<N, double>(
-            iop->get_op().get_symmetry()));
-    }
+        iop != m_ops.end(); ++iop) {
 
-    for(typename orbit_list<N, double>::iterator io = ol.begin();
-        io != ol.end(); io++) {
+        const symmetry<N, double> &sym1 = iop->get_op().get_symmetry();
+        const assignment_schedule<N, double> &sch1 =
+            iop->get_op().get_schedule();
 
-        bool zero = true;
-        typename std::list< orbit_list<N, double>* >::iterator iol =
-            op_ol.begin();
-        for(typename std::list<node_t>::iterator iop = m_ops.begin();
-            zero && iop != m_ops.end(); iop++) {
+        for(typename assignment_schedule<N, double>::iterator i = sch1.begin();
+            i != sch1.end(); ++i) {
 
-            if(!(*iol)->contains(ol.get_abs_index(io))) {
-                orbit<N, double> o(iop->get_op().get_symmetry(),
-                    ol.get_abs_index(io));
-                if(!o.is_allowed()) continue;
-                if(iop->get_op().get_schedule().contains(
-                    o.get_abs_canonical_index())) {
-                    zero = false;
-                }
-            } else {
-                if(iop->get_op().get_schedule().contains(
-                    ol.get_abs_index(io))) {
-                    zero = false;
-                }
+            subgroup_orbits<N, double> so(sym1, m_sym, sch1.get_abs_index(i));
+
+            for(typename subgroup_orbits<N, double>::iterator j = so.begin();
+                j != so.end(); ++j) {
+
+                size_t aidx = so.get_abs_index(j);
+                if(!m_sch->contains(aidx)) m_sch->insert(aidx);
             }
-            iol++;
         }
-
-        if(!zero) m_sch->insert(ol.get_abs_index(io));
     }
-
-    for(typename std::list< orbit_list<N, double>* >::iterator i =
-        op_ol.begin(); i != op_ol.end(); i++) delete *i;
 
     m_dirty_sch = false;
 }
