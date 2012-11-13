@@ -9,7 +9,7 @@
 #include "gen_bto_contract2_block_impl.h"
 #include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_copy_impl.h"
-#include "gen_bto_unfold_block_list_impl.h"
+#include "gen_bto_unfold_block_list.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "gen_bto_contract2_batch.h"
 

@@ -2,15 +2,15 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_LIST_H
 
 #include <algorithm>
-#include <utility>
 #include <vector>
 #include <libtensor/core/contraction2.h>
+#include <libtensor/core/index.h>
 #include "block_list.h"
 
 namespace libtensor {
 
 
-template<size_t N, size_t M, size_t K, typename Traits>
+template<size_t N, size_t M, size_t K>
 class gen_bto_contract2_block_list {
 public:
     enum {
@@ -20,8 +20,10 @@ public:
     };
 
 private:
-    std::vector< std::pair<size_t, size_t> > m_blsta;
-    std::vector< std::pair<size_t, size_t> > m_blstb;
+    std::vector< index<2> > m_blsta_1;
+    std::vector< index<2> > m_blstb_1;
+    std::vector< index<2> > m_blsta_2;
+    std::vector< index<2> > m_blstb_2;
 
 public:
     gen_bto_contract2_block_list(
@@ -34,12 +36,20 @@ public:
         build_list(contr, bidimsa, blsta, bidimsb, blstb);
     }
 
-    const std::vector< std::pair<size_t, size_t> > &get_blsta() const {
-        return m_blsta;
+    const std::vector< index<2> > &get_blsta_1() const {
+        return m_blsta_1;
     }
 
-    const std::vector< std::pair<size_t, size_t> > &get_blstb() const {
-        return m_blstb;
+    const std::vector< index<2> > &get_blstb_1() const {
+        return m_blstb_1;
+    }
+
+    const std::vector< index<2> > &get_blsta_2() const {
+        return m_blsta_2;
+    }
+
+    const std::vector< index<2> > &get_blstb_2() const {
+        return m_blstb_2;
     }
 
 private:
@@ -53,8 +63,8 @@ private:
 };
 
 
-template<size_t N, size_t M, typename Traits>
-class gen_bto_contract2_block_list<N, M, 0, Traits> {
+template<size_t N, size_t M>
+class gen_bto_contract2_block_list<N, M, 0> {
 public:
     enum {
         NA = N, //!< Order of first argument (A)
@@ -63,10 +73,10 @@ public:
     };
 
 private:
-    std::vector< std::pair<size_t, size_t> > m_blsta_1;
-    std::vector< std::pair<size_t, size_t> > m_blstb_1;
-    std::vector< std::pair<size_t, size_t> > m_blsta_2;
-    std::vector< std::pair<size_t, size_t> > m_blstb_2;
+    std::vector< index<2> > m_blsta_1;
+    std::vector< index<2> > m_blstb_1;
+    std::vector< index<2> > m_blsta_2;
+    std::vector< index<2> > m_blstb_2;
 
 public:
     gen_bto_contract2_block_list(
@@ -79,19 +89,19 @@ public:
         build_list(contr, bidimsa, blsta, bidimsb, blstb);
     }
 
-    const std::vector< std::pair<size_t, size_t> > &get_blsta_1() const {
+    const std::vector< index<2> > &get_blsta_1() const {
         return m_blsta_1;
     }
 
-    const std::vector< std::pair<size_t, size_t> > &get_blstb_1() const {
+    const std::vector< index<2> > &get_blstb_1() const {
         return m_blstb_1;
     }
 
-    const std::vector< std::pair<size_t, size_t> > &get_blsta_2() const {
+    const std::vector< index<2> > &get_blsta_2() const {
         return m_blsta_2;
     }
 
-    const std::vector< std::pair<size_t, size_t> > &get_blstb_2() const {
+    const std::vector< index<2> > &get_blstb_2() const {
         return m_blstb_2;
     }
 
@@ -108,11 +118,11 @@ private:
 
 struct gen_bto_contract2_block_list_less_1 {
     bool operator()(
-        const std::pair<size_t, size_t> &a,
-        const std::pair<size_t, size_t> &b) {
+        const index<2> &i1,
+        const index<2> &i2) {
 
-        if(a.first < b.first) return true;
-        if(a.first == b.first) return a.second < b.second;
+        if(i1[0] < i2[0]) return true;
+        if(i1[0] == i2[0]) return i1[1] < i2[1];
         return false;
     }
 };
@@ -120,18 +130,18 @@ struct gen_bto_contract2_block_list_less_1 {
 
 struct gen_bto_contract2_block_list_less_2 {
     bool operator()(
-        const std::pair<size_t, size_t> &a,
-        const std::pair<size_t, size_t> &b) {
+        const index<2> &i1,
+        const index<2> &i2) {
 
-        if(a.second < b.second) return true;
-        if(a.second == b.second) return a.first < b.first;
+        if(i1[1] < i2[1]) return true;
+        if(i1[1] == i2[1]) return i1[0] < i2[0];
         return false;
     }
 };
 
 
-template<size_t N, size_t M, size_t K, typename Traits>
-void gen_bto_contract2_block_list<N, M, K, Traits>::build_list(
+template<size_t N, size_t M, size_t K>
+void gen_bto_contract2_block_list<N, M, K>::build_list(
     const contraction2<N, M, K> &contr,
     const dimensions<NA> &bidimsa,
     const block_list<NA> &blsta,
@@ -178,6 +188,7 @@ void gen_bto_contract2_block_list<N, M, K, Traits>::build_list(
     index<N> idxi;
     index<M> idxj;
     index<K> idxk;
+    index<2> idx2;
 
     for(typename block_list<NA>::iterator ia = blsta.begin();
         ia != blsta.end(); ++ia) {
@@ -185,9 +196,9 @@ void gen_bto_contract2_block_list<N, M, K, Traits>::build_list(
         abs_index<NA>::get_index(blsta.get_abs_index(ia), bidimsa, bidxa);
         for(size_t i = 0; i < N; i++) idxi[i] = bidxa[mapai[i]];
         for(size_t i = 0; i < K; i++) idxk[i] = bidxa[mapak[i]];
-        m_blsta.push_back(std::make_pair(
-            abs_index<K>::get_abs_index(idxk, dimsk),
-            abs_index<N>::get_abs_index(idxi, dimsi)));
+        idx2[0] = abs_index<K>::get_abs_index(idxk, dimsk);
+        idx2[1] = abs_index<N>::get_abs_index(idxi, dimsi);
+        m_blsta_1.push_back(idx2);
     }
 
     for(typename block_list<NB>::iterator ib = blstb.begin();
@@ -196,9 +207,9 @@ void gen_bto_contract2_block_list<N, M, K, Traits>::build_list(
         abs_index<NB>::get_index(blstb.get_abs_index(ib), bidimsb, bidxb);
         for(size_t i = 0; i < M; i++) idxj[i] = bidxb[mapbj[i]];
         for(size_t i = 0; i < K; i++) idxk[i] = bidxb[mapbk[i]];
-        m_blstb.push_back(std::make_pair(
-            abs_index<K>::get_abs_index(idxk, dimsk),
-            abs_index<M>::get_abs_index(idxj, dimsj)));
+        idx2[0] = abs_index<K>::get_abs_index(idxk, dimsk);
+        idx2[1] = abs_index<M>::get_abs_index(idxj, dimsj);
+        m_blstb_1.push_back(idx2);
     }
 
     m_blsta_2 = m_blsta_1;

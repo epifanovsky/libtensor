@@ -20,6 +20,7 @@ void gen_bto_contract2_clst_builder_test::perform()
     test_1();
     test_2();
     test_3();
+//    test_4();
 
     } catch (...) {
         allocator<double>::vmm().shutdown();
@@ -89,9 +90,11 @@ void gen_bto_contract2_clst_builder_test::test_1() {
     contraction2<2, 2, 2> contr;
     contr.contract(2, 2);
     contr.contract(3, 3);
+    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidims, bla,
+        bidims, blb);
     gen_bto_contract2_clst_builder<2, 2, 2, btod_traits> op(contr, syma, symb,
         bla, blb, bidims, i0101);
-    op.build_list(false);
+    op.build_list(false, blst);
 
     const clst_type &contr_lst = op.get_clst();
     std::set<size_t> s;
@@ -192,9 +195,11 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     contraction2<2, 2, 2> contr;
     contr.contract(2, 2);
     contr.contract(3, 3);
+    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidims, bla,
+        bidims, blb);
     gen_bto_contract2_clst_builder<2, 2, 2, btod_traits> op(contr, syma, symb,
         bla, blb, bidims, i1212);
-    op.build_list(false);
+    op.build_list(false, blst);
 
     const clst_type &contr_lst = op.get_clst();
     std::set<size_t> s;
@@ -278,9 +283,11 @@ void gen_bto_contract2_clst_builder_test::test_3() {
     contraction2<2, 2, 2> contr;
     contr.contract(2, 0);
     contr.contract(3, 1);
+    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidimsa, bla,
+        bidimsb, blb);
     gen_bto_contract2_clst_builder<2, 2, 2, btod_traits> op(contr, syma, symb,
         bla, blb, bidimsc, i0000);
-    op.build_list(false);
+    op.build_list(false, blst);
 
     const clst_type &contr_lst = op.get_clst();
     size_t n = 0;

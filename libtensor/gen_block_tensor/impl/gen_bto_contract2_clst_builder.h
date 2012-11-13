@@ -135,11 +135,11 @@ public:
 
     void build_list(bool testzero);
     void build_list(bool testzero,
-        gen_bto_contract2_block_list<N, M, K, Traits> &bl);
+        gen_bto_contract2_block_list<N, M, K> &bl);
 
 private:
     void build_list_2(
-        gen_bto_contract2_block_list<N, M, K, Traits> &bl,
+        gen_bto_contract2_block_list<N, M, K> &bl,
         contr_list &clst);
 
 protected:
@@ -204,7 +204,7 @@ public:
 
     void build_list(bool testzero);
     void build_list(bool testzero,
-        gen_bto_contract2_block_list<N, M, 0, Traits> &bl) {
+        gen_bto_contract2_block_list<N, M, 0> &bl) {
         build_list(testzero);
     }
 

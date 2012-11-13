@@ -7,6 +7,7 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include "gen_bto_unfold_block_list.h"
 #include "gen_bto_contract2_clst_builder.h"
 
 namespace libtensor {
@@ -205,6 +206,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
     const dimensions<NA> &bidimsa = m_blka.get_dims();
     const dimensions<NB> &bidimsb = m_blkb.get_dims();
 
+    const index<NC> &ic = m_ic;
     sequence<N, size_t> mapai;
     sequence<M, size_t> mapbj;
     sequence<K, size_t> mapak, mapbk;
@@ -245,23 +247,28 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
     size_t aij = abs_index<M>::get_abs_index(ij, dimsj);
     size_t aik = 0;
 
-    const std::vector< std::pair<size_t, size_t> > &bla = bl.get_blsta_2();
-    const std::vector< std::pair<size_t, size_t> > &blb = bl.get_blstb_2();
+    const std::vector< index<2> > &bla = bl.get_blsta_2();
+    const std::vector< index<2> > &blb = bl.get_blstb_2();
 
-    typename std::vector< std::pair<size_t, size_t> >::const_iterator ibla_beg =
-        std::lower_bound(bla.begin(), bla.end(), make_pair(aii, aik),
-            gen_bto_contract2_block_list_less_2);
-    typename std::vector< std::pair<size_t, size_t> >::const_iterator ibla_end =
-        std::lower_bound(ibla_beg, bla.end(), make_pair(aii + 1, aik),
-            gen_bto_contract2_block_list_less_2);
-    typename std::vector< std::pair<size_t, size_t> >::const_iterator iblb_beg =
-        std::lower_bound(blb.begin(), blb.end(), make_pair(aij, aik),
-            gen_bto_contract2_block_list_less_2);
-    typename std::vector< std::pair<size_t, size_t> >::const_iterator iblb_end =
-        std::lower_bound(iblb_beg, blb.end(), make_pair(aij + 1, aik),
-            gen_bto_contract2_block_list_less_2);
-    typename std::vector< std::pair<size_t, size_t> >::const_iterator ibla;
-    typename std::vector< std::pair<size_t, size_t> >::const_iterator iblb;
+    index<2> i2;
+    i2[0] = aii; i2[1] = aik;
+    typename std::vector< index<2> >::const_iterator ibla_beg =
+        std::lower_bound(bla.begin(), bla.end(), i2,
+            gen_bto_contract2_block_list_less_2());
+    i2[0] = aii + 1; i2[1] = aik;
+    typename std::vector< index<2> >::const_iterator ibla_end =
+        std::lower_bound(ibla_beg, bla.end(), i2,
+            gen_bto_contract2_block_list_less_2());
+    i2[0] = aij; i2[1] = aik;
+    typename std::vector< index<2> >::const_iterator iblb_beg =
+        std::lower_bound(blb.begin(), blb.end(), i2,
+            gen_bto_contract2_block_list_less_2());
+    i2[0] = aij + 1; i2[1] = aik;
+    typename std::vector< index<2> >::const_iterator iblb_end =
+        std::lower_bound(iblb_beg, blb.end(), i2,
+            gen_bto_contract2_block_list_less_2());
+    typename std::vector< index<2> >::const_iterator ibla;
+    typename std::vector< index<2> >::const_iterator iblb;
 
     index<NA> ia;
     index<NB> ib;
@@ -276,14 +283,14 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
     while(true) {
 
         while(ibla != ibla_end && iblb != iblb_end &&
-            ibla->second != iblb->second) {
+            ibla->at(1) != iblb->at(1)) {
 
-            while(ibla != ibla_end && ibla->second < iblb->second) ++ibla;
-            while(iblb != iblb_end && iblb->second < ibla->second) ++iblb;
+            while(ibla != ibla_end && ibla->at(1) < iblb->at(1)) ++ibla;
+            while(iblb != iblb_end && iblb->at(1) < ibla->at(1)) ++iblb;
         }
         if(ibla == ibla_end || iblb == iblb_end) break;
 
-        aik = ibla->second;
+        aik = ibla->at(1);
         abs_index<K>::get_index(aik, dimsk, ik);
 
         for(size_t i = 0; i < N; i++) ia[mapai[i]] = ii[i];
@@ -292,22 +299,28 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
 
         block_list<NA> bla2(bidimsa), bla2x(bidimsa);
         block_list<NB> blb2(bidimsb), blb2x(bidimsb);
-        bla2.insert(ia);
-        blb2.insert(ib);
+        bla2.add(ia);
+        blb2.add(ib);
         gen_bto_unfold_block_list<NA, Traits>(m_syma, bla2).build(bla2x);
         gen_bto_unfold_block_list<NB, Traits>(m_symb, blb2).build(blb2x);
         // this list needs to be sorted by k
-        gen_bto_contract2_block_list<N, M, K, Traits> bl2(get_contr(),
+        gen_bto_contract2_block_list<N, M, K> bl2(get_contr(),
             bidimsa, bla2x, bidimsb, blb2x);
         contr_list clst;
-        build_list_2(bl2, clst);
-        coalesce(clst);
+        size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
+        size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
+        clst.push_back(contr_pair(
+            aia, aia, tensor_transf<NA, element_type>(),
+            aib, aib, tensor_transf<NB, element_type>()));
+//        build_list_2(bl2, clst);
+//        coalesce(clst);
         merge(clst); // This empties clst
 
         ++ibla;
         ++iblb;
     }
 
+#if 0
     index<K> ik1, ik2;
     for(size_t i = 0, j = 0; i < NA; i++) {
         if(conn[NC + i] > NC) {
@@ -401,14 +414,14 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
 
 
     }
-
+#endif
 
 }
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list_2(
-    gen_bto_contract2_block_list<N, M, K, Traits> &bl,
+    gen_bto_contract2_block_list<N, M, K> &bl,
     contr_list &clst) {
 
 
