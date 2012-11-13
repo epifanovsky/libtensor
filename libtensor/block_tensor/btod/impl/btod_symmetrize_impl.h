@@ -76,7 +76,9 @@ void btod_symmetrize<N>::perform(gen_block_tensor_i<N, bti_traits> &bt) {
     asch.build(m_sch, ctrl);
 
     gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, scalar_transf<double>());
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -93,7 +95,9 @@ void btod_symmetrize<N>::perform(gen_block_tensor_i<N, bti_traits> &bt,
     asch.build(m_sch, ctrl);
 
     gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -119,7 +123,9 @@ void btod_symmetrize<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
         gen_bto_aux_symmetrize<N, Traits> out2(m_op.get_symmetry(), m_sym, out);
         out2.add_transf(tr0);
         out2.add_transf(tr1);
+        out2.open();
         m_op.perform(out2);
+        out2.close();
 
     } catch(...) {
         btod_symmetrize<N>::stop_timer();

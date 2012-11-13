@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_ADDITION_SCHEDULE_IMPL_H
 #define LIBTENSOR_ADDITION_SCHEDULE_IMPL_H
 
+#include <cstring>
+#include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
@@ -129,48 +131,61 @@ void addition_schedule<N, Traits>::mark_orbits(
     const symmetry_type &sym,
     std::vector<char> &o) {
 
-    dimensions<N> bidims(sym.get_bis().get_block_index_dims());
-    abs_index<N> aci(bidims);
-    do {
-        if(o[aci.get_abs_index()] == 0) {
-            o[aci.get_abs_index()] = 2;
-            if(!mark_orbit_inner(sym, aci, o)) {
-                o[aci.get_abs_index()] = 4;
-            }
-        }
-    } while(aci.inc());
-}
+    dimensions<N> bidims = sym.get_bis().get_block_index_dims();
 
+    std::vector<size_t> q, q2;
+    q.reserve(32);
+    q2.reserve(32);
 
-template<size_t N, typename Traits>
-bool addition_schedule<N, Traits>::mark_orbit_inner(
-    const symmetry_type &sym,
-    const abs_index<N> &ai,
-    std::vector<char> &o) {
+    index<N> idx;
+    size_t aidx0 = 0;
+    const char *p0 = &o[0];
+    size_t n = bidims.get_size();
+    while(aidx0 < n) {
 
-    typedef symmetry_element_set<N, element_type> seset_type;
-    typedef typename symmetry_type::iterator symmetry_iterator;
-    typedef typename seset_type::const_iterator seset_iterator;
+        const char *p = (const char*)::memchr(p0 + aidx0, 0, n - aidx0);
+        if(p == 0) break;
+        aidx0 = p - p0;
 
-    bool allowed = true;
-    for(symmetry_iterator is = sym.begin(); is != sym.end(); ++is) {
-        const seset_type &es = sym.get_subset(is);
-        for(seset_iterator ie = es.begin(); ie != es.end(); ++ie) {
-            const symmetry_element_i<N, element_type> &e = es.get_elem(ie);
-            index<N> i1(ai.get_index());
-            allowed = allowed && e.is_allowed(i1);
-            e.apply(i1);
-            abs_index<N> ai1(i1, ai.get_dims());
-            if(o[ai1.get_abs_index()] == 0) {
-                o[ai1.get_abs_index()] = allowed ? 1 : 3;
-                if(!mark_orbit_inner(sym, ai1, o)) {
-                    allowed = false;
-                    o[ai1.get_abs_index()] = 3;
+        bool allowed = true;
+        q.push_back(aidx0);
+        o[aidx0] = 2;
+
+        while(!q.empty()) {
+
+            size_t aidx = q.back();
+            q.pop_back();
+            abs_index<N>::get_index(aidx, bidims, idx);
+
+            for(typename symmetry<N, element_type>::iterator iset = sym.begin();
+                iset != sym.end(); ++iset) {
+
+                const symmetry_element_set<N, element_type> &eset =
+                    sym.get_subset(iset);
+                for(typename symmetry_element_set<N, element_type>::
+                    const_iterator ielem = eset.begin(); ielem != eset.end();
+                    ++ielem) {
+
+                    const symmetry_element_i<N, element_type> &elem =
+                        eset.get_elem(ielem);
+                    if(allowed) allowed = elem.is_allowed(idx);
+                    index<N> idx2(idx);
+                    elem.apply(idx2);
+                    size_t aidx2 = abs_index<N>::get_abs_index(idx2, bidims);
+                    if(o[aidx2] == 0) {
+                        q.push_back(aidx2);
+                        o[aidx2] = 1;
+                    }
                 }
             }
         }
+
+        if(!allowed) {
+            o[aidx0] = 4;
+            for(size_t i = 0; i < q2.size(); i++) o[q2[i]] = 3;
+        }
+        q2.clear();
     }
-    return allowed;
 }
 
 

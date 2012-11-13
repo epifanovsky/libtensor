@@ -98,7 +98,7 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
     orbit_list<1, double> olb(ctrlb.req_const_symmetry());
     for (orbit_list<1, double>::iterator ib = olb.begin();
             ib != olb.end(); ib++) {
-        orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_index(ib));
+        orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_abs_index(ib));
         abs_index<1> bidx(ob.get_abs_canonical_index(), bidims1);
         if (! ctrlb.req_is_zero_block(bidx.get_index()))
             fail_test(testname, __FILE__, __LINE__, "Unexpected non-zero block.");
@@ -153,7 +153,7 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
     orbit_list<1, double> olb(ctrlb.req_const_symmetry());
     for (orbit_list<1, double>::iterator ib = olb.begin();
             ib != olb.end(); ib++) {
-        orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_index(ib));
+        orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_abs_index(ib));
         abs_index<1> bidx(ob.get_abs_canonical_index(), bidims1);
         if (! ctrlb.req_is_zero_block(bidx.get_index()))
             fail_test(testname, __FILE__, __LINE__, "Unexpected non-zero block.");

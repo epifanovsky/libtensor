@@ -25,6 +25,7 @@
 #include "permutation_generator_test.h"
 #include "sequence_test.h"
 #include "sequence_generator_test.h"
+#include "subgroup_orbits_test.h"
 #include "symmetry_test.h"
 #include "symmetry_element_set_test.h"
 #include "transf_list_test.h"
@@ -70,6 +71,7 @@ namespace libtensor {
     \li libtensor::permutation_generator_test
     \li libtensor::sequence_test
     \li libtensor::sequence_generator_test
+    \li libtensor::subgroup_orbits_test
     \li libtensor::symmetry_test
     \li libtensor::symmetry_element_set_test
     \li libtensor::transf_list_test
@@ -101,6 +103,7 @@ private:
     unit_test_factory<permutation_generator_test> m_utf_permutation_generator;
     unit_test_factory<sequence_test> m_utf_sequence;
     unit_test_factory<sequence_generator_test> m_utf_sequence_generator;
+    unit_test_factory<subgroup_orbits_test> m_utf_subgroup_orbits;
     unit_test_factory<symmetry_test> m_utf_symmetry;
     unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
     unit_test_factory<transf_list_test> m_utf_transf_list;

@@ -267,10 +267,10 @@ void gen_bto_contract2_clst_builder_test::test_3() {
     block_list<4> bla(bidimsa), blb(bidimsb);
     orbit_list<4, double> ola(syma), olb(symb);
     for(orbit_list<4, double>::iterator i = ola.begin(); i != ola.end(); ++i) {
-        bla.add(ola.get_index(i));
+        bla.add(ola.get_abs_index(i));
     }
     for(orbit_list<4, double>::iterator i = olb.begin(); i != olb.end(); ++i) {
-        blb.add(olb.get_index(i));
+        blb.add(olb.get_abs_index(i));
     }
 
     index<4> i0000;

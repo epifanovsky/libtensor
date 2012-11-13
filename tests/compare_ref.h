@@ -112,8 +112,9 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
         if(!ol.contains(ol_ref.get_abs_index(io_ref))) {
             std::ostringstream ss;
-            ss << "In " << test << ": Canonical index "
-                << ol_ref.get_index(io_ref)
+            index<N> idx;
+            ol_ref.get_index(io_ref, idx);
+            ss << "In " << test << ": Canonical index " << idx
                 << " is absent from result.";
             throw libtest::test_exception("compare_ref::compare()",
                 __FILE__, __LINE__, ss.str().c_str());
@@ -124,8 +125,9 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
         if(!ol_ref.contains(ol.get_abs_index(io))) {
             std::ostringstream ss;
-            ss << "In " << test << ": Canonical index "
-                << ol.get_index(io)
+            index<N> idx;
+            ol.get_index(io, idx);
+            ss << "In " << test << ": Canonical index " << idx
                 << " is absent from reference.";
             throw libtest::test_exception("compare_ref::compare()",
                 __FILE__, __LINE__, ss.str().c_str());

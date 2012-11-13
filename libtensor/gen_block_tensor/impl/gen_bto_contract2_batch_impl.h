@@ -5,10 +5,11 @@
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "../gen_bto_aux_copy.h"
-#include "../gen_bto_copy.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "gen_bto_contract2_block_impl.h"
 #include "gen_bto_contract2_clst_builder.h"
+#include "gen_bto_copy_impl.h"
+#include "gen_bto_unfold_block_list_impl.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "gen_bto_contract2_batch.h"
 
@@ -163,8 +164,6 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         block_index_space<NA> bisa2(m_bta.get_bis());
         bisa2.permute(m_perma);
         block_index_space<NB> bisb2(m_btb.get_bis());
@@ -195,11 +194,15 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
         {
             tensor_transf<NA, element_type> tra(m_perma);
             gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2);
+            cpaout.open();
             gen_bto_copy_a_type(m_bta, tra).perform(m_batcha, cpaout);
+            cpaout.close();
 
             tensor_transf<NB, element_type> trb(m_permb);
             gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2);
+            cpbout.open();
             gen_bto_copy_b_type(m_btb, trb).perform(m_batchb, cpbout);
+            cpbout.close();
         }
 
         std::vector<size_t> blsta, blstb;
@@ -211,8 +214,11 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             gen_block_tensor_rd_ctrl<NB, bti_traits> cb2(btb2);
             cb2.req_nonzero_blocks(blstb);
         }
-        block_list<NA> bla(bidimsa, blsta);
-        block_list<NB> blb(bidimsb, blstb);
+        block_list<NA> bla(bidimsa, blsta), blax(bidimsa);
+        block_list<NB> blb(bidimsb, blstb), blbx(bidimsb);
+
+        gen_bto_unfold_block_list<NA, Traits>(syma2, bla).build(blax);
+        gen_bto_unfold_block_list<NB, Traits>(symb2, blb).build(blbx);
 
         std::set<size_t> blsta2, blstb2;
 
@@ -224,7 +230,7 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             abs_index<NC>::get_index(*i, bidimsc, idxc);
             gen_bto_contract2_clst_builder<N, M, K, Traits> *clstop =
                 new gen_bto_contract2_clst_builder<N, M, K, Traits>(m_contr,
-                    syma2, symb2, bla, blb, bidimsc, idxc);
+                    syma2, symb2, blax, blbx, bidimsc, idxc);
             clstb.insert(std::make_pair(*i, clstop));
         }
         {
@@ -265,8 +271,6 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             i->second = 0;
         }
         clstb.clear();
-
-        out.close();
 
     } catch(...) {
         gen_bto_contract2_batch::stop_timer();

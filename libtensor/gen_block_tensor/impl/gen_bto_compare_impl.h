@@ -73,7 +73,7 @@ bool gen_bto_compare<N, Traits>::compare() {
         if(!ol2.contains(ol1.get_abs_index(io1))) {
 
             m_diff.kind = diff::DIFF_ORBIT;
-            m_diff.bidx = ol1.get_index(io1);
+            ol1.get_index(io1, m_diff.bidx);
             m_diff.can1 = true;
             m_diff.can2 = false;
             return false;
@@ -87,7 +87,7 @@ bool gen_bto_compare<N, Traits>::compare() {
         io1 != ol1.end(); io1++) {
 
         orbit<N, element_type> o1(ctrl1.req_const_symmetry(),
-            ol1.get_index(io1));
+            ol1.get_abs_index(io1));
 
         for(typename orbit<N, element_type>::iterator i1 = o1.begin();
             i1 != o1.end(); i1++) {
@@ -112,7 +112,7 @@ bool gen_bto_compare<N, Traits>::compare() {
     for(typename orbit_list<N, element_type>::iterator io1 = ol1.begin();
         io1 != ol1.end(); io1++) {
 
-        abs_index<N> ai(ol1.get_index(io1), bidims);
+        abs_index<N> ai(ol1.get_abs_index(io1), bidims);
         if(!compare_data(ai, ctrl1, ctrl2)) return false;
     }
 

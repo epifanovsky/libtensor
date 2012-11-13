@@ -30,6 +30,11 @@ void btod_contract3_test::perform() throw(libtest::test_exception) {
         test_contr_4();
         test_contr_5();
 
+        //  Tests for the batching mechanism
+
+        test_batch_1();
+        test_batch_2();
+
     } catch(...) {
         allocator<double>::vmm().shutdown();
         throw;
@@ -504,6 +509,168 @@ void btod_contract3_test::test_contr_5() {
         //  Compare against reference
 
         compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_contract3_test::test_batch_1() {
+
+    //
+    //  d_ijkl = a_i b_j c_kl
+    //  All dimensions are identical, no symmetry
+    //
+
+    static const char *testname = "btod_contract3_test::test_batch_1()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+        index<1> i1a, i1b;
+        i1b[0] = 19;
+        dimensions<1> dims1(index_range<1>(i1a, i1b));
+        block_index_space<1> bis1(dims1);
+        index<2> i2a, i2b;
+        i2b[0] = 19; i2b[1] = 19;
+        dimensions<2> dims2(index_range<2>(i2a, i2b));
+        block_index_space<2> bis2(dims2);
+        index<4> i4a, i4b;
+        i4b[0] = 19; i4b[1] = 19; i4b[2] = 19; i4b[3] = 19;
+        dimensions<4> dims4(index_range<4>(i4a, i4b));
+        block_index_space<4> bis4(dims4);
+        mask<1> m1;
+        m1[0] = true;
+        mask<2> m11;
+        m11[0] = true; m11[1] = true;
+        mask<4> m1111;
+        m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+        for(size_t i = 1; i < 10; i++) {
+            bis1.split(m1, 2 * i);
+            bis2.split(m11, 2 * i);
+            bis4.split(m1111, 2 * i);
+        }
+
+        block_tensor<1, double, allocator_t> bta(bis1), btb(bis1);
+        block_tensor<2, double, allocator_t> btc(bis2);
+        block_tensor<4, double, allocator_t> btd(bis4);
+
+        //  Load random data for input
+
+        btod_random<1>().perform(bta);
+        btod_random<1>().perform(btb);
+        btod_random<2>().perform(btc);
+        bta.set_immutable();
+        btb.set_immutable();
+        btc.set_immutable();
+
+        //  Run contraction
+
+        contraction2<1, 1, 0> contr1;
+        contraction2<2, 2, 0> contr2;
+
+        btod_contract3<1, 1, 2, 0, 0>(contr1, contr2, bta, btb, btc).
+            perform(btd);
+
+        //  Convert block tensors to regular tensors
+
+        dense_tensor<1, double, allocator_t> ta(dims1), tb(dims1);
+        dense_tensor<2, double, allocator_t> ti(dims2), tc(dims2);
+        dense_tensor<4, double, allocator_t> td(dims4), td_ref(dims4);
+        tod_btconv<1>(bta).perform(ta);
+        tod_btconv<1>(btb).perform(tb);
+        tod_btconv<2>(btc).perform(tc);
+        tod_btconv<4>(btd).perform(td);
+
+        //  Compute reference tensor
+
+        tod_contract2<1, 1, 0>(contr1, ta, tb).perform(true, ti);
+        tod_contract2<2, 2, 0>(contr2, ti, tc).perform(true, td_ref);
+
+        //  Compare against reference
+
+        compare_ref<4>::compare(testname, td, td_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_contract3_test::test_batch_2() {
+
+    //
+    //  d_jl = a_ij b_kl c_ik
+    //  All dimensions are identical, no symmetry
+    //
+
+    static const char *testname = "btod_contract3_test::test_batch_2()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+        index<2> i2a, i2b;
+        i2b[0] = 19; i2b[1] = 19;
+        dimensions<2> dims2(index_range<2>(i2a, i2b));
+        block_index_space<2> bis2(dims2);
+        index<4> i4a, i4b;
+        i4b[0] = 19; i4b[1] = 19; i4b[2] = 19; i4b[3] = 19;
+        dimensions<4> dims4(index_range<4>(i4a, i4b));
+        block_index_space<4> bis4(dims4);
+        mask<2> m11;
+        m11[0] = true; m11[1] = true;
+        mask<4> m1111;
+        m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+        for(size_t i = 1; i < 10; i++) {
+            bis2.split(m11, 2 * i);
+            bis4.split(m1111, 2 * i);
+        }
+
+        block_tensor<2, double, allocator_t> bta(bis2);
+        block_tensor<2, double, allocator_t> btb(bis2);
+        block_tensor<2, double, allocator_t> btc(bis2);
+        block_tensor<2, double, allocator_t> btd(bis2);
+
+        //  Load random data for input
+
+        btod_random<2>().perform(bta);
+        btod_random<2>().perform(btb);
+        btod_random<2>().perform(btc);
+        bta.set_immutable();
+        btb.set_immutable();
+        btc.set_immutable();
+
+        //  Run contraction
+
+        contraction2<2, 2, 0> contr1;
+        contraction2<2, 0, 2> contr2;
+        contr2.contract(0, 0);
+        contr2.contract(2, 1);
+
+        btod_contract3<2, 0, 0, 0, 2>(contr1, contr2, bta, btb, btc).
+            perform(btd);
+
+        //  Convert block tensors to regular tensors
+
+        dense_tensor<2, double, allocator_t> ta(dims2), tb(dims2), tc(dims2);
+        dense_tensor<4, double, allocator_t> ti(dims4);
+        dense_tensor<2, double, allocator_t> td(dims2), td_ref(dims2);
+        tod_btconv<2>(bta).perform(ta);
+        tod_btconv<2>(btb).perform(tb);
+        tod_btconv<2>(btc).perform(tc);
+        tod_btconv<2>(btd).perform(td);
+
+        //  Compute reference tensor
+
+        tod_contract2<2, 2, 0>(contr1, ta, tb).perform(true, ti);
+        tod_contract2<2, 0, 2>(contr2, ti, tc).perform(true, td_ref);
+
+        //  Compare against reference
+
+        compare_ref<2>::compare(testname, td, td_ref, 1e-13);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

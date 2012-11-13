@@ -114,7 +114,8 @@ typename Traits::element_type gen_bto_trace<N, Traits, Timed>::calculate() {
     for (typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
             ioa != ola.end(); ioa++) {
 
-        const index<NA> &idxa = ola.get_index(ioa);
+        index<NA> idxa;
+        ola.get_index(ioa, idxa);
         if(ca.req_is_zero_block(idxa)) continue;
 
         task_type *t = new task_type(m_bta, m_perm, ola, idxa, bidimsa);

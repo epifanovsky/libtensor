@@ -2,6 +2,8 @@
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
 #include "../btod_contract2.h"
 
@@ -24,31 +26,36 @@ btod_contract2<N, M, K>::btod_contract2(
     block_tensor_rd_i<NB, double> &btb) :
 
     m_gbto(contr,
-            bta, scalar_transf<double>(),
-            btb, scalar_transf<double>(),
-            scalar_transf<double>()) {
+        bta, scalar_transf<double>(),
+        btb, scalar_transf<double>(),
+        scalar_transf<double>()) {
 
 }
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(gen_block_stream_i<NC, bti_traits> &out) {
+void btod_contract2<N, M, K>::perform(
+    gen_block_stream_i<NC, bti_traits> &out) {
 
     m_gbto.perform(out);
 }
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc) {
+void btod_contract2<N, M, K>::perform(
+    gen_block_tensor_i<NC, bti_traits> &btc) {
 
     gen_bto_aux_copy<NC, btod_traits> out(get_symmetry(), btc);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
 template<size_t N, size_t M, size_t K>
-void btod_contract2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc,
-        const scalar_transf<double> &d) {
+void btod_contract2<N, M, K>::perform(
+    gen_block_tensor_i<NC, bti_traits> &btc,
+    const scalar_transf<double> &d) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -58,13 +65,16 @@ void btod_contract2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc,
     asch.build(get_schedule(), cc);
 
     gen_bto_aux_add<NC, btod_traits> out(get_symmetry(), asch, btc, d);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(
-        block_tensor_i<NC, double> &btc, double d) {
+    block_tensor_i<NC, double> &btc,
+    double d) {
 
     perform(btc, scalar_transf<double>(d));
 }
