@@ -184,6 +184,237 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
 }
 
 
+template<size_t N, size_t M, size_t K, typename Traits>
+void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
+    bool testzero, gen_bto_contract2_block_list<N, M, K, Traits> &bl) {
+
+    if(testzero == true) {
+        build_list(true);
+        return;
+    }
+
+    //  For a specified block in the result block tensor (C),
+    //  this algorithm makes a list of contractions of the blocks
+    //  from A and B that need to be made.
+
+    //  (The abbreviated version of the algorithm, which terminates
+    //  as soon as it is clear that at least one contraction is required
+    //  and therefore the block in C is non-zero.)
+
+    const sequence<NA + NB + NC, size_t> &conn = get_contr().get_conn();
+    const dimensions<NA> &bidimsa = m_blka.get_dims();
+    const dimensions<NB> &bidimsb = m_blkb.get_dims();
+
+    sequence<N, size_t> mapai;
+    sequence<M, size_t> mapbj;
+    sequence<K, size_t> mapak, mapbk;
+    index<N> ii1, ii2, ii;
+    index<M> ij1, ij2, ij;
+    index<K> ik1, ik2, ik;
+    for(size_t i = 0, j = 0; i < NA; i++) {
+        if(conn[NC + i] < NC) {
+            mapai[j] = i;
+            ii2[j] = bidimsa[i] - 1;
+            ii[j] = ic[conn[NC + i]];
+            j++;
+        }
+    }
+    for(size_t i = 0, j = 0; i < NB; i++) {
+        if(conn[NC + NA + i] < NC) {
+            mapbj[j] = i;
+            ij2[j] = bidimsb[i] - 1;
+            ij[j] = ic[conn[NC + NA + i]];
+            j++;
+        }
+    }
+    for(size_t i = 0, k = 0; i < NA; i++) {
+        if(conn[NC + i] >= NC + NA) {
+            mapak[k] = i;
+            mapbk[k] = conn[NC + i] - NC - NA;
+            ik2[k] = bidimsa[i] - 1;
+            k++;
+        }
+    }
+
+    dimensions<N> dimsi(index_range<N>(ii1, ii2));
+    dimensions<M> dimsj(index_range<M>(ij1, ij2));
+    dimensions<K> dimsk(index_range<K>(ik1, ik2));
+    size_t nk = dimsk.get_size();
+
+    size_t aii = abs_index<N>::get_abs_index(ii, dimsi);
+    size_t aij = abs_index<M>::get_abs_index(ij, dimsj);
+    size_t aik = 0;
+
+    const std::vector< std::pair<size_t, size_t> > &bla = bl.get_blsta_2();
+    const std::vector< std::pair<size_t, size_t> > &blb = bl.get_blstb_2();
+
+    typename std::vector< std::pair<size_t, size_t> >::const_iterator ibla_beg =
+        std::lower_bound(bla.begin(), bla.end(), make_pair(aii, aik),
+            gen_bto_contract2_block_list_less_2);
+    typename std::vector< std::pair<size_t, size_t> >::const_iterator ibla_end =
+        std::lower_bound(ibla_beg, bla.end(), make_pair(aii + 1, aik),
+            gen_bto_contract2_block_list_less_2);
+    typename std::vector< std::pair<size_t, size_t> >::const_iterator iblb_beg =
+        std::lower_bound(blb.begin(), blb.end(), make_pair(aij, aik),
+            gen_bto_contract2_block_list_less_2);
+    typename std::vector< std::pair<size_t, size_t> >::const_iterator iblb_end =
+        std::lower_bound(iblb_beg, blb.end(), make_pair(aij + 1, aik),
+            gen_bto_contract2_block_list_less_2);
+    typename std::vector< std::pair<size_t, size_t> >::const_iterator ibla;
+    typename std::vector< std::pair<size_t, size_t> >::const_iterator iblb;
+
+    index<NA> ia;
+    index<NB> ib;
+
+//    std::vector<char> &chk = gen_bto_contract2_clst_builder_buffer::get_v();
+//    chk.resize(nk, 0);
+//    ::memset(&chk[0], 0, nk);
+//
+    ibla = ibla_beg;
+    iblb = iblb_beg;
+
+    while(true) {
+
+        while(ibla != ibla_end && iblb != iblb_end &&
+            ibla->second != iblb->second) {
+
+            while(ibla != ibla_end && ibla->second < iblb->second) ++ibla;
+            while(iblb != iblb_end && iblb->second < ibla->second) ++iblb;
+        }
+        if(ibla == ibla_end || iblb == iblb_end) break;
+
+        aik = ibla->second;
+        abs_index<K>::get_index(aik, dimsk, ik);
+
+        for(size_t i = 0; i < N; i++) ia[mapai[i]] = ii[i];
+        for(size_t i = 0; i < M; i++) ib[mapbj[i]] = ij[i];
+        for(size_t i = 0; i < K; i++) ia[mapak[i]] = ib[mapbk[i]] = ik[i];
+
+        block_list<NA> bla2(bidimsa), bla2x(bidimsa);
+        block_list<NB> blb2(bidimsb), blb2x(bidimsb);
+        bla2.insert(ia);
+        blb2.insert(ib);
+        gen_bto_unfold_block_list<NA, Traits>(m_syma, bla2).build(bla2x);
+        gen_bto_unfold_block_list<NB, Traits>(m_symb, blb2).build(blb2x);
+        // this list needs to be sorted by k
+        gen_bto_contract2_block_list<N, M, K, Traits> bl2(get_contr(),
+            bidimsa, bla2x, bidimsb, blb2x);
+        contr_list clst;
+        build_list_2(bl2, clst);
+        coalesce(clst);
+        merge(clst); // This empties clst
+
+        ++ibla;
+        ++iblb;
+    }
+
+    index<K> ik1, ik2;
+    for(size_t i = 0, j = 0; i < NA; i++) {
+        if(conn[NC + i] > NC) {
+            ik2[j++] = bidimsa[i] - 1;
+        }
+    }
+    dimensions<K> bidimsk(index_range<K>(ik1, ik2));
+    size_t nk = bidimsk.get_size();
+
+    size_t aik = 0;
+    const char *p0 = &chk[0];
+    while(aik < nk) {
+
+        const char *p = (const char*)::memchr(p0 + aik, 1, nk - aik);
+        if(p == 0) break;
+        aik = p - p0;
+
+        index<NA> ia;
+        index<NB> ib;
+        const index<NC> &ic = m_ic;
+        index<K> ik;
+        abs_index<K>::get_index(aik, bidimsk, ik);
+        sequence<K, size_t> ka(0), kb(0);
+
+        //  Determine ia, ib from ic, ik
+        for(size_t i = 0, j = 0; i < NA; i++) {
+            if(conn[NC + i] < NC) {
+                ia[i] = ic[conn[NC + i]];
+            } else {
+                ka[j] = i;
+                kb[j] = conn[NC + i] - 2 * N - M - K;
+                ia[ka[j]] = ib[kb[j]] = ik[j];
+                j++;
+            }
+        }
+        for(size_t i = 0; i < NB; i++) {
+            if(conn[2 * N + M + K + i] < N + M) {
+                ib[i] = ic[conn[2 * N + M + K + i]];
+            }
+        }
+
+        size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
+        size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
+        if(!m_blka.contains(aia) || !m_blkb.contains(aib)) {
+            chk[aik] = 0;
+            continue;
+        }
+
+
+        orbit<NA, element_type> oa(m_syma, ia, false);
+        orbit<NB, element_type> ob(m_symb, ib, false);
+
+
+        //  Build the list of contractions for the current orbits A, B
+
+        typename orbit<NA, element_type>::iterator ja;
+        typename orbit<NB, element_type>::iterator jb;
+        for(ja = oa.begin(); ja != oa.end(); ++ja)
+        for(jb = ob.begin(); jb != ob.end(); ++jb) {
+            index<NA> ia1;
+            index<NB> ib1;
+            abs_index<NA>::get_index(oa.get_abs_index(ja), bidimsa, ia1);
+            abs_index<NB>::get_index(ob.get_abs_index(jb), bidimsb, ib1);
+            index<NC> ic1;
+            index<K> ika, ikb;
+            for(size_t i = 0; i < K; i++) {
+                ika[i] = ia1[ka[i]];
+                ikb[i] = ib1[kb[i]];
+            }
+            if(!ika.equals(ikb)) continue;
+            for(size_t i = 0; i < N + M; i++) {
+                if(conn[i] >= 2 * N + M + K) {
+                    ic1[i] = ib1[conn[i] - 2 * N - M - K];
+                } else {
+                    ic1[i] = ia1[conn[i] - N - M];
+                }
+            }
+            if(!ic1.equals(ic)) continue;
+            clst.push_back(contr_pair(
+                oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
+                ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
+            chk[abs_index<K>::get_abs_index(ika, bidimsk)] = 0;
+        }
+
+
+        //  In the abbreviated version of the algorithm, if the list is
+        //  not empty, there is no need to continue: the block is non-zero
+
+        if(testzero && !clst_empty) break;
+
+
+
+    }
+
+
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits>
+void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list_2(
+    gen_bto_contract2_block_list<N, M, K, Traits> &bl,
+    contr_list &clst) {
+
+
+}
+
+
 template<size_t N, size_t M, typename Traits>
 void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(
     bool testzero) {
