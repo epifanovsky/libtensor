@@ -2,8 +2,7 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT2_IMPL_H
 
 #include <iterator>
-#include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
@@ -131,7 +130,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     index<NA> ia;
                     abs_index<NA>::get_index(blsta[iba], bidimsa, ia);
                     ia.permute(perma);
-                    orbit<NA, element_type> oat(symat, ia, false, true);
+                    short_orbit<NA, element_type> oat(symat, ia);
                     batcha.push_back(oat.get_acindex());
                 }
             }
@@ -150,7 +149,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                         index<NB> ib;
                         abs_index<NB>::get_index(blstb[ibb], bidimsb, ib);
                         ib.permute(permb);
-                        orbit<NB, element_type> obt(symbt, ib, false, true);
+                        short_orbit<NB, element_type> obt(symbt, ib);
                         batchb.push_back(obt.get_acindex());
                     }
                 }
@@ -169,7 +168,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                         abs_index<NC>::get_index(m_sch.get_abs_index(ibc),
                             bidimsc, ic);
                         ic.permute(permc);
-                        orbit<NC, element_type> oct(symct, ic, false, true);
+                        short_orbit<NC, element_type> oct(symct, ic);
                         batchc.push_back(oct.get_acindex());
                     }
                     if(batchc.size() == 0) continue;

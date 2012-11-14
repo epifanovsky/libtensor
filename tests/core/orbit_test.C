@@ -23,7 +23,6 @@ void orbit_test::perform() throw(libtest::test_exception) {
     test_9();
     test_10();
     test_11();
-    test_short_2();
 }
 
 
@@ -1114,49 +1113,6 @@ void orbit_test::test_11() {
             fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
     }
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
-}
-
-
-void orbit_test::test_short_2() {
-
-    static const char *testname = "orbit_test::test_short_2()";
-
-    try {
-
-    index<2> i1, i2;
-    i2[0] = 2; i2[1] = 2;
-    mask<2> msk;
-    msk[0] = true; msk[1] = true;
-    dimensions<2> dims(index_range<2>(i1, i2));
-    block_index_space<2> bis(dims);
-    bis.split(msk, 1);
-    bis.split(msk, 2);
-    symmetry<2, double> sym(bis);
-    permutation<2> perm; perm.permute(0, 1);
-    scalar_transf<double> tr0;
-    se_perm<2, double> cycle(perm, tr0);
-    sym.insert(cycle);
-
-    abs_index<2> aio(dims);
-    do {
-        const index<2> &io = aio.get_index();
-        orbit<2, double> orb(sym, io, false, true);
-        bool can = io[0] <= io[1];
-        size_t abscanidx = orb.get_acindex();
-        if((can && abscanidx != aio.get_abs_index()) ||
-            (!can && abscanidx == aio.get_abs_index())) {
-
-            std::ostringstream ss;
-            ss << "Failure to detect a canonical index: " << io
-                << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
-                ss.str().c_str());
-        }
-    } while(aio.inc());
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
