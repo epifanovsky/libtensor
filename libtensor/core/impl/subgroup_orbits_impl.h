@@ -101,7 +101,7 @@ void subgroup_orbits<N, T>::mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
                 index<N> idx2(idx);
                 elem.apply(idx2);
                 size_t aidx2 = abs_index<N>::get_abs_index(idx2, m_dims);
-                if(chk[aidx2] == 0) {
+                if(chk[aidx2] != v) {
                     q.push_back(aidx2);
                     chk[aidx2] = v;
                 }
