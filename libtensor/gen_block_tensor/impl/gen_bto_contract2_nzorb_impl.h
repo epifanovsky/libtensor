@@ -12,9 +12,9 @@
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../gen_block_tensor_ctrl.h"
-#include "gen_bto_contract2_clst_builder_impl.h"
+#include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_contract2_nzorb.h"
-#include "gen_bto_unfold_block_list_impl.h"
+#include "gen_bto_unfold_block_list.h"
 
 namespace libtensor {
 

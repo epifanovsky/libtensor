@@ -26,10 +26,8 @@ public:
 
 private:
     gen_block_tensor_rd_i<N, bti_traits> &m_bta;
-    const orbit_list<N, element_type> &m_ola;
     tensor_transf<N, element_type> m_tra;
     gen_block_tensor_rd_i<N, bti_traits> &m_btb;
-    const orbit_list<N, element_type> &m_olb;
     tensor_transf<N, element_type> m_trb;
     const symmetry<N, element_type> &m_symc;
     dimensions<N> m_bidimsc;
@@ -39,15 +37,12 @@ private:
 public:
     gen_bto_dotprod_in_orbit_task(
             gen_block_tensor_rd_i<N, bti_traits> &bta,
-            const orbit_list<N, element_type> &ola,
             const tensor_transf<N, element_type> &tra,
             gen_block_tensor_rd_i<N, bti_traits> &btb,
-            const orbit_list<N, element_type> &olb,
             const tensor_transf<N, element_type> &trb,
             const symmetry<N, element_type> &symc,
             const dimensions<N> &bidimsc, const index<N> &idxc) :
-        m_bta(bta), m_ola(ola), m_tra(tra),
-        m_btb(btb), m_olb(olb), m_trb(trb),
+        m_bta(bta), m_tra(tra), m_btb(btb), m_trb(trb),
         m_symc(symc), m_bidimsc(bidimsc), m_idxc(idxc), m_d(Traits::zero()) { }
 
     virtual ~gen_bto_dotprod_in_orbit_task() { }
@@ -138,7 +133,7 @@ void gen_bto_dotprod<N, Traits, Timed>::add_arg(
 
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_dotprod<N, Traits, Timed>::calculate(
-        std::vector<element_type> &v) {
+    std::vector<element_type> &v) {
 
     static const char *method = "calculate(std::vector<element_type>&)";
 
@@ -207,8 +202,6 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
 
         for(i = 0, j = m_args.begin(); i < narg; i++, j++) {
 
-            orbit_list<N, element_type> ol1(ca[i]->req_const_symmetry());
-            orbit_list<N, element_type> ol2(cb[i]->req_const_symmetry());
             orbit_list<N, element_type> ol(*sym[i]);
 
             std::vector<task_type *> tasklist;
@@ -217,8 +210,8 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
 
                 index<N> idx;
                 ol.get_index(io, idx);
-                task_type *t = new task_type(j->bt1, ol1, j->tr1,
-                        j->bt2, ol2, j->tr2, *sym[i], bidims, idx);
+                task_type *t = new task_type(j->bt1, j->tr1, j->bt2, j->tr2,
+                    *sym[i], bidims, idx);
                 tasklist.push_back(t);
             }
 

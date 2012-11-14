@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_BLOCK_IMPL_H
 
-#include "gen_bto_contract2_clst_builder_impl.h"
+#include <libtensor/core/orbit.h>
+#include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_contract2_block.h"
 
 namespace libtensor {
