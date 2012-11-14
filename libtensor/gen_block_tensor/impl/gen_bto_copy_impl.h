@@ -278,8 +278,8 @@ void gen_bto_copy<N, Traits, Timed>::make_schedule() {
                 index<N> bib;
                 abs_index<N>::get_index(nzorba[i], bidimsa, bib);
                 bib.permute(m_tra.get_perm());
-                orbit<N, element_type> ob(m_symb, bib, false);
-                m_schb.insert(ob.get_abs_canonical_index());
+                orbit<N, element_type> ob(m_symb, bib, false, true);
+                m_schb.insert(ob.get_acindex());
             }
         }
 
