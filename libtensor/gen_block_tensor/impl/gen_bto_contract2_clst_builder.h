@@ -8,6 +8,7 @@
 #include "../gen_block_tensor_i.h"
 #include "../gen_bto_contract2_clst.h"
 #include "block_list.h"
+#include "gen_bto_contract2_block_list.h"
 
 namespace libtensor {
 
@@ -133,6 +134,13 @@ public:
         const index<NC> &ic);
 
     void build_list(bool testzero);
+    void build_list(bool testzero,
+        gen_bto_contract2_block_list<N, M, K> &bl);
+
+private:
+    void build_list_2(
+        gen_bto_contract2_block_list<N, M, K> &bl,
+        contr_list &clst);
 
 protected:
     using gen_bto_contract2_clst_builder_base<N, M, K, Traits>::get_contr;
@@ -195,6 +203,10 @@ public:
         const index<NC> &ic);
 
     void build_list(bool testzero);
+    void build_list(bool testzero,
+        gen_bto_contract2_block_list<N, M, 0> &bl) {
+        build_list(testzero);
+    }
 
 protected:
     using gen_bto_contract2_clst_builder_base<N, M, 0, Traits>::get_contr;
