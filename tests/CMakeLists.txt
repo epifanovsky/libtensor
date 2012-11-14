@@ -25,6 +25,7 @@ set(SRC_CORE
     core/permutation_generator_test.C
     core/sequence_test.C
     core/sequence_generator_test.C
+    core/short_orbit_test.C
     core/subgroup_orbits_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C

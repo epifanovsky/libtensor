@@ -69,12 +69,9 @@ public:
         \param idx Starter block index.
         \param compute_allowed If true (default), compute whether the orbit is
             allowed, false skips this computation
-        \param cindex_only If true, only computes the canonical index of the
-            orbit, if false (default) computes the whole orbit with
-            transformations
      **/
     orbit(const symmetry<N, T> &sym, const index<N> &idx,
-        bool compute_allowed = true, bool cindex_only = false);
+        bool compute_allowed = true);
 
     /** \brief Constructs the orbit using a symmetry group and the absolute
             value of any starter index in the orbit
@@ -82,12 +79,8 @@ public:
         \param aidx Absolute value of the starter block index.
         \param compute_allowed If true (default), compute whether the orbit is
             allowed, false skips this computation
-        \param cindex_only If true, only computes the canonical index of the
-            orbit, if false (default) computes the whole orbit with
-            transformations
      **/
-    orbit(const symmetry<N, T> &sym, size_t aidx, bool compute_allowed = true,
-        bool cindex_only = false);
+    orbit(const symmetry<N, T> &sym, size_t aidx, bool compute_allowed = true);
 
     /** \brief Returns whether the orbit is allowed by symmetry
      **/
@@ -171,7 +164,6 @@ public:
 
 private:
     void build_orbit(const symmetry<N, T> &sym, const abs_index<N> &aidx);
-    void find_cindex(const symmetry<N, T> &sym, const abs_index<N> &aidx);
 
 };
 

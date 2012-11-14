@@ -2,7 +2,7 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT3_IMPL_H
 
 #include <iterator>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_impl.h"
 #include "gen_bto_contract2_align.h"
@@ -213,7 +213,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     index<NAB> iab;
                     abs_index<NAB>::get_index(*ibab, bidimsab, iab);
                     iab.permute(permab1);
-                    orbit<NAB, element_type> oab(symab1, iab, false, true);
+                    short_orbit<NAB, element_type> oab(symab1, iab);
                     batchab1.push_back(oab.get_acindex());
                 }
             }
@@ -235,7 +235,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     index<NAB> iab;
                     abs_index<NAB>::get_index(batchab1[i], bidimsab1, iab);
                     iab.permute(permab);
-                    orbit<NAB, element_type> oab(symab2, iab, false, true);
+                    short_orbit<NAB, element_type> oab(symab2, iab);
                     batchab2.push_back(oab.get_acindex());
                 }
             } else {
@@ -255,7 +255,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         index<NC> ic;
                         abs_index<NC>::get_index(blstc[ibc], bidimsc, ic);
                         ic.permute(permc);
-                        orbit<NC, element_type> oct(symct, ic, false, true);
+                        short_orbit<NC, element_type> oct(symct, ic);
                         batchc.push_back(oct.get_acindex());
                     }
                 }
@@ -274,7 +274,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         abs_index<ND>::get_index(m_schd.get_abs_index(ibd),
                             bidimsd, id);
                         id.permute(permd);
-                        orbit<ND, element_type> odt(symdt, id, false, true);
+                        short_orbit<ND, element_type> odt(symdt, id);
                         batchd.push_back(odt.get_acindex());
                     }
                     if(batchd.size() == 0) continue;
@@ -360,7 +360,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                     index<NA> ia;
                     abs_index<NA>::get_index(blsta[iba], bidimsa, ia);
                     ia.permute(perma);
-                    orbit<NA, element_type> oat(symat, ia, false, true);
+                    short_orbit<NA, element_type> oat(symat, ia);
                     batcha.push_back(oat.get_acindex());
                 }
             }
@@ -379,7 +379,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                         index<NB> ib;
                         abs_index<NB>::get_index(blstb[ibb], bidimsb, ib);
                         ib.permute(permb);
-                        orbit<NB, element_type> obt(symbt, ib, false, true);
+                        short_orbit<NB, element_type> obt(symbt, ib);
                         batchb.push_back(obt.get_acindex());
                     }
                 }
