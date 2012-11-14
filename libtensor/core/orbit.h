@@ -4,6 +4,7 @@
 #include <map>
 #include <libtensor/timings.h>
 #include "abs_index.h"
+#include "noncopyable.h"
 #include "tensor_transf.h"
 #include "symmetry.h"
 
@@ -41,7 +42,7 @@ namespace libtensor {
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class orbit : public timings< orbit<N, T> > {
+class orbit : public noncopyable, public timings< orbit<N, T> > {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -68,9 +69,12 @@ public:
         \param idx Starter block index.
         \param compute_allowed If true (default), compute whether the orbit is
             allowed, false skips this computation
+        \param cindex_only If true, only computes the canonical index of the
+            orbit, if false (default) computes the whole orbit with
+            transformations
      **/
     orbit(const symmetry<N, T> &sym, const index<N> &idx,
-        bool compute_allowed = true);
+        bool compute_allowed = true, bool cindex_only = false);
 
     /** \brief Constructs the orbit using a symmetry group and the absolute
             value of any starter index in the orbit
@@ -78,8 +82,12 @@ public:
         \param aidx Absolute value of the starter block index.
         \param compute_allowed If true (default), compute whether the orbit is
             allowed, false skips this computation
+        \param cindex_only If true, only computes the canonical index of the
+            orbit, if false (default) computes the whole orbit with
+            transformations
      **/
-    orbit(const symmetry<N, T> &sym, size_t aidx, bool compute_allowed = true);
+    orbit(const symmetry<N, T> &sym, size_t aidx, bool compute_allowed = true,
+        bool cindex_only = false);
 
     /** \brief Returns whether the orbit is allowed by symmetry
      **/
@@ -163,11 +171,7 @@ public:
 
 private:
     void build_orbit(const symmetry<N, T> &sym, const abs_index<N> &aidx);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    orbit(const orbit&);
+    void find_cindex(const symmetry<N, T> &sym, const abs_index<N> &aidx);
 
 };
 

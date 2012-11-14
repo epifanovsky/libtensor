@@ -26,6 +26,7 @@ private:
     void test_9();
     void test_10();
     void test_11();
+    void test_short_2();
 
 };
 
