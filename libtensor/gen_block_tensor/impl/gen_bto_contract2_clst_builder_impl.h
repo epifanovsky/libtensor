@@ -7,7 +7,6 @@
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
-#include "gen_bto_unfold_block_list.h"
 #include "gen_bto_contract2_clst_builder.h"
 
 namespace libtensor {
@@ -187,7 +186,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
 
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
-    bool testzero, gen_bto_contract2_block_list<N, M, K, Traits> &bl) {
+    bool testzero, gen_bto_contract2_block_list<N, M, K> &bl) {
 
     if(testzero == true) {
         build_list(true);
@@ -251,171 +250,76 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
     const std::vector< index<2> > &blb = bl.get_blstb_2();
 
     index<2> i2;
-    i2[0] = aii; i2[1] = aik;
+    i2[0] = aik; i2[1] = aii;
     typename std::vector< index<2> >::const_iterator ibla_beg =
         std::lower_bound(bla.begin(), bla.end(), i2,
             gen_bto_contract2_block_list_less_2());
-    i2[0] = aii + 1; i2[1] = aik;
+    i2[0] = aik; i2[1] = aii + 1;
     typename std::vector< index<2> >::const_iterator ibla_end =
         std::lower_bound(ibla_beg, bla.end(), i2,
             gen_bto_contract2_block_list_less_2());
-    i2[0] = aij; i2[1] = aik;
+    i2[0] = aik; i2[1] = aij;
     typename std::vector< index<2> >::const_iterator iblb_beg =
         std::lower_bound(blb.begin(), blb.end(), i2,
             gen_bto_contract2_block_list_less_2());
-    i2[0] = aij + 1; i2[1] = aik;
+    i2[0] = aik; i2[1] = aij + 1;
     typename std::vector< index<2> >::const_iterator iblb_end =
         std::lower_bound(iblb_beg, blb.end(), i2,
             gen_bto_contract2_block_list_less_2());
     typename std::vector< index<2> >::const_iterator ibla;
     typename std::vector< index<2> >::const_iterator iblb;
 
+    for(ibla = ibla_beg; ibla != ibla_end; ++ibla) {
+        index<N> iii;
+        index<K> iik;
+        abs_index<K>::get_index(ibla->at(0), dimsk, iik);
+        if(N>0) abs_index<N>::get_index(ibla->at(1), dimsi, iii);
+    }
+    for(iblb = iblb_beg; iblb != iblb_end; ++iblb) {
+        index<M> iij;
+        index<K> iik;
+        abs_index<K>::get_index(iblb->at(0), dimsk, iik);
+        if(M>0) abs_index<M>::get_index(iblb->at(1), dimsj, iij);
+    }
+
     index<NA> ia;
     index<NB> ib;
+    contr_list clst;
 
-//    std::vector<char> &chk = gen_bto_contract2_clst_builder_buffer::get_v();
-//    chk.resize(nk, 0);
-//    ::memset(&chk[0], 0, nk);
-//
     ibla = ibla_beg;
     iblb = iblb_beg;
 
     while(true) {
 
         while(ibla != ibla_end && iblb != iblb_end &&
-            ibla->at(1) != iblb->at(1)) {
+            ibla->at(0) != iblb->at(0)) {
 
-            while(ibla != ibla_end && ibla->at(1) < iblb->at(1)) ++ibla;
-            while(iblb != iblb_end && iblb->at(1) < ibla->at(1)) ++iblb;
+            while(ibla != ibla_end && ibla->at(0) < iblb->at(0)) ++ibla;
+            while(iblb != iblb_end && iblb->at(0) < ibla->at(0)) ++iblb;
         }
         if(ibla == ibla_end || iblb == iblb_end) break;
 
-        aik = ibla->at(1);
+        aik = ibla->at(0);
         abs_index<K>::get_index(aik, dimsk, ik);
 
         for(size_t i = 0; i < N; i++) ia[mapai[i]] = ii[i];
         for(size_t i = 0; i < M; i++) ib[mapbj[i]] = ij[i];
         for(size_t i = 0; i < K; i++) ia[mapak[i]] = ib[mapbk[i]] = ik[i];
 
-        block_list<NA> bla2(bidimsa), bla2x(bidimsa);
-        block_list<NB> blb2(bidimsb), blb2x(bidimsb);
-        bla2.add(ia);
-        blb2.add(ib);
-        gen_bto_unfold_block_list<NA, Traits>(m_syma, bla2).build(bla2x);
-        gen_bto_unfold_block_list<NB, Traits>(m_symb, blb2).build(blb2x);
-        // this list needs to be sorted by k
-        gen_bto_contract2_block_list<N, M, K> bl2(get_contr(),
-            bidimsa, bla2x, bidimsb, blb2x);
-        contr_list clst;
         size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
         size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
+        orbit<NA, element_type> oa(m_syma, ia, false);
+        orbit<NB, element_type> ob(m_symb, ib, false);
         clst.push_back(contr_pair(
-            aia, aia, tensor_transf<NA, element_type>(),
-            aib, aib, tensor_transf<NB, element_type>()));
-//        build_list_2(bl2, clst);
-//        coalesce(clst);
-        merge(clst); // This empties clst
+            aia, oa.get_acindex(), oa.get_transf(aia),
+            aib, ob.get_acindex(), ob.get_transf(aib)));
 
         ++ibla;
         ++iblb;
     }
 
-#if 0
-    index<K> ik1, ik2;
-    for(size_t i = 0, j = 0; i < NA; i++) {
-        if(conn[NC + i] > NC) {
-            ik2[j++] = bidimsa[i] - 1;
-        }
-    }
-    dimensions<K> bidimsk(index_range<K>(ik1, ik2));
-    size_t nk = bidimsk.get_size();
-
-    size_t aik = 0;
-    const char *p0 = &chk[0];
-    while(aik < nk) {
-
-        const char *p = (const char*)::memchr(p0 + aik, 1, nk - aik);
-        if(p == 0) break;
-        aik = p - p0;
-
-        index<NA> ia;
-        index<NB> ib;
-        const index<NC> &ic = m_ic;
-        index<K> ik;
-        abs_index<K>::get_index(aik, bidimsk, ik);
-        sequence<K, size_t> ka(0), kb(0);
-
-        //  Determine ia, ib from ic, ik
-        for(size_t i = 0, j = 0; i < NA; i++) {
-            if(conn[NC + i] < NC) {
-                ia[i] = ic[conn[NC + i]];
-            } else {
-                ka[j] = i;
-                kb[j] = conn[NC + i] - 2 * N - M - K;
-                ia[ka[j]] = ib[kb[j]] = ik[j];
-                j++;
-            }
-        }
-        for(size_t i = 0; i < NB; i++) {
-            if(conn[2 * N + M + K + i] < N + M) {
-                ib[i] = ic[conn[2 * N + M + K + i]];
-            }
-        }
-
-        size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
-        size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
-        if(!m_blka.contains(aia) || !m_blkb.contains(aib)) {
-            chk[aik] = 0;
-            continue;
-        }
-
-
-        orbit<NA, element_type> oa(m_syma, ia, false);
-        orbit<NB, element_type> ob(m_symb, ib, false);
-
-
-        //  Build the list of contractions for the current orbits A, B
-
-        typename orbit<NA, element_type>::iterator ja;
-        typename orbit<NB, element_type>::iterator jb;
-        for(ja = oa.begin(); ja != oa.end(); ++ja)
-        for(jb = ob.begin(); jb != ob.end(); ++jb) {
-            index<NA> ia1;
-            index<NB> ib1;
-            abs_index<NA>::get_index(oa.get_abs_index(ja), bidimsa, ia1);
-            abs_index<NB>::get_index(ob.get_abs_index(jb), bidimsb, ib1);
-            index<NC> ic1;
-            index<K> ika, ikb;
-            for(size_t i = 0; i < K; i++) {
-                ika[i] = ia1[ka[i]];
-                ikb[i] = ib1[kb[i]];
-            }
-            if(!ika.equals(ikb)) continue;
-            for(size_t i = 0; i < N + M; i++) {
-                if(conn[i] >= 2 * N + M + K) {
-                    ic1[i] = ib1[conn[i] - 2 * N - M - K];
-                } else {
-                    ic1[i] = ia1[conn[i] - N - M];
-                }
-            }
-            if(!ic1.equals(ic)) continue;
-            clst.push_back(contr_pair(
-                oa.get_abs_index(ja), oa.get_acindex(), oa.get_transf(ja),
-                ob.get_abs_index(jb), ob.get_acindex(), ob.get_transf(jb)));
-            chk[abs_index<K>::get_abs_index(ika, bidimsk)] = 0;
-        }
-
-
-        //  In the abbreviated version of the algorithm, if the list is
-        //  not empty, there is no need to continue: the block is non-zero
-
-        if(testzero && !clst_empty) break;
-
-
-
-    }
-#endif
-
+    coalesce(clst);
+    merge(clst); // This empties clst
 }
 
 

@@ -1,6 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_builder.h>
+#include <libtensor/gen_block_tensor/impl/gen_bto_unfold_block_list.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
@@ -81,7 +82,7 @@ void gen_bto_contract2_clst_builder_test::test_1() {
     symb.insert(se2);
     symb.insert(se3);
 
-    block_list<4> bla(bidims), blb(bidims);
+    block_list<4> bla(bidims), blb(bidims), blax(bidims), blbx(bidims);
     bla.add(i0000);
     bla.add(i0101);
     blb.add(i0000);
@@ -90,8 +91,10 @@ void gen_bto_contract2_clst_builder_test::test_1() {
     contraction2<2, 2, 2> contr;
     contr.contract(2, 2);
     contr.contract(3, 3);
-    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidims, bla,
-        bidims, blb);
+    gen_bto_unfold_block_list<4, btod_traits>(syma, bla).build(blax);
+    gen_bto_unfold_block_list<4, btod_traits>(symb, blb).build(blbx);
+    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidims, blax,
+        bidims, blbx);
     gen_bto_contract2_clst_builder<2, 2, 2, btod_traits> op(contr, syma, symb,
         bla, blb, bidims, i0101);
     op.build_list(false, blst);
@@ -172,7 +175,7 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     symb.insert(se2);
     symb.insert(se3);
 
-    block_list<4> bla(bidims), blb(bidims);
+    block_list<4> bla(bidims), blb(bidims), blax(bidims), blbx(bidims);
     for(size_t ii = 0; ii < 2; ii++)
     for(size_t jj = ii; jj < 2; jj++)
     for(size_t kk = 0; kk < 2; kk++)
@@ -195,8 +198,10 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     contraction2<2, 2, 2> contr;
     contr.contract(2, 2);
     contr.contract(3, 3);
-    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidims, bla,
-        bidims, blb);
+    gen_bto_unfold_block_list<4, btod_traits>(syma, bla).build(blax);
+    gen_bto_unfold_block_list<4, btod_traits>(symb, blb).build(blbx);
+    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidims, blax,
+        bidims, blbx);
     gen_bto_contract2_clst_builder<2, 2, 2, btod_traits> op(contr, syma, symb,
         bla, blb, bidims, i1212);
     op.build_list(false, blst);
@@ -269,7 +274,7 @@ void gen_bto_contract2_clst_builder_test::test_3() {
     symb.insert(se1);
     symb.insert(se2);
 
-    block_list<4> bla(bidimsa), blb(bidimsb);
+    block_list<4> bla(bidimsa), blb(bidimsb), blax(bidimsa), blbx(bidimsb);
     orbit_list<4, double> ola(syma), olb(symb);
     for(orbit_list<4, double>::iterator i = ola.begin(); i != ola.end(); ++i) {
         bla.add(ola.get_abs_index(i));
@@ -283,8 +288,10 @@ void gen_bto_contract2_clst_builder_test::test_3() {
     contraction2<2, 2, 2> contr;
     contr.contract(2, 0);
     contr.contract(3, 1);
-    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidimsa, bla,
-        bidimsb, blb);
+    gen_bto_unfold_block_list<4, btod_traits>(syma, bla).build(blax);
+    gen_bto_unfold_block_list<4, btod_traits>(symb, blb).build(blbx);
+    gen_bto_contract2_block_list<2, 2, 2> blst(contr, bidimsa, blax,
+        bidimsb, blbx);
     gen_bto_contract2_clst_builder<2, 2, 2, btod_traits> op(contr, syma, symb,
         bla, blb, bidimsc, i0000);
     op.build_list(false, blst);

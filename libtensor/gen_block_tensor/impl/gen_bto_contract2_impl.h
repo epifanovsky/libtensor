@@ -7,7 +7,7 @@
 #include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_batching_policy.h"
-#include "gen_bto_contract2_clst_builder_impl.h"
+#include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_contract2_nzorb_impl.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_unfold_block_list.h"
