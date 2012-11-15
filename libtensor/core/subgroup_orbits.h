@@ -101,8 +101,8 @@ public:
     }
 
 private:
-    void mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
-        std::vector<char> &chk, char v);
+    void build_orbit(const symmetry<N, T> &sym, size_t aidx,
+        std::vector<size_t> &orb);
 
 };
 
