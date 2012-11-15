@@ -71,7 +71,10 @@ subgroup_orbits<N, T>::subgroup_orbits(
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "subgroup_orbits()";
 
-    if(!sym1.get_bis().equals(sym2.get_bis())) {
+    block_index_space<N> bis1(sym1.get_bis()), bis2(sym2.get_bis());
+    bis1.match_splits();
+    bis2.match_splits();
+    if(!bis1.equals(bis2)) {
         throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
             "sym1,sym2");
     }

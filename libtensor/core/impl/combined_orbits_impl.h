@@ -103,11 +103,16 @@ combined_orbits<N, T>::combined_orbits(
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "combined_orbits()";
 
-    if(!sym1.get_bis().equals(sym3.get_bis())) {
+    block_index_space<N> bis1(sym1.get_bis()), bis2(sym2.get_bis()),
+        bis3(sym3.get_bis());
+    bis1.match_splits();
+    bis2.match_splits();
+    bis3.match_splits();
+    if(!bis1.equals(bis3)) {
         throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
             "sym1,sym3");
     }
-    if(!sym2.get_bis().equals(sym3.get_bis())) {
+    if(!bis2.equals(bis3)) {
         throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
             "sym2,sym3");
     }
