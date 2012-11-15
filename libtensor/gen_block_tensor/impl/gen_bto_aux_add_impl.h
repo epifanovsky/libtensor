@@ -108,7 +108,6 @@ void gen_bto_aux_add<N, Traits>::close() {
 
         bool touched = false;
         for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
-            abs_index<N> aia(inode->cia, m_bidims);
             if(inode->zeroa) continue;
             if(m_grpmap.find(inode->cia) != m_grpmap.end()) {
                 touched = true;
@@ -118,14 +117,11 @@ void gen_bto_aux_add<N, Traits>::close() {
 
         for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
 
-            //  Skip the canonical block in B
-            if(inode->cib == inode->cic) continue;
+            //  Skip zero and canonical blocks in B
+            if(inode->zerob || inode->cib == inode->cic) continue;
 
             abs_index<N> aib(inode->cib, m_bidims),
                 aic(inode->cic, m_bidims);
-
-            //  Skip zero blocks
-            if(m_cb.req_is_zero_block(aib.get_index())) continue;
 
             rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
             wr_block_type &blkc = m_cb.req_block(aic.get_index());
@@ -195,14 +191,11 @@ void gen_bto_aux_add<N, Traits>::put(
             for(group_iterator inode = grp.begin(); inode != grp.end();
                 ++inode) {
 
-                //  Skip the canonical block in B
-                if(inode->cib == inode->cic) continue;
+                //  Skip zero and canonical blocks in B
+                if(inode->zerob || inode->cib == inode->cic) continue;
 
                 abs_index<N> aib(inode->cib, m_bidims),
                     aic(inode->cic, m_bidims);
-
-                //  Skip zero blocks
-                if(m_cb.req_is_zero_block(aib.get_index())) continue;
 
                 rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
                 wr_block_type &blkc = m_cb.req_block(aic.get_index());
