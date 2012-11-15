@@ -8,6 +8,7 @@
 #include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
 #include "block_tensor_test.h"
+#include "combined_orbits_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
 #include "dense_tensor_test.h"
@@ -55,6 +56,7 @@ namespace libtensor {
     \li libtensor::block_index_subspace_builder_test
     \li libtensor::block_map_test
     \li libtensor::block_tensor_test
+    \li libtensor::combined_orbits_test
     \li libtensor::contraction2_test
     \li libtensor::contraction2_list_builder_test
     \li libtensor::dense_tensor_test
@@ -87,6 +89,7 @@ private:
         m_utf_block_index_subspace_builder;
     unit_test_factory<block_map_test> m_utf_block_map;
     unit_test_factory<block_tensor_test> m_utf_block_tensor;
+    unit_test_factory<combined_orbits_test> m_utf_combined_orbits;
     unit_test_factory<contraction2_test> m_utf_contraction2;
     unit_test_factory<contraction2_list_builder_test>
         m_utf_contraction2_list_builder;
