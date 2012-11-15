@@ -4,6 +4,7 @@ set(SRC
     version.C
     core/impl/abs_index.C
     core/impl/allocator.C
+    core/impl/combined_orbits.C
     core/impl/dimensions.C
     core/impl/magic_dimensions.C
     core/impl/orbit.C

@@ -7,6 +7,7 @@ set(SRC_CORE
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
     core/block_tensor_test.C
+    core/combined_orbits_test.C
     core/contraction2_list_builder_test.C
     core/contraction2_test.C
     core/dense_tensor_test.C

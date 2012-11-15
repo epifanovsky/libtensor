@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SUBGROUP_ORBITS_H
-#define LIBTENSOR_SUBGROUP_ORBITS_H
+#ifndef LIBTENSOR_COMBINED_ORBITS_H
+#define LIBTENSOR_COMBINED_ORBITS_H
 
 #include <cstring> // for size_t
 #include <algorithm> // for std::binary_search
@@ -13,24 +13,28 @@
 namespace libtensor {
 
 
-/** \brief Given an orbit in a group, builds a list of orbits in a subgroup
+/** \brief Given an orbit in two groups, builds a list of orbits in their
+        subgroup
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
-    Given groups G1, G2: G2 is a subgroup of G1, and index I in C1, where
-    C1 is a set of all canonical indexes in G1 and
-    C2 is a set of all canonical indexes in G2,
-    this algorithm finds a set J: {Ji | Ji in C2, Ji in orbit(I, G1)}.
+    Given groups G1, G2, G3: G3 is a subgroup of G1 and G2, and index I,
+    this algorithm finds a complete set of indexes Ji:
+    {Ji | Ji in C3, Ji in orbit(I, G1), Ji in orbit(I, G2)},
+    where C3 is the set of all canonical indexes in G3.
 
     The output set J is sorted by absolute value of Ji and is accessible using
     an iterator.
 
-    \sa orbit, orbit_list, combined_orbits
+    The result of this algorithm is the same as subgroup_orbits with G0 and G3,
+    where G0 is the union of G1 and G2.
+
+    \sa orbit, orbit_list, subgroup_orbits
 
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class subgroup_orbits : public noncopyable {
+class combined_orbits : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -44,12 +48,14 @@ private:
 public:
     /** \brief Constructs the list of orbits
         \param sym1 Symmetry group G1.
-        \param sym2 Symmetry group G2 (must be subgroup of G1).
+        \param sym2 Symmetry group G2.
+        \param sym3 Symmetry group G3 (must be subgroup of both G1 and G2).
         \param aidx Absolute value of index I.
      **/
-    subgroup_orbits(
+    combined_orbits(
         const symmetry<N, T> &sym1,
         const symmetry<N, T> &sym2,
+        const symmetry<N, T> &sym3,
         size_t aidx);
 
     /** \brief Returns the number of orbits on the list
@@ -109,4 +115,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SUBGROUP_ORBITS_H
+#endif // LIBTENSOR_COMBINED_ORBITS_H

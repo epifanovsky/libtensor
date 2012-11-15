@@ -56,34 +56,25 @@ public:
 
 public:
     struct node {
-        bool zeroa;
+        bool zeroa, zerob;
         size_t cia, cib, cic;
         tensor_transf_type tra, trb;
+    };
 
-        node(size_t cia_, size_t cib_, size_t cic_,
-            const tensor_transf_type &tra_, const tensor_transf_type &trb_) :
-            zeroa(false), cia(cia_), cib(cib_), cic(cic_), tra(tra_), trb(trb_)
-            { }
-
-        node(size_t cib_, size_t cic_, const tensor_transf_type &trb_) :
-            zeroa(true), cia(0), cib(cib_), cic(cic_), trb(trb_)
-            { }
-
+    struct book_node {
+        size_t cidx;
+        tensor_transf_type tr;
     };
 
     typedef std::list<node> schedule_group;
     typedef std::vector<schedule_group*> schedule_type; //!< Schedule type
     typedef typename schedule_type::const_iterator iterator;
 
-    typedef std::pair<size_t, schedule_group*> book_pair_t;
-    typedef std::map<size_t, schedule_group*> book_t;
-
 private:
     const symmetry_type &m_syma; //!< Symmetry of A
     const symmetry_type &m_symb; //!< Symmetry of B
     symmetry_type m_symc; //!< Largest common subgroup of A and B
     schedule_type m_sch; //!< Additive schedule
-    book_t m_booka, m_posta;
 
 public:
     /** \brief Initializes the algorithm
@@ -118,82 +109,6 @@ private:
     /** \brief Removes all elements from the schedule
      **/
     void clear_schedule() throw();
-
-    /** \brief Fills output array with tags for each block index:
-            1 = allowed non-canonical, 2 = allowed canonical,
-            3 = forbidden non-canonical, 4 = forbidden canonical
-     **/
-    void mark_orbits(
-        const symmetry_type &sym,
-        std::vector<char> &o);
-
-    /** \brief Returns the canonical index and a transformation to a given index
-     **/
-    size_t find_canonical(
-        const dimensions<N> &bidims,
-        const symmetry_type &sym,
-        const abs_index<N> ai,
-        tensor_transf_type &tr,
-        const std::vector<char> &o);
-
-    /** \brief Recursive part of find_canonical()
-     **/
-    size_t find_canonical_inner(
-        const dimensions<N> &bidims,
-        const symmetry_type &sym,
-        const abs_index<N> &ai,
-        tensor_transf_type &tr,
-        const std::vector<char> &o,
-        std::vector<char> &o2);
-
-    void process_orbit_in_a(
-        const dimensions<N> &bidims,
-        bool zeroa,
-        gen_block_tensor_rd_ctrl<N, bti_traits> &cb,
-        const abs_index<N> &acia,
-        const abs_index<N> &aia,
-        const tensor_transf_type &tra,
-        std::vector<char> &oa,
-        std::vector<char> &ob,
-        const std::vector<char> &omb,
-        const std::vector<char> &omc,
-        schedule_group &grp);
-
-    void iterate_sym_elements_in_a(
-        const dimensions<N> &bidims,
-        bool zeroa,
-        gen_block_tensor_rd_ctrl<N, bti_traits> &cb,
-        const abs_index<N> &acia,
-        const abs_index<N> &aia,
-        const tensor_transf_type &tra,
-        std::vector<char> &oa,
-        std::vector<char> &ob,
-        const std::vector<char> &omb,
-        const std::vector<char> &omc,
-        schedule_group &grp);
-
-    void process_orbit_in_b(
-        const dimensions<N> &bidims,
-        bool zeroa,
-        const abs_index<N> &acib,
-        const abs_index<N> &aib,
-        const tensor_transf_type &trb,
-        std::vector<char> &oa,
-        std::vector<char> &ob,
-        const std::vector<char> &omb,
-        const std::vector<char> &omc,
-        schedule_group &grp);
-
-    void iterate_sym_elements_in_b(
-        const dimensions<N> &bidims,
-        bool zeroa,
-        const abs_index<N> &acib,
-        const abs_index<N> &aib,
-        const tensor_transf<N, element_type> &trb,
-        std::vector<char> &oa, std::vector<char> &ob,
-        const std::vector<char> &omb,
-        const std::vector<char> &omc,
-        schedule_group &grp);
 
 };
 
