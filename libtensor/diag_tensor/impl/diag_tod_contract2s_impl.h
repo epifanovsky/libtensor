@@ -3,9 +3,15 @@
 
 #include <libtensor/core/bad_dimensions.h>
 #include "../diag_tod_contract2.h"
+#include "../diag_tod_set.h"
 #include "../diag_tod_contract2s.h"
 
 namespace libtensor {
+
+
+template<size_t N, size_t M, size_t K>
+const char *diag_tod_contract2s<N, M, K>::k_clazz =
+    "diag_tod_contract2s<N, M, K>";
 
 
 template<size_t N, size_t M, size_t K>
@@ -82,6 +88,9 @@ void diag_tod_contract2s<N, M, K>::perform(
         diag_tod_contract2<N, M, K>(i->contr, i->dta, i->dtb, i->d).perform(
             zero1, dtc);
         zero1 = false;
+    }
+    if(zero1) {
+        diag_tod_set<NC>().perform(dtc);
     }
 }
 

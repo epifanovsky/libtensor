@@ -4,7 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/diag_tensor/diag_tensor_i.h>
-#include <libtensor/diag_tensor/diag_tod_contract2.h>
+#include <libtensor/diag_tensor/diag_tod_contract2s.h>
 #include <libtensor/diag_tensor/diag_tod_copy.h>
 #include <libtensor/diag_tensor/diag_tod_set.h>
 #include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
@@ -46,7 +46,7 @@ struct diag_btod_traits {
 
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
-        typedef diag_tod_contract2<N, M, K> type;
+        typedef diag_tod_contract2s<N, M, K> type;
         typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
     };
 

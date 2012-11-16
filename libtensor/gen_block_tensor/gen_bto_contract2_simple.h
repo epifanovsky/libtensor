@@ -62,6 +62,10 @@ public:
     typedef typename bti_traits::template rd_block_type<NB>::type
             rd_block_b_type;
 
+    //! Type of read-only block
+    typedef typename bti_traits::template rd_block_type<NC>::type
+            rd_block_type;
+
     //! Type of write-only block
     typedef typename bti_traits::template wr_block_type<NC>::type
             wr_block_type;
