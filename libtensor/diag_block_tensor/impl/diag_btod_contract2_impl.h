@@ -18,7 +18,9 @@ void diag_btod_contract2<N, M, K>::perform(
     diag_block_tensor_i<NC, double> &btc) {
 
     gen_bto_aux_copy<NC, diag_btod_traits> out(get_symmetry(), btc);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -36,7 +38,9 @@ void diag_btod_contract2<N, M, K>::perform(
 
     gen_bto_aux_add<NC, diag_btod_traits> out(get_symmetry(), asch, btc,
         scalar_transf<double>(d));
+    out.open();
     perform(out);
+    out.close();
 }
 
 
