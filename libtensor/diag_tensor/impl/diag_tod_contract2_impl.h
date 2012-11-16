@@ -51,8 +51,12 @@ void diag_tod_contract2<N, M, K>::perform(
 
     for(size_t isa = 0; isa < ssla.size(); isa++)
     for(size_t isb = 0; isb < sslb.size(); isb++) {
+
         diag_to_contract2_subspace<N, M, K> sscx(m_contr,
             dtsa.get_subspace(ssla[isa]), dtsb.get_subspace(sslb[isb]));
+
+        //  Check if the subspace resulting from the contraction is
+        //  already allowed in the result
         bool found_exact = false;
         for(size_t isc = 0; isc < sslc.size(); isc++) {
             if(dtsc.get_subspace(sslc[isc]).equals(sscx.get_dtssc())) {
@@ -66,8 +70,15 @@ void diag_tod_contract2<N, M, K>::perform(
             }
         }
         if(found_exact) continue;
-        // ...
-        throw 0;
+
+        //  If the subspace is not in the result, add one
+        size_t ssc = cc.req_add_subspace(sscx.get_dtssc());
+        sslc.push_back(ssc);
+        schrec r;
+        r.ssa = ssla[isa];
+        r.ssb = sslb[isb];
+        r.d = m_d;
+        sch.insert(std::pair<size_t, schrec>(ssc, r));
     }
 
     for(std::multimap<size_t, schrec>::const_iterator i = sch.begin();
