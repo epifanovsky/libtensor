@@ -32,8 +32,6 @@ void diag_tod_contract2<N, M, K>::perform(
     bool zero,
     diag_tensor_wr_i<N + M, double> &dtc) {
 
-    double d = 1.0;
-
     if(zero) diag_tod_set<N + M>().perform(dtc);
 
     const diag_tensor_space<N + K> &dtsa = m_dta.get_space();
@@ -61,7 +59,7 @@ void diag_tod_contract2<N, M, K>::perform(
                 schrec r;
                 r.ssa = ssla[isa];
                 r.ssb = sslb[isb];
-                r.d = d;
+                r.d = m_d;
                 sch.insert(std::pair<size_t, schrec>(sslc[isc], r));
                 found_exact = true;
                 break;

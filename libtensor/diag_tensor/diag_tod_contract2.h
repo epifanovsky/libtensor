@@ -29,6 +29,7 @@ private:
     contraction2<N, M, K> m_contr; //!< Contraction
     diag_tensor_rd_i<N + K, double> &m_dta; //!< First tensor (A)
     diag_tensor_rd_i<M + K, double> &m_dtb; //!< Second tensor (B)
+    double m_d; //!< Scaling factor
 
 public:
     /** \brief Initializes the operation
@@ -38,8 +39,9 @@ public:
      **/
     diag_tod_contract2(const contraction2<N, M, K> &contr,
         diag_tensor_rd_i<N + K, double> &dta,
-        diag_tensor_rd_i<M + K, double> &dtb) :
-        m_contr(contr), m_dta(dta), m_dtb(dtb)
+        diag_tensor_rd_i<M + K, double> &dtb,
+        double d = 1.0) :
+        m_contr(contr), m_dta(dta), m_dtb(dtb), m_d(d)
     { }
 
     /** \brief Performs the operation
