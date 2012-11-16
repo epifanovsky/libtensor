@@ -2,6 +2,7 @@
 #define LIBTENSOR_DIAG_BTOD_TRAITS_H
 
 #include <libtensor/core/allocator.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/diag_tensor/diag_tensor_i.h>
 #include <libtensor/diag_tensor/diag_tod_contract2.h>
 #include <libtensor/diag_tensor/diag_tod_copy.h>

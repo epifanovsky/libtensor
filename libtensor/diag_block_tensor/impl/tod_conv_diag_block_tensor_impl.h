@@ -10,6 +10,7 @@
 #include <libtensor/diag_tensor/diag_tod_copy.h>
 #include <libtensor/diag_tensor/tod_conv_diag_tensor.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include <libtensor/diag_block_tensor/diag_btod_traits.h>
 #include "../diag_btod_traits.h"
 #include "../tod_conv_diag_block_tensor.h"
 
@@ -38,9 +39,10 @@ void tod_conv_diag_block_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
         temp_block_tensor_type btb(bisa);
         gen_block_tensor_ctrl<N, bti_traits> cb(btb);
 
-        orbit<N, double> oa(syma, ol.get_index(io));
-        diag_tensor_rd_i<N, double> &blka =
-            ca.req_const_block(ol.get_index(io));
+        index<N> ia;
+        ol.get_index(io, ia);
+        orbit<N, double> oa(syma, ia);
+        diag_tensor_rd_i<N, double> &blka = ca.req_const_block(ia);
         for(typename orbit<N, double>::iterator ioa = oa.begin();
             ioa != oa.end(); ++ioa) {
 
@@ -61,7 +63,7 @@ void tod_conv_diag_block_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
 
             cb.req_zero_block(ib);
         }
-        ca.ret_const_block(ol.get_index(io));
+        ca.ret_const_block(ia);
     }
 }
 

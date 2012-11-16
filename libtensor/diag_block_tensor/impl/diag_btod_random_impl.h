@@ -44,7 +44,9 @@ void diag_btod_random<N>::perform(diag_block_tensor_wr_i<N, double> &bt) {
         orbit_list<N, double> ol(ctrl.req_symmetry());
         for(typename orbit_list<N, double>::iterator io = ol.begin();
             io != ol.end(); ++io) {
-            diag_btod_random_block<N>(ctrl).perform(ol.get_index(io));
+            index<N> idx;
+            ol.get_index(io, idx);
+            diag_btod_random_block<N>(ctrl).perform(idx);
         }
 
     } catch(...) {
