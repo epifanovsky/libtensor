@@ -29,6 +29,7 @@ libtensor_core_suite::libtensor_core_suite() :
     add_test("permutation_generator", m_utf_permutation_generator);
     add_test("sequence", m_utf_sequence);
     add_test("sequence_generator", m_utf_sequence_generator);
+    add_test("subgroup_orbits", m_utf_subgroup_orbits);
     add_test("symmetry", m_utf_symmetry);
     add_test("symmetry_element_set", m_utf_symmetry_element_set);
     add_test("transf_list", m_utf_transf_list);

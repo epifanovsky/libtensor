@@ -25,7 +25,9 @@ void gen_bto_random<N, Traits, Timed>::perform(
     orbit_list<N, element_type> orblist(ctrl.req_symmetry());
     typename orbit_list<N, element_type>::iterator iorbit = orblist.begin();
     for(; iorbit != orblist.end(); iorbit++) {
-        make_random_blk(ctrl, bidims, orblist.get_index(iorbit));
+        index<N> idx;
+        orblist.get_index(iorbit, idx);
+        make_random_blk(ctrl, bidims, idx);
     }
 
     gen_bto_random::stop_timer();

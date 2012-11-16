@@ -2,9 +2,10 @@
 #define LIBTENSOR_ORBIT_LIST_H
 
 #include <cstring> // for size_t
-#include <map>
+#include <algorithm> // for std::binary_search
 #include <vector>
 #include <libtensor/timings.h>
+#include "abs_index.h"
 #include "dimensions.h"
 #include "index.h"
 #include "noncopyable.h"
@@ -29,11 +30,11 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    typedef typename std::map< size_t, index<N> >::const_iterator iterator;
+    typedef typename std::vector<size_t>::const_iterator iterator;
 
 private:
     dimensions<N> m_dims; //!< Index dimensions
-    std::map< size_t, index<N> > m_orb; //!< List of orbits
+    std::vector<size_t> m_orb; //!< Sorted vector of canonical indexes
 
 public:
     /** \brief Constructs the list of orbits
@@ -51,13 +52,17 @@ public:
             on the list
         \param idx Index.
      **/
-    bool contains(const index<N> &idx) const;
+    bool contains(const index<N> &idx) const {
+        return contains(abs_index<N>::get_abs_index(idx, m_dims));
+    }
 
     /** \brief Returns true is the given index is a canonical one and contained
             on the list
         \param aidx Absolute value of an index.
      **/
-    bool contains(size_t aidx) const;
+    bool contains(size_t aidx) const {
+        return std::binary_search(m_orb.begin(), m_orb.end(), aidx);
+    }
 
     /** \brief Returns an STL-like iterator to the beginning of the orbit list
      **/
@@ -75,17 +80,18 @@ public:
             the iterator
      **/
     size_t get_abs_index(const iterator &i) const {
-        return i->first;
+        return *i;
     }
 
     /** \brief Returns the canonical index pointed to by the iterator
+        \param[out] idx Canonical index.
      **/
-    const index<N> &get_index(const iterator &i) const {
-        return i->second;
+    void get_index(const iterator &i, index<N> &idx) const {
+        abs_index<N>::get_index(*i, m_dims, idx);
     }
 
 private:
-    bool mark_orbit(const symmetry<N, T> &sym, const index<N> &idx,
+    bool mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
         std::vector<char> &chk);
 
 };

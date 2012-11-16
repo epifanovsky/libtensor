@@ -75,7 +75,9 @@ void btod_symmetrize3<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
         out2.add_transf(tr3);
         out2.add_transf(tr4);
         out2.add_transf(tr5);
+        out2.open();
         m_op.perform(out2);
+        out2.close();
 
     } catch(...) {
         throw;
@@ -97,7 +99,9 @@ void btod_symmetrize3<N>::perform(gen_block_tensor_i<N, bti_traits> &bt) {
     asch.build(m_sch, ctrl);
 
     gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, scalar_transf<double>());
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -114,7 +118,9 @@ void btod_symmetrize3<N>::perform(gen_block_tensor_i<N, bti_traits> &bt,
     asch.build(m_sch, ctrl);
 
     gen_bto_aux_add<N, Traits> out(m_sym, asch, bt, d);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -212,7 +218,7 @@ void btod_symmetrize3<N>::make_schedule() {
     for(typename orbit_list<N, double>::iterator io = ol.begin();
         io != ol.end(); io++) {
 
-        abs_index<N> ai(ol.get_index(io), bidims);
+        abs_index<N> ai(ol.get_abs_index(io), bidims);
         sym_schedule_t sch;
         make_schedule_blk(ai, sch);
         if(!sch.empty()) m_sch.insert(ai.get_abs_index());

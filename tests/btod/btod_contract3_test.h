@@ -21,6 +21,9 @@ private:
     void test_contr_4();
     void test_contr_5();
 
+    void test_batch_1();
+    void test_batch_2();
+
 };
 
 

@@ -1,6 +1,9 @@
 #ifndef LIBTENSOR_GEN_BTO_AUX_COPY_H
 #define LIBTENSOR_GEN_BTO_AUX_COPY_H
 
+#include <map>
+#include <libutil/threads/mutex.h>
+#include "block_stream_exception.h"
 #include "gen_block_stream_i.h"
 #include "gen_block_tensor_i.h"
 #include "gen_block_tensor_ctrl.h"
@@ -12,20 +15,23 @@ namespace libtensor {
     \tparam N Tensor order.
     \tparam BtiTraits Block tensor operation traits structure.
 
-    This auxiliary block tensor operation accepts blocks and saves them into
-    a given block tensor object. Upon initialization via open(), the operation
-    zeroes out the target block tensor and installs the specified symmetry.
-    Each put() will copy the block with the given index. If put() is called
-    multiple times with the same block index, only the last one will be saved.
+    This auxiliary block tensor operation accepts blocks and accumulates them
+    into a given block tensor object. Upon initialization via open(),
+    the operation zeroes out the target block tensor and installs the specified
+    symmetry. Each put() will copy the block with the given index. If put() is
+    called multiple times with the same block index, the result is added.
     The blocks must be canonical.
 
-    \sa gen_block_stream_i
+    \sa gen_block_stream_i, block_stream_exception
 
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits>
 class gen_bto_aux_copy :
     public gen_block_stream_i<N, typename Traits::bti_traits> {
+
+public:
+    static const char *k_clazz; //!< Class name
 
 public:
     //! Type of tensor elements
@@ -43,8 +49,11 @@ public:
 private:
     symmetry<N, element_type> m_sym; //!< Symmetry of target block tensor
     gen_block_tensor_wr_i<N, bti_traits> &m_bt; //!< Target block tensor
+    dimensions<N> m_bidims; //!< Block index dims
     gen_block_tensor_wr_ctrl<N, bti_traits> m_ctrl; //!< Block tensor control
     bool m_open; //!< Open state
+    libutil::mutex m_mtx; //!< Global mutex
+    std::map<size_t, libutil::mutex*> m_blkmtx; //!< Per-block mutexes
 
 public:
     /** \brief Constructs the operation

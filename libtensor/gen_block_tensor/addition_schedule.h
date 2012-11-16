@@ -127,13 +127,6 @@ private:
         const symmetry_type &sym,
         std::vector<char> &o);
 
-    /** \brief Recursive part of mark_orbits()
-     **/
-    bool mark_orbit_inner(
-        const symmetry_type &sym,
-        const abs_index<N> &aci,
-        std::vector<char> &o);
-
     /** \brief Returns the canonical index and a transformation to a given index
      **/
     size_t find_canonical(

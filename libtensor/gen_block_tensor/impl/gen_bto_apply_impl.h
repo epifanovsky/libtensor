@@ -110,8 +110,6 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         // TODO: replace with temporary block tensor from traits
         temp_block_tensor_type btb(m_bis);
 
@@ -119,8 +117,6 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
                 btb, out);
         gen_bto_apply_task_observer<N, Functor, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_apply::stop_timer();
@@ -260,7 +256,9 @@ void gen_bto_apply<N, Functor, Traits, Timed>::make_schedule() {
         // If m_fn(0.0) yields 0.0 only non-zero blocks of tensor A need to
         // be considered
         if (m_fn.keep_zero()) {
-            index<N> ia(ol.get_index(io)); ia.permute(pinv);
+            index<N> ia;
+            ol.get_index(io, ia);
+            ia.permute(pinv);
 
             orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
             if (! oa.is_allowed()) continue;

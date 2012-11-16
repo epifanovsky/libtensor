@@ -56,7 +56,9 @@ template<size_t N, size_t M, size_t K>
 void btod_ewmult2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc) {
 
     gen_bto_aux_copy<N + M + K, btod_traits> out(get_symmetry(), btc);
+    out.open();
     m_gbto.perform(out);
+    out.close();
 }
 
 
@@ -72,7 +74,9 @@ void btod_ewmult2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc,
     asch.build(get_schedule(), cc);
 
     gen_bto_aux_add<NC, btod_traits> out(get_symmetry(), asch, btc, d);
+    out.open();
     m_gbto.perform(out);
+    out.close();
 }
 
 

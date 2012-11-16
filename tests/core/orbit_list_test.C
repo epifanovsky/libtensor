@@ -57,7 +57,9 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
         bool can = false, can_ref = true;
         orbit_list<2, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<2> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -119,7 +121,9 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<2, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<2> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -181,7 +185,9 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -243,7 +249,9 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -306,7 +314,9 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -372,7 +382,9 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -438,7 +450,9 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -505,7 +519,9 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }
@@ -575,7 +591,9 @@ void orbit_list_test::test_9() throw(libtest::test_exception) {
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            if(io.equals(orblst.get_index(i))) {
+            index<4> idx;
+            orblst.get_index(i, idx);
+            if(io.equals(idx)) {
                 can = true;
                 break;
             }

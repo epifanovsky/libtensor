@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_GEN_BLOCK_TENSOR_H
 #define LIBTENSOR_GEN_BLOCK_TENSOR_H
 
-#include <libutil/threads/auto_lock.h>
 #include <libutil/threads/mutex.h>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/immutable.h>
@@ -41,6 +40,7 @@ public:
     dimensions<N> m_bidims; //!< Block index dimensions
     symmetry<N, element_type> m_symmetry; //!< Block tensor symmetry
     orbit_list<N, element_type> *m_orblst; //!< Orbit list
+    bool m_orblst_inprogress; //!< Building or orbit list is in progress
     block_map<N, BtTraits> m_map; //!< Block map
     libutil::mutex m_lock; //!< Read-write lock
 
@@ -77,7 +77,8 @@ protected:
     //@}
 
 private:
-    void update_orblst();
+    bool update_orblst(bool wait);
+    bool check_canonical_block(const index<N> &idx);
     block_type &get_block(const index<N> &idx);
 
 };

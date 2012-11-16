@@ -24,6 +24,7 @@ set(SRC_CORE
     core/permutation_generator_test.C
     core/sequence_test.C
     core/sequence_generator_test.C
+    core/subgroup_orbits_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
     core/transf_list_test.C
@@ -174,6 +175,8 @@ set(SRC_BTOD
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C
+    btod/gen_bto_aux_add_test.C
+    btod/gen_bto_aux_copy_test.C
     btod/gen_bto_contract2_clst_builder_test.C
     btod/gen_bto_dirsum_sym_test.C
     btod/gen_bto_unfold_symmetry_test.C

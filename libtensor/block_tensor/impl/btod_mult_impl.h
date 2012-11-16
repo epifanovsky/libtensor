@@ -16,7 +16,9 @@ template<size_t N>
 void btod_mult<N>::perform(gen_block_tensor_i<N, bti_traits> &btc) {
 
     gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btc);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -32,7 +34,9 @@ void btod_mult<N>::perform(gen_block_tensor_i<N, bti_traits> &btc,
     asch.build(get_schedule(), cc);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btc, d);
+    out.open();
     perform(out);
+    out.close();
 }
 
 

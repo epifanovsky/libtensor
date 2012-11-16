@@ -8,6 +8,7 @@
 #include "../gen_block_tensor_i.h"
 #include "../gen_bto_contract2_clst.h"
 #include "block_list.h"
+#include "gen_bto_contract2_block_list.h"
 
 namespace libtensor {
 
@@ -86,7 +87,7 @@ protected:
     \tparam K Order of contraction.
     \tparam Traits Traits class.
 
-    \sa gen_bto_contract2_clst_builder_base
+    \sa gen_bto_contract2_clst_builder_base, gen_bto_unfold_block_list
 
     \ingroup libtensor_gen_bto
  **/
@@ -117,8 +118,8 @@ public:
 private:
     const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
     const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
-    const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
-    const block_list<NB> &m_blkb; //!< Non-zero canonical blocks in B
+    const block_list<NA> &m_blka; //!< All non-zero blocks in A
+    const block_list<NB> &m_blkb; //!< All non-zero blocks in B
     dimensions<NC> m_bidimsc; //!< Block index dimensions (C)
     index<NC> m_ic; //!< Index in C
 
@@ -133,6 +134,13 @@ public:
         const index<NC> &ic);
 
     void build_list(bool testzero);
+    void build_list(bool testzero,
+        gen_bto_contract2_block_list<N, M, K> &bl);
+
+private:
+    void build_list_2(
+        gen_bto_contract2_block_list<N, M, K> &bl,
+        contr_list &clst);
 
 protected:
     using gen_bto_contract2_clst_builder_base<N, M, K, Traits>::get_contr;
@@ -148,7 +156,7 @@ protected:
     \tparam M Order of second tensor less degree of contraction.
     \tparam Traits Traits class.
 
-    \sa gen_bto_contract2_clst_builder_base
+    \sa gen_bto_contract2_clst_builder_base, gen_bto_unfold_block_list
 
     \ingroup libtensor_gen_bto
  **/
@@ -179,8 +187,8 @@ public:
 private:
     const symmetry<NA, element_type> &m_syma; //!< Symmetry of A
     const symmetry<NB, element_type> &m_symb; //!< Symmetry of B
-    const block_list<NA> &m_blka; //!< Non-zero canonical blocks in A
-    const block_list<NB> &m_blkb; //!< Non-zero canonical blocks in B
+    const block_list<NA> &m_blka; //!< All non-zero blocks in A
+    const block_list<NB> &m_blkb; //!< All non-zero blocks in B
     dimensions<NC> m_bidimsc; //!< Block index dimensions (C)
     index<NC> m_ic; //!< Index in C
 
@@ -195,6 +203,10 @@ public:
         const index<NC> &ic);
 
     void build_list(bool testzero);
+    void build_list(bool testzero,
+        gen_bto_contract2_block_list<N, M, 0> &bl) {
+        build_list(testzero);
+    }
 
 protected:
     using gen_bto_contract2_clst_builder_base<N, M, 0, Traits>::get_contr;

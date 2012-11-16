@@ -32,7 +32,7 @@ namespace libtensor {
     the same value of index may arrive, in which case the implementation
     shall process them according to its own policy.
 
-    \sa gen_block_tensor_i
+    \sa gen_block_tensor_i, block_stream_exception
 
     \ingroup libtensor_gen_block_tensor
  **/

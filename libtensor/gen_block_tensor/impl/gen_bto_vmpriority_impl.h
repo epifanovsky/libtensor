@@ -19,7 +19,8 @@ void gen_bto_vmpriority<N, Traits>::set_priority() {
     for(typename orbit_list<N, element_type>::iterator io = ol.begin();
         io != ol.end(); ++io) {
 
-        index<N> bi(ol.get_index(io));
+        index<N> bi;
+        ol.get_index(io, bi);
         if(ctrl.req_is_zero_block(bi)) continue;
 
         rd_block_type &blk = ctrl.req_const_block(bi);
@@ -42,7 +43,8 @@ void gen_bto_vmpriority<N, Traits>::unset_priority() {
     for(typename orbit_list<N, element_type>::iterator io = ol.begin();
             io != ol.end(); ++io) {
 
-        index<N> bi(ol.get_index(io));
+        index<N> bi;
+        ol.get_index(io, bi);
         if(ctrl.req_is_zero_block(bi)) continue;
 
         rd_block_type &blk = ctrl.req_const_block(bi);
