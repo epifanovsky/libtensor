@@ -43,9 +43,10 @@ public:
     { }
 
     /** \brief Performs the operation
+        \param zero Zero output tensor before putting result.
         \param dtc Output tensor.
      **/
-    void perform(diag_tensor_wr_i<N + M, double> &dtc);
+    void perform(bool zero, diag_tensor_wr_i<N + M, double> &dtc);
 
 };
 

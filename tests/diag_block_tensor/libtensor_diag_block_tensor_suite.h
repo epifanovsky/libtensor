@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "diag_block_tensor_test.h"
+#include "diag_btod_contract2_test.h"
 #include "diag_btod_copy_test.h"
 #include "diag_btod_random_test.h"
 #include "tod_conv_diag_block_tensor_test.h"
@@ -22,6 +23,7 @@ namespace libtensor {
 
     This suite runs the following tests:
      - libtensor::diag_block_tensor_test
+     - libtensor::diag_btod_contract2_test
      - libtensor::diag_btod_copy_test
      - libtensor::diag_btod_random_test
      - libtensor::tod_conv_diag_block_tensor_test
@@ -31,6 +33,7 @@ namespace libtensor {
 class libtensor_diag_block_tensor_suite : public libtest::test_suite {
 private:
     unit_test_factory<diag_block_tensor_test> m_utf_diag_block_tensor;
+    unit_test_factory<diag_btod_contract2_test> m_utf_diag_btod_contract2;
     unit_test_factory<diag_btod_copy_test> m_utf_diag_btod_copy;
     unit_test_factory<diag_btod_random_test> m_utf_diag_btod_random;
     unit_test_factory<tod_conv_diag_block_tensor_test>

@@ -6,6 +6,7 @@
 #include <libtensor/diag_tensor/diag_tod_contract2.h>
 #include <libtensor/diag_tensor/diag_tod_copy.h>
 #include <libtensor/diag_tensor/diag_tod_set.h>
+#include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
 #include "diag_block_tensor.h"
 
 namespace libtensor {
@@ -45,6 +46,7 @@ struct diag_btod_traits {
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
         typedef diag_tod_contract2<N, M, K> type;
+        typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
     };
 
     template<size_t N>

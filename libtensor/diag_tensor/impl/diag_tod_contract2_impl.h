@@ -29,11 +29,12 @@ using diag_tod_contract2_ns::schrec;
 
 template<size_t N, size_t M, size_t K>
 void diag_tod_contract2<N, M, K>::perform(
+    bool zero,
     diag_tensor_wr_i<N + M, double> &dtc) {
 
     double d = 1.0;
 
-    diag_tod_set<N + M>().perform(dtc);
+    if(zero) diag_tod_set<N + M>().perform(dtc);
 
     const diag_tensor_space<N + K> &dtsa = m_dta.get_space();
     const diag_tensor_space<M + K> &dtsb = m_dtb.get_space();

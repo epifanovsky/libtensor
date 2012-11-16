@@ -125,7 +125,7 @@ void diag_tod_contract2_test::test_1_1_1_01(size_t ni, size_t nj, size_t nk)
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
+        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(true, dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
@@ -212,7 +212,7 @@ void diag_tod_contract2_test::test_1_1_1_02(size_t ni, size_t nj, size_t nk)
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
+        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(true, dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
@@ -306,7 +306,7 @@ void diag_tod_contract2_test::test_1_1_1_03(size_t ni, size_t nj)
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 1);
-        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
+        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(true, dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
@@ -407,7 +407,7 @@ void diag_tod_contract2_test::test_1_1_1_04(size_t ni)
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
-        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(dtc);
+        diag_tod_contract2<1, 1, 1>(contr, dta, dtb).perform(true, dtc);
         tod_conv_diag_tensor<2>(dtc).perform(tc);
 
         tod_contract2<1, 1, 1>(contr, ta, tb).perform(true, tc_ref);
