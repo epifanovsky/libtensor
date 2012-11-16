@@ -186,8 +186,10 @@ set(SRC_DIAG_TENSOR
     diag_block_tensor/impl/diag_btod_aux_add.C
     diag_block_tensor/impl/diag_btod_aux_copy.C
     diag_block_tensor/impl/diag_btod_contract2.C
+    diag_block_tensor/impl/diag_btod_contract2_clst_builder.C
     diag_block_tensor/impl/diag_btod_copy.C
     diag_block_tensor/impl/diag_btod_random.C
+    diag_block_tensor/impl/diag_btod_unfold_block_list.C
     diag_block_tensor/impl/tod_conv_diag_block_tensor.C
     diag_tensor/impl/diag_tensor_space.C
     diag_tensor/impl/diag_tensor.C

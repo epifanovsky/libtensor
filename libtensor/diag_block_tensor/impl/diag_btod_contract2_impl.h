@@ -3,7 +3,6 @@
 
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
-#include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
 #include "../diag_btod_contract2.h"
 
 namespace libtensor {

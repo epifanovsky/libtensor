@@ -2,7 +2,7 @@
 #define LIBTENSOR_DIAG_BTOD_CONTRACT2_H
 
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/gen_block_tensor/gen_bto_contract2.h>
+#include <libtensor/gen_block_tensor/gen_bto_contract2_simple.h>
 #include <libtensor/diag_block_tensor/diag_block_tensor_i.h>
 #include "diag_btod_traits.h"
 
@@ -34,8 +34,8 @@ public:
     typedef typename diag_btod_traits::bti_traits bti_traits;
 
 private:
-    gen_bto_contract2< N, M, K, diag_btod_traits, diag_btod_contract2<N, M, K> >
-        m_gbto;
+    gen_bto_contract2_simple< N, M, K, diag_btod_traits,
+        diag_btod_contract2<N, M, K> > m_gbto;
 
 public:
     /** \brief Initializes the operation
