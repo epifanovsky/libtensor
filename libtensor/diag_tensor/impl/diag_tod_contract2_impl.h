@@ -48,6 +48,10 @@ void diag_tod_contract2<N, M, K>::perform(
     diag_tensor_wr_ctrl<N + M, double> cc(dtc);
 
     std::multimap<size_t, schrec> sch;
+    std::vector<size_t> zeross;
+
+    //  Match individual contributions to existing subspaces or
+    //  create new subspaces for them
 
     for(size_t isa = 0; isa < ssla.size(); isa++)
     for(size_t isb = 0; isb < sslb.size(); isb++) {
@@ -64,22 +68,36 @@ void diag_tod_contract2<N, M, K>::perform(
                 r.ssa = ssla[isa];
                 r.ssb = sslb[isb];
                 r.d = m_d;
-                sch.insert(std::pair<size_t, schrec>(sslc[isc], r));
+                sch.insert(std::make_pair(sslc[isc], r));
                 found_exact = true;
                 break;
             }
         }
         if(found_exact) continue;
 
-        //  If the subspace is not in the result, add one
         size_t ssc = cc.req_add_subspace(sscx.get_dtssc());
         sslc.push_back(ssc);
         schrec r;
         r.ssa = ssla[isa];
         r.ssb = sslb[isb];
         r.d = m_d;
-        sch.insert(std::pair<size_t, schrec>(ssc, r));
+        sch.insert(std::make_pair(ssc, r));
+        zeross.push_back(ssc);
     }
+
+    //  Zero out newly added subspaces
+
+    for(typename std::vector<size_t>::const_iterator isc = zeross.begin();
+        isc != zeross.end(); ++isc) {
+
+        size_t ssc = *isc;
+        size_t sz = dtsc.get_subspace_size(ssc);
+        double *pc = cc.req_dataptr(ssc);
+        for(size_t i = 0; i < sz; i++) pc[i] = 0.0;
+        cc.ret_dataptr(ssc, pc);
+    }
+
+    //  Compute all contributions according to the schedule
 
     for(std::multimap<size_t, schrec>::const_iterator i = sch.begin();
         i != sch.end(); ++i) {
