@@ -18,7 +18,9 @@ template<size_t N>
 void diag_btod_copy<N>::perform(diag_block_tensor_i<N, double> &btb) {
 
     gen_bto_aux_copy<N, diag_btod_traits> out(get_symmetry(), btb);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -36,7 +38,9 @@ void diag_btod_copy<N>::perform(
 
     gen_bto_aux_add<N, diag_btod_traits> out(get_symmetry(), asch, btb,
         scalar_transf<double>(c));
+    out.open();
     perform(out);
+    out.close();
 }
 
 
