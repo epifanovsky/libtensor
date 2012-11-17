@@ -8,7 +8,7 @@
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_batching_policy.h"
 #include "gen_bto_contract2_clst_builder.h"
-#include "gen_bto_contract2_nzorb_impl.h"
+#include "gen_bto_contract2_nzorb.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_unfold_block_list.h"
 #include "gen_bto_unfold_symmetry.h"
@@ -237,8 +237,8 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::make_schedule() {
 
     gen_bto_contract2::start_timer("make_schedule");
 
-    gen_bto_contract2_nzorb<N, M, K, Traits, Timed> nzorb(m_contr,
-        m_bta, m_btb, m_symc.get_symmetry());
+    gen_bto_contract2_nzorb<N, M, K, Traits> nzorb(m_contr, m_bta, m_btb,
+        m_symc.get_symmetry());
 
     nzorb.build();
     const block_list<NC> &blstc = nzorb.get_blst();

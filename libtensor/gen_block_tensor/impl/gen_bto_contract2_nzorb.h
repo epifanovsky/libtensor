@@ -2,10 +2,10 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT2_NZORB_H
 
 #include <vector>
-#include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/symmetry.h>
+#include <libtensor/gen_block_tensor/assignment_schedule.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_i.h>
 #include "block_list.h"
 
@@ -18,7 +18,6 @@ namespace libtensor {
     \tparam M Order of second tensor less degree of contraction.
     \tparam K Order of contraction.
     \tparam Traits Traits class.
-    \tparam Timed Class for timings.
 
     The traits class has to provide definitions for
     - \c element_type -- Type of data elements
@@ -26,8 +25,8 @@ namespace libtensor {
 
     \ingroup libtensor_gen_bto
  **/
-template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
-class gen_bto_contract2_nzorb : public timings<Timed>, public noncopyable {
+template<size_t N, size_t M, size_t K, typename Traits>
+class gen_bto_contract2_nzorb : public noncopyable {
 public:
     enum {
         NA = N + K, //!< Order of first argument (A)

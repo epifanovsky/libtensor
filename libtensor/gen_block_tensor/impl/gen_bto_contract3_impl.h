@@ -8,7 +8,7 @@
 #include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_clst_builder.h"
-#include "gen_bto_contract2_nzorb_impl.h"
+#include "gen_bto_contract2_nzorb.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_contract3_batching_policy.h"
 #include "gen_bto_unfold_symmetry.h"
@@ -408,7 +408,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
 
     gen_bto_contract3::start_timer("make_schedule");
 
-    gen_bto_contract2_nzorb<N1, N2 + K2, K1, Traits, Timed> nzorb1(m_contr1,
+    gen_bto_contract2_nzorb<N1, N2 + K2, K1, Traits> nzorb1(m_contr1,
         m_bta, m_btb, m_symab.get_symmetry());
 
     nzorb1.build();
@@ -418,7 +418,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
         m_schab.insert(blstab.get_abs_index(i));
     }
 
-    gen_bto_contract2_nzorb<N1 + N2, N3, K2, Traits, Timed> nzorb2(m_contr2,
+    gen_bto_contract2_nzorb<N1 + N2, N3, K2, Traits> nzorb2(m_contr2,
             m_symab.get_symmetry(), m_schab, m_btc, m_symd.get_symmetry());
 
     nzorb2.build();
