@@ -220,8 +220,8 @@ bool gen_block_tensor<N, BtTraits>::check_canonical_block(const index<N> &idx) {
     if(use_orblst) {
         if(!m_orblst->contains(idx)) return false;
     } else {
-        short_orbit<N, element_type> o(m_symmetry, idx);
-        if(!o.get_cindex().equals(idx)) return false;
+        short_orbit<N, element_type> o(m_symmetry, idx, true);
+        if(!o.is_allowed() || !o.get_cindex().equals(idx)) return false;
     }
     return true;
 }
