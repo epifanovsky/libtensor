@@ -28,21 +28,34 @@ private:
     dimensions<N> m_dims; //!< Index dimensions
     index<N> m_cidx; //!< Canonical index
     size_t m_acidx; //!< Absolute value of canonical index
+    bool m_allowed; //!< Whether the orbit is allowed by symmetry
 
 public:
     /** \brief Searches for the canonical index from any starter index in
             an orbit
         \param sym Symmetry group.
         \param idx Starter index.
+        \param compute_allowed If true, compute whether the orbit is
+            allowed, false (default) skips this computation
      **/
-    short_orbit(const symmetry<N, T> &sym, const index<N> &idx);
+    short_orbit(const symmetry<N, T> &sym, const index<N> &idx,
+        bool compute_allowed = false);
 
     /** \brief Searches for the canonical index from any starter index in
             an orbit
         \param sym Symmetry group.
         \param aidx Absolute value of the starter index.
+        \param compute_allowed If true, compute whether the orbit is
+            allowed, false (default) skips this computation
      **/
-    short_orbit(const symmetry<N, T> &sym, size_t aidx);
+    short_orbit(const symmetry<N, T> &sym, size_t aidx,
+        bool compute_allowed = false);
+
+    /** \brief Returns whether the orbit is allowed by symmetry
+     **/
+    bool is_allowed() const {
+        return m_allowed;
+    }
 
     /** \brief Returns the canonical index of this orbit
      **/

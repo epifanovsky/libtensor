@@ -44,28 +44,42 @@ const char *short_orbit<N, T>::k_clazz = "short_orbit<N, T>";
 
 
 template<size_t N, typename T>
-short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, const index<N> &idx) :
+short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, const index<N> &idx,
+    bool compute_allowed) :
 
-    m_dims(sym.get_bis().get_block_index_dims()) {
+    m_dims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
 
     short_orbit::start_timer();
 
+    //  Setting m_allowed to false will disable further calls to
+    //  symmetry_element_i::is_allowed
+    if(!compute_allowed) m_allowed = false;
+
     find_cindex(sym, abs_index<N>::get_abs_index(idx, m_dims));
     abs_index<N>::get_index(m_acidx, m_dims, m_cidx);
+
+    if(!compute_allowed) m_allowed = true;
 
     short_orbit::stop_timer();
 }
 
 
 template<size_t N, typename T>
-short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, size_t aidx) :
+short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, size_t aidx,
+    bool compute_allowed) :
 
-    m_dims(sym.get_bis().get_block_index_dims()) {
+    m_dims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
 
     short_orbit::start_timer();
 
+    //  Setting m_allowed to false will disable further calls to
+    //  symmetry_element_i::is_allowed
+    if(!compute_allowed) m_allowed = false;
+
     find_cindex(sym, aidx);
     abs_index<N>::get_index(m_acidx, m_dims, m_cidx);
+
+    if(!compute_allowed) m_allowed = true;
 
     short_orbit::stop_timer();
 }
@@ -107,6 +121,7 @@ void short_orbit<N, T>::find_cindex(const symmetry<N, T> &sym, size_t aidx) {
 
                 const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
 
+                if(m_allowed) m_allowed = elem.is_allowed(idx);
                 index<N> idx2(idx);
                 elem.apply(idx2);
                 size_t aidx2 = abs_index<N>::get_abs_index(idx2, m_dims);

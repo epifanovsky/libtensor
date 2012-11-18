@@ -135,12 +135,7 @@ public:
 
     void build_list(bool testzero);
     void build_list(bool testzero,
-        gen_bto_contract2_block_list<N, M, K> &bl);
-
-private:
-    void build_list_2(
-        gen_bto_contract2_block_list<N, M, K> &bl,
-        contr_list &clst);
+        const gen_bto_contract2_block_list<N, M, K> &bl);
 
 protected:
     using gen_bto_contract2_clst_builder_base<N, M, K, Traits>::get_contr;
@@ -204,7 +199,7 @@ public:
 
     void build_list(bool testzero);
     void build_list(bool testzero,
-        gen_bto_contract2_block_list<N, M, 0> &bl) {
+        const gen_bto_contract2_block_list<N, M, 0> &bl) {
         build_list(testzero);
     }
 

@@ -3,7 +3,7 @@
 
 #include <algorithm> // for std::swap
 #include <libutil/threads/auto_lock.h>
-#include <libtensor/core/orbit.h>
+#include <libtensor/core/short_orbit.h>
 #include "../gen_block_tensor.h"
 
 namespace libtensor {
@@ -120,7 +120,6 @@ void gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
-    update_orblst(true);
     m_map.get_all(nzlst);
 }
 
@@ -221,8 +220,8 @@ bool gen_block_tensor<N, BtTraits>::check_canonical_block(const index<N> &idx) {
     if(use_orblst) {
         if(!m_orblst->contains(idx)) return false;
     } else {
-        orbit<N, element_type> o(m_symmetry, idx);
-        if(!o.get_cindex().equals(idx)) return false;
+        short_orbit<N, element_type> o(m_symmetry, idx, true);
+        if(!o.is_allowed() || !o.get_cindex().equals(idx)) return false;
     }
     return true;
 }
