@@ -18,8 +18,6 @@
 #include "gen_bto_contract2_nzorb.h"
 #include "gen_bto_unfold_block_list.h"
 
-#include <libtensor/core/print_dimensions.h>
-
 namespace libtensor {
 
 
@@ -374,9 +372,8 @@ void gen_bto_contract2_nzorb<N, M, K, Traits>::build() {
     gen_bto_contract2_nzorb_task_observer<N, M, K> to;
     libutil::thread_pool::submit(ti, to);
 
-    for(size_t i = 0; i < blstc.size(); i++) {
-        m_blstc.add(blstc[i]);
-    }
+    dimensions<NC> bidimsc = m_symc.get_bis().get_block_index_dims();
+    for(size_t i = 0; i < blstc.size(); i++) m_blstc.add(blstc[i]);
 }
 
 
@@ -427,8 +424,10 @@ void gen_bto_contract2_nzorb_task<N, M, K, Traits>::perform() {
             for(size_t i = 0; i < NC; i++) ic[i] = ici[i] + icj[i];
             ic.permute(permc);
             size_t aic = abs_index<NC>::get_abs_index(ic, m_ctx.m_bidimsc);
-            short_orbit<NC, element_type> soc(m_ctx.m_symc, aic);
-            if(soc.get_acindex() == aic) candidates.push_back(aic);
+            short_orbit<NC, element_type> soc(m_ctx.m_symc, aic, true);
+            if(soc.is_allowed() && soc.get_acindex() == aic) {
+                candidates.push_back(aic);
+            }
             ++ib1;
         }
         ++ia;
@@ -514,8 +513,8 @@ void gen_bto_contract2_nzorb_task<N, M, 0, Traits>::perform() {
         for(size_t i = 0; i < NC; i++) ic[i] = ici[i] + icj[i];
         ic.permute(permc);
         size_t aic = abs_index<NC>::get_abs_index(ic, m_ctx.m_bidimsc);
-        short_orbit<NC, element_type> soc(m_ctx.m_symc, aic);
-        if(soc.get_acindex() == aic) nonzero.push_back(aic);
+        short_orbit<NC, element_type> soc(m_ctx.m_symc, aic, true);
+        if(soc.is_allowed() && soc.get_acindex() == aic) nonzero.push_back(aic);
         ++ib;
     }
     std::sort(nonzero.begin(), nonzero.end());
