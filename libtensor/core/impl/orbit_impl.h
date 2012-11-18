@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ORBIT_IMPL_H
 #define LIBTENSOR_ORBIT_IMPL_H
 
+#include <cstring>
 #include <vector>
 #include <libutil/threads/tls.h>
 #include "../orbit.h"
@@ -13,6 +14,8 @@ class orbit_buffer {
 private:
     std::vector< index<N> > m_qi, m_ti;
     std::vector< tensor_transf<N, T> > m_qt, m_tt;
+    std::vector<char> m_v;
+    std::vector<size_t> m_q;
 
 public:
     orbit_buffer() {
@@ -20,6 +23,7 @@ public:
         m_ti.reserve(32);
         m_qt.reserve(32);
         m_tt.reserve(32);
+        m_q.reserve(32);
     }
 
     static std::vector< index<N> > &get_qi() {
@@ -36,6 +40,14 @@ public:
 
     static std::vector< tensor_transf<N, T> > &get_tt() {
         return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_tt;
+    }
+
+    static std::vector<char> &get_v() {
+        return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_v;
+    }
+
+    static std::vector<size_t> &get_q() {
+        return libutil::tls< orbit_buffer<N, T> >::get_instance().get().m_q;
     }
 
 };

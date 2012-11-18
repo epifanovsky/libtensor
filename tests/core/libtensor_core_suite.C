@@ -12,6 +12,7 @@ libtensor_core_suite::libtensor_core_suite() :
         m_utf_block_index_subspace_builder);
     add_test("block_map", m_utf_block_map);
     add_test("block_tensor", m_utf_block_tensor);
+    add_test("combined_orbits", m_utf_combined_orbits);
     add_test("contraction2", m_utf_contraction2);
     add_test("contraction2_list_builder", m_utf_contraction2_list_builder);
     add_test("dense_tensor", m_utf_dense_tensor);
@@ -29,6 +30,7 @@ libtensor_core_suite::libtensor_core_suite() :
     add_test("permutation_generator", m_utf_permutation_generator);
     add_test("sequence", m_utf_sequence);
     add_test("sequence_generator", m_utf_sequence_generator);
+    add_test("short_orbit", m_utf_short_orbit);
     add_test("subgroup_orbits", m_utf_subgroup_orbits);
     add_test("symmetry", m_utf_symmetry);
     add_test("symmetry_element_set", m_utf_symmetry_element_set);

@@ -4,6 +4,7 @@
 #include <map>
 #include <libtensor/timings.h>
 #include "abs_index.h"
+#include "noncopyable.h"
 #include "tensor_transf.h"
 #include "symmetry.h"
 
@@ -41,7 +42,7 @@ namespace libtensor {
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
-class orbit : public timings< orbit<N, T> > {
+class orbit : public noncopyable, public timings< orbit<N, T> > {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -163,11 +164,6 @@ public:
 
 private:
     void build_orbit(const symmetry<N, T> &sym, const abs_index<N> &aidx);
-
-private:
-    /** \brief Private copy constructor
-     **/
-    orbit(const orbit&);
 
 };
 

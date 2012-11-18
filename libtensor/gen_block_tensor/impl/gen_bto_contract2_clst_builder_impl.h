@@ -186,7 +186,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
 
 template<size_t N, size_t M, size_t K, typename Traits>
 void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
-    bool testzero, gen_bto_contract2_block_list<N, M, K> &bl) {
+    bool testzero, const gen_bto_contract2_block_list<N, M, K> &bl) {
 
     if(testzero == true) {
         build_list(true);
@@ -320,15 +320,6 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
 
     coalesce(clst);
     merge(clst); // This empties clst
-}
-
-
-template<size_t N, size_t M, size_t K, typename Traits>
-void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list_2(
-    gen_bto_contract2_block_list<N, M, K> &bl,
-    contr_list &clst) {
-
-
 }
 
 

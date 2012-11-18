@@ -7,6 +7,7 @@ set(SRC_CORE
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
     core/block_tensor_test.C
+    core/combined_orbits_test.C
     core/contraction2_list_builder_test.C
     core/contraction2_test.C
     core/dense_tensor_test.C
@@ -24,6 +25,7 @@ set(SRC_CORE
     core/permutation_generator_test.C
     core/sequence_test.C
     core/sequence_generator_test.C
+    core/short_orbit_test.C
     core/subgroup_orbits_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
