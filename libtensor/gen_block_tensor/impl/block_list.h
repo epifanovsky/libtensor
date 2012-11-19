@@ -112,6 +112,11 @@ public:
         abs_index<N>::get_index(*i, m_dims, idx);
     }
 
+    void sort() {
+        std::sort(m_blks.begin(), m_blks.end());
+        m_sorted = true;
+    }
+
 };
 
 
