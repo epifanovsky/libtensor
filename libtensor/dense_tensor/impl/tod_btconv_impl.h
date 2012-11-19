@@ -67,8 +67,8 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
         typename orbit<N, double>::iterator i = orb.begin();
         while(i != orb.end()) {
-            abs_index<N> aidx(i->first, bidims);
-            const tensor_transf<N, double> &tr = i->second;
+            abs_index<N> aidx(orb.get_abs_index(i), bidims);
+            const tensor_transf<N, double> &tr = orb.get_transf(i);
             index<N> dst_offset = bis.get_block_start(aidx.get_index());
             copy_block(dst_ptr, t.get_dims(), dst_offset,
                 src_ptr, blk.get_dims(),
