@@ -386,16 +386,16 @@ void gen_bto_contract2_nzorb_task<N, M, K, Traits>::perform() {
     for(size_t i = 0, j = 0; i < NA; i++) {
         if(conn[NC + i] < NC) {
             i2[j] = m_ctx.m_bidimsa[i] - 1;
-            seq1[j] = j;
-            seq2[j] = conn[NC + i];
+            seq1[j] = NC + i;
+            seq2[j] = conn[j];
             j++;
         }
     }
     for(size_t i = 0, j = 0; i < NB; i++) {
         if(conn[NC + NA + i] < NC) {
             i3[N + j] = m_ctx.m_bidimsb[i] - 1;
-            seq1[N + j] = N + j;
-            seq2[N + j] = conn[NC + NA + i];
+            seq1[N + j] = NC + NA + i;
+            seq2[N + j] = conn[N + j];
             j++;
         }
     }
@@ -485,16 +485,16 @@ void gen_bto_contract2_nzorb_task<N, M, 0, Traits>::perform() {
     for(size_t i = 0, j = 0; i < NA; i++) {
         if(conn[NC + i] < NC) {
             i2[j] = m_ctx.m_bidimsa[i] - 1;
-            seq1[j] = j;
-            seq2[j] = conn[NC + i];
+            seq1[j] = NC + i;
+            seq2[j] = conn[j];
             j++;
         }
     }
     for(size_t i = 0, j = 0; i < NB; i++) {
         if(conn[NC + NA + i] < NC) {
             i3[N + j] = m_ctx.m_bidimsb[i] - 1;
-            seq1[N + j] = N + j;
-            seq2[N + j] = conn[NC + NA + i];
+            seq1[N + j] = NC + NA + i;
+            seq2[N + j] = conn[N + j];
             j++;
         }
     }
