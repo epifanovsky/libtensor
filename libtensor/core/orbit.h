@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_ORBIT_H
 #define LIBTENSOR_ORBIT_H
 
-#include <map>
+#include <utility>
+#include <vector>
 #include <libtensor/timings.h>
 #include "abs_index.h"
 #include "noncopyable.h"
@@ -46,20 +47,17 @@ class orbit : public noncopyable, public timings< orbit<N, T> > {
 public:
     static const char *k_clazz; //!< Class name
 
-private:
-    typedef tensor_transf<N, T> tensor_transf_type;
-    typedef std::pair<size_t, tensor_transf_type> pair_type;
-    typedef std::map<size_t, tensor_transf_type> orbit_map_type;
-    typedef typename orbit_map_type::iterator orbit_map_iterator_type;
-
 public:
-    typedef typename orbit_map_type::const_iterator
+    typedef tensor_transf<N, T> tensor_transf_type;
+    typedef std::pair<size_t, size_t> itr_pair_type;
+    typedef typename std::vector<itr_pair_type>::const_iterator
         iterator; //!< STL-like orbit iterator
 
 private:
-    dimensions<N> m_bidims; //!< Block index dimensions
+    dimensions<N> m_dims; //!< Block index dimensions
     index<N> m_cidx; //!< Canonical index
-    orbit_map_type m_orb; //!< Map of orbit indexes to transformations
+    std::vector<itr_pair_type> m_orb; //!< Sorted list of indexes in the orbit
+    std::vector<tensor_transf_type> m_tr; //!< Transformations
     bool m_allowed; //!< Whether the orbit is allowed by symmetry
 
 public:
@@ -98,13 +96,13 @@ public:
         \deprecated Use get_acindex() instead.
      **/
     size_t get_abs_canonical_index() const {
-        return m_orb.begin()->first;
+        return m_orb[0].first;
     }
 
     /** \brief Returns the absolute value of the canonical index of this orbit
      **/
     size_t get_acindex() const {
-        return m_orb.begin()->first;
+        return m_orb[0].first;
     }
 
     /** \brief Returns the number of indexes in the orbit
