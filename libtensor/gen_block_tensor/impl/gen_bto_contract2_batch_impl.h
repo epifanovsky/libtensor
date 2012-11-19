@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BASIC_IMPL_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_BASIC_IMPL_H
 
+#include <algorithm>
 #include <map>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/symmetry/so_permute.h>
@@ -15,6 +16,9 @@
 #include "gen_bto_contract2_batch.h"
 
 namespace libtensor {
+
+
+namespace {
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
@@ -127,6 +131,9 @@ public:
 };
 
 
+} // unnamed namespace
+
+
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 gen_bto_contract2_batch<N, M, K, Traits, Timed>::gen_bto_contract2_batch(
     const contraction2<N, M, K> &contr,
@@ -227,7 +234,8 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
         gen_bto_contract2_block_list<N, M, K> cbl(m_contr, bidimsa, blax,
             bidimsb, blbx);
 
-        std::set<size_t> blsta2, blstb2;
+        blsta.clear();
+        blstb.clear();
 
         std::map<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*> clstb;
         for(typename std::vector<size_t>::const_iterator i = blst.begin();
@@ -250,16 +258,12 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             const contr_list &clst = i->second->get_clst();
             for(typename contr_list::const_iterator j = clst.begin();
                 j != clst.end(); ++j) {
-                blsta2.insert(j->get_aindex_a());
-                blstb2.insert(j->get_aindex_b());
+                blsta.push_back(j->get_aindex_a());
+                blstb.push_back(j->get_aindex_b());
             }
         }
-        blsta.clear();
-        blstb.clear();
-        blsta.insert(blsta.begin(), blsta2.begin(), blsta2.end());
-        blsta2.clear();
-        blstb.insert(blstb.begin(), blstb2.begin(), blstb2.end());
-        blstb2.clear();
+        std::sort(blsta.begin(), blsta.end());
+        std::sort(blstb.begin(), blstb.end());
 
         gen_bto_unfold_symmetry<NA, Traits>().perform(blsta, bta2);
         gen_bto_unfold_symmetry<NB, Traits>().perform(blstb, btb2);
@@ -286,6 +290,9 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
 
     gen_bto_contract2_batch::stop_timer();
 }
+
+
+namespace {
 
 
 template<size_t N, size_t M, size_t K, typename Traits>
@@ -422,6 +429,9 @@ void gen_bto_contract2_task_observer<N, M, K>::notify_finish_task(
 
     delete t;
 }
+
+
+} // unnamed namespace
 
 
 } // namespace libtensor
