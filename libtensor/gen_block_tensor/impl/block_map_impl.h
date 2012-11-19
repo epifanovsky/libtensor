@@ -37,6 +37,7 @@ void block_map<N, BtTraits>::create(const index<N> &idx) {
         m_bf.destroy_block(i->second);
         i->second = ptr;
     }
+    m_dirty_cache = true;
 }
 
 
@@ -56,6 +57,7 @@ void block_map<N, BtTraits>::remove(const index<N> &idx) {
         m_bf.destroy_block(i->second);
         m_map.erase(i);
     }
+    m_dirty_cache = true;
 }
 
 
@@ -70,12 +72,15 @@ bool block_map<N, BtTraits>::contains(const index<N> &idx) const {
 template<size_t N, typename BtTraits>
 void block_map<N, BtTraits>::get_all(std::vector<size_t> &blst) const {
 
-    blst.clear();
-    blst.reserve(m_map.size());
-    for(typename map_type::const_iterator i = m_map.begin();
-        i != m_map.end(); ++i) {
-        blst.push_back(i->first);
+    if(m_dirty_cache) {
+        m_cached_blst.clear();
+        m_cached_blst.reserve(m_map.size());
+        for(typename map_type::const_iterator i = m_map.begin();
+            i != m_map.end(); ++i) {
+            m_cached_blst.push_back(i->first);
+        }
     }
+    blst = m_cached_blst;
 }
 
 
@@ -127,6 +132,7 @@ void block_map<N, BtTraits>::do_clear() {
         i->second = 0;
     }
     m_map.clear();
+    m_dirty_cache = true;
 }
 
 
