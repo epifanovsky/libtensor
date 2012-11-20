@@ -47,7 +47,8 @@ template<size_t N, typename T>
 short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, const index<N> &idx,
     bool compute_allowed) :
 
-    m_dims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
+    m_dims(sym.get_bis().get_block_index_dims()), m_mdims(m_dims, true),
+    m_allowed(true) {
 
     short_orbit::start_timer();
 
@@ -56,7 +57,7 @@ short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, const index<N> &idx,
     if(!compute_allowed) m_allowed = false;
 
     find_cindex(sym, abs_index<N>::get_abs_index(idx, m_dims));
-    abs_index<N>::get_index(m_acidx, m_dims, m_cidx);
+    abs_index<N>::get_index(m_acidx, m_mdims, m_cidx);
 
     if(!compute_allowed) m_allowed = true;
 
@@ -68,7 +69,8 @@ template<size_t N, typename T>
 short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, size_t aidx,
     bool compute_allowed) :
 
-    m_dims(sym.get_bis().get_block_index_dims()), m_allowed(true) {
+    m_dims(sym.get_bis().get_block_index_dims()), m_mdims(m_dims, true),
+    m_allowed(true) {
 
     short_orbit::start_timer();
 
@@ -77,7 +79,7 @@ short_orbit<N, T>::short_orbit(const symmetry<N, T> &sym, size_t aidx,
     if(!compute_allowed) m_allowed = false;
 
     find_cindex(sym, aidx);
-    abs_index<N>::get_index(m_acidx, m_dims, m_cidx);
+    abs_index<N>::get_index(m_acidx, m_mdims, m_cidx);
 
     if(!compute_allowed) m_allowed = true;
 
@@ -109,7 +111,7 @@ void short_orbit<N, T>::find_cindex(const symmetry<N, T> &sym, size_t aidx) {
         v2.clear();
         v3.clear();
 
-        abs_index<N>::get_index(q.back(), m_dims, idx);
+        abs_index<N>::get_index(q.back(), m_mdims, idx);
         q.pop_back();
 
         for(typename symmetry<N, T>::iterator iset = sym.begin();

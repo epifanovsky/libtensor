@@ -7,6 +7,7 @@
 #include "abs_index.h"
 #include "dimensions.h"
 #include "index.h"
+#include "magic_dimensions.h"
 #include "noncopyable.h"
 #include "symmetry.h"
 
@@ -43,6 +44,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Index dimensions
+    magic_dimensions<N> m_mdims; //!< Magic dimensions
     std::vector<size_t> m_orb; //!< Sorted vector of canonical indexes Ji
 
 public:
@@ -103,7 +105,7 @@ public:
         \param[out] idx Canonical index.
      **/
     void get_index(const iterator &i, index<N> &idx) const {
-        abs_index<N>::get_index(*i, m_dims, idx);
+        abs_index<N>::get_index(*i, m_mdims, idx);
     }
 
 private:

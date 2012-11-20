@@ -3,6 +3,7 @@
 
 #include <libtensor/timings.h>
 #include "abs_index.h"
+#include "magic_dimensions.h"
 #include "noncopyable.h"
 #include "tensor_transf.h"
 #include "symmetry.h"
@@ -26,6 +27,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Index dimensions
+    magic_dimensions<N> m_mdims; //!< Magic dimensions
     index<N> m_cidx; //!< Canonical index
     size_t m_acidx; //!< Absolute value of canonical index
     bool m_allowed; //!< Whether the orbit is allowed by symmetry

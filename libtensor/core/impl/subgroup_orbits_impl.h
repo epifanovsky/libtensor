@@ -66,7 +66,7 @@ subgroup_orbits<N, T>::subgroup_orbits(
     const symmetry<N, T> &sym2,
     size_t aidx) :
 
-    m_dims(sym1.get_bis().get_block_index_dims()) {
+    m_dims(sym1.get_bis().get_block_index_dims()), m_mdims(m_dims, true) {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "subgroup_orbits()";
@@ -128,7 +128,7 @@ void subgroup_orbits<N, T>::build_orbit(const symmetry<N, T> &sym, size_t aidx,
         v2.clear();
         v3.clear();
 
-        abs_index<N>::get_index(q.back(), m_dims, idx);
+        abs_index<N>::get_index(q.back(), m_mdims, idx);
         q.pop_back();
 
         for(typename symmetry<N, T>::iterator iset = sym.begin();
