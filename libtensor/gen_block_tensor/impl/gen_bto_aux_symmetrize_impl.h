@@ -2,6 +2,7 @@
 #define LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_IMPL_H
 
 #include <libtensor/core/orbit.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../block_stream_exception.h"
 #include "../gen_bto_aux_symmetrize.h"
@@ -20,7 +21,7 @@ gen_bto_aux_symmetrize<N, Traits>::gen_bto_aux_symmetrize(
     const symmetry_type &symb,
     gen_block_stream_i<N, bti_traits> &out) :
 
-    m_syma(syma.get_bis()), m_symb(symb.get_bis()), m_olb(symb), m_out(out),
+    m_syma(syma.get_bis()), m_symb(symb.get_bis()), m_out(out),
     m_open(false) {
 
     so_copy<N, element_type>(syma).perform(m_syma);
@@ -93,7 +94,8 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
             index<N> idxb;
             abs_index<N>::get_index(oa.get_abs_index(i), bidims, idxb);
             j->apply(idxb);
-            if(!m_olb.contains(idxb)) continue;
+            short_orbit<N, element_type> so(m_symb, idxb);
+            if(!so.get_cindex().equals(idxb)) continue;
 
             tensor_transf<N, double> trb(tr);
             trb.transform(tra0inv).transform(tra1).transform(*j);
