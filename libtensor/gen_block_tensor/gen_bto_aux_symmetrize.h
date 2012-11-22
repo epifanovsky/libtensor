@@ -54,7 +54,6 @@ public:
 private:
     symmetry_type m_syma; //!< Initial symmetry
     symmetry_type m_symb; //!< Target (symmetrized) symmetry
-    orbit_list<N, element_type> m_olb; //!< List of target orbits
     std::list<tensor_transf_type> m_trlst; //!< List of transformations
     gen_block_stream_i<N, bti_traits> &m_out; //!< Output stream
     bool m_open; //!< Open state

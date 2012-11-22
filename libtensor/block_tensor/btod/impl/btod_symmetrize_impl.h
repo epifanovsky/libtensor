@@ -4,7 +4,7 @@
 #include <list>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_copy.h>
@@ -223,7 +223,6 @@ void btod_symmetrize<N>::make_schedule() {
     btod_symmetrize<N>::start_timer("make_schedule");
 
     dimensions<N> bidims(m_bis.get_block_index_dims());
-    orbit_list<N, double> ol(m_sym);
 
     const assignment_schedule<N, double> &sch0 = m_op.get_schedule();
     for(typename assignment_schedule<N, double>::iterator i = sch0.begin();
@@ -238,8 +237,10 @@ void btod_symmetrize<N>::make_schedule() {
             abs_index<N> aj1(o.get_abs_index(j), bidims);
             index<N> j2(aj1.get_index()); j2.permute(m_perm1);
             abs_index<N> aj2(j2, bidims);
+            short_orbit<N, double> so1(m_sym, aj1.get_abs_index());
+            short_orbit<N, double> so2(m_sym, aj2.get_abs_index());
 
-            if(ol.contains(aj1.get_abs_index())) {
+            if(so1.get_acindex() == aj1.get_abs_index()) {
                 if(!m_sch.contains(aj1.get_abs_index())) {
                     m_sch.insert(aj1.get_abs_index());
                 }
@@ -248,7 +249,7 @@ void btod_symmetrize<N>::make_schedule() {
                     aj1.get_abs_index(),
                     schrec(ai0.get_abs_index(), tr1)));
             }
-            if(ol.contains(aj2.get_abs_index())) {
+            if(so2.get_acindex() == aj2.get_abs_index()) {
                 if(!m_sch.contains(aj2.get_abs_index())) {
                     m_sch.insert(aj2.get_abs_index());
                 }

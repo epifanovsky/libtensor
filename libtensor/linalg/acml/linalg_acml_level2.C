@@ -1,4 +1,4 @@
-#include "acml_h.h"
+#include <acml.h>
 #include "linalg_acml_level2.h"
 
 namespace libtensor {
