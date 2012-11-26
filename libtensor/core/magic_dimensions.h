@@ -2,6 +2,7 @@
 #define LIBTENSOR_MAGIC_DIMENSIONS_H
 
 #include "impl/libdivide.h"
+#include "out_of_bounds.h"
 #include "dimensions.h"
 
 namespace libtensor {
@@ -36,23 +37,46 @@ public:
         return m_dims;
     }
 
-    const libdivide::divider<uint64_t> &operator[](size_t i) const;
+    /** \brief Divides each element of index i1 by the dimensions and puts
+            the result in i2.
+     **/
+    void divide(const index<N> &i1, index<N> &i2) const {
+        for(register size_t i = 0; i < N; i++) {
+            i2[i] = ((uint64_t)i1[i]) / m_magic[i];
+        }
+    }
+
+    /** \brief Divides number n by ith dimension
+     **/
+    size_t divide(size_t n, size_t i) const {
+        return ((uint64_t)n) / m_magic[i];
+    }
 
 };
 
 
 template<>
 class magic_dimensions<0> {
+private:
+    dimensions<0> m_dims;
+
 public:
-    magic_dimensions(const dimensions<0> &dims) {
+    magic_dimensions(const dimensions<0> &dims, bool incs) : m_dims(dims) {
 
     }
 
     const dimensions<0> &get_dims() const {
+        return m_dims;
+    }
+
+    void divide(const index<0> &i1, index<0> &i2) const {
 
     }
 
-    const libdivide::divider<uint64_t> &operator[](size_t i) const {
+    size_t divide(size_t n, size_t i) const {
+        throw out_of_bounds(g_ns, "magic_dimensions<0>",
+            "divide(size_t, size_t)", __FILE__, __LINE__, "i");
+        return 0;
     }
 
 };

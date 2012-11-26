@@ -2,7 +2,6 @@
 #define LIBTENSOR_SE_PART_IMPL_H
 
 #include <algorithm>
-#include <libtensor/core/impl/magic_dimensions_impl.h>
 #include "../bad_symmetry.h"
 #include "../se_part.h"
 
@@ -290,9 +289,7 @@ template<size_t N, typename T>
 bool se_part<N, T>::is_allowed(const index<N> &idx) const {
 
     index<N> pidx;
-    for(register size_t i = 0; i < N; i++) {
-        pidx[i] = idx[i] / m_mbipdims[i];
-    }
+    m_mbipdims.divide(idx, pidx);
 
     return !is_forbidden(pidx);
 }
@@ -360,9 +357,7 @@ void se_part<N, T>::apply(index<N> &idx) const {
     //  Determine partition index and offset within partition
     //
     index<N> pidx1;
-    for(register size_t i = 0; i < N; i++) {
-        pidx1[i] = idx[i] / m_mbipdims[i];
-    }
+    m_mbipdims.divide(idx, pidx1);
 
     //  Map the partition index
     //
@@ -384,9 +379,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
     //  Determine partition index and offset within partition
     //
     index<N> pidx1;
-    for(register size_t i = 0; i < N; i++) {
-        pidx1[i] = idx[i] / m_mbipdims[i];
-    }
+    m_mbipdims.divide(idx, pidx1);
 
     //  Map the partition index
     //

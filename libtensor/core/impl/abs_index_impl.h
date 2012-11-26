@@ -132,7 +132,7 @@ void abs_index<N>::get_index(size_t aidx, const magic_dimensions<N> &mdims,
 
     uint64_t a = aidx;
     for(register size_t i = 0; i < N - 1; i++) {
-        idx[i] = a / mdims[i];
+        idx[i] = mdims.divide(a, i);
         a -= idx[i] * mdims.get_dims().get_increment(i);
     }
     idx[N - 1] = a;

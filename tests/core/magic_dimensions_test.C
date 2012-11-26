@@ -27,12 +27,12 @@ void magic_dimensions_test::test_1() {
             dimensions<2> dims(index_range<2>(i1, i2));
             magic_dimensions<2> mdims(dims, true);
 
-            size_t aj = (i * i + i + 1) / 2;
+            size_t aj = i * (i + 2) + i;
             index<2> j, j_ref;
-            j_ref[0] = aj / (i + 1);
-            j_ref[1] = aj - j_ref[0] * (i + 1);
-            j[0] = aj / mdims[0];
-            j[1] = aj  - j[0] * dims[0];
+            j_ref[0] = aj / (i + 2);
+            j_ref[1] = aj - j_ref[0] * (i + 2);
+            j[0] = mdims.divide(aj, 0);
+            j[1] = aj  - j[0] * dims[1];
 
             if(!j.equals(j_ref)) {
                 std::ostringstream ss;

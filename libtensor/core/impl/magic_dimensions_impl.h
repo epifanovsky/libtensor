@@ -23,14 +23,6 @@ magic_dimensions<N>::magic_dimensions(const dimensions<N> &dims, bool incs) :
 }
 
 
-template<size_t N>
-inline const libdivide::divider<uint64_t> &
-magic_dimensions<N>::operator[](size_t i) const {
-
-    return m_magic[i];
-}
-
-
 } // namespace libtensor
 
 #endif // LIBTENSOR_MAGIC_DIMENSIONS_IMPL_H
