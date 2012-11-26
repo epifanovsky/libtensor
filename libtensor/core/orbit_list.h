@@ -34,6 +34,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Index dimensions
+    magic_dimensions<N> m_mdims; //!< Magic dimensions
     std::vector<size_t> m_orb; //!< Sorted vector of canonical indexes
 
 public:

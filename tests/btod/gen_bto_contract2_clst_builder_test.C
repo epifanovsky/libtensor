@@ -1,3 +1,4 @@
+#include <set>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_builder.h>

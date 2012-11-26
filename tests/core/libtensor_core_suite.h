@@ -17,6 +17,7 @@
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
+#include "magic_dimensions_test.h"
 #include "mask_test.h"
 #include "mp_safe_tensor_test.h"
 #include "orbit_test.h"
@@ -65,6 +66,7 @@ namespace libtensor {
     \li libtensor::immutable_test
     \li libtensor::index_test
     \li libtensor::index_range_test
+    \li libtensor::magic_dimensions_test
     \li libtensor::mask_test
     \li libtensor::mp_safe_tensor_test
     \li libtensor::orbit_test
@@ -99,6 +101,7 @@ private:
     unit_test_factory<immutable_test> m_utf_immutable;
     unit_test_factory<index_test> m_utf_index;
     unit_test_factory<index_range_test> m_utf_index_range;
+    unit_test_factory<magic_dimensions_test> m_utf_magic_dimensions;
     unit_test_factory<mask_test> m_utf_mask;
     unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
     unit_test_factory<orbit_test> m_utf_orbit;

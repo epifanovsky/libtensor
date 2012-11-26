@@ -1,9 +1,7 @@
 #ifndef LIBTENSOR_COMBINED_ORBITS_IMPL_H
 #define LIBTENSOR_COMBINED_ORBITS_IMPL_H
 
-#include <cstring>
 #include <libutil/threads/tls.h>
-#include <libtensor/core/abs_index.h>
 #include <libtensor/core/bad_block_index_space.h>
 #include "../combined_orbits.h"
 
@@ -98,7 +96,7 @@ combined_orbits<N, T>::combined_orbits(
     const symmetry<N, T> &sym3,
     size_t aidx) :
 
-    m_dims(sym1.get_bis().get_block_index_dims()) {
+    m_dims(sym1.get_bis().get_block_index_dims()), m_mdims(m_dims, true) {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "combined_orbits()";
@@ -205,7 +203,7 @@ void combined_orbits<N, T>::build_orbit(const symmetry<N, T> &sym, size_t aidx,
         v2.clear();
         v3.clear();
 
-        abs_index<N>::get_index(q.back(), m_dims, idx);
+        abs_index<N>::get_index(q.back(), m_mdims, idx);
         q.pop_back();
 
         for(typename symmetry<N, T>::iterator iset = sym.begin();

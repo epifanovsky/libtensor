@@ -21,6 +21,7 @@ libtensor_core_suite::libtensor_core_suite() :
     add_test("immutable", m_utf_immutable);
     add_test("index", m_utf_index);
     add_test("index_range", m_utf_index_range);
+    add_test("magic_dimensions", m_utf_magic_dimensions);
     add_test("mask", m_utf_mask);
     add_test("mp_safe_tensor", m_utf_mp_safe_tensor);
     add_test("orbit", m_utf_orbit);

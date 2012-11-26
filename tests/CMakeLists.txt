@@ -16,6 +16,7 @@ set(SRC_CORE
     core/immutable_test.C
     core/index_test.C
     core/index_range_test.C
+    core/magic_dimensions_test.C
     core/mask_test.C
     core/mp_safe_tensor_test.C
     core/orbit_test.C

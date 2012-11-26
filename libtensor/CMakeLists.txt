@@ -6,6 +6,7 @@ set(SRC
     core/impl/allocator.C
     core/impl/combined_orbits.C
     core/impl/dimensions.C
+    core/impl/magic_dimensions.C
     core/impl/orbit.C
     core/impl/orbit_list.C
     core/impl/short_orbit.C
