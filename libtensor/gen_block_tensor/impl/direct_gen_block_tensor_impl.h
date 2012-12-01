@@ -140,10 +140,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
                 m_inprogress.insert(aidx.get_abs_index()).first;
         m_lock.unlock();
         try {
-            direct_gen_block_tensor_task<N, bti_traits> t(get_op(), idx, blk);
-            direct_gen_block_tensor_task_iterator<N, bti_traits> ti(t);
-            direct_gen_block_tensor_task_observer to;
-            libutil::thread_pool::submit(ti, to);
+            get_op().compute_block(idx, blk);
         } catch(...) {
             m_lock.lock();
             throw;
@@ -158,9 +155,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
         m_cond.insert(aidx.get_abs_index(), &cond);
         m_lock.unlock();
         try {
-            libutil::thread_pool::release_cpu();
             cond.wait();
-            libutil::thread_pool::acquire_cpu();
         } catch(...) {
             m_lock.lock();
             throw;
