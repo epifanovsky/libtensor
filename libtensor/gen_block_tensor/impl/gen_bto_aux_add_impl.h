@@ -6,9 +6,14 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
+#include "../block_stream_exception.h"
 #include "../gen_bto_aux_add.h"
 
 namespace libtensor {
+
+
+template<size_t N, typename Traits>
+const char *gen_bto_aux_add<N, Traits>::k_clazz = "gen_bto_aux_add<N, Traits>";
 
 
 template<size_t N, typename Traits>
@@ -29,14 +34,17 @@ gen_bto_aux_add<N, Traits>::gen_bto_aux_add(
 template<size_t N, typename Traits>
 gen_bto_aux_add<N, Traits>::~gen_bto_aux_add() {
 
-    close();
+    if(m_open) close();
 }
 
 
 template<size_t N, typename Traits>
 void gen_bto_aux_add<N, Traits>::open() {
 
-    if(m_open) return;
+    if(m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "open()",
+            __FILE__, __LINE__, "Stream is already open.");
+    }
 
     //  Compute the symmetry of the result of the addition
 
@@ -58,6 +66,20 @@ void gen_bto_aux_add<N, Traits>::open() {
     so_merge<N + N, N, element_type>(symx, msk, seq).
         perform(m_cb.req_symmetry());
 
+    //  Prepare group lookup table
+
+    m_schgrp.clear();
+    for(schedule_iterator igrp = m_asch.begin(); igrp != m_asch.end(); ++igrp) {
+
+        const schedule_group &grp = m_asch.get_node(igrp);
+
+        for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
+            if(!inode->zeroa) {
+                m_schgrp.insert(std::make_pair(inode->cia, &grp));
+            }
+        }
+    }
+
     m_open = true;
 }
 
@@ -73,7 +95,10 @@ void gen_bto_aux_add<N, Traits>::close() {
     typedef typename schedule_type::node schedule_node;
     typedef typename std::list<schedule_node>::const_iterator group_iterator;
 
-    if(!m_open) return;
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "close()",
+            __FILE__, __LINE__, "Stream is already closed.");
+    }
 
     //  Touch untouched orbits
 
@@ -83,7 +108,6 @@ void gen_bto_aux_add<N, Traits>::close() {
 
         bool touched = false;
         for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
-            abs_index<N> aia(inode->cia, m_bidims);
             if(inode->zeroa) continue;
             if(m_grpmap.find(inode->cia) != m_grpmap.end()) {
                 touched = true;
@@ -93,14 +117,11 @@ void gen_bto_aux_add<N, Traits>::close() {
 
         for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
 
-            //  Skip the canonical block in B
-            if(inode->cib == inode->cic) continue;
+            //  Skip zero and canonical blocks in B
+            if(inode->zerob || inode->cib == inode->cic) continue;
 
             abs_index<N> aib(inode->cib, m_bidims),
                 aic(inode->cic, m_bidims);
-
-            //  Skip zero blocks
-            if(m_cb.req_is_zero_block(aib.get_index())) continue;
 
             rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
             wr_block_type &blkc = m_cb.req_block(aic.get_index());
@@ -129,96 +150,85 @@ void gen_bto_aux_add<N, Traits>::put(
 
     typedef typename Traits::template to_copy_type<N>::type to_copy_type;
 
-    typedef addition_schedule<N, Traits> schedule_type;
-    typedef typename schedule_type::iterator schedule_iterator;
-    typedef typename schedule_type::schedule_group schedule_group;
-    typedef typename schedule_type::node schedule_node;
-    typedef typename std::list<schedule_node>::const_iterator group_iterator;
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "put()",
+            __FILE__, __LINE__, "Stream is not ready.");
+    }
 
     abs_index<N> aia(idx, m_bidims);
 
-    for(schedule_iterator igrp = m_asch.begin(); igrp != m_asch.end(); ++igrp) {
+    typename std::map<size_t, const schedule_group*>::const_iterator igrp =
+        m_schgrp.find(aia.get_abs_index());
+    if(igrp == m_schgrp.end()) {
+        throw block_stream_exception(g_ns, k_clazz, "put()",
+            __FILE__, __LINE__, "Unexpected input block.");
+    }
+    const schedule_group &grp = *igrp->second;
 
-        const schedule_group &grp = m_asch.get_node(igrp);
+    bool touch = false;
+    libutil::mutex *mtx = 0;
+    {
+        libutil::auto_lock<libutil::mutex> lock(m_mtx);
 
-        bool contains = false;
-        for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
-            if(!inode->zeroa && inode->cia == aia.get_abs_index()) {
-                contains = true;
-                break;
-            }
+        if(m_grpmap.find(aia.get_abs_index()) == m_grpmap.end()) {
+            size_t grpnum = m_grpcount++;
+            for(group_iterator inode = grp.begin(); inode != grp.end();
+                ++inode) if(!inode->zeroa) m_grpmap[inode->cia] = grpnum;
+            mtx = new libutil::mutex;
+            m_grpmtx.push_back(mtx);
+            touch = true;
+            mtx->lock();
+        } else {
+            size_t grpnum = m_grpmap[aia.get_abs_index()];
+            mtx = m_grpmtx[grpnum];
         }
-        if(!contains) continue;
+    }
 
-        bool touch = false;
-        libutil::mutex *mtx = 0;
-        {
-            libutil::auto_lock<libutil::mutex> lock(m_mtx);
+    //  Touch the group if necessary; group mutex is locked already
+    if(touch) {
 
-            if(m_grpmap.find(aia.get_abs_index()) == m_grpmap.end()) {
-                size_t grpnum = m_grpcount++;
-                for(group_iterator inode = grp.begin(); inode != grp.end();
-                    ++inode) if(!inode->zeroa) m_grpmap[inode->cia] = grpnum;
-                mtx = new libutil::mutex;
-                m_grpmtx.push_back(mtx);
-                touch = true;
-                mtx->lock();
-            } else {
-                size_t grpnum = m_grpmap[aia.get_abs_index()];
-                mtx = m_grpmtx[grpnum];
-            }
-        }
-
-        //  Touch the group if necessary; group mutex is locked already
-        if(touch) {
-
-            try {
-                for(group_iterator inode = grp.begin(); inode != grp.end();
-                    ++inode) {
-
-                    //  Skip the canonical block in B
-                    if(inode->cib == inode->cic) continue;
-
-                    abs_index<N> aib(inode->cib, m_bidims),
-                        aic(inode->cic, m_bidims);
-
-                    //  Skip zero blocks
-                    if(m_cb.req_is_zero_block(aib.get_index())) continue;
-
-                    rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
-                    wr_block_type &blkc = m_cb.req_block(aic.get_index());
-                    to_copy_type(blkb, inode->trb).perform(true, blkc);
-                    m_cb.ret_const_block(aib.get_index());
-                    m_cb.ret_block(aic.get_index());
-                }
-            } catch(...) {
-                mtx->unlock();
-                throw;
-            }
-
-            mtx->unlock();
-        }
-
-        //  Add contribution from A
-        {
-            libutil::auto_lock<libutil::mutex> lock(*mtx);
-
+        try {
             for(group_iterator inode = grp.begin(); inode != grp.end();
                 ++inode) {
 
-                //  Skip non-pertinent nodes
-                if(inode->zeroa || inode->cia != aia.get_abs_index()) continue;
+                //  Skip zero and canonical blocks in B
+                if(inode->zerob || inode->cib == inode->cic) continue;
 
-                abs_index<N> aic(inode->cic, m_bidims);
-                bool zeroc = m_cb.req_is_zero_block(aic.get_index());
+                abs_index<N> aib(inode->cib, m_bidims),
+                    aic(inode->cic, m_bidims);
 
+                rd_block_type &blkb = m_cb.req_const_block(aib.get_index());
                 wr_block_type &blkc = m_cb.req_block(aic.get_index());
-                tensor_transf<N, element_type> tra(tr);
-                tra.transform(inode->tra);
-                tra.transform(m_c);
-                to_copy_type(blk, tra).perform(zeroc, blkc);
+                to_copy_type(blkb, inode->trb).perform(true, blkc);
+                m_cb.ret_const_block(aib.get_index());
                 m_cb.ret_block(aic.get_index());
             }
+        } catch(...) {
+            mtx->unlock();
+            throw;
+        }
+
+        mtx->unlock();
+    }
+
+    //  Add contribution from A
+    {
+        libutil::auto_lock<libutil::mutex> lock(*mtx);
+
+        for(group_iterator inode = grp.begin(); inode != grp.end(); ++inode) {
+
+            //  Skip non-pertinent nodes
+            if(inode->zeroa || inode->cia != aia.get_abs_index()) continue;
+
+            abs_index<N> aic(inode->cic, m_bidims);
+            bool zeroc = m_cb.req_is_zero_block(aic.get_index());
+
+            wr_block_type &blkc = m_cb.req_block(aic.get_index());
+            tensor_transf<N, element_type> tra(tr);
+            tra.transform(inode->tra);
+            tra.transform(m_c);
+            to_copy_type(blk, tra).perform(zeroc, blkc);
+            m_cb.ret_block(aic.get_index());
         }
     }
 }

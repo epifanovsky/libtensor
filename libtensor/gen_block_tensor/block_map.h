@@ -40,13 +40,15 @@ public:
     dimensions<N> m_bidims; //!< Block index dimensions
     block_factory_type m_bf; //!< Block factory
     map_type m_map; //!< Map that stores all the pointers
+    mutable std::vector<size_t> m_cached_blst; //!< Cached list of blocks
+    mutable bool m_dirty_cache; //!< Whether the cache needs an update
 
 public:
     /** \brief Constructs the map
         \param bis Block index space.
      **/
     block_map(const block_index_space<N> &bis) :
-        m_bidims(bis.get_block_index_dims()), m_bf(bis)
+        m_bidims(bis.get_block_index_dims()), m_bf(bis), m_dirty_cache(true)
     { }
 
     /** \brief Destroys the map and all the blocks

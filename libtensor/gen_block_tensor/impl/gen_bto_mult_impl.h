@@ -147,16 +147,12 @@ void gen_bto_mult<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btc(m_bisc);
         gen_block_tensor_ctrl<N, bti_traits> cc(btc);
 
         gen_bto_mult_task_iterator<N, Traits, Timed> ti(*this, btc, out);
         gen_bto_mult_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_mult::stop_timer();
@@ -249,7 +245,8 @@ void gen_bto_mult<N, Traits, Timed>::make_schedule() {
     for (typename orbit_list<N, element_type>::iterator iol = ol.begin();
             iol != ol.end(); iol++) {
 
-        index<N> idx(ol.get_index(iol));
+        index<N> idx;
+        ol.get_index(iol, idx);
         index<N> idxa(idx), idxb(idx);
         permutation<N> pinva(m_tra.get_perm(), true),
                 pinvb(m_trb.get_perm(), true);

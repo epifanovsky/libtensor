@@ -3,7 +3,7 @@
 
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_bis.h"
 #include "../gen_block_tensor_ctrl.h"
@@ -168,14 +168,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         gen_bto_full_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_copy::stop_timer();
@@ -195,14 +191,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         gen_bto_part_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             blst, out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_copy::stop_timer();
@@ -286,8 +278,8 @@ void gen_bto_copy<N, Traits, Timed>::make_schedule() {
                 index<N> bib;
                 abs_index<N>::get_index(nzorba[i], bidimsa, bib);
                 bib.permute(m_tra.get_perm());
-                orbit<N, element_type> ob(m_symb, bib, false);
-                m_schb.insert(ob.get_abs_canonical_index());
+                short_orbit<N, element_type> ob(m_symb, bib);
+                m_schb.insert(ob.get_acindex());
             }
         }
 

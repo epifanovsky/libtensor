@@ -4,9 +4,13 @@ set(SRC
     version.C
     core/impl/abs_index.C
     core/impl/allocator.C
+    core/impl/combined_orbits.C
     core/impl/dimensions.C
+    core/impl/magic_dimensions.C
     core/impl/orbit.C
     core/impl/orbit_list.C
+    core/impl/short_orbit.C
+    core/impl/subgroup_orbits.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/adjacency_list.C
@@ -167,7 +171,9 @@ set(SRC_BTOD
     block_tensor/impl/btod_contract2_4.C
     block_tensor/impl/btod_contract2_5.C
     block_tensor/impl/btod_contract2_6.C
+    block_tensor/impl/btod_contract2_clst_builder.C
     block_tensor/impl/btod_contract2_clst_optimize.C
+    block_tensor/impl/btod_contract2_nzorb.C
     block_tensor/impl/btod_contract3.C
     block_tensor/impl/btod_copy.C
     block_tensor/impl/btod_diag.C
@@ -182,6 +188,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
     block_tensor/impl/btod_trace.C
+    block_tensor/impl/btod_unfold_block_list.C
     block_tensor/impl/btod_unfold_symmetry.C
     block_tensor/impl/btod_vmpriority.C
 )

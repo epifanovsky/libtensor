@@ -16,7 +16,9 @@ template<size_t N, size_t M>
 void btod_extract<N, M>::perform(gen_block_tensor_i<N - M, bti_traits> &btb) {
 
     gen_bto_aux_copy<N - M, btod_traits> out(get_symmetry(), btb);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
@@ -32,7 +34,9 @@ void btod_extract<N, M>::perform(gen_block_tensor_i<N - M, bti_traits> &btb,
     asch.build(get_schedule(), cb);
 
     gen_bto_aux_add<N - M, btod_traits> out(get_symmetry(), asch, btb, c);
+    out.open();
     perform(out);
+    out.close();
 }
 
 

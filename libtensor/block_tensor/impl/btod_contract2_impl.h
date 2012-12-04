@@ -2,6 +2,8 @@
 #define LIBTENSOR_BTOD_CONTRACT2_IMPL_H
 
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_impl.h>
 #include "../btod_contract2.h"
 
@@ -43,13 +45,10 @@ template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(
     gen_block_tensor_i<NC, bti_traits> &btc) {
 
-    typedef block_tensor_i_traits<double> bti_traits;
-
-    gen_block_tensor_wr_ctrl<NC, bti_traits> cc(btc);
-    cc.req_zero_all_blocks();
-    so_copy<NC, double>(get_symmetry()).perform(cc.req_symmetry());
-
-    perform(btc, scalar_transf<double>(1.0));
+    gen_bto_aux_copy<NC, btod_traits> out(get_symmetry(), btc);
+    out.open();
+    perform(out);
+    out.close();
 }
 
 
@@ -66,7 +65,9 @@ void btod_contract2<N, M, K>::perform(
     asch.build(get_schedule(), cc);
 
     gen_bto_aux_add<NC, btod_traits> out(get_symmetry(), asch, btc, d);
+    out.open();
     perform(out);
+    out.close();
 }
 
 

@@ -31,7 +31,8 @@ void gen_bto_set<N, Traits, Timed>::perform(
             for(typename orbit_list<N, element_type>::iterator io = ol.begin();
                 io != ol.end(); ++io) {
 
-                const index<N> &bi = ol.get_index(io);
+                index<N> bi;
+                ol.get_index(io, bi);
                 wr_block_type &blk = ca.req_block(bi);
                 to_set(m_v).perform(blk);
                 ca.ret_block(bi);

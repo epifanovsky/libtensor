@@ -73,6 +73,9 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_21();
     test_contr_22();
     test_contr_23();
+    test_contr_24();
+    test_contr_25();
+    test_contr_26();
 
     //  Tests for the contraction of a block tensor with itself
 
@@ -2772,10 +2775,502 @@ void btod_contract2_test::test_contr_23() {
 }
 
 
+void btod_contract2_test::test_contr_24() {
+
+    const char *testname = "btod_contract2_test::test_contr_24()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    // D2h point group
+    // Product table:
+    //     Ag  B1g B2g B3g Au  B1u B2u B3u
+    // Ag  Ag  B1g B2g B3g Au  B1u B2u B3u
+    // B1g B1g Ag  B3g B2g B1u Au  B3u B2u
+    // B2g B2g B3g Ag  B1g B2u B3u Au  B1u
+    // B3g B3g B2g B1g Ag  B3u B2u B1u Au
+    // Au  Au  B1u B2u B3u Ag  B1g B2g B3g
+    // B1u B1u Au  B3u B2u B1g Ag  B3g B2g
+    // B2u B2u B3u Au  B1u B2g B3g Ag  B1g
+    // B3u B3u B2u B1u Au  B3g B2g B1g Ag
+    point_group_table::label_t ag = 0, b1g = 1, b2g = 2, b3g = 3, au = 4,
+        b1u = 5, b2u = 6, b3u = 7;
+    std::vector<std::string> im(8);
+    im[ag] = "Ag"; im[b1g] = "B1g"; im[b2g] = "B2g"; im[b3g] = "B3g";
+    im[au] = "Au"; im[b1u] = "B1u"; im[b2u] = "B2u"; im[b3u] = "B3u";
+    point_group_table d2h("d2h", im, "Ag");
+    d2h.add_product(b1g, b1g, ag);
+    d2h.add_product(b1g, b2g, b3g);
+    d2h.add_product(b2g, b2g, ag);
+    d2h.add_product(b1g, b3g, b2g);
+    d2h.add_product(b2g, b3g, b1g);
+    d2h.add_product(b3g, b3g, ag);
+    d2h.add_product(b1g, au,  b1u);
+    d2h.add_product(b2g, au,  b2u);
+    d2h.add_product(b3g, au,  b3u);
+    d2h.add_product(au,  au,  ag);
+    d2h.add_product(b1g, b1u, au);
+    d2h.add_product(b2g, b1u, b3u);
+    d2h.add_product(b3g, b1u, b2u);
+    d2h.add_product(au,  b1u, b1g);
+    d2h.add_product(b1u, b1u, ag);
+    d2h.add_product(b1g, b2u, b3u);
+    d2h.add_product(b2g, b2u, au);
+    d2h.add_product(b3g, b2u, b1u);
+    d2h.add_product(au,  b2u, b2g);
+    d2h.add_product(b1u, b2u, b3g);
+    d2h.add_product(b2u, b2u, ag);
+    d2h.add_product(b1g, b3u, b2u);
+    d2h.add_product(b2g, b3u, b1u);
+    d2h.add_product(b3g, b3u, au);
+    d2h.add_product(au,  b3u, b3g);
+    d2h.add_product(b1u, b3u, b2g);
+    d2h.add_product(b2u, b3u, b1g);
+    d2h.add_product(b3u, b3u, ag);
+    d2h.check();
+    product_table_container::get_instance().add(d2h);
+
+    try {
+
+    index<3> i3a, i3b;
+    i3b[0] = 15; i3b[1] = 15; i3b[2] = 5;
+    dimensions<3> dimsa(index_range<3>(i3a, i3b));
+    i3b[0] = 31; i3b[1] = 31; i3b[2] = 5;
+    dimensions<3> dimsb(index_range<3>(i3a, i3b));
+    index<4> i4a, i4b;
+    i4b[0] = 15; i4b[1] = 31; i4b[2] = 15; i4b[3] = 31;
+    dimensions<4> dimsc(index_range<4>(i4a, i4b));
+
+    mask<3> m001, m110;
+    m110[0] = true; m110[1] = true; m001[2] = true;
+    mask<4> m1010, m0101;
+    m1010[0] = true; m0101[1] = true; m1010[2] = true; m0101[3] = true;
+
+    block_index_space<3> bisa(dimsa), bisb(dimsb);
+    block_index_space<4> bisc(dimsc);
+    for(size_t i = 1; i < 16; i++) {
+        bisa.split(m110, i);
+        bisc.split(m1010, i);
+    }
+    for(size_t i = 1; i < 32; i++) {
+        bisb.split(m110, i);
+        bisc.split(m0101, i);
+    }
+    dimensions<3> bidimsa = bisa.get_block_index_dims();
+    dimensions<3> bidimsb = bisb.get_block_index_dims();
+    dimensions<4> bidimsc = bisc.get_block_index_dims();
+
+    se_label<3, double> se1(bidimsa, "d2h");
+    se_label<3, double> se2(bidimsb, "d2h");
+    se_label<4, double> se3(bidimsc, "d2h");
+    block_labeling<3> &bl1 = se1.get_labeling();
+    block_labeling<3> &bl2 = se2.get_labeling();
+    block_labeling<4> &bl3 = se3.get_labeling();
+    for(size_t i = 0; i < 16; i++) {
+        bl1.assign(m110, i, i % 8);
+        bl3.assign(m1010, i, i % 8);
+    }
+    bl1.assign(m001, 0, 0);
+    for(size_t i = 0; i < 32; i++) {
+        bl2.assign(m110, i, (i % 16) / 2);
+        bl3.assign(m0101, i, (i % 16) / 2);
+    }
+    bl2.assign(m001, 0, 0);
+    se1.set_rule(0);
+    se2.set_rule(0);
+    se3.set_rule(0);
+
+    se_part<3, double> se4(bisa, m110, 2);
+    se_part<3, double> se5(bisb, m110, 2);
+    index<3> i000, i010, i100, i110;
+    i100[0] = 1; i010[1] = 1;
+    i110[0] = 1; i110[1] = 1;
+    se4.add_map(i000, i110, scalar_transf<double>(1.0));
+    se4.add_map(i010, i100, scalar_transf<double>(1.0));
+    se4.mark_forbidden(i010);
+    se5.add_map(i000, i110, scalar_transf<double>(1.0));
+    se5.add_map(i010, i100, scalar_transf<double>(1.0));
+    se5.mark_forbidden(i010);
+
+    symmetry<3, double> syma(bisa), symb(bisb);
+    symmetry<4, double> symc(bisc);
+    syma.insert(se1);
+    syma.insert(se4);
+    symb.insert(se2);
+    symb.insert(se5);
+    symc.insert(se3);
+
+    block_tensor<3, double, allocator_t> bta(bisa), btb(bisb);
+    block_tensor<4, double, allocator_t> btc(bisc);
+
+    {
+        block_tensor_wr_ctrl<3, double> ca(bta), cb(btb);
+        so_copy<3, double>(syma).perform(ca.req_symmetry());
+        so_copy<3, double>(symb).perform(cb.req_symmetry());
+    }
+
+    btod_random<3>().perform(bta);
+    btod_random<3>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    contraction2<2, 2, 1> contr(permutation<4>().permute(1, 2));
+    contr.contract(2, 2);
+    btod_contract2<2, 2, 1>(contr, bta, btb).perform(btc);
+
+    dense_tensor<3, double, allocator_t> ta(dimsa), tb(dimsb);
+    dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+    tod_btconv<3>(bta).perform(ta);
+    tod_btconv<3>(btb).perform(tb);
+    tod_btconv<4>(btc).perform(tc);
+    tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, tc_ref);
+
+    compare_ref<4>::compare(testname, tc, tc_ref, 1e-14);
+
+    } catch(...) {
+        product_table_container::get_instance().erase("d2h");
+        throw;
+    }
+    product_table_container::get_instance().erase("d2h");
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_contract2_test::test_contr_25() {
+
+    const char *testname = "btod_contract2_test::test_contr_25()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    // D2h point group
+    // Product table:
+    //     Ag  B1g B2g B3g Au  B1u B2u B3u
+    // Ag  Ag  B1g B2g B3g Au  B1u B2u B3u
+    // B1g B1g Ag  B3g B2g B1u Au  B3u B2u
+    // B2g B2g B3g Ag  B1g B2u B3u Au  B1u
+    // B3g B3g B2g B1g Ag  B3u B2u B1u Au
+    // Au  Au  B1u B2u B3u Ag  B1g B2g B3g
+    // B1u B1u Au  B3u B2u B1g Ag  B3g B2g
+    // B2u B2u B3u Au  B1u B2g B3g Ag  B1g
+    // B3u B3u B2u B1u Au  B3g B2g B1g Ag
+    point_group_table::label_t ag = 0, b1g = 1, b2g = 2, b3g = 3, au = 4,
+        b1u = 5, b2u = 6, b3u = 7;
+    std::vector<std::string> im(8);
+    im[ag] = "Ag"; im[b1g] = "B1g"; im[b2g] = "B2g"; im[b3g] = "B3g";
+    im[au] = "Au"; im[b1u] = "B1u"; im[b2u] = "B2u"; im[b3u] = "B3u";
+    point_group_table d2h("d2h", im, "Ag");
+    d2h.add_product(b1g, b1g, ag);
+    d2h.add_product(b1g, b2g, b3g);
+    d2h.add_product(b2g, b2g, ag);
+    d2h.add_product(b1g, b3g, b2g);
+    d2h.add_product(b2g, b3g, b1g);
+    d2h.add_product(b3g, b3g, ag);
+    d2h.add_product(b1g, au,  b1u);
+    d2h.add_product(b2g, au,  b2u);
+    d2h.add_product(b3g, au,  b3u);
+    d2h.add_product(au,  au,  ag);
+    d2h.add_product(b1g, b1u, au);
+    d2h.add_product(b2g, b1u, b3u);
+    d2h.add_product(b3g, b1u, b2u);
+    d2h.add_product(au,  b1u, b1g);
+    d2h.add_product(b1u, b1u, ag);
+    d2h.add_product(b1g, b2u, b3u);
+    d2h.add_product(b2g, b2u, au);
+    d2h.add_product(b3g, b2u, b1u);
+    d2h.add_product(au,  b2u, b2g);
+    d2h.add_product(b1u, b2u, b3g);
+    d2h.add_product(b2u, b2u, ag);
+    d2h.add_product(b1g, b3u, b2u);
+    d2h.add_product(b2g, b3u, b1u);
+    d2h.add_product(b3g, b3u, au);
+    d2h.add_product(au,  b3u, b3g);
+    d2h.add_product(b1u, b3u, b2g);
+    d2h.add_product(b2u, b3u, b1g);
+    d2h.add_product(b3u, b3u, ag);
+    d2h.check();
+    product_table_container::get_instance().add(d2h);
+
+    try {
+
+    index<3> i3a, i3b;
+    i3b[0] = 15; i3b[1] = 15; i3b[2] = 5;
+    dimensions<3> dimsa(index_range<3>(i3a, i3b));
+    i3b[0] = 31; i3b[1] = 31; i3b[2] = 5;
+    dimensions<3> dimsb(index_range<3>(i3a, i3b));
+    index<4> i4a, i4b;
+    i4b[0] = 15; i4b[1] = 31; i4b[2] = 15; i4b[3] = 31;
+    dimensions<4> dimsc(index_range<4>(i4a, i4b));
+
+    mask<3> m001, m110;
+    m110[0] = true; m110[1] = true; m001[2] = true;
+    mask<4> m1010, m0101;
+    m1010[0] = true; m0101[1] = true; m1010[2] = true; m0101[3] = true;
+
+    block_index_space<3> bisa(dimsa), bisb(dimsb);
+    block_index_space<4> bisc(dimsc);
+    for(size_t i = 1; i < 16; i++) {
+        bisa.split(m110, i);
+        bisc.split(m1010, i);
+    }
+    for(size_t i = 1; i < 32; i++) {
+        bisb.split(m110, i);
+        bisc.split(m0101, i);
+    }
+    dimensions<3> bidimsa = bisa.get_block_index_dims();
+    dimensions<3> bidimsb = bisb.get_block_index_dims();
+    dimensions<4> bidimsc = bisc.get_block_index_dims();
+
+    se_label<3, double> se1(bidimsa, "d2h");
+    se_label<3, double> se2(bidimsb, "d2h");
+    se_label<4, double> se3(bidimsc, "d2h");
+    block_labeling<3> &bl1 = se1.get_labeling();
+    block_labeling<3> &bl2 = se2.get_labeling();
+    block_labeling<4> &bl3 = se3.get_labeling();
+    for(size_t i = 0; i < 16; i++) {
+        bl1.assign(m110, i, i % 8);
+        bl3.assign(m1010, i, i % 8);
+    }
+    bl1.assign(m001, 0, 0);
+    for(size_t i = 0; i < 32; i++) {
+        bl2.assign(m110, i, (i % 16) / 2);
+        bl3.assign(m0101, i, (i % 16) / 2);
+    }
+    bl2.assign(m001, 0, 0);
+    se1.set_rule(0);
+    se2.set_rule(0);
+    se3.set_rule(0);
+
+    se_part<3, double> se4(bisa, m110, 2);
+    se_part<3, double> se5(bisb, m110, 2);
+    index<3> i000, i010, i100, i110;
+    i100[0] = 1; i010[1] = 1;
+    i110[0] = 1; i110[1] = 1;
+    se4.add_map(i000, i110, scalar_transf<double>(1.0));
+    se4.add_map(i010, i100, scalar_transf<double>(1.0));
+    se4.mark_forbidden(i010);
+    se5.add_map(i000, i110, scalar_transf<double>(1.0));
+    se5.add_map(i010, i100, scalar_transf<double>(1.0));
+    se5.mark_forbidden(i010);
+
+    symmetry<3, double> syma(bisa), symb(bisb);
+    symmetry<4, double> symc(bisc);
+    syma.insert(se1);
+    syma.insert(se4);
+    symb.insert(se2);
+    symb.insert(se5);
+    symc.insert(se3);
+
+    block_tensor<3, double, allocator_t> bta(bisa), btb(bisb);
+    block_tensor<4, double, allocator_t> btc(bisc);
+
+    {
+        block_tensor_wr_ctrl<3, double> ca(bta), cb(btb);
+        so_copy<3, double>(syma).perform(ca.req_symmetry());
+        so_copy<3, double>(symb).perform(cb.req_symmetry());
+    }
+
+    btod_random<3>().perform(bta);
+    btod_random<3>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    contraction2<2, 2, 1> contr(permutation<4>().permute(1, 2).permute(1, 3));
+    contr.contract(2, 2);
+    btod_contract2<2, 2, 1>(contr, bta, btb).perform(btc);
+
+    dense_tensor<3, double, allocator_t> ta(dimsa), tb(dimsb);
+    dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+    tod_btconv<3>(bta).perform(ta);
+    tod_btconv<3>(btb).perform(tb);
+    tod_btconv<4>(btc).perform(tc);
+    tod_contract2<2, 2, 1>(contr, ta, tb).perform(true, tc_ref);
+
+    compare_ref<4>::compare(testname, tc, tc_ref, 1e-14);
+
+    } catch(...) {
+        product_table_container::get_instance().erase("d2h");
+        throw;
+    }
+    product_table_container::get_instance().erase("d2h");
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_contract2_test::test_contr_26() {
+
+    const char *testname = "btod_contract2_test::test_contr_26()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    // D2h point group
+    // Product table:
+    //     Ag  B1g B2g B3g Au  B1u B2u B3u
+    // Ag  Ag  B1g B2g B3g Au  B1u B2u B3u
+    // B1g B1g Ag  B3g B2g B1u Au  B3u B2u
+    // B2g B2g B3g Ag  B1g B2u B3u Au  B1u
+    // B3g B3g B2g B1g Ag  B3u B2u B1u Au
+    // Au  Au  B1u B2u B3u Ag  B1g B2g B3g
+    // B1u B1u Au  B3u B2u B1g Ag  B3g B2g
+    // B2u B2u B3u Au  B1u B2g B3g Ag  B1g
+    // B3u B3u B2u B1u Au  B3g B2g B1g Ag
+    point_group_table::label_t ag = 0, b1g = 1, b2g = 2, b3g = 3, au = 4,
+        b1u = 5, b2u = 6, b3u = 7;
+    std::vector<std::string> im(8);
+    im[ag] = "Ag"; im[b1g] = "B1g"; im[b2g] = "B2g"; im[b3g] = "B3g";
+    im[au] = "Au"; im[b1u] = "B1u"; im[b2u] = "B2u"; im[b3u] = "B3u";
+    point_group_table d2h("d2h", im, "Ag");
+    d2h.add_product(b1g, b1g, ag);
+    d2h.add_product(b1g, b2g, b3g);
+    d2h.add_product(b2g, b2g, ag);
+    d2h.add_product(b1g, b3g, b2g);
+    d2h.add_product(b2g, b3g, b1g);
+    d2h.add_product(b3g, b3g, ag);
+    d2h.add_product(b1g, au,  b1u);
+    d2h.add_product(b2g, au,  b2u);
+    d2h.add_product(b3g, au,  b3u);
+    d2h.add_product(au,  au,  ag);
+    d2h.add_product(b1g, b1u, au);
+    d2h.add_product(b2g, b1u, b3u);
+    d2h.add_product(b3g, b1u, b2u);
+    d2h.add_product(au,  b1u, b1g);
+    d2h.add_product(b1u, b1u, ag);
+    d2h.add_product(b1g, b2u, b3u);
+    d2h.add_product(b2g, b2u, au);
+    d2h.add_product(b3g, b2u, b1u);
+    d2h.add_product(au,  b2u, b2g);
+    d2h.add_product(b1u, b2u, b3g);
+    d2h.add_product(b2u, b2u, ag);
+    d2h.add_product(b1g, b3u, b2u);
+    d2h.add_product(b2g, b3u, b1u);
+    d2h.add_product(b3g, b3u, au);
+    d2h.add_product(au,  b3u, b3g);
+    d2h.add_product(b1u, b3u, b2g);
+    d2h.add_product(b2u, b3u, b1g);
+    d2h.add_product(b3u, b3u, ag);
+    d2h.check();
+    product_table_container::get_instance().add(d2h);
+
+    try {
+
+    index<2> i2a, i2b;
+    i2b[0] = 15; i2b[1] = 15;;
+    dimensions<2> dimsa(index_range<2>(i2a, i2b));
+    i2b[0] = 31; i2b[1] = 31;
+    dimensions<2> dimsb(index_range<2>(i2a, i2b));
+    index<4> i4a, i4b;
+    i4b[0] = 15; i4b[1] = 31; i4b[2] = 15; i4b[3] = 31;
+    dimensions<4> dimsc(index_range<4>(i4a, i4b));
+
+    mask<2> m11;
+    m11[0] = true; m11[1] = true;
+    mask<4> m1010, m0101;
+    m1010[0] = true; m0101[1] = true; m1010[2] = true; m0101[3] = true;
+
+    block_index_space<2> bisa(dimsa), bisb(dimsb);
+    block_index_space<4> bisc(dimsc);
+    for(size_t i = 1; i < 16; i++) {
+        bisa.split(m11, i);
+        bisc.split(m1010, i);
+    }
+    for(size_t i = 1; i < 32; i++) {
+        bisb.split(m11, i);
+        bisc.split(m0101, i);
+    }
+    dimensions<2> bidimsa = bisa.get_block_index_dims();
+    dimensions<2> bidimsb = bisb.get_block_index_dims();
+    dimensions<4> bidimsc = bisc.get_block_index_dims();
+
+    se_label<2, double> se1(bidimsa, "d2h");
+    se_label<2, double> se2(bidimsb, "d2h");
+    se_label<4, double> se3(bidimsc, "d2h");
+    block_labeling<2> &bl1 = se1.get_labeling();
+    block_labeling<2> &bl2 = se2.get_labeling();
+    block_labeling<4> &bl3 = se3.get_labeling();
+    for(size_t i = 0; i < 16; i++) {
+        bl1.assign(m11, i, i % 8);
+        bl3.assign(m1010, i, i % 8);
+    }
+    for(size_t i = 0; i < 32; i++) {
+        bl2.assign(m11, i, (i % 16) / 2);
+        bl3.assign(m0101, i, (i % 16) / 2);
+    }
+    se1.set_rule(0);
+    se2.set_rule(0);
+    se3.set_rule(0);
+
+    se_part<2, double> se4(bisa, m11, 2);
+    se_part<2, double> se5(bisb, m11, 2);
+    index<2> i00, i01, i10, i11;
+    i10[0] = 1; i01[1] = 1;
+    i11[0] = 1; i11[1] = 1;
+    se4.add_map(i00, i11, scalar_transf<double>(1.0));
+    se4.add_map(i01, i10, scalar_transf<double>(1.0));
+    se4.mark_forbidden(i01);
+    se5.add_map(i00, i11, scalar_transf<double>(1.0));
+    se5.add_map(i01, i10, scalar_transf<double>(1.0));
+    se5.mark_forbidden(i01);
+
+    symmetry<2, double> syma(bisa), symb(bisb);
+    symmetry<4, double> symc(bisc);
+    syma.insert(se1);
+    syma.insert(se4);
+    symb.insert(se2);
+    symb.insert(se5);
+    symc.insert(se3);
+
+    block_tensor<2, double, allocator_t> bta(bisa), btb(bisb);
+    block_tensor<4, double, allocator_t> btc(bisc);
+
+    {
+        block_tensor_wr_ctrl<2, double> ca(bta), cb(btb);
+        so_copy<2, double>(syma).perform(ca.req_symmetry());
+        so_copy<2, double>(symb).perform(cb.req_symmetry());
+    }
+
+    btod_random<2>().perform(bta);
+    btod_random<2>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2).permute(1, 3));
+    btod_contract2<2, 2, 0>(contr, bta, btb).perform(btc);
+
+    dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb);
+    dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+    tod_btconv<2>(bta).perform(ta);
+    tod_btconv<2>(btb).perform(tb);
+    tod_btconv<4>(btc).perform(tc);
+    tod_contract2<2, 2, 0>(contr, ta, tb).perform(true, tc_ref);
+
+    compare_ref<4>::compare(testname, tc, tc_ref, 1e-14);
+
+    } catch(...) {
+        product_table_container::get_instance().erase("d2h");
+        throw;
+    }
+    product_table_container::get_instance().erase("d2h");
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
 /** \test Tests \f$ c_{ijab} = a_{ia} a_{jb} \f$, expected perm symmetry
 \f$ c_{ijab} = c_{jiba} \f$.
  **/
-void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
+void btod_contract2_test::test_self_1() {
 
     static const char *testname = "btod_contract2_test::test_self_1()";
 
@@ -2850,7 +3345,7 @@ void btod_contract2_test::test_self_1() throw(libtest::test_exception) {
 /** \test Tests \f$ c_{ijab} = \sum_c a_{iac} a_{jbc} \f$,
 expected perm symmetry \f$ c_{ijab} = c_{jiba} \f$.
  **/
-void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
+void btod_contract2_test::test_self_2() {
 
     static const char *testname = "btod_contract2_test::test_self_2()";
 
@@ -2927,7 +3422,7 @@ void btod_contract2_test::test_self_2() throw(libtest::test_exception) {
 initial perm symmetry \f$ a_{iac} = a_{ica} \f$,
 expected perm symmetry \f$ c_{ijab} = c_{jiba} \f$.
  **/
-void btod_contract2_test::test_self_3() throw(libtest::test_exception) {
+void btod_contract2_test::test_self_3() {
 
     static const char *testname = "btod_contract2_test::test_self_3()";
 

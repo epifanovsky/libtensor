@@ -7,6 +7,7 @@ set(SRC_CORE
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
     core/block_tensor_test.C
+    core/combined_orbits_test.C
     core/contraction2_list_builder_test.C
     core/contraction2_test.C
     core/dense_tensor_test.C
@@ -15,6 +16,7 @@ set(SRC_CORE
     core/immutable_test.C
     core/index_test.C
     core/index_range_test.C
+    core/magic_dimensions_test.C
     core/mask_test.C
     core/mp_safe_tensor_test.C
     core/orbit_test.C
@@ -24,6 +26,8 @@ set(SRC_CORE
     core/permutation_generator_test.C
     core/sequence_test.C
     core/sequence_generator_test.C
+    core/short_orbit_test.C
+    core/subgroup_orbits_test.C
     core/symmetry_test.C
     core/symmetry_element_set_test.C
     core/transf_list_test.C
@@ -159,6 +163,8 @@ set(SRC_BTOD
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C
+    btod/gen_bto_aux_add_test.C
+    btod/gen_bto_aux_copy_test.C
     btod/gen_bto_contract2_clst_builder_test.C
     btod/gen_bto_dirsum_sym_test.C
     btod/gen_bto_unfold_symmetry_test.C

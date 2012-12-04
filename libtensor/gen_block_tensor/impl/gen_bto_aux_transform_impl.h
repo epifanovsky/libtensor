@@ -3,9 +3,15 @@
 
 #include <libtensor/core/orbit.h>
 #include <libtensor/symmetry/so_copy.h>
+#include "../block_stream_exception.h"
 #include "../gen_bto_aux_transform.h"
 
 namespace libtensor {
+
+
+template<size_t N, typename Traits>
+const char *gen_bto_aux_transform<N, Traits>::k_clazz =
+    "gen_bto_aux_transform<N, Traits>";
 
 
 template<size_t N, typename Traits>
@@ -31,20 +37,24 @@ gen_bto_aux_transform<N, Traits>::~gen_bto_aux_transform() {
 template<size_t N, typename Traits>
 void gen_bto_aux_transform<N, Traits>::open() {
 
-    if(!m_open) {
-        m_out.open();
-        m_open = true;
+    if(m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "open()",
+            __FILE__, __LINE__, "Stream is already open.");
     }
+
+    m_open = true;
 }
 
 
 template<size_t N, typename Traits>
 void gen_bto_aux_transform<N, Traits>::close() {
 
-    if(m_open) {
-        m_out.close();
-        m_open = false;
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "close()",
+            __FILE__, __LINE__, "Stream is already closed.");
     }
+
+    m_open = false;
 }
 
 
@@ -53,6 +63,11 @@ void gen_bto_aux_transform<N, Traits>::put(
     const index<N> &idxa,
     rd_block_type &blk,
     const tensor_transf_type &tr) {
+
+    if(!m_open) {
+        throw block_stream_exception(g_ns, k_clazz, "put()",
+            __FILE__, __LINE__, "Stream is not ready.");
+    }
 
     tensor_transf_type tra1(tr);
     tra1.transform(m_tra);

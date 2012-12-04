@@ -8,6 +8,7 @@
 #include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
 #include "block_tensor_test.h"
+#include "combined_orbits_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
 #include "dense_tensor_test.h"
@@ -16,6 +17,7 @@
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
+#include "magic_dimensions_test.h"
 #include "mask_test.h"
 #include "mp_safe_tensor_test.h"
 #include "orbit_test.h"
@@ -25,6 +27,8 @@
 #include "permutation_generator_test.h"
 #include "sequence_test.h"
 #include "sequence_generator_test.h"
+#include "short_orbit_test.h"
+#include "subgroup_orbits_test.h"
 #include "symmetry_test.h"
 #include "symmetry_element_set_test.h"
 #include "transf_list_test.h"
@@ -53,6 +57,7 @@ namespace libtensor {
     \li libtensor::block_index_subspace_builder_test
     \li libtensor::block_map_test
     \li libtensor::block_tensor_test
+    \li libtensor::combined_orbits_test
     \li libtensor::contraction2_test
     \li libtensor::contraction2_list_builder_test
     \li libtensor::dense_tensor_test
@@ -61,6 +66,7 @@ namespace libtensor {
     \li libtensor::immutable_test
     \li libtensor::index_test
     \li libtensor::index_range_test
+    \li libtensor::magic_dimensions_test
     \li libtensor::mask_test
     \li libtensor::mp_safe_tensor_test
     \li libtensor::orbit_test
@@ -70,6 +76,8 @@ namespace libtensor {
     \li libtensor::permutation_generator_test
     \li libtensor::sequence_test
     \li libtensor::sequence_generator_test
+    \li libtensor::short_orbit_test
+    \li libtensor::subgroup_orbits_test
     \li libtensor::symmetry_test
     \li libtensor::symmetry_element_set_test
     \li libtensor::transf_list_test
@@ -83,6 +91,7 @@ private:
         m_utf_block_index_subspace_builder;
     unit_test_factory<block_map_test> m_utf_block_map;
     unit_test_factory<block_tensor_test> m_utf_block_tensor;
+    unit_test_factory<combined_orbits_test> m_utf_combined_orbits;
     unit_test_factory<contraction2_test> m_utf_contraction2;
     unit_test_factory<contraction2_list_builder_test>
         m_utf_contraction2_list_builder;
@@ -92,6 +101,7 @@ private:
     unit_test_factory<immutable_test> m_utf_immutable;
     unit_test_factory<index_test> m_utf_index;
     unit_test_factory<index_range_test> m_utf_index_range;
+    unit_test_factory<magic_dimensions_test> m_utf_magic_dimensions;
     unit_test_factory<mask_test> m_utf_mask;
     unit_test_factory<mp_safe_tensor_test> m_utf_mp_safe_tensor;
     unit_test_factory<orbit_test> m_utf_orbit;
@@ -101,6 +111,8 @@ private:
     unit_test_factory<permutation_generator_test> m_utf_permutation_generator;
     unit_test_factory<sequence_test> m_utf_sequence;
     unit_test_factory<sequence_generator_test> m_utf_sequence_generator;
+    unit_test_factory<short_orbit_test> m_utf_short_orbit;
+    unit_test_factory<subgroup_orbits_test> m_utf_subgroup_orbits;
     unit_test_factory<symmetry_test> m_utf_symmetry;
     unit_test_factory<symmetry_element_set_test> m_utf_symmetry_element_set;
     unit_test_factory<transf_list_test> m_utf_transf_list;

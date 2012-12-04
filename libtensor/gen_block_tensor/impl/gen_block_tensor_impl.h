@@ -1,6 +1,9 @@
 #ifndef LIBTENSOR_GEN_BLOCK_TENSOR_IMPL_H
 #define LIBTENSOR_GEN_BLOCK_TENSOR_IMPL_H
 
+#include <algorithm> // for std::swap
+#include <libutil/threads/auto_lock.h>
+#include <libtensor/core/short_orbit.h>
 #include "../gen_block_tensor.h"
 
 namespace libtensor {
@@ -18,7 +21,7 @@ gen_block_tensor<N, BtTraits>::gen_block_tensor(
     m_bis(bis),
     m_bidims(bis.get_block_index_dims()),
     m_symmetry(m_bis),
-    m_orblst(0),
+    m_orblst(0), m_orblst_inprogress(false),
     m_map(m_bis) {
 
 }
@@ -102,12 +105,11 @@ bool gen_block_tensor<N, BtTraits>::on_req_is_zero_block(const index<N> &idx) {
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
-    update_orblst();
-    if(!m_orblst->contains(idx)) {
-        throw symmetry_violation(g_ns, k_clazz, method,
-            __FILE__, __LINE__,
+    if(!check_canonical_block(idx)) {
+        throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
+
     return !m_map.contains(idx);
 }
 
@@ -118,7 +120,6 @@ void gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
-    update_orblst();
     m_map.get_all(nzlst);
 }
 
@@ -134,11 +135,12 @@ void gen_block_tensor<N, BtTraits>::on_req_zero_block(const index<N> &idx) {
         throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Immutable object cannot be modified.");
     }
-    update_orblst();
-    if(!m_orblst->contains(idx)) {
+
+    if(!check_canonical_block(idx)) {
         throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }
+
     m_map.remove(idx);
 }
 
@@ -168,15 +170,60 @@ void gen_block_tensor<N, BtTraits>::on_set_immutable() {
 
 
 template<size_t N, typename BtTraits>
-void gen_block_tensor<N, BtTraits>::update_orblst() {
+bool gen_block_tensor<N, BtTraits>::update_orblst(bool wait) {
 
-    if(m_orblst == 0) {
-        //  We may have waited long enough here that the orbit has been updated
-        //  in another thread already. Need to double check.
-        if(m_orblst == 0) {
-            m_orblst = new orbit_list<N, element_type>(m_symmetry);
-        }
+    //  If wait = true, return only when new orblst is built,
+    //  always return true.
+    //  If wait = false, do not wait for orblst to be built. Return true if
+    //  it is ready, false otherwise.
+
+    //  m_lock is locked by the caller
+
+    if(m_orblst) return true;
+    if(!wait && m_orblst_inprogress) return false;
+
+    //  If building of orblst is in progress in another thread, this thread
+    //  still builds its own. It may occur that multiple threads are building
+    //  orblst, which adds overhead. That however greatly simplifies
+    //  synchronization.
+
+    m_orblst_inprogress = true;
+    m_lock.unlock();
+    orbit_list<N, element_type> *orblst = 0;
+    try {
+        orblst = new orbit_list<N, element_type>(m_symmetry);
+    } catch(...) {
+        //  Make sure this function returns with m_lock locked
+        m_lock.lock();
+        throw;
     }
+    m_lock.lock();
+    if(m_orblst_inprogress && m_orblst == 0) {
+        //  This thread won the race!
+        std::swap(orblst, m_orblst);
+        m_orblst_inprogress = false;
+    }
+    delete orblst;
+
+    return true;
+}
+
+
+template<size_t N, typename BtTraits>
+bool gen_block_tensor<N, BtTraits>::check_canonical_block(const index<N> &idx) {
+
+    //  This trick here helps to reduce lock contention when threads
+    //  need to wait for orblst to be built. Getting rid of this symmetry
+    //  violation check entirely would help, but we want to stay strict.
+
+    bool use_orblst = update_orblst(false);
+    if(use_orblst) {
+        if(!m_orblst->contains(idx)) return false;
+    } else {
+        short_orbit<N, element_type> o(m_symmetry, idx, true);
+        if(!o.is_allowed() || !o.get_cindex().equals(idx)) return false;
+    }
+    return true;
 }
 
 
@@ -188,8 +235,7 @@ gen_block_tensor<N, BtTraits>::get_block(const index<N> &idx) {
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
-    update_orblst();
-    if(!m_orblst->contains(idx)) {
+    if(!check_canonical_block(idx)) {
         throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
             "Index does not correspond to a canonical block.");
     }

@@ -91,7 +91,7 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
     for(typename orbit_list<N, double>::iterator io = ol.begin();
         io != ol.end(); ++io) {
 
-        orbit<N, double> o(sym, ol.get_index(io));
+        orbit<N, double> o(sym, ol.get_abs_index(io));
         abs_index<N> aci(o.get_abs_canonical_index(), bidims);
 
         if(ctrl.req_is_zero_block(aci.get_index())) {
@@ -100,6 +100,23 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
             verify_nonzero_orbit(ctrl, bidims, o, sym_thresh);
         }
     }
+
+    abs_index<N> ai(bidims);
+    do {
+        if (ol.contains(ai.get_abs_index())) continue;
+
+        orbit<N, double> o(sym, ai.get_index());
+	if (ai.get_abs_index() != o.get_abs_canonical_index()) continue;
+
+        if (! ctrl.req_is_zero_block(o.get_cindex())) {
+            std::ostringstream ss;
+            ss << "Non-zero block " << o.get_cindex() << ".";
+            throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
+                ss.str().c_str());
+        }
+        verify_zero_orbit(ctrl, bidims, o);
+
+    } while (ai.inc());
 
     so_copy<N, double>(sym).perform(ctrl.req_symmetry());
 }
