@@ -25,6 +25,7 @@ private:
     void test_9() throw(libtest::test_exception);
     void test_10a() throw(libtest::test_exception);
     void test_10b() throw(libtest::test_exception);
+    void test_10c(bool both) throw(libtest::test_exception);
     void test_11() throw(libtest::test_exception);
     void test_12() throw(libtest::test_exception);
 

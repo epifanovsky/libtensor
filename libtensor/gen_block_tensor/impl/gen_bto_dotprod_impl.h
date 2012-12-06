@@ -3,11 +3,12 @@
 
 #include <vector>
 #include <libutil/thread_pool/thread_pool.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
-#include <libtensor/core/bad_block_index_space.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
 #include "../gen_bto_dotprod.h"
@@ -205,8 +206,8 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
             orbit_list<N, element_type> ol(*sym[i]);
 
             std::vector<task_type *> tasklist;
-            for(typename orbit_list<N, element_type>::iterator io = ol.begin();
-                    io != ol.end(); io++) {
+            for(typename orbit_list<N, element_type>::iterator io =
+                    ol.begin(); io != ol.end(); io++) {
 
                 index<N> idx;
                 ol.get_index(io, idx);
@@ -267,26 +268,24 @@ void gen_bto_dotprod_in_orbit_task<N, Traits, Timed>::perform() {
     idxa.permute(pinva);
     idxb.permute(pinvb);
 
-    orbit<N, element_type> orba(ca.req_const_symmetry(), idxa),
-            orbb(cb.req_const_symmetry(), idxb);
-    abs_index<N> acia(orba.get_abs_canonical_index(), bidimsa),
-            acib(orbb.get_abs_canonical_index(), bidimsb);
+    orbit<N, element_type> oa(ca.req_const_symmetry(), idxa, true);
+    orbit<N, element_type> ob(cb.req_const_symmetry(), idxb, true);
 
-    if(ca.req_is_zero_block(acia.get_index()) ||
-            cb.req_is_zero_block(acib.get_index())) return;
+    if(ca.req_is_zero_block(oa.get_cindex()) ||
+            cb.req_is_zero_block(ob.get_cindex())) return;
 
-    tensor_transf<N, element_type> tra(orba.get_transf(idxa)),
-            trb(orbb.get_transf(idxb));
+    tensor_transf<N, element_type> tra(oa.get_transf(idxa)),
+            trb(ob.get_transf(idxb));
     tra.transform(m_tra);
     trb.transform(m_trb);
 
-    rd_block_type &blka = ca.req_const_block(acia.get_index());
-    rd_block_type &blkb = cb.req_const_block(acib.get_index());
+    rd_block_type &blka = ca.req_const_block(oa.get_cindex());
+    rd_block_type &blkb = cb.req_const_block(ob.get_cindex());
 
     m_d = to_dotprod_type(blka, tra, blkb, trb).calculate();
 
-    ca.ret_const_block(acia.get_index());
-    cb.ret_const_block(acib.get_index());
+    ca.ret_const_block(oa.get_cindex());
+    cb.ret_const_block(ob.get_cindex());
 
     sum.apply(m_d);
 }
