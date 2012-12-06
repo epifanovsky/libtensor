@@ -55,7 +55,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
             size_t d1 = (ib[map[i]] + 1), d2 = pdims1[i];
             if (d1 < d2) std::swap(d1, d2);
 
-            ib[map[i]] = ((d1 % d2 == 0) ? d2 - 1 : 0);
+            ib[map[i]] = ((d1 % d2 == 0) ? d1 - 1 : 0);
         }
         else {
             ib[map[i]] = pdims1[i] - 1;
@@ -64,11 +64,17 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
     dimensions<N - M> pdims2(index_range<N - M>(ia, ib));
     if (pdims2.get_size() == 1) return;
 
-    index<N> ja, jb;
+    index<N> ja, jb1, jb2;
     for (register size_t i = 0; i < N; i++) {
-        jb[i] = pdims1[i] / pdims2[map[i]] - 1;
+        if (pdims2[map[i]] == 0) {
+            jb1[i] = pdims1[i];
+        }
+        else {
+            jb2[i] = pdims2[map[i]] / pdims1[i] - 1;
+        }
     }
-    dimensions<N> pdims1m(index_range<N>(ja, jb));
+    dimensions<N> pdims1s1(index_range<N>(ja, jb1));
+    dimensions<N> pdims1s2(index_range<N>(ja, jb2));
 
     block_index_subspace_builder<N - M, M> bb(el1.get_bis(), mm);
     el2_t el2(bb.get_bis(), pdims2);
@@ -76,13 +82,17 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
     // Merge the partitions
     abs_index<N - M> ai(pdims2);
     do {
+        register size_t i;
 
         const index<N - M> &i2a = ai.get_index();
+        // Create pre-merge index
         index<N> i1a;
-        for (register size_t i = 0; i < N; i++)
-            i1a[i] = i2a[map[i]] * pdims1m[i];
+        for (i = 0; i < N; i++) {
+            i1a[i] = i2a[map[i]] / pdims1s2[i];
+        }
 
-        if (is_forbidden(el1, i1a, pdims1m)) {
+        // Check if index forbidden
+        if (is_forbidden(el1, i1a, pdims1s1)) {
             el2.mark_forbidden(i2a);
             continue;
         }
@@ -91,16 +101,16 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
         index<N> i1b = el1.get_direct_map(i1a);
         while (! found && i1a < i1b) {
             // Check if i1b can be converted into a proper result index
-            size_t i = 0;
-            for (; i < N; i++) {
+            for (i = 0; i < N; i++) {
                 if (! params.msk[i]) continue;
 
                 size_t j = i + 1;
                 for (; j < N; j++) {
                     if (map[i] != map[j]) continue;
-                    if (i1b[i] / pdims1m[i] != i1b[j] / pdims1m[j] ||
-                            i1b[i] % pdims1m[i] != 0 ||
-                            i1b[j] % pdims1m[j] != 0) break;
+
+                    if (i1b[i] * pdims1s2[i] != i1b[j] * pdims1s2[j]) break;
+                    if (i1b[i] % pdims1s1[i] != 0 ||
+                            i1b[j] % pdims1s1[j] != 0) break;
                 }
                 if (j != N) break;
             }
@@ -109,11 +119,10 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
         }
         if (! found) continue;
 
-        if (map_exists(el1, i1a, i1b, pdims1m)) {
+        if (map_exists(el1, i1a, i1b, pdims1s1)) {
 
             index<N - M> i2b;
-            for (register size_t i = 0; i < N; i++)
-                i2b[map[i]] = i1b[i] / pdims1m[i];
+            for (i = 0; i < N; i++) i2b[map[i]] = i1b[i] / pdims1s1[i];
 
             el2.add_map(i2a, i2b, el1.get_transf(i1a, i1b));
         }
@@ -122,6 +131,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
 
     params.grp2.insert(el2);
 }
+
 
 template<size_t N, size_t M, size_t NM, typename T>
 bool symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::
@@ -143,6 +153,7 @@ is_forbidden(const el1_t &el, const index<N> &idx,
 
     return forbidden;
 }
+
 
 template<size_t N, size_t M, size_t NM, typename T>
 bool symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::
