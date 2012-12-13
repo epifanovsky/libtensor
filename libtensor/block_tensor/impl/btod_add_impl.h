@@ -23,17 +23,18 @@ void btod_add<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
 
 template<size_t N>
-void btod_add<N>::perform(block_tensor_i<N, double> &btb) {
+void btod_add<N>::perform(gen_block_tensor_i<N, bti_traits> &btb) {
 
     gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), btb);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
 template<size_t N>
-void btod_add<N>::perform(
-    block_tensor_i<N, double> &btb,
-    const double &c) {
+void btod_add<N>::perform(gen_block_tensor_i<N, bti_traits> &btb,
+        const scalar_transf<double> &c) {
 
     typedef block_tensor_i_traits<double> bti_traits;
 
@@ -43,30 +44,27 @@ void btod_add<N>::perform(
     asch.build(get_schedule(), cb);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btb, c);
+    out.open();
     perform(out);
+    out.close();
 }
 
 
 template<size_t N>
-void btod_add<N>::compute_block(
-    dense_tensor_i<N, double> &blkb,
-    const index<N> &ib) {
+void btod_add<N>::perform(block_tensor_i<N, double> &btb, double c) {
 
-    m_gbto.compute_block(true, blkb, ib, tensor_transf<N, double>());
+    perform(btb, scalar_transf<double>(c));
 }
 
 
 template<size_t N>
 void btod_add<N>::compute_block(
     bool zero,
-    dense_tensor_i<N, double> &blkb,
     const index<N> &ib,
     const tensor_transf<N, double> &trb,
-    const double &c) {
+    dense_tensor_wr_i<N, double> &blkb) {
 
-    tensor_transf<N, double> trx(trb);
-    trx.transform(scalar_transf<double>(c));
-    m_gbto.compute_block(zero, blkb, ib, trx);
+    m_gbto.compute_block(zero, ib, trb, blkb);
 }
 
 

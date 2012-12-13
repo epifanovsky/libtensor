@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_MP_SAFE_TENSOR_H
 #define LIBTENSOR_MP_SAFE_TENSOR_H
 
+#include <libutil/threads/auto_lock.h>
+#include <libutil/threads/mutex.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/impl/dense_tensor_impl.h>
 #include "default_sync_policy.h"
@@ -8,6 +10,8 @@
 
 namespace libtensor {
 
+using libutil::mutex;
+using libutil::auto_lock;
 
 /** \brief Thread-safe %tensor
     \tparam N Tensor order.

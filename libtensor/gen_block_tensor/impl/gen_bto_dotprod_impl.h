@@ -3,11 +3,12 @@
 
 #include <vector>
 #include <libutil/thread_pool/thread_pool.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_dirprod.h>
 #include <libtensor/symmetry/so_merge.h>
 #include "../gen_bto_dotprod.h"
@@ -24,15 +25,10 @@ public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
 
-public:
-    static const char *k_clazz;
-
 private:
     gen_block_tensor_rd_i<N, bti_traits> &m_bta;
-    const orbit_list<N, element_type> &m_ola;
     tensor_transf<N, element_type> m_tra;
     gen_block_tensor_rd_i<N, bti_traits> &m_btb;
-    const orbit_list<N, element_type> &m_olb;
     tensor_transf<N, element_type> m_trb;
     const symmetry<N, element_type> &m_symc;
     dimensions<N> m_bidimsc;
@@ -42,15 +38,12 @@ private:
 public:
     gen_bto_dotprod_in_orbit_task(
             gen_block_tensor_rd_i<N, bti_traits> &bta,
-            const orbit_list<N, element_type> &ola,
             const tensor_transf<N, element_type> &tra,
             gen_block_tensor_rd_i<N, bti_traits> &btb,
-            const orbit_list<N, element_type> &olb,
             const tensor_transf<N, element_type> &trb,
             const symmetry<N, element_type> &symc,
             const dimensions<N> &bidimsc, const index<N> &idxc) :
-        m_bta(bta), m_ola(ola), m_tra(tra),
-        m_btb(btb), m_olb(olb), m_trb(trb),
+        m_bta(bta), m_tra(tra), m_btb(btb), m_trb(trb),
         m_symc(symc), m_bidimsc(bidimsc), m_idxc(idxc), m_d(Traits::zero()) { }
 
     virtual ~gen_bto_dotprod_in_orbit_task() { }
@@ -141,7 +134,7 @@ void gen_bto_dotprod<N, Traits, Timed>::add_arg(
 
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_dotprod<N, Traits, Timed>::calculate(
-        std::vector<element_type> &v) {
+    std::vector<element_type> &v) {
 
     static const char *method = "calculate(std::vector<element_type>&)";
 
@@ -210,16 +203,16 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
 
         for(i = 0, j = m_args.begin(); i < narg; i++, j++) {
 
-            orbit_list<N, element_type> ol1(ca[i]->req_const_symmetry());
-            orbit_list<N, element_type> ol2(cb[i]->req_const_symmetry());
             orbit_list<N, element_type> ol(*sym[i]);
 
             std::vector<task_type *> tasklist;
-            for(typename orbit_list<N, element_type>::iterator io = ol.begin();
-                    io != ol.end(); io++) {
+            for(typename orbit_list<N, element_type>::iterator io =
+                    ol.begin(); io != ol.end(); io++) {
 
-                task_type *t = new task_type(j->bt1, ol1, j->tr1,
-                        j->bt2, ol2, j->tr2, *sym[i], bidims, ol.get_index(io));
+                index<N> idx;
+                ol.get_index(io, idx);
+                task_type *t = new task_type(j->bt1, j->tr1, j->bt2, j->tr2,
+                    *sym[i], bidims, idx);
                 tasklist.push_back(t);
             }
 
@@ -254,8 +247,6 @@ void gen_bto_dotprod_in_orbit_task<N, Traits, Timed>::perform() {
     typedef typename Traits::template to_dotprod_type<N>::type to_dotprod_type;
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
 
-    gen_bto_dotprod_in_orbit_task::start_timer();
-
     gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta), cb(m_btb);
 
     orbit<N, element_type> orb(m_symc, m_idxc);
@@ -277,30 +268,26 @@ void gen_bto_dotprod_in_orbit_task<N, Traits, Timed>::perform() {
     idxa.permute(pinva);
     idxb.permute(pinvb);
 
-    orbit<N, element_type> orba(ca.req_const_symmetry(), idxa),
-            orbb(cb.req_const_symmetry(), idxb);
-    abs_index<N> acia(orba.get_abs_canonical_index(), bidimsa),
-            acib(orbb.get_abs_canonical_index(), bidimsb);
+    orbit<N, element_type> oa(ca.req_const_symmetry(), idxa, true);
+    orbit<N, element_type> ob(cb.req_const_symmetry(), idxb, true);
 
-    if(ca.req_is_zero_block(acia.get_index()) ||
-            cb.req_is_zero_block(acib.get_index())) return;
+    if(ca.req_is_zero_block(oa.get_cindex()) ||
+            cb.req_is_zero_block(ob.get_cindex())) return;
 
-    tensor_transf<N, element_type> tra(orba.get_transf(idxa)),
-            trb(orbb.get_transf(idxb));
+    tensor_transf<N, element_type> tra(oa.get_transf(idxa)),
+            trb(ob.get_transf(idxb));
     tra.transform(m_tra);
     trb.transform(m_trb);
 
-    rd_block_type &blka = ca.req_const_block(acia.get_index());
-    rd_block_type &blkb = cb.req_const_block(acib.get_index());
+    rd_block_type &blka = ca.req_const_block(oa.get_cindex());
+    rd_block_type &blkb = cb.req_const_block(ob.get_cindex());
 
     m_d = to_dotprod_type(blka, tra, blkb, trb).calculate();
 
-    ca.ret_const_block(acia.get_index());
-    cb.ret_const_block(acib.get_index());
+    ca.ret_const_block(oa.get_cindex());
+    cb.ret_const_block(ob.get_cindex());
 
     sum.apply(m_d);
-
-    gen_bto_dotprod_in_orbit_task::stop_timer();
 }
 
 

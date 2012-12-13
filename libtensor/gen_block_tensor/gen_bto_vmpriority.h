@@ -11,7 +11,15 @@ namespace libtensor {
     \tparam N Tensor order.
     \tparam Traits Block tensor operation traits.
 
-    \ingroup libtensor_bto
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_vmpriority_type<N>::type -- Type of tensor operation
+        to_vmpriority
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits>
 class gen_bto_vmpriority : public noncopyable {

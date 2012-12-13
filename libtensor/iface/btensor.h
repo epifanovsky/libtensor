@@ -22,10 +22,11 @@ class btensor_base : public btensor_i<N, T>, public immutable {
 private:
     typedef typename Traits::element_t element_t;
     typedef typename Traits::allocator_t allocator_t;
+    typedef block_tensor_i_traits<element_t> bti_traits;
 
 private:
     block_tensor<N, element_t, allocator_t> m_bt;
-    block_tensor_ctrl<N, element_t> m_ctrl;
+    gen_block_tensor_ctrl<N, bti_traits> m_ctrl;
 
 public:
     //!    \name Construction and destruction
@@ -65,11 +66,12 @@ protected:
     //@{
     virtual symmetry<N, T> &on_req_symmetry();
     virtual const symmetry<N, T> &on_req_const_symmetry();
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
+    virtual dense_tensor_wr_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
     //@}
@@ -155,7 +157,7 @@ const symmetry<N, T> &btensor_base<N, T, Traits>::on_req_const_symmetry() {
 
 
 template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_const_block(
+dense_tensor_rd_i<N, T> &btensor_base<N, T, Traits>::on_req_const_block(
     const index<N> &idx) {
 
     return m_ctrl.req_const_block(idx);
@@ -170,7 +172,7 @@ void btensor_base<N, T, Traits>::on_ret_const_block(const index<N> &idx) {
 
 
 template<size_t N, typename T, typename Traits>
-dense_tensor_i<N, T> &btensor_base<N, T, Traits>::on_req_block(
+dense_tensor_wr_i<N, T> &btensor_base<N, T, Traits>::on_req_block(
     const index<N> &idx) {
 
     return m_ctrl.req_block(idx);
@@ -189,6 +191,15 @@ bool btensor_base<N, T, Traits>::on_req_is_zero_block(const index<N> &idx) {
 
     return m_ctrl.req_is_zero_block(idx);
 }
+
+
+template<size_t N, typename T, typename Traits>
+void btensor_base<N, T, Traits>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    m_ctrl.req_nonzero_blocks(nzlst);
+}
+
 
 template<size_t N, typename T, typename Traits>
 void btensor_base<N, T, Traits>::on_req_zero_block(const index<N> &idx) {

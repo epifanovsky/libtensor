@@ -38,11 +38,12 @@ void direct_block_tensor_test::perform() throw(libtest::test_exception) {
 
 /** \test Installs a simple copy operation in a direct block %tensor.
  **/
-void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
+void direct_block_tensor_test::test_op_1() {
 
     static const char *testname = "direct_block_tensor_test::test_op_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef std_allocator<double> allocator_type;
+    typedef block_tensor_i_traits<double> bti_traits;
 
     try {
 
@@ -51,14 +52,35 @@ void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
 
-    block_tensor<2, double, allocator_t> bta(bis);
+    block_tensor<2, double, allocator_type> bta(bis);
     btod_random<2>().perform(bta);
     bta.set_immutable();
 
     btod_copy<2> op_copy(bta);
-    direct_block_tensor<2, double, allocator_t> btb(op_copy);
+    direct_block_tensor<2, double, allocator_type> btb(op_copy);
 
-    dense_tensor<2, double, allocator_t> tc(dims), tc_ref(dims);
+    std::vector<size_t> nzl1, nzl2;
+    nzl2.push_back(100);
+    nzl2.push_back(200);
+    {
+        gen_block_tensor_rd_ctrl<2, bti_traits> cb(btb);
+        cb.req_nonzero_blocks(nzl1);
+        cb.req_nonzero_blocks(nzl2);
+    }
+    if(nzl1.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1.size() != 1");
+    }
+    if(std::find(nzl1.begin(), nzl1.end(), 0) == nzl1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1 doesn't contain [0,0]");
+    }
+    if(nzl2.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2.size() != 1");
+    }
+    if(std::find(nzl2.begin(), nzl2.end(), 0) == nzl2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2 doesn't contain [0,0]");
+    }
+
+    dense_tensor<2, double, allocator_type> tc(dims), tc_ref(dims);
     tod_btconv<2>(bta).perform(tc_ref);
     tod_btconv<2>(btb).perform(tc);
     compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
@@ -72,11 +94,12 @@ void direct_block_tensor_test::test_op_1() throw(libtest::test_exception) {
 /** \test Installs a simple copy operation in a direct block %tensor
         (multiple blocks).
  **/
-void direct_block_tensor_test::test_op_2() throw(libtest::test_exception) {
+void direct_block_tensor_test::test_op_2() {
 
     static const char *testname = "direct_block_tensor_test::test_op_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef std_allocator<double> allocator_type;
+    typedef block_tensor_i_traits<double> bti_traits;
 
     try {
 
@@ -85,22 +108,50 @@ void direct_block_tensor_test::test_op_2() throw(libtest::test_exception) {
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> msk;
-    msk[0]=true; msk[1]=true;
-    bis.split(msk,4);
+    msk[0] = true; msk[1] = true;
+    bis.split(msk, 4);
 
-    block_tensor<2, double, allocator_t> bta(bis);
+    block_tensor<2, double, allocator_type> bta(bis);
     btod_random<2>().perform(bta);
-    block_tensor_ctrl<2,double> ctrl(bta);
-    i1[1]=1;
-    i2[0]=1; i2[1]=0;
-    ctrl.req_zero_block(i1);
-    ctrl.req_zero_block(i2);
+    block_tensor_ctrl<2, double> ctrl(bta);
+    index<2> i01, i10;
+    i01[0] = 0; i01[1] = 1;
+    i10[0] = 1; i10[1] = 0;
+    ctrl.req_zero_block(i01);
+    ctrl.req_zero_block(i10);
     bta.set_immutable();
 
     btod_copy<2> op_copy(bta);
-    direct_block_tensor<2, double, allocator_t> btb(op_copy);
+    direct_block_tensor<2, double, allocator_type> btb(op_copy);
 
-    dense_tensor<2, double, allocator_t> tc(dims), tc_ref(dims);
+    std::vector<size_t> nzl1, nzl2;
+    nzl2.push_back(100);
+    nzl2.push_back(200);
+    {
+        gen_block_tensor_rd_ctrl<2, bti_traits> cb(btb);
+        cb.req_nonzero_blocks(nzl1);
+        cb.req_nonzero_blocks(nzl2);
+    }
+    if(nzl1.size() != 2) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1.size() != 2");
+    }
+    if(std::find(nzl1.begin(), nzl1.end(), 0) == nzl1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1 doesn't contain [0,0]");
+    }
+    if(std::find(nzl1.begin(), nzl1.end(), 3) == nzl1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1 doesn't contain [1,1]");
+    }
+    if(nzl2.size() != 2) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2.size() != 2");
+    }
+    if(std::find(nzl2.begin(), nzl2.end(), 0) == nzl2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2 doesn't contain [0,0]");
+    }
+    if(std::find(nzl2.begin(), nzl2.end(), 3) == nzl2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2 doesn't contain [1,1]");
+    }
+
+    dense_tensor<2, double, allocator_type> tc(dims), tc_ref(dims);
     tod_btconv<2>(bta).perform(tc_ref);
     tod_btconv<2>(btb).perform(tc);
     compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
@@ -114,11 +165,11 @@ void direct_block_tensor_test::test_op_2() throw(libtest::test_exception) {
 /** \test Installs a copy operation in a direct block %tensor and runs
         a contraction.
  **/
-void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
+void direct_block_tensor_test::test_op_3() {
 
     static const char *testname = "direct_block_tensor_test::test_op_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef std_allocator<double> allocator_type;
 
     try {
 
@@ -133,7 +184,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
     bis.split(m, 6);
     bis.split(m, 8);
 
-    block_tensor<4, double, allocator_t> bta1(bis), bta2(bis), bta3(bis),
+    block_tensor<4, double, allocator_type> bta1(bis), bta2(bis), bta3(bis),
         bta4(bis), bta(bis), btb(bis), btc(bis);
     btod_random<4>().perform(bta1);
     btod_random<4>().perform(bta2);
@@ -153,7 +204,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
     op.perform(bta);
     bta.set_immutable();
 
-    direct_block_tensor<4, double, allocator_t> dbta(op);
+    direct_block_tensor<4, double, allocator_type> dbta(op);
 
     contraction2<2, 2, 2> contr;
     contr.contract(1, 0);
@@ -161,7 +212,7 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
 
     btod_contract2<2, 2, 2>(contr, dbta, dbta).perform(btc);
 
-    dense_tensor<4, double, allocator_t> ta(dims), tb(dims), tc(dims),
+    dense_tensor<4, double, allocator_type> ta(dims), tb(dims), tc(dims),
         tc_ref(dims);
     tod_btconv<4>(bta).perform(ta);
     tod_btconv<4>(btb).perform(tb);
@@ -178,11 +229,11 @@ void direct_block_tensor_test::test_op_3() throw(libtest::test_exception) {
 
 /** \test Nested use of direct block tensors
  **/
-void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
+void direct_block_tensor_test::test_op_4() {
 
     static const char *testname = "direct_block_tensor_test::test_op_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef std_allocator<double> allocator_type;
 
     try {
 
@@ -206,7 +257,7 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
     bis4.split(m4, 6);
     bis4.split(m4, 8);
 
-    block_tensor<2, double, allocator_t> bta1(bis2), bta2(bis2), bta3(bis2),
+    block_tensor<2, double, allocator_type> bta1(bis2), bta2(bis2), bta3(bis2),
         bta4(bis2);
     btod_random<2>().perform(bta1);
     btod_random<2>().perform(bta2);
@@ -219,21 +270,21 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
 
     btod_add<2> add1(bta1, 2.0); add1.add_op(bta2, -2.0);
     btod_add<2> add2(bta3, -3.0); add2.add_op(bta4, 2.5);
-    direct_block_tensor<2, double, allocator_t> dbta1(add1), dbta2(add2);
+    direct_block_tensor<2, double, allocator_type> dbta1(add1), dbta2(add2);
 
     btod_dirsum<2, 2> dirsum1(dbta1, 1.0, dbta2, -2.0);
     btod_dirsum<2, 2> dirsum2(dbta1, -2.0, dbta2, 1.0);
-    direct_block_tensor<4, double, allocator_t> dbtb1(dirsum1),
+    direct_block_tensor<4, double, allocator_type> dbtb1(dirsum1),
         dbtb2(dirsum2);
 
     contraction2<2, 2, 2> contr;
     contr.contract(1, 0);
     contr.contract(3, 2);
 
-    block_tensor<4, double, allocator_t> btc(bis4);
+    block_tensor<4, double, allocator_type> btc(bis4);
     btod_contract2<2, 2, 2>(contr, dbtb1, dbtb2).perform(btc);
 
-    dense_tensor<2, double, allocator_t> ta1(dims2), ta2(dims2), ta3(dims2),
+    dense_tensor<2, double, allocator_type> ta1(dims2), ta2(dims2), ta3(dims2),
         ta4(dims2), ta5(dims2), ta6(dims2);
     tod_btconv<2>(bta1).perform(ta1);
     tod_btconv<2>(bta2).perform(ta2);
@@ -244,12 +295,12 @@ void direct_block_tensor_test::test_op_4() throw(libtest::test_exception) {
     tod_copy<2>(ta3, -3.0).perform(true, ta6);
     tod_copy<2>(ta4, 2.5).perform(false, ta6);
 
-	dense_tensor<4, double, allocator_t> tb1(dims4), tb2(dims4), tc(dims4),
-		tc_ref(dims4);
-	tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, tb1);
-	tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, tb2);
-	tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, tc_ref);
-	tod_btconv<4>(btc).perform(tc);
+    dense_tensor<4, double, allocator_type> tb1(dims4), tb2(dims4), tc(dims4),
+        tc_ref(dims4);
+    tod_dirsum<2, 2>(ta5, 1.0, ta6, -2.0).perform(true, tb1);
+    tod_dirsum<2, 2>(ta5, -2.0, ta6, 1.0).perform(true, tb2);
+    tod_contract2<2, 2, 2>(contr, tb1, tb2).perform(true, tc_ref);
+    tod_btconv<4>(btc).perform(tc);
 
     compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
 

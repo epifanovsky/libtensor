@@ -53,11 +53,12 @@ protected:
     //@{
     virtual const symmetry<N, T> &on_req_const_symmetry();
     virtual symmetry<N, T> &on_req_symmetry();
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
-    virtual dense_tensor_i<N, T> &on_req_block(const index<N> &idx);
+    virtual dense_tensor_wr_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
     virtual void on_req_zero_block(const index<N> &idx);
     virtual void on_req_zero_all_blocks();
     //@}
@@ -67,8 +68,6 @@ protected:
     virtual void on_set_immutable();
     //@}
 
-private:
-    void update_orblst(auto_rwlock &lock);
 };
 
 
@@ -120,7 +119,7 @@ symmetry<N, T> &block_tensor<N, T, Alloc>::on_req_symmetry() {
 
 
 template<size_t N, typename T, typename Alloc>
-dense_tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_const_block(
+dense_tensor_rd_i<N, T> &block_tensor<N, T, Alloc>::on_req_const_block(
     const index<N> &idx) {
 
     return m_ctrl.req_const_block(idx);
@@ -135,7 +134,7 @@ void block_tensor<N, T, Alloc>::on_ret_const_block(const index<N> &idx) {
 
 
 template<size_t N, typename T, typename Alloc>
-dense_tensor_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
+dense_tensor_wr_i<N, T> &block_tensor<N, T, Alloc>::on_req_block(
     const index<N> &idx) {
 
     return m_ctrl.req_block(idx);
@@ -154,6 +153,14 @@ bool block_tensor<N, T, Alloc>::on_req_is_zero_block(
     const index<N> &idx) {
 
     return m_ctrl.req_is_zero_block(idx);
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void block_tensor<N, T, Alloc>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    m_ctrl.req_nonzero_blocks(nzlst);
 }
 
 

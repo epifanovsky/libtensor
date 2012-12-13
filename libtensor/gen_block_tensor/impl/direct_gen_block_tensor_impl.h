@@ -29,7 +29,7 @@ public:
     virtual ~direct_gen_block_tensor_task() { }
 
     void perform() {
-        m_op.compute_block(m_blk, m_idx);
+        m_op.compute_block(m_idx, m_blk);
     }
 };
 
@@ -90,9 +90,26 @@ bool direct_gen_block_tensor<N, BtTraits>::on_req_is_zero_block(
 
 
 template<size_t N, typename BtTraits>
+void direct_gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
+    std::vector<size_t> &nzlst) {
+
+    libutil::auto_lock<libutil::mutex> lock(m_lock);
+
+    nzlst.clear();
+    const assignment_schedule<N, element_type> &sch = get_op().get_schedule();
+    for(typename assignment_schedule<N, element_type>::iterator i = sch.begin();
+        i != sch.end(); ++i) {
+        nzlst.push_back(sch.get_abs_index(i));
+    }
+}
+
+
+template<size_t N, typename BtTraits>
 typename direct_gen_block_tensor<N, BtTraits>::rd_block_type &
 direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
     const index<N> &idx) {
+
+    typedef typename BtTraits::template block_type<N>::type block_type;
 
     static const char *method = "on_req_const_block(const index<N>&)";
 
@@ -115,7 +132,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
         m_map.create(idx);
     }
 
-    wr_block_type &blk = m_map.get(idx);
+    block_type &blk = m_map.get(idx);
 
     if(newblock) {
 
@@ -123,10 +140,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
                 m_inprogress.insert(aidx.get_abs_index()).first;
         m_lock.unlock();
         try {
-            direct_gen_block_tensor_task<N, bti_traits> t(get_op(), idx, blk);
-            direct_gen_block_tensor_task_iterator<N, bti_traits> ti(t);
-            direct_gen_block_tensor_task_observer to;
-            libutil::thread_pool::submit(ti, to);
+            get_op().compute_block(idx, blk);
         } catch(...) {
             m_lock.lock();
             throw;
@@ -141,9 +155,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
         m_cond.insert(aidx.get_abs_index(), &cond);
         m_lock.unlock();
         try {
-            libutil::thread_pool::release_cpu();
             cond.wait();
-            libutil::thread_pool::acquire_cpu();
         } catch(...) {
             m_lock.lock();
             throw;

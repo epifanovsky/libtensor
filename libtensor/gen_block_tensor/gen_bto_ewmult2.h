@@ -16,6 +16,8 @@ namespace libtensor {
     \tparam M Order of second argument (B) less the number of shared
         indexes.
     \tparam K Number of shared indexes.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
     This operation computes the element-wise product of two block tensor.
     Refer to tod_ewmult2<N, M, K> for setup info.
@@ -24,9 +26,17 @@ namespace libtensor {
     otherwise the constructor and perform() will raise
     bad_block_index_space.
 
-    \sa tod_ewmult2, btod_contract2
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template to_ewmult2_type<N, M, K>::type -- Type of tensor operation
+        to_ewmult2
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
 
-    \ingroup libtensor_btod
+    \sa tod_ewmult2, gen_bto_contract2
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 class gen_bto_ewmult2 : public timings<Timed>, public noncopyable {

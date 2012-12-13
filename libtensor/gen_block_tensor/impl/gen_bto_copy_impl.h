@@ -3,7 +3,7 @@
 
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_bis.h"
 #include "../gen_block_tensor_ctrl.h"
@@ -22,8 +22,9 @@ private:
     gen_block_tensor_rd_i<N, bti_traits> &m_bta;
     const tensor_transf<N, element_type> &m_tra;
     const symmetry<N, element_type> &m_symb;
+    const dimensions<N> &m_bidimsa;
     const dimensions<N> &m_bidimsb;
-    index<N> m_ia;
+    size_t m_aia;
     gen_block_stream_i<N, bti_traits> &m_out;
 
 public:
@@ -31,8 +32,9 @@ public:
         gen_block_tensor_rd_i<N, bti_traits> &bta,
         const tensor_transf<N, element_type> &tra,
         const symmetry<N, element_type> &symb,
+        const dimensions<N> &bidimsa,
         const dimensions<N> &bidimsb,
-        const index<N> &ia,
+        size_t aia,
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_full_copy_task() { }
@@ -81,10 +83,11 @@ private:
     const tensor_transf<N, element_type> &m_tra;
     const symmetry<N, element_type> &m_symb;
     gen_block_stream_i<N, bti_traits> &m_out;
+    dimensions<N> m_bidimsa;
     dimensions<N> m_bidimsb;
     gen_block_tensor_rd_ctrl<N, bti_traits> m_ca;
-    orbit_list<N, element_type> m_ola;
-    typename orbit_list<N, element_type>::iterator m_ioa;
+    std::vector<size_t> m_blsta;
+    typename std::vector<size_t>::const_iterator m_ioa;
 
 public:
     gen_bto_full_copy_task_iterator(
@@ -95,9 +98,6 @@ public:
 
     virtual bool has_more() const;
     virtual libutil::task_i *get_next();
-
-private:
-    void skip_zero_blocks();
 
 };
 
@@ -168,14 +168,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         gen_bto_full_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_copy::stop_timer();
@@ -195,14 +191,10 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         gen_bto_part_copy_task_iterator<N, Traits> ti(m_bta, m_tra, m_symb,
             blst, out);
         gen_bto_copy_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_copy::stop_timer();
@@ -216,10 +208,9 @@ void gen_bto_copy<N, Traits, Timed>::perform(
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_copy<N, Traits, Timed>::compute_block(
     bool zero,
-    wr_block_type &blkb,
     const index<N> &ib,
     const tensor_transf<N, element_type> &trb,
-    const element_type &c) {
+    wr_block_type &blkb) {
 
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
@@ -244,8 +235,7 @@ void gen_bto_copy<N, Traits, Timed>::compute_block(
         //  Transformation for block from canonical A to B
         //  B = c Tr(Bc->B) Tr(A->Bc) Tr(Ac->A) Ac
         tensor_transf<N, element_type> tra(oa.get_transf(ia));
-        tra.transform(m_tra).transform(scalar_transf<element_type>(c)).
-            transform(trb);
+        tra.transform(m_tra).transform(trb);
 
         //  Compute block in B
         if(!ca.req_is_zero_block(cia)) {
@@ -277,19 +267,19 @@ void gen_bto_copy<N, Traits, Timed>::make_schedule() {
 
         bool noperm = m_tra.get_perm().is_identity();
 
-        orbit_list<N, element_type> ola(ca.req_const_symmetry());
-        for(typename orbit_list<N, element_type>::iterator ioa = ola.begin();
-            ioa != ola.end(); ++ioa) {
+        std::vector<size_t> nzorba;
+        ca.req_nonzero_blocks(nzorba);
 
-            if(ca.req_is_zero_block(ola.get_index(ioa))) continue;
+        for(size_t i = 0; i < nzorba.size(); i++) {
 
             if(noperm) {
-                m_schb.insert(ola.get_abs_index(ioa));
+                m_schb.insert(nzorba[i]);
             } else {
-                index<N> bib(ola.get_index(ioa));
+                index<N> bib;
+                abs_index<N>::get_index(nzorba[i], bidimsa, bib);
                 bib.permute(m_tra.get_perm());
-                orbit<N, element_type> ob(m_symb, bib, false);
-                m_schb.insert(ob.get_abs_canonical_index());
+                short_orbit<N, element_type> ob(m_symb, bib);
+                m_schb.insert(ob.get_acindex());
             }
         }
 
@@ -307,12 +297,13 @@ gen_bto_full_copy_task<N, Traits>::gen_bto_full_copy_task(
     gen_block_tensor_rd_i<N, bti_traits> &bta,
     const tensor_transf<N, element_type> &tra,
     const symmetry<N, element_type> &symb,
+    const dimensions<N> &bidimsa,
     const dimensions<N> &bidimsb,
-    const index<N> &ia,
+    size_t aia,
     gen_block_stream_i<N, bti_traits> &out) :
 
-    m_bta(bta), m_tra(tra), m_bidimsb(bidimsb), m_symb(symb), m_ia(ia),
-    m_out(out) {
+    m_bta(bta), m_tra(tra), m_bidimsa(bidimsa), m_bidimsb(bidimsb),
+    m_symb(symb), m_aia(aia), m_out(out) {
 
 }
 
@@ -322,13 +313,16 @@ void gen_bto_full_copy_task<N, Traits>::perform() {
 
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
 
+    index<N> ia;
+    abs_index<N>::get_index(m_aia, m_bidimsa, ia);
+
     gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta);
 
-    rd_block_type &ba = ca.req_const_block(m_ia);
+    rd_block_type &ba = ca.req_const_block(ia);
     if(m_tra.get_perm().is_identity()) {
-        m_out.put(m_ia, ba, m_tra);
+        m_out.put(ia, ba, m_tra);
     } else {
-        index<N> ib(m_ia);
+        index<N> ib(ia);
         ib.permute(m_tra.get_perm());
         orbit<N, element_type> ob(m_symb, ib, false);
         abs_index<N> acib(ob.get_acindex(), m_bidimsb);
@@ -338,7 +332,7 @@ void gen_bto_full_copy_task<N, Traits>::perform() {
         tra.transform(trb);
         m_out.put(acib.get_index(), ba, tra);
     }
-    ca.ret_const_block(m_ia);
+    ca.ret_const_block(ia);
 }
 
 
@@ -395,17 +389,19 @@ gen_bto_full_copy_task_iterator<N, Traits>::gen_bto_full_copy_task_iterator(
     gen_block_stream_i<N, bti_traits> &out) :
 
     m_bta(bta), m_tra(tra), m_symb(symb), m_out(out),
+    m_bidimsa(m_bta.get_bis().get_block_index_dims()),
     m_bidimsb(m_symb.get_bis().get_block_index_dims()),
-    m_ca(m_bta), m_ola(m_ca.req_const_symmetry()), m_ioa(m_ola.begin()) {
+    m_ca(m_bta) {
 
-    skip_zero_blocks();
+    m_ca.req_nonzero_blocks(m_blsta);
+    m_ioa = m_blsta.begin();
 }
 
 
 template<size_t N, typename Traits>
 bool gen_bto_full_copy_task_iterator<N, Traits>::has_more() const {
 
-    return m_ioa != m_ola.end();
+    return m_ioa != m_blsta.end();
 }
 
 
@@ -413,21 +409,10 @@ template<size_t N, typename Traits>
 libutil::task_i *gen_bto_full_copy_task_iterator<N, Traits>::get_next() {
 
     gen_bto_full_copy_task<N, Traits> *t =
-        new gen_bto_full_copy_task<N, Traits>(m_bta, m_tra, m_symb, m_bidimsb,
-            m_ola.get_index(m_ioa), m_out);
+        new gen_bto_full_copy_task<N, Traits>(m_bta, m_tra, m_symb, m_bidimsa,
+            m_bidimsb, *m_ioa, m_out);
     ++m_ioa;
-    skip_zero_blocks();
     return t;
-}
-
-
-template<size_t N, typename Traits>
-void gen_bto_full_copy_task_iterator<N, Traits>::skip_zero_blocks() {
-
-    while(m_ioa != m_ola.end()) {
-        if(!m_ca.req_is_zero_block(m_ola.get_index(m_ioa))) break;
-        ++m_ioa;
-    }
 }
 
 

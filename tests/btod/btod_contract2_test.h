@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::btod_contract2 class
 
     \ingroup libtensor_tests_btod
@@ -51,12 +52,20 @@ private:
     void test_contr_21() throw(libtest::test_exception);
     void test_contr_22();
     void test_contr_23();
+    void test_contr_24();
+    void test_contr_25();
+    void test_contr_26();
 
-    void test_self_1() throw(libtest::test_exception);
-    void test_self_2() throw(libtest::test_exception);
-    void test_self_3() throw(libtest::test_exception);
+    void test_self_1();
+    void test_self_2();
+    void test_self_3();
+
+    void test_batch_1();
+    void test_batch_2();
+    void test_batch_3();
 
 };
+
 
 } // namespace libtensor
 

@@ -8,8 +8,8 @@
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
-#include <libtensor/dense_tensor/tod_apply.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/impl/tod_apply_impl.h>
 #include "../compare_ref.h"
 #include "btod_apply_test.h"
 
@@ -128,7 +128,7 @@ void btod_apply_test::test_zero_1() throw(libtest::test_exception) {
     orbit_list<2, double>::iterator iorbit = orblst.begin();
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
-            orblst.get_index(iorbit));
+            orblst.get_abs_index(iorbit));
         abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
         if(! btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,
@@ -180,7 +180,7 @@ void btod_apply_test::test_zero_2() throw(libtest::test_exception) {
     orbit_list<2, double>::iterator iorbit = orblst.begin();
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
-            orblst.get_index(iorbit));
+            orblst.get_abs_index(iorbit));
         abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
         if(!btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,
@@ -234,7 +234,7 @@ void btod_apply_test::test_zero_3() throw(libtest::test_exception) {
     orbit_list<2, double>::iterator iorbit = orblst.begin();
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
-            orblst.get_index(iorbit));
+            orblst.get_abs_index(iorbit));
         abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
         if(btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,

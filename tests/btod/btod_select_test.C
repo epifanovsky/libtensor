@@ -7,7 +7,7 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/btod/btod_import_raw.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/btod/btod_select.h>
+#include <libtensor/block_tensor/btod_select.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
@@ -264,13 +264,16 @@ void btod_select_test::test_3a(size_t n,
         for (orbit_list<2, double>::iterator it = ol.begin();
                 it != ol.end(); it++) {
 
-            dense_tensor_i<2, double> &ta = ca.req_block(ol.get_index(it)),
-                    &tb = cb.req_block(ol.get_index(it));
+            index<2> ia, ib;
+            ol.get_index(it, ia);
+            ol.get_index(it, ib);
+            dense_tensor_rd_i<2, double> &ta = ca.req_const_block(ia);
+            dense_tensor_wr_i<2, double> &tb = cb.req_block(ib);
 
             tod_copy<2>(ta).perform(true, tb);
 
-            ca.ret_block(ol.get_index(it));
-            cb.ret_block(ol.get_index(it));
+            ca.ret_const_block(ia);
+            cb.ret_block(ib);
         }
 
         tod_btconv<2>(btmp).perform(t_ref);
@@ -863,18 +866,20 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
         for (orbit_list<2, double>::iterator it = ol.begin();
                 it != ol.end(); it++) {
 
-            index<2> ib = ol.get_index(it);
+            index<2> ib;
+            ol.get_index(it, ib);
             orbit<2, double> oa(ca.req_const_symmetry(), ib);
             if (! oa.is_allowed()) continue;
 
             const tensor_transf<2, double> &tra = oa.get_transf(ib);
 
             abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
-            dense_tensor_i<2, double> &ta = ca.req_block(ai.get_index()),
-                    &tb = cb.req_block(ib);
+            dense_tensor_rd_i<2, double> &ta =
+                    ca.req_const_block(ai.get_index());
+            dense_tensor_wr_i<2, double> &tb = cb.req_block(ib);
             tod_copy<2>(ta, tra).perform(true, tb);
 
-            ca.ret_block(ai.get_index());
+            ca.ret_const_block(ai.get_index());
             cb.ret_block(ib);
         }
     }

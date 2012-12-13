@@ -7,6 +7,17 @@
 namespace libtensor {
 
 
+/** \brief Generic elementwise application of functor with addition kernel (double)
+
+    This kernel performs application of a functor + addition on a
+    multidimensional array elementwise with optional scaling:
+    \f[
+        b = b + c_2 f(c_1 * a) b
+    \f]
+    a, b are arrays, c1, c2 are scaling factors.
+
+    \ingroup libtensor_kernels
+ **/
 template<typename Functor>
 class kern_applyadd : public kernel_base<linalg, 1, 1> {
 public:

@@ -23,6 +23,13 @@ namespace libtensor {
     preserved. For example, it will not zero the diagonal of a anti-symmetric
     tensor.
 
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_set_type<N>::type -- Type of tensor operation to_set
+
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>

@@ -6,7 +6,7 @@
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/kern_dcopy.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
 #include "../tod_set.h"
 #include "../tod_copy.h"
@@ -120,7 +120,7 @@ void tod_copy<N>::perform(bool zero, dense_tensor_wr_i<N, double> &tb) {
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
                 zero ?
                     kern_dcopy<linalg>::match(m_c, loop_in, loop_out) :
                     kern_dadd1<linalg>::match(m_c, loop_in, loop_out));

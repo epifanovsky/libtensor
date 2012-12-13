@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_TO_CONTRACT2_DIMS_H
 #define LIBTENSOR_TO_CONTRACT2_DIMS_H
 
+#include <libtensor/core/contraction2.h>
 #include <libtensor/core/dimensions.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/tod/contraction2.h>
 
 namespace libtensor {
 

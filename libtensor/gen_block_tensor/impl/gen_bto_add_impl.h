@@ -9,7 +9,7 @@
 #include <libtensor/symmetry/so_dirsum.h>
 #include <libtensor/symmetry/so_merge.h>
 #include <libtensor/symmetry/so_permute.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include "gen_bto_copy_bis.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_add.h"
@@ -92,7 +92,8 @@ gen_bto_add<N, Traits, Timed>::gen_bto_add(
 
     m_bisb(gen_bto_copy_bis<N>(bta.get_bis(), tra.get_perm()).get_bisb()),
     m_symb(m_bisb),
-    m_schb(m_bisb.get_block_index_dims()) {
+    m_schb(m_bisb.get_block_index_dims()),
+    m_valid_sch(false) {
 
     m_bisb.match_splits();
     add_operand(bta, tra);
@@ -133,15 +134,11 @@ void gen_bto_add<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btb(m_bisb);
 
         gen_bto_add_task_iterator<N, Traits, Timed> ti(*this, btb, out);
         gen_bto_add_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_add::stop_timer();
@@ -155,15 +152,15 @@ void gen_bto_add<N, Traits, Timed>::perform(
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_add<N, Traits, Timed>::compute_block(
     bool zero,
-    wr_block_type &blkb,
     const index<N> &ib,
-    const tensor_transf<N, element_type> &trb) {
+    const tensor_transf<N, element_type> &trb,
+    wr_block_type &blkb) {
 
     gen_bto_add::start_timer("compute_block");
 
     try {
 
-        compute_block_untimed(zero, blkb, ib, trb);
+        compute_block_untimed(zero, ib, trb, blkb);
 
     } catch(...) {
         gen_bto_add::stop_timer("compute_block");
@@ -177,9 +174,9 @@ void gen_bto_add<N, Traits, Timed>::compute_block(
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_add<N, Traits, Timed>::compute_block_untimed(
     bool zero,
-    wr_block_type &blkb,
     const index<N> &ib,
-    const tensor_transf<N, element_type> &trb) {
+    const tensor_transf<N, element_type> &trb,
+    wr_block_type &blkb) {
 
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
@@ -237,7 +234,6 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
 
     if(first) {
 
-        gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
         so_permute<N, element_type>(ca.req_const_symmetry(), tra.get_perm()).
             perform(m_symb);
 
@@ -255,7 +251,7 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
         }
         permutation_builder<N + N> pb(seq2b, seq1b);
 
-        block_index_space_product_builder<N, N> bbx(m_bisb, m_bisb,
+        block_index_space_product_builder<N, N> bbx(m_bisb, bta.get_bis(),
             pb.get_perm());
 
         symmetry<N + N, element_type> symx(bbx.get_bis());
@@ -264,19 +260,20 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
         mask<N + N> msk;
         sequence<N + N, size_t> seq;
         for(size_t i = 0; i < N; i++) {
-            msk[i] = msk[seq2a[i]] = true;
-            seq[i] = seq[seq2a[i]] = i;
+            msk[i] = msk[i + N] = true;
+            seq[i] = seq[i + N] = i;
         }
         so_merge<N + N, N, element_type>(symx, msk, seq).perform(m_symb);
 
     }
 
-    make_schedule();
+    m_valid_sch = false;
+    //make_schedule();
 }
 
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_add<N, Traits, Timed>::make_schedule() {
+void gen_bto_add<N, Traits, Timed>::make_schedule() const {
 
     gen_bto_add::start_timer("make_schedule");
 
@@ -289,7 +286,7 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() {
 
             if(m_schb.contains(olb.get_abs_index(iob))) continue;
 
-            for(typename std::list<arg>::iterator i = m_args.begin();
+            for(typename std::list<arg>::const_iterator i = m_args.begin();
                 i != m_args.end(); ++i) {
 
                 gen_block_tensor_rd_i<N, bti_traits> &bta = i->bta;
@@ -298,7 +295,8 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() {
 
                 gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
 
-                index<N> ia(olb.get_index(iob));
+                index<N> ia;
+                olb.get_index(iob, ia);
                 ia.permute(trainv.get_perm());
                 orbit<N, element_type> oa(ca.req_const_symmetry(), ia);
                 if(!oa.is_allowed()) continue;
@@ -316,6 +314,8 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() {
     }
 
     gen_bto_add::stop_timer("make_schedule");
+    
+    m_valid_sch = true;
 }
 
 
@@ -343,7 +343,7 @@ void gen_bto_add_task<N, Traits, Timed>::perform() {
 
     {
         wr_block_type &blkb = cb.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkb, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkb);
         cb.ret_block(m_idx);
     }
 

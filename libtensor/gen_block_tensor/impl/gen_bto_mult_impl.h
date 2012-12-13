@@ -2,7 +2,7 @@
 #define LIBTENSOR_GEN_BTO_MULT_IMPL_H
 
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
@@ -147,16 +147,12 @@ void gen_bto_mult<N, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btc(m_bisc);
         gen_block_tensor_ctrl<N, bti_traits> cc(btc);
 
         gen_bto_mult_task_iterator<N, Traits, Timed> ti(*this, btc, out);
         gen_bto_mult_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_mult::stop_timer();
@@ -168,15 +164,17 @@ void gen_bto_mult<N, Traits, Timed>::perform(
 
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_mult<N, Traits, Timed>::compute_block(bool zero,
-        wr_block_type &blkc, const index<N> &ic,
-        const tensor_transf_type &trc) {
+void gen_bto_mult<N, Traits, Timed>::compute_block(
+        bool zero,
+        const index<N> &ic,
+        const tensor_transf_type &trc,
+        wr_block_type &blkc) {
 
     gen_bto_mult::start_timer("compute_block");
 
     try {
 
-        compute_block_untimed(zero, blkc, ic, trc);
+        compute_block_untimed(zero, ic, trc, blkc);
 
     } catch (...) {
         gen_bto_mult::stop_timer("compute_block");
@@ -188,9 +186,11 @@ void gen_bto_mult<N, Traits, Timed>::compute_block(bool zero,
 }
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_mult<N, Traits, Timed>::compute_block_untimed(bool zero,
-        wr_block_type &blkc, const index<N> &idxc,
-        const tensor_transf_type &trc) {
+void gen_bto_mult<N, Traits, Timed>::compute_block_untimed(
+        bool zero,
+        const index<N> &idxc,
+        const tensor_transf_type &trc,
+        wr_block_type &blkc) {
 
     typedef typename Traits::template to_mult_type<N>::type to_mult;
     typedef typename Traits::template to_set_type<N>::type to_set;
@@ -245,7 +245,8 @@ void gen_bto_mult<N, Traits, Timed>::make_schedule() {
     for (typename orbit_list<N, element_type>::iterator iol = ol.begin();
             iol != ol.end(); iol++) {
 
-        index<N> idx(ol.get_index(iol));
+        index<N> idx;
+        ol.get_index(iol, idx);
         index<N> idxa(idx), idxb(idx);
         permutation<N> pinva(m_tra.get_perm(), true),
                 pinvb(m_trb.get_perm(), true);
@@ -306,7 +307,7 @@ void gen_bto_mult_task<N, Traits, Timed>::perform() {
     gen_block_tensor_ctrl<N, bti_traits> cc(m_btc);
     {
         wr_block_type &blkc = cc.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkc, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkc);
         cc.ret_block(m_idx);
     }
 

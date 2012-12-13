@@ -51,6 +51,8 @@ namespace libtensor {
     - \c element_type -- Type of data elements
     - \c bti_traits -- Type of block tensor interface traits class
     - \c template temp_block_type<N>::type -- Type of temporary tensor block
+    - \c template temp_block_tensor_type<N>::type -- Type of temporary
+            block tensor
     - \c template to_set_type<N>::type -- Type of tensor operation to_set
     - \c template to_copy_type<N>::type -- Type of tensor operation to_copy
     - \c template to_apply_type<N>::type -- Type of tensor operation to_apply
@@ -144,13 +146,19 @@ public:
         \param ib Index of target block
         \param trb Tensor transformation
      **/
-    void compute_block(bool zero, wr_block_type &blkb,
-        const index<N> &ib, const tensor_transf_type &trb);
+    void compute_block(
+            bool zero,
+            const index<N> &ib,
+            const tensor_transf_type &trb,
+            wr_block_type &blkb);
 
     /** \brief Same as compute_block(), except it doesn't run a timer
      **/
-    void compute_block_untimed(bool zero, wr_block_type &blkb,
-        const index<N> &ib, const tensor_transf_type &trb);
+    void compute_block_untimed(
+            bool zero,
+            const index<N> &ib,
+            const tensor_transf_type &trb,
+            wr_block_type &blkb);
 
 private:
     /** \brief Forms the block %index space of the output or throws an

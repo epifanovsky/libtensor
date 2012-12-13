@@ -6,6 +6,7 @@
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/tensor_transf.h>
+#include "../gen_bto_contract2_clst.h"
 
 namespace libtensor {
 
@@ -14,8 +15,23 @@ namespace libtensor {
     \tparam N Order of first tensor less degree of contraction.
     \tparam M Order of second tensor less degree of contraction.
     \tparam K Order of contraction.
-    \tparam Traits Traits class
-    \tparam Timed Class for timings
+    \tparam Traits Traits class.
+    \tparam Timed Class for timings.
+
+    This algorithm determines the list of required block contractions
+    (\sa gen_bto_contract2_clst_builder) and uses it to compute the
+    requested block.
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_set_type<NX>::type -- Type of tensor operation to_set
+    - \c template to_contract2_type<N, M, K>::type -- Type of tensor
+            operation to_contract2
+    - \c template to_contract2_type<N, M, K>::clst_optimize_type -- Type of
+            contraction pair list optimizer (\sa gen_bto_contract2_clst_builder)
+
+    \sa gen_bto_contract2
 
     \ingroup libtensor_gen_bto
  **/
@@ -47,18 +63,27 @@ public:
     typedef typename bti_traits::template wr_block_type<NC>::type
         wr_block_c_type;
 
+    //! Type of a list of contractions
+    typedef typename gen_bto_contract2_clst<N, M, K, element_type>::list_type
+        contr_list_type;
+
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
+    gen_block_tensor_rd_i<NA, bti_traits> &m_bta2; //!< A with broken symmetry
     dimensions<NA> m_bidimsa; //!< Block index dims in A
-    orbit_list<NA, element_type> m_ola; //!< List of orbits in A
+    const symmetry<NA, element_type> &m_syma;
+    block_list<NA> m_bla; //!< List of non-zero blocks in A
     scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
+    gen_block_tensor_rd_i<NB, bti_traits> &m_btb2; //!< B with broken symmetry
     dimensions<NB> m_bidimsb; //!< Block index dims in B
-    orbit_list<NB, element_type> m_olb; //!< List of orbits in B
+    const symmetry<NB, element_type> &m_symb;
+    block_list<NB> m_blb; //!< List of non-zero blocks in B
     scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     dimensions<NC> m_bidimsc; //!< Block index dims in C
     scalar_transf<element_type> m_kc; //!< Scalar transformation of C
+    bool m_use_broken_sym; //!< Whether to use broken symmetry
 
 public:
     /** \brief Initializes the contraction operation
@@ -74,14 +99,43 @@ public:
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
         const symmetry<NA, element_type> &syma,
+        const block_list<NA> &bla,
         const scalar_transf<element_type> &ka,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
         const symmetry<NB, element_type> &symb,
+        const block_list<NB> &blb,
+        const scalar_transf<element_type> &kb,
+        const block_index_space<NC> &bisc,
+        const scalar_transf<element_type> &kc);
+
+    /** \brief Initializes the contraction operation
+        \param contr Contraction.
+        \param bta First block tensor (A).
+        \param bta2 A with broken symmetry.
+        \param ka Scalar transform of A.
+        \param btb Second block tensor (B).
+        \param btb2 B with broken symmetry.
+        \param kb Scalar transform of B.
+        \param bisc Block index space of result (C).
+        \param kc Scalar transform of C.
+     **/
+    gen_bto_contract2_block(
+        const contraction2<N, M, K> &contr,
+        gen_block_tensor_rd_i<NA, bti_traits> &bta,
+        gen_block_tensor_rd_i<NA, bti_traits> &bta2,
+        const symmetry<NA, element_type> &syma,
+        const block_list<NA> &bla,
+        const scalar_transf<element_type> &ka,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb,
+        gen_block_tensor_rd_i<NB, bti_traits> &btb2,
+        const symmetry<NB, element_type> &symb,
+        const block_list<NB> &blb,
         const scalar_transf<element_type> &kb,
         const block_index_space<NC> &bisc,
         const scalar_transf<element_type> &kc);
 
     void compute_block(
+        const contr_list_type &clst,
         bool zero,
         const index<NC> &idxc,
         const tensor_transf<NC, element_type> &trc,

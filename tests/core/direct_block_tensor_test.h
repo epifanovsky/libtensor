@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::direct_block_tensor class
 
     \ingroup libtensor_tests_core
@@ -14,12 +15,13 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_op_1() throw(libtest::test_exception);
-    void test_op_2() throw(libtest::test_exception);
-    void test_op_3() throw(libtest::test_exception);
-    void test_op_4() throw(libtest::test_exception);
+    void test_op_1();
+    void test_op_2();
+    void test_op_3();
+    void test_op_4();
 
 };
+
 
 } // namespace libtensor
 

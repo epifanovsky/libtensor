@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_SET_ELEM_H
 
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/gen_bto_set_elem.h>
 
 namespace libtensor {

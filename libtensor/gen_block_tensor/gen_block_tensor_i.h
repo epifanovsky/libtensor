@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_GEN_BLOCK_TENSOR_I_H
 #define LIBTENSOR_GEN_BLOCK_TENSOR_I_H
 
+#include <cstring> // for size_t
+#include <vector>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>
 
@@ -94,6 +96,11 @@ protected:
         \param idx Index of the block.
      **/
     virtual bool on_req_is_zero_block(const index<N> &idx) = 0;
+
+    /** \brief Invoked to returns the list of all non-zero canonical blocks
+        \param[out] nzlst Vector to be filled on output.
+     **/
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst) = 0;
 
 };
 

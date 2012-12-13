@@ -4,6 +4,8 @@
 #include <cstring> // for memset
 #include <memory>
 #include <libtensor/core/allocator.h>
+#include <libtensor/core/bad_dimensions.h>
+#include <libtensor/core/contraction2_list_builder.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd1.h>
@@ -11,8 +13,6 @@
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_node.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/tod/bad_dimensions.h>
-#include <libtensor/tod/contraction2_list_builder.h>
 #include "../dense_tensor.h"
 #include "../dense_tensor_ctrl.h"
 #include "../tod_contract2.h"

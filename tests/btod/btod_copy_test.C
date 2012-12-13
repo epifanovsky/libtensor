@@ -101,7 +101,7 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
     orbit_list<2, double>::iterator iorbit = orblst.begin();
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
-            orblst.get_index(iorbit));
+            orblst.get_abs_index(iorbit));
         abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
         if(!btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,
@@ -153,7 +153,7 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
     orbit_list<2, double>::iterator iorbit = orblst.begin();
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
-            orblst.get_index(iorbit));
+            orblst.get_abs_index(iorbit));
         abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
         if(!btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,
@@ -2040,7 +2040,7 @@ void btod_copy_test::test_bug_1() throw(libtest::test_exception) {
     dense_tensor<4, double, allocator_t> ta0100(dims0100);
 
     btod_copy<4> op_copy(bta);
-    op_copy.compute_block(true, ta0100, i0100, tr0100, 1.0);
+    op_copy.compute_block(true, i0100, tr0100, ta0100);
 
     } catch(exception &exc) {
         fail_test(testname, __FILE__, __LINE__, exc.what());

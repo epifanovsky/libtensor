@@ -1,14 +1,17 @@
 #ifndef LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 #define LIBTENSOR_DIRECT_BLOCK_TENSOR_H
 
+#include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/direct_gen_block_tensor.h>
 #include <libtensor/gen_block_tensor/impl/direct_gen_block_tensor_impl.h>
 #include <libtensor/gen_block_tensor/direct_gen_bto.h>
+#include "block_tensor_i.h"
 #include "block_tensor_traits.h"
 
 namespace libtensor {
 
-/** \brief Direct block %tensor
+
+/** \brief Direct block tensor
     \tparam N Tensor order.
     \tparam T Tensor element type.
     \tparam Alloc Memory allocator type.
@@ -50,14 +53,18 @@ protected:
     //@{
 
     virtual const symmetry<N, double> &on_req_const_symmetry() {
-        m_ctrl.req_const_symmetry();
+        return m_ctrl.req_const_symmetry();
     }
 
     virtual bool on_req_is_zero_block(const index<N> &idx) {
         return m_ctrl.req_is_zero_block(idx);
     }
 
-    virtual dense_tensor_i<N, T> &on_req_const_block(const index<N> &idx) {
+    virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst) {
+        m_ctrl.req_nonzero_blocks(nzlst);
+    }
+
+    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx) {
         return m_ctrl.req_const_block(idx);
     }
 

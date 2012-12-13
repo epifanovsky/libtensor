@@ -26,6 +26,7 @@ private:
     void test_inc_4() throw(libtest::test_exception);
     void test_inc_5() throw(libtest::test_exception);
     void test_last_1() throw(libtest::test_exception);
+    void test_get_index_1() throw(libtest::test_exception);
 
 };
 

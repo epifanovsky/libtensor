@@ -2,6 +2,7 @@
 #define LIBTENSOR_ABS_INDEX_IMPL_H
 
 #include <libtensor/core/out_of_bounds.h>
+#include "magic_dimensions_impl.h"
 #include "../abs_index.h"
 
 namespace libtensor {
@@ -72,15 +73,20 @@ template<size_t N>
 size_t abs_index<N>::get_abs_index(const index<N> &idx,
     const dimensions<N> &dims) {
 
+#ifdef LIBTENSOR_DEBUG
     static const char *method =
         "get_abs_index(const index<N>&, const dimensions<N>&)";
 
-    size_t aidx = 0;
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(idx[i] >= dims[i]) {
             throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "idx");
         }
+    }
+#endif // LIBTENSOR_DEBUG
+
+    size_t aidx = 0;
+    for(register size_t i = 0; i < N; i++) {
         aidx += dims.get_increment(i) * idx[i];
     }
 
@@ -92,18 +98,42 @@ template<size_t N>
 void abs_index<N>::get_index(size_t aidx, const dimensions<N> &dims,
     index<N> &idx) {
 
+#ifdef LIBTENSOR_DEBUG
     static const char *method =
         "get_index(size_t, const dimensions<N>&, index<N>&)";
 
     if(aidx >= dims.get_size()) {
         throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "aidx");
     }
+#endif // LIBTENSOR_DEBUG
 
     size_t a = aidx;
     size_t imax = N - 1;
     for(register size_t i = 0; i < imax; i++) {
         idx[i] = a / dims.get_increment(i);
         a %= dims.get_increment(i);
+    }
+    idx[N - 1] = a;
+}
+
+
+template<size_t N>
+void abs_index<N>::get_index(size_t aidx, const magic_dimensions<N> &mdims,
+    index<N> &idx) {
+
+#ifdef LIBTENSOR_DEBUG
+    static const char *method =
+        "get_index(size_t, const dimensions<N>&, index<N>&)";
+
+    if(aidx >= mdims.get_dims().get_size()) {
+        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__, "aidx");
+    }
+#endif // LIBTENSOR_DEBUG
+
+    uint64_t a = aidx;
+    for(register size_t i = 0; i < N - 1; i++) {
+        idx[i] = mdims.divide(a, i);
+        a -= idx[i] * mdims.get_dims().get_increment(i);
     }
     idx[N - 1] = a;
 }

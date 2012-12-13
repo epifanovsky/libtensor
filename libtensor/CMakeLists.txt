@@ -4,9 +4,13 @@ set(SRC
     version.C
     core/impl/abs_index.C
     core/impl/allocator.C
+    core/impl/combined_orbits.C
     core/impl/dimensions.C
+    core/impl/magic_dimensions.C
     core/impl/orbit.C
     core/impl/orbit_list.C
+    core/impl/short_orbit.C
+    core/impl/subgroup_orbits.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
     symmetry/adjacency_list.C
@@ -161,7 +165,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    block_tensor/btod/impl/additive_btod.C
     block_tensor/btod/impl/btod_sum.C
     block_tensor/btod/impl/btod_symmetrize.C
     block_tensor/btod/impl/btod_symmetrize3.C
@@ -179,16 +182,17 @@ set(SRC_INST
 set(SRC_GEN_BTOD
     gen_block_tensor/impl/auto_rwlock.C
     gen_block_tensor/impl/gen_bto_contract2_bis.C
-    gen_block_tensor/impl/gen_bto_dirsum_bis.C
 )
 
 set(SRC_BTOD
+    block_tensor/impl/additive_btod.C
     block_tensor/impl/block_tensor.C
     block_tensor/impl/btod_addition_schedule.C
     block_tensor/impl/btod_add.C
     block_tensor/impl/btod_aux_add.C
     block_tensor/impl/btod_aux_copy.C
     block_tensor/impl/btod_aux_symmetrize.C
+    block_tensor/impl/btod_aux_transform.C
     block_tensor/impl/btod_compare.C
     block_tensor/impl/btod_contract2_1.C
     block_tensor/impl/btod_contract2_2.C
@@ -196,6 +200,9 @@ set(SRC_BTOD
     block_tensor/impl/btod_contract2_4.C
     block_tensor/impl/btod_contract2_5.C
     block_tensor/impl/btod_contract2_6.C
+    block_tensor/impl/btod_contract2_clst_builder.C
+    block_tensor/impl/btod_contract2_clst_optimize.C
+    block_tensor/impl/btod_contract2_nzorb.C
     block_tensor/impl/btod_contract3.C
     block_tensor/impl/btod_copy.C
     block_tensor/impl/btod_diag.C
@@ -210,6 +217,8 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
     block_tensor/impl/btod_trace.C
+    block_tensor/impl/btod_unfold_block_list.C
+    block_tensor/impl/btod_unfold_symmetry.C
     block_tensor/impl/btod_vmpriority.C
 )
 

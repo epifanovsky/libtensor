@@ -3,9 +3,9 @@
 
 #include <ostream>
 #include <iomanip>
-#include "../defs.h"
-#include "../exception.h"
-#include "../core/allocator.h"
+#include <libtensor/defs.h>
+#include <libtensor/exception.h>
+#include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_btconv.h>

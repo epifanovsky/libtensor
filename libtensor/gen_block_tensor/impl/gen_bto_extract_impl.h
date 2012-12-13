@@ -2,17 +2,11 @@
 #define LIBTENSOR_GEN_BTO_EXTRACT_IMPL_H
 
 #include <libutil/thread_pool/thread_pool.h>
-//#include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/core/permutation_builder.h>
-//#include <libtensor/dense_tensor/tod_extract.h>
-//#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/symmetry/so_reduce.h>
 #include <libtensor/symmetry/so_permute.h>
-//#include <libtensor/btod/bad_block_index_space.h>
-//#include <libtensor/block_tensor/block_tensor.h>
-//#include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "../gen_bto_extract.h"
 
 namespace libtensor {
@@ -130,15 +124,11 @@ void gen_bto_extract<N, M, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         temp_block_tensor_type btb(m_bis);
 
         gen_bto_extract_task_iterator<N, M, Traits, Timed> ti(*this, btb, out);
         gen_bto_extract_task_observer<N, M, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_extract::stop_timer();
@@ -317,8 +307,9 @@ void gen_bto_extract<N, M, Traits, Timed>::make_schedule() {
             iob != olb.end(); iob++) {
 
         index<NA> idxa;
-        index<NB> idxb(olb.get_index(iob));
+        index<NB> idxb;
 
+        olb.get_index(iob, idxb);
         idxb.permute(pinv);
 
         for(size_t i = 0, j = 0; i < NA; i++) {

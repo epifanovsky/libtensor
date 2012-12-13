@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTO_APPLY_IMPL_H
 #define LIBTENSOR_BTO_APPLY_IMPL_H
 
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_apply.h>
@@ -109,8 +110,6 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
 
     try {
 
-        out.open();
-
         // TODO: replace with temporary block tensor from traits
         temp_block_tensor_type btb(m_bis);
 
@@ -118,8 +117,6 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
                 btb, out);
         gen_bto_apply_task_observer<N, Functor, Traits> to;
         libutil::thread_pool::submit(ti, to);
-
-        out.close();
 
     } catch(...) {
         gen_bto_apply::stop_timer();
@@ -131,14 +128,16 @@ void gen_bto_apply<N, Functor, Traits, Timed>::perform(
 
 
 template<size_t N, typename Functor, typename Traits, typename Timed>
-void gen_bto_apply<N, Functor, Traits, Timed>::compute_block(bool zero,
-        wr_block_type &blkb, const index<N> &ib,
-        const tensor_transf_type &trb) {
+void gen_bto_apply<N, Functor, Traits, Timed>::compute_block(
+        bool zero,
+        const index<N> &ib,
+        const tensor_transf_type &trb,
+        wr_block_type &blkb) {
 
     gen_bto_apply::start_timer("compute_block");
     try {
 
-        compute_block_untimed(zero, blkb, ib, trb);
+        compute_block_untimed(zero, ib, trb, blkb);
 
     } catch (...) {
         gen_bto_apply::stop_timer("compute_block");
@@ -150,11 +149,13 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block(bool zero,
 
 
 template<size_t N, typename Functor, typename Traits, typename Timed>
-void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
-        wr_block_type &blkb, const index<N> &ib,
-        const tensor_transf_type &trb) {
+void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
+        bool zero,
+        const index<N> &ib,
+        const tensor_transf_type &trb,
+        wr_block_type &blkb) {
 
-    typedef typename Traits::template temp_block_type<N>::type tensor_type;
+    typedef typename Traits::template temp_block_type<N>::type temp_block_type;
     typedef typename Traits::template to_set_type<N>::type to_set;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
     typedef typename Traits::template to_apply_type<N, Functor>::type
@@ -174,7 +175,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
     // Find the orbit the index belongs to
     orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
 
-    // If the orbit of A is not allowed, we assume it all elements are 0.0
+    // If the orbit of A is not allowed, we assume all its elements are 0.0
     if (! oa.is_allowed()) {
         if (! m_fn.keep_zero()) {
             element_type val = m_fn(Traits::zero());
@@ -183,7 +184,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
             if (zero)
                 to_set(val).perform(blkb);
             else {
-                tensor_type temp_blk(blkb.get_dims());
+                temp_block_type temp_blk(blkb.get_dims());
                 to_set(val).perform(temp_blk);
                 to_copy(temp_blk).perform(false, blkb);
             }
@@ -221,7 +222,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(bool zero,
             if (zero)
                 to_set(val).perform(blkb);
             else {
-                tensor_type temp_blk(blkb.get_dims());
+                temp_block_type temp_blk(blkb.get_dims());
                 to_set(val).perform(temp_blk);
                 to_copy(temp_blk).perform(false, blkb);
             }
@@ -255,7 +256,9 @@ void gen_bto_apply<N, Functor, Traits, Timed>::make_schedule() {
         // If m_fn(0.0) yields 0.0 only non-zero blocks of tensor A need to
         // be considered
         if (m_fn.keep_zero()) {
-            index<N> ia(ol.get_index(io)); ia.permute(pinv);
+            index<N> ia;
+            ol.get_index(io, ia);
+            ia.permute(pinv);
 
             orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
             if (! oa.is_allowed()) continue;
@@ -295,7 +298,7 @@ void gen_bto_apply_task<N, Functor, Traits, Timed>::perform() {
     gen_block_tensor_ctrl<N, bti_traits> cb(m_btb);
     {
         wr_block_type &blkb = cb.req_block(m_idx);
-        m_bto.compute_block_untimed(true, blkb, m_idx, tr0);
+        m_bto.compute_block_untimed(true, m_idx, tr0, blkb);
         cb.ret_block(m_idx);
     }
 

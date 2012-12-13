@@ -2,7 +2,7 @@
 #define LIBTENSOR_GEN_BTO_COMPARE_IMPL_H
 
 #include <libtensor/core/orbit_list.h>
-#include <libtensor/btod/bad_block_index_space.h>
+#include <libtensor/core/bad_block_index_space.h>
 #include "../gen_bto_compare.h"
 
 namespace libtensor {
@@ -73,7 +73,7 @@ bool gen_bto_compare<N, Traits>::compare() {
         if(!ol2.contains(ol1.get_abs_index(io1))) {
 
             m_diff.kind = diff::DIFF_ORBIT;
-            m_diff.bidx = ol1.get_index(io1);
+            ol1.get_index(io1, m_diff.bidx);
             m_diff.can1 = true;
             m_diff.can2 = false;
             return false;
@@ -87,7 +87,7 @@ bool gen_bto_compare<N, Traits>::compare() {
         io1 != ol1.end(); io1++) {
 
         orbit<N, element_type> o1(ctrl1.req_const_symmetry(),
-            ol1.get_index(io1));
+            ol1.get_abs_index(io1));
 
         for(typename orbit<N, element_type>::iterator i1 = o1.begin();
             i1 != o1.end(); i1++) {
@@ -112,7 +112,7 @@ bool gen_bto_compare<N, Traits>::compare() {
     for(typename orbit_list<N, element_type>::iterator io1 = ol1.begin();
         io1 != ol1.end(); io1++) {
 
-        abs_index<N> ai(ol1.get_index(io1), bidims);
+        abs_index<N> ai(ol1.get_abs_index(io1), bidims);
         if(!compare_data(ai, ctrl1, ctrl2)) return false;
     }
 
@@ -172,11 +172,12 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
     gen_block_tensor_rd_ctrl<N, bti_traits> &ctrl1,
     gen_block_tensor_rd_ctrl<N, bti_traits> &ctrl2) {
 
-    typedef typename Traits::template to_compare_type<N>::type to_compare;
     typedef typename Traits::template temp_block_tensor_type<N>::type
             temp_block_tensor_type;
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
+    typedef typename Traits::template to_compare_type<N>::type to_compare;
+    typedef typename Traits::template to_set_type<N>::type to_set;
 
 
     const index<N> &idx = aidx.get_index();
@@ -199,16 +200,29 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
             rd_block_type &blka = ca.req_const_block(idx);
 
             temp_block_tensor_type btc(m_bt1.get_bis());
-
+            {
             gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
             wr_block_type &blkb = cb.req_block(aidx.get_index());
+            to_set().perform(blkb);
+            cb.ret_block(aidx.get_index());
+            }
+
+            bool z;
+            {
+            gen_block_tensor_rd_ctrl<N, bti_traits> cb(btc);
+            rd_block_type &blkb = cb.req_const_block(aidx.get_index());
 
             to_compare cmp(blka, blkb, m_thresh);
-            bool z = cmp.compare();
+            z = cmp.compare();
 
             ca.ret_const_block(idx);
-            cb.ret_block(idx);
+            cb.ret_const_block(idx);
+            }
+
+            {
+            gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
             cb.req_zero_block(idx);
+            }
 
             if(!z) {
                 m_diff.kind = diff::DIFF_DATA;

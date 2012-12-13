@@ -14,26 +14,26 @@ namespace libtensor {
 template<size_t N>
 class compare_ref {
 public:
-	static void compare(const char *test, dense_tensor_i<N, double> &t,
-		dense_tensor_i<N, double> &t_ref, double thresh)
-		throw(exception, libtest::test_exception);
-	static void compare(const char *test, block_tensor_i<N, double> &t,
-		block_tensor_i<N, double> &t_ref, double thresh)
-		throw(exception, libtest::test_exception);
-	static void compare(const char *test, const symmetry<N, double> &s,
-		const symmetry<N, double> &s_ref)
-		throw(exception, libtest::test_exception);
-	static void compare(const char *test, const block_index_space<N> &bis,
-		const symmetry_element_set<N, double> &s,
-		const symmetry_element_set<N, double> &s_ref)
-		throw(exception, libtest::test_exception);
+    static void compare(const char *test, dense_tensor_i<N, double> &t,
+            dense_tensor_i<N, double> &t_ref, double thresh)
+    throw(exception, libtest::test_exception);
+    static void compare(const char *test, block_tensor_i<N, double> &t,
+            block_tensor_i<N, double> &t_ref, double thresh)
+    throw(exception, libtest::test_exception);
+    static void compare(const char *test, const symmetry<N, double> &s,
+            const symmetry<N, double> &s_ref)
+    throw(exception, libtest::test_exception);
+    static void compare(const char *test, const block_index_space<N> &bis,
+            const symmetry_element_set<N, double> &s,
+            const symmetry_element_set<N, double> &s_ref)
+    throw(exception, libtest::test_exception);
 };
 
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, dense_tensor_i<N, double> &t,
-	dense_tensor_i<N, double> &t_ref, double thresh)
-	throw(exception, libtest::test_exception) {
+        dense_tensor_i<N, double> &t_ref, double thresh)
+        throw(exception, libtest::test_exception) {
 
     tod_compare<N> cmp(t, t_ref, thresh);
     if(!cmp.compare()) {
@@ -53,8 +53,8 @@ void compare_ref<N>::compare(const char *test, dense_tensor_i<N, double> &t,
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
-    block_tensor_i<N, double> &t_ref, double thresh)
-    throw(exception, libtest::test_exception) {
+        block_tensor_i<N, double> &t_ref, double thresh)
+        throw(exception, libtest::test_exception) {
 
     btod_compare<N> cmp(t, t_ref, thresh);
     if(!cmp.compare()) {
@@ -96,8 +96,8 @@ void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
-    const symmetry<N, double> &s_ref)
-    throw(exception, libtest::test_exception) {
+        const symmetry<N, double> &s_ref)
+        throw(exception, libtest::test_exception) {
 
     if(!s_ref.get_bis().equals(s.get_bis())) {
         std::ostringstream ss;
@@ -112,8 +112,9 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
         if(!ol.contains(ol_ref.get_abs_index(io_ref))) {
             std::ostringstream ss;
-            ss << "In " << test << ": Canonical index "
-                << ol_ref.get_index(io_ref)
+            index<N> idx;
+            ol_ref.get_index(io_ref, idx);
+            ss << "In " << test << ": Canonical index " << idx
                 << " is absent from result.";
             throw libtest::test_exception("compare_ref::compare()",
                 __FILE__, __LINE__, ss.str().c_str());
@@ -124,8 +125,9 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
         if(!ol_ref.contains(ol.get_abs_index(io))) {
             std::ostringstream ss;
-            ss << "In " << test << ": Canonical index "
-                << ol.get_index(io)
+            index<N> idx;
+            ol.get_index(io, idx);
+            ss << "In " << test << ": Canonical index " << idx
                 << " is absent from reference.";
             throw libtest::test_exception("compare_ref::compare()",
                 __FILE__, __LINE__, ss.str().c_str());
@@ -136,10 +138,10 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test,
-    const block_index_space<N> &bis,
-    const symmetry_element_set<N, double> &s,
-    const symmetry_element_set<N, double> &s_ref)
-    throw(exception, libtest::test_exception) {
+        const block_index_space<N> &bis,
+        const symmetry_element_set<N, double> &s,
+        const symmetry_element_set<N, double> &s_ref)
+        throw(exception, libtest::test_exception) {
 
     symmetry<N, double> sym(bis), sym_ref(bis);
     for(typename symmetry_element_set<N, double>::const_iterator i =

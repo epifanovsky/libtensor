@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_BTOD_MULT_H
 #define LIBTENSOR_BTOD_MULT_H
 
+#include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/bto/additive_bto.h>
-#include <libtensor/block_tensor/btod/btod_traits.h>
+#include <libtensor/gen_block_tensor/additive_gen_bto.h>
 #include <libtensor/gen_block_tensor/gen_bto_mult.h>
 
 namespace libtensor {
@@ -15,7 +15,9 @@ namespace libtensor {
     \ingroup libtensor_btod
  **/
 template<size_t N>
-class btod_mult : public additive_bto<N, btod_traits>, public noncopyable {
+class btod_mult :
+    public additive_gen_bto<N, btod_traits::bti_traits>,
+    public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -95,6 +97,9 @@ public:
 
     //@}
 
+    //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
+    //@{
+
     virtual const block_index_space<N> &get_bis() const {
         return m_gbto.get_bis();
     }
@@ -111,15 +116,25 @@ public:
         m_gbto.perform(out);
     }
 
-    virtual void perform(block_tensor_i<N, double> &btc);
-    virtual void perform(block_tensor_i<N, double> &btc, const double &d);
+    //@}
 
-    virtual void compute_block(dense_tensor_i<N, double> &blkc,
-        const index<N> &ic);
+    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //@{
 
-    virtual void compute_block(bool zero,
-        dense_tensor_i<N, double> &blkc, const index<N> &ic,
-        const tensor_transf<N, double> &trc, const double &c);
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btc);
+
+    virtual void perform(gen_block_tensor_i<N, bti_traits> &btc,
+            const scalar_transf<double> &d);
+
+    virtual void compute_block(
+            bool zero,
+            const index<N> &ic,
+            const tensor_transf<N, double> &trc,
+            dense_tensor_wr_i<N, double> &blkc);
+
+    //@}
+
+    virtual void perform(block_tensor_i<N, double> &btc, double d);
 };
 
 

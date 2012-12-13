@@ -2,7 +2,7 @@
 #define LIBTENSOR_DIAG_TOD_CONTRACT2_H
 
 #include <libtensor/timings.h>
-#include <libtensor/tod/contraction2.h>
+#include <libtensor/core/contraction2.h>
 #include "diag_tensor_i.h"
 
 namespace libtensor {

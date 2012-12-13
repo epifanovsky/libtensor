@@ -23,23 +23,37 @@ namespace libtensor {
 
     \sa gen_block_stream_i, gen_bto_aux_add
 
-    \ingroup libtensor_block_tensor_bto
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits>
 class gen_bto_aux_symmetrize :
     public gen_block_stream_i<N, typename Traits::bti_traits> {
 
 public:
+    static const char *k_clazz; //!< Class name
+
+public:
+    //! Type of tensor elements
     typedef typename Traits::element_type element_type;
+
+    //! Block tensor interface traits
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename Traits::template block_type<N>::type block_type;
+
+    //! Type of read-only block
+    typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
+
+    //! Type of write-only block
+    typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
+
+    //! Type of symmetry
     typedef symmetry<N, element_type> symmetry_type;
+
+    //! Type of tensor transformation
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
 private:
     symmetry_type m_syma; //!< Initial symmetry
     symmetry_type m_symb; //!< Target (symmetrized) symmetry
-    orbit_list<N, element_type> m_olb; //!< List of target orbits
     std::list<tensor_transf_type> m_trlst; //!< List of transformations
     gen_block_stream_i<N, bti_traits> &m_out; //!< Output stream
     bool m_open; //!< Open state
@@ -77,7 +91,7 @@ public:
      **/
     virtual void put(
         const index<N> &idx,
-        block_type &blk,
+        rd_block_type &blk,
         const tensor_transf_type &tr);
 
 };

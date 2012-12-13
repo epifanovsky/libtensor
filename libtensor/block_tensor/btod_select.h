@@ -3,6 +3,7 @@
 
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/gen_block_tensor/gen_bto_select.h>
+#include "btod_traits.h"
 
 namespace libtensor {
 
@@ -85,3 +86,5 @@ public:
 } // namespace libtensor
 
 #endif // LIBTENSOR_BTOD_SELECT_H
+
+#include "impl/btod_select_impl.h"

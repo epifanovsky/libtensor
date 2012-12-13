@@ -3,7 +3,7 @@
 
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/gen_bto_dotprod.h>
-#include "btod/btod_traits.h"
+#include "btod_traits.h"
 
 namespace libtensor {
 

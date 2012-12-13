@@ -10,9 +10,18 @@ namespace libtensor {
 
 
 /** \brief Computes the trace of a matricized block %tensor
-    \tparam N Tensor diagonal order.
+    \tparam N Tensor order.
+    \tparam Traits Block tensor operation traits.
+    \tparam Timed Timed implementation.
 
-    \ingroup libtensor_btod
+    <b>Traits</b>
+
+    The traits class has to provide definitions for
+    - \c element_type -- Type of data elements
+    - \c bti_traits -- Type of block tensor interface traits class
+    - \c template to_trace_type<N>::type -- Type of tensor operation to_trace
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_trace : public timings<Timed>, public noncopyable {

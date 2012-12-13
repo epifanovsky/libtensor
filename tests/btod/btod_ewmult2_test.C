@@ -99,19 +99,19 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	double d = drand48();
-	btod_ewmult2<0, 0, 1> op(bta, btb);
-	if(!op.get_bis().equals(bisc)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	if(doadd) {
-		tod_ewmult2<0, 0, 1>(ta, tb, d).perform(false, tc_ref);
-		op.perform(btc, d);
-	} else {
-		tod_ewmult2<0, 0, 1>(ta, tb).perform(true, tc_ref);
-		op.perform(btc);
-	}
-	tod_btconv<1>(btc).perform(tc);
+    double d = drand48();
+    btod_ewmult2<0, 0, 1> op(bta, btb);
+    if(!op.get_bis().equals(bisc)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    if(doadd) {
+        tod_ewmult2<0, 0, 1>(ta, tb, d).perform(false, tc_ref);
+        op.perform(btc, d);
+    } else {
+        tod_ewmult2<0, 0, 1>(ta, tb).perform(true, tc_ref);
+        op.perform(btc);
+    }
+    tod_btconv<1>(btc).perform(tc);
 
     //  Compare against the reference
 
@@ -178,24 +178,24 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	double d = drand48();
-	permutation<2> perma;
-	permutation<2> permb;
-	permutation<2> permc;
-	btod_ewmult2<0, 0, 2> op(bta, perma, btb, permb, permc);
-	if(!op.get_bis().equals(bisc)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	if(doadd) {
-		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc, d).
-			perform(false, tc_ref);
-		op.perform(btc, d);
-	} else {
-		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-			perform(true, tc_ref);
-		op.perform(btc);
-	}
-	tod_btconv<2>(btc).perform(tc);
+    double d = drand48();
+    permutation<2> perma;
+    permutation<2> permb;
+    permutation<2> permc;
+    btod_ewmult2<0, 0, 2> op(bta, perma, btb, permb, permc);
+    if(!op.get_bis().equals(bisc)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    if(doadd) {
+        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc, d).
+            perform(false, tc_ref);
+        op.perform(btc, d);
+    } else {
+        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
+            perform(true, tc_ref);
+        op.perform(btc);
+    }
+    tod_btconv<2>(btc).perform(tc);
 
     //  Compare against the reference
 
@@ -262,24 +262,24 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	double d = drand48();
-	permutation<2> perma;
-	permutation<2> permb; permb.permute(0, 1);
-	permutation<2> permc;
-	btod_ewmult2<0, 0, 2> op(bta, perma, btb, permb, permc);
-	if(!op.get_bis().equals(bisc)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	if(doadd) {
-		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc, d).
-			perform(false, tc_ref);
-		op.perform(btc, d);
-	} else {
-		tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
-			perform(true, tc_ref);
-		op.perform(btc);
-	}
-	tod_btconv<2>(btc).perform(tc);
+    double d = drand48();
+    permutation<2> perma;
+    permutation<2> permb; permb.permute(0, 1);
+    permutation<2> permc;
+    btod_ewmult2<0, 0, 2> op(bta, perma, btb, permb, permc);
+    if(!op.get_bis().equals(bisc)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    if(doadd) {
+        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc, d).
+            perform(false, tc_ref);
+        op.perform(btc, d);
+    } else {
+        tod_ewmult2<0, 0, 2>(ta, perma, tb, permb, permc).
+            perform(true, tc_ref);
+        op.perform(btc);
+    }
+    tod_btconv<2>(btc).perform(tc);
 
     //  Compare against the reference
 
@@ -354,24 +354,24 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	double d = drand48();
-	permutation<2> perma; perma.permute(0, 1); // kj->jk
-	permutation<3> permb; permb.permute(1, 2); // ikl->ilk
-	permutation<4> permc; permc.permute(0, 1).permute(2, 3); // jilk->ijkl
-	btod_ewmult2<1, 2, 1> op(bta, perma, btb, permb, permc);
-	if(!op.get_bis().equals(bisc)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	if(doadd) {
-		tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc, d).
-			perform(false, tc_ref);
-		op.perform(btc, d);
-	} else {
-		tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
-			perform(true, tc_ref);
-		op.perform(btc);
-	}
-	tod_btconv<4>(btc).perform(tc);
+    double d = drand48();
+    permutation<2> perma; perma.permute(0, 1); // kj->jk
+    permutation<3> permb; permb.permute(1, 2); // ikl->ilk
+    permutation<4> permc; permc.permute(0, 1).permute(2, 3); // jilk->ijkl
+    btod_ewmult2<1, 2, 1> op(bta, perma, btb, permb, permc);
+    if(!op.get_bis().equals(bisc)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    if(doadd) {
+        tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc, d).
+            perform(false, tc_ref);
+        op.perform(btc, d);
+    } else {
+        tod_ewmult2<1, 2, 1>(ta, perma, tb, permb, permc).
+            perform(true, tc_ref);
+        op.perform(btc);
+    }
+    tod_btconv<4>(btc).perform(tc);
 
     //  Compare against the reference
 
@@ -449,25 +449,25 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	double d = drand48();
-	permutation<3> perma; perma.permute(1, 2).permute(0, 1); // ljk->klj
-	permutation<3> permb; permb.permute(0, 1).permute(1, 2); // jil->ilj
-	permutation<4> permc;
-	permc.permute(2, 3).permute(1, 2).permute(0, 2); // kilj->ijkl
-	btod_ewmult2<1, 1, 2> op(bta, perma, btb, permb, permc);
-	if(!op.get_bis().equals(bisc_ref)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	if(doadd) {
-		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc, d).
-			perform(false, tc_ref);
-		op.perform(btc, d);
-	} else {
-		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-			perform(true, tc_ref);
-		op.perform(btc);
-	}
-	tod_btconv<4>(btc).perform(tc);
+    double d = drand48();
+    permutation<3> perma; perma.permute(1, 2).permute(0, 1); // ljk->klj
+    permutation<3> permb; permb.permute(0, 1).permute(1, 2); // jil->ilj
+    permutation<4> permc;
+    permc.permute(2, 3).permute(1, 2).permute(0, 2); // kilj->ijkl
+    btod_ewmult2<1, 1, 2> op(bta, perma, btb, permb, permc);
+    if(!op.get_bis().equals(bisc_ref)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    if(doadd) {
+        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc, d).
+            perform(false, tc_ref);
+        op.perform(btc, d);
+    } else {
+        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
+            perform(true, tc_ref);
+        op.perform(btc);
+    }
+    tod_btconv<4>(btc).perform(tc);
 
     //  Compare against the reference
 
@@ -569,24 +569,24 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	double d = drand48();
-	permutation<3> perma;
-	permutation<3> permb;
-	permutation<4> permc;
-	btod_ewmult2<1, 1, 2> op(bta, perma, btb, permb, permc);
-	if(!op.get_bis().equals(bisc_ref)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	if(doadd) {
-		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc, d).
-			perform(false, tc_ref);
-		op.perform(btc, d);
-	} else {
-		tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
-			perform(true, tc_ref);
-		op.perform(btc);
-	}
-	tod_btconv<4>(btc).perform(tc);
+    double d = drand48();
+    permutation<3> perma;
+    permutation<3> permb;
+    permutation<4> permc;
+    btod_ewmult2<1, 1, 2> op(bta, perma, btb, permb, permc);
+    if(!op.get_bis().equals(bisc_ref)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    if(doadd) {
+        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc, d).
+            perform(false, tc_ref);
+        op.perform(btc, d);
+    } else {
+        tod_ewmult2<1, 1, 2>(ta, perma, tb, permb, permc).
+            perform(true, tc_ref);
+        op.perform(btc);
+    }
+    tod_btconv<4>(btc).perform(tc);
 
     //  Compare against the reference
 
@@ -734,17 +734,17 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
 
     //  Invoke the operation
 
-	permutation<2> perma; perma.permute(0, 1);
-	permutation<2> permb; permb.permute(0, 1);
-	permutation<3> permc; permc.permute(1, 2).permute(0, 1);
-	btod_ewmult2<1, 1, 1> op(bta, perma, btb, permb, permc);
-	if(!op.get_bis().equals(bisc_ref)) {
-		fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
-	}
-	tod_ewmult2<1, 1, 1>(ta, perma, tb, permb, permc).
-	    perform(true, tc_ref);
-	op.perform(btc);
-	tod_btconv<3>(btc).perform(tc);
+    permutation<2> perma; perma.permute(0, 1);
+    permutation<2> permb; permb.permute(0, 1);
+    permutation<3> permc; permc.permute(1, 2).permute(0, 1);
+    btod_ewmult2<1, 1, 1> op(bta, perma, btb, permb, permc);
+    if(!op.get_bis().equals(bisc_ref)) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, "Bad bis.");
+    }
+    tod_ewmult2<1, 1, 1>(ta, perma, tb, permb, permc).
+        perform(true, tc_ref);
+    op.perform(btc);
+    tod_btconv<3>(btc).perform(tc);
 
     //  Compare against the reference
 

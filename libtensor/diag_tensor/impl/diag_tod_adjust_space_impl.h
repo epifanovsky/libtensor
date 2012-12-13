@@ -11,7 +11,7 @@
 #include <libtensor/kernels/kern_dcopy.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 #include "../diag_tod_adjust_space.h"
 
 namespace libtensor {

@@ -15,7 +15,8 @@ gen_bto_dirsum_sym<N, M, Traits>::gen_bto_dirsum_sym(
         gen_block_tensor_rd_i<M, bti_traits> &btb,
         const scalar_transf<element_type> &kb,
         const permutation<NC> &permc) :
-        m_bisc(bta.get_bis(), btb.get_bis(), permc), m_symc(m_bisc.get_bis()) {
+        m_bisc(contraction2<N, M, 0>(permc), bta.get_bis(), btb.get_bis()),
+        m_symc(m_bisc.get_bis()) {
 
     gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
     gen_block_tensor_rd_ctrl<M, bti_traits> cb(btb);
@@ -28,12 +29,13 @@ gen_bto_dirsum_sym<N, M, Traits>::gen_bto_dirsum_sym(
 
 template<size_t N, size_t M, typename Traits>
 gen_bto_dirsum_sym<N, M, Traits>::gen_bto_dirsum_sym(
-        const block_index_space<N> &bisa,
         const symmetry<N, element_type> &syma,
-        const block_index_space<M> &bisb,
+        const scalar_transf<element_type> &ka,
         const symmetry<M, element_type> &symb,
+        const scalar_transf<element_type> &kb,
         const permutation<NC> &permc) :
-        m_bisc(bisa, bisb, permc), m_symc(m_bisc.get_bis()) {
+        m_bisc(contraction2<N, M, 0>(permc), syma.get_bis(), symb.get_bis()),
+        m_symc(m_bisc.get_bis()) {
 
     so_dirsum<N, M, element_type>(syma, symb, permc).perform(m_symc);
 }
@@ -46,7 +48,7 @@ gen_bto_dirsum_sym<N, N, Traits>::gen_bto_dirsum_sym(
         gen_block_tensor_rd_i<N, bti_traits> &btb,
         const scalar_transf<element_type> &kb,
         const permutation<NC> &permc) :
-        m_bisc(bta.get_bis(), btb.get_bis(), permc),
+        m_bisc(contraction2<N, N, 0>(permc), bta.get_bis(), btb.get_bis()),
         m_symc(m_bisc.get_bis()) {
 
     gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta), cb(btb);
@@ -58,14 +60,12 @@ gen_bto_dirsum_sym<N, N, Traits>::gen_bto_dirsum_sym(
 
 template<size_t N, typename Traits>
 gen_bto_dirsum_sym<N, N, Traits>::gen_bto_dirsum_sym(
-        const block_index_space<N> &bisa,
         const symmetry<N, element_type> &syma,
         const scalar_transf<element_type> &ka,
-        const block_index_space<N> &bisb,
         const symmetry<N, element_type> &symb,
         const scalar_transf<element_type> &kb,
         const permutation<NC> &permc, bool self) :
-        m_bisc(bisa, bisb, permc),
+        m_bisc(contraction2<N, N, 0>(permc), syma.get_bis(), symb.get_bis()),
         m_symc(m_bisc.get_bis()) {
 
     make_symmetry(syma, ka, symb, kb, permc, self);
