@@ -5,6 +5,7 @@
 #include <libtensor/gen_block_tensor/direct_gen_block_tensor.h>
 #include <libtensor/gen_block_tensor/impl/direct_gen_block_tensor_impl.h>
 #include <libtensor/gen_block_tensor/direct_gen_bto.h>
+#include "block_tensor_i.h"
 #include "block_tensor_traits.h"
 
 namespace libtensor {

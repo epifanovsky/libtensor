@@ -16,6 +16,7 @@ void so_merge_se_part_test::perform() throw(libtest::test_exception) {
     test_2n2nn_1(true, false); test_2n2nn_1(false, false);
     test_2n2nn_2(true,  true); test_2n2nn_2(false,  true);
     test_2n2nn_2(true, false); test_2n2nn_2(false, false);
+    test_2n2nn_3(true); test_2n2nn_3(false);
     test_nmk_1(true); test_nmk_1(false);
     test_nmk_2(true,  true); test_nmk_2(false,  true);
     test_nmk_2(true, false); test_nmk_2(false, false);
@@ -441,6 +442,81 @@ throw(libtest::test_exception) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
+
+/** \test Double merge of 4 dim of a 4-space on a 2-space.
+ **/
+void so_merge_se_part_test::test_2n2nn_3(bool sign)
+throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_merge_se_part_test::test_2n2nn_3(" << sign << ")";
+
+    typedef se_part<4, double> se4_t;
+    typedef se_part<2, double> se2_t;
+    typedef so_merge<4, 2, double> so_merge_t;
+    typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
+
+    try {
+
+        index<4> i1a, i1b;
+        i1b[0] = 5; i1b[1] = 5; i1b[2] = 5; i1b[3] = 5;
+        block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
+        mask<4> ma; ma[0] = true; ma[1] = true; ma[2] = true; ma[3] = true;
+        bisa.split(ma, 2);
+        bisa.split(ma, 3);
+        bisa.split(ma, 5);
+
+        index<2> i2a, i2b;
+        i2b[0] = 5; i2b[1] = 5;
+        block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
+        mask<2> mb; mb[0] = true; mb[1] = true;
+        bisb.split(mb, 2);
+        bisb.split(mb, 3);
+        bisb.split(mb, 5);
+
+        mask<4> m; m[0] = m[1] = true;
+        se4_t ela(bisa, m, 2);
+        index<4> i0000, i0100, i1000, i1100;
+        i1000[0] = 1; i0100[1] = 1;
+        i1100[0] = 1; i1100[1] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i0000, i1100, sign ? tr0 : tr1);
+        ela.mark_forbidden(i0100);
+        ela.mark_forbidden(i1000);
+
+        se2_t elb(bisb, mb, 2);
+        index<2> i00, i01, i10, i11;
+        i10[0] = 1; i01[1] = 1;
+        i11[0] = 1; i11[1] = 1;
+        elb.mark_forbidden(i01);
+        elb.mark_forbidden(i10);
+
+        symmetry_element_set<4, double> seta(se4_t::k_sym_type);
+        symmetry_element_set<2, double> setb(se2_t::k_sym_type);
+        symmetry_element_set<2, double> setb_ref(se2_t::k_sym_type);
+
+        seta.insert(ela);
+        setb_ref.insert(elb);
+
+        mask<4> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
+        sequence<4, size_t> seq(0); seq[1] = seq[3] = 1;
+        symmetry_operation_params<so_merge_t> params(seta, msk, seq, setb);
+
+        so_merge_se_t().perform(params);
+
+        if(setb.is_empty()) {
+            fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                    "Expected a non-empty set.");
+        }
+
+        compare_ref<2>::compare(tnss.str().c_str(), bisb, setb, setb_ref);
+
+    } catch(exception &e) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
 
 /** \test Double merge of 4 dim of a 5-space on a 3-space.
  **/
