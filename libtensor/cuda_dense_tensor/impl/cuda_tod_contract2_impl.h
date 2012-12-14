@@ -4,6 +4,8 @@
 #include <memory>
 #include <cuda_runtime.h>
 #include <libvmm/cuda_allocator.h>
+#include <libtensor/core/bad_dimensions.h>
+#include <libtensor/core/contraction2_list_builder.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/linalg/cublas/linalg_cublas.h>
 #include <libtensor/kernels/kern_dadd1.h>
@@ -11,8 +13,6 @@
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_node.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/tod/bad_dimensions.h>
-#include <libtensor/tod/contraction2_list_builder.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../local_cublas_handle.h"
 #include "../cuda_tod_contract2.h"

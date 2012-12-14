@@ -10,7 +10,7 @@
 //#include "loop_list_add.h"
 //#include "loop_list_copy.h"
 //#include "tod_additive.h"
-#include "bad_dimensions.h"
+#include <libtensor/core/bad_dimensions.h>
 
 namespace libtensor {
 

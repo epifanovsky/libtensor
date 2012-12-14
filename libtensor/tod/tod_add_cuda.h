@@ -2,8 +2,8 @@
 #define LIBTENSOR_TOD_ADD_CUDA_H
 
 #include <list>
+#include <libtensor/core/bad_dimensions.h>
 #include "tod_cuda_copy.h"
-#include "bad_dimensions.h"
 
 namespace libtensor {
 

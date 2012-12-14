@@ -6,7 +6,7 @@
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/core/dimensions.h>
-#include <libtensor/tod/bad_dimensions.h>
+#include <libtensor/core/bad_dimensions.h>
 
 namespace libtensor {
 
