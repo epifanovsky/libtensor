@@ -157,9 +157,9 @@ T *dense_tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
             "Data pointer is already checked out for ro");
     }
 
-    timings< dense_tensor<N, T, Alloc> >::start_timer("lock_rw");
+    dense_tensor::start_timer("lock_rw");
     m_dataptr = Alloc::lock_rw(m_data);
-    timings< dense_tensor<N, T, Alloc> >::stop_timer("lock_rw");
+    dense_tensor::stop_timer("lock_rw");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
     return m_dataptr;
@@ -205,9 +205,9 @@ const T *dense_tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
         return m_const_dataptr;
     }
 
-    timings< dense_tensor<N, T, Alloc> >::start_timer("lock_ro");
+    dense_tensor::start_timer("lock_ro");
     m_const_dataptr = Alloc::lock_ro(m_data);
-    timings< dense_tensor<N, T, Alloc> >::stop_timer("lock_ro");
+    dense_tensor::stop_timer("lock_ro");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
     return m_const_dataptr;
