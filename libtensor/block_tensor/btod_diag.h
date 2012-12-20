@@ -8,6 +8,7 @@
 
 namespace libtensor {
 
+
 /** \brief Extracts a general diagonal from a block %tensor
     \tparam N Tensor order.
     \tparam M Diagonal order.
@@ -101,6 +102,13 @@ public:
             const index<N - M + 1> &ib,
             const tensor_transf<N - M + 1, double> &trb,
             dense_tensor_wr_i<N - M + 1, double> &blkb);
+
+    virtual void compute_block(
+            const index<N - M + 1> &ib,
+            dense_tensor_wr_i<N - M + 1, double> &blkb) {
+
+        compute_block(true, ib, tensor_transf<N - M + 1, double>(), blkb);
+    }
 
     //@}
 

@@ -95,6 +95,13 @@ public:
             const tensor_transf<N - M, double> &trb,
             dense_tensor_wr_i<N - M, double> &blkb);
 
+    virtual void compute_block(
+            const index<N - M> &ib,
+            dense_tensor_wr_i<N - M, double> &blkb) {
+
+        compute_block(true, ib, tensor_transf<N - M, double>(), blkb);
+    }
+
     //@}
 
     void perform(block_tensor_i<N - M, double> &btb, double c);
