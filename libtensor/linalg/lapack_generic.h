@@ -208,7 +208,9 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
     int gen_n = n;
     int gen_lda = lda;
     int gen_info = 0;
+#ifndef USE_QCHEM
     dpotrf_(&uplo, &gen_n, a, &gen_lda, &gen_info);
+#endif // USE_QCHEM
     return gen_info;
 }
 
