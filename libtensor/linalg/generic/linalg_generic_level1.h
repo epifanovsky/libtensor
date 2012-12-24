@@ -113,6 +113,38 @@ public:
         double *c, size_t sic,
         double d);
 
+    /** \brief Sets up the random number generator
+        \param ctx Context of computational device (unused for CPUs).
+     **/
+    static void rng_setup(
+        void *ctx);
+
+    /** \brief Generates an array of random numbers in [0, 1]
+        \param ctx Context of computational device (unused for CPUs).
+        \param ni Number of elements i.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param c Scaling coefficient.
+     **/
+    static void rng_set_i_x(
+        void *ctx,
+        size_t ni,
+        double *a, size_t sia,
+        double c);
+
+    /** \brief Adds an array of random numbers in [0, 1]
+        \param ctx Context of computational device (unused for CPUs).
+        \param ni Number of elements i.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param c Scaling coefficient.
+     **/
+    static void rng_add_i_x(
+        void *ctx,
+        size_t ni,
+        double *a, size_t sia,
+        double c);
+
 };
 
 
