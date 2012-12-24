@@ -8,6 +8,7 @@
 
 namespace libtensor {
 
+
 /** \brief Fills a tensor with random numbers or adds them to it
     \tparam N Tensor order.
 
@@ -46,9 +47,6 @@ public:
         \param t Tensor to put random data
      **/
     void perform(dense_tensor_wr_i<N, double> &t);
-
-private:
-    static void update_seed(); //! updates the seed value by using srand48
 
 };
 
