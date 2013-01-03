@@ -2,9 +2,14 @@
 #define LIBTENSOR_ALLOCATOR_H
 
 #ifndef WITHOUT_LIBVMM
+
+#ifdef LIBTENSOR_ALLOCATOR_DEBUG
 #include <libvmm/ec_allocator.h>
+#endif // LIBTENSOR_ALLOCATOR_DEBUG
+
 #include <libvmm/vm_allocator.h>
 #include <libvmm/evmm/evmm.h>
+
 #endif // WITHOUT_LIBVMM
 
 #include "std_allocator.h"
@@ -39,6 +44,8 @@ public:
 };
 
 
+#ifdef LIBTENSOR_ALLOCATOR_DEBUG
+
 /** \brief Error-checking memory allocator used in the tensor library
 
     This memory allocator uses libvmm::ec_allocator.
@@ -65,14 +72,16 @@ public:
 
 };
 
+#endif // LIBTENSOR_ALLOCATOR_DEBUG
+
 #endif // WITHOUT_LIBVMM
 
 
 /** \brief Memory allocator used in the tensor library
 
     This is a proxy class that uses the error-checking allocator if
-    LIBTENSOR_DEBUG is defined or the regular virtual memory allocator
-    otherwise.
+    LIBTENSOR_ALLOCATOR_DEBUG is defined or the regular virtual memory
+    allocator otherwise.
 
     \sa ec_allocator_base, vm_allocator_base, std_allocator
 
@@ -83,11 +92,11 @@ class allocator :
 #ifdef WITHOUT_LIBVMM
     public std_allocator<T> {
 #else // WITHOUT_LIBVMM
-#ifdef LIBTENSOR_DEBUG
+#ifdef LIBTENSOR_ALLOCATOR_DEBUG
     public ec_allocator_base<T> {
-#else // LIBTENSOR_DEBUG
+#else // LIBTENSOR_ALLOCATOR_DEBUG
     public vm_allocator_base<T> {
-#endif // LIBTENSOR_DEBUG
+#endif // LIBTENSOR_ALLOCATOR_DEBUG
 #endif // WITHOUT_LIBVMM
 
 };
