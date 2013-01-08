@@ -17,7 +17,7 @@ namespace libtensor {
 
 void btod_compare_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    allocator<double>::init(16, 16, 65536, 65536);
     try {
 
     test_1();
@@ -34,10 +34,10 @@ void btod_compare_test::perform() throw(libtest::test_exception) {
     test_operation();
 
     } catch (...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 

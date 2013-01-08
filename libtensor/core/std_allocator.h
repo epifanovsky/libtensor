@@ -24,18 +24,31 @@ public:
     typedef T *pointer_type; //!< Pointer type
 
 public:
-    struct dummy_vmm {
-        static void init(size_t, size_t, size_t, size_t) { }
-        static void shutdown() { }
-    };
-
-public:
     static const pointer_type invalid_pointer; //!< Invalid pointer constant
 
-private:
-    static dummy_vmm m_vmm; //!< Dummy vmm instance to provide init()
-
 public:
+    /** \brief Initializes the virtual memory manager
+
+        \param base_sz Exponential base for block size increment.
+        \param min_sz Smallest block size in data elements.
+        \param max_sz Largest block size in data elements.
+        \param mem_limit Memory limit in data elements.
+     **/
+    static void init(size_t base_sz, size_t min_sz, size_t max_sz, size_t mem_limit) {
+
+    }
+
+    /** \brief Shuts down the memory manager
+
+        The virtual memory manager is not usable after it is shut down until
+        it is initialized again via init().
+
+        This method frees all the memory allocated by the memory manager.
+     **/
+    static void shutdown() {
+
+    }
+
     /** \brief Allocates a block of memory
         \param sz Block size (in units of type T).
         \return Pointer to the block of memory.
@@ -108,19 +121,12 @@ public:
 
     }
 
-    static dummy_vmm &vmm() {
-        return m_vmm;
-    }
-
 };
 
 
 template<typename T>
 const typename std_allocator<T>::pointer_type
     std_allocator<T>::invalid_pointer = 0;
-
-template<typename T>
-typename std_allocator<T>::dummy_vmm std_allocator<T>::m_vmm;
 
 
 } // namespace libtensor

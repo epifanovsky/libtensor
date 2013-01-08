@@ -21,7 +21,7 @@ namespace libtensor {
 
 void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -57,11 +57,11 @@ void btod_symmetrize_test::perform() throw(libtest::test_exception) {
         test_6b(true, true, true);
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 /** \test Symmetrization of a non-symmetric 2-index block %tensor

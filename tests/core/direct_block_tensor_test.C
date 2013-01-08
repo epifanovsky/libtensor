@@ -18,7 +18,7 @@ namespace libtensor {
 
 void direct_block_tensor_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -30,11 +30,11 @@ void direct_block_tensor_test::perform() throw(libtest::test_exception) {
     test_op_6();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 
