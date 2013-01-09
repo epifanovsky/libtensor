@@ -35,8 +35,10 @@ public:
         \param min_sz Smallest block size in data elements.
         \param max_sz Largest block size in data elements.
         \param mem_limit Memory limit in data elements.
+        \param pfprefix Prefix to page file path.
      **/
-    static void init(size_t base_sz, size_t min_sz, size_t max_sz, size_t mem_limit);
+    static void init(size_t base_sz, size_t min_sz, size_t max_sz,
+        size_t mem_limit, const char *pfprefix = 0);
 
     /** \brief Shuts down the virtual memory manager
 

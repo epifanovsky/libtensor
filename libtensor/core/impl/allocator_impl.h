@@ -48,10 +48,12 @@ const typename allocator<T>::pointer_type allocator<T>::invalid_pointer =
 
 template<typename T>
 void allocator<T>::init(size_t base_sz, size_t min_sz, size_t max_sz,
-    size_t mem_limit) {
+    size_t mem_limit, const char *pfprefix) {
 
+    typename allocator_base<T>::vmm_type::page_file_factory_type pff(
+        pfprefix == 0 ? "" : pfprefix);
     allocator_base<T>::vmm_type::get_instance().
-        init(base_sz, min_sz, max_sz, mem_limit);
+        init(base_sz, min_sz, max_sz, mem_limit, pff);
 }
 
 
