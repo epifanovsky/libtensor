@@ -18,10 +18,12 @@ const char *gen_bto_aux_copy<N, Traits>::k_clazz =
 template<size_t N, typename Traits>
 gen_bto_aux_copy<N, Traits>::gen_bto_aux_copy(
     const symmetry<N, element_type> &sym,
-    gen_block_tensor_wr_i<N, bti_traits> &bt) :
+    gen_block_tensor_wr_i<N, bti_traits> &bt,
+    bool sync) :
 
     m_sym(sym.get_bis()), m_bt(bt), m_ctrl(m_bt),
-    m_bidims(m_bt.get_bis().get_block_index_dims()), m_open(false) {
+    m_bidims(m_bt.get_bis().get_block_index_dims()), m_open(false),
+    m_sync(sync) {
 
     so_copy<N, element_type>(sym).perform(m_sym);
 }
@@ -80,7 +82,7 @@ void gen_bto_aux_copy<N, Traits>::put(
     bool touched = false;
     libutil::mutex *blkmtx = 0;
 
-    {
+    if(m_sync) {
         libutil::auto_lock<libutil::mutex> lock(m_mtx);
         typename std::map<size_t, libutil::mutex*>::iterator imtx =
             m_blkmtx.find(aidx);
@@ -93,10 +95,14 @@ void gen_bto_aux_copy<N, Traits>::put(
         }
     }
 
-    {
+    if(m_sync) {
         libutil::auto_lock<libutil::mutex> lock(*blkmtx);
         wr_block_type &blk_tgt = m_ctrl.req_block(idx);
         to_copy_type(blk, tr).perform(!touched, blk_tgt);
+        m_ctrl.ret_block(idx);
+    } else {
+        wr_block_type &blk_tgt = m_ctrl.req_block(idx);
+        to_copy_type(blk, tr).perform(true, blk_tgt);
         m_ctrl.ret_block(idx);
     }
 }
