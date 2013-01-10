@@ -93,6 +93,7 @@ set(SRC_INST
     dense_tensor/impl/tod_set.C
     dense_tensor/impl/tod_set_diag.C
     dense_tensor/impl/tod_set_elem.C
+    dense_tensor/impl/tod_size.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
     symmetry/inst/block_labeling_inst.C
@@ -187,6 +188,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_diag.C
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
+    block_tensor/impl/btod_size.C
     block_tensor/impl/btod_trace.C
     block_tensor/impl/btod_unfold_block_list.C
     block_tensor/impl/btod_unfold_symmetry.C

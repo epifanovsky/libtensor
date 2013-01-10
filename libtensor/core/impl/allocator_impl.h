@@ -45,15 +45,35 @@ template<typename T>
 const typename allocator<T>::pointer_type allocator<T>::invalid_pointer =
     allocator_base<T>::vmm_type::invalid_pointer;
 
+template<typename T>
+size_t allocator<T>::m_base_sz = 0;
+
+
+template<typename T>
+size_t allocator<T>::m_min_sz = 0;
+
+
+template<typename T>
+size_t allocator<T>::m_max_sz = 0;
+
 
 template<typename T>
 void allocator<T>::init(size_t base_sz, size_t min_sz, size_t max_sz,
     size_t mem_limit, const char *pfprefix) {
 
-    typename allocator_base<T>::vmm_type::page_file_factory_type pff(
-        pfprefix == 0 ? "" : pfprefix);
-    allocator_base<T>::vmm_type::get_instance().
-        init(base_sz, min_sz, max_sz, mem_limit, pff);
+    if(pfprefix == 0) {
+        typename allocator_base<T>::vmm_type::page_file_factory_type pff;
+        allocator_base<T>::vmm_type::get_instance().
+            init(base_sz, min_sz, max_sz, mem_limit, pff);
+    } else {
+        typename allocator_base<T>::vmm_type::page_file_factory_type
+            pff(pfprefix);
+        allocator_base<T>::vmm_type::get_instance().
+            init(base_sz, min_sz, max_sz, mem_limit, pff);
+    }
+    m_base_sz = base_sz;
+    m_min_sz = min_sz;
+    m_max_sz = max_sz;
 }
 
 
@@ -61,6 +81,19 @@ template<typename T>
 void allocator<T>::shutdown() {
 
     allocator_base<T>::vmm_type::get_instance().shutdown();
+}
+
+
+template<typename T>
+size_t allocator<T>::get_block_size(size_t sz) {
+
+    size_t real_sz = m_min_sz;
+    if(sz > m_max_sz) {
+        real_sz = sz;
+    } else {
+        while(real_sz < sz) real_sz *= m_base_sz;
+    }
+    return real_sz * sizeof(T);
 }
 
 

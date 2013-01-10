@@ -28,10 +28,15 @@ public:
 public:
     static const pointer_type invalid_pointer; //!< Invalid pointer constant
 
+private:
+    static size_t m_base_sz; //!< Exponential base of data block size
+    static size_t m_min_sz; //!< Smallest block size in data elements
+    static size_t m_max_sz; //!< Largest block size in data elements
+
 public:
     /** \brief Initializes the virtual memory manager
 
-        \param base_sz Exponential base for block size increment.
+        \param base_sz Exponential base of data block size.
         \param min_sz Smallest block size in data elements.
         \param max_sz Largest block size in data elements.
         \param mem_limit Memory limit in data elements.
@@ -48,6 +53,11 @@ public:
         This method frees all the memory allocated by the memory manager.
      **/
     static void shutdown();
+
+    /** \brief Returns the real size of a block, in bytes, including alignment
+        \param sz Block size in units of T.
+     **/
+    static size_t get_block_size(size_t sz);
 
     /** \brief Allocates a block of memory
         \param sz Block size in units of T.
