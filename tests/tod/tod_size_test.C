@@ -1,0 +1,53 @@
+#include <sstream>
+#include <libtensor/core/allocator.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/dense_tensor/tod_size.h>
+#include "tod_size_test.h"
+
+namespace libtensor {
+
+
+void tod_size_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::init(16, 16, 16777216, 16777216);
+
+    try {
+
+        test_1();
+
+    } catch(...) {
+        allocator<double>::shutdown();
+        throw;
+    }
+
+    allocator<double>::shutdown();
+}
+
+
+void tod_size_test::test_1() {
+
+    static const char testname[] = "tod_size_test::test_1()";
+
+    typedef allocator<double> allocator_t;
+
+    try {
+
+        index<1> i1, i2;
+        i2[0] = 10;
+        dimensions<1> dims(index_range<1>(i1, i2));
+
+        dense_tensor<1, double, allocator_t> t1(dims);
+
+        size_t sz = tod_size<1>().get_size(t1);
+        if(sz != 16 * sizeof(double)) {
+            fail_test(testname, __FILE__, __LINE__, "Bad size.");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+} // namespace libtensor
+

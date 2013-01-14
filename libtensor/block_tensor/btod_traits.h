@@ -133,6 +133,11 @@ struct btod_traits {
     };
 
     template<size_t N>
+    struct to_size_type {
+        typedef tod_size<N> type;
+    };
+
+    template<size_t N>
     struct to_trace_type {
         typedef tod_trace<N> type;
     };

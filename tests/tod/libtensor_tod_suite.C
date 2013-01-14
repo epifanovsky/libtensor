@@ -28,9 +28,9 @@ libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
     add_test("tod_set", m_utf_tod_set);
     add_test("tod_set_diag", m_utf_tod_set_diag);
     add_test("tod_set_elem", m_utf_tod_set_elem);
+    add_test("tod_size", m_utf_tod_size);
     add_test("tod_trace", m_utf_tod_trace);
     add_test("tod_vmpriority", m_utf_tod_vmpriority);
 }
 
-}
-
+} // namespace libtensor

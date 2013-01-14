@@ -13,7 +13,7 @@ namespace libtensor {
 
 void btod_diagonalize_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -24,11 +24,11 @@ void btod_diagonalize_test::perform() throw(libtest::test_exception) {
     test_5();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 

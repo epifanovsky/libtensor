@@ -32,6 +32,7 @@
 #include "tod_set_diag.h"
 #include "tod_set_elem.h"
 #include "tod_set.h"
+#include "tod_size.h"
 #include "tod_trace.h"
 #include "tod_vmpriority.h"
 

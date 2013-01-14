@@ -60,6 +60,7 @@ set(SRC_TOD
     tod/tod_set_diag_test.C
     tod/tod_set_elem_test.C
     tod/tod_set_test.C
+    tod/tod_size_test.C
     tod/tod_trace_test.C
     tod/tod_vmpriority_test.C
 )

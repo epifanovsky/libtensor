@@ -18,7 +18,7 @@ const double tod_contract2_test::k_thresh = 5e-14;
 
 void tod_contract2_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -1075,11 +1075,11 @@ void tod_contract2_test::perform() throw(libtest::test_exception) {
 
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 #if 0

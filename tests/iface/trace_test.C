@@ -10,7 +10,7 @@ namespace libtensor {
 
 void trace_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -21,11 +21,11 @@ void trace_test::perform() throw(libtest::test_exception) {
         test_e_3();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 

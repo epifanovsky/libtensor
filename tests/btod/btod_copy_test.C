@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    allocator<double>::init(16, 16, 65536, 65536);
 
     try {
 
@@ -60,10 +60,10 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 
     }
     catch (...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 
