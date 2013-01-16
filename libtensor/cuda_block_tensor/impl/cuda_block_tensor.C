@@ -7,27 +7,27 @@
 namespace libtensor {
 
 
-typedef cuda_block_tensor_traits< double, std_allocator<double> > std_bt_traits;
+typedef cuda_block_tensor_traits< double, cuda_allocator<double> > cuda_bt_traits;
 
-template class gen_block_tensor<1, std_bt_traits>;
-template class gen_block_tensor<2, std_bt_traits>;
-template class gen_block_tensor<3, std_bt_traits>;
-template class gen_block_tensor<4, std_bt_traits>;
-template class gen_block_tensor<5, std_bt_traits>;
-template class gen_block_tensor<6, std_bt_traits>;
-template class gen_block_tensor<7, std_bt_traits>;
-template class gen_block_tensor<8, std_bt_traits>;
+template class gen_block_tensor<1, cuda_bt_traits>;
+template class gen_block_tensor<2, cuda_bt_traits>;
+template class gen_block_tensor<3, cuda_bt_traits>;
+template class gen_block_tensor<4, cuda_bt_traits>;
+template class gen_block_tensor<5, cuda_bt_traits>;
+template class gen_block_tensor<6, cuda_bt_traits>;
+template class gen_block_tensor<7, cuda_bt_traits>;
+template class gen_block_tensor<8, cuda_bt_traits>;
 
-typedef cuda_block_tensor_traits< double, allocator<double> > bt_traits;
-
-template class gen_block_tensor<1, bt_traits>;
-template class gen_block_tensor<2, bt_traits>;
-template class gen_block_tensor<3, bt_traits>;
-template class gen_block_tensor<4, bt_traits>;
-template class gen_block_tensor<5, bt_traits>;
-template class gen_block_tensor<6, bt_traits>;
-template class gen_block_tensor<7, bt_traits>;
-template class gen_block_tensor<8, bt_traits>;
+//typedef cuda_block_tensor_traits< double, allocator<double> > bt_traits;
+//
+//template class gen_block_tensor<1, bt_traits>;
+//template class gen_block_tensor<2, bt_traits>;
+//template class gen_block_tensor<3, bt_traits>;
+//template class gen_block_tensor<4, bt_traits>;
+//template class gen_block_tensor<5, bt_traits>;
+//template class gen_block_tensor<6, bt_traits>;
+//template class gen_block_tensor<7, bt_traits>;
+//template class gen_block_tensor<8, bt_traits>;
 
 
 } // namespace libtensor
