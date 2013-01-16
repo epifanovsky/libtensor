@@ -6,8 +6,8 @@
 namespace libtensor {
 
 
-template<size_t N, typename T> class cuda_dense_tensor_rd_i;
-template<size_t N, typename T> class cuda_dense_tensor_wr_i;
+template<size_t N, typename T> class dense_tensor_rd_i;
+template<size_t N, typename T> class dense_tensor_wr_i;
 
 
 /** \brief Block tensor interface traits
