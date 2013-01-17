@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BLOCK_TENSOR_TRAITS_H
 #define LIBTENSOR_BLOCK_TENSOR_TRAITS_H
 
-#include <libtensor/mp/mp_safe_tensor.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include "block_factory.h"
 #include "block_tensor_i_traits.h"
 
@@ -35,7 +35,7 @@ struct block_tensor_traits {
     //! Type of blocks
     template<size_t N>
     struct block_type {
-        typedef mp_safe_tensor<N, T, Alloc> type;
+        typedef dense_tensor<N, T, Alloc> type;
     };
 
     //! Type of block factory
