@@ -11,7 +11,7 @@ namespace libtensor {
 
 void mult_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
         test_tt_1a();
@@ -33,11 +33,11 @@ void mult_test::perform() throw(libtest::test_exception) {
         test_ee_2();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 

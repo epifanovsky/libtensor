@@ -18,7 +18,7 @@ namespace libtensor {
 
 void direct_block_tensor_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -26,13 +26,15 @@ void direct_block_tensor_test::perform() throw(libtest::test_exception) {
     test_op_2();
     test_op_3();
     test_op_4();
+    test_op_5();
+    test_op_6();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 
@@ -303,6 +305,127 @@ void direct_block_tensor_test::test_op_4() {
     tod_btconv<4>(btc).perform(tc);
 
     compare_ref<4>::compare(testname, tc, tc_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Tests recursive use of direct block tensors
+ **/
+void direct_block_tensor_test::test_op_5() {
+
+    static const char *testname = "direct_block_tensor_test::test_op_5()";
+
+    typedef std_allocator<double> allocator_type;
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 9; i2[1] = 9;
+    dimensions<2> dims(index_range<2>(i1, i2));
+    block_index_space<2> bis(dims);
+
+    block_tensor<2, double, allocator_type> bta(bis);
+    btod_random<2>().perform(bta);
+    bta.set_immutable();
+
+    btod_copy<2> op_copy1(bta);
+    direct_block_tensor<2, double, allocator_type> btb(op_copy1);
+    btod_copy<2> op_copy2(btb);
+    direct_block_tensor<2, double, allocator_type> btc(op_copy2);
+
+    std::vector<size_t> nzl1, nzl2;
+    nzl2.push_back(100);
+    nzl2.push_back(200);
+    {
+        gen_block_tensor_rd_ctrl<2, bti_traits> cc(btc);
+        cc.req_nonzero_blocks(nzl1);
+        cc.req_nonzero_blocks(nzl2);
+    }
+    if(nzl1.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1.size() != 1");
+    }
+    if(std::find(nzl1.begin(), nzl1.end(), 0) == nzl1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1 doesn't contain [0,0]");
+    }
+    if(nzl2.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2.size() != 1");
+    }
+    if(std::find(nzl2.begin(), nzl2.end(), 0) == nzl2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2 doesn't contain [0,0]");
+    }
+
+    dense_tensor<2, double, allocator_type> tc(dims), tc_ref(dims);
+    tod_btconv<2>(bta).perform(tc_ref);
+    tod_btconv<2>(btc).perform(tc);
+    compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Tests recursive use of direct block tensors
+ **/
+void direct_block_tensor_test::test_op_6() {
+
+    static const char *testname = "direct_block_tensor_test::test_op_6()";
+
+    typedef std_allocator<double> allocator_type;
+    typedef block_tensor_i_traits<double> bti_traits;
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 9; i2[1] = 9;
+    dimensions<2> dims(index_range<2>(i1, i2));
+    block_index_space<2> bis(dims);
+
+    block_tensor<2, double, allocator_type> bta1(bis), bta2(bis);
+    btod_random<2>().perform(bta1);
+    btod_random<2>().perform(bta2);
+    bta1.set_immutable();
+    bta2.set_immutable();
+
+    contraction2<1, 1, 1> contr;
+    contr.contract(1, 0);
+    btod_contract2<1, 1, 1> op_contr1(contr, bta1, bta2);
+    direct_block_tensor<2, double, allocator_type> btb(op_contr1);
+    btod_copy<2> op_copy2(btb);
+    direct_block_tensor<2, double, allocator_type> btc(op_copy2);
+
+    std::vector<size_t> nzl1, nzl2;
+    nzl2.push_back(100);
+    nzl2.push_back(200);
+    {
+        gen_block_tensor_rd_ctrl<2, bti_traits> cc(btc);
+        cc.req_nonzero_blocks(nzl1);
+        cc.req_nonzero_blocks(nzl2);
+    }
+    if(nzl1.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1.size() != 1");
+    }
+    if(std::find(nzl1.begin(), nzl1.end(), 0) == nzl1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl1 doesn't contain [0,0]");
+    }
+    if(nzl2.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2.size() != 1");
+    }
+    if(std::find(nzl2.begin(), nzl2.end(), 0) == nzl2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "nzl2 doesn't contain [0,0]");
+    }
+
+    dense_tensor<2, double, allocator_type> ta1(dims), ta2(dims);
+    dense_tensor<2, double, allocator_type> tc(dims), tc_ref(dims);
+    tod_btconv<2>(bta1).perform(ta1);
+    tod_btconv<2>(bta2).perform(ta2);
+    tod_contract2<1, 1, 1>(contr, ta1, ta2).perform(true, tc_ref);
+    tod_btconv<2>(btc).perform(tc);
+    compare_ref<2>::compare(testname, tc, tc_ref, 0.0);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

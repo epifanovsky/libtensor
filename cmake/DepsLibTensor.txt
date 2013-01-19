@@ -1,22 +1,35 @@
 #
-#	Set up third-party dependencies for libtensor
+#   Set up third-party dependencies for libtensor
 #
 
 include(CheckCXXSourceCompiles)
 include(${LIBTENSOR_DIR}/cmake/SetupMKL.txt)
 
-#	Detect whether the system is POSIX-compliant
+#   Detect whether the system is POSIX-compliant
 #
 if(UNIX)
-	add_definitions(-DPOSIX)
+    add_definitions(-DPOSIX)
 endif(UNIX)
 
-#	Detect the Intel compiler
+#   Detect the Intel compiler
 #
 string(REGEX MATCH icpc IS_ICPC ${CMAKE_CXX_COMPILER})
 string(REGEX MATCH xlc IS_XLC ${CMAKE_C_COMPILER})
 
-#	Detect the linear algebra library
+#   Test drand48
+#
+check_cxx_source_compiles("
+#include<cstdlib>
+int main() {
+  double d = drand48();
+  return 0;
+}
+" HAVE_DRAND48)
+if(HAVE_DRAND48)
+    add_definitions(-DHAVE_DRAND48)
+endif(HAVE_DRAND48)
+
+#   Detect the linear algebra library
 #
 set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
@@ -29,58 +42,58 @@ find_package(LAPACK)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 
 if(IS_ICPC AND MKL_FOUND)
-	SetupMKL()
+    SetupMKL()
 else(IS_ICPC AND MKL_FOUND)
 if(ACML_FOUND)
-	add_definitions(-DUSE_ACML)
-	set(USE_ACML TRUE)
-	include_directories(${ACML_INCLUDE_PATH})
-	set(BLAS_LIBS ${ACML_LIBRARIES})
-	message(STATUS "Using ACML: " ${ACML_PATH})
+    add_definitions(-DUSE_ACML)
+    set(USE_ACML TRUE)
+    include_directories(${ACML_INCLUDE_PATH})
+    set(BLAS_LIBS ${ACML_LIBRARIES})
+    message(STATUS "Using ACML: " ${ACML_PATH})
 else(ACML_FOUND)
 if(IS_XLC AND ESSL_FOUND)
-	add_definitions(-DUSE_ESSL)
-	set(USE_ESSL TRUE)
-	set(BLAS_LIBS ${ESSL_LIBRARIES})
-	message(STATUS "Using ESSL: " ${ESSL_LIBRARY_PATH})
+    add_definitions(-DUSE_ESSL)
+    set(USE_ESSL TRUE)
+    set(BLAS_LIBS ${ESSL_LIBRARIES})
+    message(STATUS "Using ESSL: " ${ESSL_LIBRARY_PATH})
 else(IS_XLC AND ESSL_FOUND)
 if(GSL_FOUND AND LAPACK_FOUND)
-	add_definitions(-DUSE_GSL)
-	add_definitions(-DUSE_LAPACK)
-	set(USE_GSL TRUE)
-	include_directories(${GSL_INCLUDE_PATH})
-	set(BLAS_LIBS ${GSL_LIBRARIES})
-	set(LAPACK_LIBS ${LAPACK_LIBRARY_PATH})
-	message(STATUS "Using GSL: " ${GSL_INCLUDE_PATH})
-	message(STATUS "Using LAPACK: " ${LAPACK_LIBRARY_PATH})
+    add_definitions(-DUSE_GSL)
+    add_definitions(-DUSE_LAPACK)
+    set(USE_GSL TRUE)
+    include_directories(${GSL_INCLUDE_PATH})
+    set(BLAS_LIBS ${GSL_LIBRARIES})
+    set(LAPACK_LIBS ${LAPACK_LIBRARY_PATH})
+    message(STATUS "Using GSL: " ${GSL_INCLUDE_PATH})
+    message(STATUS "Using LAPACK: " ${LAPACK_LIBRARY_PATH})
 else(GSL_FOUND AND LAPACK_FOUND)
 if(GSL_FOUND)
-	add_definitions(-DUSE_GSL)
-	set(USE_GSL TRUE)
-	include_directories(${GSL_INCLUDE_PATH})
-	set(BLAS_LIBS ${GSL_LIBRARIES})
-	message(STATUS "Using GSL: " ${GSL_INCLUDE_PATH})
+    add_definitions(-DUSE_GSL)
+    set(USE_GSL TRUE)
+    include_directories(${GSL_INCLUDE_PATH})
+    set(BLAS_LIBS ${GSL_LIBRARIES})
+    message(STATUS "Using GSL: " ${GSL_INCLUDE_PATH})
 else(GSL_FOUND)
 if(CBLAS_FOUND)
-	add_definitions(-DUSE_CBLAS)
-	set(USE_CBLAS TRUE)
-	include_directories(${CBLAS_INCLUDE_PATH})
-	set(BLAS_LIBS ${CBLAS_LIBRARIES})
-	message(STATUS "Using CBLAS: " ${CBLAS_INCLUDE_PATH})
+    add_definitions(-DUSE_CBLAS)
+    set(USE_CBLAS TRUE)
+    include_directories(${CBLAS_INCLUDE_PATH})
+    set(BLAS_LIBS ${CBLAS_LIBRARIES})
+    message(STATUS "Using CBLAS: " ${CBLAS_INCLUDE_PATH})
 else(CBLAS_FOUND)
 if(NOT IS_ICPC AND MKL_FOUND)
-	SetupMKL()
+    SetupMKL()
 else(NOT IS_ICPC AND MKL_FOUND)
-	message(FATAL_ERROR "Could not find a BLAS library")
+    message(FATAL_ERROR "Could not find a BLAS library")
 endif(NOT IS_ICPC AND MKL_FOUND)
 endif(CBLAS_FOUND)
 if(CBLAS_FOUND)
 if(LAPACK_FOUND)
-	add_definitions(-DUSE_LAPACK)
-	set(LAPACK_LIBS ${LAPACK_LIBRARY_PATH})
-	message(STATUS "Using LAPACK: " ${LAPACK_LIBRARY_PATH})
+    add_definitions(-DUSE_LAPACK)
+    set(LAPACK_LIBS ${LAPACK_LIBRARY_PATH})
+    message(STATUS "Using LAPACK: " ${LAPACK_LIBRARY_PATH})
 else(LAPACK_FOUND)
-	message(FATAL_ERROR "Could not find a LAPACK library")
+    message(FATAL_ERROR "Could not find a LAPACK library")
 endif(LAPACK_FOUND)
 endif(CBLAS_FOUND)
 endif(GSL_FOUND)
@@ -89,7 +102,7 @@ endif(IS_XLC AND ESSL_FOUND)
 endif(ACML_FOUND)
 endif(IS_ICPC AND MKL_FOUND)
 
-#	Libtensor dependencies (libraries)
+#   Libtensor dependencies (libraries)
 #
 set(LIBTENSOR_DEP_LIBS ${LAPACK_LIBS} ${BLAS_LIBS})
 

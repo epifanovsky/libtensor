@@ -2,6 +2,7 @@
 #define LIBTENSOR_DENSE_TENSOR_IMPL_H
 
 #include <sstream>
+#include <libutil/threads/auto_lock.h>
 #include <libtensor/exception.h>
 #include "../dense_tensor.h"
 
@@ -78,6 +79,8 @@ template<size_t N, typename T, typename Alloc>
 typename dense_tensor<N, T, Alloc>::handle_t
 dense_tensor<N, T, Alloc>::on_req_open_session() {
 
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
+
     size_t sz = m_sessions.size();
 
     for(register size_t i = 0; i < sz; i++) {
@@ -98,6 +101,8 @@ dense_tensor<N, T, Alloc>::on_req_open_session() {
 
 template<size_t N, typename T, typename Alloc>
 void dense_tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
+
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
 
     verify_session(h);
 
@@ -121,6 +126,8 @@ void dense_tensor<N, T, Alloc>::on_req_close_session(const handle_t &h) {
 template<size_t N, typename T, typename Alloc>
 void dense_tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
 
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
+
     verify_session(h);
 
     if(m_dataptr == 0 && m_const_dataptr == 0) Alloc::prefetch(m_data);
@@ -129,6 +136,8 @@ void dense_tensor<N, T, Alloc>::on_req_prefetch(const handle_t &h) {
 
 template<size_t N, typename T, typename Alloc>
 void dense_tensor<N, T, Alloc>::on_req_priority(const handle_t &h, bool pri) {
+
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
 
     verify_session(h);
 
@@ -141,6 +150,8 @@ template<size_t N, typename T, typename Alloc>
 T *dense_tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
 
     static const char *method = "on_req_dataptr(const handle_t&)";
+
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
 
     verify_session(h);
 
@@ -157,9 +168,9 @@ T *dense_tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
             "Data pointer is already checked out for ro");
     }
 
-    timings< dense_tensor<N, T, Alloc> >::start_timer("lock_rw");
+    dense_tensor::start_timer("lock_rw");
     m_dataptr = Alloc::lock_rw(m_data);
-    timings< dense_tensor<N, T, Alloc> >::stop_timer("lock_rw");
+    dense_tensor::stop_timer("lock_rw");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
     return m_dataptr;
@@ -170,6 +181,8 @@ template<size_t N, typename T, typename Alloc>
 void dense_tensor<N, T, Alloc>::on_ret_dataptr(const handle_t &h, const T *p) {
 
     static const char *method = "on_ret_dataptr(const handle_t&, const T*)";
+
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
 
     verify_session(h);
 
@@ -193,6 +206,8 @@ const T *dense_tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
 
     static const char *method = "on_req_const_dataptr(const handle_t&)";
 
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
+
     verify_session(h);
 
     if(m_dataptr != 0) {
@@ -205,9 +220,9 @@ const T *dense_tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
         return m_const_dataptr;
     }
 
-    timings< dense_tensor<N, T, Alloc> >::start_timer("lock_ro");
+    dense_tensor::start_timer("lock_ro");
     m_const_dataptr = Alloc::lock_ro(m_data);
-    timings< dense_tensor<N, T, Alloc> >::stop_timer("lock_ro");
+    dense_tensor::stop_timer("lock_ro");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
     return m_const_dataptr;
@@ -220,6 +235,8 @@ void dense_tensor<N, T, Alloc>::on_ret_const_dataptr(const handle_t &h,
 
     static const char *method =
         "on_ret_const_dataptr(const handle_t&, const T*)";
+
+    libutil::auto_lock<libutil::mutex> lock(m_mtx);
 
     verify_session(h);
 

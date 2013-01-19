@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_MAGIC_DIMENSIONS_H
 #define LIBTENSOR_MAGIC_DIMENSIONS_H
 
+#include <stdint.h> // required for libdivide
 #include "impl/libdivide.h"
 #include "out_of_bounds.h"
 #include "dimensions.h"

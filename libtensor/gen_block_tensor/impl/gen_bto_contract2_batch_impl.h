@@ -218,13 +218,13 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
 
         {
             tensor_transf<NA, element_type> tra(m_perma);
-            gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2);
+            gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2, false);
             cpaout.open();
             gen_bto_copy_a_type(m_bta, tra).perform(m_batcha, cpaout);
             cpaout.close();
 
             tensor_transf<NB, element_type> trb(m_permb);
-            gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2);
+            gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2, false);
             cpbout.open();
             gen_bto_copy_b_type(m_btb, trb).perform(m_batchb, cpbout);
             cpbout.close();

@@ -18,7 +18,6 @@ set(SRC_CORE
     core/index_range_test.C
     core/magic_dimensions_test.C
     core/mask_test.C
-    core/mp_safe_tensor_test.C
     core/orbit_test.C
     core/orbit_list_test.C
     core/permutation_test.C
@@ -61,6 +60,7 @@ set(SRC_TOD
     tod/tod_set_diag_test.C
     tod/tod_set_elem_test.C
     tod/tod_set_test.C
+    tod/tod_size_test.C
     tod/tod_trace_test.C
     tod/tod_vmpriority_test.C
 )

@@ -3,7 +3,6 @@
 
 #include <libutil/threads/auto_lock.h>
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/mp/default_sync_policy.h>
 #include <libtensor/core/abs_index.h>
 #include "block_map_impl.h"
 
@@ -155,7 +154,9 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
         m_cond.insert(aidx.get_abs_index(), &cond);
         m_lock.unlock();
         try {
+            libutil::thread_pool::release_cpu();
             cond.wait();
+            libutil::thread_pool::acquire_cpu();
         } catch(...) {
             m_lock.lock();
             throw;
