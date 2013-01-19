@@ -9,7 +9,7 @@ libtensor_cuda_dense_tensor_suite::libtensor_cuda_dense_tensor_suite() :
     add_test("cuda_tod_contract2", m_utf_cuda_tod_contract2);
     add_test("tod_cuda_copy", m_utf_tod_cuda_copy);
     add_test("cuda_tod_copy_hd", m_utf_cuda_tod_copy_hd);
-    add_test("tod_set_cuda", m_utf_tod_set_cuda);
+    add_test("cuda_tod_set", m_utf_cuda_tod_set);
     add_test("tod_add_cuda", m_utf_tod_add_cuda);
 }
 

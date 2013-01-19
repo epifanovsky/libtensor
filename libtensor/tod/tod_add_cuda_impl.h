@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TOD_ADD_CUDA_IMPL_H
 #define LIBTENSOR_TOD_ADD_CUDA_IMPL_H
 
-#include "tod_set_cuda.h"
+#include <libtensor/cuda_dense_tensor/cuda_tod_set.h>
 //#include "tod_set.h"
 
 namespace libtensor {
@@ -107,7 +107,7 @@ void tod_add_cuda<N>::perform(bool zero, double c,
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    if(zero) tod_set_cuda<N>().perform(t);
+    if(zero) cuda_tod_set<N>().perform(t);
     if(c == 0.0) return;
 
     tod_add_cuda<N>::start_timer();

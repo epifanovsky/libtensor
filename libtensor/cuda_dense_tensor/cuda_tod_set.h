@@ -1,7 +1,8 @@
-#ifndef LIBTENSOR_TOD_SET_CUDA_H
-#define LIBTENSOR_TOD_SET_CUDA_H
+#ifndef LIBTENSOR_CUDA_TOD_SET_H
+#define LIBTENSOR_CUDA_TOD_SET_H
 
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/dense_tensor/dense_tensor_i.h>
 
 namespace libtensor {
 
@@ -9,10 +10,10 @@ namespace libtensor {
 /** \brief Sets all elements of a tensor to the given value
     \tparam N Tensor order.
 
-    \ingroup libtensor_tod
+    \ingroup libtensor_cuda_tod
  **/
 template<size_t N>
-class tod_set_cuda {
+class cuda_tod_set : public noncopyable {
 private:
     double m_v; //!< Value
 
@@ -20,7 +21,7 @@ public:
     /**	\brief Initializes the operation
         \param v Value to be assigned to the tensor elements.
      **/
-    tod_set_cuda(double v = 0.0);
+    cuda_tod_set(double v = 0.0);
 
     /**	\brief Performs the operation
         \param t Output tensor.
@@ -32,4 +33,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_TOD_SET_CUDA_H
+#endif // LIBTENSOR_CUDA_TOD_SET_H

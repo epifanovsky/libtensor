@@ -1,18 +1,18 @@
-#include "tod_set_cuda.h"
-#include "kernels/cuda_kern_set.h"
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "../cuda_tod_set.h"
+#include "cuda_kern_set.h"
 
 namespace libtensor {
 
-template<size_t N>
-tod_set_cuda<N>::tod_set_cuda(const double v) :
 
-    m_v(v) {
+template<size_t N>
+cuda_tod_set<N>::cuda_tod_set(double v) : m_v(v) {
 
 }
 
 
 template<size_t N>
-void tod_set_cuda<N>::perform(dense_tensor_wr_i<N, double> &t) {
+void cuda_tod_set<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
     dense_tensor_wr_ctrl<N, double> ctrl(t);
     double *d = ctrl.req_dataptr();
@@ -42,14 +42,6 @@ void tod_set_cuda<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
     ctrl.ret_dataptr(d);
 }
-
-template class tod_set_cuda<1>;
-template class tod_set_cuda<2>;
-template class tod_set_cuda<3>;
-template class tod_set_cuda<4>;
-template class tod_set_cuda<5>;
-template class tod_set_cuda<6>;
-
 
 
 } // namespace libtensor
