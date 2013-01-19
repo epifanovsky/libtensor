@@ -22,7 +22,9 @@ set(SRC
 set(SRC_CUDA
     cuda_dense_tensor/local_cublas_handle.C
     cuda_dense_tensor/impl/cuda_kern_set.cu
+    cuda_dense_tensor/impl/cuda_tod_add.C
     cuda_dense_tensor/impl/cuda_tod_contract2.C
+    cuda_dense_tensor/impl/cuda_tod_copy.C
     cuda_dense_tensor/impl/cuda_tod_copy_d2h.C
     cuda_dense_tensor/impl/cuda_tod_copy_h2d.C
     cuda_dense_tensor/impl/cuda_tod_set.cu
@@ -32,7 +34,6 @@ set(SRC_CUDA
     tod/kernels/cuda_kern_copy_6d.cu
     tod/kernels/cuda_kern_copy_generic.cu
     tod/kernels/cuda_kern_functions.cu
-    tod/tod_add_cuda.C
 )
 
 set(SRC_LINALG_ACML

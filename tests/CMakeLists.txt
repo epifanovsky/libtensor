@@ -68,11 +68,11 @@ set(SRC_TOD
 set(SRC_CUDA_DENSE_TENSOR
     cuda_dense_tensor/libtensor_cuda_dense_tensor_tests.C
     cuda_dense_tensor/libtensor_cuda_dense_tensor_suite.C
+    cuda_dense_tensor/cuda_tod_add_test.C
     cuda_dense_tensor/cuda_tod_contract2_test.C
-    cuda_dense_tensor/tod_cuda_copy_test.cu
+    cuda_dense_tensor/cuda_tod_copy_test.C
     cuda_dense_tensor/cuda_tod_copy_hd_test.cu
     cuda_dense_tensor/cuda_tod_set_test.C
-    cuda_dense_tensor/tod_add_cuda_test.cu    
 )
 
 set(SRC_DIAG_TENSOR

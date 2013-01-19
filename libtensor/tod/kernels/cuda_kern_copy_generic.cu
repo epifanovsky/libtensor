@@ -74,10 +74,16 @@ cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *
 
 }
 
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<1> &dimsa,
+		const permutation<1> &perma, const double &c, const double &d);
 template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<2> &dimsa,
 		const permutation<2> &perma, const double &c, const double &d);
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<3> &dimsa,
+		const permutation<3> &perma, const double &c, const double &d);
 template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<4> &dimsa,
 		const permutation<4> &perma, const double &c, const double &d);
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<5> &dimsa,
+		const permutation<5> &perma, const double &c, const double &d);
 template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<6> &dimsa,
 		const permutation<6> &perma, const double &c, const double &d);
 

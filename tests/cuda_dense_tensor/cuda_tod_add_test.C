@@ -1,19 +1,17 @@
-#include <algorithm>
-#include <cmath>
 #include <sstream>
+#include <libvmm/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/tod/tod_add_cuda.h>
+#include <libtensor/cuda_dense_tensor/cuda_tod_add.h>
+#include <libtensor/cuda_dense_tensor/cuda_tod_copy_d2h.h>
+#include <libtensor/cuda_dense_tensor/cuda_tod_copy_h2d.h>
 #include "../compare_ref.h"
-#include "tod_add_cuda_test.h"
+#include "cuda_tod_add_test.h"
 
 namespace libtensor {
 
 
-const double tod_add_cuda_test::k_thresh = 1e-14;
-
-
-void tod_add_cuda_test::perform() throw(libtest::test_exception) {
+void cuda_tod_add_test::perform() throw(libtest::test_exception) {
 
     test_exc();
 
@@ -25,13 +23,12 @@ void tod_add_cuda_test::perform() throw(libtest::test_exception) {
     test_add_two_pqrs_qpsr(2, 3, 4, 5);
     test_add_two_ijkl_kjli(1, 2, 13, 2, 0.5, -1.0);
     test_add_mult(3, 2, 5, 4);
-    //*/
 }
 
 
-void tod_add_cuda_test::test_exc() throw(libtest::test_exception) {
+void cuda_tod_add_test::test_exc() throw(libtest::test_exception) {
 
-    static const char *testname = "tod_add_cuda_test::test_exc()";
+    static const char *testname = "cuda_tod_add_test::test_exc()";
 
     typedef std_allocator<double> std_allocator;
     typedef libvmm::cuda_allocator<double> cuda_allocator;
@@ -50,7 +47,7 @@ void tod_add_cuda_test::test_exc() throw(libtest::test_exception) {
 
     dense_tensor<4, double, std_allocator> h_t1(dim), h_t2(dim);
     dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim);
-    tod_add_cuda<4> add(d_t1, p1, 0.4);
+    cuda_tod_add<4> add(d_t1, p1, 0.4);
 
     bool ok = false;
     try {
@@ -83,11 +80,11 @@ void tod_add_cuda_test::test_exc() throw(libtest::test_exception) {
 }
 
 
-void tod_add_cuda_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
+void cuda_tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
     throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_to_self_pqrs(" << p << "," << q << ","
+    tnss << "cuda_tod_add_test::test_add_to_self_pqrs(" << p << "," << q << ","
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
@@ -106,7 +103,6 @@ void tod_add_cuda_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size
     dense_tensor<4, double, std_allocator> h_tc(dim), h_ta(dim), tc_ref(dim);
     dense_tensor<4, double, cuda_allocator> d_tc(dim), d_ta(dim);
 
-    double ta_max = 0.0;
     {
         dense_tensor_ctrl<4, double> ctrla(h_ta), ctrlc_ref(tc_ref);
 
@@ -118,34 +114,33 @@ void tod_add_cuda_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size
         const double *cptra = ctrla.req_const_dataptr();
         for(size_t i = 0; i < dim.get_size(); i++) {
             ptrc_ref[i] = 2.0 * cptra[i] + 0.5 * cptra[i];
-            ta_max = std::max(ta_max, fabs(cptra[i]));
         }
         ctrla.ret_const_dataptr(cptra); cptra = 0;
         ctrlc_ref.ret_dataptr(ptrc_ref); ptrc_ref = 0;
     }
 
-    copyTensorHostToDevice(h_ta, d_ta);
+    cuda_tod_copy_h2d<4>(h_ta).perform(d_ta);
 
-    tod_add_cuda<4> add(d_ta, 2.0);
+    cuda_tod_add<4> add(d_ta, 2.0);
     add.add_op(d_ta, 0.5);
     add.prefetch();
     add.perform(true, 1.0, d_tc);
 
-    copyTensorDeviceToHost(d_tc, h_tc);
+    cuda_tod_copy_d2h<4>(d_tc).perform(h_tc);
 
-    compare_ref<4>::compare(tn.c_str(), h_tc, tc_ref, ta_max * k_thresh);
-//*/
+    compare_ref<4>::compare(tn.c_str(), h_tc, tc_ref, 1e-15);
+
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
 }
 
 
-void tod_add_cuda_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
+void cuda_tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     size_t s) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_to_pqrs_pqrs(" << p << "," << q << ","
+    tnss << "cuda_tod_add_test::test_add_to_pqrs_pqrs(" << p << "," << q << ","
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
@@ -164,7 +159,6 @@ void tod_add_cuda_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     dense_tensor<4, double, std_allocator> h_t1(dim), h_t2(dim), t1_ref(dim);
     dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim);
 
-    double t2_max = 0.0;
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
 
@@ -181,21 +175,20 @@ void tod_add_cuda_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
         const double* cptr2 = ctrl2.req_const_dataptr();
         for(size_t i = 0; i < dim.get_size(); i++) {
             ptr1_ref[i] += 2.0 * cptr2[i];
-            t2_max = std::max(t2_max, fabs(cptr2[i]));
         }
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
     }
-    copyTensorHostToDevice(h_t1, d_t1);
-    copyTensorHostToDevice(h_t2, d_t2);
+    cuda_tod_copy_h2d<4>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<4>(h_t2).perform(d_t2);
 
-    tod_add_cuda<4> add(d_t2, 2.0);
+    cuda_tod_add<4> add(d_t2, 2.0);
     add.prefetch();
     add.perform(false, 1.0, d_t1);
 
-    copyTensorDeviceToHost(d_t1, h_t1);
+    cuda_tod_copy_d2h<4>(d_t1).perform(h_t1);
 
-    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, t2_max * k_thresh);
+    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -203,11 +196,11 @@ void tod_add_cuda_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
 }
 
 
-void tod_add_cuda_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
+void cuda_tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     size_t s) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_two_pqrs_qprs(" << p << "," << q << ","
+    tnss << "cuda_tod_add_test::test_add_two_pqrs_qprs(" << p << "," << q << ","
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
@@ -230,7 +223,6 @@ void tod_add_cuda_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     dense_tensor<4, double, std_allocator> h_t1(dim1), h_t2(dim2), t1_ref(dim1);
     dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
 
-    double t2_max = 0.0;
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
 
@@ -255,22 +247,21 @@ void tod_add_cuda_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
             i1[0] = j; i1[1] = i; i1[2] = k; i1[3] = l;
             abs_index<4> ai(i1, dim2);
             ptr1_ref[cnt] += 0.1 * cptr2[ai.get_abs_index()];
-            t2_max = std::max(t2_max, fabs(cptr2[ai.get_abs_index()]));
             cnt++;
         }
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
     }
-    copyTensorHostToDevice(h_t1, d_t1);
-    copyTensorHostToDevice(h_t2, d_t2);
+    cuda_tod_copy_h2d<4>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<4>(h_t2).perform(d_t2);
 
-    tod_add_cuda<4> add(d_t2, p2, 0.1);
+    cuda_tod_add<4> add(d_t2, p2, 0.1);
     add.prefetch();
     add.perform(false, 1.0, d_t1);
 
-    copyTensorDeviceToHost(d_t1, h_t1);
+    cuda_tod_copy_d2h<4>(d_t1).perform(h_t1);
 
-    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, t2_max * k_thresh);
+    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -278,11 +269,11 @@ void tod_add_cuda_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
 }
 
 
-void tod_add_cuda_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
+void cuda_tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     size_t s) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_two_pqrs_prsq(";
+    tnss << "cuda_tod_add_test::test_add_two_pqrs_prsq(";
     tnss << p << "," << q << "," << r << "," << s << ")";
     std::string tn = tnss.str();
 
@@ -307,7 +298,6 @@ void tod_add_cuda_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     dense_tensor<4, double, std_allocator> h_t1(dim1), h_t2(dim2), t1_ref(dim1);
     dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
 
-    double t2_max = 0.0;
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
 
@@ -330,23 +320,22 @@ void tod_add_cuda_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
             i1[0] = i; i1[1] = k; i1[2] = l; i1[3] = j;
             abs_index<4> ai(i1, dim2);
             ptr1_ref[cnt] += 0.1 * cptr2[ai.get_abs_index()];
-            t2_max = std::max(t2_max, fabs(cptr2[ai.get_abs_index()]));
             cnt++;
         }
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
     }
 
-    copyTensorHostToDevice(h_t1, d_t1);
-    copyTensorHostToDevice(h_t2, d_t2);
+    cuda_tod_copy_h2d<4>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<4>(h_t2).perform(d_t2);
 
-    tod_add_cuda<4> add(d_t2, p2, 0.1);
+    cuda_tod_add<4> add(d_t2, p2, 0.1);
     add.prefetch();
     add.perform(false, 1.0, d_t1);
 
-    copyTensorDeviceToHost(d_t1, h_t1);
+    cuda_tod_copy_d2h<4>(d_t1).perform(h_t1);
 
-    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, t2_max * k_thresh);
+    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -354,11 +343,11 @@ void tod_add_cuda_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
 }
 
 
-void tod_add_cuda_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
+void cuda_tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     size_t s) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_two_pqrs_qpsr(";
+    tnss << "cuda_tod_add_test::test_add_two_pqrs_qpsr(";
     tnss << p << "," << q << "," << r << "," << s << ")";
     std::string tn = tnss.str();
 
@@ -382,7 +371,6 @@ void tod_add_cuda_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     dense_tensor<4, double, std_allocator> h_t1(dim1), h_t2(dim2), t1_ref(dim1);
     dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
 
-    double t2_max = 0.0;
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
 
@@ -407,23 +395,22 @@ void tod_add_cuda_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
             i1[0] = j; i1[1] = i; i1[2] = l; i1[3] = k;
             abs_index<4> ai(i1, dim2);
             ptr1_ref[cnt] += 0.1 * cptr2[ai.get_abs_index()];
-            t2_max = std::max(t2_max, fabs(cptr2[ai.get_abs_index()]));
             cnt++;
         }
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
     }
 
-    copyTensorHostToDevice(h_t1, d_t1);
-	copyTensorHostToDevice(h_t2, d_t2);
+    cuda_tod_copy_h2d<4>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<4>(h_t2).perform(d_t2);
 
-	tod_add_cuda<4> add(d_t2, p2, 0.1);
-	add.prefetch();
-	add.perform(false, 1.0, d_t1);
+    cuda_tod_add<4> add(d_t2, p2, 0.1);
+    add.prefetch();
+    add.perform(false, 1.0, d_t1);
 
-	copyTensorDeviceToHost(d_t1, h_t1);
+    cuda_tod_copy_d2h<4>(d_t1).perform(h_t1);
 
-    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, t2_max * k_thresh);
+    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -431,11 +418,11 @@ void tod_add_cuda_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
 }
 
 
-void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
+void cuda_tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     size_t nl, double c1, double c2) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_two_ijkl_kjli(" << ni << ", " << nj << ", "
+    tnss << "cuda_tod_add_test::test_add_two_ijkl_kjli(" << ni << ", " << nj << ", "
         << nk << ", " << nl << ", " << c1 << ", " << c2 << ")";
     std::string tn = tnss.str();
 
@@ -458,7 +445,7 @@ void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     dense_tensor<4, double, std_allocator> h_t1(dims_ijkl), h_t2(dims_kjli),
         h_t3(dims_kjli), t3_ref(dims_kjli);
     dense_tensor<4, double, cuda_allocator> d_t1(dims_ijkl), d_t2(dims_kjli),
-           d_t3(dims_kjli);
+        d_t3(dims_kjli);
 
     dense_tensor_ctrl<4, double> ct1(h_t1), ct2(h_t2), ct3_ref(t3_ref);
 
@@ -466,16 +453,15 @@ void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     double *p2 = ct2.req_dataptr();
     double *p3_ref = ct3_ref.req_dataptr();
 
-    //	Generate random input
+    //    Generate random input
 
     for(size_t i = 0; i < sz; i++) {
         p1[i] = drand48();
         p2[i] = drand48();
     }
 
-    //	Generate output reference data
+    //    Generate output reference data
 
-    double t3_max = 0.0;
     abs_index<4> ai(dims_ijkl);
     do {
         index<4> i1(ai.get_index()), i2(ai.get_index()), i3(ai.get_index());
@@ -486,25 +472,24 @@ void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
             dims_kjli);
         p3_ref[ai3.get_abs_index()] = c1 * p1[ai1.get_abs_index()] + c2
             * p2[ai2.get_abs_index()];
-        t3_max = std::max(t3_max, fabs(p3_ref[ai3.get_abs_index()]));
     } while(ai.inc());
 
     ct3_ref.ret_dataptr(p3_ref); p3_ref = 0;
     ct2.ret_dataptr(p2); p2 = 0;
     ct1.ret_dataptr(p1); p1 = 0;
 
-    copyTensorHostToDevice(h_t1, d_t1);
-   	copyTensorHostToDevice(h_t2, d_t2);
+    cuda_tod_copy_h2d<4>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<4>(h_t2).perform(d_t2);
 
-    //	Invoke the operation
+    //  Invoke the operation
 
-    tod_add_cuda<4> op(d_t1, perm, c1);
+    cuda_tod_add<4> op(d_t1, perm, c1);
     op.add_op(d_t2, c2);
     op.perform(true, 1.0, d_t3);
 
-    copyTensorDeviceToHost(d_t3, h_t3);
+    cuda_tod_copy_d2h<4>(d_t3).perform(h_t3);
 
-    compare_ref<4>::compare(tn.c_str(), h_t3, t3_ref, t3_max * k_thresh);
+    compare_ref<4>::compare(tn.c_str(), h_t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -512,11 +497,11 @@ void tod_add_cuda_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 }
 
 
-void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
+void cuda_tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_mult(" << p << "," << q << "," << r << ","
+    tnss << "cuda_tod_add_test::test_add_mult(" << p << "," << q << "," << r << ","
         << s << ")";
     std::string tn = tnss.str();
 
@@ -536,7 +521,6 @@ void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
         t1_ref(dim);
     dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim), d_t3(dim3), d_t4(dim);
 
-    double t_max = 0.0;
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl3(h_t3), ctrl4(h_t4),
             ctrl1_ref(t1_ref);
@@ -569,7 +553,6 @@ void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
             abs_index<4> ai(i1, dim3);
             ptr1_ref[cnt] += 0.5 * (cptr2[cnt] -
                 4.0 * cptr3[ai.get_abs_index()] + 0.2 * cptr4[cnt]);
-            t_max = std::max(t_max, fabs(ptr1_ref[cnt]));
             cnt++;
         }
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
@@ -578,20 +561,20 @@ void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
         ctrl4.ret_const_dataptr(cptr4); cptr4 = 0;
     }
 
-    copyTensorHostToDevice(h_t1, d_t1);
-    copyTensorHostToDevice(h_t2, d_t2);
-    copyTensorHostToDevice(h_t3, d_t3);
-    copyTensorHostToDevice(h_t4, d_t4);
+    cuda_tod_copy_h2d<4>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<4>(h_t2).perform(d_t2);
+    cuda_tod_copy_h2d<4>(h_t3).perform(d_t3);
+    cuda_tod_copy_h2d<4>(h_t4).perform(d_t4);
 
-    tod_add_cuda<4> add(d_t2, 1.0);
+    cuda_tod_add<4> add(d_t2, 1.0);
     add.add_op(d_t3, p3, -4.0);
     add.add_op(d_t4, 0.2);
     add.prefetch();
     add.perform(false, 0.5, d_t1);
 
-    copyTensorDeviceToHost(d_t1, h_t1);
+    cuda_tod_copy_d2h<4>(d_t1).perform(h_t1);
 
-    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, t_max * k_thresh);
+    compare_ref<4>::compare(tn.c_str(), h_t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
@@ -599,11 +582,11 @@ void tod_add_cuda_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
 }
 
 
-void tod_add_cuda_test::test_add_two_pq_qp(size_t p, size_t q)
+void cuda_tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "tod_add_cuda_test::test_add_two_pq_qp(" << p << "," << q << ")";
+    tnss << "cuda_tod_add_test::test_add_two_pq_qp(" << p << "," << q << ")";
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
@@ -623,7 +606,6 @@ void tod_add_cuda_test::test_add_two_pq_qp(size_t p, size_t q)
     dense_tensor<2, double, std_allocator> h_t1(dim), h_t2(dim), h_t3(dim3), t1_ref(dim);
     dense_tensor<2, double, cuda_allocator> d_t1(dim), d_t2(dim), d_t3(dim3);
 
-    double t_max = 0.0;
     {
         dense_tensor_ctrl<2, double> ctrl1(h_t1), ctrl2(h_t2), ctrl3(h_t3),
             ctrl1_ref(t1_ref);
@@ -647,7 +629,6 @@ void tod_add_cuda_test::test_add_two_pq_qp(size_t p, size_t q)
         for(size_t i = 0; i < dim[0]; i++)
         for(size_t j = 0; j < dim[1]; j++) {
             ptr1_ref[cnt] += 0.5 * (2.0 * cptr2[cnt] - cptr3[j * dim3[1] + i]);
-            t_max = std::max(t_max, fabs(ptr1_ref[cnt]));
             cnt++;
         }
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
@@ -655,48 +636,24 @@ void tod_add_cuda_test::test_add_two_pq_qp(size_t p, size_t q)
         ctrl3.ret_const_dataptr(cptr3); cptr3 = 0;
     }
 
-    copyTensorHostToDevice(h_t1, d_t1);
-    copyTensorHostToDevice(h_t2, d_t2);
-    copyTensorHostToDevice(h_t3, d_t3);
+    cuda_tod_copy_h2d<2>(h_t1).perform(d_t1);
+    cuda_tod_copy_h2d<2>(h_t2).perform(d_t2);
+    cuda_tod_copy_h2d<2>(h_t3).perform(d_t3);
 
-    tod_add_cuda<2> add(d_t2, 2.0);
+    cuda_tod_add<2> add(d_t2, 2.0);
     add.add_op(d_t3, p3, -1.0);
     add.prefetch();
     add.perform(false, 0.5, d_t1);
 
-    copyTensorDeviceToHost(d_t1, h_t1);
+    cuda_tod_copy_d2h<2>(d_t1).perform(h_t1);
 
-    compare_ref<2>::compare(tn.c_str(), h_t1, t1_ref, t_max * k_thresh);
+    compare_ref<2>::compare(tn.c_str(), h_t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
 }
 
-template<typename T, size_t N>
-void tod_add_cuda_test::copyTensorHostToDevice(dense_tensor<N, T, std_allocator<T> > &ht, dense_tensor<N, T, libvmm::cuda_allocator<T> > &dt)
-{
-	dense_tensor_ctrl<N, T> dtc(dt);
-	dense_tensor_ctrl<N, T> htc(ht);
-	T *hdta = htc.req_dataptr();
-	T *ddta = dtc.req_dataptr();
-	libvmm::cuda_allocator<T>::copy_to_device(ddta, hdta, ht.get_dims().get_size());
-
-	htc.ret_dataptr(hdta); hdta = NULL;
-	dtc.ret_dataptr(ddta); ddta = NULL;
-}
-
-template<typename T, size_t N>
-//void copyTensorDeviceToHost(tensor<N, T, cuda_allocator_t> dt, tensor<N, T, std_allocator_t> ht)
-void tod_add_cuda_test::copyTensorDeviceToHost(dense_tensor<N, T, libvmm::cuda_allocator<T> > &dt, dense_tensor<N, T, std_allocator<T> > &ht)
-{
-	dense_tensor_ctrl<N, T> htc(ht), dtc(dt);
-	T *hdta = htc.req_dataptr();
-	T *ddta = dtc.req_dataptr();
-	libvmm::cuda_allocator<T>::copy_to_host(hdta, ddta, ht.get_dims().get_size());
-
-	htc.ret_dataptr(hdta); hdta = NULL;
-	dtc.ret_dataptr(ddta); ddta = NULL;
-}
 
 } // namespace libtensor
+

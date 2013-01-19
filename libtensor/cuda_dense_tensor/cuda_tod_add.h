@@ -1,9 +1,10 @@
-#ifndef LIBTENSOR_TOD_ADD_CUDA_H
-#define LIBTENSOR_TOD_ADD_CUDA_H
+#ifndef LIBTENSOR_CUDA_TOD_ADD_H
+#define LIBTENSOR_CUDA_TOD_ADD_H
 
 #include <list>
-#include <libtensor/core/bad_dimensions.h>
-#include "tod_cuda_copy.h"
+#include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
+#include <libtensor/dense_tensor/dense_tensor_i.h>
 
 namespace libtensor {
 
@@ -21,7 +22,7 @@ namespace libtensor {
     \ingroup libtensor_tod
  **/
 template<size_t N>
-class tod_add_cuda : public timings< tod_add_cuda<N> > {
+class cuda_tod_add : public timings< cuda_tod_add<N> >, public noncopyable {
 public:
     static const char* k_clazz; //!< Class name
 
@@ -46,19 +47,19 @@ public:
         \param t First %tensor in the series.
         \param c Scaling coefficient.
      **/
-    tod_add_cuda(dense_tensor_i<N, double> &t, double c = 1.0);
+    cuda_tod_add(dense_tensor_i<N, double> &t, double c = 1.0);
 
     /** \brief Initializes the addition operation
         \param t First %tensor in the series.
         \param p Permutation of the first %tensor.
         \param c Scaling coefficient.
      **/
-    tod_add_cuda(dense_tensor_i<N, double> &t, const permutation<N> &p,
+    cuda_tod_add(dense_tensor_i<N, double> &t, const permutation<N> &p,
         double c = 1.0);
 
     /** \brief Virtual destructor
      **/
-    virtual ~tod_add_cuda();
+    virtual ~cuda_tod_add();
 
     //@}
 
@@ -83,15 +84,9 @@ public:
      **/
     void prefetch();
 
+    /** \brief Computes the sum into the output tensor
+     **/
     void perform(bool zero, double c, dense_tensor_i<N, double> &tb);
-
-    /** \brief Computes the sum into the output %tensor
-     **/
-//    void perform(dense_tensor_i<N, double> &t);
-
-    /** \brief Adds the sum to the output %tensor
-     **/
-//    void perform(dense_tensor_i<N, double> &t, double c);
 
     //@}
 
@@ -106,23 +101,4 @@ private:
 
 } // namespace libtensor
 
-
-#ifdef LIBTENSOR_INSTANTIATE_TEMPLATES
-
-namespace libtensor {
-
-    extern template class tod_add_cuda<1>;
-    extern template class tod_add_cuda<2>;
-    extern template class tod_add_cuda<3>;
-    extern template class tod_add_cuda<4>;
-    extern template class tod_add_cuda<5>;
-    extern template class tod_add_cuda<6>;
-
-} // namespace libtensor
-
-#else // LIBTENSOR_INSTANTIATE_TEMPLATES
-#include "tod_add_cuda_impl.h"
-#endif // LIBTENSOR_INSTANTIATE_TEMPLATES
-
-
-#endif // LIBTENSOR_TOD_ADD_CUDA_H
+#endif // LIBTENSOR_CUDA_TOD_ADD_H
