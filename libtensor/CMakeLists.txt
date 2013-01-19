@@ -34,6 +34,7 @@ set(SRC_CUDA
     tod/kernels/cuda_kern_copy_6d.cu
     tod/kernels/cuda_kern_copy_generic.cu
     tod/kernels/cuda_kern_functions.cu
+    cuda_block_tensor/impl/cuda_btod_copy_h2d.C
 )
 
 set(SRC_LINALG_ACML
