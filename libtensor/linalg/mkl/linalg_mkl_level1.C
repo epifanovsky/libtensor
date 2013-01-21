@@ -3,6 +3,8 @@
 #ifdef HAVE_MKL_VML
 #include <mkl_vml_functions.h>
 #endif // HAVE_MKL_VML
+#include <libutil/threads/spinlock.h>
+#include <libutil/threads/tls.h>
 #include "linalg_mkl_level1.h"
 
 namespace libtensor {
@@ -118,6 +120,100 @@ void linalg_mkl_level1::mul2_i_i_i_x(
             c[i * sic] += d * a[i * sia] * b[i * sib];
         }
         timings_base::stop_timer("nonblas");
+    }
+}
+
+
+namespace {
+
+static struct {
+    libutil::spinlock lock;
+    unsigned n;
+} rng_stream_count;
+
+struct rng_stream {
+    bool init;
+    VSLStreamStatePtr stream;
+    rng_stream() : init(false) { }
+};
+
+} // unnamed namespace
+
+
+void linalg_mkl_level1::rng_setup(
+    void*) {
+
+    rng_stream_count.n = 0;
+}
+
+
+void linalg_mkl_level1::rng_set_i_x(
+    void*,
+    size_t ni,
+    double *a, size_t sia,
+    double c) {
+
+    rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
+    if(!rs.init) {
+        unsigned count = 0;
+        rng_stream_count.lock.lock();
+        count = rng_stream_count.n++;
+        rng_stream_count.lock.unlock();
+        vslNewStream(&rs.stream, VSL_BRNG_MT2203 + count, 162);
+        rs.init = true;
+    }
+
+    if(sia == 1) {
+        if(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+            ni, a, 0.0, c) != VSL_STATUS_OK) {
+            throw 0;
+        }
+    } else {
+        double buf[256];
+        size_t ni1 = ni, off = 0;
+        while(ni1 > 0) {
+            size_t batsz = std::min(ni1, size_t(256));
+            if(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+                batsz, buf, 0.0, c) != VSL_STATUS_OK) {
+                throw 0;
+            }
+            for(size_t i = 0; i < batsz; i++) a[(off + i) * sia] = buf[i];
+            ni1 -= batsz;
+        }
+    }
+}
+
+
+void linalg_mkl_level1::rng_add_i_x(
+    void*,
+    size_t ni,
+    double *a, size_t sia,
+    double c) {
+
+    rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
+    if(!rs.init) {
+        unsigned count = 0;
+        rng_stream_count.lock.lock();
+        count = rng_stream_count.n++;
+        rng_stream_count.lock.unlock();
+        vslNewStream(&rs.stream, VSL_BRNG_MT2203 + count, 162);
+        rs.init = true;
+    }
+
+    double buf[256];
+    size_t ni1 = ni, off = 0;
+    while(ni1 > 0) {
+        size_t batsz = std::min(ni1, size_t(256));
+        if(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+            batsz, buf, 0.0, c) != VSL_STATUS_OK) {
+            throw 0;
+        }
+        if(sia == 1) {
+            for(size_t i = 0; i < batsz; i++) a[off + i] += buf[i];
+        } else {
+            for(size_t i = 0; i < batsz; i++) a[(off + i) * sia] += buf[i];
+        }
+        ni1 -= batsz;
     }
 }
 
