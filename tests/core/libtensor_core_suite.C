@@ -23,7 +23,6 @@ libtensor_core_suite::libtensor_core_suite() :
     add_test("index_range", m_utf_index_range);
     add_test("magic_dimensions", m_utf_magic_dimensions);
     add_test("mask", m_utf_mask);
-    add_test("mp_safe_tensor", m_utf_mp_safe_tensor);
     add_test("orbit", m_utf_orbit);
     add_test("orbit_list", m_utf_orbit_list);
     add_test("permutation", m_utf_permutation);

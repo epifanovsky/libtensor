@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::btod_symmetrize class
 
     \ingroup libtensor_tests_btod
@@ -23,8 +24,10 @@ private:
             bool part, bool doadd) throw(libtest::test_exception);
     void test_6b(bool symm, bool label,
             bool part) throw(libtest::test_exception);
+    void test_7();
 
 };
+
 
 } // namespace libtensor
 

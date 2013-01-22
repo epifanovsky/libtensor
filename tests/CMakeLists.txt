@@ -18,7 +18,6 @@ set(SRC_CORE
     core/index_range_test.C
     core/magic_dimensions_test.C
     core/mask_test.C
-    core/mp_safe_tensor_test.C
     core/orbit_test.C
     core/orbit_list_test.C
     core/permutation_test.C

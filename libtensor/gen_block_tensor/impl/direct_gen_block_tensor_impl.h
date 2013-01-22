@@ -3,7 +3,6 @@
 
 #include <libutil/threads/auto_lock.h>
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/mp/default_sync_policy.h>
 #include <libtensor/core/abs_index.h>
 #include "block_map_impl.h"
 

@@ -3,6 +3,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/iface/iface.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../compare_ref.h"
@@ -24,6 +25,7 @@ void symm_test::perform() throw(libtest::test_exception) {
         test_asymm2_contr_tt_3();
         test_asymm2_contr_tt_4();
         test_asymm2_contr_tt_5();
+        test_asymm2_contr_tt_6();
         test_asymm2_contr_ee_1();
         test_asymm2_contr_ee_2();
 
@@ -348,6 +350,95 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
     }
 
     compare_ref<4>::compare(testname, t4, t4_ref, 6e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
+
+    const char *testname = "symm_test::test_asymm2_contr_tt_6()";
+
+    try {
+
+    bispace<1> sp_i(10), sp_a(20);
+    sp_i.split(3).split(5).split(8);
+    sp_a.split(6).split(10).split(16);
+    bispace<2> sp_ia(sp_i|sp_a);
+    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+
+    btensor<2, double> t1(sp_ia);
+    btensor<4, double> t2(sp_ijab), t3(sp_ijab), t3_ref(sp_ijab);
+
+    {
+        block_tensor_ctrl<2, double> ctrl(t1);
+
+        mask<2> m11;
+        m11[0] = true; m11[1] = true;
+
+        index<2> i00, i01, i10, i11;
+        i10[0] = 1; i01[1] = 1;
+        i11[0] = 1; i11[1] = 1;
+
+        se_part<2, double> se(sp_ia.get_bis(), m11, 2);
+        se.add_map(i00, i11);
+        se.mark_forbidden(i01);
+        se.mark_forbidden(i10);
+        ctrl.req_symmetry().insert(se);
+    }
+    {
+        block_tensor_ctrl<4, double> ctrl(t2);
+
+        mask<4> m1111;
+        m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+        index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+            i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
+        i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
+        i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
+        i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
+        i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
+        i1011[0] = 1; i0100[1] = 1; i1011[2] = 1; i1011[3] = 1;
+        i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
+        i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
+        i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
+
+        se_part<4,double> se(sp_ijab.get_bis(), m1111, 2);
+        se.add_map(i0000, i1111);
+        se.add_map(i0110, i1001);
+        se.add_map(i0101, i1010);
+        se.mark_forbidden(i0001);
+        se.mark_forbidden(i0010);
+        se.mark_forbidden(i0100);
+        se.mark_forbidden(i1000);
+        se.mark_forbidden(i0011);
+        se.mark_forbidden(i1100);
+        se.mark_forbidden(i0111);
+        se.mark_forbidden(i1011);
+        se.mark_forbidden(i1101);
+        se.mark_forbidden(i1110);
+        ctrl.req_symmetry().insert(se);
+    }
+
+    btod_random<2>().perform(t1);
+    btod_random<4>().perform(t2);
+    btod_random<4>().perform(t3);
+    t1.set_immutable();
+    t2.set_immutable();
+    t3.set_immutable();
+
+    contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
+    btod_contract2<2, 2, 0> op_contr(contr, t1, t1);
+    btod_symmetrize<4> op_symm(op_contr, 0, 1, false);
+    btod_copy<4>(t2).perform(t3_ref);
+    op_symm.perform(t3_ref, 1.0);
+
+    letter i, j, k, l, a, b, c;
+    t3(i|j|a|b) = t2(i|j|a|b) + asymm(i, j, t1(i|a) * t1(j|b));
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
