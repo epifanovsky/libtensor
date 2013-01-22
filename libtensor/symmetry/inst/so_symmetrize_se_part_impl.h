@@ -69,6 +69,8 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
             continue;
         }
 
+        if (sp1.is_forbidden(i1)) continue;
+
         index<N> i2 = sp1.get_direct_map(i1);
         bool found = false;
         while (! found && i1 < i2) {

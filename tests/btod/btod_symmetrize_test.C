@@ -8,6 +8,7 @@
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod/btod_symmetrize.h>
 #include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/print_symmetry.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
@@ -723,10 +724,10 @@ void btod_symmetrize_test::test_7() {
     btod_random<2>().perform(bt1);
     btod_random<4>().perform(bt2);
     bt1.set_immutable();
-    bt2.set_immutable();
 
     contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
     btod_contract2<2, 2, 0> op_contr(contr, bt1, bt1);
+
     btod_symmetrize<4>(op_contr, 0, 1, false).perform(bt2);
 
     dense_tensor<2, double, allocator_t> t1(dims_ia);
