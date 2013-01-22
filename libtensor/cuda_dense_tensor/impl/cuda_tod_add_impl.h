@@ -2,6 +2,7 @@
 #define LIBTENSOR_CUDA_TOD_ADD_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
+#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../cuda_tod_add.h"
 #include "../cuda_tod_copy.h"
 #include "../cuda_tod_set.h"
