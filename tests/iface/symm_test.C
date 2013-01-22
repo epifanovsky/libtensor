@@ -427,7 +427,6 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
     btod_random<4>().perform(t3);
     t1.set_immutable();
     t2.set_immutable();
-    t3.set_immutable();
 
     contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
     btod_contract2<2, 2, 0> op_contr(contr, t1, t1);
