@@ -3,6 +3,7 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod/btod_symmetrize.h>
@@ -55,6 +56,7 @@ void btod_symmetrize_test::perform() throw(libtest::test_exception) {
         test_6b(true, false, true);
         test_6b(true, true, false);
         test_6b(true, true, true);
+        test_7();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -659,6 +661,91 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
     }
     if (label) product_table_container::get_instance().erase(tns);
 
+}
+
+
+void btod_symmetrize_test::test_7() {
+
+    const char *testname = "btod_symmetrize_test::test_7()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    mask<2> m01, m10, m11;
+    m10[0] = true; m01[1] = true;
+    m11[0] = true; m11[1] = true;
+
+    mask<4> m0011, m1100, m1111;
+    m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
+    m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+    index<2> i2a, i2b;
+    i2b[0] = 9; i2b[1] = 19;
+    dimensions<2> dims_ia(dimensions<2>(index_range<2>(i2a, i2b)));
+    block_index_space<2> bis_ia(dims_ia);
+    index<4> i4a, i4b;
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 19; i4b[3] = 19;
+    dimensions<4> dims_ijab(dimensions<4>(index_range<4>(i4a, i4b)));
+    block_index_space<4> bis_ijab(dims_ijab);
+
+    bis_ia.split(m10, 3);
+    bis_ia.split(m10, 5);
+    bis_ia.split(m10, 8);
+    bis_ia.split(m01, 6);
+    bis_ia.split(m01, 10);
+    bis_ia.split(m01, 16);
+
+    bis_ijab.split(m1100, 3);
+    bis_ijab.split(m1100, 5);
+    bis_ijab.split(m1100, 8);
+    bis_ijab.split(m0011, 6);
+    bis_ijab.split(m0011, 10);
+    bis_ijab.split(m0011, 16);
+
+    block_tensor<2, double, allocator_t> bt1(bis_ia);
+    block_tensor<4, double, allocator_t> bt2(bis_ijab);
+
+    {
+        block_tensor_ctrl<2, double> ctrl(bt1);
+
+        index<2> i00, i01, i10, i11;
+        i10[0] = 1; i01[1] = 1;
+        i11[0] = 1; i11[1] = 1;
+
+        se_part<2, double> se(bis_ia, m11, 2);
+        se.add_map(i00, i11);
+        se.mark_forbidden(i01);
+        se.mark_forbidden(i10);
+        ctrl.req_symmetry().insert(se);
+    }
+
+    btod_random<2>().perform(bt1);
+    btod_random<4>().perform(bt2);
+    bt1.set_immutable();
+    bt2.set_immutable();
+
+    contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
+    btod_contract2<2, 2, 0> op_contr(contr, bt1, bt1);
+    btod_symmetrize<4>(op_contr, 0, 1, false).perform(bt2);
+
+    dense_tensor<2, double, allocator_t> t1(dims_ia);
+    dense_tensor<4, double, allocator_t> ti1(dims_ijab), t2(dims_ijab),
+        t2_ref(dims_ijab);
+
+    tod_btconv<2>(bt1).perform(t1);
+    tod_btconv<4>(bt2).perform(t2);
+
+    tod_contract2<2, 2, 0>(contr, t1, t1).perform(true, ti1);
+    tod_copy<4>(ti1).perform(true, t2_ref);
+    tod_copy<4>(ti1, permutation<4>().permute(0, 1), -1.0).
+        perform(false, t2_ref);
+
+    compare_ref<4>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 
