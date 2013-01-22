@@ -1,14 +1,14 @@
-#include "cuda_btod_copy_h2d_impl.h"
+#include "cuda_btod_copy_d2h_impl.h"
 
 namespace libtensor {
 
 
-template class cuda_btod_copy_h2d<1>;
-template class cuda_btod_copy_h2d<2>;
-template class cuda_btod_copy_h2d<3>;
-template class cuda_btod_copy_h2d<4>;
-template class cuda_btod_copy_h2d<5>;
-template class cuda_btod_copy_h2d<6>;
+template class cuda_btod_copy_d2h<1>;
+template class cuda_btod_copy_d2h<2>;
+template class cuda_btod_copy_d2h<3>;
+template class cuda_btod_copy_d2h<4>;
+template class cuda_btod_copy_d2h<5>;
+template class cuda_btod_copy_d2h<6>;
 
 
 } // namespace libtensor
