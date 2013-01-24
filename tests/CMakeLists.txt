@@ -75,6 +75,14 @@ set(SRC_CUDA_DENSE_TENSOR
     cuda_dense_tensor/cuda_tod_set_test.C
 )
 
+set(SRC_CUDA_BLOCK_TENSOR
+    cuda_block_tensor/libtensor_cuda_block_tensor_tests.C
+    cuda_block_tensor/libtensor_cuda_block_tensor_suite.C
+    #cuda_block_tensor/cuda_btod_contract2_test.C
+    #cuda_block_tensor/cuda_tod_copy_test.C
+    cuda_block_tensor/cuda_btod_copy_hd_test.C
+)
+
 set(SRC_DIAG_TENSOR
     diag_tensor/libtensor_diag_tensor_tests.C
     diag_tensor/libtensor_diag_tensor_suite.C
@@ -266,10 +274,13 @@ include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 if(CUDA_FOUND)
     set(CUDA_TARGETS
         libtensor_linalg_cublas_tests
+        libtensor_cuda_block_tensor_tests
         libtensor_cuda_dense_tensor_tests)
     add_executable(libtensor_linalg_cublas_tests ${SRC_LINALG_CUBLAS})
     cuda_add_executable(libtensor_cuda_dense_tensor_tests
         ${SRC_CUDA_DENSE_TENSOR})
+    cuda_add_executable(libtensor_cuda_block_tensor_tests
+        ${SRC_CUDA_BLOCK_TENSOR})
     foreach(TARGET ${CUDA_TARGETS})
         cuda_add_cublas_to_target(${TARGET})
     endforeach(TARGET)
