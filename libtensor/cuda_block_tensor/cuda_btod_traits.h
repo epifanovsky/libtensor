@@ -6,6 +6,7 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_copy.h>
+#include <libtensor/cuda_dense_tensor/cuda_tod_contract2.h>
 #include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
 #include "cuda_block_tensor.h"
 
@@ -48,7 +49,7 @@ struct cuda_btod_traits {
 
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
-        typedef tod_contract2<N, M, K> type;
+        typedef cuda_tod_contract2<N, M, K> type;
         typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
     };
 
