@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_CUDA_BLOCK_TENSOR_TRAITS_H
 #define LIBTENSOR_CUDA_BLOCK_TENSOR_TRAITS_H
 
+#include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/block_tensor/block_factory.h>
-#include "cuda_block_tensor.h"
 #include "cuda_block_tensor_i_traits.h"
 
 namespace libtensor {

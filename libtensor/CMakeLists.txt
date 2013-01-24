@@ -24,6 +24,7 @@ set(SRC_CUDA
     cuda_block_tensor/impl/cuda_btod_copy_d2h.C
     cuda_block_tensor/impl/cuda_btod_copy_h2d.C
     cuda_dense_tensor/local_cublas_handle.C
+    cuda_dense_tensor/impl/cuda_dense_tensor.C
     cuda_dense_tensor/impl/cuda_kern_set.cu
     cuda_dense_tensor/impl/cuda_tod_add.C
     cuda_dense_tensor/impl/cuda_tod_contract2.C
