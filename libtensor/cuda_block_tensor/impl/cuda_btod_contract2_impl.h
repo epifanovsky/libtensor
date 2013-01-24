@@ -36,7 +36,7 @@ template<size_t N, size_t M, size_t K>
 void cuda_btod_contract2<N, M, K>::perform(
     gen_block_tensor_i<NC, bti_traits> &btc) {
 
-    gen_bto_aux_copy<NC, btod_traits> out(get_symmetry(), btc);
+    gen_bto_aux_copy<NC, cuda_btod_traits> out(get_symmetry(), btc);
     out.open();
     perform(out);
     out.close();
@@ -51,11 +51,11 @@ void cuda_btod_contract2<N, M, K>::perform(
     typedef cuda_block_tensor_i_traits<double> bti_traits;
 
     gen_block_tensor_rd_ctrl<NC, bti_traits> cc(btc);
-    addition_schedule<NC, btod_traits> asch(get_symmetry(),
+    addition_schedule<NC, cuda_btod_traits> asch(get_symmetry(),
         cc.req_const_symmetry());
     asch.build(get_schedule(), cc);
 
-    gen_bto_aux_add<NC, btod_traits> out(get_symmetry(), asch, btc, d);
+    gen_bto_aux_add<NC, cuda_btod_traits> out(get_symmetry(), asch, btc, d);
     out.open();
     perform(out);
     out.close();
