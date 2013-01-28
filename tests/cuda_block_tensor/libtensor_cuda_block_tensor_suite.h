@@ -2,8 +2,8 @@
 #define LIBTENSOR_LIBTENSOR_CUDA_BLOCK_TENSOR_SUITE_H
 
 #include <libtest/test_suite.h>
-//#include "cuda_btod_contract2_test.h"
-//#include "cuda_btod_copy_test.h"
+#include "cuda_btod_contract2_test.h"
+#include "cuda_btod_copy_test.h"
 #include "cuda_btod_copy_hd_test.h"
 
 using libtest::unit_test_factory;
@@ -26,8 +26,8 @@ namespace libtensor {
  **/
 class libtensor_cuda_block_tensor_suite : public libtest::test_suite {
 private:
-    //unit_test_factory<cuda_btod_contract2_test> m_utf_cuda_btod_contract2;
-    //unit_test_factory<cuda_btod_copy_test> m_utf_cuda_btod_copy;
+    unit_test_factory<cuda_btod_contract2_test> m_utf_cuda_btod_contract2;
+    unit_test_factory<cuda_btod_copy_test> m_utf_cuda_btod_copy;
     unit_test_factory<cuda_btod_copy_hd_test> m_utf_cuda_btod_copy_hd;
 
 public:

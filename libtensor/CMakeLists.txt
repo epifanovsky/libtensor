@@ -29,6 +29,15 @@ set(SRC_CUDA
     cuda_block_tensor/impl/cuda_btod_contract2_4.C
     cuda_block_tensor/impl/cuda_btod_contract2_5.C
     cuda_block_tensor/impl/cuda_btod_contract2_6.C
+    cuda_block_tensor/impl/cuda_btod_contract2_clst_builder.C
+    cuda_block_tensor/impl/cuda_btod_addition_schedule.C
+    cuda_block_tensor/impl/cuda_btod_aux_add.C
+    cuda_block_tensor/impl/cuda_btod_aux_copy.C
+    cuda_block_tensor/impl/cuda_btod_aux_symmetrize.C
+    cuda_block_tensor/impl/cuda_btod_aux_transform.C
+    cuda_block_tensor/impl/cuda_btod_contract2_nzorb.C
+    cuda_block_tensor/impl/cuda_btod_unfold_symmetry.C
+    cuda_block_tensor/impl/cuda_btod_unfold_block_list.C
     cuda_dense_tensor/local_cublas_handle.C
     cuda_dense_tensor/impl/cuda_dense_tensor.C
     cuda_dense_tensor/impl/cuda_kern_set.cu
