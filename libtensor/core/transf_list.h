@@ -14,7 +14,7 @@ namespace libtensor {
 
 
 /** \brief Enumerates all transformations associated with a block in
-        a %symmetry group
+        a symmetry group
     \tparam N Tensor order (symmetry cardinality).
     \tparam T Tensor element type.
 
@@ -27,7 +27,7 @@ namespace libtensor {
 template<size_t N, typename T>
 class transf_list : public timings< transf_list<N, T> > {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     typedef std::list< tensor_transf<N, T> > transf_lst_t;
@@ -76,8 +76,6 @@ private:
     bool is_found(const transf_lst_t &trlist,
             const tensor_transf<N, T> &tr) const;
 
-    void join_lists(transf_lst_t &l1, transf_lst_t &l2) const;
-
     void visit(const symmetry<N, T> &sym, const abs_index<N> &aidx,
         const tensor_transf<N, T> &tr, transf_map_t &visited);
 
@@ -85,7 +83,7 @@ private:
 
 
 template<size_t N, typename T>
-const char *transf_list<N, T>::k_clazz = "transf_list<N, T>";
+const char transf_list<N, T>::k_clazz[] = "transf_list<N, T>";
 
 
 template<size_t N, typename T>
@@ -118,33 +116,13 @@ bool transf_list<N, T>::is_found(const transf_lst_t &trlist,
 
 
 template<size_t N, typename T>
-void transf_list<N, T>::join_lists(transf_lst_t &l1, transf_lst_t &l2) const {
-
-    for(typename transf_lst_t::iterator i1 = l1.begin();
-        !l2.empty() && i1 != l1.end(); ++i1) {
-
-        typename transf_lst_t::iterator i2 = l2.begin();
-        while(i2 != l2.end()) {
-            if(*i1 == *i2) i2 = l2.erase(i2);
-            else ++i2;
-        }
-    }
-    l1.splice(l1.end(), l2);
-}
-
-
-template<size_t N, typename T>
 void transf_list<N, T>::visit(const symmetry<N, T> &sym,
     const abs_index<N> &aidx, const tensor_transf<N, T> &tr,
     transf_map_t &visited) {
 
-    tensor_transf<N, T> tr1(tr);
-    transf_lst_t lst1;
-    do {
-        lst1.push_back(tr1);
-        tr1.transform(tr);
-    } while(tr1 != tr);
-    join_lists(visited[aidx.get_abs_index()], lst1);
+    transf_lst_t &lst = visited[aidx.get_abs_index()];
+    if(is_found(lst, tr)) return;
+    lst.push_back(tr);
 
     for(typename symmetry<N, T>::iterator iset = sym.begin();
         iset != sym.end(); ++iset) {
@@ -153,17 +131,14 @@ void transf_list<N, T>::visit(const symmetry<N, T> &sym,
         for(typename symmetry_element_set<N, T>::const_iterator ielem =
             eset.begin(); ielem != eset.end(); ++ielem) {
 
-            const symmetry_element_i<N, T> &elem =
-                eset.get_elem(ielem);
+            const symmetry_element_i<N, T> &elem = eset.get_elem(ielem);
 
             index<N> idx2(aidx.get_index());
             tensor_transf<N, T> tr2(tr);
             elem.apply(idx2, tr2);
             abs_index<N> aidx2(idx2, aidx.get_dims());
 
-            if(!is_found(visited[aidx2.get_abs_index()], tr2)) {
-                visit(sym, aidx2, tr2, visited);
-            }
+            visit(sym, aidx2, tr2, visited);
         }
     }
 }

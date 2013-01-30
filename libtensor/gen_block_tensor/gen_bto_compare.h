@@ -76,7 +76,7 @@ namespace libtensor {
 template<size_t N, typename Traits>
 class gen_bto_compare : public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     //! Type of tensor elements
@@ -104,7 +104,6 @@ public:
     };
 
 private:
-
     gen_block_tensor_rd_i<N, bti_traits> &m_bt1; //!< First block %tensor
     gen_block_tensor_rd_i<N, bti_traits> &m_bt2; //!< Second block %tensor
     element_type m_thresh; //!< Threshold
@@ -122,10 +121,10 @@ public:
         otherwise an exception will be thrown.
      **/
     gen_bto_compare(
-            gen_block_tensor_rd_i<N, bti_traits> &bt1,
-            gen_block_tensor_rd_i<N, bti_traits> &bt2,
-            const element_type &thresh = Traits::zero(),
-            bool strict = true);
+        gen_block_tensor_rd_i<N, bti_traits> &bt1,
+        gen_block_tensor_rd_i<N, bti_traits> &bt2,
+        const element_type &thresh = Traits::zero(),
+        bool strict = true);
 
     /** \brief Performs the comparison
         \return \c true if all the elements are equal within
@@ -154,14 +153,14 @@ private:
     /** \brief Checks that two orbits have the same canonical %index
      **/
     bool compare_canonical(const abs_index<N> &acidx1,
-            orbit<N, element_type> &o1, orbit<N, element_type> &o2);
+        orbit<N, element_type> &o1, orbit<N, element_type> &o2);
 
     /** \brief Checks that the same transformation corresponds to a
             given %index
      **/
     bool compare_transf(const abs_index<N> &aidx,
-            orbit<N, element_type> &o1, transf_list<N, element_type> &trl1,
-            orbit<N, element_type> &o2, transf_list<N, element_type> &trl2);
+        orbit<N, element_type> &o1, transf_list<N, element_type> &trl1,
+        orbit<N, element_type> &o2, transf_list<N, element_type> &trl2);
 
     /** \brief Compares two canonical blocks identified by an %index
      **/

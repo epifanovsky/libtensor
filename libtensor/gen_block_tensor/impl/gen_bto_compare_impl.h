@@ -9,25 +9,25 @@ namespace libtensor {
 
 
 template<size_t N, typename Traits>
-const char *gen_bto_compare<N, Traits>::k_clazz = "gen_bto_compare<N, Traits>";
+const char gen_bto_compare<N, Traits>::k_clazz[] = "gen_bto_compare<N, Traits>";
 
 
 template<size_t N, typename Traits>
 gen_bto_compare<N, Traits>::gen_bto_compare(
-        gen_block_tensor_rd_i<N, bti_traits> &bt1,
-        gen_block_tensor_rd_i<N, bti_traits> &bt2,
-        const element_type &thresh, bool strict) :
+    gen_block_tensor_rd_i<N, bti_traits> &bt1,
+    gen_block_tensor_rd_i<N, bti_traits> &bt2,
+    const element_type &thresh, bool strict) :
 
     m_bt1(bt1), m_bt2(bt2), m_thresh(thresh), m_strict(strict) {
 
     static const char *method = "gen_bto_compare("
-            "gen_block_tensor_rd_i<N, bti_traits>&, "
-            "gen_block_tensor_rd_i<N, bti_traits>&, "
-            "const element_type &, bool)";
+        "gen_block_tensor_rd_i<N, bti_traits>&, "
+        "gen_block_tensor_rd_i<N, bti_traits>&, "
+        "const element_type &, bool)";
 
     if(!m_bt1.get_bis().equals(m_bt2.get_bis())) {
-        throw bad_block_index_space(g_ns, k_clazz, method,
-            __FILE__, __LINE__, "bt1, bt2");
+        throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
+            "bt1, bt2");
     }
 }
 
@@ -35,9 +35,8 @@ gen_bto_compare<N, Traits>::gen_bto_compare(
 template<size_t N, typename Traits>
 bool gen_bto_compare<N, Traits>::compare() {
 
-    //
     //  Start with the assumption that the block tensor are identical
-    //
+
     index<N> i0;
     m_diff.kind = diff::DIFF_NODIFF;
     m_diff.bidx = i0;
@@ -55,20 +54,18 @@ bool gen_bto_compare<N, Traits>::compare() {
         ol2(ctrl2.req_const_symmetry());
     dimensions<N> bidims = m_bt1.get_bis().get_block_index_dims();
 
-    //
     //  If orbit lists are different
-    //
+
     if(ol1.get_size() != ol2.get_size()) {
 
         m_diff.kind = diff::DIFF_ORBLSTSZ;
         return false;
     }
 
-    //
     //  Compare all canonical indexes
-    //
+
     for(typename orbit_list<N, element_type>::iterator io1 = ol1.begin();
-        io1 != ol1.end(); io1++) {
+        io1 != ol1.end(); ++io1) {
 
         if(!ol2.contains(ol1.get_abs_index(io1))) {
 
@@ -80,17 +77,16 @@ bool gen_bto_compare<N, Traits>::compare() {
         }
     }
 
-    //
     //  Compare orbits
-    //
+
     for(typename orbit_list<N, element_type>::iterator io1 = ol1.begin();
-        io1 != ol1.end(); io1++) {
+        io1 != ol1.end(); ++io1) {
 
         orbit<N, element_type> o1(ctrl1.req_const_symmetry(),
             ol1.get_abs_index(io1));
 
         for(typename orbit<N, element_type>::iterator i1 = o1.begin();
-            i1 != o1.end(); i1++) {
+            i1 != o1.end(); ++i1) {
 
             abs_index<N> ai1(o1.get_abs_index(i1), bidims);
             orbit<N, element_type> o2(ctrl2.req_const_symmetry(),
@@ -101,16 +97,14 @@ bool gen_bto_compare<N, Traits>::compare() {
                 ai1.get_index());
 
             if(!compare_canonical(ai1, o1, o2)) return false;
-            if(!compare_transf(ai1, o1, trl1, o2, trl2))
-                return false;
+            if(!compare_transf(ai1, o1, trl1, o2, trl2)) return false;
         }
     }
 
-    //
     //  Compare actual data
-    //
+
     for(typename orbit_list<N, element_type>::iterator io1 = ol1.begin();
-        io1 != ol1.end(); io1++) {
+        io1 != ol1.end(); ++io1) {
 
         abs_index<N> ai(ol1.get_abs_index(io1), bidims);
         if(!compare_data(ai, ctrl1, ctrl2)) return false;
@@ -144,11 +138,11 @@ bool gen_bto_compare<N, Traits>::compare_transf(const abs_index<N> &aidx,
 
     bool diff = false;
     for(typename transf_list<N, element_type>::iterator i = trl1.begin();
-        !diff && i != trl1.end(); i++) {
+        !diff && i != trl1.end(); ++i) {
         diff = !trl2.is_found(trl1.get_transf(i));
     }
     for(typename transf_list<N, element_type>::iterator i = trl2.begin();
-        !diff && i != trl2.end(); i++) {
+        !diff && i != trl2.end(); ++i) {
         diff = !trl1.is_found(trl2.get_transf(i));
     }
 
@@ -193,6 +187,7 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
             m_diff.zero1 = zero1;
             m_diff.zero2 = zero2;
             return false;
+
         } else {
 
             gen_block_tensor_rd_ctrl<N, bti_traits> &ca =
@@ -201,27 +196,27 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
 
             temp_block_tensor_type btc(m_bt1.get_bis());
             {
-            gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
-            wr_block_type &blkb = cb.req_block(aidx.get_index());
-            to_set().perform(blkb);
-            cb.ret_block(aidx.get_index());
+                gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
+                wr_block_type &blkb = cb.req_block(aidx.get_index());
+                to_set().perform(blkb);
+                cb.ret_block(aidx.get_index());
             }
 
             bool z;
             {
-            gen_block_tensor_rd_ctrl<N, bti_traits> cb(btc);
-            rd_block_type &blkb = cb.req_const_block(aidx.get_index());
+                gen_block_tensor_rd_ctrl<N, bti_traits> cb(btc);
+                rd_block_type &blkb = cb.req_const_block(aidx.get_index());
 
-            to_compare cmp(blka, blkb, m_thresh);
-            z = cmp.compare();
+                to_compare cmp(blka, blkb, m_thresh);
+                z = cmp.compare();
 
-            ca.ret_const_block(idx);
-            cb.ret_const_block(idx);
+                ca.ret_const_block(idx);
+                cb.ret_const_block(idx);
             }
 
             {
-            gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
-            cb.req_zero_block(idx);
+                gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
+                cb.req_zero_block(idx);
             }
 
             if(!z) {
