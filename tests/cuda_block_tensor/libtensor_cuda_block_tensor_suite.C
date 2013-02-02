@@ -8,6 +8,7 @@ libtensor_cuda_block_tensor_suite::libtensor_cuda_block_tensor_suite() :
 
     add_test("cuda_btod_contract2", m_utf_cuda_btod_contract2);
     add_test("cuda_btod_copy", m_utf_cuda_btod_copy);
+    add_test("cuda_btod_sum", m_utf_cuda_btod_sum);
     add_test("cuda_btod_copy_hd", m_utf_cuda_btod_copy_hd);
 }
 

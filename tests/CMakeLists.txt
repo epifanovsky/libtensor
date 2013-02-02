@@ -79,9 +79,9 @@ set(SRC_CUDA_BLOCK_TENSOR
     cuda_block_tensor/libtensor_cuda_block_tensor_tests.C
     cuda_block_tensor/libtensor_cuda_block_tensor_suite.C
     cuda_block_tensor/cuda_btod_contract2_test.C
-    #cuda_block_tensor/cuda_tod_copy_test.C
     cuda_block_tensor/cuda_btod_copy_hd_test.C
     cuda_block_tensor/cuda_btod_copy_test.C
+    cuda_block_tensor/cuda_btod_sum_test.C
 )
 
 set(SRC_DIAG_TENSOR

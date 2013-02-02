@@ -192,7 +192,7 @@ void cuda_btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         btc_ref.set_immutable();
 
 
-        //  Copy back from host to device memory
+        //  Copy from host to device memory
 
         cuda_btod_copy_h2d<4>(bta).perform(bta_d);
         cuda_btod_copy_h2d<4>(btb).perform(btb_d);
@@ -201,7 +201,7 @@ void cuda_btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         cuda_btod_contract2<2, 2, 2> op_d(contr, bta_d, btb_d);
         op_d.perform(btc_d);
 
-        //  Copy from device to host memory
+        //  Copy back from device to host memory
 
         cuda_btod_copy_d2h<4>(btc_d).perform(btc);
 
