@@ -6,7 +6,7 @@
 #include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/block_tensor/btod/btod_symmetrize.h>
+#include <libtensor/block_tensor/btod_symmetrize2.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/print_symmetry.h>
 #include <libtensor/symmetry/product_table_container.h>
@@ -15,13 +15,13 @@
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
-#include "btod_symmetrize_test.h"
+#include "btod_symmetrize2_test.h"
 #include "../compare_ref.h"
 
 namespace libtensor {
 
 
-void btod_symmetrize_test::perform() throw(libtest::test_exception) {
+void btod_symmetrize2_test::perform() throw(libtest::test_exception) {
 
     allocator<double>::init(16, 16, 16777216, 16777216);
 
@@ -69,9 +69,9 @@ void btod_symmetrize_test::perform() throw(libtest::test_exception) {
 
 /** \test Symmetrization of a non-symmetric 2-index block %tensor
  **/
-void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_1() throw(libtest::test_exception) {
 
-    static const char *testname = "btod_symmetrize_test::test_1()";
+    static const char *testname = "btod_symmetrize2_test::test_1()";
 
     typedef std_allocator<double> allocator_t;
 
@@ -104,7 +104,7 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
     //  Run the symmetrization operation
 
     btod_copy<2> op_copy(bta);
-    btod_symmetrize<2>(op_copy, 0, 1, true).perform(btb);
+    btod_symmetrize2<2>(op_copy, 0, 1, true).perform(btb);
 
     tod_btconv<2>(btb).perform(tb);
 
@@ -131,9 +131,9 @@ void btod_symmetrize_test::test_1() throw(libtest::test_exception) {
 
 /** \test Anti-symmetrization of a non-symmetric 2-index block %tensor
  **/
-void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_2() throw(libtest::test_exception) {
 
-    static const char *testname = "btod_symmetrize_test::test_2()";
+    static const char *testname = "btod_symmetrize2_test::test_2()";
 
     typedef std_allocator<double> allocator_t;
 
@@ -166,7 +166,7 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
     //  Run the symmetrization operation
 
     btod_copy<2> op_copy(bta);
-    btod_symmetrize<2>(op_copy, 0, 1, false).perform(btb);
+    btod_symmetrize2<2>(op_copy, 0, 1, false).perform(btb);
 
     tod_btconv<2>(btb).perform(tb);
 
@@ -194,9 +194,9 @@ void btod_symmetrize_test::test_2() throw(libtest::test_exception) {
 /** \test Anti-symmetrization of S(-)2*C1*C1 to S(-)2*S(-)2
         in a 4-index block %tensor
  **/
-void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_3() throw(libtest::test_exception) {
 
-    static const char *testname = "btod_symmetrize_test::test_3()";
+    static const char *testname = "btod_symmetrize2_test::test_3()";
 
     typedef std_allocator<double> allocator_t;
 
@@ -237,7 +237,7 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
     //  Run the symmetrization operation
 
     btod_copy<4> op_copy(bta);
-    btod_symmetrize<4>(op_copy, 1, 3, false).perform(btb);
+    btod_symmetrize2<4>(op_copy, 1, 3, false).perform(btb);
 
     tod_btconv<4>(btb).perform(tb);
 
@@ -266,9 +266,9 @@ void btod_symmetrize_test::test_3() throw(libtest::test_exception) {
 
 /** \test Symmetrization of S2*S2 to S2*C1*C1 in a 4-index block %tensor
  **/
-void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_4() throw(libtest::test_exception) {
 
-    static const char *testname = "btod_symmetrize_test::test_4()";
+    static const char *testname = "btod_symmetrize2_test::test_4()";
 
     typedef std_allocator<double> allocator_t;
 
@@ -309,7 +309,7 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
     //  Run the symmetrization operation
 
     btod_copy<4> op_copy(bta);
-    btod_symmetrize<4>(op_copy, 0, 2, true).perform(btb);
+    btod_symmetrize2<4>(op_copy, 0, 2, true).perform(btb);
 
     tod_btconv<4>(btb).perform(tb);
 
@@ -336,9 +336,9 @@ void btod_symmetrize_test::test_4() throw(libtest::test_exception) {
 /** \test Symmetrization of two pairs of indexes in a non-symmetric
         4-index block %tensor
  **/
-void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_5(bool symm) throw(libtest::test_exception) {
 
-    static const char *testname = "btod_symmetrize_test::test_5(bool)";
+    static const char *testname = "btod_symmetrize2_test::test_5(bool)";
 
     typedef std_allocator<double> allocator_t;
 
@@ -373,7 +373,7 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
     //  Run the symmetrization operation
 
     btod_copy<4> op_copy(bta);
-    btod_symmetrize<4>(op_copy, permutation<4>().permute(0, 2).
+    btod_symmetrize2<4>(op_copy, permutation<4>().permute(0, 2).
         permute(1, 3), symm).perform(btb);
 
     tod_btconv<4>(btb).perform(tb);
@@ -402,11 +402,11 @@ void btod_symmetrize_test::test_5(bool symm) throw(libtest::test_exception) {
 /** \test (Anti-)Symmetrization of two indexes in a non-symmetric
         2-dim block %tensor with se_label, se_part
  **/
-void btod_symmetrize_test::test_6a(bool symm, bool label,
+void btod_symmetrize2_test::test_6a(bool symm, bool label,
         bool part, bool doadd) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "btod_symmetrize_test::test_6a(" << symm << ", "
+    tnss << "btod_symmetrize2_test::test_6a(" << symm << ", "
             << label << ", " << part << ", " << doadd << ")";
     std::string tns = tnss.str();
 
@@ -497,8 +497,8 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
     //  Run the symmetrization operation
 
     btod_copy<2> op_copy(bta);
-    if (doadd) btod_symmetrize<2>(op_copy, p, symm).perform(btb, 0.25);
-    else btod_symmetrize<2>(op_copy, p, symm).perform(btb);
+    if (doadd) btod_symmetrize2<2>(op_copy, p, symm).perform(btb, 0.25);
+    else btod_symmetrize2<2>(op_copy, p, symm).perform(btb);
 
     tod_btconv<2>(btb).perform(tb);
 
@@ -525,11 +525,11 @@ void btod_symmetrize_test::test_6a(bool symm, bool label,
 /** \test Double (anti-)symmetrization of two indexes in a non-symmetric
         4-dim block %tensor with se_label, se_part
  **/
-void btod_symmetrize_test::test_6b(bool symm, bool label,
+void btod_symmetrize2_test::test_6b(bool symm, bool label,
         bool part) throw(libtest::test_exception) {
 
     std::ostringstream tnss;
-    tnss << "btod_symmetrize_test::test_6b(" << symm << ", "
+    tnss << "btod_symmetrize2_test::test_6b(" << symm << ", "
             << label << ", " << part << ", " << ")";
     std::string tns = tnss.str();
 
@@ -637,8 +637,8 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
     //  Run the symmetrization operation
 
     btod_copy<4> op_copy(bta);
-    btod_symmetrize<4> sym1(op_copy, p1, symm);
-    btod_symmetrize<4> sym2(sym1, p2, symm);
+    btod_symmetrize2<4> sym1(op_copy, p1, symm);
+    btod_symmetrize2<4> sym2(sym1, p2, symm);
     sym2.perform(btb);
 
     tod_btconv<4>(btb).perform(tb);
@@ -665,9 +665,9 @@ void btod_symmetrize_test::test_6b(bool symm, bool label,
 }
 
 
-void btod_symmetrize_test::test_7() {
+void btod_symmetrize2_test::test_7() {
 
-    const char *testname = "btod_symmetrize_test::test_7()";
+    const char *testname = "btod_symmetrize2_test::test_7()";
 
     typedef std_allocator<double> allocator_t;
 
@@ -728,7 +728,7 @@ void btod_symmetrize_test::test_7() {
     contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
     btod_contract2<2, 2, 0> op_contr(contr, bt1, bt1);
 
-    btod_symmetrize<4>(op_contr, 0, 1, false).perform(bt2);
+    btod_symmetrize2<4>(op_contr, 0, 1, false).perform(bt2);
 
     dense_tensor<2, double, allocator_t> t1(dims_ia);
     dense_tensor<4, double, allocator_t> ti1(dims_ijab), t2(dims_ijab),

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM1_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM1_EVAL_H
 
-#include <libtensor/block_tensor/btod/btod_symmetrize.h>
+#include <libtensor/block_tensor/btod_symmetrize2.h>
 #include "../expr/eval_i.h"
 #include "../expr/evalfunctor.h"
 
@@ -62,7 +62,7 @@ private:
     sub_evalfunctor_t m_sub_eval; //!< Evaluation functor
     size_t m_i1; //!< Symmetrized %index
     mask<N> m_i2; //!< Mask of target indexes
-    btod_symmetrize<N> *m_op; //!< Symmetrization operation
+    btod_symmetrize2<N> *m_op; //!< Symmetrization operation
     arg<N, T, oper_tag> *m_arg; //!< Argument
 
 public:
@@ -156,14 +156,14 @@ void symm1_eval<N, M, Sym, T, SubCore>::create_arg() {
     if(M == 1) {
         size_t i2 = 0;
         while(i2 < N && !m_i2[i2]) i2++;
-        m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(),
+        m_op = new btod_symmetrize2<N>(m_sub_eval.get_bto(),
             m_i1, i2, Sym);
     } else if(M == 2) {
         size_t i2 = 0, i3 = 0;
         while(i2 < N && !m_i2[i2]) i2++;
         i3 = i2 + 1;
         while(i3 < N && !m_i2[i3]) i3++;
-        m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(),
+        m_op = new btod_symmetrize2<N>(m_sub_eval.get_bto(),
             m_i1, i2, i3, Sym);
     } else {
         throw expr_exception(g_ns, k_clazz, "create_arg()",

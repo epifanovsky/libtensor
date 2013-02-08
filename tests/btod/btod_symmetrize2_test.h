@@ -1,16 +1,16 @@
-#ifndef LIBTENSOR_BTOD_SYMMETRIZE_TEST_H
-#define LIBTENSOR_BTOD_SYMMETRIZE_TEST_H
+#ifndef LIBTENSOR_BTOD_SYMMETRIZE2_TEST_H
+#define LIBTENSOR_BTOD_SYMMETRIZE2_TEST_H
 
 #include <libtest/unit_test.h>
 
 namespace libtensor {
 
 
-/** \brief Tests the libtensor::btod_symmetrize class
+/** \brief Tests the libtensor::btod_symmetrize2 class
 
     \ingroup libtensor_tests_btod
  **/
-class btod_symmetrize_test : public libtest::unit_test {
+class btod_symmetrize2_test : public libtest::unit_test {
 public:
     virtual void perform() throw(libtest::test_exception);
 
@@ -31,4 +31,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_SYMMETRIZE_TEST_H
+#endif // LIBTENSOR_BTOD_SYMMETRIZE2_TEST_H
