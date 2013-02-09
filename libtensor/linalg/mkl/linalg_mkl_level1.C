@@ -153,6 +153,8 @@ void linalg_mkl_level1::rng_set_i_x(
     double *a, size_t sia,
     double c) {
 
+#ifdef HAVE_MKL_VSL
+
     rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
     if(!rs.init) {
         unsigned count = 0;
@@ -181,6 +183,12 @@ void linalg_mkl_level1::rng_set_i_x(
             ni1 -= batsz;
         }
     }
+
+#else // HAVE_MKL_VSL
+
+    linalg_generic_level1::rng_set_i_x(0, ni, a, sia, c);
+
+#endif // HAVE_MKL_VSL
 }
 
 
@@ -189,6 +197,8 @@ void linalg_mkl_level1::rng_add_i_x(
     size_t ni,
     double *a, size_t sia,
     double c) {
+
+#ifdef HAVE_MKL_VSL
 
     rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
     if(!rs.init) {
@@ -215,6 +225,12 @@ void linalg_mkl_level1::rng_add_i_x(
         }
         ni1 -= batsz;
     }
+
+#else // HAVE_MKL_VSL
+
+    linalg_generic_level1::rng_add_i_x(0, ni, a, sia, c);
+
+#endif // HAVE_MKL_VSL
 }
 
 
