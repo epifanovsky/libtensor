@@ -22,6 +22,7 @@ set(SRC
 set(SRC_CUDA
     cuda_block_tensor/impl/cuda_additive_btod.C
     cuda_block_tensor/impl/cuda_block_tensor.C
+    cuda_block_tensor/impl/cuda_btod_copy.C
     cuda_block_tensor/impl/cuda_btod_copy_d2h.C
     cuda_block_tensor/impl/cuda_btod_copy_h2d.C
     cuda_block_tensor/impl/cuda_btod_contract2_1.C
@@ -36,9 +37,11 @@ set(SRC_CUDA
     cuda_block_tensor/impl/cuda_btod_aux_copy.C
     cuda_block_tensor/impl/cuda_btod_aux_symmetrize.C
     cuda_block_tensor/impl/cuda_btod_aux_transform.C
+    cuda_block_tensor/impl/cuda_btod_add.C
     cuda_block_tensor/impl/cuda_btod_contract2_nzorb.C
     cuda_block_tensor/impl/cuda_btod_sum.C
-    cuda_block_tensor/impl/cuda_btod_add.C
+    cuda_block_tensor/impl/cuda_btod_symmetrize2.C
+    cuda_block_tensor/impl/cuda_btod_symmetrize3.C
     cuda_block_tensor/impl/cuda_btod_unfold_symmetry.C
     cuda_block_tensor/impl/cuda_btod_unfold_block_list.C
     cuda_dense_tensor/local_cublas_handle.C
@@ -56,8 +59,6 @@ set(SRC_CUDA
     tod/kernels/cuda_kern_copy_6d.cu
     tod/kernels/cuda_kern_copy_generic.cu
     tod/kernels/cuda_kern_functions.cu
-    cuda_block_tensor/impl/cuda_btod_copy.C
-    cuda_block_tensor/impl/cuda_btod_copy_h2d.C
 )
 
 set(SRC_LINALG_ACML
