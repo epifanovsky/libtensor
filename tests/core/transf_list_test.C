@@ -15,15 +15,18 @@ void transf_list_test::perform() throw(libtest::test_exception) {
 
     test_1();
     test_2();
-    test_3();
+    test_3a();
+    test_3b();
+    test_3c();
     test_4();
     test_5a();
     test_5b();
     test_5c();
+    test_6a();
 }
 
 
-namespace transf_list_test_ns {
+namespace {
 
 
 template<size_t N>
@@ -82,8 +85,7 @@ std::string trlist_compare(const char *testname, const index<N> &idx,
 }
 
 
-} // namespace transf_list_test_ns
-using namespace transf_list_test_ns;
+} // unnamed namespace
 
 
 /** \brief Tests transformation lists for diagonal and non-diagonal blocks
@@ -202,9 +204,9 @@ void transf_list_test::test_2() throw(libtest::test_exception) {
 /** \brief Tests transformation lists for a diagonal block of a three-index
         tensor with S3(+) symmetry (indirect relation to self).
  **/
-void transf_list_test::test_3() throw(libtest::test_exception) {
+void transf_list_test::test_3a() throw(libtest::test_exception) {
 
-    static const char *testname = "transf_list_test::test_3()";
+    static const char *testname = "transf_list_test::test_3a()";
 
     try {
 
@@ -250,6 +252,160 @@ void transf_list_test::test_3() throw(libtest::test_exception) {
     trlist010_ref.push_back(trref);
     trref.reset();
     trref.permute(permutation<3>().permute(0, 2));
+    trlist010_ref.push_back(trref);
+
+    //  Make transformation lists
+
+    index<3> i000, i010;
+    i010[1] = 1;
+    transf_list<3, double> trl000(sym, i000), trl010(sym, i010);
+
+    //  Check against the reference
+
+    std::string s;
+    s = trlist_compare(testname, i000, trl000, trlist000_ref);
+    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    s = trlist_compare(testname, i010, trl010, trlist010_ref);
+    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \brief Tests transformation lists for a diagonal block of a three-index
+        tensor with S3(-) symmetry (indirect relation to self).
+ **/
+void transf_list_test::test_3b() throw(libtest::test_exception) {
+
+    static const char *testname = "transf_list_test::test_3b()";
+
+    try {
+
+    index<3> i1, i2;
+    i2[0] = 2; i2[1] = 2; i2[2] = 2;
+    mask<3> msk;
+    msk[0] = true; msk[1] = true; msk[2] = true;
+    dimensions<3> dims(index_range<3>(i1, i2));
+    block_index_space<3> bis(dims);
+    bis.split(msk, 1);
+    symmetry<3, double> sym(bis);
+
+    scalar_transf<double> tr0(-1.0);
+    se_perm<3, double> se1(permutation<3>().permute(0, 1), tr0);
+    se_perm<3, double> se2(permutation<3>().permute(1, 2), tr0);
+    sym.insert(se1);
+    sym.insert(se2);
+
+    //  Reference lists
+
+    tensor_transf<3, double> trref;
+    std::list< tensor_transf<3, double> > trlist000_ref, trlist010_ref;
+
+    trref.reset();
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 1));
+    trref.transform(tr0);
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 2));
+    trref.transform(tr0);
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(1, 2));
+    trref.transform(tr0);
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 1).permute(1, 2));
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(1, 2).permute(0, 1));
+    trlist000_ref.push_back(trref);
+
+    trref.reset();
+    trlist010_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 2));
+    trref.transform(tr0);
+    trlist010_ref.push_back(trref);
+
+    //  Make transformation lists
+
+    index<3> i000, i010;
+    i010[1] = 1;
+    transf_list<3, double> trl000(sym, i000), trl010(sym, i010);
+
+    //  Check against the reference
+
+    std::string s;
+    s = trlist_compare(testname, i000, trl000, trlist000_ref);
+    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    s = trlist_compare(testname, i010, trl010, trlist010_ref);
+    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \brief Tests transformation lists for a diagonal block of a three-index
+        tensor with S3(-) symmetry (indirect relation to self).
+ **/
+void transf_list_test::test_3c() throw(libtest::test_exception) {
+
+    static const char *testname = "transf_list_test::test_3c()";
+
+    try {
+
+    index<3> i1, i2;
+    i2[0] = 2; i2[1] = 2; i2[2] = 2;
+    mask<3> msk;
+    msk[0] = true; msk[1] = true; msk[2] = true;
+    dimensions<3> dims(index_range<3>(i1, i2));
+    block_index_space<3> bis(dims);
+    bis.split(msk, 1);
+    symmetry<3, double> sym(bis);
+
+    scalar_transf<double> tr1(-1.0), tr2(1.0);
+    se_perm<3, double> se1(permutation<3>().permute(0, 1).permute(1, 2), tr2);
+    se_perm<3, double> se2(permutation<3>().permute(0, 1), tr1);
+    sym.insert(se1);
+    sym.insert(se2);
+
+    //  Reference lists
+
+    tensor_transf<3, double> trref;
+    std::list< tensor_transf<3, double> > trlist000_ref, trlist010_ref;
+
+    trref.reset();
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 1));
+    trref.transform(tr1);
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 2));
+    trref.transform(tr1);
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(1, 2));
+    trref.transform(tr1);
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 1).permute(1, 2));
+    trlist000_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(1, 2).permute(0, 1));
+    trlist000_ref.push_back(trref);
+
+    trref.reset();
+    trlist010_ref.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<3>().permute(0, 2));
+    trref.transform(tr1);
     trlist010_ref.push_back(trref);
 
     //  Make transformation lists
@@ -591,5 +747,105 @@ void transf_list_test::test_5c() throw(libtest::test_exception) {
 
     product_table_container::get_instance().erase("pg");
 }
+
+
+/** \brief Tests transformation lists for a diagonal block of a 6-index
+        tensor with S3(-)*S3(-) symmetry.
+ **/
+void transf_list_test::test_6a() throw(libtest::test_exception) {
+
+    static const char *testname = "transf_list_test::test_6a()";
+
+    try {
+
+    index<6> i1, i2;
+    i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 3; i2[4] = 3; i2[5] = 3;
+    dimensions<6> dims(index_range<6>(i1, i2));
+    block_index_space<6> bis(dims);
+    symmetry<6, double> sym(bis);
+
+    scalar_transf<double> tr1(-1.0), tr2(1.0);
+    se_perm<6, double> se1(permutation<6>().permute(0, 1), tr1);
+    se_perm<6, double> se2(permutation<6>().permute(1, 2), tr1);
+    se_perm<6, double> se3(permutation<6>().permute(3, 4), tr1);
+    se_perm<6, double> se4(permutation<6>().permute(4, 5), tr1);
+    sym.insert(se1);
+    sym.insert(se2);
+    sym.insert(se3);
+    sym.insert(se4);
+
+    //  Reference lists
+
+    tensor_transf<6, double> trref;
+    std::list< tensor_transf<6, double> > trlist_ref, trlist1, trlist2;
+
+    trref.reset();
+    trlist1.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(0, 1));
+    trref.transform(tr1);
+    trlist1.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(0, 2));
+    trref.transform(tr1);
+    trlist1.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(1, 2));
+    trref.transform(tr1);
+    trlist1.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(0, 1).permute(1, 2));
+    trlist1.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(1, 2).permute(0, 1));
+    trlist1.push_back(trref);
+
+    trref.reset();
+    trlist2.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(3, 4));
+    trref.transform(tr1);
+    trlist2.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(3, 5));
+    trref.transform(tr1);
+    trlist2.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(4, 5));
+    trref.transform(tr1);
+    trlist2.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(3, 4).permute(4, 5));
+    trlist2.push_back(trref);
+    trref.reset();
+    trref.permute(permutation<6>().permute(4, 5).permute(3, 4));
+    trlist2.push_back(trref);
+
+    for(std::list< tensor_transf<6, double> >::iterator i1 = trlist1.begin();
+        i1 != trlist1.end(); ++i1)
+    for(std::list< tensor_transf<6, double> >::iterator i2 = trlist2.begin();
+        i2 != trlist2.end(); ++i2) {
+
+        tensor_transf<6, double> tr(*i1);
+        tr.transform(*i2);
+        trlist_ref.push_back(tr);
+    }
+
+    //  Make transformation lists
+
+    index<6> i000000;
+    transf_list<6, double> trl(sym, i000000);
+
+    //  Check against the reference
+
+    std::string s;
+    s = trlist_compare(testname, i000000, trl, trlist_ref);
+    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
 
 } // namespace libtensor

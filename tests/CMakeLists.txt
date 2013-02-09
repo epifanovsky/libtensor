@@ -178,7 +178,7 @@ set(SRC_BTOD
     btod/btod_set_elem_test.C
     btod/btod_set_test.C
     btod/btod_sum_test.C
-    btod/btod_symmetrize_test.C
+    btod/btod_symmetrize2_test.C
     btod/btod_symmetrize3_test.C
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C

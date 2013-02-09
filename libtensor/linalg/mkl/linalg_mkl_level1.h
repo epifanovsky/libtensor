@@ -63,6 +63,21 @@ public:
         double *c, size_t sic,
         double d);
 
+    static void rng_setup(
+        void*);
+
+    static void rng_set_i_x(
+        void*,
+        size_t ni,
+        double *a, size_t sia,
+        double c);
+
+    static void rng_add_i_x(
+        void*,
+        size_t ni,
+        double *a, size_t sia,
+        double c);
+
 };
 
 

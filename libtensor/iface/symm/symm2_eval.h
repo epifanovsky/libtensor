@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM2_EVAL_H
 
-#include <libtensor/block_tensor/btod/btod_symmetrize.h>
+#include <libtensor/block_tensor/btod_symmetrize2.h>
 #include "../expr/eval_i.h"
 #include "../expr/evalfunctor.h"
 
@@ -61,7 +61,7 @@ private:
     sub_eval_container_t m_sub_eval_cont; //!< Evaluation of the sub-expression
     sub_evalfunctor_t m_sub_eval; //!< Evaluation functor
     permutation<N> m_perm; //!< Permutation for symmetrization
-    btod_symmetrize<N> *m_op; //!< Symmetrization operation
+    btod_symmetrize2<N> *m_op; //!< Symmetrization operation
     arg<N, T, oper_tag> *m_arg; //!< Argument
 
 public:
@@ -154,7 +154,7 @@ template<size_t N, size_t M, bool Sym, typename T, typename SubCore>
 void symm2_eval<N, M, Sym, T, SubCore>::create_arg() {
 
     destroy_arg();
-    m_op = new btod_symmetrize<N>(m_sub_eval.get_bto(), m_perm, Sym);
+    m_op = new btod_symmetrize2<N>(m_sub_eval.get_bto(), m_perm, Sym);
     m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
