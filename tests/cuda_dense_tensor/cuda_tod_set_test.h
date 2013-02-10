@@ -18,6 +18,7 @@ public:
 
 private:
     void test_1(double v);
+    void test_2(double v);
 
 };
 
