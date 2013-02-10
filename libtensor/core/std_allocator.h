@@ -53,7 +53,7 @@ public:
         \param sz Block size in units of T.
      **/
     static size_t get_block_size(size_t sz) {
-        return sz * sizeof(T)
+        return sz * sizeof(T);
     }
 
     /** \brief Allocates a block of memory
