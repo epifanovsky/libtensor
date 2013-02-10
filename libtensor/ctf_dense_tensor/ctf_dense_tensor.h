@@ -51,6 +51,10 @@ protected:
      **/
     virtual int on_req_tensor_id();
 
+    /** \brief Called when state changes to immutable
+     **/
+    virtual void on_set_immutable();
+
 };
 
 

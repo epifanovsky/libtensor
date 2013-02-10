@@ -32,7 +32,7 @@ ctf_dense_tensor<N, T>::ctf_dense_tensor(const dimensions<N> &dims) :
         sym[i] = 0;
     }
     int res = ctf::get().define_tensor(N, edge_len, sym, &m_tid);
-    if(res != 0) {
+    if(res != DIST_TENSOR_SUCCESS) {
         throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__, "");
     }
 }
@@ -65,6 +65,12 @@ int ctf_dense_tensor<N, T>::on_req_tensor_id() {
     }
 
     return m_tid;
+}
+
+
+template<size_t N, typename T>
+void ctf_dense_tensor<N, T>::on_set_immutable() {
+
 }
 
 

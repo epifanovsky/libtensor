@@ -13,7 +13,7 @@ namespace libtensor {
     \ingroup libtensor_ctf_dense_tensor
  **/
 template<size_t N, typename T>
-class dense_tensor_ctrl {
+class ctf_dense_tensor_ctrl {
 private:
     ctf_dense_tensor_i<N, T> &m_t; //!< CTF dense tensor object
 

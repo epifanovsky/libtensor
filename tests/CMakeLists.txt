@@ -77,6 +77,12 @@ set(SRC_DIAG_TENSOR
     diag_tensor/tod_conv_diag_tensor_test.C
 )
 
+set(SRC_CTF_DENSE_TENSOR
+    ctf_dense_tensor/libtensor_ctf_dense_tensor_tests.C
+    ctf_dense_tensor/libtensor_ctf_dense_tensor_suite.C
+    ctf_dense_tensor/ctf_dense_tensor_test.C
+)
+
 set(SRC_SYMMETRY
     symmetry/adjacency_list_test.C
     symmetry/block_labeling_test.C
@@ -217,6 +223,7 @@ set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
     libtensor_diag_tensor_tests
+    libtensor_ctf_dense_tensor_tests
     libtensor_btod_tests
     libtensor_iface_tests
     libtensor_linalg_tests
@@ -230,6 +237,7 @@ add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
+add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -245,6 +253,6 @@ endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
-    tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+    tensor ctf ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
 
