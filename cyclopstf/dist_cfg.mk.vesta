@@ -1,0 +1,43 @@
+CFLAGS  = -O3 -g -qsmp=omp -DUSE_OMP -DVIRT_NTD=1 -DTAU -DDEBUG=1 #-DUSE_SCALAPACK -DUSE_JAG
+CFLAGS += -D__STDC_LIMIT_MACROS
+AFLAGS	= -DBGQ
+CFLAGS += $(AFLAGS)
+CC	= mpixlcxx_r 
+CXX	= mpixlcxx_r
+
+#SCALA   = -L$(ROOT)/scalapack-2.0.1 -lscalapack
+#BLACS   = /home/edgar/work/BLACS/LIB/blacs_MPI-LINUX-0.a
+#BLACS   += /home/edgar/work/BLACS/LIB/blacsCinit_MPI-LINUX-0.a
+#BLACS   += /home/edgar/work/BLACS/LIB/blacsF77init_MPI-LINUX-0.a
+#BLACS   += /home/edgar/work/BLACS/LIB/blacs_MPI-LINUX-0.a
+
+
+#the code supports openmp, pthreads (no thread pool yet), and TBB
+#any one of the three should work, all are not needed
+OPENMP  = -qsmp=omp -qthreaded
+PTHREADS= -pthread
+TBB	= -ltbb
+
+BGP_ESSL  = /soft/libraries/essl/current/
+BGP_LIBS  = -L$(BGP_ESSL)/lib64 \
+               -L/soft/compilers/ibmcmp-feb2012/xlf/bg/14.1/lib64/ \
+               -L/opt/ibmcmp/lib64 \
+               -L/opt/ibmcmp/lib64 \
+
+BLAS_INC  = -I$(BGP_ESSL)/include 
+BLAS_LD   = $(BGP_LIBS)
+BLAS_LIBS = -lesslsmpbg -lxlsmp -lxlfmath -lxlf90_r
+BLAS	  = $(BLAS_LD) $(BLAS_LIBS) $(BLAS_INC)
+#BLASBGQ	  = -L/g/g15/solomon/work/BLAS/ -lblas_BGQ
+#LAPACKBGQ = -L/g/g15/solomon/work/lapack-3.4.0/ -llapack_BGQ
+LIBS    =  $(SCALA) $(BLACS) $(BLAS) $(BLASBGQ) $(LAPACKBGQ) -qarch=qp 
+
+
+ifneq (,$(findstring DTAU,$(DFLAGS)$(CFLAGS)))
+        include  $(TAUROOTDIR)/include/Makefile
+        CFLAGS+=$(TAU_INCLUDE) $(TAU_DEFS) 
+        LIBS+=$(TAU_MPI_LIBS) $(TAU_LIBS) 
+#        LIBS+= $(TAU_LIBS)
+endif
+LIBS+=-lc -lnss_files -lnss_dns -lresolv
+

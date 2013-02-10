@@ -1,0 +1,78 @@
+run with 16 processors
+
+-iter		4
+-seed 		100
+-nphys_dim 	3
+-ndim_A 	4
+-ndim_B 	4
+-ndim_C 	4
+-phys_dim_len0	2
+-phys_dim_len1	2
+-phys_dim_len2	4
+-edge_len_A0	20
+-edge_len_A1	20
+-edge_len_A2	20
+-edge_len_A3	20
+-edge_len_B0	20
+-edge_len_B1	20
+-edge_len_B2	20
+-edge_len_B3	20
+-edge_len_C0	20
+-edge_len_C1	20
+-edge_len_C2	20
+-edge_len_C3	20
+
+-sym_A0		1
+-sym_A1		-1
+-sym_A2		3
+-sym_A3		-1
+-sym_B0		1
+-sym_B1		-1
+-sym_B2		3
+-sym_B3		-1
+-sym_C0		1
+-sym_C1		-1
+-sym_C2		3
+-sym_C3		-1
+
+-sym_type_A0		1
+-sym_type_A1		1
+-sym_type_A2		1
+-sym_type_A3		1
+-sym_type_B0		1
+-sym_type_B1		1
+-sym_type_B2		1
+-sym_type_B3		1
+-sym_type_C0		1
+-sym_type_C1		1
+-sym_type_C2		1
+-sym_type_C3		1
+
+-nctr 		2
+
+-idx_map_A0_0	0
+-idx_map_A1_0	1
+-idx_map_A2_0	2
+-idx_map_A3_0	3
+-idx_map_B0_0	0
+-idx_map_B1_0	1
+-idx_map_B2_0	4
+-idx_map_B3_0	5
+-idx_map_C0_0	2
+-idx_map_C1_0	3
+-idx_map_C2_0	4
+-idx_map_C3_0	5
+
+
+-idx_map_A0_1	2
+-idx_map_A1_1	3
+-idx_map_A2_1	0
+-idx_map_A3_1	1
+-idx_map_B0_1	0
+-idx_map_B1_1	1
+-idx_map_B2_1	4
+-idx_map_B3_1	5
+-idx_map_C0_1	2
+-idx_map_C1_1	3
+-idx_map_C2_1	4
+-idx_map_C3_1	5

@@ -1,0 +1,25 @@
+CFLAGS  = -O3 -g -DNABLE_ASSERT -DDEBUG=0 -DVIRT_NTD=1
+CFLAGS += -Wall -Wwrite-strings -DUSE_OMP -fopenmp -lm #-DUSESCALAPACK
+CFLAGS += -D__STDC_LIMIT_MACROS
+CXX	= mpicxx
+BLAS	= -lblas
+LAPACK	= -llapack 
+
+ifneq (,$(findstring DUSESCALAPACK,$(CFLAGS)))
+  SCALA 	= -L/home/edgar/work/scalapack-2.0.1/lib -lscalapack 
+  BLACS	= /home/edgar/work/BLACS/LIB/blacs_MPI-LINUX-0.a
+  BLACS	+= /home/edgar/work/BLACS/LIB/blacsCinit_MPI-LINUX-0.a 
+  BLACS	+= /home/edgar/work/BLACS/LIB/blacsF77init_MPI-LINUX-0.a 
+  BLACS	+= /home/edgar/work/BLACS/LIB/blacs_MPI-LINUX-0.a
+  LIBS 	= $(SCALA) $(BLACS) $(BLAS) -lm 
+else
+  LIBS 	= $(BLAS) -lm 
+endif
+
+ifneq (,$(findstring DTAU,$(DFLAGS)))
+        include  $(TAUROOTDIR)/include/Makefile
+        CFLAGS+=$(TAU_INCLUDE) $(TAU_DEFS) 
+#       LIBS+=$(TAU_MPI_LIBS) $(TAU_LIBS) 
+        LIBS+= $(TAU_LIBS)
+endif
+
