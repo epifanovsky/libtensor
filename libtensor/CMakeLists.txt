@@ -195,6 +195,10 @@ set(SRC_BTOD
     block_tensor/impl/btod_vmpriority.C
 )
 
+set(SRC_CTF
+    ctf_dense_tensor/impl/ctf_dense_tensor.C
+)
+
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
 elseif(USE_CBLAS OR USE_GSL)
@@ -206,7 +210,7 @@ elseif(USE_MKL)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_INST} ${SRC_MP})
+    ${SRC_BTOD} ${SRC_CTF} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
