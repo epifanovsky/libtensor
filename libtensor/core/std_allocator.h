@@ -49,6 +49,13 @@ public:
 
     }
 
+    /** \brief Returns the real size of a block, in bytes, including alignment
+        \param sz Block size in units of T.
+     **/
+    static size_t get_block_size(size_t sz) {
+        return sz * sizeof(T)
+    }
+
     /** \brief Allocates a block of memory
         \param sz Block size (in units of type T).
         \return Pointer to the block of memory.
