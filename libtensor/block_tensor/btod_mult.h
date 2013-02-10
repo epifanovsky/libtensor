@@ -132,6 +132,13 @@ public:
             const tensor_transf<N, double> &trc,
             dense_tensor_wr_i<N, double> &blkc);
 
+    virtual void compute_block(
+            const index<N> &ic,
+            dense_tensor_wr_i<N, double> &blkc) {
+
+        compute_block(true, ic, tensor_transf<N, double>(), blkc);
+    }
+
     //@}
 
     virtual void perform(block_tensor_i<N, double> &btc, double d);
