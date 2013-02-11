@@ -81,6 +81,7 @@ set(SRC_CTF_DENSE_TENSOR
     ctf_dense_tensor/libtensor_ctf_dense_tensor_tests.C
     ctf_dense_tensor/libtensor_ctf_dense_tensor_suite.C
     ctf_dense_tensor/ctf_dense_tensor_test.C
+    ctf_dense_tensor/ctf_tod_copy_test.C
     ctf_dense_tensor/ctf_tod_distribute_test.C
 )
 

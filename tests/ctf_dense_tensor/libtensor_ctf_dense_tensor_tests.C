@@ -1,16 +1,12 @@
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <mpi.h>
-#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
+#include <libtensor/linalg/linalg.h>
 #include "libtensor_ctf_dense_tensor_suite.h"
 
 using namespace libtensor;
 using namespace std;
-using libutil::thread_pool;
 using libtest::test_exception;
 
 
@@ -45,6 +41,8 @@ public:
 
 
 int main(int argc, char **argv) {
+
+    linalg::rng_setup(0);
 
     int nproc, myid;
     MPI_Init(&argc, &argv);

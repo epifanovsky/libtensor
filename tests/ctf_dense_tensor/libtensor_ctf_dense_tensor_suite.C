@@ -7,6 +7,7 @@ libtensor_ctf_dense_tensor_suite::libtensor_ctf_dense_tensor_suite() :
     libtest::test_suite("libtensor_ctf_dense_tensor") {
 
     add_test("ctf_dense_tensor", m_utf_ctf_dense_tensor);
+    add_test("ctf_tod_copy", m_utf_ctf_tod_copy);
     add_test("ctf_tod_distribute", m_utf_ctf_tod_distribute);
 }
 
