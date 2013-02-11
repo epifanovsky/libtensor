@@ -30,7 +30,7 @@ public:
     /** \brief Requests tensor ID in CTF
      **/
     int req_tensor_id() {
-        m_t.on_req_tensor_id();
+        return m_t.on_req_tensor_id();
     }
 
 };
