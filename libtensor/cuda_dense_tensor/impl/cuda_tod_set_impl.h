@@ -20,8 +20,10 @@ void cuda_tod_set<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
      size_t sz = t.get_dims().get_size();
      size_t grid, threads;
-     threads = 65535;
-     size_t max_threads_per_kernel = 1024 * threads;
+//     threads = 65535;
+     threads = 1024;
+//     size_t max_threads_per_kernel = 1024 * threads;
+     size_t max_threads_per_kernel = 65535 * threads;
      for(size_t i = 0; i < sz; i+= max_threads_per_kernel) {
          size_t remaining = 0;
         //Do max possible number of blocks if possible
