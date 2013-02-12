@@ -514,7 +514,7 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 
     compare_ref<6>::compare(testname, symb, symb_ref);
 
-    compare_ref<6>::compare(testname, tb, tb_ref, 1e-15);
+    compare_ref<6>::compare(testname, tb, tb_ref, 1e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -611,7 +611,7 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
     compare_ref<6>::compare(testname, symb, symb_ref);
 
-    compare_ref<6>::compare(testname, tb, tb_ref, 1e-15);
+    compare_ref<6>::compare(testname, tb, tb_ref, 2e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
