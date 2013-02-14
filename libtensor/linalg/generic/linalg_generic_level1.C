@@ -36,6 +36,18 @@ void linalg_generic_level1::copy_i_i(
 }
 
 
+void linalg_generic_level1::div1_i_i(
+    void *,
+    size_t ni,
+    const double *a, size_t sia,
+    double *c, size_t sic) {
+
+    timings_base::start_timer("div1_i_i");
+    for(size_t i = 0; i < ni; i++) c[i * sic] /= a[i * sia];
+    timings_base::stop_timer("div1_i_i");
+}
+
+
 void linalg_generic_level1::mul1_i_x(
     void*,
     size_t ni,

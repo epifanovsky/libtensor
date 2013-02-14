@@ -51,6 +51,20 @@ public:
         const double *a, size_t sia,
         double *c, size_t sic);
 
+    /** \brief \f$ c_i = c_i / a_i \f$
+        \param ctx Context of computational device (unused for CPUs).
+        \param ni Number of elements i.
+        \param a Pointer to a.
+        \param sia Step of i in a.
+        \param c Pointer to c.
+        \param sic Step of i in c.
+     **/
+    static void div1_i_i(
+        void *ctx,
+        size_t ni,
+        const double *a, size_t sia,
+        double *c, size_t sic);
+
     /** \brief \f$ c_i = c_i a \f$
         \param ctx Context of computational device (unused for CPUs).
         \param ni Number of elements i.
