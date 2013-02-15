@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_BLOCK_MAP_H
 #define LIBTENSOR_BLOCK_MAP_H
 
-#include <map>
+#include <utility> // for std::pair
 #include <vector>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/immutable.h>
@@ -31,24 +31,32 @@ public:
     typedef typename BtTraits::template block_type<N>::type block_type;
     typedef typename BtTraits::template block_factory_type<N>::type
         block_factory_type;
-    typedef std::map<size_t, block_type*> map_type;
+    typedef std::pair<size_t, block_type*> pair_type;
 
 private:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
+
+private:
+    struct blkmap_cmp {
+        bool operator()(
+            const std::pair<size_t, block_type*> &p1,
+            const std::pair<size_t, block_type*> &p2) {
+            return p1.first < p2.first;
+        }
+    };
 
 public:
     dimensions<N> m_bidims; //!< Block index dimensions
     block_factory_type m_bf; //!< Block factory
-    map_type m_map; //!< Map that stores all the pointers
-    mutable std::vector<size_t> m_cached_blst; //!< Cached list of blocks
-    mutable bool m_dirty_cache; //!< Whether the cache needs an update
+    mutable std::vector<pair_type> m_blocks; //!< Index to block mapping
+    mutable bool m_sorted; //!< Whether the block map is sorted
 
 public:
     /** \brief Constructs the map
         \param bis Block index space.
      **/
     block_map(const block_index_space<N> &bis) :
-        m_bidims(bis.get_block_index_dims()), m_bf(bis), m_dirty_cache(true)
+        m_bidims(bis.get_block_index_dims()), m_bf(bis), m_sorted(true)
     { }
 
     /** \brief Destroys the map and all the blocks
@@ -95,6 +103,10 @@ protected:
     virtual void on_set_immutable();
 
 private:
+    /** \brief Sorts the block mapping
+     **/
+    void sort() const;
+
     /** \brief Removes all blocks (without checking for immutability)
      **/
     void do_clear();
