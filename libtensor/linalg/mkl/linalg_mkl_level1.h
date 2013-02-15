@@ -36,11 +36,12 @@ public:
         const double *a, size_t sia,
         double *c, size_t sic);
 
-    static void div1_i_i(
+    static void div1_i_i_x(
         void *ctx,
         size_t ni,
         const double *a, size_t sia,
-        double *c, size_t sic);
+        double *c, size_t sic,
+        double d);
 
     static void mul1_i_x(
         void*,
