@@ -155,7 +155,6 @@ set(SRC_GEN_BTOD
 )
 
 set(SRC_BTOD
-    block_tensor/impl/additive_btod.C
     block_tensor/impl/block_tensor.C
     block_tensor/impl/btod_addition_schedule.C
     block_tensor/impl/btod_add.C
