@@ -76,7 +76,7 @@ void linalg_mkl_level1::div1_i_i_x(
     } else
 #endif
     {
-        linalg_generic_level1::div1_i_i(0, ni, a, sia, c, sic);
+        linalg_generic_level1::div1_i_i_x(0, ni, a, sia, c, sic, d);
     }
 }
 
