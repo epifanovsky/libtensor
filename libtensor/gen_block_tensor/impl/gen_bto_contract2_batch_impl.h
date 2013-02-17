@@ -269,8 +269,8 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
         std::sort(blstb.begin(), blstb.end());
         blstb.resize(std::unique(blstb.begin(), blstb.end()) - blstb.begin());
 
-        gen_bto_unfold_symmetry<NA, Traits>().perform(blsta, m_bta2);
-        gen_bto_unfold_symmetry<NB, Traits>().perform(blstb, m_btb2);
+        gen_bto_unfold_symmetry<NA, Traits>().perform(syma2, blsta, m_bta2);
+        gen_bto_unfold_symmetry<NB, Traits>().perform(symb2, blstb, m_btb2);
 
         gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr,
             m_bta, m_bta2, syma2, bla, m_ka, m_btb, m_btb2, symb2, blb, m_kb,

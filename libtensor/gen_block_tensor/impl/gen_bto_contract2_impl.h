@@ -241,8 +241,9 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                 cpaout.close();
             }
             {
-                gen_block_tensor_rd_ctrl<NA, bti_traits> ca2(bta2);
+                gen_block_tensor_ctrl<NA, bti_traits> ca2(bta2);
                 ca2.req_nonzero_blocks(blsta2);
+                ca2.req_symmetry().clear();
             }
             block_list<NA> bla(bidimsa2, blsta2), blax(bidimsa2);
             gen_bto_unfold_block_list<NA, Traits>(syma2, bla).build(blax);
@@ -263,8 +264,9 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     cpbout.close();
                 }
                 {
-                    gen_block_tensor_rd_ctrl<NB, bti_traits> cb2(btb2);
+                    gen_block_tensor_ctrl<NB, bti_traits> cb2(btb2);
                     cb2.req_nonzero_blocks(blstb2);
+                    cb2.req_symmetry().clear();
                 }
                 block_list<NB> blb(bidimsb2, blstb2), blbx(bidimsb2);
                 gen_bto_unfold_block_list<NB, Traits>(symb2, blb).build(blbx);

@@ -11,6 +11,9 @@
 namespace libtensor {
 
 
+namespace {
+
+
 template<size_t N, typename Traits>
 class gen_bto_unfold_symmetry_task : public libutil::task_i {
 public:
@@ -78,6 +81,9 @@ public:
 };
 
 
+} // unnamed namespace
+
+
 template<size_t N, typename Traits>
 void gen_bto_unfold_symmetry<N, Traits>::perform(
     gen_block_tensor_i<N, bti_traits> &bt) {
@@ -105,21 +111,13 @@ void gen_bto_unfold_symmetry<N, Traits>::perform(
 
 template<size_t N, typename Traits>
 void gen_bto_unfold_symmetry<N, Traits>::perform(
+    const symmetry<N, element_type> &sym,
     const std::vector<size_t> &blst,
     gen_block_tensor_i<N, bti_traits> &bt) {
 
     try {
 
-        symmetry<N, element_type> symcopy(bt.get_bis());
-
-        {
-            gen_block_tensor_ctrl<N, bti_traits> ctrl(bt);
-            so_copy<N, element_type>(ctrl.req_const_symmetry()).
-                perform(symcopy);
-            ctrl.req_symmetry().clear();
-        }
-
-        gen_bto_unfold_symmetry_task_iterator<N, Traits> ti(blst, bt, symcopy);
+        gen_bto_unfold_symmetry_task_iterator<N, Traits> ti(blst, bt, sym);
         gen_bto_unfold_symmetry_task_observer<N, Traits> to;
         libutil::thread_pool::submit(ti, to);
 
@@ -127,6 +125,9 @@ void gen_bto_unfold_symmetry<N, Traits>::perform(
         throw;
     }
 }
+
+
+namespace {
 
 
 template<size_t N, typename Traits>
@@ -249,6 +250,8 @@ void gen_bto_unfold_symmetry_task_observer<N, Traits>::notify_finish_task(
     delete t;
 }
 
+
+} // unnamed namespace
 
 } // namespace libtensor
 
