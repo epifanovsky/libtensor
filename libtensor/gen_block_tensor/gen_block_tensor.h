@@ -5,7 +5,6 @@
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/immutable.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/core/orbit_list.h>
 #include "block_map.h"
 #include "gen_block_tensor_i.h"
 
@@ -39,8 +38,6 @@ public:
     block_index_space<N> m_bis; //!< Block index space
     dimensions<N> m_bidims; //!< Block index dimensions
     symmetry<N, element_type> m_symmetry; //!< Block tensor symmetry
-    orbit_list<N, element_type> *m_orblst; //!< Orbit list
-    bool m_orblst_inprogress; //!< Building or orbit list is in progress
     block_map<N, BtTraits> m_map; //!< Block map
     libutil::mutex m_lock; //!< Read-write lock
 
@@ -77,7 +74,6 @@ protected:
     //@}
 
 private:
-    bool update_orblst(bool wait);
     bool check_canonical_block(const index<N> &idx);
     block_type &get_block(const index<N> &idx);
 
