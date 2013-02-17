@@ -148,13 +148,13 @@ template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 gen_bto_contract2_batch<N, M, K, Traits, Timed>::gen_bto_contract2_batch(
     const contraction2<N, M, K> &contr,
     gen_block_tensor_rd_i<NA, bti_traits> &bta,
-    gen_block_tensor_rd_i<NA, bti_traits> &bta2,
+    gen_block_tensor_i<NA, bti_traits> &bta2,
     const permutation<NA> &perma,
     const scalar_transf<element_type> &ka,
     const block_list<NA> &blax,
     const std::vector<size_t> &batcha,
     gen_block_tensor_rd_i<NB, bti_traits> &btb,
-    gen_block_tensor_rd_i<NB, bti_traits> &btb2,
+    gen_block_tensor_i<NB, bti_traits> &btb2,
     const permutation<NB> &permb,
     const scalar_transf<element_type> &kb,
     const block_list<NB> &blbx,
@@ -234,6 +234,9 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
         gen_bto_contract2_block_list<N, M, K> cbl(m_contr, bidimsa, m_blax,
             bidimsb, m_blbx);
 
+        blsta.clear();
+        blstb.clear();
+
         std::vector<clst_pair_type> clstb;
         clstb.reserve(blst.size());
         for(typename std::vector<size_t>::const_iterator i = blst.begin();
@@ -252,6 +255,22 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
             gen_bto_contract2_task_observer<N, M, K> to;
             libutil::thread_pool::submit(ti, to);
         }
+        for(typename std::vector<clst_pair_type>::iterator i = clstb.begin();
+            i != clstb.end(); ++i) {
+            const contr_list &clst = i->second->get_clst();
+            for(typename contr_list::const_iterator j = clst.begin();
+                j != clst.end(); ++j) {
+                blsta.push_back(j->get_aindex_a());
+                blstb.push_back(j->get_aindex_b());
+            }
+        }
+        std::sort(blsta.begin(), blsta.end());
+        blsta.resize(std::unique(blsta.begin(), blsta.end()) - blsta.begin());
+        std::sort(blstb.begin(), blstb.end());
+        blstb.resize(std::unique(blstb.begin(), blstb.end()) - blstb.begin());
+
+        gen_bto_unfold_symmetry<NA, Traits>().perform(blsta, m_bta2);
+        gen_bto_unfold_symmetry<NB, Traits>().perform(blstb, m_btb2);
 
         gen_bto_contract2_block<N, M, K, Traits, Timed> bto(m_contr,
             m_bta, m_bta2, syma2, bla, m_ka, m_btb, m_btb2, symb2, blb, m_kb,

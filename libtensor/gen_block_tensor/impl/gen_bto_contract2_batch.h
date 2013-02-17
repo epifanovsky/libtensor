@@ -48,13 +48,13 @@ public:
 private:
     contraction2<N, M, K> m_contr; //!< Contraction
     gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< First block tensor (A)
-    gen_block_tensor_rd_i<NA, bti_traits> &m_bta2; //!< First block tensor (A)
+    gen_block_tensor_i<NA, bti_traits> &m_bta2; //!< First block tensor (A)
     permutation<NA> m_perma; //!< Permutation of A
     scalar_transf<element_type> m_ka; //!< Scalar transformation of A
     const block_list<NA> &m_blax;
     const std::vector<size_t> &m_batcha; //!< List of blocks in A
     gen_block_tensor_rd_i<NB, bti_traits> &m_btb; //!< Second block tensor (B)
-    gen_block_tensor_rd_i<NB, bti_traits> &m_btb2; //!< Second block tensor (B)
+    gen_block_tensor_i<NB, bti_traits> &m_btb2; //!< Second block tensor (B)
     permutation<NB> m_permb; //!< Permutation of B
     scalar_transf<element_type> m_kb; //!< Scalar transformation of B
     const block_list<NB> &m_blbx;
@@ -79,13 +79,13 @@ public:
     gen_bto_contract2_batch(
         const contraction2<N, M, K> &contr,
         gen_block_tensor_rd_i<NA, bti_traits> &bta,
-        gen_block_tensor_rd_i<NA, bti_traits> &bta2,
+        gen_block_tensor_i<NA, bti_traits> &bta2,
         const permutation<NA> &perma,
         const scalar_transf<element_type> &ka,
         const block_list<NA> &blax,
         const std::vector<size_t> &batcha,
         gen_block_tensor_rd_i<NB, bti_traits> &btb,
-        gen_block_tensor_rd_i<NB, bti_traits> &btb2,
+        gen_block_tensor_i<NB, bti_traits> &btb2,
         const permutation<NB> &permb,
         const scalar_transf<element_type> &kb,
         const block_list<NB> &blbx,

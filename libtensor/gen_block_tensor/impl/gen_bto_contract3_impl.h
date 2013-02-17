@@ -257,7 +257,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
             }
             block_list<NAB> blab(bidimsab2, batchab2), blabx(bidimsab2);
             gen_bto_unfold_block_list<NAB, Traits>(symab2, blab).build(blabx);
-            gen_bto_unfold_symmetry<NAB, Traits>().perform(btab2);
+//            gen_bto_unfold_symmetry<NAB, Traits>().perform(btab2);
 
             for(size_t ibc = 0; ibc < nblkc;) {
 
@@ -292,7 +292,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                 }
                 block_list<NC> blc(bidimsc2, blstc2), blcx(bidimsc2);
                 gen_bto_unfold_block_list<NC, Traits>(symc2, blc).build(blcx);
-                gen_bto_unfold_symmetry<NC, Traits>().perform(btc2);
+//                gen_bto_unfold_symmetry<NC, Traits>().perform(btc2);
 
                 typename assignment_schedule<ND, element_type>::iterator ibd =
                     m_schd.begin();
@@ -441,7 +441,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
             }
             block_list<NA> bla(bidimsa2, blsta2), blax(bidimsa2);
             gen_bto_unfold_block_list<NA, Traits>(syma2, bla).build(blax);
-            gen_bto_unfold_symmetry<NA, Traits>().perform(bta2);
+//            gen_bto_unfold_symmetry<NA, Traits>().perform(bta2);
 
             for(size_t ibb = 0; ibb < nblkb;) {
 
@@ -476,7 +476,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                 }
                 block_list<NB> blb(bidimsb2, blstb2), blbx(bidimsb2);
                 gen_bto_unfold_block_list<NB, Traits>(symb2, blb).build(blbx);
-                gen_bto_unfold_symmetry<NB, Traits>().perform(btb2);
+//                gen_bto_unfold_symmetry<NB, Traits>().perform(btb2);
 
                 gen_bto_contract2_batch<N1, N2 + K2, K1, Traits, Timed>(contr,
                     m_bta, bta2, perma, m_ka, blax, batcha,

@@ -178,10 +178,13 @@ void gen_bto_unfold_symmetry_task<N, Traits>::perform() {
 
         if(o.get_acindex() != m_aidx) {
 
-            if(!ctrl.req_is_zero_block(o.get_cindex())) {
+            index<N> idx;
+            abs_index<N>::get_index(m_aidx, m_bidims, idx);
+
+            if(ctrl.req_is_zero_block(idx) &&
+                !ctrl.req_is_zero_block(o.get_cindex())) {
+
                 rd_block_type &ba = ctrl.req_const_block(o.get_cindex());
-                index<N> idx;
-                abs_index<N>::get_index(m_aidx, m_bidims, idx);
                 wr_block_type &bb = ctrl.req_block(idx);
                 to_copy(ba, o.get_transf(m_aidx)).perform(true, bb);
                 ctrl.ret_block(idx);
