@@ -9,7 +9,7 @@ namespace libtensor {
 
 
 template<size_t N, typename BtTraits>
-const char *gen_block_tensor<N, BtTraits>::k_clazz =
+const char gen_block_tensor<N, BtTraits>::k_clazz[] =
     "gen_block_tensor<N, BtTraits>";
 
 
@@ -50,7 +50,7 @@ template<size_t N, typename BtTraits>
 typename gen_block_tensor<N, BtTraits>::symmetry_type&
 gen_block_tensor<N, BtTraits>::on_req_symmetry() {
 
-    static const char *method = "on_req_symmetry()";
+    static const char method[] = "on_req_symmetry()";
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
@@ -67,7 +67,7 @@ template<size_t N, typename BtTraits>
 typename gen_block_tensor<N, BtTraits>::rd_block_type&
 gen_block_tensor<N, BtTraits>::on_req_const_block(const index<N> &idx) {
 
-    return get_block(idx);
+    return get_block(idx, false);
 }
 
 
@@ -82,7 +82,7 @@ template<size_t N, typename BtTraits>
 typename gen_block_tensor<N, BtTraits>::wr_block_type&
 gen_block_tensor<N, BtTraits>::on_req_block(const index<N> &idx) {
 
-    return get_block(idx);
+    return get_block(idx, true);
 }
 
 
@@ -95,7 +95,7 @@ void gen_block_tensor<N, BtTraits>::on_ret_block(const index<N> &idx) {
 template<size_t N, typename BtTraits>
 bool gen_block_tensor<N, BtTraits>::on_req_is_zero_block(const index<N> &idx) {
 
-    static const char *method = "on_req_is_zero_block(const index<N>&)";
+    static const char method[] = "on_req_is_zero_block(const index<N>&)";
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
@@ -121,7 +121,7 @@ void gen_block_tensor<N, BtTraits>::on_req_nonzero_blocks(
 template<size_t N, typename BtTraits>
 void gen_block_tensor<N, BtTraits>::on_req_zero_block(const index<N> &idx) {
 
-    static const char *method = "on_req_zero_block(const index<N>&)";
+    static const char method[] = "on_req_zero_block(const index<N>&)";
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
@@ -142,7 +142,7 @@ void gen_block_tensor<N, BtTraits>::on_req_zero_block(const index<N> &idx) {
 template<size_t N, typename BtTraits>
 void gen_block_tensor<N, BtTraits>::on_req_zero_all_blocks() {
 
-    static const char *method = "on_req_zero_all_blocks()";
+    static const char method[] = "on_req_zero_all_blocks()";
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
@@ -167,6 +167,11 @@ template<size_t N, typename BtTraits>
 bool gen_block_tensor<N, BtTraits>::check_canonical_block(
     const index<N> &idx) {
 
+#ifndef LIBTENSOR_DEBUG
+    //  This check is fast, but not very robust. Disable it in the debug mode.
+    if(m_map.contains(idx)) return true;
+#endif // LIBTENSOR_DEBUG
+
     short_orbit<N, element_type> o(m_symmetry, idx, true);
     return o.is_allowed() && o.get_cindex().equals(idx);
 }
@@ -174,9 +179,9 @@ bool gen_block_tensor<N, BtTraits>::check_canonical_block(
 
 template<size_t N, typename BtTraits>
 typename gen_block_tensor<N, BtTraits>::block_type&
-gen_block_tensor<N, BtTraits>::get_block(const index<N> &idx) {
+gen_block_tensor<N, BtTraits>::get_block(const index<N> &idx, bool create) {
 
-    static const char *method = "get_block(const index<N>&)";
+    static const char method[] = "get_block(const index<N>&, bool)";
 
     libutil::auto_lock<libutil::mutex> lock(m_lock);
 
@@ -186,7 +191,12 @@ gen_block_tensor<N, BtTraits>::get_block(const index<N> &idx) {
     }
 
     if(!m_map.contains(idx)) {
-        if(!m_map.contains(idx)) m_map.create(idx);
+        if(create) {
+            m_map.create(idx);
+        } else {
+            throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "Block does not exist.");
+        }
     }
     return m_map.get(idx);
 }

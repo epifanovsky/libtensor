@@ -24,7 +24,7 @@ class gen_block_tensor :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename BtTraits::element_type element_type;
@@ -75,7 +75,7 @@ protected:
 
 private:
     bool check_canonical_block(const index<N> &idx);
-    block_type &get_block(const index<N> &idx);
+    block_type &get_block(const index<N> &idx, bool create);
 
 };
 
