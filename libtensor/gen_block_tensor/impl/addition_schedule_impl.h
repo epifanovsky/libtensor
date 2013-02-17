@@ -213,14 +213,36 @@ public:
 
             combined_orbits<N, element_type> co(m_syma, m_symb, m_symc, acic);
             schedule_group *grp = new schedule_group;
+            bool first = true, already_visited = false;
             for(typename combined_orbits<N, element_type>::iterator i =
                 co.begin(); i != co.end(); ++i) {
+
                 size_t ic = co.get_abs_index(i);
                 typename std::map<size_t, book_node>::iterator ia =
                     m_booka.find(ic);
                 typename std::map<size_t, book_node>::iterator ib =
                     m_bookb.find(ic);
-                bool already_visited = false;
+
+                if(ia == m_booka.end() && ib == m_bookb.end()) continue;
+                if(first) {
+                    libutil::auto_lock<libutil::spinlock> lock(m_lock);
+                    if(ia != m_booka.end()) {
+                        if(ia->second.visited) {
+                            already_visited = true;
+                        } else {
+                            ia->second.visited = true;
+                        }
+                    } else {
+                        if(ib->second.visited) {
+                            already_visited = true;
+                        } else {
+                            ib->second.visited = true;
+                        }
+                    }
+                    first = false;
+                    if(already_visited) break;
+                }
+
                 node n;
                 n.cic = ic;
                 if(ia == m_booka.end()) {
@@ -229,11 +251,6 @@ public:
                     n.zeroa = false;
                     n.cia = ia->second.cidx;
                     n.tra = ia->second.tr;
-                    {
-                        libutil::auto_lock<libutil::spinlock> lock(m_lock);
-                        if(ia->second.visited) already_visited = true;
-                        else ia->second.visited = true;
-                    }
                 }
                 if(ib == m_bookb.end()) {
                     n.zerob = true;
@@ -241,17 +258,11 @@ public:
                     n.zerob = false;
                     n.cib = ib->second.cidx;
                     n.trb = ib->second.tr;
-                    {
-                        libutil::auto_lock<libutil::spinlock> lock(m_lock);
-                        if(ib->second.visited) already_visited = true;
-                        else ib->second.visited = true;
-                    }
                 }
-                if(already_visited) break;
                 if(!n.zeroa || !n.zerob) grp->push_back(n);
             }
 
-            {
+            if(!already_visited) {
                 libutil::auto_lock<libutil::spinlock> lock(m_lock);
                 m_sch.push_back(grp);
             }
