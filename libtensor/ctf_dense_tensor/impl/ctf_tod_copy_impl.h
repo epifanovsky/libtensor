@@ -59,7 +59,7 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     sequence<N, int> seqa(0), seqb(0);
     int mapa[N], mapb[N];
     for(size_t i = 0; i < N; i++) seqa[i] = seqb[i] = i;
-    m_tra.get_perm().apply(seqa);
+    m_tra.get_perm().apply(seqb);
     for(size_t i = 0; i < N; i++) {
         mapa[i] = seqa[i];
         mapb[i] = seqb[i];
