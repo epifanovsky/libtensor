@@ -1,3 +1,6 @@
+#ifndef LIBTENSOR_CTF_TOD_COPY_IMPL_H
+#define LIBTENSOR_CTF_TOD_COPY_IMPL_H
+
 #include <libtensor/core/bad_dimensions.h>
 #include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
@@ -85,4 +88,6 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
 
 
 } // namespace libtensor
+
+#endif // LIBTENSOR_CTF_TOD_COPY_IMPL_H
 

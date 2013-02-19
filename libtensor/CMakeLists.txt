@@ -198,6 +198,7 @@ set(SRC_BTOD
 set(SRC_CTF
     ctf_dense_tensor/impl/ctf_dense_tensor.C
     ctf_dense_tensor/impl/ctf_tod_collect.C
+    ctf_dense_tensor/impl/ctf_tod_contract2.C
     ctf_dense_tensor/impl/ctf_tod_copy.C
     ctf_dense_tensor/impl/ctf_tod_distribute.C
 )

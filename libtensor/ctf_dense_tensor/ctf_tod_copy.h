@@ -39,8 +39,8 @@ public:
         \param perma Tensor permutation.
         \param c Coefficient (default 1.0).
      **/
-    ctf_tod_copy(ctf_dense_tensor_i<N, double> &ta, const permutation<N> &perma,
-        double c = 1.0);
+    ctf_tod_copy(ctf_dense_tensor_i<N, double> &ta,
+        const permutation<N> &perma, double c = 1.0);
 
     /** \brief Transformed copy
         \param ta Source tensor.
