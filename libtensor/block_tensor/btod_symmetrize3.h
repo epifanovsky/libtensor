@@ -92,7 +92,6 @@ public:
 
     //@}
 
-protected:
     //!    \brief Implementation of additive_bto<N, btod_traits>
     //@{
 
