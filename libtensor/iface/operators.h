@@ -16,6 +16,7 @@
 #include "ewmult/operator_ewmult.h"
 #include "mult/operator_div.h"
 #include "mult/operator_mult.h"
+#include "scale/operator_div.h"
 #include "scale/operator_mul.h"
 #include "symm/symm_operator.h"
 #include "dot_product.h"
