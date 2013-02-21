@@ -351,7 +351,7 @@ inline bool permutation<N>::operator<(const permutation<N> &p) const {
 
 /** \brief Prints out a permutation to an output stream
 
-    \ingroup libtensor
+    \ingroup libtensor_core
 **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const permutation<N> &p) {

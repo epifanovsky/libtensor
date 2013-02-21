@@ -26,7 +26,7 @@ public:
     The order of %tensor indexes in the result can be specified using
     a permutation.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M>
 class btod_dirsum :
@@ -38,6 +38,8 @@ public:
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;
+    typedef typename bti_traits::template wr_block_type<N + M>::type
+            wr_block_type;
     typedef tensor_transf<N + M, double> tensor_transf_type;
 
 private:
@@ -122,7 +124,7 @@ public:
 
     virtual void compute_block(
             const index<N + M> &ic,
-            dense_tensor_wr_i<N + M, double> &blkc) {
+            wr_block_type &blkc) {
 
         compute_block(true, ic, tensor_transf<N + M, double>(), blkc);
     }

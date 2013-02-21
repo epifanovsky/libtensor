@@ -10,7 +10,7 @@ namespace libtensor {
 /** \brief Computes the trace of a matricized block %tensor
     \tparam N Tensor diagonal order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_trace : public noncopyable {

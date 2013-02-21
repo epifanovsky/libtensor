@@ -13,7 +13,7 @@ namespace libtensor {
 
     Base class for direct block %tensors. Implements the functions
 
-    \ingroup libtensor_core
+    \ingroup libtensor_gen_block_tensor
 **/
 template<size_t N, typename BtiTraits>
 class direct_gen_block_tensor_base :

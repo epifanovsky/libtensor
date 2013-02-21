@@ -16,7 +16,7 @@ namespace libtensor {
     \tparam T Tensor element type.
     \tparam Alloc Memory allocator.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_block_tensor
  **/
 template<size_t N, typename T, typename Alloc>
 class block_tensor :

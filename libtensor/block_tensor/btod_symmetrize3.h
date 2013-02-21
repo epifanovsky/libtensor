@@ -24,7 +24,7 @@ namespace libtensor {
 
     The constructor takes three different indexes to be symmetrized.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_symmetrize3 :

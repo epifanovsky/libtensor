@@ -22,7 +22,7 @@ namespace libtensor {
 
     Marked deprecated!!! Will be removed when interface has been generalized.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_sum :

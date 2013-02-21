@@ -24,7 +24,7 @@ namespace libtensor {
 
     \sa tod_ewmult2, btod_contract2
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :

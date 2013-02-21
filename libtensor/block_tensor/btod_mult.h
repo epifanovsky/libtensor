@@ -12,7 +12,7 @@ namespace libtensor {
 /** \brief Elementwise multiplication of two block tensors
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_mult :

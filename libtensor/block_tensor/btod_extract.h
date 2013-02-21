@@ -14,7 +14,7 @@ namespace libtensor {
     \tparam M Number of fixed dimensions.
     \tparam N - M result tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M>
 class btod_extract :

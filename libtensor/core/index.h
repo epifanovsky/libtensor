@@ -12,9 +12,17 @@ namespace libtensor {
 template<size_t N>
 class index;
 
+/** \brief Prints out an index to an output stream
+
+    \ingroup libtensor_core
+ **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const index<N> &i);
 
+/** \brief Prints out an index to an output stream (specialization for N=0)
+
+    \ingroup libtensor_core
+ **/
 template<>
 std::ostream &operator<<(std::ostream &os, const index<0> &i);
 
