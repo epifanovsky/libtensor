@@ -873,7 +873,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 
             const tensor_transf<2, double> &tra = oa.get_transf(ib);
 
-            abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
+            abs_index<2> ai(oa.get_acindex(), bidims);
             dense_tensor_rd_i<2, double> &ta =
                     ca.req_const_block(ai.get_index());
             dense_tensor_wr_i<2, double> &tb = cb.req_block(ib);

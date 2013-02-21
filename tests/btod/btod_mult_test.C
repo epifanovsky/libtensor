@@ -265,7 +265,7 @@ void btod_mult_test::test_3(
     index<2> idxa;
     idxa[0] = 0; idxa[1] = 2;
     orbit<2, double> oa(cbta.req_const_symmetry(), idxa);
-    abs_index<2> cidxa(oa.get_abs_canonical_index(), bidims);
+    abs_index<2> cidxa(oa.get_acindex(), bidims);
     cbta.req_zero_block(cidxa.get_index());
     }
 
@@ -355,7 +355,7 @@ void btod_mult_test::test_4(
     index<4> idxa;
     idxa[0] = 0; idxa[1] = 1; idxa[2] = 1; idxa[3] = 0;
     orbit<4, double> oa(cbta.req_const_symmetry(), idxa);
-    abs_index<4> cidxa(oa.get_abs_canonical_index(), bidims);
+    abs_index<4> cidxa(oa.get_acindex(), bidims);
     cbta.req_zero_block(cidxa.get_index());
     }
 

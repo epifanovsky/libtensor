@@ -86,7 +86,7 @@ void btod_sum<N>::compute_block(
             const symmetry<N, double> &sym = iop->get_op().get_symmetry();
             orbit<N, double> orb(sym, i);
             if(!orb.is_allowed()) continue;
-            abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
+            abs_index<N> ci(orb.get_acindex(), m_bidims);
 
             if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
                 tensor_transf<N, double> tra(orb.get_transf(i));
