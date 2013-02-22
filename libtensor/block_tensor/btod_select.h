@@ -37,7 +37,7 @@ namespace libtensor {
     the first value is taken to be more optimal with respect to the compare
     policy.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, typename ComparePolicy=compare4absmin>
 class btod_select : public noncopyable {

@@ -324,11 +324,11 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
@@ -385,11 +385,11 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
@@ -444,11 +444,11 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
@@ -503,11 +503,11 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }

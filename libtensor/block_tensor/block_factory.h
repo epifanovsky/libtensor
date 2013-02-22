@@ -11,7 +11,7 @@ namespace libtensor {
     \tparam T Tensor element type.
     \tparam Block Block type.
 
-    \ingroup libtensor_gen_block_tensor
+    \ingroup libtensor_block_tensor
  **/
 template<size_t N, typename T, typename Block>
 class block_factory {

@@ -9,9 +9,18 @@
 namespace libtensor {
 
 template<size_t N> class mask;
+
+/** \brief Prints out a mask to an output stream
+
+    \ingroup libtensor_core
+ **/
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const mask<N> &m);
 
+/** \brief A sequence of boolean values representing a mask.
+
+    \ingroup libtensor_core
+ **/
 template<size_t N>
 class mask : public sequence<N, bool> {
     friend std::ostream &operator<<

@@ -11,7 +11,7 @@ namespace libtensor {
 /** \brief Sets or unsets the VM in-core priority
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_vmpriority : public noncopyable {

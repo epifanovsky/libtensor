@@ -14,7 +14,7 @@ namespace libtensor {
 
     \sa gen_bto_add
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_add :

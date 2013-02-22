@@ -47,7 +47,7 @@ gen_bto_contract2_batching_policy<N, M, K>::
 gen_bto_contract2_batching_policy(const contraction2<N, M, K> &contr,
         size_t nblka, size_t nblkb, size_t nblkc) {
 
-    size_t batch_size = 4096;
+    size_t batch_size = 1024;
     size_t nbata, nbatb, nbatc;
 
     nbata = (nblka + batch_size - 1) / batch_size;

@@ -13,7 +13,7 @@ namespace libtensor {
 /** \brief Symmetrizes the result of another block %tensor operation
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_symmetrize2 :

@@ -266,14 +266,14 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
         if (zeroa == zerob) continue;
 
         if (! zeroa) {
-            abs_index<NA> ai(oa.get_abs_canonical_index(),
+            abs_index<NA> ai(oa.get_acindex(),
                     m_bta.get_bis().get_block_index_dims());
             zeroa = ca.req_is_zero_block(ai.get_index());
         }
 
 
         if (! zerob) {
-            abs_index<NB> bi(ob.get_abs_canonical_index(),
+            abs_index<NB> bi(ob.get_acindex(),
                     m_btb.get_bis().get_block_index_dims());
             zerob = cb.req_is_zero_block(bi.get_index());
         }
@@ -337,8 +337,8 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule(
 
             permutation_builder<NC> pbc(seqc2, seqc1);
             schrec rec;
-            rec.absidxa = oa.get_abs_canonical_index();
-            rec.absidxb = ob.get_abs_canonical_index();
+            rec.absidxa = oa.get_acindex();
+            rec.absidxb = ob.get_acindex();
             rec.zeroa = zeroa;
             rec.zerob = zerob;
             rec.ka.transform(tra.get_scalar_tr()).transform(m_ka);

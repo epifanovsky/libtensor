@@ -13,7 +13,7 @@ namespace libtensor {
 
     \sa tod_mult1
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_mult1 : public noncopyable {

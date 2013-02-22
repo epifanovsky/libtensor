@@ -21,7 +21,7 @@ namespace libtensor {
     %symmetry rules such that the specified element of the specified block
     is given the specified value.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_set_elem : public noncopyable {

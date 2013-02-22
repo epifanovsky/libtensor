@@ -118,7 +118,7 @@ template<size_t N, typename Traits>
 bool gen_bto_compare<N, Traits>::compare_canonical(const abs_index<N> &acidx1,
     orbit<N, element_type> &o1, orbit<N, element_type> &o2) {
 
-    if(o1.get_abs_canonical_index() != o2.get_abs_canonical_index()) {
+    if(o1.get_acindex() != o2.get_acindex()) {
 
         m_diff.kind = diff::DIFF_ORBIT;
         m_diff.bidx = acidx1.get_index();
@@ -151,9 +151,9 @@ bool gen_bto_compare<N, Traits>::compare_transf(const abs_index<N> &aidx,
         m_diff.kind = diff::DIFF_TRANSF;
         m_diff.bidx = aidx.get_index();
         m_diff.can1 =
-            aidx.get_abs_index() == o1.get_abs_canonical_index();
+            aidx.get_abs_index() == o1.get_acindex();
         m_diff.can2 =
-            aidx.get_abs_index() == o2.get_abs_canonical_index();
+            aidx.get_abs_index() == o2.get_acindex();
         return false;
     }
 

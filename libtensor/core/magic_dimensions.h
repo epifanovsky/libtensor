@@ -1,10 +1,8 @@
 #ifndef LIBTENSOR_MAGIC_DIMENSIONS_H
 #define LIBTENSOR_MAGIC_DIMENSIONS_H
 
-#include <stdint.h> // required for libdivide
-#include "impl/libdivide.h"
-#include "out_of_bounds.h"
 #include "dimensions.h"
+#include "out_of_bounds.h"
 
 namespace libtensor {
 
@@ -29,11 +27,25 @@ template<size_t N>
 class magic_dimensions {
 private:
     dimensions<N> m_dims;
-    sequence<N, libdivide::divider<uint64_t> > m_magic;
+    void *m_magic;
 
 public:
+    /** \brief Constructs magic dimensions from regular dimensions
+        \param dims Dimensions.
+        \param incs Use linear increments (true) or dimensions (false).
+     **/
     magic_dimensions(const dimensions<N> &dims, bool incs);
 
+    /** \brief Copy constructor
+     **/
+    magic_dimensions(const magic_dimensions<N> &mdims);
+
+    /** \brief Destructor
+     **/
+    ~magic_dimensions();
+
+    /** \brief Returns the dimensions
+     **/
     const dimensions<N> &get_dims() const {
         return m_dims;
     }
@@ -41,17 +53,15 @@ public:
     /** \brief Divides each element of index i1 by the dimensions and puts
             the result in i2.
      **/
-    void divide(const index<N> &i1, index<N> &i2) const {
-        for(register size_t i = 0; i < N; i++) {
-            i2[i] = ((uint64_t)i1[i]) / m_magic[i];
-        }
-    }
+    void divide(const index<N> &i1, index<N> &i2) const;
 
     /** \brief Divides number n by ith dimension
      **/
-    size_t divide(size_t n, size_t i) const {
-        return ((uint64_t)n) / m_magic[i];
-    }
+    size_t divide(size_t n, size_t i) const;
+
+    /** \brief Copy operator
+     **/
+    const magic_dimensions<N> &operator=(const magic_dimensions<N> &mdims);
 
 };
 

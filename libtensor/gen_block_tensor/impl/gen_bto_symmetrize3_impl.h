@@ -91,6 +91,7 @@ void gen_bto_symmetrize3<N, Traits, Timed>::compute_block(
 
     typedef typename Traits::template temp_block_type<N>::type temp_block_type;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
+    typedef typename Traits::template to_set_type<N>::type to_set;
 
     typedef typename sym_schedule_type::iterator iterator_t;
 
@@ -125,13 +126,14 @@ void gen_bto_symmetrize3<N, Traits, Timed>::compute_block(
             m_op.compute_block(zero1, ai.get_index(), tri, blkb);
             zero1 = false;
             sch1.pop_front();
+
         } else {
 
             dimensions<N> dims(blkb.get_dims());
             dims.permute(permutation<N>(trb.get_perm(), true));
             dims.permute(permutation<N>(sch1.front().tr.get_perm(), true));
             temp_block_type tblk(dims);
-            m_op.compute_block(true, aib.get_index(),
+            m_op.compute_block(true, ai.get_index(),
                 tensor_transf<N, element_type>(), tblk);
             for(typename std::list<schrec>::iterator j = sch1.begin();
                 j != sch1.end();) {
@@ -145,8 +147,11 @@ void gen_bto_symmetrize3<N, Traits, Timed>::compute_block(
                 zero1 = false;
                 j = sch1.erase(j);
             }
+
         }
     }
+
+    if(zero1) to_set().perform(blkb);
 }
 
 
@@ -227,41 +232,41 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule_blk(
 
     //  Form the temporary schedule
 
-    if(sch0.contains(o0.get_abs_canonical_index())) {
+    if(sch0.contains(o0.get_acindex())) {
         tensor_transf<N, element_type> tr(o0.get_transf(idx0));
-        sch1.push_back(schrec(o0.get_abs_canonical_index(), tr));
+        sch1.push_back(schrec(o0.get_acindex(), tr));
     }
-    if(sch0.contains(o1.get_abs_canonical_index())) {
+    if(sch0.contains(o1.get_acindex())) {
         tensor_transf<N, element_type> tr(o1.get_transf(idx1));
         tr.permute(m_perm1);
         tr.transform(scalar_transf<element_type>(scal));
-        sch1.push_back(schrec(o1.get_abs_canonical_index(), tr));
+        sch1.push_back(schrec(o1.get_acindex(), tr));
     }
-    if(sch0.contains(o2.get_abs_canonical_index())) {
+    if(sch0.contains(o2.get_acindex())) {
         tensor_transf<N, element_type> tr(o2.get_transf(idx2));
         tr.permute(m_perm2);
         tr.transform(scalar_transf<element_type>(scal));
-        sch1.push_back(schrec(o2.get_abs_canonical_index(), tr));
+        sch1.push_back(schrec(o2.get_acindex(), tr));
     }
-    if(sch0.contains(o3.get_abs_canonical_index())) {
+    if(sch0.contains(o3.get_acindex())) {
         tensor_transf<N, element_type> tr(o3.get_transf(idx3));
-        tr.permute(m_perm1);
         tr.permute(m_perm2);
-        sch1.push_back(schrec(o3.get_abs_canonical_index(), tr));
+        tr.permute(m_perm1);
+        sch1.push_back(schrec(o3.get_acindex(), tr));
     }
-    if(sch0.contains(o4.get_abs_canonical_index())) {
+    if(sch0.contains(o4.get_acindex())) {
         tensor_transf<N, element_type> tr(o4.get_transf(idx4));
-        tr.permute(m_perm2);
         tr.permute(m_perm1);
-        sch1.push_back(schrec(o4.get_abs_canonical_index(), tr));
+        tr.permute(m_perm2);
+        sch1.push_back(schrec(o4.get_acindex(), tr));
     }
-    if(sch0.contains(o5.get_abs_canonical_index())) {
+    if(sch0.contains(o5.get_acindex())) {
         tensor_transf<N, element_type> tr(o5.get_transf(idx5));
         tr.permute(m_perm1);
         tr.permute(m_perm2);
         tr.permute(m_perm1);
         tr.transform(scalar_transf<element_type>(scal));
-        sch1.push_back(schrec(o5.get_abs_canonical_index(), tr));
+        sch1.push_back(schrec(o5.get_acindex(), tr));
     }
 
     //  Consolidate and transfer the temporary schedule

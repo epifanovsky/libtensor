@@ -10,7 +10,7 @@ namespace libtensor {
 /** \brief Scales a block %tensor by a coefficient
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_scale : public noncopyable {

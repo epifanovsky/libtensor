@@ -10,6 +10,8 @@
 #include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_contract2_nzorb.h"
 #include "gen_bto_contract2_sym_impl.h"
+#include "gen_bto_prefetch.h"
+#include "gen_bto_set_impl.h"
 #include "gen_bto_unfold_block_list.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "../gen_block_tensor_ctrl.h"
@@ -39,6 +41,15 @@ gen_bto_contract2<N, M, K, Traits, Timed>::gen_bto_contract2(
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
     gen_block_stream_i<NC, bti_traits> &out) {
+
+    typedef typename Traits::template temp_block_tensor_type<NA>::type
+        temp_block_tensor_a_type;
+    typedef typename Traits::template temp_block_tensor_type<NB>::type
+        temp_block_tensor_b_type;
+    typedef gen_bto_set<NA, Traits, Timed> gen_bto_set_a_type;
+    typedef gen_bto_set<NB, Traits, Timed> gen_bto_set_b_type;
+    typedef gen_bto_copy<NA, Traits, Timed> gen_bto_copy_a_type;
+    typedef gen_bto_copy<NB, Traits, Timed> gen_bto_copy_b_type;
 
     gen_bto_contract2::start_timer();
 
@@ -113,17 +124,24 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
         size_t batchsza = bp.get_bsz_a(), batchszb = bp.get_bsz_b(),
             batchszc = bp.get_bsz_c();
 
-        std::vector<size_t> batcha, batchb, batchc;
-        batcha.reserve(batchsza);
-        batchb.reserve(batchszb);
-        batchc.reserve(batchszc);
+        std::list< std::vector<size_t> > batchesa, batchesb, batchesc,
+            fbatchesa, fbatchesb;
+        typedef typename std::list< std::vector<size_t> >::const_iterator
+            batch_iterator;
 
         for(size_t iba = 0; iba < nblka;) {
 
-            batcha.clear();
+            batchesa.push_back(std::vector<size_t>());
+            fbatchesa.push_back(std::vector<size_t>());
+            std::vector<size_t> &batcha = batchesa.back();
+            std::vector<size_t> &fbatcha = fbatchesa.back();
+            batcha.reserve(batchsza);
+            fbatcha.reserve(batchsza);
+
             if(perma.is_identity()) {
                 for(; iba < nblka && batcha.size() < batchsza; iba++) {
                     batcha.push_back(blsta[iba]);
+                    fbatcha.push_back(blsta[iba]);
                 }
             } else {
                 for(; iba < nblka && batcha.size() < batchsza; iba++) {
@@ -132,55 +150,150 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                     ia.permute(perma);
                     short_orbit<NA, element_type> oat(symat, ia);
                     batcha.push_back(oat.get_acindex());
+                    fbatcha.push_back(blsta[iba]);
                 }
             }
+        }
 
-            if(batcha.size() == 0) continue;
+        for(size_t ibb = 0; ibb < nblkb;) {
 
-            for(size_t ibb = 0; ibb < nblkb;) {
+            batchesb.push_back(std::vector<size_t>());
+            fbatchesb.push_back(std::vector<size_t>());
+            std::vector<size_t> &batchb = batchesb.back();
+            std::vector<size_t> &fbatchb = fbatchesb.back();
+            batchb.reserve(batchszb);
+            fbatchb.reserve(batchszb);
 
-                batchb.clear();
-                if(permb.is_identity()) {
-                    for(; ibb < nblkb && batchb.size() < batchszb; ibb++) {
-                        batchb.push_back(blstb[ibb]);
-                    }
+            if(permb.is_identity()) {
+                for(; ibb < nblkb && batchb.size() < batchszb; ibb++) {
+                    batchb.push_back(blstb[ibb]);
+                    fbatchb.push_back(blstb[ibb]);
+                }
+            } else {
+                for(; ibb < nblkb && batchb.size() < batchszb; ibb++) {
+                    index<NB> ib;
+                    abs_index<NB>::get_index(blstb[ibb], bidimsb, ib);
+                    ib.permute(permb);
+                    short_orbit<NB, element_type> obt(symbt, ib);
+                    batchb.push_back(obt.get_acindex());
+                    fbatchb.push_back(blstb[ibb]);
+                }
+            }
+        }
+
+        typename assignment_schedule<NC, element_type>::iterator ibc =
+            m_sch.begin();
+        while(ibc != m_sch.end()) {
+
+            batchesc.push_back(std::vector<size_t>());
+            std::vector<size_t> &batchc = batchesc.back();
+            batchc.reserve(batchszc);
+
+            for(; ibc != m_sch.end() && batchc.size() < batchszc; ++ibc) {
+                index<NC> ic;
+                abs_index<NC>::get_index(m_sch.get_abs_index(ibc), bidimsc, ic);
+                ic.permute(permc);
+                short_orbit<NC, element_type> oct(symct, ic);
+                batchc.push_back(oct.get_acindex());
+            }
+        }
+
+        gen_bto_prefetch<NA, Traits> prefetch_a(m_bta);
+        gen_bto_prefetch<NB, Traits> prefetch_b(m_btb);
+
+        block_index_space<NA> bisa2(m_bta.get_bis());
+        bisa2.permute(perma);
+        block_index_space<NB> bisb2(m_btb.get_bis());
+        bisb2.permute(permb);
+        dimensions<NA> bidimsa2 = bisa2.get_block_index_dims();
+        dimensions<NB> bidimsb2 = bisb2.get_block_index_dims();
+
+        temp_block_tensor_a_type bta2(bisa2);
+        temp_block_tensor_b_type btb2(bisb2);
+
+        symmetry<NA, element_type> syma2(bisa2);
+        symmetry<NB, element_type> symb2(bisb2);
+
+        {
+            gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+            so_permute<NA, element_type>(ca.req_const_symmetry(), perma).
+                perform(syma2);
+        }
+        {
+            gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+            so_permute<NB, element_type>(cb.req_const_symmetry(), permb).
+                perform(symb2);
+        }
+
+        std::vector<size_t> blsta2, blstb2;
+
+        for(batch_iterator iba1 = batchesa.begin(), iba2 = fbatchesa.begin();
+            iba1 != batchesa.end(); ++iba1, ++iba2) {
+
+            const std::vector<size_t> &batcha = *iba1;
+
+            gen_bto_set_a_type(Traits::zero()).perform(bta2);
+            {
+                tensor_transf<NA, element_type> tra(perma);
+                gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2, false);
+                cpaout.open();
+                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
+                cpaout.close();
+            }
+            {
+                gen_block_tensor_ctrl<NA, bti_traits> ca2(bta2);
+                ca2.req_nonzero_blocks(blsta2);
+                ca2.req_symmetry().clear();
+            }
+            block_list<NA> bla(bidimsa2, blsta2), blax(bidimsa2);
+            gen_bto_unfold_block_list<NA, Traits>(syma2, bla).build(blax);
+//            gen_bto_unfold_symmetry<NA, Traits>().perform(bta2);
+
+            for(batch_iterator ibb1 = batchesb.begin(),
+                ibb2 = fbatchesb.begin(); ibb1 != batchesb.end();
+                ++ibb1, ++ibb2) {
+
+                const std::vector<size_t> &batchb = *ibb1;
+
+                gen_bto_set_b_type(Traits::zero()).perform(btb2);
+                {
+                    tensor_transf<NB, element_type> trb(permb);
+                    gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2, false);
+                    cpbout.open();
+                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
+                    cpbout.close();
+                }
+                {
+                    gen_block_tensor_ctrl<NB, bti_traits> cb2(btb2);
+                    cb2.req_nonzero_blocks(blstb2);
+                    cb2.req_symmetry().clear();
+                }
+                block_list<NB> blb(bidimsb2, blstb2), blbx(bidimsb2);
+                gen_bto_unfold_block_list<NB, Traits>(symb2, blb).build(blbx);
+//                gen_bto_unfold_symmetry<NB, Traits>().perform(btb2);
+
+                batch_iterator iba3 = iba2, ibb3 = ibb2;
+                ++iba3; ++ibb3;
+                if(ibb3 != fbatchesb.end()) {
+                    prefetch_b.perform(*ibb3);
                 } else {
-                    for(; ibb < nblkb && batchb.size() < batchszb; ibb++) {
-                        index<NB> ib;
-                        abs_index<NB>::get_index(blstb[ibb], bidimsb, ib);
-                        ib.permute(permb);
-                        short_orbit<NB, element_type> obt(symbt, ib);
-                        batchb.push_back(obt.get_acindex());
-                    }
+                    if(iba3 != fbatchesa.end()) prefetch_a.perform(*iba3);
+                    prefetch_b.perform(fbatchesb.front());
                 }
 
-                if(batchb.size() == 0) continue;
+                for(batch_iterator ibc = batchesc.begin();
+                    ibc != batchesc.end(); ++ibc) {
 
-                typename assignment_schedule<NC, element_type>::iterator ibc =
-                    m_sch.begin();
-                while(ibc != m_sch.end()) {
-
-                    batchc.clear();
-
-                    for(; ibc != m_sch.end() && batchc.size() < batchszc;
-                        ++ibc) {
-                        index<NC> ic;
-                        abs_index<NC>::get_index(m_sch.get_abs_index(ibc),
-                            bidimsc, ic);
-                        ic.permute(permc);
-                        short_orbit<NC, element_type> oct(symct, ic);
-                        batchc.push_back(oct.get_acindex());
-                    }
-                    if(batchc.size() == 0) continue;
+                    const std::vector<size_t> &batchc = *ibc;
 
                     tensor_transf<NC, element_type> trc(permcinv);
                     gen_bto_aux_transform<NC, Traits> out2(trc,
                         m_symc.get_symmetry(), out);
                     out2.open();
                     gen_bto_contract2_batch<N, M, K, Traits, Timed>(contr,
-                        m_bta, perma, m_ka, batcha, m_btb, permb, m_kb,
-                        batchb, symct.get_bis(), m_kc).
-                        perform(batchc, out2);
+                        m_bta, bta2, perma, m_ka, blax, batcha,
+                        m_btb, btb2, permb, m_kb, blbx, batchb,
+                        symct.get_bis(), m_kc).perform(batchc, out2);
                     out2.close();
                 }
             }

@@ -2,6 +2,7 @@
 #define LIBTENSOR_GEN_BTO_SIZE_H
 
 #include <libtensor/core/noncopyable.h>
+#include "gen_block_tensor_i.h"
 
 namespace libtensor {
 
