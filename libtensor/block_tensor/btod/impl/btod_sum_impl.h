@@ -69,7 +69,7 @@ void btod_sum<N>::compute_block(
         const tensor_transf<N, double> &tr,
         dense_tensor_wr_i<N, double> &blk) {
 
-    if(zero) tod_set<N>().perform(blk);
+    bool zero1 = zero;
 
     abs_index<N> ai(i, m_bidims);
 
@@ -80,24 +80,26 @@ void btod_sum<N>::compute_block(
         if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
             tensor_transf<N, double> tra(permutation<N>(), kc);
             tra.transform(tr);
-            additive_gen_bto<N, bti_traits>::compute_block(
-                    iop->get_op(), false, i, tra, blk);
+            iop->get_op().compute_block(zero1, i, tra, blk);
+            zero1 = false;
         } else {
             const symmetry<N, double> &sym = iop->get_op().get_symmetry();
             orbit<N, double> orb(sym, i);
             if(!orb.is_allowed()) continue;
-            abs_index<N> ci(orb.get_abs_canonical_index(), m_bidims);
+            abs_index<N> ci(orb.get_acindex(), m_bidims);
 
             if(iop->get_op().get_schedule().contains(ci.get_abs_index())) {
                 tensor_transf<N, double> tra(orb.get_transf(i));
                 tra.transform(kc);
                 tra.transform(tr);
 
-                additive_gen_bto<N, bti_traits>::compute_block(
-                        iop->get_op(), false, ci.get_index(), tra, blk);
+                iop->get_op().compute_block(zero1, ci.get_index(), tra, blk);
+                zero1 = false;
             }
         }
     }
+
+    if(zero1) tod_set<N>().perform(blk);
 }
 
 

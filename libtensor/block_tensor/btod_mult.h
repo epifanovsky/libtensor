@@ -12,7 +12,7 @@ namespace libtensor {
 /** \brief Elementwise multiplication of two block tensors
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_mult :
@@ -131,6 +131,13 @@ public:
             const index<N> &ic,
             const tensor_transf<N, double> &trc,
             dense_tensor_wr_i<N, double> &blkc);
+
+    virtual void compute_block(
+            const index<N> &ic,
+            dense_tensor_wr_i<N, double> &blkc) {
+
+        compute_block(true, ic, tensor_transf<N, double>(), blkc);
+    }
 
     //@}
 

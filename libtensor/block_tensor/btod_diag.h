@@ -15,7 +15,7 @@ namespace libtensor {
 
     \sa gen_bto_diag
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M>
 class btod_diag :

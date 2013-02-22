@@ -64,6 +64,7 @@ public:
     struct book_node {
         size_t cidx;
         tensor_transf_type tr;
+        bool visited;
     };
 
     typedef std::list<node> schedule_group;

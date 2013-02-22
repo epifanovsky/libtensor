@@ -12,7 +12,7 @@ namespace libtensor {
         %symmetry
     \tparam N Block %tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_random : public noncopyable {

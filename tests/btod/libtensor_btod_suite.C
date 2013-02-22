@@ -34,7 +34,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_set_diag", m_utf_btod_set_diag);
     add_test("btod_set_elem", m_utf_btod_set_elem);
     add_test("btod_sum", m_utf_btod_sum);
-    add_test("btod_symmetrize", m_utf_btod_symmetrize);
+    add_test("btod_symmetrize2", m_utf_btod_symmetrize2);
     add_test("btod_symmetrize3", m_utf_btod_symmetrize3);
     add_test("btod_trace", m_utf_btod_trace);
 //    add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);

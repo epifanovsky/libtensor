@@ -186,7 +186,7 @@ void gen_bto_extract<N, M, Traits, Timed>::compute_block_untimed(
 
     orbit<NA, element_type> oa(ca.req_const_symmetry(), idxa);
 
-    abs_index<NA> cidxa(oa.get_abs_canonical_index(),
+    abs_index<NA> cidxa(oa.get_acindex(),
             m_bta.get_bis().get_block_index_dims());
     tensor_transf<NA, element_type> tra(oa.get_transf(idxa));
     tra.invert();
@@ -319,7 +319,7 @@ void gen_bto_extract<N, M, Traits, Timed>::make_schedule() {
 
         orbit<NA, element_type> oa(ca.req_const_symmetry(), idxa);
 
-        abs_index<NA> cidxa(oa.get_abs_canonical_index(),
+        abs_index<NA> cidxa(oa.get_acindex(),
                 m_bta.get_bis().get_block_index_dims());
 
         if(!oa.is_allowed()) continue;

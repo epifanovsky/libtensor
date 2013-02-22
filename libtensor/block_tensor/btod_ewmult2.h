@@ -24,7 +24,7 @@ namespace libtensor {
 
     \sa tod_ewmult2, btod_contract2
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :
@@ -128,6 +128,13 @@ public:
             const index<NC> &i,
             const tensor_transf<NC, double> &tr,
             dense_tensor_wr_i<NC, double> &blk);
+
+    virtual void compute_block(
+            const index<NC> &ic,
+            dense_tensor_wr_i<NC, double> &blkc) {
+
+        compute_block(true, ic, tensor_transf<NC, double>(), blkc);
+    }
 
     //@}
 

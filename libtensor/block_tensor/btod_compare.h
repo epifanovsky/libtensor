@@ -57,7 +57,7 @@ namespace libtensor {
     Two special static methods tostr() will output the difference structure
     to a stream or a string in a human-readable format.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_compare : public noncopyable {

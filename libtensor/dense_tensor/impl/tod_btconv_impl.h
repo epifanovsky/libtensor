@@ -56,7 +56,7 @@ void tod_btconv<N>::perform(dense_tensor_wr_i<N, double> &t) {
         index<N> idx;
         orblst.get_index(iorbit, idx);
         orbit<N, double> orb(src_ctrl.req_const_symmetry(), idx);
-        abs_index<N> abidx(orb.get_abs_canonical_index(), bidims);
+        abs_index<N> abidx(orb.get_acindex(), bidims);
         if(src_ctrl.req_is_zero_block(abidx.get_index())) continue;
 
         dense_tensor_rd_i<N, double> &blk =

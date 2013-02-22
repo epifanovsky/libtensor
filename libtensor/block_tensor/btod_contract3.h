@@ -31,7 +31,7 @@ namespace libtensor {
         B = \sum_{i=1}^n B_i
     \f]
 
-    \ingroup libtensor_block_tensor
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
 class btod_contract3 : public noncopyable {

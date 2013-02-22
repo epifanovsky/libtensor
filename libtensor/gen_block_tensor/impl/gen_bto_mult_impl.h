@@ -205,12 +205,12 @@ void gen_bto_mult<N, Traits, Timed>::compute_block_untimed(
     idxb.permute(pinvb);
 
     orbit<N, element_type> oa(ctrla.req_const_symmetry(), idxa);
-    abs_index<N> cidxa(oa.get_abs_canonical_index(),
+    abs_index<N> cidxa(oa.get_acindex(),
             m_bta.get_bis().get_block_index_dims());
     tensor_transf_type tra(oa.get_transf(idxa));
 
     orbit<N, element_type> ob(ctrlb.req_const_symmetry(), idxb);
-    abs_index<N> cidxb(ob.get_abs_canonical_index(),
+    abs_index<N> cidxb(ob.get_acindex(),
             m_btb.get_bis().get_block_index_dims());
     tensor_transf_type trb(ob.get_transf(idxb));
 
@@ -255,7 +255,7 @@ void gen_bto_mult<N, Traits, Timed>::make_schedule() {
 
         orbit<N, element_type> oa(ctrla.req_const_symmetry(), idxa);
         if (! oa.is_allowed()) continue;
-        abs_index<N> cidxa(oa.get_abs_canonical_index(),
+        abs_index<N> cidxa(oa.get_acindex(),
                 m_bta.get_bis().get_block_index_dims());
         bool zeroa = ctrla.req_is_zero_block(cidxa.get_index());
 
@@ -268,7 +268,7 @@ void gen_bto_mult<N, Traits, Timed>::make_schedule() {
             continue;
         }
 
-        abs_index<N> cidxb(ob.get_abs_canonical_index(),
+        abs_index<N> cidxb(ob.get_acindex(),
                 m_btb.get_bis().get_block_index_dims());
         bool zerob = ctrlb.req_is_zero_block(cidxb.get_index());
 

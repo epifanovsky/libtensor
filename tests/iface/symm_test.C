@@ -75,7 +75,7 @@ void symm_test::test_symm2_contr_tt_1() throw(libtest::test_exception) {
     btod_contract2<1, 3, 1> op(contr, t1, t2);
     op.perform(t3_ref_tmp);
     btod_copy<4> cp(t3_ref_tmp);
-    btod_symmetrize<4>(cp, permutation<4>().permute(0, 1), true).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(0, 1), true).
         perform(t3_ref);
 
     letter a, b, c, d, i;
@@ -130,7 +130,7 @@ void symm_test::test_symm2_contr_ee_1() throw(libtest::test_exception) {
     op.perform(t3_ref_tmp);
 
     btod_copy<4> cp(t3_ref_tmp);
-    btod_symmetrize<4>(cp, permutation<4>().permute(0, 1), true).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(0, 1), true).
         perform(t3_ref);
 
     letter a, b, c, d, i;
@@ -170,7 +170,7 @@ void symm_test::test_asymm2_contr_tt_1() throw(libtest::test_exception) {
     btod_contract2<1, 3, 1> op(contr, t1, t2);
     op.perform(t3_ref_tmp);
     btod_copy<4> cp(t3_ref_tmp);
-    btod_symmetrize<4>(cp, permutation<4>().permute(0, 1), false).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(0, 1), false).
         perform(t3_ref);
 
     letter a, b, c, d, i;
@@ -213,7 +213,7 @@ void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
     permutation<4> perm; perm.permute(2, 3);
     btod_copy<4>(t0).perform(t3_ref);
     btod_copy<4> cp(t3_ref_tmp);
-    btod_symmetrize<4>(cp, permutation<4>().permute(2, 3), false).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(2, 3), false).
         perform(t3_ref, 1.0);
 
     letter i, j, a, b, c;
@@ -252,7 +252,7 @@ void symm_test::test_asymm2_contr_tt_3() throw(libtest::test_exception) {
     btod_contract2<3, 1, 1> op(contr, t1, t2);
     op.perform(t3_ref_tmp);
     btod_copy<4> cp(t3_ref_tmp, 1.5);
-    btod_symmetrize<4>(cp, permutation<4>().permute(2, 3), false).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(2, 3), false).
         perform(t3_ref);
 
     letter i, j, a, b, c;
@@ -290,7 +290,7 @@ void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
     btod_contract2<3, 1, 1> op(contr, t1, t2);
     op.perform(t3_ref_tmp);
     btod_copy<4> cp(t3_ref_tmp, 3.0);
-    btod_symmetrize<4>(cp, permutation<4>().permute(2, 3), false).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(2, 3), false).
         perform(t3_ref);
 
     letter i, j, a, b, c;
@@ -331,7 +331,7 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
     contr.contract(1, 1);
     contr.contract(3, 3);
     btod_contract2<2, 2, 2> op_contr(contr, t2, t3);
-    btod_symmetrize<4> op_symm(op_contr, 0, 1, false);
+    btod_symmetrize2<4> op_symm(op_contr, 0, 1, false);
     op_symm.perform(tt1);
     btod_copy<4>(t1).perform(t4_ref);
     btod_copy<4>(tt1).perform(t4_ref, -1.0);
@@ -427,11 +427,10 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
     btod_random<4>().perform(t3);
     t1.set_immutable();
     t2.set_immutable();
-    t3.set_immutable();
 
     contraction2<2, 2, 0> contr(permutation<4>().permute(1, 2));
     btod_contract2<2, 2, 0> op_contr(contr, t1, t1);
-    btod_symmetrize<4> op_symm(op_contr, 0, 1, false);
+    btod_symmetrize2<4> op_symm(op_contr, 0, 1, false);
     btod_copy<4>(t2).perform(t3_ref);
     op_symm.perform(t3_ref, 1.0);
 
@@ -487,7 +486,7 @@ void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
     op.perform(t3_ref_tmp);
 
     btod_copy<4> cp(t3_ref_tmp);
-    btod_symmetrize<4>(cp, permutation<4>().permute(0, 1), false).
+    btod_symmetrize2<4>(cp, permutation<4>().permute(0, 1), false).
         perform(t3_ref);
 
     letter a, b, c, d, i;
@@ -532,7 +531,7 @@ void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
     contraction2<1, 3, 1> contr;
     contr.contract(1, 1);
     btod_contract2<1, 3, 1> op(contr, bta, btb);
-    btod_symmetrize<4> op_sym(op, 0, 1, false);
+    btod_symmetrize2<4> op_sym(op, 0, 1, false);
     op_sym.perform(btc_ref);
 
     letter a, b, i, j, k;
@@ -567,10 +566,10 @@ void symm_test::test_symm22_t_1() throw(libtest::test_exception) {
     t1.set_immutable();
 
     btod_copy<4> cp1(t1);
-    btod_symmetrize<4>(cp1, permutation<4>().permute(0, 1), true).
+    btod_symmetrize2<4>(cp1, permutation<4>().permute(0, 1), true).
         perform(t2_ref_tmp);
     btod_copy<4> cp2(t2_ref_tmp);
-    btod_symmetrize<4>(cp2, permutation<4>().permute(2, 3), true).
+    btod_symmetrize2<4>(cp2, permutation<4>().permute(2, 3), true).
         perform(t2_ref);
 
     letter i, j, a, b;
@@ -604,10 +603,10 @@ void symm_test::test_asymm22_t_1() throw(libtest::test_exception) {
     t1.set_immutable();
 
     btod_copy<4> cp1(t1);
-    btod_symmetrize<4>(cp1, permutation<4>().permute(0, 1), false).
+    btod_symmetrize2<4>(cp1, permutation<4>().permute(0, 1), false).
         perform(t2_ref_tmp);
     btod_copy<4> cp2(t2_ref_tmp);
-    btod_symmetrize<4>(cp2, permutation<4>().permute(2, 3), false).
+    btod_symmetrize2<4>(cp2, permutation<4>().permute(2, 3), false).
         perform(t2_ref);
 
     letter i, j, a, b;
@@ -717,10 +716,10 @@ void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
     btod_copy<4>(t1a).perform(t1);
     btod_copy<4>(t1b).perform(t1, 1.0);
     btod_copy<4> cp1(t1);
-    btod_symmetrize<4>(cp1, permutation<4>().permute(0, 1), true).
+    btod_symmetrize2<4>(cp1, permutation<4>().permute(0, 1), true).
         perform(t2_ref_tmp);
     btod_copy<4> cp2(t2_ref_tmp);
-    btod_symmetrize<4>(cp2, permutation<4>().permute(2, 3), true).
+    btod_symmetrize2<4>(cp2, permutation<4>().permute(2, 3), true).
         perform(t2_ref);
 
     letter i, j, a, b;
@@ -758,10 +757,10 @@ void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
     btod_copy<4>(t1a).perform(t1);
     btod_copy<4>(t1b).perform(t1, 1.0);
     btod_copy<4> cp1(t1);
-    btod_symmetrize<4>(cp1, permutation<4>().permute(0, 1), false).
+    btod_symmetrize2<4>(cp1, permutation<4>().permute(0, 1), false).
         perform(t2_ref_tmp);
     btod_copy<4> cp2(t2_ref_tmp);
-    btod_symmetrize<4>(cp2, permutation<4>().permute(2, 3), false).
+    btod_symmetrize2<4>(cp2, permutation<4>().permute(2, 3), false).
         perform(t2_ref);
 
     letter i, j, a, b;

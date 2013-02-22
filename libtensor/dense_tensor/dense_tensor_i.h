@@ -187,7 +187,7 @@ protected:
     \sa dense_tensor_base_i, dense_tensor_rd_i, dense_tensor_wr_i,
         dense_tensor_ctrl
 
-    \ingroup libtensor_core
+    \ingroup libtensor_dense_tensor
  **/
 template<size_t N, typename T>
 class dense_tensor_i :

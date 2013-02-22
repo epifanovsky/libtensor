@@ -3,6 +3,9 @@
 
 #include <cstring>
 #include <algorithm>
+#include <libutil/threads/auto_lock.h>
+#include <libutil/threads/spinlock.h>
+#include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/block_index_space_product_builder.h>
 #include <libtensor/core/combined_orbits.h>
@@ -51,6 +54,304 @@ addition_schedule<N, Traits>::~addition_schedule() {
 }
 
 
+namespace {
+
+
+template<size_t N, typename Traits>
+class addition_schedule_task_1 : public libutil::task_i {
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::bti_traits bti_traits;
+    typedef typename addition_schedule<N, Traits>::book_node book_node;
+
+private:
+    std::vector<size_t> m_nzorb;
+    const symmetry<N, element_type> &m_syma;
+    const symmetry<N, element_type> &m_symb;
+    std::map<size_t, book_node> &m_booka;
+    libutil::spinlock &m_lock;
+
+public:
+    addition_schedule_task_1(
+        std::vector<size_t> &nzorb, const symmetry<N, element_type> &syma,
+        const symmetry<N, element_type> &symb,
+        std::map<size_t, book_node> &booka, libutil::spinlock &lock) :
+
+        m_syma(syma), m_symb(symb), m_booka(booka), m_lock(lock) {
+
+        std::swap(nzorb, m_nzorb);
+    }
+
+    virtual ~addition_schedule_task_1() { }
+
+    virtual void perform() {
+
+        std::map<size_t, book_node> booka;
+
+        for(size_t i = 0; i < m_nzorb.size(); i++) {
+            size_t acia = m_nzorb[i];
+            orbit<N, element_type> oa(m_syma, acia);
+            subgroup_orbits<N, element_type> soa(m_syma, m_symb, acia);
+            for(typename subgroup_orbits<N, element_type>::iterator i =
+                soa.begin(); i != soa.end(); ++i) {
+
+                size_t acic = soa.get_abs_index(i);
+                book_node n;
+                n.cidx = acia;
+                n.tr = oa.get_transf(acic);
+                n.visited = false;
+                booka[acic] = n;
+            }
+        }
+
+        {
+            libutil::auto_lock<libutil::spinlock> lock(m_lock);
+            m_booka.insert(booka.begin(), booka.end());
+        }
+    }
+
+};
+
+
+template<size_t N, typename Traits, typename Iterator>
+class addition_schedule_task_iterator_1 : public libutil::task_iterator_i {
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::bti_traits bti_traits;
+    typedef typename addition_schedule<N, Traits>::book_node book_node;
+
+private:
+    Iterator m_ibegin;
+    Iterator m_iend;
+    const symmetry<N, element_type> &m_syma;
+    const symmetry<N, element_type> &m_symb;
+    std::map<size_t, book_node> &m_booka;
+    libutil::spinlock m_lock;
+
+public:
+    addition_schedule_task_iterator_1(
+        const Iterator &ibegin, const Iterator &iend,
+        const symmetry<N, element_type> &syma,
+        const symmetry<N, element_type> &symb,
+        std::map<size_t, book_node> &booka) :
+
+        m_ibegin(ibegin), m_iend(iend), m_syma(syma), m_symb(symb),
+        m_booka(booka) {
+
+    }
+
+    virtual bool has_more() const {
+        return m_ibegin != m_iend;
+    }
+
+    virtual libutil::task_i *get_next() {
+
+        const size_t batch_size = 10;
+
+        std::vector<size_t> nzorb;
+        nzorb.reserve(batch_size);
+
+        size_t i = 0;
+        while(m_ibegin != m_iend && i < batch_size) {
+            nzorb.push_back(*m_ibegin);
+            ++m_ibegin;
+            i++;
+        }
+
+        return new addition_schedule_task_1<N, Traits>(nzorb, m_syma, m_symb,
+            m_booka, m_lock);
+    }
+
+};
+
+
+template<size_t N, typename Traits>
+class addition_schedule_task_2 : public libutil::task_i {
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::bti_traits bti_traits;
+    typedef typename addition_schedule<N, Traits>::node node;
+    typedef typename addition_schedule<N, Traits>::book_node book_node;
+    typedef typename addition_schedule<N, Traits>::schedule_group
+        schedule_group;
+    typedef typename addition_schedule<N, Traits>::schedule_type schedule_type;
+
+private:
+    std::vector<size_t> m_batch;
+    const symmetry<N, element_type> &m_syma;
+    const symmetry<N, element_type> &m_symb;
+    const symmetry<N, element_type> &m_symc;
+    std::map<size_t, book_node> &m_booka;
+    std::map<size_t, book_node> &m_bookb;
+    schedule_type &m_sch;
+    libutil::spinlock &m_lock;
+
+public:
+    addition_schedule_task_2(
+        std::vector<size_t> &batch,
+        const symmetry<N, element_type> &syma,
+        const symmetry<N, element_type> &symb,
+        const symmetry<N, element_type> &symc,
+        std::map<size_t, book_node> &booka,
+        std::map<size_t, book_node> &bookb,
+        schedule_type &sch,
+        libutil::spinlock &lock) :
+
+        m_syma(syma), m_symb(symb), m_symc(symc), m_booka(booka),
+        m_bookb(bookb), m_sch(sch), m_lock(lock) {
+
+        std::swap(m_batch, batch);
+    }
+
+    virtual ~addition_schedule_task_2() { }
+
+    virtual void perform() {
+
+        for(size_t i = 0; i < m_batch.size(); i++) {
+
+            size_t acic = m_batch[i];
+
+            combined_orbits<N, element_type> co(m_syma, m_symb, m_symc, acic);
+            schedule_group *grp = new schedule_group;
+            bool first = true, already_visited = false;
+            for(typename combined_orbits<N, element_type>::iterator i =
+                co.begin(); i != co.end(); ++i) {
+
+                size_t ic = co.get_abs_index(i);
+                typename std::map<size_t, book_node>::iterator ia =
+                    m_booka.find(ic);
+                typename std::map<size_t, book_node>::iterator ib =
+                    m_bookb.find(ic);
+
+                if(ia == m_booka.end() && ib == m_bookb.end()) continue;
+                if(first) {
+                    libutil::auto_lock<libutil::spinlock> lock(m_lock);
+                    if(ia != m_booka.end()) {
+                        if(ia->second.visited) {
+                            already_visited = true;
+                        } else {
+                            ia->second.visited = true;
+                        }
+                    } else {
+                        if(ib->second.visited) {
+                            already_visited = true;
+                        } else {
+                            ib->second.visited = true;
+                        }
+                    }
+                    first = false;
+                    if(already_visited) break;
+                }
+
+                node n;
+                n.cic = ic;
+                if(ia == m_booka.end()) {
+                    n.zeroa = true;
+                } else {
+                    n.zeroa = false;
+                    n.cia = ia->second.cidx;
+                    n.tra = ia->second.tr;
+                }
+                if(ib == m_bookb.end()) {
+                    n.zerob = true;
+                } else {
+                    n.zerob = false;
+                    n.cib = ib->second.cidx;
+                    n.trb = ib->second.tr;
+                }
+                if(!n.zeroa || !n.zerob) grp->push_back(n);
+            }
+
+            if(!already_visited) {
+                libutil::auto_lock<libutil::spinlock> lock(m_lock);
+                m_sch.push_back(grp);
+            }
+        }
+    }
+
+};
+
+
+template<size_t N, typename Traits>
+class addition_schedule_task_iterator_2 : public libutil::task_iterator_i {
+public:
+    typedef typename Traits::element_type element_type;
+    typedef typename Traits::bti_traits bti_traits;
+    typedef typename addition_schedule<N, Traits>::book_node book_node;
+    typedef typename addition_schedule<N, Traits>::schedule_type schedule_type;
+
+private:
+    const symmetry<N, element_type> &m_syma;
+    const symmetry<N, element_type> &m_symb;
+    const symmetry<N, element_type> &m_symc;
+    std::map<size_t, book_node> &m_booka;
+    std::map<size_t, book_node> &m_bookb;
+    typename std::map<size_t, book_node>::iterator m_ia;
+    typename std::map<size_t, book_node>::iterator m_ib;
+    schedule_type &m_sch;
+    libutil::spinlock m_lock;
+
+public:
+    addition_schedule_task_iterator_2(
+        const symmetry<N, element_type> &syma,
+        const symmetry<N, element_type> &symb,
+        const symmetry<N, element_type> &symc,
+        std::map<size_t, book_node> &booka,
+        std::map<size_t, book_node> &bookb,
+        schedule_type &sch) :
+
+        m_syma(syma), m_symb(symb), m_symc(symc), m_booka(booka),
+        m_bookb(bookb), m_ia(m_booka.begin()), m_ib(m_bookb.begin()),
+        m_sch(sch) {
+
+    }
+
+    virtual bool has_more() const {
+
+        return m_ia != m_booka.end() || m_ib != m_bookb.end();
+    }
+
+    virtual libutil::task_i *get_next() {
+
+        const size_t batch_size = 10;
+
+        std::vector<size_t> batch;
+        batch.reserve(batch_size);
+
+        {
+            libutil::auto_lock<libutil::spinlock> lock(m_lock);
+
+            while(batch.size() < batch_size && m_ia != m_booka.end()) {
+                if(!m_ia->second.visited) batch.push_back(m_ia->first);
+                ++m_ia;
+            }
+            while(batch.size() < batch_size && m_ib != m_bookb.end()) {
+                if(!m_ib->second.visited) batch.push_back(m_ib->first);
+                ++m_ib;
+            }
+        }
+
+        return new addition_schedule_task_2<N, Traits>(batch, m_syma, m_symb,
+            m_symc, m_booka, m_bookb, m_sch, m_lock);
+    }
+
+};
+
+
+template<size_t N, typename Traits>
+class addition_schedule_task_observer : public libutil::task_observer_i {
+public:
+    virtual void notify_start_task(libutil::task_i *t) { }
+    virtual void notify_finish_task(libutil::task_i *t) {
+        delete t;
+    }
+
+};
+
+
+} // unnamed namespace
+
+
 template<size_t N, typename Traits>
 void addition_schedule<N, Traits>::build(
     const assignment_schedule_type &asch,
@@ -60,82 +361,43 @@ void addition_schedule<N, Traits>::build(
 
     addition_schedule<N, Traits>::start_timer();
 
-    clear_schedule();
+    try {
 
-    dimensions<N> bidims(m_syma.get_bis().get_block_index_dims());
+        clear_schedule();
 
-    std::vector<size_t> nzlstb;
-    cb.req_nonzero_blocks(nzlstb);
+        dimensions<N> bidims(m_syma.get_bis().get_block_index_dims());
 
-    std::map<size_t, book_node> booka, bookb;
+        std::vector<size_t> nzlstb;
+        cb.req_nonzero_blocks(nzlstb);
 
-    for(asgsch_iterator ia = asch.begin(); ia != asch.end(); ++ia) {
+        std::map<size_t, book_node> booka, bookb;
 
-        size_t acia = asch.get_abs_index(ia);
-        orbit<N, element_type> oa(m_syma, acia);
-        subgroup_orbits<N, element_type> soa(m_syma, m_symc, acia);
-
-        for(typename subgroup_orbits<N, element_type>::iterator i = soa.begin();
-            i != soa.end(); ++i) {
-
-            size_t acic = soa.get_abs_index(i);
-            book_node n;
-            n.cidx = acia;
-            n.tr = oa.get_transf(acic);
-            booka[acic] = n;
+        {
+            typedef typename assignment_schedule_type::iterator iterator_type;
+            addition_schedule_task_iterator_1<N, Traits, iterator_type> ti(
+                asch.begin(), asch.end(), m_syma, m_symc, booka);
+            addition_schedule_task_observer<N, Traits> to;
+            libutil::thread_pool::submit(ti, to);
         }
-    }
 
-    for(typename std::vector<size_t>::const_iterator ib = nzlstb.begin();
-        ib != nzlstb.end(); ++ib) {
-
-        size_t acib = *ib;
-        orbit<N, element_type> ob(m_symb, acib);
-        subgroup_orbits<N, element_type> sob(m_symb, m_symc, acib);
-
-        for(typename subgroup_orbits<N, element_type>::iterator i = sob.begin();
-            i != sob.end(); ++i) {
-
-            size_t acic = sob.get_abs_index(i);
-            book_node n;
-            n.cidx = acib;
-            n.tr = ob.get_transf(acic);
-            bookb[acic] = n;
+        {
+            typedef typename std::vector<size_t>::const_iterator iterator_type;
+            addition_schedule_task_iterator_1<N, Traits, iterator_type> ti(
+                nzlstb.begin(), nzlstb.end(), m_symb, m_symc, bookb);
+            addition_schedule_task_observer<N, Traits> to;
+            libutil::thread_pool::submit(ti, to);
         }
-    }
 
-    while(!booka.empty() || !bookb.empty()) {
-        size_t acic;
-        if(!booka.empty()) acic = booka.begin()->first;
-        else acic = bookb.begin()->first;
-        combined_orbits<N, element_type> co(m_syma, m_symb, m_symc, acic);
-        schedule_group *grp = new schedule_group;
-        for(typename combined_orbits<N, element_type>::iterator i = co.begin();
-            i != co.end(); ++i) {
-            size_t ic = co.get_abs_index(i);
-            typename std::map<size_t, book_node>::iterator ia = booka.find(ic);
-            typename std::map<size_t, book_node>::iterator ib = bookb.find(ic);
-            node n;
-            n.cic = ic;
-            if(ia == booka.end()) {
-                n.zeroa = true;
-            } else {
-                n.zeroa = false;
-                n.cia = ia->second.cidx;
-                n.tra = ia->second.tr;
-                booka.erase(ia);
-            }
-            if(ib == bookb.end()) {
-                n.zerob = true;
-            } else {
-                n.zerob = false;
-                n.cib = ib->second.cidx;
-                n.trb = ib->second.tr;
-                bookb.erase(ib);
-            }
-            if(!n.zeroa || !n.zerob) grp->push_back(n);
+        {
+            addition_schedule_task_iterator_2<N, Traits> ti(
+                m_syma, m_symb, m_symc, booka, bookb, m_sch);
+            addition_schedule_task_observer<N, Traits> to;
+            libutil::thread_pool::submit(ti, to);
         }
-        m_sch.push_back(grp);
+
+    } catch(...) {
+        addition_schedule<N, Traits>::stop_timer();
+        throw;
     }
 
     addition_schedule<N, Traits>::stop_timer();

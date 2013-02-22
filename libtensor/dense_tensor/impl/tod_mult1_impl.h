@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <libtensor/exception.h>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_ddiv1.h>
 #include <libtensor/kernels/kern_ddivadd1.h>
 #include <libtensor/kernels/kern_dmul1.h>
@@ -96,7 +97,7 @@ void tod_mult1<N>::perform(bool zero, dense_tensor_wr_i<N, double> &ta) {
     std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
         m_recip ?
             (zero ?
-                kern_ddiv1::match(m_c, loop_in, loop_out) :
+                kern_ddiv1<linalg>::match(m_c, loop_in, loop_out) :
                 kern_ddivadd1::match(m_c, loop_in, loop_out)) :
             (zero ?
                 kern_dmul1::match(m_c, loop_in, loop_out) :

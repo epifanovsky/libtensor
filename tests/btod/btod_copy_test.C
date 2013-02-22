@@ -102,7 +102,7 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
             orblst.get_abs_index(iorbit));
-        abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
+        abs_index<2> blkidx(orb.get_acindex(), bidims);
         if(!btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,
                 "All blocks are expected to be empty.");
@@ -154,7 +154,7 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
     for(; iorbit != orblst.end(); iorbit++) {
         orbit<2, double> orb(btb_ctrl.req_symmetry(),
             orblst.get_abs_index(iorbit));
-        abs_index<2> blkidx(orb.get_abs_canonical_index(), bidims);
+        abs_index<2> blkidx(orb.get_acindex(), bidims);
         if(!btb_ctrl.req_is_zero_block(blkidx.get_index())) {
             fail_test(testname, __FILE__, __LINE__,
                 "All blocks are expected to be empty.");

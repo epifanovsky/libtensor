@@ -120,7 +120,7 @@ namespace libtensor {
     fails for any reason. If an %exception is thrown, the state of
     the %tensor object is undefined.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_dense_tensor
  **/
 template<size_t N, typename T, typename Alloc>
 class dense_tensor :

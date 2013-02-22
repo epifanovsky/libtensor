@@ -52,7 +52,7 @@ void orbit_test::test_1() {
             fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
-        if(orb.get_abs_canonical_index() != aio.get_abs_index()) {
+        if(orb.get_acindex() != aio.get_abs_index()) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io << ".";
             fail_test(testname, __FILE__, __LINE__,
@@ -111,7 +111,7 @@ void orbit_test::test_2() {
             fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
         bool can = io[0] <= io[1];
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
 
@@ -192,7 +192,7 @@ void orbit_test::test_3() {
                 ss.str().c_str());
         }
         bool can = io[0] <= io[1];
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
 
@@ -274,7 +274,7 @@ void orbit_test::test_4() {
                 ss.str().c_str());
         }
         bool can = io[1] <= io[2];
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
 
@@ -357,7 +357,7 @@ void orbit_test::test_5() {
         }
         bool can = (io[0] == io[1] && io[0] <= io[2]) ||
             (io[0] < io[1] && io[0] < io[2]);
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
 
@@ -452,7 +452,7 @@ void orbit_test::test_6() {
                 ss.str().c_str());
         }
         bool can = (io[0] <= io[1] && io[2] <= io[3]);
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
 
@@ -551,7 +551,7 @@ void orbit_test::test_7() {
                 ss.str().c_str());
         }
         bool can = (io[0] <= io[1] && io[1] <= io[2]);
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         abs_index<4> canidx(abscanidx, dims);
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
@@ -647,7 +647,7 @@ void orbit_test::test_8() {
                 ss.str().c_str());
         }
         bool can = (io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
-        size_t abscanidx = orb.get_abs_canonical_index();
+        size_t abscanidx = orb.get_acindex();
         abs_index<4> canidx(abscanidx, dims);
         if((can && abscanidx != aio.get_abs_index()) ||
             (!can && abscanidx == aio.get_abs_index())) {
@@ -765,7 +765,7 @@ void orbit_test::test_9() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o00.get_abs_canonical_index() != ai00.get_abs_index()) {
+    if(o00.get_acindex() != ai00.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i00
             << ".";
@@ -795,7 +795,7 @@ void orbit_test::test_9() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o01.get_abs_canonical_index() != ai01.get_abs_index()) {
+    if(o01.get_acindex() != ai01.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i01
             << ".";
@@ -825,7 +825,7 @@ void orbit_test::test_9() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o10.get_abs_canonical_index() != ai10.get_abs_index()) {
+    if(o10.get_acindex() != ai10.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i10
             << ".";
@@ -855,7 +855,7 @@ void orbit_test::test_9() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o11.get_abs_canonical_index() != ai11.get_abs_index()) {
+    if(o11.get_acindex() != ai11.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i11
             << ".";
@@ -946,7 +946,7 @@ void orbit_test::test_10() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o00.get_abs_canonical_index() != ai00.get_abs_index()) {
+    if(o00.get_acindex() != ai00.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i00
             << ".";
@@ -976,7 +976,7 @@ void orbit_test::test_10() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o01.get_abs_canonical_index() != ai01.get_abs_index()) {
+    if(o01.get_acindex() != ai01.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i01
             << ".";
@@ -1006,7 +1006,7 @@ void orbit_test::test_10() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o10.get_abs_canonical_index() != ai01.get_abs_index()) {
+    if(o10.get_acindex() != ai01.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i10
             << ".";
@@ -1036,7 +1036,7 @@ void orbit_test::test_10() {
         fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
-    if(o11.get_abs_canonical_index() != ai11.get_abs_index()) {
+    if(o11.get_acindex() != ai11.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i11
             << ".";

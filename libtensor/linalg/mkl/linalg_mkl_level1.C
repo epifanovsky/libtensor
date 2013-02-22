@@ -51,6 +51,36 @@ void linalg_mkl_level1::copy_i_i(
 }
 
 
+void linalg_mkl_level1::div1_i_i_x(
+    void *,
+    size_t ni,
+    const double *a, size_t sia,
+    double *c, size_t sic,
+    double d) {
+
+#if defined(HAVE_MKL_VML)
+    if(sia == 1 && sic == 1) {
+        timings_base::start_timer("vddiv");
+        double buf[256];
+        size_t len = 256;
+        while(ni > 0) {
+            if(ni < len) len = ni;
+            vdDiv(len, c, a, buf);
+            cblas_dscal(len, d, buf, 1);
+            ::memcpy(c, buf, len * sizeof(double));
+            ni -= len;
+            a += len;
+            c += len;
+        }
+        timings_base::stop_timer("vddiv");
+    } else
+#endif
+    {
+        linalg_generic_level1::div1_i_i_x(0, ni, a, sia, c, sic, d);
+    }
+}
+
+
 void linalg_mkl_level1::mul1_i_x(
     void*,
     size_t ni,
@@ -153,6 +183,8 @@ void linalg_mkl_level1::rng_set_i_x(
     double *a, size_t sia,
     double c) {
 
+#ifdef HAVE_MKL_VSL
+
     rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
     if(!rs.init) {
         unsigned count = 0;
@@ -181,6 +213,12 @@ void linalg_mkl_level1::rng_set_i_x(
             ni1 -= batsz;
         }
     }
+
+#else // HAVE_MKL_VSL
+
+    linalg_generic_level1::rng_set_i_x(0, ni, a, sia, c);
+
+#endif // HAVE_MKL_VSL
 }
 
 
@@ -189,6 +227,8 @@ void linalg_mkl_level1::rng_add_i_x(
     size_t ni,
     double *a, size_t sia,
     double c) {
+
+#ifdef HAVE_MKL_VSL
 
     rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
     if(!rs.init) {
@@ -215,6 +255,12 @@ void linalg_mkl_level1::rng_add_i_x(
         }
         ni1 -= batsz;
     }
+
+#else // HAVE_MKL_VSL
+
+    linalg_generic_level1::rng_add_i_x(0, ni, a, sia, c);
+
+#endif // HAVE_MKL_VSL
 }
 
 

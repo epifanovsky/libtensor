@@ -30,6 +30,7 @@ void btod_compare_test::perform() throw(libtest::test_exception) {
     test_5a();
     test_5b();
     test_6();
+    test_7();
     test_exc();
     test_operation();
 
@@ -323,11 +324,11 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
@@ -384,11 +385,11 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
@@ -443,11 +444,11 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
@@ -502,11 +503,11 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
     }
     abs_index<4> ai(cmp.get_diff().bidx, bidims);
     orbit<4, double> o1(sym1, ai.get_index()), o2(sym2, ai.get_index());
-    if((o1.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o1.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can2) {
         fail_test(testname, __FILE__, __LINE__, "bad can2");
     }
-    if((o2.get_abs_canonical_index() == ai.get_abs_index()) !=
+    if((o2.get_acindex() == ai.get_abs_index()) !=
         cmp.get_diff().can1) {
         fail_test(testname, __FILE__, __LINE__, "bad can1");
     }
@@ -558,6 +559,61 @@ void btod_compare_test::test_6() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, "!cmp.compare()");
     }
     if(cmp.get_diff().kind != btod_compare<4>::diff::DIFF_NODIFF) {
+        fail_test(testname, __FILE__, __LINE__,
+            "kind != diff::DIFF_NODIFF");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Comparison of two block tensors with the same orbits and
+        transformations, but symmetries set up differently
+ **/
+void btod_compare_test::test_7() throw(libtest::test_exception) {
+
+    static const char *testname = "btod_compare_test::test_7()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<6> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 5; i2[4] = 5; i2[5] = 5;
+    dimensions<6> dims(index_range<6>(i1, i2));
+    block_index_space<6> bis(dims);
+
+    block_tensor<6, double, allocator_t> bt1(bis), bt2(bis);
+
+    {
+        scalar_transf<double> tr1(-1.0), tr2(1.0);
+        block_tensor_ctrl<6, double> ctrl1(bt1);
+        block_tensor_ctrl<6, double> ctrl2(bt2);
+        ctrl1.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(0, 1), tr1));
+        ctrl1.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(1, 2), tr1));
+        ctrl1.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(3, 4), tr1));
+        ctrl1.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(4, 5), tr1));
+        ctrl2.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(0, 1).permute(1, 2), tr2));
+        ctrl2.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(0, 1), tr1));
+        ctrl2.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(3, 4).permute(4, 5), tr2));
+        ctrl2.req_symmetry().insert(se_perm<6, double>(
+            permutation<6>().permute(3, 4), tr1));
+    }
+
+    btod_compare<6> cmp(bt1, bt2);
+    if(!cmp.compare()) {
+        fail_test(testname, __FILE__, __LINE__, "!cmp.compare()");
+    }
+    if(cmp.get_diff().kind != btod_compare<6>::diff::DIFF_NODIFF) {
         fail_test(testname, __FILE__, __LINE__,
             "kind != diff::DIFF_NODIFF");
     }
