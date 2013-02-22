@@ -82,8 +82,7 @@ void cuda_btod_sum<N>::compute_block(
         if(iop->get_op().get_schedule().contains(ai.get_abs_index())) {
             tensor_transf<N, double> tra(permutation<N>(), kc);
             tra.transform(tr);
-            additive_gen_bto<N, bti_traits>::compute_block(
-                    iop->get_op(), false, i, tra, blk);
+            iop->get_op().compute_block(false, i, tra, blk);
         } else {
             const symmetry<N, double> &sym = iop->get_op().get_symmetry();
             orbit<N, double> orb(sym, i);
@@ -95,8 +94,7 @@ void cuda_btod_sum<N>::compute_block(
                 tra.transform(kc);
                 tra.transform(tr);
 
-                additive_gen_bto<N, bti_traits>::compute_block(
-                        iop->get_op(), false, ci.get_index(), tra, blk);
+                iop->get_op().compute_block(false, ci.get_index(), tra, blk);
             }
         }
     }
