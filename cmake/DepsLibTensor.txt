@@ -109,6 +109,8 @@ endif(IS_ICPC AND MKL_FOUND)
 find_package(MPI REQUIRED)
 if(MPI_CXX_FOUND)
     include_directories(${MPI_CXX_INCLUDE_PATH})
+elseif(MPI_FOUND)
+    include_directories(${MPI_INCLUDE_PATH})
 endif(MPI_CXX_FOUND)
 
 #   Libtensor dependencies (libraries)
