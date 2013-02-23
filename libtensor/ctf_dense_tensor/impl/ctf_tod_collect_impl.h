@@ -29,7 +29,7 @@ void ctf_tod_collect<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
     size_t sz = m_dt.get_dims().get_size();
     double *data;
-    uint64_t n;
+    int64_t n;
 
     ctf_dense_tensor_ctrl<N, double> dctrl(m_dt);
     int tid = dctrl.req_tensor_id();

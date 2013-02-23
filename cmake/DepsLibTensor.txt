@@ -115,5 +115,5 @@ endif(MPI_CXX_FOUND)
 
 #   Libtensor dependencies (libraries)
 #
-set(LIBTENSOR_DEP_LIBS ${MPI_CXX_LIBRARIES} ${LAPACK_LIBS} ${BLAS_LIBS})
+set(LIBTENSOR_DEP_LIBS ${MPI_LIBRARIES} ${LAPACK_LIBS} ${BLAS_LIBS})
 
