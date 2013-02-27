@@ -51,6 +51,7 @@ set(SRC_CUDA
     cuda_dense_tensor/impl/cuda_tod_copy.C
     cuda_dense_tensor/impl/cuda_tod_copy_d2h.C
     cuda_dense_tensor/impl/cuda_tod_copy_h2d.C
+    cuda_dense_tensor/impl/cuda_tod_dotprod.C
     cuda_dense_tensor/impl/cuda_tod_set.cu
     dense_tensor/impl/dense_tensor_cuda.C
     tod/kernels/cuda_kern_copy_2d.cu

@@ -72,6 +72,7 @@ set(SRC_CUDA_DENSE_TENSOR
     cuda_dense_tensor/cuda_tod_contract2_test.C
     cuda_dense_tensor/cuda_tod_copy_test.C
     cuda_dense_tensor/cuda_tod_copy_hd_test.cu
+    cuda_dense_tensor/cuda_tod_dotprod_test.C
     cuda_dense_tensor/cuda_tod_set_test.C
 )
 
