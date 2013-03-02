@@ -127,7 +127,7 @@ inline long lrand48() { return rand(); }
     \ingroup libtensor
  **/
 
-/** \defgroup libtensor_symmetry Components for tensor symmetry
+/** \defgroup libtensor_symmetry Symmetry related components
     \brief Easy to use interface to implement equations with block tensors.
     \ingroup libtensor
  **/
