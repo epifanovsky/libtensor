@@ -53,7 +53,7 @@ void linalg_cublas_mul2_x_p_p_test::test_mul2_x_p_p(size_t np, size_t spa,
 
     cublasHandle_t cbh;
     cublasStatus_t ec = cublasCreate(&cbh);
-    if(ec != cudaSuccess) {
+    if(ec != CUBLAS_STATUS_SUCCESS) {
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 

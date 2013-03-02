@@ -29,15 +29,17 @@ namespace libtensor {
 template<size_t N, size_t M, size_t K>
 class to_contract2_perms {
 private:
-	const size_t k_ordera = N + K; //!< Order of %tensor a
-	const size_t k_orderb = M + K; //!< Order of %tensor b
-	const size_t k_orderc = N + M; //!< Order of %tensor c
-	const size_t k_totidx = N + M + K; //!< Total number of indexes
-	const size_t k_maxconn = 2 * k_totidx; //!< Total number of indexes
+    enum {
+        k_ordera = N + K, //!< Order of %tensor a
+        k_orderb = M + K, //!< Order of %tensor b
+        k_orderc = N + M, //!< Order of %tensor c
+        k_totidx = N + M + K, //!< Total number of indexes
+        k_maxconn = 2 * k_totidx, //!< Total number of indexes
+    };
 
-	permutation<k_ordera> m_perma; //!< Permutation of the first input %tensor (a)
-	permutation<k_orderb> m_permb; //!< Permutation of the second input %tensor (b)
-	permutation<k_orderc> m_permc; //!< Permutation of the output %tensor (c)
+    permutation<k_ordera> m_perma; //!< Permutation of the first input %tensor (a)
+    permutation<k_orderb> m_permb; //!< Permutation of the second input %tensor (b)
+    permutation<k_orderc> m_permc; //!< Permutation of the output %tensor (c)
 
 
 public:
@@ -50,7 +52,7 @@ public:
         const dimensions<N + K> &dimsa, const dimensions<M + K> &dimsb, const dimensions<N + M> &dimsc)
         //m_perma(make_perma(contr, dimsa, dimsb)) //????
     {
-    	make_perms(contr, dimsa, dimsb, dimsc);
+        make_perms(contr, dimsa, dimsb, dimsc);
     }
 
     /** \brief Returns the permutation of A
@@ -82,9 +84,9 @@ private:
 
 template<size_t A, size_t B>
     bool does_permute_first(const dimensions<A> &dimsa,
-    	    const dimensions<B> &dimsb, size_t perm_indexa, size_t perm_indexb, size_t permute_zone_a, size_t permute_zone_b);
-	template<size_t A>
-		size_t get_permute_cost(const dimensions<A> &dimsa,	size_t perm_indexa);
+            const dimensions<B> &dimsb, size_t perm_indexa, size_t perm_indexb, size_t permute_zone_a, size_t permute_zone_b);
+    template<size_t A>
+        size_t get_permute_cost(const dimensions<A> &dimsa,    size_t perm_indexa);
 
     void permute_conn(sequence<k_maxconn, size_t> &conn, size_t i, size_t j);
 

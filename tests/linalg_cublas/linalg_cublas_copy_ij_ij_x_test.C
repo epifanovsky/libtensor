@@ -59,7 +59,7 @@ void linalg_cublas_copy_ij_ij_x_test::test_copy_ij_ij_x(size_t ni, size_t nj,
 
     cublasHandle_t cbh;
     cublasStatus_t ec = cublasCreate(&cbh);
-    if(ec != cudaSuccess) {
+    if(ec != CUBLAS_STATUS_SUCCESS) {
         fail_test(tnss.c_str(), __FILE__, __LINE__, "Failed cublasCreate().");
     }
 

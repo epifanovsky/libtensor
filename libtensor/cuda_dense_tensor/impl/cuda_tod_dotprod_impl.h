@@ -7,6 +7,7 @@
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "../local_cublas_handle.h"
 #include "../cuda_tod_dotprod.h"
 
 namespace libtensor {
@@ -127,7 +128,8 @@ double cuda_tod_dotprod<N>::calculate() {
         std::auto_ptr< kernel_base<linalg_cublas, 2, 1> > kern(
             kern_dmul2<linalg_cublas>::match(1.0, loop_in, loop_out));
         cuda_tod_dotprod::start_timer(kern->get_name());
-        loop_list_runner<linalg_cublas, 2, 1>(loop_in).run(0, r, *kern);
+        loop_list_runner<linalg_cublas, 2, 1>(loop_in).
+            run(local_cublas_handle::get(), r, *kern);
         cuda_tod_dotprod::stop_timer(kern->get_name());
 
         ca.ret_const_dataptr(pa);

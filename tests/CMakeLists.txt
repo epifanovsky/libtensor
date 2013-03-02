@@ -283,9 +283,6 @@ if(CUDA_FOUND)
         ${SRC_CUDA_DENSE_TENSOR})
     cuda_add_executable(libtensor_cuda_block_tensor_tests
         ${SRC_CUDA_BLOCK_TENSOR})
-    foreach(TARGET ${CUDA_TARGETS})
-        cuda_add_cublas_to_target(${TARGET})
-    endforeach(TARGET)
     set(TARGETS ${TARGETS} ${CUDA_TARGETS})
 endif(CUDA_FOUND)
 
@@ -303,3 +300,10 @@ foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
+
+if(CUDA_FOUND)
+    foreach(TARGET ${CUDA_TARGETS})
+        cuda_add_cublas_to_target(${TARGET})
+    endforeach(TARGET)
+endif(CUDA_FOUND)
+
