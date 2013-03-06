@@ -33,12 +33,12 @@ void cuda_kern_copy_4d::run() {
 
 	//kernel call
    	if (m_d != 0) {
-   			cuda::add_copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, m_c*m_d);
+   			cuda::add_copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c*m_d);
    	} else {
    		if (m_c == 1) {
-   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs);
+   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims);
    		} else {
-   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, m_c);
+   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c);
    		}
    	}
 }

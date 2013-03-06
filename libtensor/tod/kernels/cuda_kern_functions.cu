@@ -23,127 +23,277 @@ namespace cuda {
 	//Copy 2-dimensional tensor a to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void copy_tensor( const double *a, double *b, const uint2 b_incrs) {
-		int j, k;
+	__global__ void copy_tensor( const double *a, double *b, const uint2 b_incrs, const uint2 dims) {
+		int j, k, ind;
+		//index along x dimension
+		ind = threadIdx.x;
+
 		//index in the tensor a
-		j = threadIdx.x + blockIdx.x*blockDim.x;
+//		j = threadIdx.x + blockIdx.x*blockDim.x;
+		j = threadIdx.x + blockIdx.x*dims.y;
 		//new index in the output array b
 		k = threadIdx.x*b_incrs.x + blockIdx.x*b_incrs.y;
 
-		b[k] = a[j];
+//		printf("\nk1 = %d, j1 = %d", k, j);
+		while (ind < dims.y) {
+//			printf("\nk = %d, j = %d, threadIdx = %d, blockIdx = %d", k, j, threadIdx.x, blockIdx.x);
+			b[k] = a[j];
+			ind += blockDim.x;
+			j += blockDim.x;
+			k += blockDim.x*b_incrs.x;
+		}
 	}
 
 	//Copy 1-dimensional tensor a scaled by factor 'multiply' to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void copy_tensor( const double *a, double *b, const uint2 b_incrs, const double multiply) {
-		int j, k;
+	__global__ void copy_tensor( const double *a, double *b, const uint2 b_incrs, const uint2 dims, const double multiply) {
+		int j, k, ind;
+		//index along x dimension
+		ind = threadIdx.x;
 		//index in the tensor a
-		j = threadIdx.x + blockIdx.x*blockDim.x;
+		j = threadIdx.x + blockIdx.x*dims.y;
 		//new index in the output array b
 		k = threadIdx.x*b_incrs.x + blockIdx.x*b_incrs.y;
-		b[k] = a[j]*multiply;
+		while (ind < dims.y) {
+			b[k] = a[j]*multiply;
+			ind += blockDim.x;
+			j += blockDim.x;
+			k += blockDim.x*b_incrs.x;
+		}
 	}
 
 	//Copy 4-dimensional tensor a to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void copy_tensor( const double *a, double *b, const uint4 b_incrs) {
+	__global__ void copy_tensor( const double *a, double *b, const uint4 b_incrs, const uint4 dims) {
+
 		int j, k;
+		//index along x dimension
+		int ind_x, ind_y;
 		//index in the tensor a
-		j = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*blockDim.x*blockDim.y*gridDim.x;
+		int block_ind_j =  blockIdx.x*dims.x*dims.y + blockIdx.y*dims.x*dims.y*gridDim.x;
+		j = threadIdx.x + threadIdx.y*dims.x + blockIdx.x*dims.x*dims.y	+ block_ind_j;
 		//new index in the output array b
-		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
+		int block_ind_k = blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
+		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + block_ind_k;
 
-		b[k] = a[j];
+		ind_y = threadIdx.y;
+		while (ind_y < dims.y) {
+			ind_x = threadIdx.x;
+			j = ind_x + ind_y*dims.x + block_ind_j;
+			k = ind_x*b_incrs.x + ind_y*b_incrs.y + block_ind_k;
+			while (ind_x < dims.x) {
+				b[k] = a[j];
+				ind_x += blockDim.x;
+				j += blockDim.x;
+				k += blockDim.x*b_incrs.x;
+			} //ind_x
+			ind_y += blockDim.y;
+		} //ind_y
 
-//		if (j < 8) {
-//		printf("Thread x = %d, y = %d, \n Block x = %d, y = %d \n b[%d] = %f, a[%d] = %f\n",
-//				threadIdx.x, threadIdx.y, blockIdx.x,  blockIdx.y, k, b[k], j, a[j]);
-//		}
+//		int j, k;
+//		//index in the tensor a
+//		j = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*blockDim.x*blockDim.y*gridDim.x;
+//		//new index in the output array b
+//		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
+//
+//		b[k] = a[j];
 	}
 
 	//Copy 4-dimensional tensor a to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void copy_tensor( const double *a, double *b, const uint4 b_incrs, const double multiply) {
+	__global__ void copy_tensor( const double *a, double *b, const uint4 b_incrs, const uint4 dims, const double multiply) {
 		int j, k;
+		//index along x dimension
+		int ind_x, ind_y;
 		//index in the tensor a
-		j = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*blockDim.x*blockDim.y*gridDim.x;
+		int block_ind_j =  blockIdx.x*dims.x*dims.y + blockIdx.y*dims.x*dims.y*gridDim.x;
+		j = threadIdx.x + threadIdx.y*dims.x + blockIdx.x*dims.x*dims.y	+ block_ind_j;
 		//new index in the output array b
-		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
-		b[k] = a[j]*multiply;
+		int block_ind_k = blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
+		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + block_ind_k;
+
+		ind_y = threadIdx.y;
+		while (ind_y < dims.y) {
+			ind_x = threadIdx.x;
+			j = ind_x + ind_y*dims.x + block_ind_j;
+			k = ind_x*b_incrs.x + ind_y*b_incrs.y + block_ind_k;
+			while (ind_x < dims.x) {
+				b[k] = a[j]*multiply;
+				ind_x += blockDim.x;
+				j += blockDim.x;
+				k += blockDim.x*b_incrs.x;
+			} //ind_x
+			ind_y += blockDim.y;
+		} //ind_y
 	}
 
 	//Copy 6-dimensional tensor a to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void copy_tensor(const double *a, double *b, const uint3 b_incrs1, const uint3 b_incrs2) {
+	__global__ void copy_tensor(const double *a, double *b, const uint3 b_incrs1, const uint3 b_incrs2, const uint3 dims) {
 		int j, k;
+		//index along x dimension
+		int ind_x, ind_y, ind_z;
+
 		//index in the tensor a
-		j = threadIdx.x + threadIdx.y*blockDim.x +  threadIdx.z*blockDim.x*blockDim.y + blockIdx.x*blockDim.x*blockDim.y*blockDim.z
-				+ blockIdx.y*blockDim.x*blockDim.y*blockDim.z*gridDim.x + blockIdx.z*blockDim.x*blockDim.y*blockDim.z*gridDim.x*gridDim.y;
-	//	__shared__ double a_buffer[threadsPerBlock], b_buffer[threadsPerBlock];
+//		j = threadIdx.x + threadIdx.y*blockDim.x +  threadIdx.z*blockDim.x*blockDim.y + blockIdx.x*blockDim.x*blockDim.y*blockDim.z
+//				+ blockIdx.y*blockDim.x*blockDim.y*blockDim.z*gridDim.x + blockIdx.z*blockDim.x*blockDim.y*blockDim.z*gridDim.x*gridDim.y;
+
+		int block_ind_j =  blockIdx.x*dims.x*dims.y*dims.z + blockIdx.y*dims.x*dims.y*dims.z*gridDim.x + blockIdx.z*dims.x*dims.y*dims.z*gridDim.x*gridDim.y;
+		j = threadIdx.x + threadIdx.y*dims.x +  threadIdx.z*dims.x*dims.y + blockIdx.x*dims.x*dims.y*dims.z
+				+ block_ind_j;
+//					+ blockIdx.y*dims.x*dims.y*dims.z*gridDim.x + blockIdx.z*dims.x*dims.y*dims.z*gridDim.x*gridDim.y;
 		//new index in the output array b
-		k = threadIdx.x*b_incrs1.x + threadIdx.y*b_incrs1.y + threadIdx.z*b_incrs1.z + blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
-		b[k] = a[j];
+		int block_ind_k = blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + blockIdx.z*b_incrs2.z;
+		k = threadIdx.x*b_incrs1.x + threadIdx.y*b_incrs1.y + threadIdx.z*b_incrs1.z +
+				block_ind_k;
+//				blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
+
+		ind_z = threadIdx.z;
+		while ( ind_z < dims.z) {
+			ind_y = threadIdx.y;
+			while (ind_y < dims.y) {
+				ind_x = threadIdx.x;
+				j = ind_x + ind_y*dims.x +  ind_z*dims.x*dims.y + block_ind_j;
+				k = ind_x*b_incrs1.x + ind_y*b_incrs1.y + ind_z*b_incrs1.z +
+								block_ind_k;
+				while (ind_x < dims.x) {
+//					printf("\nk = %d, j = %d, threadIdx = %d, threadIdy = %d, threadIdz = %d, "
+//							"blockIdx = %d, blockIdy = %d, blockIdz = %d",
+//							k, j, threadIdx.x, threadIdx.y, threadIdx.z, blockIdx.x, blockIdx.y, blockIdx.z);
+					b[k] = a[j];
+					ind_x += blockDim.x;
+					j += blockDim.x;
+					k += blockDim.x*b_incrs1.x;
+				} //ind_x
+				ind_y += blockDim.y;
+			} //ind_y
+			ind_z += blockDim.z;
+		} //ind_z
 	}
 
 	//Copy 6-dimensional tensor a to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void copy_tensor(const double *a, double *b, const uint3 b_incrs1, const uint3 b_incrs2, const double multiply) {
+	__global__ void copy_tensor(const double *a, double *b, const uint3 b_incrs1, const uint3 b_incrs2, const uint3 dims, const double multiply) {
 		int j, k;
+		//index along x dimension
+		int ind_x, ind_y, ind_z;
 		//index in the tensor a
-		j = threadIdx.x + threadIdx.y*blockDim.x +  threadIdx.z*blockDim.x*blockDim.y + blockIdx.x*blockDim.x*blockDim.y*blockDim.z
-				+ blockIdx.y*blockDim.x*blockDim.y*blockDim.z*gridDim.x + blockIdx.z*blockDim.x*blockDim.y*blockDim.z*gridDim.x*gridDim.y;
-	//	__shared__ double a_buffer[threadsPerBlock], b_buffer[threadsPerBlock];
+		j = threadIdx.x + threadIdx.y*dims.x +  threadIdx.z*dims.x*dims.y + blockIdx.x*dims.x*dims.y*dims.z
+					+ blockIdx.y*dims.x*dims.y*dims.z*gridDim.x + blockIdx.z*dims.x*dims.y*dims.z*gridDim.x*gridDim.y;
+		int block_ind_j =  blockIdx.x*dims.x*dims.y*dims.z + blockIdx.y*dims.x*dims.y*dims.z*gridDim.x + blockIdx.z*dims.x*dims.y*dims.z*gridDim.x*gridDim.y;
 		//new index in the output array b
-		k = threadIdx.x*b_incrs1.x + threadIdx.y*b_incrs1.y + threadIdx.z*b_incrs1.z + blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
-		b[k] = a[j]*multiply;
+		k = threadIdx.x*b_incrs1.x + threadIdx.y*b_incrs1.y + threadIdx.z*b_incrs1.z +
+				blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
+		int block_ind_k = blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
+		ind_z = threadIdx.z;
+		while ( ind_z < dims.z) {
+			ind_y = threadIdx.y;
+			while (ind_y < dims.y) {
+				ind_x = threadIdx.x;
+				j = ind_x + ind_y*dims.x +  ind_z*dims.x*dims.y + block_ind_j;
+				k = ind_x*b_incrs1.x + ind_y*b_incrs1.y + ind_z*b_incrs1.z +
+								block_ind_k;
+				while (ind_x < dims.x) {
+					b[k] = a[j]*multiply;
+					ind_x += blockDim.x;
+					j += blockDim.x;
+					k += blockDim.x*b_incrs1.x;
+				} //ind_x
+				ind_y += blockDim.y;
+			} //ind_y
+			ind_z += blockDim.z;
+		} //ind_z
 	}
 
 	//Add 2-dimensional tensor a multiplied by 'multiply' to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void add_copy_tensor(const double *a, double *b, const uint2 b_incrs, const double multiply) {
-		int j, k;
+	__global__ void add_copy_tensor(const double *a, double *b, const uint2 b_incrs, const uint2 dims, const double multiply) {
+		int j, k, ind;
+		//index along x dimension
+		ind = threadIdx.x;
 		//index in the tensor a
-		j = threadIdx.x + blockIdx.x*blockDim.x;
+		j = threadIdx.x + blockIdx.x*dims.y;
 		//new index in the output array b
 		k = threadIdx.x*b_incrs.x + blockIdx.x*b_incrs.y;
 
-		b[k] = b[k] + a[j]*multiply;
+		while (ind < dims.y) {
+			b[k] = b[k] + a[j]*multiply;
+			ind += blockDim.x;
+			j += blockDim.x;
+			k += blockDim.x*b_incrs.x;
+		}
 	}
 
 	//Add 4-dimensional tensor a multiplied by 'multiply' to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void add_copy_tensor(const double *a, double *b, const uint4 b_incrs, const double multiply) {
+	__global__ void add_copy_tensor(const double *a, double *b, const uint4 b_incrs, const uint4 dims, const double multiply) {
 		int j, k;
+		//index along x dimension
+		int ind_x, ind_y;
 		//index in the tensor a
-		j = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*blockDim.x*blockDim.y*gridDim.x;
-	//	__shared__ double a_buffer[threadsPerBlock], b_buffer[threadsPerBlock];
+		int block_ind_j =  blockIdx.x*dims.x*dims.y + blockIdx.y*dims.x*dims.y*gridDim.x;
+		j = threadIdx.x + threadIdx.y*dims.x + blockIdx.x*dims.x*dims.y	+ block_ind_j;
 		//new index in the output array b
-		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
+		int block_ind_k = blockIdx.x*b_incrs.z + blockIdx.y*b_incrs.w;
+		k = threadIdx.x*b_incrs.x + threadIdx.y*b_incrs.y + block_ind_k;
 
-		b[k] = b[k] + a[j]*multiply;
+		ind_y = threadIdx.y;
+		while (ind_y < dims.y) {
+			ind_x = threadIdx.x;
+			j = ind_x + ind_y*dims.x + block_ind_j;
+			k = ind_x*b_incrs.x + ind_y*b_incrs.y + block_ind_k;
+			while (ind_x < dims.x) {
+				b[k] = b[k] + a[j]*multiply;
+				ind_x += blockDim.x;
+				j += blockDim.x;
+				k += blockDim.x*b_incrs.x;
+			} //ind_x
+			ind_y += blockDim.y;
+		} //ind_y
 	}
 
 	//Add 6-dimensional tensor a multiplied by 'multiply' to tensor b and applies permutation according to increments in b_incrs.
 	//Every thread copies one element from tensor a to tensor b.
 	//Position of element in a calculated from the thread ID, position in tensor b calculated from thread ID and increments in b
-	__global__ void add_copy_tensor( const double *a, double *b, const uint3 b_incrs1, const uint3 b_incrs2, const double multiply) {
-			int j, k;
-			//index in the tensor a
-			j = threadIdx.x + threadIdx.y*blockDim.x +  threadIdx.z*blockDim.x*blockDim.y + blockIdx.x*blockDim.x*blockDim.y*blockDim.z
-					+ blockIdx.y*blockDim.x*blockDim.y*blockDim.z*gridDim.x + blockIdx.z*blockDim.x*blockDim.y*blockDim.z*gridDim.x*gridDim.y;
-		//	__shared__ double a_buffer[threadsPerBlock], b_buffer[threadsPerBlock];
-			//new index in the output array b
-			k = threadIdx.x*b_incrs1.x + threadIdx.y*b_incrs1.y + threadIdx.z*b_incrs1.z + blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
+	__global__ void add_copy_tensor( const double *a, double *b, const uint3 b_incrs1, const uint3 b_incrs2, const uint3 dims, const double multiply) {
+		int j, k;
+		//index along x dimension
+		int ind_x, ind_y, ind_z;
+		//index in the tensor a
+		j = threadIdx.x + threadIdx.y*dims.x +  threadIdx.z*dims.x*dims.y + blockIdx.x*dims.x*dims.y*dims.z
+					+ blockIdx.y*dims.x*dims.y*dims.z*gridDim.x + blockIdx.z*dims.x*dims.y*dims.z*gridDim.x*gridDim.y;
+		int block_ind_j =  blockIdx.x*dims.x*dims.y*dims.z + blockIdx.y*dims.x*dims.y*dims.z*gridDim.x + blockIdx.z*dims.x*dims.y*dims.z*gridDim.x*gridDim.y;
+		//new index in the output array b
+		k = threadIdx.x*b_incrs1.x + threadIdx.y*b_incrs1.y + threadIdx.z*b_incrs1.z +
+				blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
+		int block_ind_k = blockIdx.x*b_incrs2.x + blockIdx.y*b_incrs2.y + + blockIdx.z*b_incrs2.z;
+		ind_z = threadIdx.z;
+		while ( ind_z < dims.z) {
+			ind_y = threadIdx.y;
+			while (ind_y < dims.y) {
+				ind_x = threadIdx.x;
+				j = ind_x + ind_y*dims.x +  ind_z*dims.x*dims.y + block_ind_j;
+				k = ind_x*b_incrs1.x + ind_y*b_incrs1.y + ind_z*b_incrs1.z +
+								block_ind_k;
+				while (ind_x < dims.x) {
+					b[k] = b[k] + a[j]*multiply;
+					ind_x += blockDim.x;
+					j += blockDim.x;
+					k += blockDim.x*b_incrs1.x;
+				} //ind_x
+				ind_y += blockDim.y;
+			} //ind_y
+			ind_z += blockDim.z;
+		} //ind_z
 
-			b[k] = b[k] + a[j]*multiply;
-		}
+	}
 
 
 

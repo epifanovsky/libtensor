@@ -36,36 +36,56 @@ cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *
 	switch(N)	{
 	case 2:
 	{
+		const int THREADS_PER_BLOCK = 512;
+//		const int THREADS_PER_BLOCK = 2;
+
+		uint2 dims = make_uint2(dimsa.get_dim(0), dimsa.get_dim(1) );
 		//get b increments using the map
 		uint2 b_incrs = make_uint2(dimsb.get_increment(map[1]), dimsb.get_increment(map[0]) );
 		// setup execution parameters
-		dim3 threads(dimsa.get_dim(1));
+		dim3 threads;
+		// setup execution parameters
+		threads.x = (dimsa.get_dim(1) < THREADS_PER_BLOCK) ? dimsa.get_dim(1) : THREADS_PER_BLOCK;
 		dim3 grid(dimsa.get_dim(0));
 
-		return new cuda_kern_copy_2d(pa, pb, threads, grid, b_incrs, c, d);
+		return new cuda_kern_copy_2d(pa, pb, threads, grid, b_incrs, dims, c, d);
 	}
 	case 4:
 	{
+		uint4 dims = make_uint4(dimsa.get_dim(3), dimsa.get_dim(2), dimsa.get_dim(1), dimsa.get_dim(0) );
 		//get b increments using the map
 		uint4 b_incrs = make_uint4(dimsb.get_increment(map[3]), dimsb.get_increment(map[2]), dimsb.get_increment(map[1]), dimsb.get_increment(map[0]) );
 
 		// setup execution parameters
-		dim3 threads(dimsa.get_dim(3), dimsa.get_dim(2));
+//		dim3 threads(dimsa.get_dim(3), dimsa.get_dim(2));
+		//maximum possible block configuration is 32x32
+		dim3 threads;
+		threads.x = (dimsa.get_dim(3) > 32) ? 32 : dimsa.get_dim(3);
+		threads.y = (dimsa.get_dim(2) > 32) ? 32 : dimsa.get_dim(2);
 		dim3 grid(dimsa.get_dim(1), dimsa.get_dim(0));
 
-		return new cuda_kern_copy_4d(pa, pb, threads, grid, b_incrs, c, d);
+		return new cuda_kern_copy_4d(pa, pb, threads, grid, b_incrs, dims, c, d);
 	}
 	case 6:
 	{
+		uint3 dims2 = make_uint3(dimsa.get_dim(5), dimsa.get_dim(4), dimsa.get_dim(3) );
 		//get incriments using the map
 		uint3 b_incrs1 = make_uint3(dimsb.get_increment(map[5]), dimsb.get_increment(map[4]), dimsb.get_increment(map[3]));
 		uint3 b_incrs2 = make_uint3(dimsb.get_increment(map[2]), dimsb.get_increment(map[1]), dimsb.get_increment(map[0]));
 //
 //		// setup execution parameters
-		dim3 threads(dimsa.get_dim(5), dimsa.get_dim(4), dimsa.get_dim(3));
+		//maximum possible block configuration is 8x8x16
+//		dim3 threads(dimsa.get_dim(5), dimsa.get_dim(4), dimsa.get_dim(3));
+		dim3 threads;
+		threads.x = (dimsa.get_dim(5) > 16) ? 16 : dimsa.get_dim(5);
+		threads.y = (dimsa.get_dim(4) > 8) ? 8 : dimsa.get_dim(4);
+		threads.z = (dimsa.get_dim(3) > 8) ? 8 : dimsa.get_dim(3);
+//		threads.x = (dimsa.get_dim(5) > 2) ? 2 : dimsa.get_dim(5);
+//		threads.y = (dimsa.get_dim(4) > 2) ? 2 : dimsa.get_dim(4);
+//		threads.z = (dimsa.get_dim(3) > 2) ? 2 : dimsa.get_dim(3);
 		dim3 grid(dimsa.get_dim(2), dimsa.get_dim(1), dimsa.get_dim(0));
 
-		return new cuda_kern_copy_6d(pa, pb, threads, grid, b_incrs1, b_incrs2, c, d);
+		return new cuda_kern_copy_6d(pa, pb, threads, grid, b_incrs1, b_incrs2, dims2, c, d);
 	}
 	//no default copy
 	default:
