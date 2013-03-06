@@ -17,11 +17,14 @@ void cuda_tod_copy_test::perform() throw(libtest::test_exception) {
     test_exc();
 
     index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
+//    index<2> i2a, i2b; i2b[0]=10; i2b[1]=1500;
+//    index<2> i2a, i2b; i2b[0]=1; i2b[1]=3;
     index_range<2> ir2(i2a, i2b); dimensions<2> dims2(ir2);
     permutation<2> perm2, perm2t;
     perm2t.permute(0, 1);
 
     test_plain(dims2);
+
     test_plain_additive(dims2, 1.0);
     test_plain_additive(dims2, -1.0);
     test_plain_additive(dims2, 2.5);
@@ -74,18 +77,12 @@ void cuda_tod_copy_test::perform() throw(libtest::test_exception) {
     test_perm_scaled_additive(dims2, perm2t, -3.14, 2.5);
 
     index<6> i6a, i6b;
-    i6b[0]=5; i6b[1]=4; i6b[2]=5; i6b[3]=4; i6b[4]=3; i6b[5]=5;
+//    i6b[0]=5; i6b[1]=4; i6b[2]=5; i6b[3]=4; i6b[4]=3; i6b[5]=5;
+    i6b[0]=5; i6b[1]=4; i6b[2]=5; i6b[3]=9; i6b[4]=10; i6b[5]=8;
+//    i6b[0]=0; i6b[1]=0; i6b[2]=0; i6b[3]=1; i6b[4]=2; i6b[5]=3;
     index_range<6> ir6(i6a, i6b); dimensions<6> dims6(ir6);
     permutation<6> perm6, perm6t;
     perm6t.permute(0, 1).permute(1, 2);
-
-//    index<4> i4a, i4b;
-//    i4b[0] = 5; i4b[1] = 4; i4b[2] = 5; i4b[3] = 4;
-////    i4b[0] = 1; i4b[1] = 2; i4b[2] = 3; i4b[3] = 4;
-//    dimensions<4> dims2(index_range<4>(i4a, i4b));
-//    permutation<4> perm2, perm2t;
-//    perm2t.permute(0, 1).permute(1, 2).permute(2, 3);
-//    perm2t.permute(0, 1).permute(1, 2);
 
     test_plain(dims6);
     test_plain_additive(dims6, 1.0);
@@ -138,13 +135,23 @@ void cuda_tod_copy_test::perform() throw(libtest::test_exception) {
     test_perm_scaled_additive(dims6, perm6t, 0.5, 2.5);
     test_perm_scaled_additive(dims6, perm6, -3.14, 2.5);
     test_perm_scaled_additive(dims6, perm6t, -3.14, 2.5);
-
+//*/
     index<4> i4a, i4b;
-    i4b[0] = 4; i4b[1] = 5; i4b[2] = 6; i4b[3] = 7;
+//    i4b[0] = 4; i4b[1] = 5; i4b[2] = 6; i4b[3] = 7;
+    i4b[0] = 1; i4b[1] = 1; i4b[2] = 50; i4b[3] = 70;
     dimensions<4> dims4(index_range<4>(i4a, i4b));
     permutation<4> perm4, perm4c;
     perm4c.permute(0, 1).permute(1, 2).permute(2, 3);
 ////
+    test_plain(dims4);
+
+    test_plain_additive(dims4, 1.0);
+    test_plain_additive(dims4, -1.0);
+    test_plain_additive(dims4, 2.5);
+
+    test_scaled(dims4, 1.0);
+    test_scaled(dims4, 0.5);
+
     test_perm(dims4, perm4);
     test_perm(dims4, perm4c);
 
@@ -154,6 +161,7 @@ void cuda_tod_copy_test::perform() throw(libtest::test_exception) {
     test_perm_scaled_additive(dims4, perm4c, 0.5, 2.5);
     test_perm_scaled_additive(dims4, perm4, -3.14, 2.5);
     test_perm_scaled_additive(dims4, perm4c, -3.14, 2.5);
+    //*/
 
 }
 
@@ -194,6 +202,7 @@ void cuda_tod_copy_test::test_plain(const dimensions<N> &dims)
 //        h_dtb1[i] = drand48();
 //    } while(dims.inc_index(ida));
 
+//    std::cout << "Copy to device";
     //copy a and b from host to device
     cuda_allocator_t::copy_to_device(d_dta, h_dta, dims.get_size());
     cuda_allocator_t::copy_to_device(d_dtb1, h_dtb1, dims.get_size());
@@ -204,15 +213,15 @@ void cuda_tod_copy_test::test_plain(const dimensions<N> &dims)
     d_tca.ret_dataptr(d_dta); d_dta = NULL;
     d_tcb.ret_dataptr(d_dtb1); d_dtb1 = NULL;
     h_ta.set_immutable(); h_tb_ref.set_immutable();
-    //std::cout << "\nFirst adapter return\n ";
+//    std::cout << "\nFirst adapter return\n ";
     }
 
     // Invoke the copy operation
 
     cuda_tod_copy<N> cp(d_ta);
-    //std::cout << "\nCuda copy initialized\n ";
+//    std::cout << "\nCuda copy initialized\n ";
     cp.perform(d_tb);
-    //std::cout << "\nCuda copy performed\n ";
+//    std::cout << "\nCuda copy performed\n ";
 
     //copy from device to host
     {
@@ -232,7 +241,7 @@ void cuda_tod_copy_test::test_plain(const dimensions<N> &dims)
         h_tcb.ret_dataptr(h_dtb1); h_dtb1 = NULL;
         //std::cout << "Second adapter return\n ";
         d_tcb.ret_dataptr(d_dtb1); d_dtb1 = NULL;
-        //std::cout << "Third adapter return\n ";
+//        std::cout << "Third adapter return\n ";
 //        h_tcb_ref.ret_const_dataptr(h_dtb2); h_dtb2 = NULL;
     }
 
