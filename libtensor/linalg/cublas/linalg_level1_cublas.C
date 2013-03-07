@@ -1,5 +1,6 @@
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
+#include <libtensor/cuda/cuda_error.h>
 #include "linalg_level1_cublas.h"
 
 namespace libtensor {
@@ -41,11 +42,21 @@ double linalg_level1_cublas::mul2_x_p_p(
     const double *a, size_t spa,
     const double *b, size_t spb) {
 
+    static const char method[] = "mul2_x_p_p()";
+
     start_timer("ddot");
     double d = 0.0;
     cublasStatus_t ec = cublasDdot(h, np, a, spa, b, spb, &d);
+    if(ec != CUBLAS_STATUS_SUCCESS) {
+        stop_timer("ddot");
+        throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, "ec");
+    }
     cudaStream_t stream;
     ec = cublasGetStream(h, &stream);
+    if(ec != CUBLAS_STATUS_SUCCESS) {
+        stop_timer("ddot");
+        throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, "ec");
+    }
     cudaStreamSynchronize(stream);
     stop_timer("ddot");
     return d;
