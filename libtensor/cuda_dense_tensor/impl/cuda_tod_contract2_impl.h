@@ -14,6 +14,7 @@
 #include <libtensor/kernels/loop_list_node.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include "cuda_kern_copy_generic.h"
 #include "../local_cublas_handle.h"
 #include "../cuda_tod_contract2.h"
 #include "../../dense_tensor/to_contract2_perms.h"
@@ -468,12 +469,12 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         r.m_ptrb_end[0] = pa1 + dimsa1.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg_cublas, 1, 1> >kern(
-                kern_dcopy<linalg_cublas>::match(1.0, loop_in, loop_out));
+            std::auto_ptr<cuda_kern_copy_generic> kern(
+                cuda_kern_copy_generic::match(pa, pa1, dimsa, ar.perma,
+                1.0, 1.0));
             cuda_tod_contract2::start_timer("perma");
             cuda_tod_contract2::start_timer(kern->get_name());
-            loop_list_runner<linalg_cublas, 1, 1>(loop_in).
-                run(local_cublas_handle::get(), r, *kern);
+            kern->run();
             cuda_tod_contract2::stop_timer(kern->get_name());
             cuda_tod_contract2::stop_timer("perma");
         }
@@ -515,12 +516,12 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         r.m_ptrb_end[0] = pb1 + dimsb1.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg_cublas, 1, 1> >kern(
-                kern_dcopy<linalg_cublas>::match(1.0, loop_in, loop_out));
+            std::auto_ptr<cuda_kern_copy_generic> kern(
+                cuda_kern_copy_generic::match(pb, pb1, dimsb, ar.permb,
+                1.0, 1.0));
             cuda_tod_contract2::start_timer("permb");
             cuda_tod_contract2::start_timer(kern->get_name());
-            loop_list_runner<linalg_cublas, 1, 1>(loop_in).
-                run(local_cublas_handle::get(), r, *kern);
+            kern->run();
             cuda_tod_contract2::stop_timer(kern->get_name());
             cuda_tod_contract2::stop_timer("permb");
         }

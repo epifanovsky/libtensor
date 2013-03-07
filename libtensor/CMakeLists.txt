@@ -45,6 +45,11 @@ set(SRC_CUDA
     cuda_block_tensor/impl/cuda_btod_unfold_block_list.C
     cuda_dense_tensor/local_cublas_handle.C
     cuda_dense_tensor/impl/cuda_dense_tensor.C
+    cuda_dense_tensor/impl/cuda_kern_copy_2d.cu
+    cuda_dense_tensor/impl/cuda_kern_copy_4d.cu
+    cuda_dense_tensor/impl/cuda_kern_copy_6d.cu
+    cuda_dense_tensor/impl/cuda_kern_copy_generic.cu
+    cuda_dense_tensor/impl/cuda_kern_functions.cu
     cuda_dense_tensor/impl/cuda_kern_set.cu
     cuda_dense_tensor/impl/cuda_tod_add.C
     cuda_dense_tensor/impl/cuda_tod_contract2.C
@@ -54,11 +59,6 @@ set(SRC_CUDA
     cuda_dense_tensor/impl/cuda_tod_dotprod.C
     cuda_dense_tensor/impl/cuda_tod_set.cu
     dense_tensor/impl/dense_tensor_cuda.C
-    tod/kernels/cuda_kern_copy_2d.cu
-    tod/kernels/cuda_kern_copy_4d.cu
-    tod/kernels/cuda_kern_copy_6d.cu
-    tod/kernels/cuda_kern_copy_generic.cu
-    tod/kernels/cuda_kern_functions.cu
 )
 
 set(SRC_LINALG_ACML

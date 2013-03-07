@@ -1,7 +1,7 @@
 #include <memory>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/tod/kernels/cuda_kern_copy_generic.h>
+#include "cuda_kern_copy_generic.h"
 #include "../cuda_tod_copy.h"
 
 namespace libtensor {
