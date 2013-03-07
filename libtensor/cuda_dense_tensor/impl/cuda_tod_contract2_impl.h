@@ -220,18 +220,14 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                 r.m_ptrb_end[0] = pc + dimsc.get_size();
 
                 {
-                    std::auto_ptr< kernel_base<linalg_cublas, 1, 1> > kern(
-                        zero1 ?
-                            kern_dcopy<linalg_cublas>::match(1.0, loop_in,
-                                loop_out) :
-                            kern_dadd1<linalg_cublas>::match(1.0, loop_in,
-                                loop_out));
-                    cuda_tod_contract2::start_timer("permc");
+                    std::auto_ptr<cuda_kern_copy_generic> kern(
+                        cuda_kern_copy_generic::match(pc1, pc, dimsc1,
+                            pinvc, 1.0, zero1 ? 0.0 : 1.0));
+                    cuda_tod_contract2::start_timer("perma");
                     cuda_tod_contract2::start_timer(kern->get_name());
-                    loop_list_runner<linalg_cublas, 1, 1>(loop_in).
-                        run(local_cublas_handle::get(), r, *kern);
+                    kern->run();
                     cuda_tod_contract2::stop_timer(kern->get_name());
-                    cuda_tod_contract2::stop_timer("permc");
+                    cuda_tod_contract2::stop_timer("perma");
                     zero1 = false;
                 }
             }
