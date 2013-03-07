@@ -223,11 +223,26 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                     std::auto_ptr<cuda_kern_copy_generic> kern(
                         cuda_kern_copy_generic::match(pc1, pc, dimsc1,
                             pinvc, 1.0, zero1 ? 0.0 : 1.0));
-                    cuda_tod_contract2::start_timer("perma");
-                    cuda_tod_contract2::start_timer(kern->get_name());
-                    kern->run();
-                    cuda_tod_contract2::stop_timer(kern->get_name());
-                    cuda_tod_contract2::stop_timer("perma");
+                    if(kern.get() != 0) {
+                        cuda_tod_contract2::start_timer("permc");
+                        cuda_tod_contract2::start_timer(kern->get_name());
+                        kern->run();
+                        cuda_tod_contract2::stop_timer(kern->get_name());
+                        cuda_tod_contract2::stop_timer("permc");
+                    } else {
+                        std::auto_ptr< kernel_base<linalg_cublas, 1, 1> > kern2(
+                            zero1 ?
+                                kern_dcopy<linalg_cublas>::match(1.0, loop_in,
+                                    loop_out) :
+                                kern_dadd1<linalg_cublas>::match(1.0, loop_in,
+                                    loop_out));
+                        cuda_tod_contract2::start_timer("permc");
+                        cuda_tod_contract2::start_timer(kern2->get_name());
+                        loop_list_runner<linalg_cublas, 1, 1>(loop_in).
+                            run(local_cublas_handle::get(), r, *kern2);
+                        cuda_tod_contract2::stop_timer(kern2->get_name());
+                        cuda_tod_contract2::stop_timer("permc");
+                    }
                     zero1 = false;
                 }
             }
@@ -468,11 +483,22 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
             std::auto_ptr<cuda_kern_copy_generic> kern(
                 cuda_kern_copy_generic::match(pa, pa1, dimsa, ar.perma,
                 1.0, 1.0));
-            cuda_tod_contract2::start_timer("perma");
-            cuda_tod_contract2::start_timer(kern->get_name());
-            kern->run();
-            cuda_tod_contract2::stop_timer(kern->get_name());
-            cuda_tod_contract2::stop_timer("perma");
+            if(kern.get() != 0) {
+                cuda_tod_contract2::start_timer("perma");
+                cuda_tod_contract2::start_timer(kern->get_name());
+                kern->run();
+                cuda_tod_contract2::stop_timer(kern->get_name());
+                cuda_tod_contract2::stop_timer("perma");
+            } else {
+                std::auto_ptr< kernel_base<linalg_cublas, 1, 1> >kern2(
+                    kern_dcopy<linalg_cublas>::match(1.0, loop_in, loop_out));
+                cuda_tod_contract2::start_timer("perma");
+                cuda_tod_contract2::start_timer(kern2->get_name());
+                loop_list_runner<linalg_cublas, 1, 1>(loop_in).
+                    run(local_cublas_handle::get(), r, *kern2);
+                cuda_tod_contract2::stop_timer(kern2->get_name());
+                cuda_tod_contract2::stop_timer("perma");
+            }
         }
 
         pa2 = pa1;
@@ -515,11 +541,22 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
             std::auto_ptr<cuda_kern_copy_generic> kern(
                 cuda_kern_copy_generic::match(pb, pb1, dimsb, ar.permb,
                 1.0, 1.0));
-            cuda_tod_contract2::start_timer("permb");
-            cuda_tod_contract2::start_timer(kern->get_name());
-            kern->run();
-            cuda_tod_contract2::stop_timer(kern->get_name());
-            cuda_tod_contract2::stop_timer("permb");
+            if(kern.get() != 0) {
+                cuda_tod_contract2::start_timer("permb");
+                cuda_tod_contract2::start_timer(kern->get_name());
+                kern->run();
+                cuda_tod_contract2::stop_timer(kern->get_name());
+                cuda_tod_contract2::stop_timer("permb");
+            } else {
+                std::auto_ptr< kernel_base<linalg_cublas, 1, 1> >kern2(
+                    kern_dcopy<linalg_cublas>::match(1.0, loop_in, loop_out));
+                cuda_tod_contract2::start_timer("permb");
+                cuda_tod_contract2::start_timer(kern2->get_name());
+                loop_list_runner<linalg_cublas, 1, 1>(loop_in).
+                    run(local_cublas_handle::get(), r, *kern2);
+                cuda_tod_contract2::stop_timer(kern2->get_name());
+                cuda_tod_contract2::stop_timer("permb");
+            }
         }
 
         pb2 = pb1;
