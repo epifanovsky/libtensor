@@ -482,7 +482,7 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         {
             std::auto_ptr<cuda_kern_copy_generic> kern(
                 cuda_kern_copy_generic::match(pa, pa1, dimsa, ar.perma,
-                1.0, 1.0));
+                1.0, 0.0));
             if(kern.get() != 0) {
                 cuda_tod_contract2::start_timer("perma");
                 cuda_tod_contract2::start_timer(kern->get_name());
@@ -540,7 +540,7 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         {
             std::auto_ptr<cuda_kern_copy_generic> kern(
                 cuda_kern_copy_generic::match(pb, pb1, dimsb, ar.permb,
-                1.0, 1.0));
+                1.0, 0.0));
             if(kern.get() != 0) {
                 cuda_tod_contract2::start_timer("permb");
                 cuda_tod_contract2::start_timer(kern->get_name());
