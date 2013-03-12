@@ -2,6 +2,7 @@
 #define LIBTENSOR_STD_ALLOCATOR_H
 
 #include <new>
+#include "../defs.h"
 
 namespace libtensor {
 
