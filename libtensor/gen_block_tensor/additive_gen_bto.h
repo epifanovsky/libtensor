@@ -72,17 +72,6 @@ public:
         compute_block(true, idx, tensor_transf_type(), blk);
     }
 
-protected:
-    /** \brief Invokes compute_block on another additive operation;
-            allows derived classes to call other additive operations
-     **/
-    void compute_block(
-            additive_gen_bto<N, BtiTraits> &op,
-            bool zero,
-            const index<N> &idx,
-            const tensor_transf_type &tr,
-            wr_block_type &blk);
-
 };
 
 

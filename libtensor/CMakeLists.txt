@@ -4,9 +4,12 @@ set(SRC
     version.C
     core/impl/abs_index.C
     core/impl/allocator.C
+    core/impl/combined_orbits.C
     core/impl/dimensions.C
+    core/impl/magic_dimensions.C
     core/impl/orbit.C
     core/impl/orbit_list.C
+    core/impl/short_orbit.C
     core/impl/subgroup_orbits.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
@@ -90,6 +93,7 @@ set(SRC_INST
     dense_tensor/impl/tod_set.C
     dense_tensor/impl/tod_set_diag.C
     dense_tensor/impl/tod_set_elem.C
+    dense_tensor/impl/tod_size.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
     symmetry/inst/block_labeling_inst.C
@@ -134,8 +138,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
     block_tensor/btod/impl/btod_sum.C
-    block_tensor/btod/impl/btod_symmetrize.C
-    block_tensor/btod/impl/btod_symmetrize3.C
 )
 
 set(SRC_GEN_BTOD
@@ -144,7 +146,6 @@ set(SRC_GEN_BTOD
 )
 
 set(SRC_BTOD
-    block_tensor/impl/additive_btod.C
     block_tensor/impl/block_tensor.C
     block_tensor/impl/btod_addition_schedule.C
     block_tensor/impl/btod_add.C
@@ -161,6 +162,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_contract2_6.C
     block_tensor/impl/btod_contract2_clst_builder.C
     block_tensor/impl/btod_contract2_clst_optimize.C
+    block_tensor/impl/btod_contract2_nzorb.C
     block_tensor/impl/btod_contract3.C
     block_tensor/impl/btod_copy.C
     block_tensor/impl/btod_diag.C
@@ -174,6 +176,9 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_diag.C
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
+    block_tensor/impl/btod_size.C
+    block_tensor/impl/btod_symmetrize2.C
+    block_tensor/impl/btod_symmetrize3.C
     block_tensor/impl/btod_trace.C
     block_tensor/impl/btod_unfold_block_list.C
     block_tensor/impl/btod_unfold_symmetry.C

@@ -53,7 +53,7 @@ void gen_bto_set_diag<N, Traits>::perform(
         abs_index<N> aidx(idx, dims);
         orbit<N, element_type> o(ctrl.req_const_symmetry(), idx);
         if(!o.is_allowed()) continue;
-        if(o.get_abs_canonical_index() != aidx.get_abs_index())
+        if(o.get_acindex() != aidx.get_abs_index())
             continue;
 
         if(ctrl.req_is_zero_block(idx)) {

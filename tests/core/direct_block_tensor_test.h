@@ -19,6 +19,8 @@ private:
     void test_op_2();
     void test_op_3();
     void test_op_4();
+    void test_op_5();
+    void test_op_6();
 
 };
 

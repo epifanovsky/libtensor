@@ -14,7 +14,7 @@ namespace libtensor {
     This operation sets the diagonal elements of a block %tensor to a value
     without affecting all the off-diagonal elements.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_set_diag : public noncopyable {

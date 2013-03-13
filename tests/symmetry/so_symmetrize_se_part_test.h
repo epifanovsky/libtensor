@@ -20,6 +20,7 @@ private:
     void test_empty_1() throw(libtest::test_exception);
     void test_empty_2() throw(libtest::test_exception);
     void test_sym2_1(bool sign) throw(libtest::test_exception);
+    void test_sym2_2() throw(libtest::test_exception);
 
 };
 

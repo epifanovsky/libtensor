@@ -70,7 +70,7 @@ void gen_bto_select<N, Traits, ComparePolicy>::perform(
         orbit<N, element_type> oa(sym, idxa);
         if (! oa.is_allowed()) continue;
 
-        abs_index<N>::get_index(oa.get_abs_canonical_index(), bidims, idxa0);
+        abs_index<N>::get_index(oa.get_acindex(), bidims, idxa0);
         if (ctrl.req_is_zero_block(idxa0)) continue;
 
         // Obtain block

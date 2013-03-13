@@ -14,7 +14,7 @@ namespace libtensor {
     \tparam M Number of fixed dimensions.
     \tparam N - M result tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M>
 class btod_extract :
@@ -94,6 +94,13 @@ public:
             const index<N - M> &ib,
             const tensor_transf<N - M, double> &trb,
             dense_tensor_wr_i<N - M, double> &blkb);
+
+    virtual void compute_block(
+            const index<N - M> &ib,
+            dense_tensor_wr_i<N - M, double> &blkb) {
+
+        compute_block(true, ib, tensor_transf<N - M, double>(), blkb);
+    }
 
     //@}
 

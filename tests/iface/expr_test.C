@@ -18,7 +18,7 @@ namespace libtensor {
 
 void expr_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -34,11 +34,11 @@ void expr_test::perform() throw(libtest::test_exception) {
         test_10();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 
@@ -336,7 +336,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
         permute(0, 2).permute(1, 3));
     contr3.contract(3, 1);
     btod_contract2<3, 1, 1> op3a(contr3, i_ooov, t1);
-    btod_symmetrize<4> op3(op3a, 0, 1, false);
+    btod_symmetrize2<4> op3(op3a, 0, 1, false);
 
     contraction2<2, 2, 0> contr4a(permutation<4>().permute(1, 2));
     btensor<4> tmp4a(soovv);

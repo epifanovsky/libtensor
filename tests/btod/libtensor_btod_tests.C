@@ -5,6 +5,7 @@
 #include <sstream>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/version.h>
+#include <libtensor/linalg/linalg.h>
 #include "libtensor_btod_suite.h"
 
 using namespace libtensor;
@@ -42,7 +43,7 @@ public:
 
 int main(int argc, char **argv) {
 
-    srand48(time(0));
+    linalg::rng_setup(0);
 
     for(size_t ncpus = 1; ncpus <= 2; ncpus++) {
     for(size_t nmult = 1; nmult <= 2; nmult++) {

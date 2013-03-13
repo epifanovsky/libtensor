@@ -175,13 +175,13 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::compute_block_untimed(
     orbit<NB, element_type> ob(ctrlb.req_const_symmetry(), idxb);
 
     index<NA> idxa0;
-    abs_index<NA>::get_index(oa.get_abs_canonical_index(),
+    abs_index<NA>::get_index(oa.get_acindex(),
         m_bta.get_bis().get_block_index_dims(), idxa0);
     tensor_transf<NA, element_type> tra(oa.get_transf(idxa));
     tra.transform(m_tra);
 
     index<NB> idxb0;
-    abs_index<NB>::get_index(ob.get_abs_canonical_index(),
+    abs_index<NB>::get_index(ob.get_acindex(),
         m_btb.get_bis().get_block_index_dims(), idxb0);
     tensor_transf<NB, element_type> trb(ob.get_transf(idxb));
     trb.transform(m_trb);
@@ -398,10 +398,10 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::make_schedule() {
         if(!oa.is_allowed() || !ob.is_allowed()) continue;
 
         index<NA> idxa0;
-        abs_index<NA>::get_index(oa.get_abs_canonical_index(),
+        abs_index<NA>::get_index(oa.get_acindex(),
             m_bta.get_bis().get_block_index_dims(), idxa0);
         index<NB> idxb0;
-        abs_index<NB>::get_index(ob.get_abs_canonical_index(),
+        abs_index<NB>::get_index(ob.get_acindex(),
             m_btb.get_bis().get_block_index_dims(), idxb0);
         bool zeroa = ctrla.req_is_zero_block(idxa0);
         bool zerob = ctrlb.req_is_zero_block(idxb0);

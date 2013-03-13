@@ -1,3 +1,5 @@
+#include <ctime>
+#include <cstdlib>
 #include "linalg_generic_level1.h"
 
 namespace libtensor {
@@ -31,6 +33,19 @@ void linalg_generic_level1::copy_i_i(
     timings_base::start_timer("copy_i_i");
     for(size_t i = 0; i < ni; i++) c[i * sic] = a[i * sia];
     timings_base::stop_timer("copy_i_i");
+}
+
+
+void linalg_generic_level1::div1_i_i_x(
+    void *,
+    size_t ni,
+    const double *a, size_t sia,
+    double *c, size_t sic,
+    double d) {
+
+    timings_base::start_timer("div1_i_i_x");
+    for(size_t i = 0; i < ni; i++) c[i * sic] = c[i * sic] * d / a[i * sia];
+    timings_base::stop_timer("div1_i_i_x");
 }
 
 
@@ -84,6 +99,49 @@ void linalg_generic_level1::mul2_i_i_i_x(
     timings_base::start_timer("mul2_i_i_i_x");
     for(size_t i = 0; i < ni; i++) c[i * sic] += d * a[i * sia] * b[i * sib];
     timings_base::stop_timer("mul2_i_i_i_x");
+}
+
+
+void linalg_generic_level1::rng_setup(
+    void*) {
+
+#if defined(HAVE_DRAND48)
+    ::srand48(::time(0));
+#else // HAVE_DRAND48
+    ::srand(::time(0));
+#endif // HAVE_DRAND48
+}
+
+
+void linalg_generic_level1::rng_set_i_x(
+    void*,
+    size_t ni,
+    double *a, size_t sia,
+    double c) {
+
+#if defined(HAVE_DRAND48)
+    for(size_t i = 0; i < ni; i++) a[i * sia] = c * ::drand48();
+#else // HAVE_DRAND48
+    for(size_t i = 0; i < ni; i++) {
+        a[i * sia] = c * double(::rand()) / double(RAND_MAX);
+    }
+#endif // HAVE_DRAND48
+}
+
+
+void linalg_generic_level1::rng_add_i_x(
+    void*,
+    size_t ni,
+    double *a, size_t sia,
+    double c) {
+
+#if defined(HAVE_DRAND48)
+    for(size_t i = 0; i < ni; i++) a[i * sia] += c * ::drand48();
+#else // HAVE_DRAND48
+    for(size_t i = 0; i < ni; i++) {
+        a[i * sia] += c * double(::rand()) / double(RAND_MAX);
+    }
+#endif // HAVE_DRAND48
 }
 
 

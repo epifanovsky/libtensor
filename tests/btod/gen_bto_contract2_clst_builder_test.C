@@ -1,3 +1,4 @@
+#include <set>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_clst_builder.h>
@@ -14,7 +15,7 @@ namespace libtensor {
 void gen_bto_contract2_clst_builder_test::perform()
     throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    allocator<double>::init(16, 16, 65536, 65536);
 
     try {
 
@@ -24,10 +25,10 @@ void gen_bto_contract2_clst_builder_test::perform()
 //    test_4();
 
     } catch (...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 

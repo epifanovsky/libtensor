@@ -163,7 +163,7 @@ void gen_bto_mult1<N, Traits, Timed>::perform(bool zero,
 
             orbit<N, element_type> oa(syma, idxa);
             index<N> idxa0;
-            abs_index<N>::get_index(oa.get_abs_canonical_index(),
+            abs_index<N>::get_index(oa.get_acindex(),
                     bidimsa, idxa0);
 
             if (idxa.equals(idxa0)) continue;
@@ -191,7 +191,7 @@ void gen_bto_mult1<N, Traits, Timed>::perform(bool zero,
 
             orbit<N, element_type> ob(cb.req_const_symmetry(), idxb);
             index<N> idxb0;
-            abs_index<N>::get_index(ob.get_abs_canonical_index(),
+            abs_index<N>::get_index(ob.get_acindex(),
                     bidimsb, idxb0);
 
             bool zerob = cb.req_is_zero_block(idxb0);

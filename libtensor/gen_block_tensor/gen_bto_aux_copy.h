@@ -22,6 +22,11 @@ namespace libtensor {
     called multiple times with the same block index, the result is added.
     The blocks must be canonical.
 
+    The operation is thread-safe when explicit synchronization is enabled,
+    otherwise it is not. Explicit synchronization has overhead and scalability
+    limitations, and can be turned off. Thread safety must then be ensured by
+    the caller.
+
     \sa gen_block_stream_i, block_stream_exception
 
     \ingroup libtensor_gen_bto
@@ -52,6 +57,7 @@ private:
     dimensions<N> m_bidims; //!< Block index dims
     gen_block_tensor_wr_ctrl<N, bti_traits> m_ctrl; //!< Block tensor control
     bool m_open; //!< Open state
+    bool m_sync; //!< Explicit synchronization
     libutil::mutex m_mtx; //!< Global mutex
     std::map<size_t, libutil::mutex*> m_blkmtx; //!< Per-block mutexes
 
@@ -59,10 +65,12 @@ public:
     /** \brief Constructs the operation
         \brief sym Symmetry of the target block tensor.
         \brief bt Target block tensor.
+        \brief sync Explicit synchronization
      **/
     gen_bto_aux_copy(
         const symmetry<N, element_type> &sym,
-        gen_block_tensor_wr_i<N, bti_traits> &bt);
+        gen_block_tensor_wr_i<N, bti_traits> &bt,
+        bool sync = true);
 
     /** \brief Virtual destructor
      **/

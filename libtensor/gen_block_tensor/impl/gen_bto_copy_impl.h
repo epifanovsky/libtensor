@@ -3,9 +3,10 @@
 
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_bis.h"
+#include "gen_bto_copy_nzorb_impl.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_copy.h"
 
@@ -262,25 +263,13 @@ void gen_bto_copy<N, Traits, Timed>::make_schedule() {
 
     try {
 
-        gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta);
-        dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
+        gen_bto_copy_nzorb<N, Traits> nzorb(m_bta, m_tra, m_symb);
+        nzorb.build();
 
-        bool noperm = m_tra.get_perm().is_identity();
-
-        std::vector<size_t> nzorba;
-        ca.req_nonzero_blocks(nzorba);
-
-        for(size_t i = 0; i < nzorba.size(); i++) {
-
-            if(noperm) {
-                m_schb.insert(nzorba[i]);
-            } else {
-                index<N> bib;
-                abs_index<N>::get_index(nzorba[i], bidimsa, bib);
-                bib.permute(m_tra.get_perm());
-                orbit<N, element_type> ob(m_symb, bib, false);
-                m_schb.insert(ob.get_abs_canonical_index());
-            }
+        const block_list<N> &blstb = nzorb.get_blst();
+        for(typename block_list<N>::iterator i = blstb.begin();
+                i != blstb.end(); ++i) {
+            m_schb.insert(blstb.get_abs_index(i));
         }
 
     } catch(...) {

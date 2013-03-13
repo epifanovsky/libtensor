@@ -2,7 +2,8 @@
 #define LIBTENSOR_DENSE_TENSOR_H
 
 #include <vector>
-#include "../timings.h"
+#include <libutil/threads/mutex.h>
+#include <libtensor/timings.h>
 #include <libtensor/core/immutable.h>
 #include "dense_tensor_i.h"
 
@@ -119,7 +120,7 @@ namespace libtensor {
     fails for any reason. If an %exception is thrown, the state of
     the %tensor object is undefined.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_dense_tensor
  **/
 template<size_t N, typename T, typename Alloc>
 class dense_tensor :
@@ -133,35 +134,37 @@ public:
 public:
     typedef T element_t; //!< Tensor element type
     typedef typename Alloc::pointer_type ptr_t; //!< Memory pointer type
-    typedef typename dense_tensor_i<N, T>::session_handle_type handle_t; //!< Session handle type
+    typedef typename dense_tensor_i<N, T>::session_handle_type
+        handle_t; //!< Session handle type
 
 private:
-    dimensions<N> m_dims; //!< Tensor %dimensions
+    dimensions<N> m_dims; //!< Tensor dimensions
     ptr_t m_data; //!< Pointer to data
     T *m_dataptr; //!< Pointer to checked out data
     const T *m_const_dataptr; //!< Constant pointer to checked out data
     size_t m_ptrcount; //!< Number of data pointers checked out
     std::vector<char> m_sessions; //!< Sessions
     std::vector<size_t> m_session_ptrcount; //!< Per-session data pointer counts
+    libutil::mutex m_mtx; //!< Lock
 
 public:
     //! \name Construction and destruction
     //@{
 
-    /** \brief Creates an empty %tensor
-        \param dims Non-zero %tensor dimensions.
+    /** \brief Creates an empty tensor
+        \param dims Non-zero tensor dimensions.
      **/
     dense_tensor(const dimensions<N> &dims);
 
-    /** \brief Creates an empty %tensor with the same %dimensions
+    /** \brief Creates an empty tensor with the same dimensions
             (data are not copied)
-        \param t Another %tensor (dense_tensor_i<N, T>).
+        \param t Another tensor (dense_tensor_i<N, T>).
      **/
     dense_tensor(const dense_tensor_i<N, T> &t);
 
-    /** \brief Creates an empty %tensor with the same %dimensions
-        (data are not copied)
-        \param t Another %tensor (tensor<N, T, Alloc).
+    /** \brief Creates an empty tensor with the same dimensions (data are not
+            copied)
+        \param t Another tensor (tensor<N, T, Alloc).
      **/
     dense_tensor(const dense_tensor<N, T, Alloc> &t);
 
@@ -175,9 +178,7 @@ public:
     //! \name Implementation of libtensor::dense_tensor_i<N, T>
     //@{
 
-    /** \brief Returns the %dimensions of the %tensor
-
-        Returns the %dimensions of the %tensor.
+    /** \brief Returns the dimensions of the tensor
      **/
     virtual const dimensions<N> &get_dims() const;
 

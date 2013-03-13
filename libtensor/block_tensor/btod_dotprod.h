@@ -18,7 +18,7 @@ namespace libtensor {
 
     This operation computes the dot product for a series of arguments.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_dotprod : public noncopyable {

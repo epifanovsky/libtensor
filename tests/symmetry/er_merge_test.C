@@ -15,6 +15,7 @@ void er_merge_test::perform() throw(libtest::test_exception) {
     try {
 
         test_1(c2v);
+        test_4(c2v);
 
     } catch (libtest::test_exception &e) {
         clear_pg_table(c2v);
@@ -273,6 +274,73 @@ void er_merge_test::test_3(
         fail_test(testname, __FILE__, __LINE__, "Too many terms in pr2.");
     }
 
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void er_merge_test::test_4(
+        const std::string &id) throw(libtest::test_exception) {
+
+    static const char *testname = "er_merge_test::test_4()";
+
+    typedef product_table_i::label_set_t label_set_t;
+    typedef product_table_i::label_group_t label_group_t;
+
+    try {
+
+    evaluation_rule<4> r1;
+    {
+        sequence<4, size_t> seq1(1), seq2(0), seq3(0);
+        seq2[0] = seq2[2] = 1; seq3[1] = seq3[3] = 1;
+        product_rule<4> &pr1 = r1.new_product();
+        pr1.add(seq1, 0);
+        product_rule<4> &pr2 = r1.new_product();
+        pr2.add(seq2, 0);
+        pr2.add(seq3, 0);
+    }
+
+    sequence<4, size_t> mmap(0);
+    mmap[0] = 0; mmap[1] = 1; mmap[2] = 2; mmap[3] = 1;
+    mask<3> smsk;
+    smsk[1] = true;
+
+    evaluation_rule<3> r2, tmp;
+    er_merge<4, 3>(r1, mmap, smsk).perform(tmp);
+    er_optimize<3>(tmp, id).perform(r2);
+
+    // Check sequence list
+    const eval_sequence_list<3> &sl = r2.get_sequences();
+    if (sl.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "# seq.");
+    }
+    if (sl[0][0] != 1 || sl[0][2] != 1) {
+        fail_test(testname, __FILE__, __LINE__, "seq.");
+    }
+
+    // Check product list
+    evaluation_rule<3>::iterator it = r2.begin();
+    if (it == r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product list.");
+    }
+    const product_rule<3> &pr1 = r2.get_product(it);
+    it++;
+    if (it != r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "More than one product.");
+    }
+
+    product_rule<3>::iterator ip1 = pr1.begin();
+    if (ip1 == pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product pr1.");
+    }
+    if (pr1.get_intrinsic(ip1) != product_table_i::k_identity)
+        fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
+    ip1++;
+    if (ip1 != pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Too many terms in pr1.");
+    }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

@@ -18,7 +18,7 @@ namespace libtensor {
 
 void btod_diag_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -54,11 +54,11 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
     test_sym_7(true);
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
@@ -99,7 +99,7 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
     for (orbit_list<1, double>::iterator ib = olb.begin();
             ib != olb.end(); ib++) {
         orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_abs_index(ib));
-        abs_index<1> bidx(ob.get_abs_canonical_index(), bidims1);
+        abs_index<1> bidx(ob.get_acindex(), bidims1);
         if (! ctrlb.req_is_zero_block(bidx.get_index()))
             fail_test(testname, __FILE__, __LINE__, "Unexpected non-zero block.");
     }
@@ -154,7 +154,7 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
     for (orbit_list<1, double>::iterator ib = olb.begin();
             ib != olb.end(); ib++) {
         orbit<1, double> ob(ctrlb.req_const_symmetry(), olb.get_abs_index(ib));
-        abs_index<1> bidx(ob.get_abs_canonical_index(), bidims1);
+        abs_index<1> bidx(ob.get_acindex(), bidims1);
         if (! ctrlb.req_is_zero_block(bidx.get_index()))
             fail_test(testname, __FILE__, __LINE__, "Unexpected non-zero block.");
     }

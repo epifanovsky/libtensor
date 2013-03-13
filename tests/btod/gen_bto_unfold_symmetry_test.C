@@ -17,7 +17,7 @@ namespace libtensor {
 
 void gen_bto_unfold_symmetry_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    allocator<double>::init(16, 16, 65536, 65536);
 
     try {
 
@@ -27,10 +27,10 @@ void gen_bto_unfold_symmetry_test::perform() throw(libtest::test_exception) {
     test_4();
 
     } catch (...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 
@@ -177,13 +177,17 @@ void gen_bto_unfold_symmetry_test::test_3() {
     btod_random<2>().perform(bta);
     bta.set_immutable();
     btod_copy<2>(bta).perform(btb);
+    {
+        block_tensor_wr_ctrl<2, double> cb(btb);
+        cb.req_symmetry().clear();
+    }
 
     std::vector<size_t> blst;
     blst.push_back(1);
     blst.push_back(2);
     blst.push_back(6);
 
-    gen_bto_unfold_symmetry<2, btod_traits>().perform(blst, btb);
+    gen_bto_unfold_symmetry<2, btod_traits>().perform(syma, blst, btb);
 
     {
         block_tensor_rd_ctrl<2, double> cb(btb);
@@ -263,6 +267,10 @@ void gen_bto_unfold_symmetry_test::test_4() {
     }
     bta.set_immutable();
     btod_copy<2>(bta).perform(btb);
+    {
+        block_tensor_wr_ctrl<2, double> cb(btb);
+        cb.req_symmetry().clear();
+    }
 
     std::vector<size_t> blst;
     blst.push_back(1);
@@ -271,7 +279,7 @@ void gen_bto_unfold_symmetry_test::test_4() {
     blst.push_back(4);
     blst.push_back(5);
 
-    gen_bto_unfold_symmetry<2, btod_traits>().perform(blst, btb);
+    gen_bto_unfold_symmetry<2, btod_traits>().perform(syma, blst, btb);
 
     {
         block_tensor_rd_ctrl<2, double> cb(btb);

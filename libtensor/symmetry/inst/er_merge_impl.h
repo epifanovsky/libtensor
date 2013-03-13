@@ -91,6 +91,9 @@ void er_merge<N, M>::perform(evaluation_rule<M> &to) const {
         product_rule<M> &prb = to.new_product();
         for (typename product_rule<N>::iterator ip = pra.begin();
                     ip != pra.end(); ip++) {
+
+            if (smap[pra.get_seqno(ip)] == slist1.size()) continue;
+
             prb.add(slist2[smap[pra.get_seqno(ip)]], pra.get_intrinsic(ip));
         }
     }

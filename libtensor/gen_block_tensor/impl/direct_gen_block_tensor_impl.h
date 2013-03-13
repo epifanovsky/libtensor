@@ -3,7 +3,6 @@
 
 #include <libutil/threads/auto_lock.h>
 #include <libutil/thread_pool/thread_pool.h>
-#include <libtensor/mp/default_sync_policy.h>
 #include <libtensor/core/abs_index.h>
 #include "block_map_impl.h"
 
@@ -140,10 +139,7 @@ direct_gen_block_tensor<N, BtTraits>::on_req_const_block(
                 m_inprogress.insert(aidx.get_abs_index()).first;
         m_lock.unlock();
         try {
-            direct_gen_block_tensor_task<N, bti_traits> t(get_op(), idx, blk);
-            direct_gen_block_tensor_task_iterator<N, bti_traits> ti(t);
-            direct_gen_block_tensor_task_observer to;
-            libutil::thread_pool::submit(ti, to);
+            get_op().compute_block(idx, blk);
         } catch(...) {
             m_lock.lock();
             throw;

@@ -5,6 +5,7 @@
 #include <libtensor/gen_block_tensor/direct_gen_block_tensor.h>
 #include <libtensor/gen_block_tensor/impl/direct_gen_block_tensor_impl.h>
 #include <libtensor/gen_block_tensor/direct_gen_bto.h>
+#include "block_tensor_i.h"
 #include "block_tensor_traits.h"
 
 namespace libtensor {
@@ -15,7 +16,7 @@ namespace libtensor {
     \tparam T Tensor element type.
     \tparam Alloc Memory allocator type.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_block_tensor
  **/
 template<size_t N, typename T, typename Alloc>
 class direct_block_tensor :

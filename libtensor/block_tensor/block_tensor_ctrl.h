@@ -9,7 +9,7 @@ namespace libtensor {
     \tparam N Block %tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_block_tensor
 **/
 template<size_t N, typename T>
 class block_tensor_base_ctrl {
@@ -36,7 +36,7 @@ public:
     \tparam N Block %tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_block_tensor
 **/
 template<size_t N, typename T>
 class block_tensor_rd_ctrl : virtual public block_tensor_base_ctrl<N, T> {
@@ -72,7 +72,7 @@ public:
     \tparam N Block %tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_block_tensor
 **/
 template<size_t N, typename T>
 class block_tensor_wr_ctrl : virtual public block_tensor_base_ctrl<N, T> {
@@ -121,7 +121,7 @@ public:
     \tparam N Block %tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_block_tensor
 **/
 template<size_t N, typename T>
 class block_tensor_ctrl :

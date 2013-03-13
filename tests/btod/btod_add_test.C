@@ -13,7 +13,7 @@ namespace libtensor {
 
 void btod_add_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 16777216, 16777216);
+    allocator<double>::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -45,11 +45,11 @@ void btod_add_test::perform() throw(libtest::test_exception) {
     test_exc();
 
     } catch(...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
 
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 void btod_add_test::test_1(double ca1, double ca2)

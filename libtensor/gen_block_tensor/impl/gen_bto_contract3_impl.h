@@ -2,15 +2,16 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT3_IMPL_H
 
 #include <iterator>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_impl.h"
 #include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_clst_builder.h"
-#include "gen_bto_contract2_nzorb_impl.h"
+#include "gen_bto_contract2_nzorb.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_contract3_batching_policy.h"
+#include "gen_bto_set_impl.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_aux_copy.h"
@@ -56,6 +57,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
     typedef typename Traits::template temp_block_tensor_type<NAB>::type
             temp_block_tensor_ab_type;
 
+    typedef gen_bto_set<NC, Traits, Timed> gen_bto_set_c_type;
     typedef gen_bto_copy<NAB, Traits, Timed> gen_bto_copy_ab_type;
     typedef gen_bto_copy<NC, Traits, Timed> gen_bto_copy_c_type;
     typedef gen_bto_copy<ND, Traits, Timed> gen_bto_copy_d_type;
@@ -165,7 +167,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         //  Temporary partial AB1, AB2, C, and D
 
-        temp_block_tensor_ab_type btab1(bisab1);
+        temp_block_tensor_ab_type btab1(bisab1), btab2(bisab2);
         temp_block_tensor_d_type btdt(bisdt);
 
         gen_block_tensor_rd_ctrl<ND, bti_traits> cdt(btdt);
@@ -176,7 +178,8 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
         dimensions<NB> bidimsb(m_btb.get_bis().get_block_index_dims());
         dimensions<NC> bidimsc(m_btc.get_bis().get_block_index_dims());
         dimensions<NAB> bidimsab(m_symab.get_bis().get_block_index_dims());
-        dimensions<NAB> bidimsab1(symab1.get_bis().get_block_index_dims());
+        dimensions<NAB> bidimsab1(bisab1.get_block_index_dims());
+        dimensions<NAB> bidimsab2(bisab2.get_block_index_dims());
         dimensions<ND> bidimsd(m_symd.get_bis().get_block_index_dims());
         dimensions<ND> bidimsdt(bisdt.get_block_index_dims());
 
@@ -193,6 +196,18 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
         batchab2.reserve(batchszab);
         batchc.reserve(batchszc);
         batchd.reserve(batchszd);
+
+        block_index_space<NC> bisc2(m_btc.get_bis());
+        bisc2.permute(permc);
+        dimensions<NC> bidimsc2 = bisc2.get_block_index_dims();
+        temp_block_tensor_c_type btc2(bisc2);
+        symmetry<NC, element_type> symc2(bisc2);
+        {
+            gen_block_tensor_rd_ctrl<NC, bti_traits> cc(m_btc);
+            so_permute<NC, element_type>(cc.req_const_symmetry(), permc).
+                perform(symc2);
+        }
+        std::vector<size_t> blstc2;
 
         typename assignment_schedule<NAB, element_type>::iterator ibab =
             m_schab.begin();
@@ -213,7 +228,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     index<NAB> iab;
                     abs_index<NAB>::get_index(*ibab, bidimsab, iab);
                     iab.permute(permab1);
-                    orbit<NAB, element_type> oab(symab1, iab, false);
+                    short_orbit<NAB, element_type> oab(symab1, iab);
                     batchab1.push_back(oab.get_acindex());
                 }
             }
@@ -228,20 +243,22 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                     m_symab.get_bis(), batchab1, ab1cout);
             ab1cout.close();
 
-            if(!permab.is_identity()) {
-                gen_block_tensor_rd_ctrl<NAB, bti_traits> cab1(btab1);
-                cab1.req_nonzero_blocks(batchab1);
-                for (size_t i = 0; i < batchab1.size(); i++) {
-                    index<NAB> iab;
-                    abs_index<NAB>::get_index(batchab1[i], bidimsab1, iab);
-                    iab.permute(permab);
-                    orbit<NAB, element_type> oab(symab2, iab, false);
-                    batchab2.push_back(oab.get_acindex());
-                }
-            } else {
-                gen_block_tensor_rd_ctrl<NAB, bti_traits> cab1(btab1);
-                cab1.req_nonzero_blocks(batchab2);
+            {
+                tensor_transf<NAB, element_type> trab(permab);
+                gen_bto_aux_copy<NAB, Traits> cpabout(symab2, btab2, false);
+                cpabout.open();
+                gen_bto_copy_ab_type(btab1, trab).perform(cpabout);
+                cpabout.close();
             }
+
+            {
+                gen_block_tensor_ctrl<NAB, bti_traits> cab2(btab2);
+                cab2.req_nonzero_blocks(batchab2);
+                cab2.req_symmetry().clear();
+            }
+            block_list<NAB> blab(bidimsab2, batchab2), blabx(bidimsab2);
+            gen_bto_unfold_block_list<NAB, Traits>(symab2, blab).build(blabx);
+//            gen_bto_unfold_symmetry<NAB, Traits>().perform(btab2);
 
             for(size_t ibc = 0; ibc < nblkc;) {
 
@@ -255,12 +272,29 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         index<NC> ic;
                         abs_index<NC>::get_index(blstc[ibc], bidimsc, ic);
                         ic.permute(permc);
-                        orbit<NC, element_type> oct(symct, ic, false);
+                        short_orbit<NC, element_type> oct(symct, ic);
                         batchc.push_back(oct.get_acindex());
                     }
                 }
 
                 if(batchc.size() == 0) continue;
+
+                gen_bto_set_c_type(Traits::zero()).perform(btc2);
+                {
+                    tensor_transf<NC, element_type> trc(permc);
+                    gen_bto_aux_copy<NC, Traits> cpcout(symc2, btc2, false);
+                    cpcout.open();
+                    gen_bto_copy_c_type(m_btc, trc).perform(batchc, cpcout);
+                    cpcout.close();
+                }
+                {
+                    gen_block_tensor_ctrl<NC, bti_traits> cc2(btc2);
+                    cc2.req_nonzero_blocks(blstc2);
+                    cc2.req_symmetry().clear();
+                }
+                block_list<NC> blc(bidimsc2, blstc2), blcx(bidimsc2);
+                gen_bto_unfold_block_list<NC, Traits>(symc2, blc).build(blcx);
+//                gen_bto_unfold_symmetry<NC, Traits>().perform(btc2);
 
                 typename assignment_schedule<ND, element_type>::iterator ibd =
                     m_schd.begin();
@@ -274,7 +308,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         abs_index<ND>::get_index(m_schd.get_abs_index(ibd),
                             bidimsd, id);
                         id.permute(permd);
-                        orbit<ND, element_type> odt(symdt, id, false);
+                        short_orbit<ND, element_type> odt(symdt, id);
                         batchd.push_back(odt.get_acindex());
                     }
                     if(batchd.size() == 0) continue;
@@ -284,8 +318,8 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                         m_symd.get_symmetry(), out);
                     out2.open();
                     gen_bto_contract2_batch<N1 + N2, N3, K2, Traits, Timed>(
-                        contr2, btab1, permab, kab, batchab2,
-                        m_btc, permc, m_kc, batchc,
+                        contr2, btab1, btab2, permab, kab, blabx, batchab2,
+                        m_btc, btc2, permc, m_kc, blcx, batchc,
                         symdt.get_bis(), m_kd).perform(batchd, out2);
                     out2.close();
                 }
@@ -319,6 +353,8 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
         temp_block_tensor_a_type;
     typedef typename Traits::template temp_block_tensor_type<NB>::type
         temp_block_tensor_b_type;
+    typedef gen_bto_set<NA, Traits, Timed> gen_bto_set_a_type;
+    typedef gen_bto_set<NB, Traits, Timed> gen_bto_set_b_type;
     typedef gen_bto_copy< NA, Traits, Timed> gen_bto_copy_a_type;
     typedef gen_bto_copy< NB, Traits, Timed> gen_bto_copy_b_type;
 
@@ -342,6 +378,32 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
 
         scalar_transf<element_type> kab;
 
+        block_index_space<NA> bisa2(m_bta.get_bis());
+        bisa2.permute(perma);
+        block_index_space<NB> bisb2(m_btb.get_bis());
+        bisb2.permute(permb);
+        dimensions<NA> bidimsa2 = bisa2.get_block_index_dims();
+        dimensions<NB> bidimsb2 = bisb2.get_block_index_dims();
+
+        temp_block_tensor_a_type bta2(bisa2);
+        temp_block_tensor_b_type btb2(bisb2);
+
+        symmetry<NA, element_type> syma2(bisa2);
+        symmetry<NB, element_type> symb2(bisb2);
+
+        {
+            gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+            so_permute<NA, element_type>(ca.req_const_symmetry(), perma).
+                perform(syma2);
+        }
+        {
+            gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
+            so_permute<NB, element_type>(cb.req_const_symmetry(), permb).
+                perform(symb2);
+        }
+
+        std::vector<size_t> blsta2, blstb2;
+
         //  Batching loops
 
         std::vector<size_t> batcha, batchb;
@@ -360,12 +422,29 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                     index<NA> ia;
                     abs_index<NA>::get_index(blsta[iba], bidimsa, ia);
                     ia.permute(perma);
-                    orbit<NA, element_type> oat(symat, ia, false);
+                    short_orbit<NA, element_type> oat(symat, ia);
                     batcha.push_back(oat.get_acindex());
                 }
             }
 
             if(batcha.size() == 0) continue;
+
+            gen_bto_set_a_type(Traits::zero()).perform(bta2);
+            {
+                tensor_transf<NA, element_type> tra(perma);
+                gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2, false);
+                cpaout.open();
+                gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
+                cpaout.close();
+            }
+            {
+                gen_block_tensor_ctrl<NA, bti_traits> ca2(bta2);
+                ca2.req_nonzero_blocks(blsta2);
+                ca2.req_symmetry().clear();
+            }
+            block_list<NA> bla(bidimsa2, blsta2), blax(bidimsa2);
+            gen_bto_unfold_block_list<NA, Traits>(syma2, bla).build(blax);
+//            gen_bto_unfold_symmetry<NA, Traits>().perform(bta2);
 
             for(size_t ibb = 0; ibb < nblkb;) {
 
@@ -379,16 +458,33 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                         index<NB> ib;
                         abs_index<NB>::get_index(blstb[ibb], bidimsb, ib);
                         ib.permute(permb);
-                        orbit<NB, element_type> obt(symbt, ib, false);
+                        short_orbit<NB, element_type> obt(symbt, ib);
                         batchb.push_back(obt.get_acindex());
                     }
                 }
 
                 if(batchb.size() == 0) continue;
 
+                gen_bto_set_b_type(Traits::zero()).perform(btb2);
+                {
+                    tensor_transf<NB, element_type> trb(permb);
+                    gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2, false);
+                    cpbout.open();
+                    gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
+                    cpbout.close();
+                }
+                {
+                    gen_block_tensor_ctrl<NB, bti_traits> cb2(btb2);
+                    cb2.req_nonzero_blocks(blstb2);
+                    cb2.req_symmetry().clear();
+                }
+                block_list<NB> blb(bidimsb2, blstb2), blbx(bidimsb2);
+                gen_bto_unfold_block_list<NB, Traits>(symb2, blb).build(blbx);
+//                gen_bto_unfold_symmetry<NB, Traits>().perform(btb2);
+
                 gen_bto_contract2_batch<N1, N2 + K2, K1, Traits, Timed>(contr,
-                    m_bta, perma, m_ka, batcha,
-                    m_btb, permb, m_kb, batchb, bisab, kab).
+                    m_bta, bta2, perma, m_ka, blax, batcha,
+                    m_btb, btb2, permb, m_kb, blbx, batchb, bisab, kab).
                     perform(blst, out);
             }
         }
@@ -408,7 +504,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
 
     gen_bto_contract3::start_timer("make_schedule");
 
-    gen_bto_contract2_nzorb<N1, N2 + K2, K1, Traits, Timed> nzorb1(m_contr1,
+    gen_bto_contract2_nzorb<N1, N2 + K2, K1, Traits> nzorb1(m_contr1,
         m_bta, m_btb, m_symab.get_symmetry());
 
     nzorb1.build();
@@ -418,7 +514,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
         m_schab.insert(blstab.get_abs_index(i));
     }
 
-    gen_bto_contract2_nzorb<N1 + N2, N3, K2, Traits, Timed> nzorb2(m_contr2,
+    gen_bto_contract2_nzorb<N1 + N2, N3, K2, Traits> nzorb2(m_contr2,
             m_symab.get_symmetry(), m_schab, m_btc, m_symd.get_symmetry());
 
     nzorb2.build();

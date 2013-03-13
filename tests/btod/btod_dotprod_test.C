@@ -9,6 +9,7 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_dotprod.h>
@@ -19,7 +20,7 @@ namespace libtensor {
 
 void btod_dotprod_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::vmm().init(16, 16, 65536, 65536);
+    allocator<double>::init(16, 16, 65536, 65536);
     try {
 
     test_1();
@@ -33,15 +34,17 @@ void btod_dotprod_test::perform() throw(libtest::test_exception) {
     test_9();
     test_10a();
     test_10b();
+    test_10c(true);
+    test_10c(false);
     test_11();
     test_12();
 
     }
     catch (...) {
-        allocator<double>::vmm().shutdown();
+        allocator<double>::shutdown();
         throw;
     }
-    allocator<double>::vmm().shutdown();
+    allocator<double>::shutdown();
 }
 
 
@@ -843,6 +846,85 @@ void btod_dotprod_test::test_10b() throw(libtest::test_exception) {
     }
 
     product_table_container::get_instance().erase(tnss.str());
+}
+
+
+void btod_dotprod_test::test_10c(
+        bool both) throw(libtest::test_exception) {
+
+    //
+    //  Two blocks in each dimension, multiple non-zero arguments,
+    //  partition symmetry in one or both block tensors
+    //
+
+    std::ostringstream tnss;
+    tnss << "btod_dotprod_test::test_10c(" << both << ")";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 11; i2[1] = 11;
+    dimensions<2> dims(index_range<2>(i1, i2));
+    block_index_space<2> bis(dims);
+    mask<2> m;
+    m[0] = true; m[1] = true;
+    bis.split(m, 2);
+    bis.split(m, 6);
+    bis.split(m, 8);
+    block_tensor<2, double, allocator_t> bt1(bis), bt2(bis);
+
+    //  Set up symmetry
+
+    {
+        block_tensor_ctrl<2, double> ctrl1(bt1), ctrl2(bt2);
+
+        scalar_transf<double> tr(1.0);
+        se_part<2, double> sp(bis, m, 2);
+
+        index<2> i00, i01, i10, i11;
+        i10[0] = i01[1] = i11[0] = i11[1] = 1;
+        sp.add_map(i00, i11, tr);
+        sp.mark_forbidden(i01);
+        sp.mark_forbidden(i10);
+
+        ctrl1.req_symmetry().insert(sp);
+        if (both) ctrl2.req_symmetry().insert(sp);
+    }
+
+    //  Fill in random data
+
+    btod_random<2>().perform(bt1);
+    btod_random<2>().perform(bt2);
+    bt1.set_immutable();
+    bt2.set_immutable();
+
+    //  Compute the dot product
+
+    double d = btod_dotprod<2>(bt1, bt2).calculate();
+
+    libutil::timings_store<libtensor_timings>::get_instance().print(std::cout);
+
+    //  Compute the reference
+
+    dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
+    tod_btconv<2>(bt1).perform(t1);
+    tod_btconv<2>(bt2).perform(t2);
+    double d_ref = tod_dotprod<2>(t1, t2).calculate();
+
+    //  Compare
+
+    if(fabs(d - d_ref) > fabs(d_ref) * 1e-14) {
+        std::ostringstream ss;
+        ss << "Result does not match reference: " << d << " vs. "
+            << d_ref << " (ref), " << d - d_ref << " (diff).";
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+    }
 }
 
 

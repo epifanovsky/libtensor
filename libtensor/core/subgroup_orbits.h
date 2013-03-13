@@ -7,6 +7,7 @@
 #include "abs_index.h"
 #include "dimensions.h"
 #include "index.h"
+#include "magic_dimensions.h"
 #include "noncopyable.h"
 #include "symmetry.h"
 
@@ -25,7 +26,7 @@ namespace libtensor {
     The output set J is sorted by absolute value of Ji and is accessible using
     an iterator.
 
-    \sa orbit, orbit_list
+    \sa orbit, orbit_list, combined_orbits
 
     \ingroup libtensor_core
  **/
@@ -39,6 +40,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Index dimensions
+    magic_dimensions<N> m_mdims; //!< Magic dimensions
     std::vector<size_t> m_orb; //!< Sorted vector of canonical indexes Ji
 
 public:
@@ -101,8 +103,8 @@ public:
     }
 
 private:
-    void mark_orbit(const symmetry<N, T> &sym, size_t aidx0,
-        std::vector<char> &chk, char v);
+    void build_orbit(const symmetry<N, T> &sym, size_t aidx,
+        std::vector<size_t> &orb);
 
 };
 

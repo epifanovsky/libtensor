@@ -1,5 +1,5 @@
+#include <acml.h>
 #include <libtensor/not_implemented.h>
-#include "acml_h.h"
 #include "../lapack_acml.h"
 
 
@@ -31,7 +31,8 @@ int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n,
     std::complex<double> *work, size_t lwork, double *rwork) {
 
     int info = 0;
-    zgesvd(jobu, jobvt, m, n, a, lda, s, u, ldu, vt, ldvt, &info);
+    zgesvd(jobu, jobvt, m, n, (doublecomplex*)a, lda, s, (doublecomplex*)u,
+        ldu, (doublecomplex*)vt, ldvt, &info);
     return info;
 }
 
@@ -61,7 +62,8 @@ int lapack_zgeev(char jobvl, char jobvr, size_t n,
     size_t ldvr, std::complex<double> *work, size_t lwork, double *rwork) {
 
     int info = 0;
-    zgeev(jobvl, jobvr, n, a, lda, w, vl, ldvl, vr, ldvr, &info);
+    zgeev(jobvl, jobvr, n, (doublecomplex*)a, lda, (doublecomplex*)w,
+        (doublecomplex*)vl, ldvl, (doublecomplex*)vr, ldvr, &info);
     return info;
 }
 
