@@ -122,8 +122,8 @@ void gen_bto_contract2_simple<N, M, K, Traits, Timed>::make_schedule() {
 
     gen_bto_contract2_simple::start_timer("make_schedule");
 
-    gen_bto_contract2_nzorb<N, M, K, Traits, Timed> nzorb(m_contr,
-        m_bta, m_btb, m_symc.get_symmetry());
+    gen_bto_contract2_nzorb<N, M, K, Traits> nzorb(m_contr, m_bta, m_btb,
+        m_symc.get_symmetry());
 
     nzorb.build();
     const block_list<NC> &blstc = nzorb.get_blst();
