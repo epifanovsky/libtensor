@@ -240,7 +240,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
             compute_batch_ab(contr1,
                     bidimsa, perma, symat, batchsza,
                     bidimsb, permb, symbt, batchszb,
-                    m_symab.get_bis(), batchab1, ab1cout);
+                    bisab1, batchab1, ab1cout);
             ab1cout.close();
 
             {

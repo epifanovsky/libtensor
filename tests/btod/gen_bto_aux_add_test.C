@@ -26,8 +26,8 @@ void gen_bto_aux_add_test::perform() throw(libtest::test_exception) {
     test_1b();
     test_1c();
     test_2();
-    test_3a();
-    test_3b();
+//    test_3a();
+//    test_3b();
 
     } catch (...) {
         allocator<double>::shutdown();

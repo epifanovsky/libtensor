@@ -1,6 +1,7 @@
 #include <libtensor/symmetry/er_optimize.h>
 #include <libtensor/symmetry/er_reduce.h>
 #include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/print_symmetry.h>
 #include "er_reduce_test.h"
 
 namespace libtensor {
@@ -32,6 +33,7 @@ void er_reduce_test::perform() throw(libtest::test_exception) {
     try {
 
         test_6(c2v);
+        test_7(c2v);
 
     } catch (libtest::test_exception &e) {
         clear_pg_table(c2v);
@@ -592,6 +594,93 @@ void er_reduce_test::test_6(
     if (pr1.get_intrinsic(ip1) != 0) {
         fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
     }
+}
+
+
+/** \brief Reduction of two dimensions in one steps
+ **/
+void er_reduce_test::test_7(
+        const std::string &id) throw(libtest::test_exception) {
+
+
+    static const char *testname = "er_reduce_test::test_7()";
+
+    typedef product_table_i::label_t label_t;
+    typedef product_table_i::label_set_t label_set_t;
+    typedef product_table_i::label_group_t label_group_t;
+
+    evaluation_rule<6> r1, r2;
+    evaluation_rule<4> r3, r4;
+
+//    Rmap: [ 0 1 2 3 4 4]
+//    Block labels:
+//    [ 0 1 2 3]
+//    []
+//    Table ID: C2v
+//    Block labels:  [0(0): * *] [1(0): * *] [2(0): * *] [3(1): 0 1 2 3 0 1 2 3] [4(0): * *] [5(0): * *]
+//    Rule:
+//    ([000101], *)
+
+
+    try {
+
+        sequence<6, size_t> seq1(0), seq2(0);
+        seq1[3] = 1; seq1[5] = 1; seq2[3] = 1;
+
+        product_rule<6> &pr1 = r1.new_product();
+        pr1.add(seq1, product_table_i::k_invalid);
+        product_rule<6> &pr2 = r2.new_product();
+        pr2.add(seq2, product_table_i::k_invalid);
+
+        sequence<6, size_t> rmap(0);
+        rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 3;
+        rmap[4] = 4; rmap[5] = 4;
+        sequence<2, label_group_t> rdims;
+        rdims[0].push_back(0);
+        rdims[0].push_back(1);
+        rdims[0].push_back(2);
+        rdims[0].push_back(3);
+
+        evaluation_rule<4> tmp;
+        er_reduce<6, 2>(r1, rmap, rdims, id).perform(r3);
+        //er_optimize<4>(tmp, id).perform(r3);
+        er_reduce<6, 2>(r2, rmap, rdims, id).perform(r4);
+        //er_optimize<4>(tmp, id).perform(r4);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    std::cout <<"R3:"<< r3 << std::endl;
+    std::cout <<"R4:"<< r4 << std::endl;
+
+//    // Check sequence list
+//    const eval_sequence_list<2> &sl = r2.get_sequences();
+//    if (sl.size() != 1) {
+//        fail_test(testname, __FILE__, __LINE__, "# seq.");
+//    }
+//    if (sl[0][0] != 1 || sl[0][1] != 1) {
+//        fail_test(testname, __FILE__, __LINE__, "seq.");
+//    }
+//
+//    // Check product list
+//    evaluation_rule<2>::iterator it = r2.begin();
+//    if (it == r2.end()) {
+//        fail_test(testname, __FILE__, __LINE__, "Empty product list.");
+//    }
+//
+//    const product_rule<2> &pr1 = r2.get_product(it);
+//    it++;
+//    if (it != r2.end()) {
+//        fail_test(testname, __FILE__, __LINE__, "More than one product.");
+//    }
+//    product_rule<2>::iterator ip1 = pr1.begin();
+//    if (ip1 == pr1.end()) {
+//        fail_test(testname, __FILE__, __LINE__, "Empty product pr1.");
+//    }
+//    if (pr1.get_intrinsic(ip1) != 0) {
+//        fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
+//    }
 }
 
 

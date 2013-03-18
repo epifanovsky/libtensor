@@ -39,7 +39,12 @@ void tod_size_test::test_1() {
         dense_tensor<1, double, allocator_t> t1(dims);
 
         size_t sz = tod_size<1>().get_size(t1);
-        if(sz != 16 * sizeof(double)) {
+#if !defined(WITHOUT_LIBVMM)
+        size_t sz_ref = 16 * sizeof(double);
+#else
+        size_t sz_ref = 11 * sizeof(double);
+#endif
+        if(sz != sz_ref) {
             fail_test(testname, __FILE__, __LINE__, "Bad size.");
         }
 
