@@ -2,6 +2,7 @@ set(SRC
     defs.C
     exception.C
     version.C
+    core/impl/batching_policy_base.C
     core/impl/abs_index.C
     core/impl/allocator.C
     core/impl/combined_orbits.C
