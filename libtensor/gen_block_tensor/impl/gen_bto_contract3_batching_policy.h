@@ -72,11 +72,11 @@ gen_bto_contract3_batching_policy(
     //bszc = std::max(batch_size * nblkc / nblktot, size_t(1));
     //bszab = std::max(batch_size * nblkab / nblktot, size_t(1));
     //bszd = std::max(batch_size * nblkd / nblktot, size_t(1));
-    bsza = std::min(batch_size / 3, nblka);
-    bszb = std::min(batch_size / 3, nblkb);
-    bszc = std::min(batch_size / 3, nblkc);
-    bszab = std::min(batch_size / 3, nblkab);
-    bszd = std::min(batch_size / 3, nblkd);
+    bsza = std::max(std::min(batch_size / 3, nblka), size_t(1));
+    bszb = std::max(std::min(batch_size / 3, nblkb), size_t(1));
+    bszc = std::max(std::min(batch_size / 3, nblkc), size_t(1));
+    bszab = std::max(std::min(batch_size / 3, nblkab), size_t(1));
+    bszd = std::max(std::min(batch_size / 3, nblkd), size_t(1));
 
     nbata = (nblka + bsza - 1) / bsza;
     m_bsz[0] = (nbata > 0 ? (nblka + nbata - 1) / nbata : 1);
