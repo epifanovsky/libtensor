@@ -1,7 +1,9 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT3_BATCHING_POLICY_H
 #define LIBTENSOR_GEN_BTO_CONTRACT3_BATCHING_POLICY_H
 
+#include <algorithm>
 #include <libtensor/core/contraction2.h>
+#include <libtensor/core/batching_policy_base.h>
 
 namespace libtensor {
 
@@ -55,23 +57,36 @@ public:
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2>
 gen_bto_contract3_batching_policy<N1, N2, N3, K1, K2>::
 gen_bto_contract3_batching_policy(
-        const contraction2<N1, N2 + K2, K1> &contr1,
-        const contraction2<N1 + N2, N3, K2> &contr2,
-        size_t nblka, size_t nblkb, size_t nblkc,
-        size_t nblkab, size_t nblkd) {
+    const contraction2<N1, N2 + K2, K1> &contr1,
+    const contraction2<N1 + N2, N3, K2> &contr2,
+    size_t nblka, size_t nblkb, size_t nblkc,
+    size_t nblkab, size_t nblkd) {
 
-    size_t batch_size = 4096;
+    size_t batch_size = batching_policy_base::get_batch_size();
+    size_t nblktot = nblka + nblkb + nblkc + nblkab + nblkd;
+    size_t bsza, bszb, bszc, bszab, bszd;
     size_t nbata, nbatb, nbatc, nbatab, nbatd;
 
-    nbata = (nblka + batch_size - 1) / batch_size;
+    //bsza = std::max(batch_size * nblka / nblktot, size_t(1));
+    //bszb = std::max(batch_size * nblkb / nblktot, size_t(1));
+    //bszc = std::max(batch_size * nblkc / nblktot, size_t(1));
+    //bszab = std::max(batch_size * nblkab / nblktot, size_t(1));
+    //bszd = std::max(batch_size * nblkd / nblktot, size_t(1));
+    bsza = std::max(std::min(batch_size / 3, nblka), size_t(1));
+    bszb = std::max(std::min(batch_size / 3, nblkb), size_t(1));
+    bszc = std::max(std::min(batch_size / 3, nblkc), size_t(1));
+    bszab = std::max(std::min(batch_size / 3, nblkab), size_t(1));
+    bszd = std::max(std::min(batch_size / 3, nblkd), size_t(1));
+
+    nbata = (nblka + bsza - 1) / bsza;
     m_bsz[0] = (nbata > 0 ? (nblka + nbata - 1) / nbata : 1);
-    nbatb = (nblkb + batch_size - 1) / batch_size;
+    nbatb = (nblkb + bszb - 1) / bszb;
     m_bsz[1] = (nbatb > 0 ? (nblkb + nbatb - 1) / nbatb : 1);
-    nbatc = (nblkc + batch_size - 1) / batch_size;
+    nbatc = (nblkc + bszc - 1) / bszc;
     m_bsz[2] = (nbatc > 0 ? (nblkc + nbatc - 1) / nbatc : 1);
-    nbatab = (nblkab + batch_size - 1) / batch_size;
+    nbatab = (nblkab + bszab - 1) / bszab;
     m_bsz[3] = (nbatab > 0 ? (nblkab + nbatab - 1) / nbatab : 1);
-    nbatd = (nblkd + batch_size - 1) / batch_size;
+    nbatd = (nblkd + bszd - 1) / bszd;
     m_bsz[4] = (nbatd > 0 ? (nblkd + nbatd - 1) / nbatd : 1);
 }
 
