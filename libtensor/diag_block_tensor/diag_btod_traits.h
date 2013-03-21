@@ -6,6 +6,7 @@
 #include <libtensor/diag_tensor/diag_tensor_i.h>
 #include <libtensor/diag_tensor/diag_tod_contract2s.h>
 #include <libtensor/diag_tensor/diag_tod_copy.h>
+#include <libtensor/diag_tensor/diag_tod_dotprod.h>
 #include <libtensor/diag_tensor/diag_tod_set.h>
 #include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
 #include "diag_block_tensor.h"
@@ -65,10 +66,10 @@ struct diag_btod_traits {
 //        typedef tod_dirsum<N, M> type;
 //    };
 
-//    template<size_t N>
-//    struct to_dotprod_type {
-//        typedef tod_dotprod<N> type;
-//    };
+    template<size_t N>
+    struct to_dotprod_type {
+        typedef diag_tod_dotprod<N> type;
+    };
 
 //    template<size_t N>
 //    struct to_mult_type {
