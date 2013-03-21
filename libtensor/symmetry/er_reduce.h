@@ -63,11 +63,27 @@ private:
     void build_rsteps_in_seq(const eval_sequence_list<N> &slist,
             std::vector<size_t> &rsteps_in_seq) const;
 
+    /** \brief Reduce the product rule
+        \param pr Product rule to reduce (input)
+        \param slist List of sequences (input)
+        \param rsteps_in_seq Reduction steps in the sequences (input)
+        \param to Result rule to add the product to
+        \return True if a product rule was added, false
+            if the product is always allowed
+     **/
     bool reduce_product(const product_rule<N> &pr,
             const eval_sequence_list<N> &slist,
             const std::vector<size_t> &rsteps_in_seq,
             evaluation_rule<N - M> &to) const;
 
+    /** \brief Combine the sequences given by slist and clist into a sequence
+            of remaining indexes and a sequence of reduced indexes.
+        \param slist List of sequences
+        \param clist Numbers of sequences to combine
+        \param seq_list List to append sequence of remaining indexes to.
+        \param rseq_list List to append sequence of reduced indexes to.
+        \return Number of remaining indexes in the sequence.
+     **/
     size_t append_seq(const eval_sequence_list<N> &slist,
             const std::vector<size_t> &clist,
             std::vector< sequence<N - M, size_t> > &seq_list,

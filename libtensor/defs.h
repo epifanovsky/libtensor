@@ -38,7 +38,44 @@ inline long lrand48() { return rand(); }
 
 /** \page compile How to compile
 
+    \section Requirements
+
+    To compile libtensor the following programs and libraries are required:
+    - \c cmake -- libtensor uses cmake to configure and set up the build
+    - \c lapack and \c blas libraries (e.g. MKL, ACML, Atlas, CBLAS, GSL)
+    - \c libtest -- Test library (to compile the unit tests for \c libtensor)
+    - \c libutil -- Utilities library (machine-dependent code)
+    - [optional] \c libvmm -- Virtual memory management library
+
+    The libraries \c libtest, \c libutil, and \c libvmm have to be located in
+    the same directory as \c libtensor for the configuration of the build to
+    work seemlessly. All libraries have to be configured and compiled before
+    \c libtensor can be build. The configuration and build of the libraries is
+    similar to that of \c libtensor (see below). It is necessary to compile
+    the libraries in the same order as they are listed above.
+
+    \section The Configuration
+
+    The simplest way to configure the build of \c libtensor (and the other
+    libraries) is to use the shell script \c configure in the main directory.
+    The script accepts two options:
+    - the compiler -- \c gcc, \c mingw32, \c intel, \c open64, \c pgi, or \c ibm
+    - the build type -- \c debug, \c release, or \c relwdeb
+    The script then creates the directory \c build and runs \c cmake in it to
+    set up the build system according to the options provided.
+
+    \section The Build
+
+    After the configuration has succeeded \c libtensor can be build by changing
+    into directory \c build and executing \c make. This will create the static
+    library \c libtensor.a in the subdirectory \c libtensor and
+    several unit test suites \c libtensor_.*_tests in the subdirectory
+    \c tests of the build folder.
+
+    \section Using \c libtensor with Other Programs
+
     ... coming soon ...
+
  **/
 
 /** \page prog_guide Programmer's guide
