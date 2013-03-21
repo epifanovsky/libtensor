@@ -11,6 +11,7 @@
 #include "diag_tod_contract2_test.h"
 #include "diag_tod_contract2_part_test.h"
 #include "diag_tod_copy_test.h"
+#include "diag_tod_dotprod_test.h"
 #include "diag_tod_mult1_test.h"
 #include "diag_tod_random_test.h"
 #include "diag_tod_set_test.h"
@@ -38,6 +39,7 @@ namespace libtensor {
      - libtensor::diag_tod_contract2_test
      - libtensor::diag_tod_contract2_part_test
      - libtensor::diag_tod_copy_test
+     - libtensor::diag_tod_dotprod_test
      - libtensor::diag_tod_mult1_test
      - libtensor::diag_tod_random_test
      - libtensor::diag_tod_set_test
@@ -58,6 +60,7 @@ private:
     unit_test_factory<diag_tod_contract2_part_test>
         m_utf_diag_tod_contract2_part;
     unit_test_factory<diag_tod_copy_test> m_utf_diag_tod_copy;
+    unit_test_factory<diag_tod_dotprod_test> m_utf_diag_tod_dotprod;
     unit_test_factory<diag_tod_mult1_test> m_utf_diag_tod_mult1;
     unit_test_factory<diag_tod_random_test> m_utf_diag_tod_random;
     unit_test_factory<diag_tod_set_test> m_utf_diag_tod_set;

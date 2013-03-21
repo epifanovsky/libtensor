@@ -76,6 +76,7 @@ set(SRC_DIAG_TENSOR
     diag_tensor/diag_tod_contract2_test.C
     diag_tensor/diag_tod_contract2_part_test.C
     diag_tensor/diag_tod_copy_test.C
+    diag_tensor/diag_tod_dotprod_test.C
     diag_tensor/diag_tod_mult1_test.C
     diag_tensor/diag_tod_random_test.C
     diag_tensor/diag_tod_set_test.C

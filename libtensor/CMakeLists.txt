@@ -205,9 +205,11 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_tod_adjust_space.C
     diag_tensor/impl/diag_tod_aux_constr_add.C
     diag_tensor/impl/diag_tod_aux_constr_base.C
+    diag_tensor/impl/diag_tod_aux_dotprod.C
     diag_tensor/impl/diag_tod_contract2.C
     diag_tensor/impl/diag_tod_contract2s.C
     diag_tensor/impl/diag_tod_copy.C
+    diag_tensor/impl/diag_tod_dotprod.C
     diag_tensor/impl/diag_tod_mult1.C
     diag_tensor/impl/diag_tod_random.C
     diag_tensor/impl/diag_tod_set.C
