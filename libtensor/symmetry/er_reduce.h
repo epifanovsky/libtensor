@@ -60,9 +60,6 @@ public:
     void perform(evaluation_rule<N - M> &to) const;
 
 private:
-    void build_rsteps_in_seq(const eval_sequence_list<N> &slist,
-            std::vector<size_t> &rsteps_in_seq) const;
-
     /** \brief Reduce the product rule
         \param pr Product rule to reduce (input)
         \param slist List of sequences (input)
