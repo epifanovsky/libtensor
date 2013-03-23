@@ -49,21 +49,23 @@ void ctf_tod_contract2<N, M, K>::perform(
     const sequence<NA + NB + NC, size_t> &conn = m_contr.get_conn();
     for(size_t i = 0; i < NC; i++) {
         map[i] = i;
-        map[conn[i]] = i;
+        size_t ii = conn[NC - i - 1] - NC;
+        if(ii < NA) {
+            ii = NA - ii - 1;
+            map[NC + ii] = i;
+        } else {
+            ii = NB + NA - ii - 1;
+            map[NC + NA + ii] = i;
+        }
     }
     for(size_t i = 0, j = NC; i < NA; i++) {
         size_t ii = NC + i;
         if(conn[ii] >= NC + NA) {
-            map[ii] = j;
-            map[conn[ii]] = j;
+            size_t ia = NA - i - 1;
+            size_t ib = NC + NA + NB - conn[ii] - 1;
+            map[NC + ia] = j;
+            map[NC + NA + ib] = j;
             j++;
-        }
-    }
-
-    if(zero) {
-        if(ctf::get().set_zero_tensor(tcid) != DIST_TENSOR_SUCCESS) {
-            throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "set_zero_tensor");
         }
     }
 
@@ -74,7 +76,8 @@ void ctf_tod_contract2<N, M, K>::perform(
     ctrtyp.idx_map_A = &map[NC];
     ctrtyp.idx_map_B = &map[NC + NA];
     ctrtyp.idx_map_C = &map[0];
-    if(ctf::get().contract(&ctrtyp, m_d, 1.0) != DIST_TENSOR_SUCCESS) {
+    double z = zero ? 0.0 : 1.0;
+    if(ctf::get().contract(&ctrtyp, m_d, z) != DIST_TENSOR_SUCCESS) {
         throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__, "contract");
     }
 }

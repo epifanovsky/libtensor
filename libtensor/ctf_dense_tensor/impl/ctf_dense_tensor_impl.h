@@ -26,10 +26,13 @@ ctf_dense_tensor<N, T>::ctf_dense_tensor(const dimensions<N> &dims) :
     }
 #endif // LIBTENSOR_DEBUG
 
+    //  CTF stores tensors in the column-major format,
+    //  need to use the reverse order of dimensions
+
     int edge_len[N], sym[N];
     for(size_t i = 0; i < N; i++) {
-        edge_len[i] = m_dims[i];
-        sym[i] = 0;
+        edge_len[i] = m_dims[N - i - 1];
+        sym[i] = NS;
     }
     int res = ctf::get().define_tensor(N, edge_len, sym, &m_tid);
     if(res != DIST_TENSOR_SUCCESS) {

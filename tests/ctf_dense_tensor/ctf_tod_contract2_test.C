@@ -51,6 +51,7 @@ void ctf_tod_contract2_test::test_1a() {
     tod_random<2>().perform(ta);
     tod_random<2>().perform(tb);
     tod_random<2>().perform(tc);
+    tod_copy<2>(tc).perform(true, tc_ref);
 
     contraction2<1, 1, 1> contr;
     contr.contract(1, 0);
@@ -89,6 +90,7 @@ void ctf_tod_contract2_test::test_1b() {
     tod_random<2>().perform(ta);
     tod_random<2>().perform(tb);
     tod_random<2>().perform(tc);
+    tod_copy<2>(tc).perform(true, tc_ref);
 
     contraction2<1, 1, 1> contr;
     contr.contract(1, 0);
