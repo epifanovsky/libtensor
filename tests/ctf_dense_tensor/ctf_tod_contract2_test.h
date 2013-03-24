@@ -17,6 +17,8 @@ public:
 private:
     void test_1a();
     void test_1b();
+    void test_2a();
+    void test_2b();
 
 };
 
