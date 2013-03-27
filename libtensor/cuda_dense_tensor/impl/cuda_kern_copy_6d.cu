@@ -1,4 +1,5 @@
 #include "cuda_kern_copy_6d.h"
+#include <libtensor/cuda/cuda_utils.h>
 
 namespace libtensor {
 
@@ -28,10 +29,8 @@ cuda_kern_copy_6d::cuda_kern_copy_6d(const double *pa, double *pb, const dimensi
 }
 
 void cuda_kern_copy_6d::run() {
-	// setup execution parameters
-//	dim3 threads(m_dimsa.get_dim(0), m_dimsa.get_dim(1), m_dimsa.get_dim(2));
-//	dim3 grid(m_dimsa.get_dim(3), m_dimsa.get_dim(4), m_dimsa.get_dim(5));
-//
+	static const char *method =
+			        "run( )";
 //	//kernel call
 	if (m_d != 0) {
    			cuda::add_copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs1, b_incrs2, dims1, m_c*m_d);
@@ -42,6 +41,7 @@ void cuda_kern_copy_6d::run() {
    			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs1, b_incrs2, dims1, m_c);
    		}
    	}
+   	cuda_utils::handle_kernel_error(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 
 //template<size_t N>

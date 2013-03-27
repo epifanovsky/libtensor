@@ -1,6 +1,6 @@
 #include <cmath> // for fabs()
 #include <sstream>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
@@ -12,7 +12,6 @@
 #include "cuda_tod_dotprod_test.h"
 
 namespace libtensor {
-using libvmm::cuda_allocator;
 
 
 void cuda_tod_dotprod_test::perform() throw(libtest::test_exception) {

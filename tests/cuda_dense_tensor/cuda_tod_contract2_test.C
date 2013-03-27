@@ -2,7 +2,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <libvmm/cuda_allocator.h>
+//#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
@@ -16,7 +17,7 @@
 
 namespace libtensor {
 
-using libvmm::cuda_allocator;
+//using cuda_allocator;
 typedef std_allocator<double> allocator_t;
 typedef std_allocator<double> allocator_type;
 typedef cuda_allocator<double> cuda_allocator_type;
@@ -289,7 +290,7 @@ void cuda_tod_contract2_test::perform() throw(libtest::test_exception) {
     test_ij_pi_pj_qi_qj(3, 3, 3, 3, 1.0);
     test_ij_pi_pj_qi_qj(3, 5, 7, 11, -1.2);
     test_ij_pi_pj_qi_qj(16, 16, 16, 16, 0.7);
-
+/*
     test_ijk_ip_pkj(1, 1, 1, 1);
     test_ijk_ip_pkj(1, 1, 2, 1);
     test_ijk_ip_pkj(1, 2, 1, 2);
@@ -1066,6 +1067,7 @@ void cuda_tod_contract2_test::perform() throw(libtest::test_exception) {
     test_ijkl_ij_kl(3, 4, 5, 6);
 
     test_ijkl_ij_lk(3, 4, 5, 6);
+    //*/
 
     } catch(...) {
         throw;
@@ -2840,9 +2842,13 @@ void cuda_tod_contract2_test::test_ij_pi_pj_qi_jq(
     } else {
         zero = false; k = d;
     }
-    cuda_tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1 * k);
-    op.add_args(contr2, ta2, tb2, d2 * k);
-    op.perform(zero, tc);
+    cuda_tod_contract2<1, 1, 1> op(contr1, cuta1, cutb1, d1 * k);
+    op.add_args(contr2, cuta2, cutb2, d2 * k);
+    op.perform(zero, cutc);
+
+    //    Copy result from device to host
+
+    cuda_tod_copy_d2h<2>(cutc).perform(tc);
 
     //  Compare against the reference
 
@@ -2980,9 +2986,13 @@ void cuda_tod_contract2_test::test_ij_pi_pj_qi_qj(
     } else {
         zero = false; k = d;
     }
-    cuda_tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1 * k);
-    op.add_args(contr2, ta2, tb2, d2 * k);
-    op.perform(zero, tc);
+    cuda_tod_contract2<1, 1, 1> op(contr1, cuta1, cutb1, d1 * k);
+    op.add_args(contr2, cuta2, cutb2, d2 * k);
+    op.perform(zero, cutc);
+
+    //    Copy result from device to host
+
+    cuda_tod_copy_d2h<2>(cutc).perform(tc);
 
     //  Compare against the reference
 

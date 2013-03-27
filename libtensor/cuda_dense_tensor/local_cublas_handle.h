@@ -17,6 +17,8 @@ private:
     cublasHandle_t m_handle; //!< cuBLAS handle
 
 public:
+    static const char *k_clazz; //!< Class name
+
     /** \brief Initializes the handle
      **/
     local_cublas_handle();

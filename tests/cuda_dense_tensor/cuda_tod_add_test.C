@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_add.h>
@@ -31,7 +31,7 @@ void cuda_tod_add_test::test_exc() throw(libtest::test_exception) {
     static const char *testname = "cuda_tod_add_test::test_exc()";
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -89,7 +89,7 @@ void cuda_tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -145,7 +145,7 @@ void cuda_tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -205,7 +205,7 @@ void cuda_tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -278,7 +278,7 @@ void cuda_tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -352,7 +352,7 @@ void cuda_tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -427,7 +427,7 @@ void cuda_tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -506,7 +506,7 @@ void cuda_tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 
@@ -590,7 +590,7 @@ void cuda_tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     std::string tn = tnss.str();
 
     typedef std_allocator<double> std_allocator;
-    typedef libvmm::cuda_allocator<double> cuda_allocator;
+    typedef cuda_allocator<double> cuda_allocator;
 
     try {
 

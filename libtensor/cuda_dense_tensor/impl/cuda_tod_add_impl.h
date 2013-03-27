@@ -6,6 +6,7 @@
 #include "../cuda_tod_add.h"
 #include "../cuda_tod_copy.h"
 #include "../cuda_tod_set.h"
+#include <libtensor/cuda/cuda_utils.h>
 
 namespace libtensor {
 
@@ -118,6 +119,7 @@ void cuda_tod_add<N>::perform(bool zero, double c,
     typename std::list<arg>::iterator i = m_args.begin();
     for(; i != m_args.end(); ++i) {
         cuda_tod_copy<N>(i->t, i->p, i->c).perform(t, c);
+       	cuda_utils::handle_kernel_error(g_ns, k_clazz, method, __FILE__, __LINE__);
     }
 
     cuda_tod_add::stop_timer();

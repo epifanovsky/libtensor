@@ -18,6 +18,7 @@
 #include "../local_cublas_handle.h"
 #include "../cuda_tod_contract2.h"
 #include "../../dense_tensor/to_contract2_perms.h"
+#include <libtensor/cuda/cuda_error.h>
 
 
 namespace libtensor {
@@ -146,7 +147,11 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
 
         if(argslst.empty() && zero) {
             cuda_tod_contract2::start_timer("zeroc");
-            cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
+            cudaError_t err = cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
+            if (  err != cudaSuccess) {
+            	cuda_tod_contract2::stop_timer("zeroc");
+            	throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, cudaGetErrorString( err ));
+            }
             cuda_tod_contract2::stop_timer("zeroc");
         }
 
@@ -169,14 +174,24 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                 pc2 = pc;
                 if(zero1) {
                     cuda_tod_contract2::start_timer("zeroc");
-                    cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
+                    cudaError_t err = cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
+					 if (  err != cudaSuccess) {
+						cuda_tod_contract2::stop_timer("zeroc");
+						throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, cudaGetErrorString( err ));
+					}
+					cuda_tod_contract2::stop_timer("zeroc");
                     zero1 = false;
                     cuda_tod_contract2::stop_timer("zeroc");
                 }
             } else {
                 pc2 = pc1;
                 cuda_tod_contract2::start_timer("zeroc1");
-                cudaMemset(pc1, 0, sizeof(double) * dimsc.get_size());
+                cudaError_t err = cudaMemset(pc1, 0, sizeof(double) * dimsc.get_size());
+				if (  err != cudaSuccess) {
+					cuda_tod_contract2::stop_timer("zeroc");
+					throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, cudaGetErrorString( err ));
+				}
+				cuda_tod_contract2::stop_timer("zeroc");
                 cuda_tod_contract2::stop_timer("zeroc1");
             }
 

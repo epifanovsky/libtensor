@@ -1,4 +1,5 @@
 #include "cuda_kern_copy_2d.h"
+#include <libtensor/cuda/cuda_utils.h>
 
 namespace libtensor {
 
@@ -28,6 +29,8 @@ cuda_kern_copy_2d::cuda_kern_copy_2d(const double *pa, double *pb, const dimensi
 }
 
 void cuda_kern_copy_2d::run() {
+	static const char *method =
+		        "run( )";
 
 	//kernel call
    	if (m_d != 0) {
@@ -41,5 +44,6 @@ void cuda_kern_copy_2d::run() {
    			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c);
    		}
    	}
+   	cuda_utils::handle_kernel_error(g_ns, k_clazz, method, __FILE__, __LINE__);
 }
 } // namespace libtensor

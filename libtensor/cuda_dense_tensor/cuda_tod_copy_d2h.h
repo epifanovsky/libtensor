@@ -7,6 +7,7 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/core/dimensions.h>
 #include <libtensor/core/bad_dimensions.h>
+#include <libtensor/cuda/cuda_utils.h>
 
 namespace libtensor {
 
@@ -71,6 +72,8 @@ void cuda_tod_copy_d2h<N>::perform(dense_tensor_wr_i<N, double> &host_tensor)  {
 
 template<size_t N>
 void cuda_tod_copy_d2h<N>::do_perform(dense_tensor_wr_i<N, double> &host_tensor) {
+	static const char *method =
+	        "do_perform( dense_tensor_wr_i<N , double>&)";
 
 	cuda_tod_copy_d2h<N>::start_timer();
 
@@ -85,11 +88,9 @@ void cuda_tod_copy_d2h<N>::do_perform(dense_tensor_wr_i<N, double> &host_tensor)
 	double *ph = ch.req_dataptr();
 
 	cuda_tod_copy_d2h<N>::start_timer("copy_d2h");
-	cudaError_t ec = cudaMemcpy(ph, pd, sizeof(double) * m_dev_tensor.get_dims().get_size(), cudaMemcpyDeviceToHost);
-	if(ec != cudaSuccess) {
-	//	throw cuda_exception(k_clazz, method, __FILE__, __LINE__,
-		//	cudaGetErrorString(ec));
-	}
+	cuda_utils::handle_error(
+			cudaMemcpy(ph, pd, sizeof(double) * m_dev_tensor.get_dims().get_size(), cudaMemcpyDeviceToHost),
+			g_ns, k_clazz, method, __FILE__, __LINE__);
 	cuda_tod_copy_d2h<N>::stop_timer("copy_d2h");
 
 	cd.ret_const_dataptr(pd);

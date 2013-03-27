@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_CUDA_BTOD_TRAITS_H
 #define LIBTENSOR_CUDA_BTOD_TRAITS_H
 
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod.h>
@@ -24,12 +24,12 @@ struct cuda_btod_traits {
     //! Type of temporary block tensor
     template<size_t N>
     struct temp_block_tensor_type {
-        typedef cuda_block_tensor< N, double, libvmm::cuda_allocator<double> > type;
+        typedef cuda_block_tensor< N, double, cuda_allocator<double> > type;
     };
 
     template<size_t N>
     struct temp_block_type {
-        typedef dense_tensor< N, double, libvmm::cuda_allocator<double> > type;
+        typedef dense_tensor< N, double, cuda_allocator<double> > type;
     };
 
     template<size_t N>

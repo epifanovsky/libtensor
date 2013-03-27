@@ -18,6 +18,8 @@ private:
     double m_v; //!< Value
 
 public:
+    static const char *k_clazz; //!< Class name
+
     /**	\brief Initializes the operation
         \param v Value to be assigned to the tensor elements.
      **/

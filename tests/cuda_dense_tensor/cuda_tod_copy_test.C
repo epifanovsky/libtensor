@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
@@ -10,7 +10,7 @@
 namespace libtensor {
 
 typedef std_allocator<double> std_allocator_t;
-typedef libvmm::cuda_allocator<double> cuda_allocator_t;
+typedef cuda_allocator<double> cuda_allocator_t;
 typedef dense_tensor<4, double, cuda_allocator_t> d_tensor4;
 
 void cuda_tod_copy_test::perform() throw(libtest::test_exception) {

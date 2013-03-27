@@ -28,7 +28,7 @@ void cuda_tod_set_test::test_1(double v) {
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-    typedef libvmm::cuda_allocator<double> cuda_allocator_t;
+    typedef cuda_allocator<double> cuda_allocator_t;
 
     try {
 
@@ -61,7 +61,7 @@ void cuda_tod_set_test::test_2(double v) {
     std::string tn = tnss.str();
 
     typedef std_allocator<double> allocator_t;
-    typedef libvmm::cuda_allocator<double> cuda_allocator_t;
+    typedef cuda_allocator<double> cuda_allocator_t;
 
     try {
 

@@ -20,6 +20,7 @@ set(SRC
 )
 
 set(SRC_CUDA
+    cuda/cuda_allocator.C
     cuda_block_tensor/impl/cuda_block_tensor.C
     cuda_block_tensor/impl/cuda_btod_copy.C
     cuda_block_tensor/impl/cuda_btod_copy_d2h.C

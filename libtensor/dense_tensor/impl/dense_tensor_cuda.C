@@ -1,9 +1,8 @@
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include "../dense_tensor.h"
 #include "dense_tensor_impl.h"
 
 namespace libtensor {
-using libvmm::cuda_allocator;
 
 
 template class dense_tensor< 1, double, cuda_allocator<double> >;

@@ -5,7 +5,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/cuda_block_tensor/cuda_btod_traits.h>
 #include <libtensor/gen_block_tensor/additive_gen_bto.h>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 
 namespace libtensor {
 
@@ -30,7 +30,7 @@ class cuda_btod_sum :
     public additive_gen_bto<N, cuda_btod_traits::bti_traits>,
     public timings< cuda_btod_sum<N> > {
 
-typedef libvmm::cuda_allocator<double> cuda_allocator_t;
+typedef cuda_allocator<double> cuda_allocator_t;
 
 public:
     static const char* k_clazz; //!< Class name

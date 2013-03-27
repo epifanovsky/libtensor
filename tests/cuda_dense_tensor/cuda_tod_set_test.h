@@ -2,7 +2,7 @@
 #define LIBTENSOR_CUDA_TOD_SET_TEST_H
 
 #include <libtest/unit_test.h>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 

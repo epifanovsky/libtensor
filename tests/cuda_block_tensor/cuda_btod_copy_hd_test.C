@@ -4,7 +4,7 @@
 #include <libtensor/cuda_block_tensor/cuda_btod_copy_h2d.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/core/allocator.h>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 //#include <libtensor/dense_tensor/tod_btconv.h>
@@ -38,7 +38,7 @@ void cuda_btod_copy_hd_test::test1() throw(libtest::test_exception) {
     static const char *testname = "cuda_btod_copy_hd_test::test1()";
 
     typedef std_allocator<double> allocator_t;
-    typedef libvmm::cuda_allocator<double> cuda_allocator_t;
+    typedef cuda_allocator<double> cuda_allocator_t;
 
         try {
 

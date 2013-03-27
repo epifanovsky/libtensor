@@ -3,7 +3,7 @@
 
 #include <libtest/unit_test.h>
 #include <libtensor/core/allocator.h>
-#include <libvmm/cuda_allocator.h>
+#include <libtensor/cuda/cuda_allocator.h>
 
 namespace libtensor {
 
@@ -15,7 +15,7 @@ namespace libtensor {
 class cuda_btod_contract2_test : public libtest::unit_test {
 
 	 typedef std_allocator<double> allocator_t;
-	 typedef libvmm::cuda_allocator<double> cuda_allocator_t;
+	 typedef cuda_allocator<double> cuda_allocator_t;
 
 public:
     virtual void perform() throw(libtest::test_exception);
