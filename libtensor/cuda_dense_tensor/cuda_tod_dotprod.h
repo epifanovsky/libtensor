@@ -6,7 +6,7 @@
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 
 namespace libtensor {
 
@@ -27,8 +27,8 @@ public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    dense_tensor_rd_i<N, double> &m_ta; //!< First tensor (A)
-    dense_tensor_rd_i<N, double> &m_tb; //!< Second tensor (B)
+    cuda_dense_tensor_rd_i<N, double> &m_ta; //!< First tensor (A)
+    cuda_dense_tensor_rd_i<N, double> &m_tb; //!< Second tensor (B)
     permutation<N> m_perma;//!< Permutation of the first tensor (A)
     permutation<N> m_permb; //!< Permutation of the second tensor (B)
     double m_c; //!< Scaling coefficient
@@ -39,8 +39,8 @@ public:
         \param tb Second tensor (B)
      **/
     cuda_tod_dotprod(
-        dense_tensor_rd_i<N, double> &ta,
-        dense_tensor_rd_i<N, double> &tb);
+        cuda_dense_tensor_rd_i<N, double> &ta,
+        cuda_dense_tensor_rd_i<N, double> &tb);
 
     /** \brief Initializes the operation
         \param ta First tensor (A)
@@ -49,8 +49,8 @@ public:
         \param permb Permutation of second tensor (B)
      **/
     cuda_tod_dotprod(
-        dense_tensor_rd_i<N, double> &ta, const permutation<N> &perma,
-        dense_tensor_rd_i<N, double> &tb, const permutation<N> &permb);
+        cuda_dense_tensor_rd_i<N, double> &ta, const permutation<N> &perma,
+        cuda_dense_tensor_rd_i<N, double> &tb, const permutation<N> &permb);
 
     /** \brief Initializes the operation
         \param ta First tensor (A)
@@ -59,8 +59,8 @@ public:
         \param trb Transformation of second tensor (B)
      **/
     cuda_tod_dotprod(
-        dense_tensor_rd_i<N, double> &ta, const tensor_transf<N, double> &tra,
-        dense_tensor_rd_i<N, double> &tb, const tensor_transf<N, double> &trb);
+        cuda_dense_tensor_rd_i<N, double> &ta, const tensor_transf<N, double> &tra,
+        cuda_dense_tensor_rd_i<N, double> &tb, const tensor_transf<N, double> &trb);
 
     /** \brief Prefetches the arguments
      **/

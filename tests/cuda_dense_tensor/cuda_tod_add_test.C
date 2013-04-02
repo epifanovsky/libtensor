@@ -2,6 +2,7 @@
 #include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_add.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_copy_d2h.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_copy_h2d.h>
@@ -46,7 +47,7 @@ void cuda_tod_add_test::test_exc() throw(libtest::test_exception) {
     p1.permute(0, 1);
 
     dense_tensor<4, double, std_allocator> h_t1(dim), h_t2(dim);
-    dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim);
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim);
     cuda_tod_add<4> add(d_t1, p1, 0.4);
 
     bool ok = false;
@@ -101,7 +102,7 @@ void cuda_tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);
     dense_tensor<4, double, std_allocator> h_tc(dim), h_ta(dim), tc_ref(dim);
-    dense_tensor<4, double, cuda_allocator> d_tc(dim), d_ta(dim);
+    cuda_dense_tensor<4, double, cuda_allocator> d_tc(dim), d_ta(dim);
 
     {
         dense_tensor_ctrl<4, double> ctrla(h_ta), ctrlc_ref(tc_ref);
@@ -157,7 +158,7 @@ void cuda_tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);
     dense_tensor<4, double, std_allocator> h_t1(dim), h_t2(dim), t1_ref(dim);
-    dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim);
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim);
 
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
@@ -221,7 +222,7 @@ void cuda_tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     dim2.permute(p2);
 
     dense_tensor<4, double, std_allocator> h_t1(dim1), h_t2(dim2), t1_ref(dim1);
-    dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
 
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
@@ -296,7 +297,7 @@ void cuda_tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     p2.invert();
 
     dense_tensor<4, double, std_allocator> h_t1(dim1), h_t2(dim2), t1_ref(dim1);
-    dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
 
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
@@ -369,7 +370,7 @@ void cuda_tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     dim2.permute(p2);
 
     dense_tensor<4, double, std_allocator> h_t1(dim1), h_t2(dim2), t1_ref(dim1);
-    dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dim1), d_t2(dim2);
 
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl1_ref(t1_ref);
@@ -444,7 +445,7 @@ void cuda_tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     dense_tensor<4, double, std_allocator> h_t1(dims_ijkl), h_t2(dims_kjli),
         h_t3(dims_kjli), t3_ref(dims_kjli);
-    dense_tensor<4, double, cuda_allocator> d_t1(dims_ijkl), d_t2(dims_kjli),
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dims_ijkl), d_t2(dims_kjli),
         d_t3(dims_kjli);
 
     dense_tensor_ctrl<4, double> ct1(h_t1), ct2(h_t2), ct3_ref(t3_ref);
@@ -519,7 +520,7 @@ void cuda_tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     dim3.permute(p3);
     dense_tensor<4, double, std_allocator> h_t1(dim), h_t2(dim), h_t3(dim3), h_t4(dim),
         t1_ref(dim);
-    dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim), d_t3(dim3), d_t4(dim);
+    cuda_dense_tensor<4, double, cuda_allocator> d_t1(dim), d_t2(dim), d_t3(dim3), d_t4(dim);
 
     {
         dense_tensor_ctrl<4, double> ctrl1(h_t1), ctrl2(h_t2), ctrl3(h_t3), ctrl4(h_t4),
@@ -604,7 +605,7 @@ void cuda_tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     dim3.permute(p3);
 
     dense_tensor<2, double, std_allocator> h_t1(dim), h_t2(dim), h_t3(dim3), t1_ref(dim);
-    dense_tensor<2, double, cuda_allocator> d_t1(dim), d_t2(dim), d_t3(dim3);
+    cuda_dense_tensor<2, double, cuda_allocator> d_t1(dim), d_t2(dim), d_t3(dim3);
 
     {
         dense_tensor_ctrl<2, double> ctrl1(h_t1), ctrl2(h_t2), ctrl3(h_t3),

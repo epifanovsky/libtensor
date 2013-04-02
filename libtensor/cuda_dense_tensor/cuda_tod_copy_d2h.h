@@ -4,7 +4,9 @@
 #include <libtensor/timings.h>
 #include <cuda_runtime_api.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_ctrl.h>
 #include <libtensor/core/dimensions.h>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/cuda/cuda_utils.h>
@@ -19,7 +21,7 @@ namespace libtensor {
 template<size_t N>
 class cuda_tod_copy_d2h :
 public timings< cuda_tod_copy_d2h<N> > {
-	dense_tensor_rd_i<N, double> &m_dev_tensor; //!< Source %tensor
+	cuda_dense_tensor_rd_i<N, double> &m_dev_tensor; //!< Source %tensor
 private:
 
 public:
@@ -31,7 +33,7 @@ public:
 public:
     /** \brief Initializes the handle
      **/
-    cuda_tod_copy_d2h(dense_tensor_rd_i<N, double> &dev_tensor);
+    cuda_tod_copy_d2h(cuda_dense_tensor_rd_i<N, double> &dev_tensor);
 
     /** \brief Frees the handle
      **/
@@ -52,7 +54,7 @@ template<size_t N>
 const char *cuda_tod_copy_d2h<N>::k_clazz = "cuda_tod_copy_d2h<N>";
 
 template<size_t N>
-cuda_tod_copy_d2h<N>::cuda_tod_copy_d2h(dense_tensor_rd_i<N, double> &dev_tensor) :
+cuda_tod_copy_d2h<N>::cuda_tod_copy_d2h(cuda_dense_tensor_rd_i<N, double> &dev_tensor) :
 	m_dev_tensor(dev_tensor) {
 
 }
@@ -79,17 +81,17 @@ void cuda_tod_copy_d2h<N>::do_perform(dense_tensor_wr_i<N, double> &host_tensor)
 
 	try {
 
-	dense_tensor_rd_ctrl<k_orderc, double> cd(m_dev_tensor);
+	cuda_dense_tensor_rd_ctrl<k_orderc, double> cd(m_dev_tensor);
 	dense_tensor_wr_ctrl<k_orderc, double> ch(host_tensor);
 	ch.req_prefetch();
 	cd.req_prefetch();
 
-	const double *pd = cd.req_const_dataptr();
+	cuda_pointer<const double> pd = cd.req_const_dataptr();
 	double *ph = ch.req_dataptr();
 
 	cuda_tod_copy_d2h<N>::start_timer("copy_d2h");
 	cuda_utils::handle_error(
-			cudaMemcpy(ph, pd, sizeof(double) * m_dev_tensor.get_dims().get_size(), cudaMemcpyDeviceToHost),
+			cudaMemcpy(ph, pd.get_physical_pointer(), sizeof(double) * m_dev_tensor.get_dims().get_size(), cudaMemcpyDeviceToHost),
 			g_ns, k_clazz, method, __FILE__, __LINE__);
 	cuda_tod_copy_d2h<N>::stop_timer("copy_d2h");
 

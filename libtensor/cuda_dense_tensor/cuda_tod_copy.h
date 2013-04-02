@@ -5,7 +5,7 @@
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/tensor_transf.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 
 namespace libtensor {
 
@@ -27,7 +27,7 @@ public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    dense_tensor_rd_i<N, double> &m_ta; //!< Source tensor
+    cuda_dense_tensor_rd_i<N, double> &m_ta; //!< Source tensor
     permutation<N> m_perm; //!< Permutation of elements
     double m_c; //!< Scaling coefficient
     dimensions<N> m_dimsb; //!< Dimensions of output tensor
@@ -37,21 +37,21 @@ public:
         \param ta Source tensor.
         \param c Coefficient.
      **/
-    cuda_tod_copy(dense_tensor_rd_i<N, double> &ta, double c = 1.0);
+    cuda_tod_copy(cuda_dense_tensor_rd_i<N, double> &ta, double c = 1.0);
 
     /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
         \param p Permutation of tensor elements.
         \param c Coefficient.
      **/
-    cuda_tod_copy(dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
+    cuda_tod_copy(cuda_dense_tensor_rd_i<N, double> &ta, const permutation<N> &p,
         double c = 1.0);
 
     /** \brief Prepares the permute & copy operation
         \param ta Source tensor.
         \param tra Transformation of tensor elements.
      **/
-    cuda_tod_copy(dense_tensor_rd_i<N, double> &ta,
+    cuda_tod_copy(cuda_dense_tensor_rd_i<N, double> &ta,
         const tensor_transf<N, double> &tra);
 
     /** \brief Virtual destructor
@@ -60,17 +60,17 @@ public:
 
     virtual void prefetch();
 
-    virtual void perform(dense_tensor_wr_i<N, double> &t);
+    virtual void perform(cuda_dense_tensor_wr_i<N, double> &t);
 
-    virtual void perform(dense_tensor_wr_i<N, double> &t, double c);
+    virtual void perform(cuda_dense_tensor_wr_i<N, double> &t, double c);
 
-    virtual void perform(bool zero, dense_tensor_wr_i<N, double> &t);
+    virtual void perform(bool zero, cuda_dense_tensor_wr_i<N, double> &t);
 
 private:
-    static dimensions<N> mk_dimsb(dense_tensor_rd_i<N, double> &ta,
+    static dimensions<N> mk_dimsb(cuda_dense_tensor_rd_i<N, double> &ta,
         const permutation<N> &perm);
 
-    void do_perform(dense_tensor_wr_i<N, double> &t, double c);
+    void do_perform(cuda_dense_tensor_wr_i<N, double> &t, double c);
 
 };
 

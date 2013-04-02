@@ -4,7 +4,9 @@
 #include <libtensor/timings.h>
 #include <cuda_runtime_api.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_ctrl.h>
 #include <libtensor/core/dimensions.h>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/cuda/cuda_utils.h>
@@ -40,11 +42,11 @@ public:
 public:
     /** \brief Perform copying
     **/
-    void perform(dense_tensor_wr_i<N, double> &dev_tensor);
+    void perform(cuda_dense_tensor_wr_i<N, double> &dev_tensor);
 
     /** \brief Perform actual copying
     **/
-    void do_perform(dense_tensor_wr_i<N, double> &dev_tensor);
+    void do_perform(cuda_dense_tensor_wr_i<N, double> &dev_tensor);
 
 };
 
@@ -60,7 +62,7 @@ cuda_tod_copy_h2d<N>::cuda_tod_copy_h2d(dense_tensor_rd_i<N, double> &host_tenso
 
 
 template<size_t N>
-void cuda_tod_copy_h2d<N>::perform(dense_tensor_wr_i<N, double> &dev_tensor)  {
+void cuda_tod_copy_h2d<N>::perform(cuda_dense_tensor_wr_i<N, double> &dev_tensor)  {
 	static const char *method = "perform(dense_tensor_wr_i<N, double>&)";
 
 		if(!dev_tensor.get_dims().equals(m_host_tensor.get_dims())) {
@@ -71,7 +73,7 @@ void cuda_tod_copy_h2d<N>::perform(dense_tensor_wr_i<N, double> &dev_tensor)  {
 }
 
 template<size_t N>
-void cuda_tod_copy_h2d<N>::do_perform(dense_tensor_wr_i<N, double> &dev_tensor) {
+void cuda_tod_copy_h2d<N>::do_perform(cuda_dense_tensor_wr_i<N, double> &dev_tensor) {
 
 
     static const char *method =
@@ -82,16 +84,16 @@ void cuda_tod_copy_h2d<N>::do_perform(dense_tensor_wr_i<N, double> &dev_tensor) 
 	try {
 
 	dense_tensor_rd_ctrl<N, double> ch(m_host_tensor);
-	dense_tensor_wr_ctrl<N, double> cd(dev_tensor);
+	cuda_dense_tensor_wr_ctrl<N, double> cd(dev_tensor);
 	ch.req_prefetch();
 	cd.req_prefetch();
 
 	const double *ph = ch.req_const_dataptr();
-	double *pd = cd.req_dataptr();
+	cuda_pointer<double> pd = cd.req_dataptr();
 
 	cuda_tod_copy_h2d<N>::start_timer("copy_h2d");
 	cuda_utils::handle_error(
-			cudaMemcpy(pd, ph, sizeof(double) * m_host_tensor.get_dims().get_size(), cudaMemcpyHostToDevice),
+			cudaMemcpy(pd.get_physical_pointer(), ph, sizeof(double) * m_host_tensor.get_dims().get_size(), cudaMemcpyHostToDevice),
 			g_ns, k_clazz, method, __FILE__, __LINE__);
 	cuda_tod_copy_h2d<N>::stop_timer("copy_h2d");
 

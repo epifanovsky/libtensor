@@ -68,7 +68,7 @@ void cuda_btod_symmetrize3<N>::compute_block(
     bool zero,
     const index<N> &ib,
     const tensor_transf<N, double> &trb,
-    dense_tensor_wr_i<N, double> &blkb) {
+    cuda_dense_tensor_wr_i<N, double> &blkb) {
 
     m_gbto.compute_block(zero, ib, trb, blkb);
 }
@@ -77,7 +77,7 @@ void cuda_btod_symmetrize3<N>::compute_block(
 template<size_t N>
 void cuda_btod_symmetrize3<N>::compute_block(
     const index<N> &ib,
-    dense_tensor_wr_i<N, double> &blkb) {
+    cuda_dense_tensor_wr_i<N, double> &blkb) {
 
     m_gbto.compute_block(true, ib, tensor_transf<N, double>(), blkb);
 }

@@ -4,6 +4,7 @@
 //#include "kernel_base.h"
 #include "../../core/dimensions.h"
 #include "../../core/permutation.h"
+#include <libtensor/cuda/cuda_pointer.h>
 
 namespace libtensor {
 
@@ -25,8 +26,8 @@ protected:
 //	size_t fist_dim;
 //	size_t second_dim;
 
-	const double *m_pa;
-	double *m_pb;
+	cuda_pointer<const double> m_pa;
+	cuda_pointer<double> m_pb;
 	const double m_c; //scaled factor
 	const double m_d; //scaled factor for addition
 //	size_t dim1, dim2, size;
@@ -38,7 +39,7 @@ public:
 //				m_pa(pa), m_pb(pb), m_dimsa(dimsa), m_c(c) {
 //		}
 
-	cuda_kern_copy_generic(const double *pa, double *pb, const double &c, const double &d) :
+	cuda_kern_copy_generic(cuda_pointer<const double> pa, cuda_pointer<double> pb, const double &c, const double &d) :
 					m_pa(pa), m_pb(pb), m_c(c), m_d(d) {
 			}
 
@@ -61,7 +62,7 @@ public:
 //	}
 
 	template<size_t N>
-	static cuda_kern_copy_generic *match(const double *pa, double *pb, const dimensions<N> &dimsa, const permutation<N> &perma, const double &c, const double &d);
+	static cuda_kern_copy_generic *match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<N> &dimsa, const permutation<N> &perma, const double &c, const double &d);
 
 };
 

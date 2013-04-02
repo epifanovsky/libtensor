@@ -19,7 +19,7 @@ void cuda_kern_copy_generic::run() {
 
 
 template<size_t N>
-cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<N> &dimsa,
+cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<N> &dimsa,
 		const permutation<N> &perma, const double &c, const double &d) {
 
 	permutation<N> perma_i(perma, true);
@@ -94,17 +94,17 @@ cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *
 
 }
 
-template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<1> &dimsa,
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<1> &dimsa,
 		const permutation<1> &perma, const double &c, const double &d);
-template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<2> &dimsa,
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<2> &dimsa,
 		const permutation<2> &perma, const double &c, const double &d);
-template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<3> &dimsa,
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<3> &dimsa,
 		const permutation<3> &perma, const double &c, const double &d);
-template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<4> &dimsa,
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<4> &dimsa,
 		const permutation<4> &perma, const double &c, const double &d);
-template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<5> &dimsa,
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<5> &dimsa,
 		const permutation<5> &perma, const double &c, const double &d);
-template cuda_kern_copy_generic *cuda_kern_copy_generic::match(const double *pa, double *pb, const dimensions<6> &dimsa,
+template cuda_kern_copy_generic *cuda_kern_copy_generic::match(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<6> &dimsa,
 		const permutation<6> &perma, const double &c, const double &d);
 
 } // namespace libtensor

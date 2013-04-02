@@ -53,9 +53,9 @@ protected:
     //@{
     virtual const symmetry<N, T> &on_req_const_symmetry();
     virtual symmetry<N, T> &on_req_symmetry();
-    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
+    virtual cuda_dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx);
     virtual void on_ret_const_block(const index<N> &idx);
-    virtual dense_tensor_wr_i<N, T> &on_req_block(const index<N> &idx);
+    virtual cuda_dense_tensor_wr_i<N, T> &on_req_block(const index<N> &idx);
     virtual void on_ret_block(const index<N> &idx);
     virtual bool on_req_is_zero_block(const index<N> &idx);
     virtual void on_req_nonzero_blocks(std::vector<size_t> &nzlst);
@@ -119,7 +119,7 @@ symmetry<N, T> &cuda_block_tensor<N, T, Alloc>::on_req_symmetry() {
 
 
 template<size_t N, typename T, typename Alloc>
-dense_tensor_rd_i<N, T> &cuda_block_tensor<N, T, Alloc>::on_req_const_block(
+cuda_dense_tensor_rd_i<N, T> &cuda_block_tensor<N, T, Alloc>::on_req_const_block(
     const index<N> &idx) {
 
     return m_ctrl.req_const_block(idx);
@@ -134,7 +134,7 @@ void cuda_block_tensor<N, T, Alloc>::on_ret_const_block(const index<N> &idx) {
 
 
 template<size_t N, typename T, typename Alloc>
-dense_tensor_wr_i<N, T> &cuda_block_tensor<N, T, Alloc>::on_req_block(
+cuda_dense_tensor_wr_i<N, T> &cuda_block_tensor<N, T, Alloc>::on_req_block(
     const index<N> &idx) {
 
     return m_ctrl.req_block(idx);

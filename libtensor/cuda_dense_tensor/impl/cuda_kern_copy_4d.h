@@ -30,9 +30,9 @@ private:
 
 
 public:
-	cuda_kern_copy_4d(const double *pa, double *pb, const dimensions<4> dimsa, const permutation<4> &perma, const double &c, const double &d);
+	cuda_kern_copy_4d(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<4> dimsa, const permutation<4> &perma, const double &c, const double &d);
 
-	cuda_kern_copy_4d(const double *pa, double *pb, dim3 p_threads, dim3 p_grids, uint4 p_b_incrs, uint4 p_dims, const double &c, const double &d):
+	cuda_kern_copy_4d(cuda_pointer<const double> pa, cuda_pointer<double> pb, dim3 p_threads, dim3 p_grids, uint4 p_b_incrs, uint4 p_dims, const double &c, const double &d):
 		cuda_kern_copy_generic(pa, pb, c, d), threads(p_threads), grid(p_grids), b_incrs(p_b_incrs), dims(p_dims) {
 	}
 //	cuda_kern_copy_generic<4>(pa, pb, dimsa, c) {

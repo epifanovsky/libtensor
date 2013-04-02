@@ -6,9 +6,10 @@
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
 #include <libtensor/kernels/loop_list_node.h>
+#include <libtensor/cuda/cuda_allocator.h>
 
 
 namespace libtensor {
@@ -21,7 +22,7 @@ namespace libtensor {
 
     For more details see tod_contract2.
 
-    \sa dense_tensor_i, contraction2, tod_contract2
+    \sa cuda_dense_tensor_i, contraction2, tod_contract2
 
     \ingroup libtensor_cuda_dense_tensor_tod
  **/
@@ -30,6 +31,8 @@ class cuda_tod_contract2 :
     public timings< cuda_tod_contract2<N, M, K> >,
     public noncopyable {
 
+   typedef typename cuda_allocator<double>::pointer_type cuda_pointer_rw;
+   typedef typename cuda_allocator<const double>::pointer_type cuda_pointer_ro;
 public:
     static const char *k_clazz;
 
@@ -43,14 +46,14 @@ public:
 private:
     struct args {
         contraction2<N, M, K> contr; //!< Contraction
-        dense_tensor_rd_i<k_ordera, double> &ta; //!< First tensor (A)
-        dense_tensor_rd_i<k_orderb, double> &tb; //!< Second tensor (B)
+        cuda_dense_tensor_rd_i<k_ordera, double> &ta; //!< First tensor (A)
+        cuda_dense_tensor_rd_i<k_orderb, double> &tb; //!< Second tensor (B)
         double d; //!< Scaling factor
 
         args(
             const contraction2<N, M, K> &contr_,
-            dense_tensor_rd_i<k_ordera, double> &ta_,
-            dense_tensor_rd_i<k_orderb, double> &tb_,
+            cuda_dense_tensor_rd_i<k_ordera, double> &ta_,
+            cuda_dense_tensor_rd_i<k_orderb, double> &tb_,
             double d_) :
             contr(contr_), ta(ta_), tb(tb_), d(d_) { }
     };
@@ -104,9 +107,9 @@ public:
      **/
     cuda_tod_contract2(
         const contraction2<N, M, K> &contr,
-        dense_tensor_rd_i<k_ordera, double> &ta,
+        cuda_dense_tensor_rd_i<k_ordera, double> &ta,
         const scalar_transf<double> &ka,
-        dense_tensor_rd_i<k_orderb, double> &tb,
+        cuda_dense_tensor_rd_i<k_orderb, double> &tb,
         const scalar_transf<double> &kb,
         const scalar_transf<double> &kc = scalar_transf<double>());
 
@@ -118,8 +121,8 @@ public:
      **/
     cuda_tod_contract2(
         const contraction2<N, M, K> &contr,
-        dense_tensor_rd_i<k_ordera, double> &ta,
-        dense_tensor_rd_i<k_orderb, double> &tb,
+        cuda_dense_tensor_rd_i<k_ordera, double> &ta,
+        cuda_dense_tensor_rd_i<k_orderb, double> &tb,
         double d = 1.0);
 
     /** \brief Adds a set of arguments to the argument list
@@ -132,9 +135,9 @@ public:
      **/
     void add_args(
         const contraction2<N, M, K> &contr,
-        dense_tensor_rd_i<k_ordera, double> &ta,
+        cuda_dense_tensor_rd_i<k_ordera, double> &ta,
         const scalar_transf<double> &ka,
-        dense_tensor_rd_i<k_orderb, double> &tb,
+        cuda_dense_tensor_rd_i<k_orderb, double> &tb,
         const scalar_transf<double> &kb,
         const scalar_transf<double> &kc);
 
@@ -146,8 +149,8 @@ public:
      **/
     void add_args(
         const contraction2<N, M, K> &contr,
-        dense_tensor_rd_i<k_ordera, double> &ta,
-        dense_tensor_rd_i<k_orderb, double> &tb,
+        cuda_dense_tensor_rd_i<k_ordera, double> &ta,
+        cuda_dense_tensor_rd_i<k_orderb, double> &tb,
         double d);
 
     /** \brief Prefetches the arguments
@@ -159,14 +162,14 @@ public:
         \param d Scaling factor.
         \param tc Output tensor.
      **/
-    void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
+    void perform(bool zero, cuda_dense_tensor_wr_i<k_orderc, double> &tc);
 
 private:
     void align(const sequence<2 * (N + M + K), size_t> &conn,
         permutation<N + K> &perma, permutation<M + K> &permb,
         permutation<N + M> &permc);
 
-    void perform_internal(aligned_args &ar, double *pc,
+    void perform_internal(aligned_args &ar, cuda_pointer_rw pc,
         const dimensions<k_orderc> &dimsc);
 };
 

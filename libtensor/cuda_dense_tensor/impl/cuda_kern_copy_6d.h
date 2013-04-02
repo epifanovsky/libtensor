@@ -37,9 +37,9 @@ public:
 //
 //	}
 
-	cuda_kern_copy_6d(const double *pa, double *pb, const dimensions<6> dimsa, const permutation<6> &perma, const double &c, const double &d);
+	cuda_kern_copy_6d(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<6> dimsa, const permutation<6> &perma, const double &c, const double &d);
 
-	cuda_kern_copy_6d(const double *pa, double *pb, dim3 p_threads, dim3 p_grids, uint3 p_b_incrs1, uint3 p_b_incrs2,
+	cuda_kern_copy_6d(cuda_pointer<const double> pa, cuda_pointer<double> pb, dim3 p_threads, dim3 p_grids, uint3 p_b_incrs1, uint3 p_b_incrs2,
 											uint3 p_dims, const double &c, const double &d):
 		cuda_kern_copy_generic(pa, pb, c, d), threads(p_threads), grid(p_grids), b_incrs1(p_b_incrs1), b_incrs2(p_b_incrs2),
 						dims1(p_dims) {

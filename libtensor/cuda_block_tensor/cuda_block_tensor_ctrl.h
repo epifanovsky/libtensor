@@ -60,7 +60,7 @@ public:
 
     //!    \name Block events
     //@{
-    dense_tensor_rd_i<N, T> &req_const_block(const index<N> &idx);
+    cuda_dense_tensor_rd_i<N, T> &req_const_block(const index<N> &idx);
     void ret_const_block(const index<N> &idx);
     bool req_is_zero_block(const index<N> &idx);
     //@}
@@ -108,7 +108,7 @@ public:
 
     //!    \name Block events
     //@{
-    dense_tensor_wr_i<N, T> &req_block(const index<N> &idx);
+    cuda_dense_tensor_wr_i<N, T> &req_block(const index<N> &idx);
     void ret_block(const index<N> &idx);
     void req_zero_block(const index<N> &idx);
     void req_zero_all_blocks();
@@ -179,7 +179,7 @@ const symmetry<N, T> &cuda_block_tensor_base_ctrl<N, T>::req_const_symmetry() {
 }
 
 template<size_t N, typename T>
-inline dense_tensor_rd_i<N, T> &cuda_block_tensor_rd_ctrl<N, T>::req_const_block(
+inline cuda_dense_tensor_rd_i<N, T> &cuda_block_tensor_rd_ctrl<N, T>::req_const_block(
     const index<N> &idx) {
 
     return m_bt.on_req_const_block(idx);
@@ -198,7 +198,7 @@ inline bool cuda_block_tensor_rd_ctrl<N, T>::req_is_zero_block(const index<N> &i
 }
 
 template<size_t N, typename T>
-inline dense_tensor_wr_i<N, T> &cuda_block_tensor_wr_ctrl<N, T>::req_block(
+inline cuda_cuda_dense_tensor_wr_i<N, T> &cuda_block_tensor_wr_ctrl<N, T>::req_block(
     const index<N> &idx) {
 
     return m_bt.on_req_block(idx);

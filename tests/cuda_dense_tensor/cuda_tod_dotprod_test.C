@@ -4,6 +4,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_dotprod.h>
 #include <libtensor/dense_tensor/tod_random.h>
@@ -83,8 +84,8 @@ void cuda_tod_dotprod_test::test_i_i(size_t ni) {
 
         dense_tensor<1, double, allocator_t> ta(dima);
         dense_tensor<1, double, allocator_t> tb(dimb);
-        dense_tensor<1, double, cuda_allocator_t> dta(dima);
-        dense_tensor<1, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<1, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<1, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<1>().perform(ta);
         tod_random<1>().perform(tb);
@@ -140,8 +141,8 @@ void cuda_tod_dotprod_test::test_ij_ij(size_t ni, size_t nj) {
 
         dense_tensor<2, double, allocator_t> ta(dima);
         dense_tensor<2, double, allocator_t> tb(dimb);
-        dense_tensor<2, double, cuda_allocator_t> dta(dima);
-        dense_tensor<2, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<2, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<2, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<2>().perform(ta);
         tod_random<2>().perform(tb);
@@ -206,8 +207,8 @@ void cuda_tod_dotprod_test::test_ij_ji(size_t ni, size_t nj) {
 
         dense_tensor<2, double, allocator_t> ta(dima);
         dense_tensor<2, double, allocator_t> tb(dimb);
-        dense_tensor<2, double, cuda_allocator_t> dta(dima);
-        dense_tensor<2, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<2, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<2, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<2>().perform(ta);
         tod_random<2>().perform(tb);
@@ -267,8 +268,8 @@ void cuda_tod_dotprod_test::test_ijk_ijk(size_t ni, size_t nj, size_t nk) {
 
         dense_tensor<3, double, allocator_t> ta(dima);
         dense_tensor<3, double, allocator_t> tb(dimb);
-        dense_tensor<3, double, cuda_allocator_t> dta(dima);
-        dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<3>().perform(ta);
         tod_random<3>().perform(tb);
@@ -342,8 +343,8 @@ void cuda_tod_dotprod_test::test_ijk_ikj(size_t ni, size_t nj, size_t nk) {
 
         dense_tensor<3, double, allocator_t> ta(dima);
         dense_tensor<3, double, allocator_t> tb(dimb);
-        dense_tensor<3, double, cuda_allocator_t> dta(dima);
-        dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<3>().perform(ta);
         tod_random<3>().perform(tb);
@@ -421,8 +422,8 @@ void cuda_tod_dotprod_test::test_ijk_jik(size_t ni, size_t nj, size_t nk) {
 
         dense_tensor<3, double, allocator_t> ta(dima);
         dense_tensor<3, double, allocator_t> tb(dimb);
-        dense_tensor<3, double, cuda_allocator_t> dta(dima);
-        dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<3>().perform(ta);
         tod_random<3>().perform(tb);
@@ -500,8 +501,8 @@ void cuda_tod_dotprod_test::test_ijk_jki(size_t ni, size_t nj, size_t nk) {
 
         dense_tensor<3, double, allocator_t> ta(dima);
         dense_tensor<3, double, allocator_t> tb(dimb);
-        dense_tensor<3, double, cuda_allocator_t> dta(dima);
-        dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dta(dima);
+        cuda_dense_tensor<3, double, cuda_allocator_t> dtb(dimb);
 
         tod_random<3>().perform(ta);
         tod_random<3>().perform(tb);

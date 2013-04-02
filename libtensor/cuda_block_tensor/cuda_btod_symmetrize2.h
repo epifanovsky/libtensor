@@ -97,11 +97,11 @@ public:
         bool zero,
         const index<N> &ib,
         const tensor_transf<N, double> &trb,
-        dense_tensor_wr_i<N, double> &blkb);
+        cuda_dense_tensor_wr_i<N, double> &blkb);
 
     virtual void compute_block(
         const index<N> &ib,
-        dense_tensor_wr_i<N, double> &blkb);
+        cuda_dense_tensor_wr_i<N, double> &blkb);
 
     //@}
 

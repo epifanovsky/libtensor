@@ -64,7 +64,7 @@ protected:
         m_ctrl.req_nonzero_blocks(nzlst);
     }
 
-    virtual dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx) {
+    virtual cuda_dense_tensor_rd_i<N, T> &on_req_const_block(const index<N> &idx) {
         return m_ctrl.req_const_block(idx);
     }
 

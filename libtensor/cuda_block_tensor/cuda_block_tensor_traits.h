@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_CUDA_BLOCK_TENSOR_TRAITS_H
 #define LIBTENSOR_CUDA_BLOCK_TENSOR_TRAITS_H
 
-#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
 #include <libtensor/block_tensor/block_factory.h>
 #include "cuda_block_tensor_i_traits.h"
 
@@ -32,7 +32,7 @@ struct cuda_block_tensor_traits {
     //! Type of blocks
     template<size_t N>
     struct block_type {
-        typedef dense_tensor<N, T, Alloc> type;
+        typedef cuda_dense_tensor<N, T, Alloc> type;
     };
 
     //! Type of block factory

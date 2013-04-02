@@ -26,9 +26,9 @@ private:
 
 
 public:
-	cuda_kern_copy_2d(const double *pa, double *pb, const dimensions<2> dimsa, const dimensions<2> dimsb, const permutation<2> &perma, const double &c, const double &d);
+	cuda_kern_copy_2d(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<2> dimsa, const dimensions<2> dimsb, const permutation<2> &perma, const double &c, const double &d);
 
-	cuda_kern_copy_2d(const double *pa, double *pb, dim3 p_threads, dim3 p_grids, const uint2 p_b_incrs, const uint2 p_dims,
+	cuda_kern_copy_2d(cuda_pointer<const double> pa, cuda_pointer<double> pb, dim3 p_threads, dim3 p_grids, const uint2 p_b_incrs, const uint2 p_dims,
 			const double &c, const double &d):
 		cuda_kern_copy_generic(pa, pb, c, d), threads(p_threads), grid(p_grids), b_incrs(p_b_incrs), dims(p_dims) {
 	}

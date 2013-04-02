@@ -1,3 +1,4 @@
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_random.h>
 #include <libtensor/dense_tensor/tod_set.h>
@@ -36,7 +37,7 @@ void cuda_tod_set_test::test_1(double v) {
     i2[0] = 3; i2[1] = 3; i2[2] = 4; i2[3] = 4;
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);
-    dense_tensor<4, double, cuda_allocator_t> d_t(dim);
+    cuda_dense_tensor<4, double, cuda_allocator_t> d_t(dim);
     dense_tensor<4, double, allocator_t> h_t(dim), h_t_ref(dim);
 
     tod_random<4>().perform(h_t);
@@ -69,7 +70,7 @@ void cuda_tod_set_test::test_2(double v) {
     i2[0] = 17; i2[1] = 17; i2[2] = 17; i2[3] = 17;
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);
-    dense_tensor<4, double, cuda_allocator_t> d_t(dim);
+    cuda_dense_tensor<4, double, cuda_allocator_t> d_t(dim);
     dense_tensor<4, double, allocator_t> h_t(dim), h_t_ref(dim);
 
     tod_random<4>().perform(h_t);

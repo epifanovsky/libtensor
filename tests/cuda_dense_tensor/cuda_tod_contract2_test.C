@@ -7,6 +7,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_contract2.h>
@@ -1104,9 +1105,9 @@ void cuda_tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
     dense_tensor<2, double, allocator_type> tb(dimb);
     dense_tensor<1, double, allocator_type> tc(dimc);
     dense_tensor<1, double, allocator_type> tc_ref(dimc);
-    dense_tensor<1, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1207,9 +1208,9 @@ void cuda_tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
     dense_tensor<2, double, allocator_type> tb(dimb);
     dense_tensor<1, double, allocator_type> tc(dimc);
     dense_tensor<1, double, allocator_type> tc_ref(dimc);
-    dense_tensor<1, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1307,9 +1308,9 @@ void cuda_tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
     dense_tensor<1, double, allocator_type> tb(dimb);
     dense_tensor<1, double, allocator_type> tc(dimc);
     dense_tensor<1, double, allocator_type> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1407,9 +1408,9 @@ void cuda_tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
     dense_tensor<1, double, allocator_type> tb(dimb);
     dense_tensor<1, double, allocator_type> tc(dimc);
     dense_tensor<1, double, allocator_type> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1507,9 +1508,9 @@ void cuda_tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
     dense_tensor<1, double, allocator_type> tb(dimb);
     dense_tensor<2, double, allocator_type> tc(dimc);
     dense_tensor<2, double, allocator_type> tc_ref(dimc);
-    dense_tensor<1, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1607,9 +1608,9 @@ void cuda_tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
     dense_tensor<2, double, allocator_type> tc(dimc);
     dense_tensor<2, double, allocator_type> tc_ref(dimc);
 
-    dense_tensor<1, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1708,9 +1709,9 @@ void cuda_tod_contract2_test::test_ij_pi_pj(
     dense_tensor<2, double, allocator_type> tb(dimb);
     dense_tensor<2, double, allocator_type> tc(dimc);
     dense_tensor<2, double, allocator_type> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1813,9 +1814,9 @@ void cuda_tod_contract2_test::test_ij_pi_jp(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -1915,9 +1916,9 @@ void cuda_tod_contract2_test::test_ij_ip_pj(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2017,9 +2018,9 @@ void cuda_tod_contract2_test::test_ij_ip_jp(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2119,9 +2120,9 @@ void cuda_tod_contract2_test::test_ij_pj_pi(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2222,9 +2223,9 @@ void cuda_tod_contract2_test::test_ij_pj_ip(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2325,9 +2326,9 @@ void cuda_tod_contract2_test::test_ij_jp_ip(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2428,9 +2429,9 @@ void cuda_tod_contract2_test::test_ij_jp_pi(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2531,9 +2532,9 @@ void cuda_tod_contract2_test::test_ij_p_pji(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<1, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2636,9 +2637,9 @@ void cuda_tod_contract2_test::test_ij_pji_p(
     dense_tensor<1, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<1, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -2749,9 +2750,9 @@ void cuda_tod_contract2_test::test_ij_pi_pj_qi_jq(
     dense_tensor<2, double, allocator_t> tb1(dimb1), tb2(dimb2);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta1(dima1), cuta2(dima2);
-    dense_tensor<2, double, cuda_allocator_type> cutb1(dimb1), cutb2(dimb2);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta1(dima1), cuta2(dima2);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb1(dimb1), cutb2(dimb2);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double d1, d2;
 
@@ -2894,9 +2895,9 @@ void cuda_tod_contract2_test::test_ij_pi_pj_qi_qj(
     dense_tensor<2, double, allocator_t> tb1(dimb1), tb2(dimb2);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta1(dima1), cuta2(dima2);
-    dense_tensor<2, double, cuda_allocator_type> cutb1(dimb1), cutb2(dimb2);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta1(dima1), cuta2(dima2);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb1(dimb1), cutb2(dimb2);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
     double d1, d2;
 
     double cij_max = 0.0;
@@ -3003,7 +3004,7 @@ void cuda_tod_contract2_test::test_ij_pi_pj_qi_qj(
     }
 }
 
-
+/*
 void cuda_tod_contract2_test::test_ijk_ip_pkj(
     size_t ni, size_t nj, size_t nk, size_t np, double d)
     throw(libtest::test_exception) {
@@ -3030,9 +3031,9 @@ void cuda_tod_contract2_test::test_ijk_ip_pkj(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3138,9 +3139,9 @@ void cuda_tod_contract2_test::test_ijk_pi_pkj(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3246,9 +3247,9 @@ void cuda_tod_contract2_test::test_ijk_pik_pj(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3354,9 +3355,9 @@ void cuda_tod_contract2_test::test_ijk_pj_ipk(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3462,9 +3463,9 @@ void cuda_tod_contract2_test::test_ijk_pj_pik(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3570,9 +3571,9 @@ void cuda_tod_contract2_test::test_ijk_pkj_ip(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3678,9 +3679,9 @@ void cuda_tod_contract2_test::test_ijk_pkj_pi(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3786,9 +3787,9 @@ void cuda_tod_contract2_test::test_ij_pqi_pjq(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3891,9 +3892,9 @@ void cuda_tod_contract2_test::test_ij_ipq_jqp(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -3996,9 +3997,9 @@ void cuda_tod_contract2_test::test_ij_jpq_iqp(
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4104,9 +4105,9 @@ void cuda_tod_contract2_test::test_ij_jipq_qp(
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4207,9 +4208,9 @@ void cuda_tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4300,9 +4301,9 @@ void cuda_tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4399,9 +4400,9 @@ void cuda_tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4509,9 +4510,9 @@ void cuda_tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4621,9 +4622,9 @@ void cuda_tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4732,9 +4733,9 @@ void cuda_tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<3, double, allocator_t> tc(dimc);
     dense_tensor<3, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4842,9 +4843,9 @@ void cuda_tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -4953,9 +4954,9 @@ void cuda_tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5064,9 +5065,9 @@ void cuda_tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5174,9 +5175,9 @@ void cuda_tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5285,9 +5286,9 @@ void cuda_tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5411,9 +5412,9 @@ void cuda_tod_contract2_test::test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_
     dense_tensor<3, double, allocator_t> tb1(dimb1), tb2(dimb2), tb3(dimb3);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta1(dima1), cuta2(dima2), cuta3(dima3);
-    dense_tensor<3, double, cuda_allocator_type> cutb1(dimb1), cutb2(dimb2), cutb3(dimb3);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta1(dima1), cuta2(dima2), cuta3(dima3);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb1(dimb1), cutb2(dimb2), cutb3(dimb3);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
     double d1, d2, d3;
 
     double cij_max = 0.0;
@@ -5553,10 +5554,21 @@ void cuda_tod_contract2_test::test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_
         zero = false;
         k = d;
     }
-    cuda_tod_contract2<2, 2, 1> op(contr1, ta1, tb1, d1 * k);
-    op.add_args(contr2, ta2, tb2, d2 * k);
-    op.add_args(contr3, ta3, tb3, d3 * k);
-    op.perform(zero, tc);
+
+    //    Copy input from host to device
+
+    cuda_tod_copy_h2d<3>(ta).perform(cuta);
+    cuda_tod_copy_h2d<3>(tb).perform(cutb);
+    cuda_tod_copy_h2d<4>(tc).perform(cutc);
+
+    cuda_tod_contract2<2, 2, 1> op(contr1, cuta1, cutb1, d1 * k);
+    op.add_args(contr2, cuta2, cutb2, d2 * k);
+    op.add_args(contr3, cuta3, cutb3, d3 * k);
+    op.perform(zero, cutc);
+
+    //    Copy result from device to host
+
+    cuda_tod_copy_d2h<2>(cutc).perform(cutc);
 
     //  Compare against the reference
 
@@ -5599,9 +5611,9 @@ void cuda_tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<5, double, allocator_t> tc(dimc);
     dense_tensor<5, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<5, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<5, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5717,9 +5729,9 @@ void cuda_tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t n
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<5, double, allocator_t> tc(dimc);
     dense_tensor<5, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<5, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<5, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5835,9 +5847,9 @@ void cuda_tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<5, double, allocator_t> tc(dimc);
     dense_tensor<5, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<5, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<5, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -5953,9 +5965,9 @@ void cuda_tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<6, double, allocator_t> tc(dimc);
     dense_tensor<6, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<6, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<6, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6073,9 +6085,9 @@ void cuda_tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6186,9 +6198,9 @@ void cuda_tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6299,9 +6311,9 @@ void cuda_tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6412,9 +6424,9 @@ void cuda_tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6525,9 +6537,9 @@ void cuda_tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6638,9 +6650,9 @@ void cuda_tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6751,9 +6763,9 @@ void cuda_tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6864,9 +6876,9 @@ void cuda_tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -6971,9 +6983,9 @@ void cuda_tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7084,9 +7096,9 @@ void cuda_tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7199,9 +7211,9 @@ void cuda_tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7307,9 +7319,9 @@ void cuda_tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7404,9 +7416,9 @@ void cuda_tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7504,9 +7516,9 @@ void cuda_tod_contract2_test::test_ij_ipqr_pjrq(
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7609,9 +7621,9 @@ void cuda_tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7676,9 +7688,13 @@ void cuda_tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
     contr.contract(3, 2);
 
     //~ cuda_tod_contract2<1, 1, 3> op(contr, ta, tb);
-    cuda_tod_contract2<1, 1, 3> op(contr, tb, ta, (d != 0 ? d : 1.0));
-    if(d == 0.0) op.perform(true, tc);
-    else op.perform(false, tc);
+    cuda_tod_contract2<1, 1, 3> op(contr, cutb, cuta, (d != 0 ? d : 1.0));
+    if(d == 0.0) op.perform(true, cutc);
+    else op.perform(false, cutc);
+
+    //    Copy result from device to host
+
+    cuda_tod_copy_d2h<2>(cutc).perform(tc);
 
     // Compare against the reference
 
@@ -7709,9 +7725,9 @@ void cuda_tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7805,9 +7821,9 @@ void cuda_tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<2, double, allocator_t> tc(dimc);
     dense_tensor<2, double, allocator_t> tc_ref(dimc);
-    dense_tensor<4, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -7908,9 +7924,9 @@ void cuda_tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cijkl_max = 0.0;
 
@@ -8026,9 +8042,9 @@ void cuda_tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cijkl_max = 0.0;
 
@@ -8139,9 +8155,9 @@ void cuda_tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -8236,9 +8252,9 @@ void cuda_tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t n
     dense_tensor<4, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -8332,9 +8348,9 @@ void cuda_tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -8426,9 +8442,9 @@ void cuda_tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t n
     dense_tensor<3, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<3, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<3, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cij_max = 0.0;
 
@@ -8527,9 +8543,9 @@ void cuda_tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cijkl_max = 0.0;
 
@@ -8642,9 +8658,9 @@ void cuda_tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
     dense_tensor<2, double, allocator_t> tb(dimb);
     dense_tensor<4, double, allocator_t> tc(dimc);
     dense_tensor<4, double, allocator_t> tc_ref(dimc);
-    dense_tensor<2, double, cuda_allocator_type> cuta(dima);
-    dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
-    dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cuta(dima);
+    cuda_dense_tensor<2, double, cuda_allocator_type> cutb(dimb);
+    cuda_dense_tensor<4, double, cuda_allocator_type> cutc(dimc);
 
     double cijkl_max = 0.0;
 
@@ -8727,6 +8743,8 @@ void cuda_tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
+//*/
 
 
 } // namespace libtensor

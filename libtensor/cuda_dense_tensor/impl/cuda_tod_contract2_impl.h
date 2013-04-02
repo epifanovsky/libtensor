@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <cuda_runtime.h>
-#include <libvmm/cuda_allocator.h>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/core/contraction2_list_builder.h>
 #include <libtensor/core/permutation_builder.h>
@@ -13,7 +12,7 @@
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_node.h>
 #include <libtensor/kernels/loop_list_runner.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_ctrl.h>
 #include "cuda_kern_copy_generic.h"
 #include "../local_cublas_handle.h"
 #include "../cuda_tod_contract2.h"
@@ -22,8 +21,6 @@
 
 
 namespace libtensor {
-using libvmm::cuda_allocator;
-
 
 template<size_t N, size_t M, size_t K>
 const char *cuda_tod_contract2<N, M, K>::k_clazz =
@@ -33,9 +30,9 @@ const char *cuda_tod_contract2<N, M, K>::k_clazz =
 template<size_t N, size_t M, size_t K>
 cuda_tod_contract2<N, M, K>::cuda_tod_contract2(
     const contraction2<N, M, K> &contr,
-    dense_tensor_rd_i<k_ordera, double> &ta,
+    cuda_dense_tensor_rd_i<k_ordera, double> &ta,
     const scalar_transf<double> &ka,
-    dense_tensor_rd_i<k_orderb, double> &tb,
+    cuda_dense_tensor_rd_i<k_orderb, double> &tb,
     const scalar_transf<double> &kb,
     const scalar_transf<double> &kc) :
 
@@ -48,8 +45,8 @@ cuda_tod_contract2<N, M, K>::cuda_tod_contract2(
 template<size_t N, size_t M, size_t K>
 cuda_tod_contract2<N, M, K>::cuda_tod_contract2(
     const contraction2<N, M, K> &contr,
-    dense_tensor_rd_i<k_ordera, double> &ta,
-    dense_tensor_rd_i<k_orderb, double> &tb,
+    cuda_dense_tensor_rd_i<k_ordera, double> &ta,
+    cuda_dense_tensor_rd_i<k_orderb, double> &tb,
     double d) :
 
     m_dimsc(contr, ta.get_dims(), tb.get_dims()) {
@@ -61,9 +58,9 @@ cuda_tod_contract2<N, M, K>::cuda_tod_contract2(
 template<size_t N, size_t M, size_t K>
 void cuda_tod_contract2<N, M, K>::add_args(
     const contraction2<N, M, K> &contr,
-    dense_tensor_rd_i<k_ordera, double> &ta,
+    cuda_dense_tensor_rd_i<k_ordera, double> &ta,
     const scalar_transf<double> &ka,
-    dense_tensor_rd_i<k_orderb, double> &tb,
+    cuda_dense_tensor_rd_i<k_orderb, double> &tb,
     const scalar_transf<double> &kb,
     const scalar_transf<double> &kc) {
 
@@ -75,12 +72,12 @@ void cuda_tod_contract2<N, M, K>::add_args(
 template<size_t N, size_t M, size_t K>
 void cuda_tod_contract2<N, M, K>::add_args(
     const contraction2<N, M, K> &contr,
-    dense_tensor_rd_i<k_ordera, double> &ta,
-    dense_tensor_rd_i<k_orderb, double> &tb,
+    cuda_dense_tensor_rd_i<k_ordera, double> &ta,
+    cuda_dense_tensor_rd_i<k_orderb, double> &tb,
     double d) {
 
     static const char *method = "add_args(const contraction2<N, M, K>&, "
-        "dense_tensor_i<N + K, double>&, dense_tensor_i<M + K, double>&, "
+        "cuda_dense_tensor_i<N + K, double>&, cuda_dense_tensor_i<M + K, double>&, "
         "double)";
 
     if(!to_contract2_dims<N, M, K>(contr, ta.get_dims(), tb.get_dims()).
@@ -99,18 +96,18 @@ void cuda_tod_contract2<N, M, K>::prefetch() {
     for(typename std::list<args>::iterator i = m_argslst.begin();
         i != m_argslst.end(); ++i) {
 
-        dense_tensor_rd_ctrl<k_ordera, double>(i->ta).req_prefetch();
-        dense_tensor_rd_ctrl<k_orderb, double>(i->tb).req_prefetch();
+        cuda_dense_tensor_rd_ctrl<k_ordera, double>(i->ta).req_prefetch();
+        cuda_dense_tensor_rd_ctrl<k_orderb, double>(i->tb).req_prefetch();
     }
 }
 
 
 template<size_t N, size_t M, size_t K>
 void cuda_tod_contract2<N, M, K>::perform(bool zero,
-    dense_tensor_wr_i<k_orderc, double> &tc) {
+    cuda_dense_tensor_wr_i<k_orderc, double> &tc) {
 
     static const char *method =
-        "perform(bool, dense_tensor_i<N + M, double>&)";
+        "perform(bool, cuda_dense_tensor_i<N + M, double>&)";
 
     if(!m_dimsc.get_dims().equals(tc.get_dims())) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
@@ -120,8 +117,8 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
 
     try {
 
-        dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
-        double *pc = cc.req_dataptr();
+        cuda_dense_tensor_wr_ctrl<k_orderc, double> cc(tc);
+        cuda_pointer_rw pc = cc.req_dataptr();
         const dimensions<k_orderc> &dimsc = tc.get_dims();
 
         //  Pre-process the arguments by aligning indexes
@@ -147,7 +144,7 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
 
         if(argslst.empty() && zero) {
             cuda_tod_contract2::start_timer("zeroc");
-            cudaError_t err = cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
+            cudaError_t err = cudaMemset(pc.get_physical_pointer(), 0, sizeof(double) * dimsc.get_size());
             if (  err != cudaSuccess) {
             	cuda_tod_contract2::stop_timer("zeroc");
             	throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, cudaGetErrorString( err ));
@@ -158,7 +155,7 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
         //  Compute the contractions grouping them by the permutation of C
 
         bool zero1 = zero;
-        double *pc1 = 0, *pc2 = 0;
+        cuda_pointer_rw pc1, pc2;
         typename cuda_allocator<double>::pointer_type vpc;
         vpc = cuda_allocator<double>::allocate(dimsc.get_size());
         pc1 = cuda_allocator<double>::lock_rw(vpc);
@@ -174,7 +171,7 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                 pc2 = pc;
                 if(zero1) {
                     cuda_tod_contract2::start_timer("zeroc");
-                    cudaError_t err = cudaMemset(pc, 0, sizeof(double) * dimsc.get_size());
+                    cudaError_t err = cudaMemset(pc.get_physical_pointer(), 0, sizeof(double) * dimsc.get_size());
 					 if (  err != cudaSuccess) {
 						cuda_tod_contract2::stop_timer("zeroc");
 						throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, cudaGetErrorString( err ));
@@ -186,7 +183,7 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
             } else {
                 pc2 = pc1;
                 cuda_tod_contract2::start_timer("zeroc1");
-                cudaError_t err = cudaMemset(pc1, 0, sizeof(double) * dimsc.get_size());
+                cudaError_t err = cudaMemset(pc1.get_physical_pointer(), 0, sizeof(double) * dimsc.get_size());
 				if (  err != cudaSuccess) {
 					cuda_tod_contract2::stop_timer("zeroc");
 					throw cuda_error(g_ns, k_clazz, method, __FILE__, __LINE__, cudaGetErrorString( err ));
@@ -229,10 +226,10 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
                 }
 
                 loop_registers<1, 1> r;
-                r.m_ptra[0] = pc1;
-                r.m_ptrb[0] = pc;
-                r.m_ptra_end[0] = pc1 + dimsc1.get_size();
-                r.m_ptrb_end[0] = pc + dimsc.get_size();
+                r.m_ptra[0] = pc1.get_physical_pointer();
+                r.m_ptrb[0] = pc.get_physical_pointer();
+                r.m_ptra_end[0] = pc1.get_physical_pointer() + dimsc1.get_size();
+                r.m_ptrb_end[0] = pc.get_physical_pointer() + dimsc.get_size();
 
                 {
                     std::auto_ptr<cuda_kern_copy_generic> kern(
@@ -263,10 +260,10 @@ void cuda_tod_contract2<N, M, K>::perform(bool zero,
             }
         }
 
-        cuda_allocator<double>::unlock_rw(vpc); pc1 = 0;
+        cuda_allocator<double>::unlock_rw(vpc); pc1.p = 0;
         cuda_allocator<double>::deallocate(vpc);
 
-        cc.ret_dataptr(pc); pc = 0;
+        cc.ret_dataptr(pc); pc.p = 0;
 
     } catch(...) {
         cuda_tod_contract2::stop_timer();
@@ -444,10 +441,10 @@ void cuda_tod_contract2<N, M, K>::align(
 
 template<size_t N, size_t M, size_t K>
 void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
-    double *pc, const dimensions<k_orderc> &dimsc) {
+		cuda_pointer_rw pc, const dimensions<k_orderc> &dimsc) {
 
-    dense_tensor_rd_ctrl<k_ordera, double> ca(ar.ta);
-    dense_tensor_rd_ctrl<k_orderb, double> cb(ar.tb);
+    cuda_dense_tensor_rd_ctrl<k_ordera, double> ca(ar.ta);
+    cuda_dense_tensor_rd_ctrl<k_orderb, double> cb(ar.tb);
 
     const dimensions<k_ordera> &dimsa = ar.ta.get_dims();
     const dimensions<k_orderb> &dimsb = ar.tb.get_dims();
@@ -455,9 +452,9 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
     dimensions<k_ordera> dimsa1(dimsa); dimsa1.permute(ar.perma);
     dimensions<k_orderb> dimsb1(dimsb); dimsb1.permute(ar.permb);
 
-    const double *pa = 0, *pb = 0;
-    double *pa1 = 0, *pb1 = 0;
-    const double *pa2 = 0, *pb2 = 0;
+    cuda_pointer_ro pa, pb;
+    cuda_pointer_rw pa1, pb1;
+    cuda_pointer_ro pa2, pb2;
 
     typename cuda_allocator<double>::pointer_type vpa, vpb;
 
@@ -489,10 +486,10 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         }
 
         loop_registers<1, 1> r;
-        r.m_ptra[0] = pa;
-        r.m_ptrb[0] = pa1;
-        r.m_ptra_end[0] = pa + dimsa.get_size();
-        r.m_ptrb_end[0] = pa1 + dimsa1.get_size();
+        r.m_ptra[0] = pa.get_physical_pointer();
+        r.m_ptrb[0] = pa1.get_physical_pointer();
+        r.m_ptra_end[0] = pa.get_physical_pointer() + dimsa.get_size();
+        r.m_ptrb_end[0] = pa1.get_physical_pointer() + dimsa1.get_size();
 
         {
             std::auto_ptr<cuda_kern_copy_generic> kern(
@@ -547,10 +544,10 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         }
 
         loop_registers<1, 1> r;
-        r.m_ptra[0] = pb;
-        r.m_ptrb[0] = pb1;
-        r.m_ptra_end[0] = pb + dimsb.get_size();
-        r.m_ptrb_end[0] = pb1 + dimsb1.get_size();
+        r.m_ptra[0] = pb.get_physical_pointer();
+        r.m_ptrb[0] = pb1.get_physical_pointer();
+        r.m_ptra_end[0] = pb.get_physical_pointer() + dimsb.get_size();
+        r.m_ptrb_end[0] = pb1.get_physical_pointer() + dimsb1.get_size();
 
         {
             std::auto_ptr<cuda_kern_copy_generic> kern(
@@ -589,12 +586,12 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
 
     {
         loop_registers<2, 1> r;
-        r.m_ptra[0] = pa2;
-        r.m_ptra[1] = pb2;
-        r.m_ptrb[0] = pc;
-        r.m_ptra_end[0] = pa2 + dimsa1.get_size();
-        r.m_ptra_end[1] = pb2 + dimsb1.get_size();
-        r.m_ptrb_end[0] = pc + dimsc.get_size();
+        r.m_ptra[0] = pa2.get_physical_pointer();
+        r.m_ptra[1] = pb2.get_physical_pointer();
+        r.m_ptrb[0] = pc.get_physical_pointer();
+        r.m_ptra_end[0] = pa2.get_physical_pointer() + dimsa1.get_size();
+        r.m_ptra_end[1] = pb2.get_physical_pointer() + dimsb1.get_size();
+        r.m_ptrb_end[0] = pc.get_physical_pointer() + dimsc.get_size();
 
         std::auto_ptr< kernel_base<linalg_cublas, 2, 1> > kern(
             kern_dmul2<linalg_cublas>::match(ar.d, loop_in, loop_out));
@@ -606,14 +603,14 @@ void cuda_tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         cuda_tod_contract2::stop_timer(kern->get_name());
     }
 
-    if(pa1) {
-        cuda_allocator<double>::unlock_rw(vpa); pa1 = 0;
+    if(pa1.get_physical_pointer()) {
+        cuda_allocator<double>::unlock_rw(vpa); pa1.p = 0;
         cuda_allocator<double>::deallocate(vpa);
     }
     ca.ret_const_dataptr(pa);
 
-    if(pb1) {
-        cuda_allocator<double>::unlock_rw(vpb); pb1 = 0;
+    if(pb1.get_physical_pointer()) {
+        cuda_allocator<double>::unlock_rw(vpb); pb1.p = 0;
         cuda_allocator<double>::deallocate(vpb);
     }
     cb.ret_const_dataptr(pb);

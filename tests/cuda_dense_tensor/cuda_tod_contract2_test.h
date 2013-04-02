@@ -117,7 +117,7 @@ private:
     // c_{ij} = \sum_p a^1_{pi} b^1_{pj} + \sum_q a^2_{qi} b^2_{qj}
     void test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq,
         double d = 0.0) throw(libtest::test_exception);
-
+/*
     // c_{ijk} = \sum_{pq} a_{ip} b_{pkj}
     void test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np,
         double d = 0.0) throw(libtest::test_exception);
@@ -319,6 +319,7 @@ private:
     void test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk, size_t nl,
         size_t nm, size_t nn, size_t np, double d = 0.0)
         throw(libtest::test_exception);
+//*/
 
 };
 

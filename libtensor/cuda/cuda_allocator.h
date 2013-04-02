@@ -2,6 +2,7 @@
 #define LIBTENSOR_CUDA_ALLOCATOR_H
 
 #include <cstddef> // for size_t
+#include "cuda_pointer.h"
 
 namespace libtensor {
 
@@ -19,11 +20,12 @@ public:
     static const char *k_clazz; //!< Class name
 
 public:
-    typedef struct cuda_pointer {
-        T *p;
-        cuda_pointer(T *p_ = 0) : p(p_) { }
-        bool operator==(const cuda_pointer &p_) const { return p == p_.p; }
-    } pointer_type; //!< Wrapped CUDA pointer type
+    typedef cuda_pointer<T> pointer_type;
+//    typedef struct cuda_pointer {
+//        T *p;
+//        cuda_pointer(T *p_ = 0) : p(p_) { }
+//        bool operator==(const cuda_pointer &p_) const { return p == p_.p; }
+//    } pointer_type; //!< Wrapped CUDA pointer type
 
 public:
     static const pointer_type invalid_pointer; //!< Invalid pointer constant
@@ -57,9 +59,10 @@ public:
         \param p Pointer to a block of GPU memory.
         \return Constant physical pointer to the memory.
      **/
-    static const T *lock_ro(pointer_type p) {
+    static cuda_pointer<const T> lock_ro(pointer_type p) {
 
-        return p.p;
+    	cuda_pointer<const T> tmp_p( p.get_physical_pointer() );
+        return tmp_p;
     }
 
     /** \brief Unlocks a block of memory previously locked by lock_ro()
@@ -75,9 +78,9 @@ public:
         \param p Pointer to a block of GPU memory.
         \return Physical pointer to the memory.
      **/
-    static T *lock_rw(pointer_type p) {
+    static cuda_pointer<T> lock_rw(pointer_type p) {
 
-        return p.p;
+    	return p;
     }
 
     /** \brief Unlocks a block of memory previously locked by lock_rw()

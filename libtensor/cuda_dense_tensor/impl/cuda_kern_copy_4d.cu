@@ -6,7 +6,7 @@ namespace libtensor {
 
 const char *cuda_kern_copy_4d::k_clazz = "cuda_kern_copy_4d";
 
-cuda_kern_copy_4d::cuda_kern_copy_4d(const double *pa, double *pb, const dimensions<4> dimsa, const permutation<4> &perma, const double &c, const double &d) :
+cuda_kern_copy_4d::cuda_kern_copy_4d(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<4> dimsa, const permutation<4> &perma, const double &c, const double &d) :
 		cuda_kern_copy_generic(pa, pb, c, d) {
 		//create a simple sequence map and permute it to get coefficients in the permuted tensor
 //		const size_t N = 4;
@@ -32,12 +32,12 @@ void cuda_kern_copy_4d::run() {
 			        "run( )";
 	//kernel call
    	if (m_d != 0) {
-   			cuda::add_copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c*m_d);
+   			cuda::add_copy_tensor<<<grid, threads>>>(m_pa.get_physical_pointer(), m_pb.get_physical_pointer(), b_incrs, dims, m_c*m_d);
    	} else {
    		if (m_c == 1) {
-   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims);
+   			cuda::copy_tensor<<<grid, threads>>>(m_pa.get_physical_pointer(), m_pb.get_physical_pointer(), b_incrs, dims);
    		} else {
-   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c);
+   			cuda::copy_tensor<<<grid, threads>>>(m_pa.get_physical_pointer(), m_pb.get_physical_pointer(), b_incrs, dims, m_c);
    		}
    	}
    	cuda_utils::handle_kernel_error(g_ns, k_clazz, method, __FILE__, __LINE__);

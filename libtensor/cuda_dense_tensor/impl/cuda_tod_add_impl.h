@@ -2,7 +2,7 @@
 #define LIBTENSOR_CUDA_TOD_ADD_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_ctrl.h>
 #include "../cuda_tod_add.h"
 #include "../cuda_tod_copy.h"
 #include "../cuda_tod_set.h"
@@ -16,7 +16,7 @@ const char* cuda_tod_add<N>::k_clazz = "cuda_tod_add<N>";
 
 
 template<size_t N>
-cuda_tod_add<N>::cuda_tod_add(dense_tensor_i<N, double> &t, double c) : m_dims(t.get_dims()) {
+cuda_tod_add<N>::cuda_tod_add(cuda_dense_tensor_i<N, double> &t, double c) : m_dims(t.get_dims()) {
 
     static const char *method = "cuda_tod_add(tensor_i<N, double>&, double)";
 
@@ -25,7 +25,7 @@ cuda_tod_add<N>::cuda_tod_add(dense_tensor_i<N, double> &t, double c) : m_dims(t
 
 
 template<size_t N>
-cuda_tod_add<N>::cuda_tod_add(dense_tensor_i<N, double> &t, const permutation<N> &p, double c) :
+cuda_tod_add<N>::cuda_tod_add(cuda_dense_tensor_i<N, double> &t, const permutation<N> &p, double c) :
     m_dims(t.get_dims()) {
 
     static const char *method =
@@ -43,7 +43,7 @@ cuda_tod_add<N>::~cuda_tod_add() {
 
 
 template<size_t N>
-void cuda_tod_add<N>::add_op(dense_tensor_i<N, double> &t, double c) {
+void cuda_tod_add<N>::add_op(cuda_dense_tensor_i<N, double> &t, double c) {
 
     static const char *method = "add_op(tensor_i<N, double>&, double)";
 
@@ -60,7 +60,7 @@ void cuda_tod_add<N>::add_op(dense_tensor_i<N, double> &t, double c) {
 
 template<size_t N>
 void cuda_tod_add<N>::add_op(
-    dense_tensor_i<N, double> &t, const permutation<N> &p, double c) {
+    cuda_dense_tensor_i<N, double> &t, const permutation<N> &p, double c) {
 
     static const char *method =
         "add_op(tensor_i<N, double>&, const permutation<N>&, double)";
@@ -79,7 +79,7 @@ void cuda_tod_add<N>::add_op(
 
 
 template<size_t N>
-void cuda_tod_add<N>::add_operand(dense_tensor_i<N, double> &t, const permutation<N> &p,
+void cuda_tod_add<N>::add_operand(cuda_dense_tensor_i<N, double> &t, const permutation<N> &p,
     double c) {
 
     static const char *method = "add_operand(tensor_i<N, double>&, "
@@ -95,14 +95,14 @@ void cuda_tod_add<N>::prefetch() {
     for(typename std::list<arg>::iterator i = m_args.begin();
         i != m_args.end(); ++i) {
 
-        dense_tensor_ctrl<N, double>(i->t).req_prefetch();
+        cuda_dense_tensor_ctrl<N, double>(i->t).req_prefetch();
     }
 }
 
 
 template<size_t N>
 void cuda_tod_add<N>::perform(bool zero, double c,
-    dense_tensor_i<N, double> &t) {
+    cuda_dense_tensor_i<N, double> &t) {
 
     static const char *method = "perform(bool, double, tensor_i<N, double>&)";
 
@@ -119,7 +119,6 @@ void cuda_tod_add<N>::perform(bool zero, double c,
     typename std::list<arg>::iterator i = m_args.begin();
     for(; i != m_args.end(); ++i) {
         cuda_tod_copy<N>(i->t, i->p, i->c).perform(t, c);
-       	cuda_utils::handle_kernel_error(g_ns, k_clazz, method, __FILE__, __LINE__);
     }
 
     cuda_tod_add::stop_timer();

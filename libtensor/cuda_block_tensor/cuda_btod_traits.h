@@ -2,10 +2,11 @@
 #define LIBTENSOR_CUDA_BTOD_TRAITS_H
 
 #include <libtensor/cuda/cuda_allocator.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
 #include <libtensor/dense_tensor/tod.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_copy.h>
+#include <libtensor/cuda_dense_tensor/cuda_tod_set.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_contract2.h>
 #include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
 #include "cuda_block_tensor.h"
@@ -29,7 +30,7 @@ struct cuda_btod_traits {
 
     template<size_t N>
     struct temp_block_type {
-        typedef dense_tensor< N, double, cuda_allocator<double> > type;
+        typedef cuda_dense_tensor< N, double, cuda_allocator<double> > type;
     };
 
     template<size_t N>
@@ -125,7 +126,7 @@ struct cuda_btod_traits {
 
     template<size_t N>
     struct to_set_type {
-        typedef tod_set<N> type;
+        typedef cuda_tod_set<N> type;
     };
 
     template<size_t N>

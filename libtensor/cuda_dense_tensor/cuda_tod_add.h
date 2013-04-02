@@ -4,7 +4,7 @@
 #include <list>
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 
 namespace libtensor {
 
@@ -28,10 +28,10 @@ public:
 
 private:
     struct arg {
-        dense_tensor_i<N, double> &t;
+        cuda_dense_tensor_i<N, double> &t;
         permutation<N> p;
         double c;
-        arg(dense_tensor_i<N, double> &t_, const permutation<N> &p_,
+        arg(cuda_dense_tensor_i<N, double> &t_, const permutation<N> &p_,
             double c_ = 1.0) : t(t_), p(p_), c(c_) { }
     };
 
@@ -47,14 +47,14 @@ public:
         \param t First %tensor in the series.
         \param c Scaling coefficient.
      **/
-    cuda_tod_add(dense_tensor_i<N, double> &t, double c = 1.0);
+    cuda_tod_add(cuda_dense_tensor_i<N, double> &t, double c = 1.0);
 
     /** \brief Initializes the addition operation
         \param t First %tensor in the series.
         \param p Permutation of the first %tensor.
         \param c Scaling coefficient.
      **/
-    cuda_tod_add(dense_tensor_i<N, double> &t, const permutation<N> &p,
+    cuda_tod_add(cuda_dense_tensor_i<N, double> &t, const permutation<N> &p,
         double c = 1.0);
 
     /** \brief Virtual destructor
@@ -71,14 +71,14 @@ public:
         \param t Tensor.
         \param c Coefficient.
      **/
-    void add_op(dense_tensor_i<N, double> &t, double c);
+    void add_op(cuda_dense_tensor_i<N, double> &t, double c);
 
     /** \brief Adds an operand
         \param t Tensor.
         \param p Permutation of %tensor elements.
         \param c Coefficient.
      **/
-    void add_op(dense_tensor_i<N, double> &t, const permutation<N> &p, double c);
+    void add_op(cuda_dense_tensor_i<N, double> &t, const permutation<N> &p, double c);
 
     /** \brief Prefetches the arguments
      **/
@@ -86,14 +86,14 @@ public:
 
     /** \brief Computes the sum into the output tensor
      **/
-    void perform(bool zero, double c, dense_tensor_i<N, double> &tb);
+    void perform(bool zero, double c, cuda_dense_tensor_i<N, double> &tb);
 
     //@}
 
 private:
     /** \brief Adds an operand (implementation)
      **/
-    void add_operand(dense_tensor_i<N, double> &t, const permutation<N> &perm,
+    void add_operand(cuda_dense_tensor_i<N, double> &t, const permutation<N> &perm,
         double c);
 
 };

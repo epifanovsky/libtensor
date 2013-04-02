@@ -105,11 +105,11 @@ public:
         bool zero,
         const index<NC> &ic,
         const tensor_transf<NC, double> &trc,
-        dense_tensor_wr_i<NC, double> &blkc);
+        cuda_dense_tensor_wr_i<NC, double> &blkc);
 
     virtual void compute_block(
         const index<NC> &ic,
-        dense_tensor_wr_i<NC, double> &blkc) {
+        cuda_dense_tensor_wr_i<NC, double> &blkc) {
 
         compute_block(true, ic, tensor_transf<NC, double>(), blkc);
     }

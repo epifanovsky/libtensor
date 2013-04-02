@@ -105,7 +105,7 @@ public:
             bool zero,
             const index<N> &i,
             const tensor_transf<N, double> &tr,
-            dense_tensor_wr_i<N, double> &blk);
+            cuda_dense_tensor_wr_i<N, double> &blk);
 
     virtual void perform(gen_block_tensor_i<N, bti_traits> &btb);
     virtual void perform(gen_block_tensor_i<N, bti_traits> &btb,

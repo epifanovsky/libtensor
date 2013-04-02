@@ -2,7 +2,7 @@
 #define LIBTENSOR_CUDA_TOD_SET_H
 
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_i.h>
 
 namespace libtensor {
 
@@ -28,7 +28,7 @@ public:
     /**	\brief Performs the operation
         \param t Output tensor.
      **/
-    void perform(dense_tensor_wr_i<N, double> &t);
+    void perform(cuda_dense_tensor_wr_i<N, double> &t);
 
 };
 

@@ -21,6 +21,7 @@ set(SRC
 
 set(SRC_CUDA
     cuda/cuda_allocator.C
+    cuda/cuda_pointer.C
     cuda_block_tensor/impl/cuda_block_tensor.C
     cuda_block_tensor/impl/cuda_btod_copy.C
     cuda_block_tensor/impl/cuda_btod_copy_d2h.C
@@ -59,7 +60,6 @@ set(SRC_CUDA
     cuda_dense_tensor/impl/cuda_tod_copy_h2d.C
     cuda_dense_tensor/impl/cuda_tod_dotprod.C
     cuda_dense_tensor/impl/cuda_tod_set.cu
-    dense_tensor/impl/dense_tensor_cuda.C
 )
 
 set(SRC_LINALG_ACML

@@ -1,12 +1,13 @@
 #include "cuda_kern_copy_2d.h"
 #include <libtensor/cuda/cuda_utils.h>
+#include <libtensor/cuda/cuda_pointer.h>
 
 namespace libtensor {
 
 
 const char *cuda_kern_copy_2d::k_clazz = "cuda_kern_copy_2d";
 
-cuda_kern_copy_2d::cuda_kern_copy_2d(const double *pa, double *pb, const dimensions<2> dimsa, const dimensions<2> dimsb, const permutation<2> &perma, const double &c, const double &d) :
+cuda_kern_copy_2d::cuda_kern_copy_2d(cuda_pointer<const double> pa, cuda_pointer<double> pb, const dimensions<2> dimsa, const dimensions<2> dimsb, const permutation<2> &perma, const double &c, const double &d) :
 	cuda_kern_copy_generic(pa, pb, c, d) {
 
 	const int THREADS_PER_BLOCK = 512;
@@ -34,14 +35,14 @@ void cuda_kern_copy_2d::run() {
 
 	//kernel call
    	if (m_d != 0) {
-   			cuda::add_copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c*m_d);
+   			cuda::add_copy_tensor<<<grid, threads>>>(m_pa.get_physical_pointer(), m_pb.get_physical_pointer(), b_incrs, dims, m_c*m_d);
    	} else {
    		if (m_c == 1) {
 //   			std::cout << "\nb_inc = " << b_incrs.x << " " << b_incrs.y << "\n";
 //   			std::cout << "\dims = " << dims.x << " " << dims.y << "\n";
-   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims);
+   			cuda::copy_tensor<<<grid, threads>>>(m_pa.get_physical_pointer(), m_pb.get_physical_pointer(), b_incrs, dims);
    		} else {
-   			cuda::copy_tensor<<<grid, threads>>>(m_pa, m_pb, b_incrs, dims, m_c);
+   			cuda::copy_tensor<<<grid, threads>>>(m_pa.get_physical_pointer(), m_pb.get_physical_pointer(), b_incrs, dims, m_c);
    		}
    	}
    	cuda_utils::handle_kernel_error(g_ns, k_clazz, method, __FILE__, __LINE__);

@@ -43,7 +43,7 @@ void cuda_btod_copy_d2h<N>::perform(block_tensor_wr_i<N, double> &bth) {
         for(size_t i = 0; i < nzorba.size(); i++) {
             index<N> bi;
             abs_index<N>::get_index(nzorba[i], bidimsa, bi);
-            dense_tensor_rd_i<N, double> &blka = ca.req_const_block(bi);
+            cuda_dense_tensor_rd_i<N, double> &blka = ca.req_const_block(bi);
             dense_tensor_wr_i<N, double> &blkb = cb.req_block(bi);
             cuda_tod_copy_d2h<N>(blka).perform(blkb);
         }

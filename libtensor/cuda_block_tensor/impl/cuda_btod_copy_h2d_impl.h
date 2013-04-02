@@ -44,7 +44,7 @@ void cuda_btod_copy_h2d<N>::perform(cuda_block_tensor_wr_i<N, double> &btd) {
             index<N> bi;
             abs_index<N>::get_index(nzorba[i], bidimsa, bi);
             dense_tensor_rd_i<N, double> &blka = ca.req_const_block(bi);
-            dense_tensor_wr_i<N, double> &blkb = cb.req_block(bi);
+            cuda_dense_tensor_wr_i<N, double> &blkb = cb.req_block(bi);
             cuda_tod_copy_h2d<N>(blka).perform(blkb);
         }
 

@@ -1,8 +1,10 @@
 #include <sstream>
 #include <libtensor/cuda/cuda_allocator.h>
 #include <libtensor/core/allocator.h>
-#include <libtensor/dense_tensor/dense_tensor_i.h>
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+//#include <libtensor/dense_tensor/dense_tensor_i.h>
+#include <libtensor/dense_tensor/dense_tensor.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor.h>
+//#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_copy_d2h.h>
 #include <libtensor/cuda_dense_tensor/cuda_tod_copy_h2d.h>
 #include "../compare_ref.h"
@@ -13,7 +15,7 @@ namespace libtensor {
 
 typedef std_allocator<double> std_allocator_t;
 typedef cuda_allocator<double> cuda_allocator_t;
-typedef dense_tensor<4, double, cuda_allocator_t> d_tensor4;
+typedef cuda_dense_tensor<4, double, cuda_allocator_t> d_tensor4;
 
 void cuda_tod_copy_hd_test::perform() throw(libtest::test_exception) {
 	test_exc();
@@ -39,11 +41,10 @@ void cuda_tod_copy_hd_test::test_plain(const dimensions<N> &dims)
 	try {
 
 	dense_tensor<N, double, std_allocator_t> h_ta(dims), h_ta_copy(dims);
-	dense_tensor<N, double, cuda_allocator_t> d_ta(dims);
+	cuda_dense_tensor<N, double, cuda_allocator_t> d_ta(dims);
 
 	{
 	dense_tensor_ctrl<N, double> h_tca(h_ta), h_tca_copy(h_ta_copy);
-	dense_tensor_ctrl<N, double> d_tca(d_ta);
 
 	double *h_dta = h_tca.req_dataptr();
 	//double *h_dtb1 = h_tcb.req_dataptr();
@@ -81,7 +82,8 @@ void cuda_tod_copy_hd_test::test_exc() throw(libtest::test_exception) {
 	i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
 	index_range<4> ir1(i1,i2), ir2(i1,i3);
 	dimensions<4> dim1(ir1), dim2(ir2);
-	d_tensor4 t1(dim1), t2(dim2);
+	dense_tensor<4, double, std_allocator_t> t1(dim1);
+	d_tensor4 t2(dim2);
 
 	bool ok = false;
 	try {
@@ -91,7 +93,7 @@ void cuda_tod_copy_hd_test::test_exc() throw(libtest::test_exception) {
 	}
 
 	try {
-		cuda_tod_copy_d2h<4>(t1).perform(t2);
+		cuda_tod_copy_d2h<4>(t2).perform(t1);
 	} catch(exception &e) {
 		ok = ok && true;
 	}

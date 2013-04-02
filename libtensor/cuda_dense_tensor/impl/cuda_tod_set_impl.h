@@ -1,4 +1,4 @@
-#include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <libtensor/cuda_dense_tensor/cuda_dense_tensor_ctrl.h>
 #include "../cuda_tod_set.h"
 #include "cuda_kern_set.h"
 #include <libtensor/cuda/cuda_utils.h>
@@ -16,13 +16,12 @@ cuda_tod_set<N>::cuda_tod_set(double v) : m_v(v) {
 
 
 template<size_t N>
-void cuda_tod_set<N>::perform(dense_tensor_wr_i<N, double> &t) {
+void cuda_tod_set<N>::perform(cuda_dense_tensor_wr_i<N, double> &t) {
 	 static const char *method =
-	        "perform(bool, dense_tensor_wr_i<N, double>&)";
-
-    dense_tensor_wr_ctrl<N, double> ctrl(t);
-    double *d = ctrl.req_dataptr();
-    double *p = d;
+	        "perform(bool, cuda_dense_tensor_wr_i<N, double>&)";
+    cuda_dense_tensor_wr_ctrl<N, double> ctrl(t);
+    cuda_pointer<double> d = ctrl.req_dataptr();
+    double *p = d.get_physical_pointer();
 
      size_t sz = t.get_dims().get_size();
      size_t grid, threads;
