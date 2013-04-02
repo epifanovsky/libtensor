@@ -43,6 +43,7 @@ set(SRC_TOD
     tod/to_contract2_dims_test.C
     tod/tod_contract2_test.C
     tod/tod_copy_test.C
+    tod/tod_copy_wnd_test.C
     tod/tod_diag_test.C
     tod/tod_dirsum_test.C
     tod/tod_dotprod_test.C

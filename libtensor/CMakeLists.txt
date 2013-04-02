@@ -78,6 +78,7 @@ set(SRC_INST
     dense_tensor/impl/tod_compare.C
     dense_tensor/impl/tod_contract2.C
     dense_tensor/impl/tod_copy.C
+    dense_tensor/impl/tod_copy_wnd.C
     dense_tensor/impl/tod_diag.C
     dense_tensor/impl/tod_dirsum.C
     dense_tensor/impl/tod_dotprod.C
