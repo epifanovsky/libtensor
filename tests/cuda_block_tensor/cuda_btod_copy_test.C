@@ -59,11 +59,9 @@ void cuda_btod_copy_test::test1() throw(libtest::test_exception) {
         bta.set_immutable();
 
         //  Copy from device to host memory
-        std::cout << "\ntest1\n";
 
         cuda_btod_copy_h2d<2>(bta).perform(btb);
 
-        std::cout << "\ntest2\n";
         //  Copy from device to device memory
 
         cuda_btod_copy<2>(btb).perform(btb_copy);

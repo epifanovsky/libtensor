@@ -172,15 +172,13 @@ void cuda_btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
         block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btc(bisc), btc_ref(bisc);
         cuda_block_tensor<4, double, cuda_allocator_t> bta_d(bisa), btb_d(bisb), btc_d(bisc);
 
-        std::cout << "\ntest0\n";
-
         //  Load random data for input
 
         btod_random<4> rand;
         rand.perform(bta);
         rand.perform(btb);
-//        bta.set_immutable();
-//        btb.set_immutable();
+        bta.set_immutable();
+        btb.set_immutable();
 
         //  Run reference contraction
 
@@ -190,31 +188,21 @@ void cuda_btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
         btod_contract2<2, 2, 2> op(contr, bta, btb);
         op.perform(btc_ref);
-//        btc_ref.set_immutable();
-
-
-        std::cout << "\ntest01\n";
+        btc_ref.set_immutable();
 
         //  Copy from host to device memory
 
         cuda_btod_copy_h2d<4>(bta).perform(bta_d);
-
-        std::cout << "\ntest1\n";
         cuda_btod_copy_h2d<4>(btb).perform(btb_d);
 
-        std::cout << "\ntest2\n";
         //Run contraction on GPU
         cuda_btod_contract2<2, 2, 2> op_d(contr, bta_d, btb_d);
         op_d.perform(btc_d);
 
-
-        std::cout << "\ntest3\n";
         //  Copy back from device to host memory
 
         cuda_btod_copy_d2h<4>(btc_d).perform(btc);
 
-
-        std::cout << "\ntest4\n";
         //  Compare against reference
 
         compare_ref<4>::compare(testname, btc, btc_ref, 1e-13);
