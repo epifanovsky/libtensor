@@ -18,6 +18,10 @@ template class symmetry_operation_impl< so_permute<5, double>,
     se_perm<5, double> >;
 template class symmetry_operation_impl< so_permute<6, double>,
     se_perm<6, double> >;
+template class symmetry_operation_impl< so_permute<7, double>,
+    se_perm<7, double> >;
+template class symmetry_operation_impl< so_permute<8, double>,
+    se_perm<8, double> >;
 
 
 } // namespace libtensor
