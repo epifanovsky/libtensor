@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_SYMMETRIZE3_IMPL_H
 #define LIBTENSOR_BTOD_SYMMETRIZE3_IMPL_H
 
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>

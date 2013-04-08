@@ -1,9 +1,7 @@
 #ifndef LIBTENSOR_SCALAR_TRANSF_DOUBLE_H
 #define LIBTENSOR_SCALAR_TRANSF_DOUBLE_H
 
-
-#include "../defs.h"
-#include "../core/scalar_transf.h"
+#include "scalar_transf.h"
 
 
 namespace libtensor {

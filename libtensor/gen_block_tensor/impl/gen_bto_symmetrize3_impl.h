@@ -1,9 +1,10 @@
 #ifndef LIBTENSOR_GEN_BTO_SYMMETRIZE3_IMPL_H
 #define LIBTENSOR_GEN_BTO_SYMMETRIZE3_IMPL_H
 
+#include <set>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
+#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_symmetrize.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_symmetrize.h>
 #include "../gen_bto_symmetrize3.h"
@@ -187,21 +188,103 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_symmetry() {
 }
 
 
+namespace {
+
+template<size_t N, typename T>
+void visit_orbit(const orbit<N, T> &o, std::set<size_t> &visited) {
+
+    for(typename orbit<N, T>::iterator j = o.begin(); j != o.end(); j++) {
+        visited.insert(o.get_abs_index(j));
+    }
+}
+
+} // unnamed namespace
+
+
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
 
     gen_bto_symmetrize3::start_timer("make_schedule");
 
     dimensions<N> bidims(m_op.get_bis().get_block_index_dims());
-    orbit_list<N, element_type> ol(m_sym);
+    scalar_transf<element_type> scal(m_symm ? 1.0 : -1.0);
 
-    for(typename orbit_list<N, element_type>::iterator io = ol.begin();
-        io != ol.end(); ++io) {
+    std::set<size_t> visited;
 
-        abs_index<N> ai(ol.get_abs_index(io), bidims);
-        sym_schedule_type sch;
-        make_schedule_blk(ai, sch);
-        if(!sch.empty()) m_sch.insert(ai.get_abs_index());
+    const assignment_schedule<N, element_type> &sch0 = m_op.get_schedule();
+    for(typename assignment_schedule<N, element_type>::iterator i =
+        sch0.begin(); i != sch0.end(); ++i) {
+
+        abs_index<N> ai0(sch0.get_abs_index(i), bidims);
+        orbit<N, element_type> o(m_op.get_symmetry(), ai0.get_index());
+
+        for(typename orbit<N, element_type>::iterator j = o.begin();
+            j != o.end(); j++) {
+
+            abs_index<N> aj1(o.get_abs_index(j), bidims);
+            if(visited.count(aj1.get_abs_index()) == 0) {
+                orbit<N, element_type> o1(m_sym, aj1.get_abs_index());
+                if(!m_sch.contains(o1.get_acindex())) {
+                    m_sch.insert(o1.get_acindex());
+                    visit_orbit(o1, visited);
+                }
+            }
+
+            index<N> j2(aj1.get_index());
+            j2.permute(m_perm1);
+            abs_index<N> aj2(j2, bidims);
+            if(visited.count(aj2.get_abs_index()) == 0) {
+                orbit<N, element_type> o2(m_sym, aj2.get_abs_index());
+                if(!m_sch.contains(o2.get_acindex())) {
+                    m_sch.insert(o2.get_acindex());
+                    visit_orbit(o2, visited);
+                }
+            }
+
+            index<N> j3(aj1.get_index());
+            j3.permute(m_perm2);
+            abs_index<N> aj3(j3, bidims);
+            if(visited.count(aj3.get_abs_index()) == 0) {
+                orbit<N, element_type> o3(m_sym, aj3.get_abs_index());
+                if(!m_sch.contains(o3.get_acindex())) {
+                    m_sch.insert(o3.get_acindex());
+                    visit_orbit(o3, visited);
+                }
+            }
+
+            index<N> j4(aj1.get_index());
+            j4.permute(m_perm1).permute(m_perm2);
+            abs_index<N> aj4(j4, bidims);
+            if(visited.count(aj4.get_abs_index()) == 0) {
+                orbit<N, element_type> o4(m_sym, aj4.get_abs_index());
+                if(!m_sch.contains(o4.get_acindex())) {
+                    m_sch.insert(o4.get_acindex());
+                    visit_orbit(o4, visited);
+                }
+            }
+
+            index<N> j5(aj1.get_index());
+            j5.permute(m_perm2).permute(m_perm1);
+            abs_index<N> aj5(j5, bidims);
+            if(visited.count(aj5.get_abs_index()) == 0) {
+                orbit<N, element_type> o5(m_sym, aj5.get_abs_index());
+                if(!m_sch.contains(o5.get_acindex())) {
+                    m_sch.insert(o5.get_acindex());
+                    visit_orbit(o5, visited);
+                }
+            }
+
+            index<N> j6(aj1.get_index());
+            j6.permute(m_perm1).permute(m_perm2).permute(m_perm1);
+            abs_index<N> aj6(j6, bidims);
+            if(visited.count(aj6.get_abs_index()) == 0) {
+                orbit<N, element_type> o6(m_sym, aj6.get_abs_index());
+                if(!m_sch.contains(o6.get_acindex())) {
+                    m_sch.insert(o6.get_acindex());
+                    visit_orbit(o6, visited);
+                }
+            }
+        }
     }
 
     gen_bto_symmetrize3::stop_timer("make_schedule");
