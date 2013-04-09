@@ -44,21 +44,37 @@ void btod_sum<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 
     if(m_ops.empty()) return;
 
-    for(typename std::list<node_t>::iterator iop = m_ops.begin();
-        iop != m_ops.end(); ++iop) {
+    if(m_ops.size() == 1) {
+
+        typename std::list<node_t>::iterator iop = m_ops.begin();
 
         tensor_transf<N, double> tr(permutation<N>(),
             scalar_transf<double>(iop->get_coeff()));
-
-        gen_bto_aux_chsym<N, btod_traits> out1(iop->get_op().get_symmetry(),
-            m_sym, out);
-        gen_bto_aux_transform<N, btod_traits> out2(tr, m_sym, out1);
+        gen_bto_aux_transform<N, btod_traits> out1(tr, m_sym, out);
 
         out1.open();
-        out2.open();
-        iop->get_op().perform(out2);
+        iop->get_op().perform(out1);
         out1.close();
-        out2.close();
+
+    } else {
+
+        for(typename std::list<node_t>::iterator iop = m_ops.begin();
+            iop != m_ops.end(); ++iop) {
+
+            tensor_transf<N, double> tr(permutation<N>(),
+                scalar_transf<double>(iop->get_coeff()));
+
+            gen_bto_aux_chsym<N, btod_traits> out1(iop->get_op().get_symmetry(),
+                m_sym, out);
+            gen_bto_aux_transform<N, btod_traits> out2(tr, m_sym, out1);
+
+            out1.open();
+            out2.open();
+            iop->get_op().perform(out2);
+            out1.close();
+            out2.close();
+        }
+
     }
 }
 
