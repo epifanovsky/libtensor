@@ -25,9 +25,9 @@ gen_bto_symmetrize3<N, Traits, Timed>::gen_bto_symmetrize3(
     bool symm) :
 
     m_op(op), m_perm1(perm1), m_perm2(perm2), m_symm(symm),
-    m_sym(op.get_bis()), m_sch(op.get_bis().get_block_index_dims()) {
+    m_sym(op.get_bis()), m_sch(0) {
 
-    static const char *method =
+    static const char method[] =
         "gen_bto_symmetrize3(additive_bto<N, btod_traits>&, "
         "const permutation<N>&, const permutation<N>&, bool)";
 
@@ -48,6 +48,13 @@ gen_bto_symmetrize3<N, Traits, Timed>::gen_bto_symmetrize3(
 
     make_symmetry();
     make_schedule();
+}
+
+
+template<size_t N, typename Traits, typename Timed>
+gen_bto_symmetrize3<N, Traits, Timed>::~gen_bto_symmetrize3() {
+
+    delete m_sch;
 }
 
 
@@ -202,7 +209,11 @@ void visit_orbit(const orbit<N, T> &o, std::set<size_t> &visited) {
 
 
 template<size_t N, typename Traits, typename Timed>
-void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
+void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() const {
+
+    delete m_sch;
+    m_sch = new assignment_schedule<N, element_type>(
+        m_op.get_bis().get_block_index_dims());
 
     gen_bto_symmetrize3::start_timer("make_schedule");
 
@@ -224,8 +235,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
             abs_index<N> aj1(o.get_abs_index(j), bidims);
             if(visited.count(aj1.get_abs_index()) == 0) {
                 orbit<N, element_type> o1(m_sym, aj1.get_abs_index());
-                if(!m_sch.contains(o1.get_acindex())) {
-                    m_sch.insert(o1.get_acindex());
+                if(!m_sch->contains(o1.get_acindex())) {
+                    m_sch->insert(o1.get_acindex());
                     visit_orbit(o1, visited);
                 }
             }
@@ -235,8 +246,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
             abs_index<N> aj2(j2, bidims);
             if(visited.count(aj2.get_abs_index()) == 0) {
                 orbit<N, element_type> o2(m_sym, aj2.get_abs_index());
-                if(!m_sch.contains(o2.get_acindex())) {
-                    m_sch.insert(o2.get_acindex());
+                if(!m_sch->contains(o2.get_acindex())) {
+                    m_sch->insert(o2.get_acindex());
                     visit_orbit(o2, visited);
                 }
             }
@@ -246,8 +257,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
             abs_index<N> aj3(j3, bidims);
             if(visited.count(aj3.get_abs_index()) == 0) {
                 orbit<N, element_type> o3(m_sym, aj3.get_abs_index());
-                if(!m_sch.contains(o3.get_acindex())) {
-                    m_sch.insert(o3.get_acindex());
+                if(!m_sch->contains(o3.get_acindex())) {
+                    m_sch->insert(o3.get_acindex());
                     visit_orbit(o3, visited);
                 }
             }
@@ -257,8 +268,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
             abs_index<N> aj4(j4, bidims);
             if(visited.count(aj4.get_abs_index()) == 0) {
                 orbit<N, element_type> o4(m_sym, aj4.get_abs_index());
-                if(!m_sch.contains(o4.get_acindex())) {
-                    m_sch.insert(o4.get_acindex());
+                if(!m_sch->contains(o4.get_acindex())) {
+                    m_sch->insert(o4.get_acindex());
                     visit_orbit(o4, visited);
                 }
             }
@@ -268,8 +279,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
             abs_index<N> aj5(j5, bidims);
             if(visited.count(aj5.get_abs_index()) == 0) {
                 orbit<N, element_type> o5(m_sym, aj5.get_abs_index());
-                if(!m_sch.contains(o5.get_acindex())) {
-                    m_sch.insert(o5.get_acindex());
+                if(!m_sch->contains(o5.get_acindex())) {
+                    m_sch->insert(o5.get_acindex());
                     visit_orbit(o5, visited);
                 }
             }
@@ -279,8 +290,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule() {
             abs_index<N> aj6(j6, bidims);
             if(visited.count(aj6.get_abs_index()) == 0) {
                 orbit<N, element_type> o6(m_sym, aj6.get_abs_index());
-                if(!m_sch.contains(o6.get_acindex())) {
-                    m_sch.insert(o6.get_acindex());
+                if(!m_sch->contains(o6.get_acindex())) {
+                    m_sch->insert(o6.get_acindex());
                     visit_orbit(o6, visited);
                 }
             }
