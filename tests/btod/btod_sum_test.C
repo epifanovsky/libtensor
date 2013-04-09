@@ -309,7 +309,8 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
     //  Two operands A + B and C + D, symmetry
     //
 
-    static const char *testname = "btod_sum_test::test_6()";
+    std::ostringstream tnss;
+    tnss << "btod_sum_test::test_6(" << do_add << ")";
 
     typedef std_allocator<double> allocator_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -366,9 +367,9 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
     bta2.set_immutable();
     btb2.set_immutable();
 
-    // Prepare reference
+    //  Prepare reference
 
-    if (do_add) {
+    if(do_add) {
         btod_random<4>().perform(btc);
         btod_copy<4>(btc).perform(btc_ref);
     }
@@ -378,19 +379,19 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
     btod_add<4> op1(bta1), op2(bta2);
     op1.add_op(btb1);
     op2.add_op(btb2);
-    if (do_add) op1.perform(btc_ref, 1.0);
+    if(do_add) op1.perform(btc_ref, 1.0);
     else op1.perform(btc_ref);
     op2.perform(btc_ref, 1.0);
 
     btod_sum<4> sum(op1);
     sum.add_op(op2);
-    if (do_add) sum.perform(btc, 1.0);
+    if(do_add) sum.perform(btc, 1.0);
     else sum.perform(btc);
 
-    compare_ref<4>::compare(testname, btc, btc_ref, 1e-14);
+    compare_ref<4>::compare(tnss.str().c_str(), btc, btc_ref, 1e-14);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
 

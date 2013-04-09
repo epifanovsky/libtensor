@@ -161,6 +161,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_addition_schedule.C
     block_tensor/impl/btod_add.C
     block_tensor/impl/btod_aux_add.C
+    block_tensor/impl/btod_aux_chsym.C
     block_tensor/impl/btod_aux_copy.C
     block_tensor/impl/btod_aux_symmetrize.C
     block_tensor/impl/btod_aux_transform.C
