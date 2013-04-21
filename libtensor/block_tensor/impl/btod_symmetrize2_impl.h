@@ -1,17 +1,11 @@
 #ifndef LIBTENSOR_BTOD_SYMMETRIZE2_IMPL_H
 #define LIBTENSOR_BTOD_SYMMETRIZE2_IMPL_H
 
-#include <list>
-#include <libtensor/core/allocator.h>
-#include <libtensor/core/orbit.h>
-#include <libtensor/core/short_orbit.h>
-#include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/core/tensor_transf.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/symmetry/so_permute.h>
-#include <libtensor/symmetry/so_symmetrize.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
-#include <libtensor/gen_block_tensor/gen_bto_aux_symmetrize.h>
 #include "../btod_symmetrize2.h"
 
 namespace libtensor {

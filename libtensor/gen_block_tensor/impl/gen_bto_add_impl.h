@@ -272,6 +272,19 @@ void gen_bto_add<N, Traits, Timed>::add_operand(
 }
 
 
+namespace {
+
+template<size_t N, typename T>
+void visit_orbit(const orbit<N, T> &o, std::set<size_t> &visited) {
+
+    for(typename orbit<N, T>::iterator j = o.begin(); j != o.end(); j++) {
+        visited.insert(o.get_abs_index(j));
+    }
+}
+
+} // unnamed namespace
+
+
 template<size_t N, typename Traits, typename Timed>
 void gen_bto_add<N, Traits, Timed>::make_schedule() const {
 
@@ -279,32 +292,38 @@ void gen_bto_add<N, Traits, Timed>::make_schedule() const {
 
     try {
 
-        orbit_list<N, element_type> olb(m_symb);
+        dimensions<N> bidimsb = m_bisb.get_block_index_dims();
 
-        for(typename orbit_list<N, element_type>::iterator iob = olb.begin();
-            iob != olb.end(); ++iob) {
+        std::set<size_t> visited;
 
-            if(m_schb.contains(olb.get_abs_index(iob))) continue;
+        for(typename std::list<arg>::const_iterator i = m_args.begin();
+            i != m_args.end(); ++i) {
 
-            for(typename std::list<arg>::const_iterator i = m_args.begin();
-                i != m_args.end(); ++i) {
+            gen_block_tensor_rd_i<N, bti_traits> &bta = i->bta;
+            const tensor_transf<N, element_type> &tra = i->tra;
+            dimensions<N> bidimsa = bta.get_bis().get_block_index_dims();
+            tensor_transf<N, element_type> trainv(tra, true);
 
-                gen_block_tensor_rd_i<N, bti_traits> &bta = i->bta;
-                const tensor_transf<N, element_type> &tra = i->tra;
-                tensor_transf<N, element_type> trainv(tra, true);
+            gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
 
-                gen_block_tensor_rd_ctrl<N, bti_traits> ca(bta);
+            std::vector<size_t> nzblka;
+            ca.req_nonzero_blocks(nzblka);
+
+            for(size_t j = 0; j < nzblka.size(); j++) {
 
                 index<N> ia;
-                olb.get_index(iob, ia);
-                ia.permute(trainv.get_perm());
-                orbit<N, element_type> oa(ca.req_const_symmetry(), ia);
-                if(!oa.is_allowed()) continue;
+                abs_index<N>::get_index(nzblka[j], bidimsa, ia);
 
-                if(!ca.req_is_zero_block(oa.get_cindex())) {
-                    m_schb.insert(olb.get_abs_index(iob));
-                    break;
+                index<N> ib(ia);
+                ib.permute(tra.get_perm());
+                size_t aib = abs_index<N>::get_abs_index(ib, bidimsb);
+                if(visited.count(aib) != 0) continue;
+
+                orbit<N, element_type> ob(m_symb, ib);
+                if(!m_schb.contains(ob.get_acindex())) {
+                    m_schb.insert(ob.get_acindex());
                 }
+                visit_orbit(ob, visited);
             }
         }
 

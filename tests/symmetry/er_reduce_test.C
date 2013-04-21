@@ -609,28 +609,26 @@ void er_reduce_test::test_7(
     typedef product_table_i::label_set_t label_set_t;
     typedef product_table_i::label_group_t label_group_t;
 
-    evaluation_rule<6> r1, r2;
-    evaluation_rule<4> r3, r4;
+    evaluation_rule<6> r1, r3;
+    evaluation_rule<4> r2, r4;
 
-//    Rmap: [ 0 1 2 3 4 4]
-//    Block labels:
-//    [ 0 1 2 3]
-//    []
-//    Table ID: C2v
-//    Block labels:  [0(0): * *] [1(0): * *] [2(0): * *] [3(1): 0 1 2 3 0 1 2 3] [4(0): * *] [5(0): * *]
-//    Rule:
-//    ([000101], *)
-
+    //    Rmap: [ 0 1 2 3 4 4]
+    //    Table ID: C2v
+    //    Block labels:  [0(0): * *] [1(0): * *] [2(0): * *]
+    //      [3(1): 0 1 2 3 0 1 2 3] [4(0): * *] [5(0): * *]
+    //    Rule:
+    //    ([000101], 0) ([111010], 0)
 
     try {
 
-        sequence<6, size_t> seq1(0), seq2(0);
-        seq1[3] = 1; seq1[5] = 1; seq2[3] = 1;
+        sequence<6, size_t> seq1a(0), seq1b(0), seq2(0);
+        seq1a[3] = 1; seq1a[5] = 1;
+        seq1b[0] = 1; seq1b[1] = 1; seq1b[2] = 1; seq1b[4] = 1;
+        seq2[3] = 1;
 
         product_rule<6> &pr1 = r1.new_product();
-        pr1.add(seq1, product_table_i::k_invalid);
-        product_rule<6> &pr2 = r2.new_product();
-        pr2.add(seq2, product_table_i::k_invalid);
+        pr1.add(seq1a, product_table_i::k_identity);
+        pr1.add(seq1b, product_table_i::k_identity);
 
         sequence<6, size_t> rmap(0);
         rmap[0] = 0; rmap[1] = 1; rmap[2] = 2; rmap[3] = 3;
@@ -641,46 +639,40 @@ void er_reduce_test::test_7(
         rdims[0].push_back(2);
         rdims[0].push_back(3);
 
-        evaluation_rule<4> tmp;
-        er_reduce<6, 2>(r1, rmap, rdims, id).perform(r3);
-        //er_optimize<4>(tmp, id).perform(r3);
-        er_reduce<6, 2>(r2, rmap, rdims, id).perform(r4);
-        //er_optimize<4>(tmp, id).perform(r4);
+        er_reduce<6, 2>(r1, rmap, rdims, id).perform(r2);
+        er_reduce<6, 2>(r3, rmap, rdims, id).perform(r4);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
-    std::cout <<"R3:"<< r3 << std::endl;
-    std::cout <<"R4:"<< r4 << std::endl;
+    // Check sequence list
+    const eval_sequence_list<4> &sl = r2.get_sequences();
+    if (sl.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "# seq.");
+    }
+    if (sl[0][0] != 1 || sl[0][1] != 1 || sl[0][2] != 1 || sl[0][3] != 1) {
+        fail_test(testname, __FILE__, __LINE__, "seq.");
+    }
 
-//    // Check sequence list
-//    const eval_sequence_list<2> &sl = r2.get_sequences();
-//    if (sl.size() != 1) {
-//        fail_test(testname, __FILE__, __LINE__, "# seq.");
-//    }
-//    if (sl[0][0] != 1 || sl[0][1] != 1) {
-//        fail_test(testname, __FILE__, __LINE__, "seq.");
-//    }
-//
-//    // Check product list
-//    evaluation_rule<2>::iterator it = r2.begin();
-//    if (it == r2.end()) {
-//        fail_test(testname, __FILE__, __LINE__, "Empty product list.");
-//    }
-//
-//    const product_rule<2> &pr1 = r2.get_product(it);
-//    it++;
-//    if (it != r2.end()) {
-//        fail_test(testname, __FILE__, __LINE__, "More than one product.");
-//    }
-//    product_rule<2>::iterator ip1 = pr1.begin();
-//    if (ip1 == pr1.end()) {
-//        fail_test(testname, __FILE__, __LINE__, "Empty product pr1.");
-//    }
-//    if (pr1.get_intrinsic(ip1) != 0) {
-//        fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
-//    }
+    // Check product list
+    evaluation_rule<4>::iterator it = r2.begin();
+    if (it == r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product list.");
+    }
+
+    const product_rule<4> &pr1 = r2.get_product(it);
+    it++;
+    if (it != r2.end()) {
+        fail_test(testname, __FILE__, __LINE__, "More than one product.");
+    }
+    product_rule<2>::iterator ip1 = pr1.begin();
+    if (ip1 == pr1.end()) {
+        fail_test(testname, __FILE__, __LINE__, "Empty product pr1.");
+    }
+    if (pr1.get_intrinsic(ip1) != 0) {
+        fail_test(testname, __FILE__, __LINE__, "Intrinsic label.");
+    }
 }
 
 

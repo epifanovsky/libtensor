@@ -9,6 +9,7 @@
 #include "to_contract2_dims_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
+#include "tod_copy_wnd_test.h"
 #include "tod_diag_test.h"
 #include "tod_dirsum_test.h"
 #include "tod_dotprod_test.h"
@@ -51,6 +52,7 @@ namespace libtensor {
     \li libtensor::to_contract2_dims_test
     \li libtensor::tod_contract2_test
     \li libtensor::tod_copy_test
+    \li libtensor::tod_copy_wnd_test
     \li libtensor::tod_diag_test
     \li libtensor::tod_dirsum_test
     \li libtensor::tod_dotprod_test
@@ -80,6 +82,7 @@ private:
     unit_test_factory<to_contract2_dims_test> m_utf_to_contract2_dims;
     unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
     unit_test_factory<tod_copy_test> m_utf_tod_copy;
+    unit_test_factory<tod_copy_wnd_test> m_utf_tod_copy_wnd;
     unit_test_factory<tod_diag_test> m_utf_tod_diag;
     unit_test_factory<tod_dirsum_test> m_utf_tod_dirsum;
     unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
