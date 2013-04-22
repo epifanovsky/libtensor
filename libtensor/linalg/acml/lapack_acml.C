@@ -96,6 +96,14 @@ int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
 }
 
 
+int lapack_dpotri(char uplo, size_t n, double *a, size_t lda) {
+
+    int info = 0;
+    dpotri(uplo, n, a, lda, &info);
+    return info;
+}
+
+
 int lapack_dlarnv(size_t idist, int *iseed, size_t n, double *x) {
 
     throw not_implemented(g_ns, 0, "lapack_dlarnv", __FILE__, __LINE__);
