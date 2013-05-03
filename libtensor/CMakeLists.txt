@@ -172,6 +172,8 @@ set(SRC_BTOD
     block_tensor/impl/btod_contract2_4.C
     block_tensor/impl/btod_contract2_5.C
     block_tensor/impl/btod_contract2_6.C
+    block_tensor/impl/btod_contract2_7.C
+    block_tensor/impl/btod_contract2_8.C
     block_tensor/impl/btod_contract2_clst_builder.C
     block_tensor/impl/btod_contract2_clst_optimize.C
     block_tensor/impl/btod_contract2_nzorb.C
