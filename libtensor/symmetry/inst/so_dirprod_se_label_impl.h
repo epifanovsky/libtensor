@@ -112,7 +112,6 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<NM, T> >::do_perform(
             }
 
             transfer_labeling(cl2.get_labeling(), map2, e3.get_labeling());
-            e3.get_labeling().match();
 
             // Transfer the rules
             const evaluation_rule<N> &r1 = cl1.get_rule();
@@ -162,6 +161,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<NM, T> >::do_perform(
             } // Loop ir1
         }
 
+        e3.get_labeling().match();
         e3.set_rule(r3);
         params.g3.insert(e3);
     }
@@ -216,6 +216,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<NM, T> >::do_perform(
         }
 
         // Set the rule and finish off
+        e3.get_labeling().match();
         e3.set_rule(r3);
         params.g3.insert(e3);
     }

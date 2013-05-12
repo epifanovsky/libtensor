@@ -85,6 +85,13 @@ int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
 int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda);
 
 
+/** \brief LAPACK function dpotri (Intel MKL)
+
+    \ingroup libtensor_linalg
+ **/
+int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda);
+
+
 /** \brief LAPACK function dlarnv (Intel MKL)
 
     \ingroup libtensor_linalg
