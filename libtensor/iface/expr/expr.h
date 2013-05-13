@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
-#define    LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
+#define LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
 
-#include "../../defs.h"
-#include "../../exception.h"
+#include <libtensor/exception.h>
+#include <libtensor/core/noncopyable.h>
 #include "../labeled_btensor.h"
 #include "arg.h"
 
@@ -10,14 +10,49 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/** \brief Expression base class
+/** \brief Evaluation container base class
 
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class expr_i {
+class eval_container_i {
 public:
-    virtual ~expr_i() { }
+    /** \brief Virtual destructor
+     **/
+    virtual ~eval_container_i() { }
+
+    /** \brief Prepares the container
+     **/
+    virtual void prepare() = 0;
+
+    /** \brief Cleans up the container
+     **/
+    virtual void clean() = 0;
+
+};
+
+
+/** \brief Expression core base class
+
+    \ingroup libtensor_btensor_expr
+ **/
+template<size_t N, typename T>
+class expr_core_i {
+public:
+    /** \brief Virtual destructor
+     **/
+    virtual ~expr_core_i() { }
+
+    /** \brief Clones this expression core
+     **/
+    virtual expr_core_i<N, T> *clone() const = 0;
+
+    /** \brief Creates an evaluation container using new, caller responsible
+            to call delete
+     **/
+    virtual eval_container_i<N, T> *create_container(
+        const letter_expr<N> &label) const = 0;
+
 };
 
 
@@ -36,91 +71,57 @@ public:
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename Core>
-class expr : public expr_i<N, T> {
-public:
-    //!    Expression core type
-    typedef Core core_t;
-
-    //!    Expression evaluating container type
-    typedef typename Core::eval_container_t eval_container_t;
-
+template<size_t N, typename T>
+class expr : public noncopyable {
 private:
-    Core m_core; //!< Expression core
+    expr_core_i<N, T> *m_core; //!< Expression core
 
 public:
     /** \brief Constructs the expression using a core
      **/
-    expr(const Core &core) : m_core(core) { }
+    expr(const expr_core_i<N, T> &core) : m_core(core.clone()) { }
 
     /** \brief Copy constructor
      **/
-    expr(const expr<N, T, Core> &expr) : m_core(expr.m_core) { }
+    expr(const expr<N, T> &expr) : m_core(expr.m_core->clone()) { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~expr() { }
+    virtual ~expr() {
+        delete m_core;
+    }
 
     /** \brief Returns the core of the expression
      **/
-    Core &get_core();
+    expr_core_i<N, T> &get_core() {
+        return *m_core;
+    }
 
     /** \brief Returns the core of the expression (const version)
      **/
-    const Core &get_core() const;
+    const expr_core_i<N, T> &get_core() const {
+        return *m_core;
+    }
 
     /** \brief Returns whether the label contains a %letter
      **/
-    bool contains(const letter &let) const;
+    bool contains(const letter &let) const {
+        return m_core->contains(let);
+    }
 
     /** \brief Returns the %index of a %letter in the label
      **/
-    size_t index_of(const letter &let) const throw(exception);
+    size_t index_of(const letter &let) const {
+        return m_core->index_of(let);
+    }
 
     /** \brief Returns the %letter at a given position in the label
      **/
-    const letter &letter_at(size_t i) const throw(exception);
+    const letter &letter_at(size_t i) const {
+        return m_core->letter_at(i);
+    }
 
-private:
-    expr<N, T, Core> &operator=(const expr<N, T, Core>&);
 };
-
-
-template<size_t N, typename T, typename Core>
-inline Core &expr<N, T, Core>::get_core() {
-
-    return m_core;
-}
-
-
-template<size_t N, typename T, typename Core>
-inline const Core &expr<N, T, Core>::get_core() const {
-
-    return m_core;
-}
-
-
-template<size_t N, typename T, typename Core>
-inline bool expr<N, T, Core>::contains(const letter &let) const {
-
-    return m_core.contains(let);
-}
-
-
-template<size_t N, typename T, typename Core>
-inline size_t expr<N, T, Core>::index_of(const letter &let) const
-    throw(exception) {
-
-    return m_core.index_of(let);
-}
-
-
-template<size_t N, typename T, typename Core>
-inline const letter &expr<N, T, Core>::letter_at(size_t i) const
-    throw(exception) {
-
-    return m_core.letter_at(i);
-}
 
 
 } // namespace labeled_btensor_expr

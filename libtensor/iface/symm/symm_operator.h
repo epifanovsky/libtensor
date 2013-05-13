@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM_OPERATOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM_OPERATOR_H
 
-#include "symm1_core.h"
-#include "symm1_eval.h"
 #include "symm2_core.h"
 #include "symm2_eval.h"
 #include "symm3_core.h"

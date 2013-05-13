@@ -17,13 +17,6 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    template<size_t N, typename T, typename Core>
-    void invoke_eval(
-        const char *testname,
-        const labeled_btensor_expr::expr<N, T, Core> &expr,
-        const letter_expr<N> &label, block_tensor_i<N, T> &ref,
-        double thresh = 1e-14)
-        throw(libtest::test_exception);
 
     void test_copy_1() throw(libtest::test_exception);
     void test_copy_2() throw(libtest::test_exception);

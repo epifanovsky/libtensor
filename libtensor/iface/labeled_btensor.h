@@ -8,7 +8,7 @@
 namespace libtensor {
 
 namespace labeled_btensor_expr {
-template<size_t N, typename T, typename Expr> class expr;
+template<size_t N, typename T> class expr;
 } // namespace labeled_btensor_expr
 
 
@@ -42,19 +42,15 @@ public:
 
     /** \brief Assigns this %tensor to an expression
      **/
-    template<typename Expr>
     labeled_btensor<N, T, true> &operator=(
-        const labeled_btensor_expr::expr<N, T, Expr> rhs)
-        throw(exception);
+        const labeled_btensor_expr::expr<N, T> rhs);
 
     template<bool AssignableR>
     labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, AssignableR> rhs)
-        throw(exception);
+        labeled_btensor<N, T, AssignableR> rhs);
 
     labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, true> rhs)
-        throw(exception);
+        labeled_btensor<N, T, true> rhs);
 
 };
 

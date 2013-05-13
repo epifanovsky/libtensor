@@ -7,8 +7,8 @@
 #include "ident/core_ident.h"
 #include "ident/eval_ident.h"
 
-#include "add/operator_add.h"
-#include "add/operator_sub.h"
+#include "add/add_operator.h"
+#include "add/sub_operator.h"
 #include "contract/operator_contract.h"
 #include "diag/diag_operator.h"
 #include "direct_product/operator_direct_product.h"

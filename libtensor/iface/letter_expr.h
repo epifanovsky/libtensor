@@ -1,9 +1,8 @@
 #ifndef LIBTENSOR_LETTER_EXPR_H
 #define LIBTENSOR_LETTER_EXPR_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../core/permutation_builder.h"
+#include <libtensor/exception.h>
+#include <libtensor/core/permutation_builder.h>
 
 /** \defgroup libtensor_letter_expr Letter index expressions
     \ingroup libtensor_iface
