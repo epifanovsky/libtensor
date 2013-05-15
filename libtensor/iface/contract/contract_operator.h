@@ -1,9 +1,8 @@
-#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATOR_CONTRACT_H
-#define LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATOR_CONTRACT_H
+#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_OPERATOR_H
+#define LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_OPERATOR_H
 
-#include "../ident/core_ident.h"
-#include "core_contract.h"
-#include "eval_contract.h"
+#include "../ident/ident_core.h"
+#include "contract_core.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -23,7 +22,7 @@ expr<N + M - 2 * K, T> contract(
     expr<N, T> bta,
     expr<M, T> btb) {
 
-    typedef core_contract<N - K, M - K, K, T> core_t;
+    typedef contract_core<N - K, M - K, K, T> core_t;
     typedef expr<N + M - 2 * K, T> expr_t;
     return expr_t(core_t(contr, bta, btb));
 }
@@ -166,4 +165,4 @@ using labeled_btensor_expr::contract;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATOR_CONTRACT_H
+#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_OPERATOR_H

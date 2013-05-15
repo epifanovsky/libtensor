@@ -46,9 +46,8 @@ public:
             expression
         \tparam Expr Tensor expression type.
      **/
-    template<typename Core>
     direct_btensor(const letter_expr<N> &label,
-        const labeled_btensor_expr::expr<N, T, Core> &expr);
+        const labeled_btensor_expr::expr<N, T> &expr);
 
     /** \brief Virtual destructor
      **/
@@ -98,9 +97,9 @@ private:
 };
 
 
-template<size_t N, typename T, typename Traits> template<typename Core>
+template<size_t N, typename T, typename Traits>
 direct_btensor<N, T, Traits>::direct_btensor(const letter_expr<N> &label,
-    const labeled_btensor_expr::expr<N, T, Core> &expr) :
+    const labeled_btensor_expr::expr<N, T> &expr) :
 
     m_label(label), m_ptrs(mk_func(m_label, expr)),
     m_bt(m_ptrs.m_pfunc->get_bto()), m_ctrl(m_bt) {

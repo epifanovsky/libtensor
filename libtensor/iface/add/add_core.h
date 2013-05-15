@@ -22,16 +22,17 @@ private:
     expr<N, T> m_expr_r; //!< Right expression
 
 public:
-    //! \name Construction
-    //@{
-
     /** \brief Initializes the core with left and right expressions
      **/
     add_core(const expr<N, T> &expr_l, const expr<N, T> &expr_r) :
         m_expr_l(expr_l), m_expr_r(expr_r)
     { }
 
-    //@}
+    /** \brief Clones this object using new
+     **/
+    expr_core_i<N, T> *clone() const {
+        return new add_core(*this);
+    }
 
     /** \brief Returns the left expression
      **/
@@ -94,7 +95,7 @@ public:
 
     add_eval(expr<N, T> &e, const letter_expr<N> &label);
 
-    virtual ~add_eval() { }
+    virtual ~add_eval();
 
     //@}
 

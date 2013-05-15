@@ -2,9 +2,7 @@
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM_OPERATOR_H
 
 #include "symm2_core.h"
-#include "symm2_eval.h"
 #include "symm3_core.h"
-#include "symm3_eval.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -14,21 +12,17 @@ namespace labeled_btensor_expr {
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
-    \tparam SubCore Sub-expression core.
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, size_t M, typename T, typename SubCore>
-inline
-expr< N, T, symm2_core<N, M, true, T, SubCore> >
-symm(
+template<size_t N, size_t M, typename T>
+expr<N, T> symm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
-    expr<N, T, SubCore> subexpr) {
+    expr<N, T> subexpr) {
 
-    typedef symm2_core<N, M, true, T, SubCore> core_t;
     typedef expr<N, T, core_t> expr_t;
-    return expr_t(core_t(sym1, sym2, subexpr));
+    return expr<N, T>(symm2_core<N, M, true, T>(sym1, sym2, subexpr));
 }
 
 
@@ -36,82 +30,64 @@ symm(
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
-    \tparam SubCore Sub-expression core.
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, size_t M, typename T, typename SubCore>
-inline
-expr< N, T, symm2_core<N, M, false, T, SubCore> >
-asymm(
+template<size_t N, size_t M, typename T>
+expr<N, T> asymm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
-    expr<N, T, SubCore> subexpr) {
+    expr<N, T> subexpr) {
 
-    typedef symm2_core<N, M, false, T, SubCore> core_t;
-    typedef expr<N, T, core_t> expr_t;
-    return expr_t(core_t(sym1, sym2, subexpr));
+    return expr<N, T>(symm2_core<N, M, false, T>(sym1, sym2, subexpr));
 }
 
 
 /** \brief Symmetrization of an expression over three indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
-    \tparam SubCore Sub-expression core.
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename SubCore>
-inline
-expr< N, T, symm3_core<N, true, T, SubCore> >
-symm(
+template<size_t N, typename T>
+expr<N, T> symm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
-    expr<N, T, SubCore> subexpr) {
+    expr<N, T> subexpr) {
 
-    typedef symm3_core<N, true, T, SubCore> core_t;
-    typedef expr<N, T, core_t> expr_t;
-    return expr_t(core_t(l1, l2, l3, subexpr));
+    return expr<N, T>(symm3_core<N, true, T>(l1, l2, l3, subexpr));
 }
 
 
 /** \brief Anti-symmetrization of an expression over three indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
-    \tparam SubCore Sub-expression core.
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename SubCore>
-inline
-expr< N, T, symm3_core<N, false, T, SubCore> >
-asymm(
+template<size_t N, typename T>
+expr<N, T> asymm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
-    expr<N, T, SubCore> subexpr) {
+    expr<N, T> subexpr) {
 
-    typedef symm3_core<N, false, T, SubCore> core_t;
-    typedef expr<N, T, core_t> expr_t;
-    return expr_t(core_t(l1, l2, l3, subexpr));
+    return expr<N, T>(symm3_core<N, false, T>(l1, l2, l3, subexpr));
 }
 
 
 /** \brief Symmetrization of an expression over two indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
-    \tparam SubCore Sub-expression core.
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename SubCore>
-inline
-expr< N, T, symm2_core<N, 1, true, T, SubCore> >
-symm(
+template<size_t N, typename T>
+expr<N, T> symm(
     const letter &l1,
     const letter &l2,
-    expr<N, T, SubCore> subexpr) {
+    expr<N, T> subexpr) {
 
     return symm(letter_expr<1>(l1), letter_expr<1>(l2), subexpr);
 }
@@ -120,23 +96,20 @@ symm(
 /** \brief Anti-symmetrization of an expression over two indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
-    \tparam SubCore Sub-expression core.
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, typename SubCore>
-inline
-expr< N, T, symm2_core<N, 1, false, T, SubCore> >
-asymm(
+template<size_t N, typename T>
+expr<N, T> asymm(
     const letter &l1,
     const letter &l2,
-    expr<N, T, SubCore> subexpr) {
+    expr<N, T> subexpr) {
 
     return asymm(letter_expr<1>(l1), letter_expr<1>(l2), subexpr);
 }
 
 
-/** \brief Symmetrization of a %tensor over two sets of indexes
+/** \brief Symmetrization of a tensor over two sets of indexes
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
@@ -145,19 +118,16 @@ asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A>
-inline
-expr< N, T, symm2_core< N, M, true, T, core_ident<N, T, A> > >
-symm(
+expr<N, T> symm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
     labeled_btensor<N, T, A> bt) {
 
-    typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-    return symm(sym1, sym2, sub_expr_t(bt));
+    return symm(sym1, sym2, expr<N, T>(ident_core<N, T, A>(bt)));
 }
 
 
-/** \brief Anti-symmetrization of a %tensor over two sets of indexes
+/** \brief Anti-symmetrization of a tensor over two sets of indexes
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
@@ -166,19 +136,16 @@ symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A>
-inline
-expr< N, T, symm2_core< N, M, false, T, core_ident<N, T, A> > >
-asymm(
+expr<N, T> asymm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
     labeled_btensor<N, T, A> bt) {
 
-    typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-    return asymm(sym1, sym2, sub_expr_t(bt));
+    return asymm(sym1, sym2, expr<N, T>(ident_core<N, T, A>(bt)));
 }
 
 
-/** \brief Symmetrization of a %tensor over two indexes
+/** \brief Symmetrization of a tensor over two indexes
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
@@ -187,9 +154,7 @@ asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-inline
-expr< N, T, symm2_core< N, 1, true, T, core_ident<N, T, A> > >
-symm(
+expr<N, T> symm(
     const letter &l1,
     const letter &l2,
     labeled_btensor<N, T, A> bt) {
@@ -198,7 +163,7 @@ symm(
 }
 
 
-/** \brief Anti-symmetrization of a %tensor over two indexes
+/** \brief Anti-symmetrization of a tensor over two indexes
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
@@ -207,9 +172,7 @@ symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-inline
-expr< N, T, symm2_core< N, 1, false, T, core_ident<N, T, A> > >
-asymm(
+expr<N, T> asymm(
     const letter &l1,
     const letter &l2,
     labeled_btensor<N, T, A> bt) {
@@ -218,7 +181,7 @@ asymm(
 }
 
 
-/** \brief Symmetrization of a %tensor over three indexes
+/** \brief Symmetrization of a tensor over three indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
     \tparam A Tensor assignable.
@@ -226,20 +189,17 @@ asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-inline
-expr< N, T, symm3_core< N, true, T, core_ident<N, T, A> > >
-symm(
+expr<N, T> symm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
     labeled_btensor<N, T, A> bt) {
 
-    typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-    return symm(l1, l2, l3, sub_expr_t(bt));
+    return symm(l1, l2, l3, expr<N, T>(ident_core<N, T, A>(bt)));
 }
 
 
-/** \brief Anti-symmetrization of a %tensor over three indexes
+/** \brief Anti-symmetrization of a tensor over three indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
     \tparam A Tensor assignable.
@@ -247,16 +207,13 @@ symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-inline
-expr< N, T, symm3_core< N, false, T, core_ident<N, T, A> > >
-asymm(
+expr<N, T> asymm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
     labeled_btensor<N, T, A> bt) {
 
-    typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
-    return asymm(l1, l2, l3, sub_expr_t(bt));
+    return asymm(l1, l2, l3, expr<N, T>(ident_core<N, T, A>(bt)));
 }
 
 

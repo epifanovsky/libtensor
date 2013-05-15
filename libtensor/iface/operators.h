@@ -1,22 +1,20 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATORS_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATORS_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include <libtensor/core/exception.h>
 #include "labeled_btensor_expr.h"
-#include "ident/core_ident.h"
-#include "ident/eval_ident.h"
+#include "ident/ident_core.h"
 
 #include "add/add_operator.h"
 #include "add/sub_operator.h"
-#include "contract/operator_contract.h"
+#include "contract/contract_operator.h"
 #include "diag/diag_operator.h"
-#include "direct_product/operator_direct_product.h"
-#include "dirsum/operator_dirsum.h"
-#include "ewmult/operator_ewmult.h"
-#include "mult/operator_div.h"
-#include "mult/operator_mult.h"
-#include "scale/operator_mul.h"
+#include "direct_product/direct_product_operator.h"
+#include "dirsum/dirsum_operator.h"
+#include "ewmult/ewmult_operator.h"
+#include "mult/div_operator.h"
+#include "mult/mult_operator.h"
+#include "scale/mul_operator.h"
 #include "symm/symm_operator.h"
 #include "dot_product.h"
 #include "trace/trace_operator.h"
