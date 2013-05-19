@@ -46,22 +46,21 @@ void contract_test::perform() throw(libtest::test_exception) {
 }
 
 
-namespace contract_test_ns {
+namespace {
 
 using labeled_btensor_expr::expr;
-using labeled_btensor_expr::core_contract;
+using labeled_btensor_expr::contract_core;
 using labeled_btensor_expr::contract_subexpr_labels;
 
-template<size_t N, size_t M, size_t NM, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t NM, size_t K, typename T>
 void test_subexpr_labels_tpl(
-    expr<NM, T, core_contract<N, M, K, T, E1, E2> > e,
+    expr<NM, T> e,
     letter_expr<NM> label_c) {
 
-    contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels(e, label_c);
+    contract_subexpr_labels<N, M, K, T> subexpr_labels(e, label_c);
 }
 
-} // namespace contract_test_ns
-namespace ns = contract_test_ns;
+} // unnamed namespace
 
 
 void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
@@ -74,7 +73,7 @@ void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
     bispace<4> spijab(spi&spi|spa&spa);
     btensor<4> ta(spijab), tb(spijab);
     letter i, j, k, l, a, b;
-    ns::test_subexpr_labels_tpl(
+    test_subexpr_labels_tpl<2, 2, 4, 2, double>(
         contract(a|b, ta(i|j|a|b), tb(k|l|a|b)),
         i|j|k|l);
 

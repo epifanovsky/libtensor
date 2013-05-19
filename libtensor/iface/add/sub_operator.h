@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SUB_OPERATOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SUB_OPERATOR_H
 
-#include "../scale/core_scale.h"
+#include "../scale/scale_core.h"
 #include "add_operator.h"
 
 namespace libtensor {
@@ -17,7 +17,7 @@ expr<N, T> operator-(
     expr<N, T> lhs,
     expr<N, T> rhs) {
 
-    return lhs + expr<N, T>(core_scale<N, T>(T(-1), rhs));
+    return lhs + expr<N, T>(scale_core<N, T>(T(-1), rhs));
 }
 
 
@@ -30,7 +30,7 @@ expr<N, T> operator-(
     expr<N, T> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return lhs - expr<N, T>(core_ident<N, T, A2>(rhs));
+    return lhs - expr<N, T>(ident_core<N, T, A2>(rhs));
 }
 
 
@@ -43,7 +43,7 @@ expr<N, T> operator-(
     labeled_btensor<N, T, A1> lhs,
     expr<N, T> rhs) {
 
-    return expr<N, T>(core_ident<N, T, A1(lhs)) - rhs;
+    return expr<N, T>(ident_core<N, T, A1(lhs)) - rhs;
 }
 
 
@@ -56,8 +56,8 @@ expr<N, T> operator-(
     labeled_btensor<N, T, A1> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return expr<N, T>(core_ident<N, T, A1>(lhs)) -
-        expr<N, T>(core_ident<N, T, A2>(rhs));
+    return expr<N, T>(ident_core<N, T, A1>(lhs)) -
+        expr<N, T>(ident_core<N, T, A2>(rhs));
 }
 
 
@@ -69,7 +69,7 @@ template<size_t N, typename T>
 expr<N, T> operator-(
     expr<N, T> e) {
 
-    return expr<N, T>(core_scale<N, T>(T(-1), e));
+    return expr<N, T>(scale_core<N, T>(T(-1), e));
 }
 
 
@@ -81,7 +81,7 @@ template<size_t N, typename T, bool A>
 expr<N, T> operator-(
     labeled_btensor<N, T, A> t) {
 
-    return -expr<N, T>(core_ident<N, T, A>(t));
+    return -expr<N, T>(ident_core<N, T, A>(t));
 }
 
 

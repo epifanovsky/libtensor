@@ -29,6 +29,24 @@ public:
      **/
     virtual void clean() = 0;
 
+    /** \brief Returns the number of tensors in expression
+     **/
+    virtual size_t get_ntensor() const = 0;
+
+    /** \brief Returns the number of tensor operations in expression
+     **/
+    virtual size_t get_noper() const = 0;
+
+    /** \brief Returns tensor arguments
+        \param i Argument number.
+     **/
+    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i) = 0;
+
+    /** \brief Returns operation arguments
+        \param i Argument number.
+     **/
+    virtual arg<N, T, oper_tag> get_oper_arg(size_t i) = 0;
+
 };
 
 
@@ -52,6 +70,18 @@ public:
      **/
     virtual eval_container_i<N, T> *create_container(
         const letter_expr<N> &label) const = 0;
+
+    /** \brief Returns whether the label contains a letter
+     **/
+    virtual bool contains(const letter &let) const = 0;
+
+    /** \brief Returns the index of a letter in the label
+     **/
+    virtual size_t index_of(const letter &let) const = 0;
+
+    /** \brief Returns the letter at a given position in the label
+     **/
+    virtual const letter &letter_at(size_t i) const = 0;
 
 };
 
@@ -103,7 +133,8 @@ public:
         return *m_core;
     }
 
-    /** \brief Returns whether the label contains a %letter
+#if 0
+    /** \brief Returns whether the label contains a letter
      **/
     bool contains(const letter &let) const {
         return m_core->contains(let);
@@ -120,6 +151,7 @@ public:
     const letter &letter_at(size_t i) const {
         return m_core->letter_at(i);
     }
+#endif
 
 };
 

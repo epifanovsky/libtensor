@@ -40,6 +40,8 @@ private:
 public:
     letter_expr(const letter_expr<N - 1> &expr, const letter &let) :
         m_expr(expr), m_let(let) { }
+    letter_expr(const std::vector<const letter*> &v) :
+        m_expr(v), m_let(*v[N - 1]) { }
     letter_expr(const letter_expr<N> &expr) :
         m_expr(expr.m_expr), m_let(expr.m_let) { }
 
@@ -94,6 +96,7 @@ private:
 
 public:
     letter_expr(const letter &let) : m_let(let) { }
+    letter_expr(const std::vector<const letter*> &v) : m_let(*v[0]) { }
     letter_expr(const letter_expr<1> &expr) : m_let(expr.m_let) { }
 
     /** \brief Returns whether the expression contains a %letter

@@ -1,12 +1,11 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_IMPL_H
 #define LIBTENSOR_LABELED_BTENSOR_IMPL_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include <libtensor/exception.h>
 #include "labeled_btensor.h"
 #include "expr/expr.h"
 #include "expr/eval.h"
-#include "ident/core_ident.h"
+#include "ident/ident_core.h"
 
 namespace libtensor {
 
@@ -14,8 +13,7 @@ template<size_t N, typename T>
 labeled_btensor<N, T, true> &labeled_btensor<N, T, true>::operator=(
     const labeled_btensor_expr::expr<N, T> rhs) {
 
-    labeled_btensor_expr::eval<N, T, Expr> eval(rhs, *this);
-    eval.evaluate();
+    labeled_btensor_expr::eval<N, T>(rhs, *this).evaluate();
     return *this;
 }
 
@@ -24,12 +22,8 @@ template<bool AssignableR>
 labeled_btensor<N, T, true> &labeled_btensor<N, T, true>::operator=(
     labeled_btensor<N, T, AssignableR> rhs) {
 
-    typedef labeled_btensor_expr::core_ident<N, T, AssignableR> id_t;
-    typedef labeled_btensor_expr::expr<N, T, id_t> expr_t;
-    id_t id(rhs);
-    expr_t op(id);
-    labeled_btensor_expr::eval<N, T, id_t> eval(op, *this);
-    eval.evaluate();
+    expr<N, T> e(ident_core<N, T, AssignableR>(rhs));
+    labeled_btensor_expr::eval<N, T>(e, *this).evaluate();
     return *this;
 }
 
@@ -37,11 +31,8 @@ template<size_t N, typename T>
 labeled_btensor<N, T, true> &labeled_btensor<N, T, true>::operator=(
     labeled_btensor<N, T, true> rhs) {
 
-    typedef labeled_btensor_expr::core_ident<N, T, true> id_t;
-    typedef labeled_btensor_expr::expr<N, T, id_t> expr_t;
-    id_t id(rhs);
-    expr_t op(id);
-    labeled_btensor_expr::eval<N, T, id_t> eval(op, *this);
+    expr<N, T> e(ident_core<N, T, true>(rhs));
+    labeled_btensor_expr::eval<N, T>(e, *this).evaluate();
     eval.evaluate();
     return *this;
 }

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_OPERATOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_OPERATOR_H
 
-#include "../ident/core_ident.h"
+#include "../ident/ident_core.h"
 #include "direct_product_core.h"
 
 namespace libtensor {

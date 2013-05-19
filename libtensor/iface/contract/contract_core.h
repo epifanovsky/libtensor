@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_CORE_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_CORE_H
 
-#include <libtensor/exception.h>
 #include <libtensor/core/sequence.h>
 #include "../expr_exception.h"
 #include "../letter.h"
@@ -23,10 +22,6 @@ template<size_t N, size_t M, size_t K, typename T>
 class contract_core : public expr_core_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
-
-public:
-     //! Evaluating container type
-    typedef contract_eval<N, M, K, T> eval_container_t;
 
 private:
     letter_expr<K> m_contr; //!< Contracted indexes
@@ -51,31 +46,31 @@ public:
 
     /** \brief Clones this object using new
      **/
-    expr_core_i<N + M, T> *clone() const {
+    virtual expr_core_i<N + M, T> *clone() const {
         return new contract_core(*this);
     }
 
     /** \brief Returns the first expression (A)
      **/
-    E1 &get_expr_1() {
+    expr<N + K, T> &get_expr_1() {
         return m_expr1;
     }
 
     /** \brief Returns the first expression (A), const version
      **/
-    const E1 &get_expr_1() const {
+    const expr<N + K, T> &get_expr_1() const {
         return m_expr1;
     }
 
     /** \brief Returns the second expression (B)
      **/
-    E2 &get_expr_2() {
+    expr<M + K, T> &get_expr_2() {
         return m_expr2;
     }
 
     /** \brief Returns the second expression (B), const version
      **/
-    const E2 &get_expr_2() const {
+    const expr<M + K, T> &get_expr_2() const {
         return m_expr2;
     }
 
@@ -85,26 +80,41 @@ public:
         return m_contr;
     }
 
-    /** \brief Returns whether the result's label contains a %letter
+    /** \brief Creates evaluation container using new
+     **/
+    virtual eval_container_i<N + M, T> *create_container(
+        const letter_expr<N + M> &label) const;
+
+    /** \brief Returns whether the result's label contains a letter
         \param let Letter.
      **/
-    bool contains(const letter &let) const;
+    virtual bool contains(const letter &let) const;
 
-    /** \brief Returns the %index of a %letter in the result's label
+    /** \brief Returns the index of a letter in the result's label
         \param let Letter.
         \throw expr_exception If the label does not contain the
             requested letter.
      **/
-    size_t index_of(const letter &let) const throw(expr_exception);
+    virtual size_t index_of(const letter &let) const;
 
-    /** \brief Returns the %letter at a given position in
+    /** \brief Returns the letter at a given position in
             the result's label
         \param i Letter index.
         \throw out_of_bounds If the index is out of bounds.
      **/
-    const letter &letter_at(size_t i) const throw(out_of_bounds);
+    virtual const letter &letter_at(size_t i) const;
 
 };
+
+
+} // namespace labeled_btensor_expr
+} // namespace libtensor
+
+#include "contract_subexpr_labels.h"
+#include "contract_eval_functor.h"
+
+namespace libtensor {
+namespace labeled_btensor_expr {
 
 
 /** \brief Evaluating container for the contraction of two tensors
@@ -115,71 +125,31 @@ public:
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class contract_eval : public eval_i<N + M, T> {
+class contract_eval : public eval_container_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
-    static const size_t k_ordera = N + K; //!< Order of the first %tensor
-    static const size_t k_orderb = M + K; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
 
+public:
     enum {
+        NA = N + K,
+        NB = M + K,
         NC = N + M
     };
 
-    //!    Contraction expression core type
-    typedef core_contract<N, M, K, T, E1, E2> core_t;
-
-    //!    Contraction expression type
-    typedef expr<k_orderc, T, core_t> expression_t;
-
-    //!    Evaluating container type of the first expression (A)
-    typedef typename E1::eval_container_t eval_container_a_t;
-
-    //!    Evaluating container type of the second expression (B)
-    typedef typename E2::eval_container_t eval_container_b_t;
-
-    //!    Number of %tensor arguments in expression A
-    static const size_t k_narg_tensor_a =
-        eval_container_a_t::template narg<tensor_tag>::k_narg;
-
-    //!    Number of operation arguments in expression A
-    static const size_t k_narg_oper_a =
-        eval_container_a_t::template narg<oper_tag>::k_narg;
-
-    //!    Number of %tensor arguments in expression B
-    static const size_t k_narg_tensor_b =
-        eval_container_b_t::template narg<tensor_tag>::k_narg;
-
-    //!    Number of operation arguments in expression A
-    static const size_t k_narg_oper_b =
-        eval_container_b_t::template narg<oper_tag>::k_narg;
-
-    //!    Labels for sub-expressions
-    typedef contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels_t;
-
-    //!    Evaluating functor type (specialized for A and B)
-    typedef contract_eval_functor<N, M, K, T, E1, E2,
-        k_narg_tensor_a, k_narg_oper_a, k_narg_tensor_b, k_narg_oper_b>
-        functor_t;
-
-    //!    Number of arguments in the expression
-    template<typename Tag, int Dummy = 0>
-    struct narg {
-        static const size_t k_narg = 0;
-    };
-
 private:
-    expr<NC, T> m_expr; //!< Scaled expression
-    contract_core<N, M, K, T> &m_core; //!< Expression core
-    subexpr_labels_t m_sub_labels;
-    functor_t m_func; //!< Sub-expression evaluation functor
-
+    contract_core<N, M, K, T> m_core; //!< Expression core
+    contract_subexpr_labels<N, M, K, T>
+        m_sub_labels; //!< Labels for sub-expressions
+    contract_eval_functor<N, M, K, T>
+        m_func; //!< Sub-expression evaluation functor
 
 public:
     /** \brief Initializes the container with given expression and
             result recipient
      **/
-    contract_eval(expr<NC, T> &e, const letter_expr<NC> &label);
+    contract_eval(
+        const contract_core<N, M, K, T> &core,
+        const letter_expr<NC> &label);
 
     /** \brief Virtual destructor
      **/
@@ -193,14 +163,27 @@ public:
      **/
     virtual void clean();
 
-    template<typename Tag>
-    arg<N + M, T, Tag> get_arg(const Tag &tag, size_t i) const
-        throw(exception);
-
-    /** \brief Returns a single argument
+    /** \brief Returns the number of tensors in expression
      **/
-    arg<N + M, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const
-        throw(exception);
+    virtual size_t get_ntensor() const {
+        return 0;
+    }
+
+    /** \brief Returns the number of tensor operations in expression
+     **/
+    virtual size_t get_noper() const {
+        return 1;
+    }
+
+    /** \brief Returns tensor arguments (not valid)
+        \param i Argument number.
+     **/
+    virtual arg<N + M, T, tensor_tag> get_tensor_arg(size_t i);
+
+    /** \brief Returns operation arguments
+        \param i Argument number (0 is the only valid value).
+     **/
+    virtual arg<N + M, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -220,9 +203,12 @@ contract_core<N, M, K, T>::contract_core(
     static const char method[] = "contract_core(const letter_expr<K>&, "
         "const expr<N + K, T>&, const expr<M + K, T>&)";
 
+    const expr_core_i<N + K, T> &core1 = expr1.get_core();
+    const expr_core_i<M + K, T> &core2 = expr2.get_core();
+
     for(size_t i = 0; i < K; i++) {
         const letter &l = contr.letter_at(i);
-        if(!expr1.contains(l) || !expr2.contains(l)) {
+        if(!core1.contains(l) || !core2.contains(l)) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Contracted index is absent from arguments.");
         }
@@ -230,9 +216,9 @@ contract_core<N, M, K, T>::contract_core(
 
     size_t j = 0;
     for(size_t i = 0; i < N + K; i++) {
-        const letter &l = expr1.letter_at(i);
+        const letter &l = core1.letter_at(i);
         if(!contr.contains(l)) {
-            if(expr2.contains(l)) {
+            if(core2.contains(l)) {
                 throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                     "Duplicate uncontracted index in A.");
             } else {
@@ -241,9 +227,9 @@ contract_core<N, M, K, T>::contract_core(
         }
     }
     for(size_t i = 0; i < M + K; i++) {
-        const letter &l = expr2.letter_at(i);
+        const letter &l = core2.letter_at(i);
         if(!contr.contains(l)) {
-            if(expr1.contains(l)) {
+            if(core1.contains(l)) {
                 throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                     "Duplicate uncontracted index in B.");
             } else {
@@ -279,7 +265,7 @@ size_t contract_core<N, M, K, T>::index_of(const letter &let) const {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-const letter&contract_core<N, M, K, T>::letter_at(size_t i) const {
+const letter& contract_core<N, M, K, T>::letter_at(size_t i) const {
 
     static const char method[] = "letter_at(size_t)";
 
@@ -295,21 +281,14 @@ template<size_t N, size_t M, size_t K, typename T>
 const char contract_eval<N, M, K, T>::k_clazz[] = "contract_eval<N, M, K, T>";
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-template<int Dummy>
-struct contract_eval<N, M, K, T, E1, E2>::narg<oper_tag, Dummy> {
-    static const size_t k_narg = 1;
-};
-
-
 template<size_t N, size_t M, size_t K, typename T>
-contract_eval<N, M, K, T>::contract_eval(expr<NC, T> &e,
+contract_eval<N, M, K, T>::contract_eval(
+    const contract_core<N, M, K, T> &core,
     const letter_expr<NC> &label) :
 
-    m_expr(e),
-    m_core(dynamic_cast< contract_core<N, M, K, T>& >(m_expr.get_core())),
-    m_sub_labels(expr, label),
-    m_func(expr, m_sub_labels, label) {
+    m_core(core),
+    m_sub_labels(core, label),
+    m_func(m_core, m_sub_labels, label) {
 
 }
 
@@ -328,22 +307,22 @@ void contract_eval<N, M, K, T>::clean() {
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-template<typename Tag>
-arg<N + M, T, Tag> contract_eval<N, M, K, T, E1, E2>::get_arg(
-    const Tag &tag, size_t i) const throw(exception) {
+template<size_t N, size_t M, size_t K, typename T>
+arg<N + M, T, tensor_tag> contract_eval<N, M, K, T>::get_tensor_arg(
+    size_t i) {
 
-    static const char *method = "get_arg(const Tag&, size_t)";
+    static const char method[] = "get_tensor_arg(size_t)";
+
     throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
         "Invalid method.");
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-arg<N + M, T, oper_tag> contract_eval<N, M, K, T, E1, E2>::get_arg(
-    const oper_tag &tag, size_t i) const throw(exception) {
+template<size_t N, size_t M, size_t K, typename T>
+arg<N + M, T, oper_tag> contract_eval<N, M, K, T>::get_oper_arg(
+    size_t i) {
 
-    static const char *method = "get_arg(const oper_tag&, size_t)";
+    static const char method[] = "get_oper_arg(size_t)";
 
     if(i != 0) {
         throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -351,6 +330,14 @@ arg<N + M, T, oper_tag> contract_eval<N, M, K, T, E1, E2>::get_arg(
     }
 
     return m_func.get_arg();
+}
+
+
+template<size_t N, size_t M, size_t K, typename T>
+eval_container_i<N + M, T> *contract_core<N, M, K, T>::create_container(
+    const letter_expr<N + M> &label) const {
+
+    return new contract_eval<N, M, K, T>(*this, label);
 }
 
 

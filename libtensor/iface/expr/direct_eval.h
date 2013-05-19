@@ -1,8 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_EVAL_H
 
-#include "../../defs.h"
-#include "../../exception.h"
+#include <libtensor/exception.h>
 #include "../direct_btensor.h"
 #include "expr.h"
 
@@ -17,21 +16,17 @@ namespace labeled_btensor_expr {
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename Core>
+template<size_t N, typename T>
 class direct_eval {
-public:
-    //!    Expression type
-    typedef expr<N, T, Core> expression_t;
-
 private:
-    direct_btensor<N, T> m_bt; //!< Direct block %tensor
+    direct_btensor<N, T> m_bt; //!< Direct block tensor
 
 public:
     //!    \name Construction and destruction
     //@{
 
-    direct_eval(const expression_t &expr, const letter_expr<N> &label) :
-        m_bt(label, expr) { }
+    direct_eval(const expr<N, T> &e, const letter_expr<N> &label) :
+        m_bt(label, e) { }
 
     ~direct_eval() { }
 

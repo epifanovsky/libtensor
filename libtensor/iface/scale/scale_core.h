@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SCALE_CORE_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SCALE_CORE_H
 
-#include <libtensor/exception.h>
+#include <libtensor/core/noncopyable.h>
 #include "../expr_exception.h"
 #include "../letter.h"
 #include "../letter_expr.h"
@@ -40,7 +40,7 @@ public:
 
     /** \brief Clones this object using new
      **/
-    expr_core_i<N, T> *clone() const {
+    virtual expr_core_i<N, T> *clone() const {
         return new scale_core(*this);
     }
 
@@ -69,20 +69,20 @@ public:
 
     /** \brief Returns whether the tensor's label contains a letter
      **/
-    bool contains(const letter &let) const {
-        return m_expr.contains(let);
+    virtual bool contains(const letter &let) const {
+        return m_expr.get_core().contains(let);
     }
 
     /** \brief Returns the index of a letter in the tensor's label
      **/
-    size_t index_of(const letter &let) const {
-        return m_expr.index_of(let);
+    virtual size_t index_of(const letter &let) const {
+        return m_expr.get_core().index_of(let);
     }
 
     /** \brief Returns the letter at a given position in the tensor's label
      **/
-    const letter &letter_at(size_t i) const {
-        return m_expr.letter_at(i);
+    virtual const letter &letter_at(size_t i) const {
+        return m_expr.get_core().letter_at(i);
     }
 
 };
@@ -95,40 +95,25 @@ public:
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class scale_eval : public eval_i<N, T> {
+class scale_eval : public eval_container_i<N, T>, public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
-
-public:
-    //!    Scaling expression core type
-    typedef core_scale<N, T, Expr> core_t;
-
-    //!    Scaled expression type
-    typedef expr<N, T, core_t> expression_t;
-
-    //!    Unscaled expression evaluating container type
-    typedef typename Expr::eval_container_t unscaled_eval_container_t;
-
-    //!    Number of arguments in the expression
-    template<typename Tag>
-    struct narg {
-        static const size_t k_narg =
-            unscaled_eval_container_t::template narg<Tag>::k_narg;
-    };
+    static const char k_clazz[]; //!< Class name
 
 private:
-    expr<N, T> m_expr; //!< Expression
-    scale_core<N, T> &m_core; //!< Expression core
-    eval_container_i<N, T> *m_unscaled_cont; //!< Original expression
+    scale_core<N, T> m_core; //!< Expression core
+    std::auto_ptr< eval_container_i<N, T> >
+        m_unscaled_cont; //!< Original expression
 
 public:
     /** \brief Constructs the evaluating container
      **/
-    scale_eval(expr<N, T> &e, const letter_expr<N> &label);
+    scale_eval(
+        const scale_core<N, T> &core,
+        const letter_expr<N> &label);
 
     /** \brief Virtual destructor
      **/
-    virtual ~scale_eval();
+    virtual ~scale_eval() { }
 
     /** \brief Evaluates sub-expressions into temporary tensors
      **/
@@ -138,8 +123,23 @@ public:
      **/
     virtual void clean();
 
-    template<typename Tag>
-    arg<N, T, Tag> get_arg(const Tag &tag, size_t i) const throw(exception);
+    /** \brief Returns the number of tensors in expression
+     **/
+    virtual size_t get_ntensor() const;
+
+    /** \brief Returns the number of tensor operations in expression
+     **/
+    virtual size_t get_noper() const;
+
+    /** \brief Returns tensor arguments
+        \param i Argument number.
+     **/
+    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
+
+    /** \brief Returns operation arguments
+        \param i Argument number.
+     **/
+    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -149,20 +149,14 @@ const char scale_eval<N, T>::k_clazz[] = "scale_eval<N, T>";
 
 
 template<size_t N, typename T>
-scale_eval<N, T>::scale_eval(expr<N, T> &e, const letter_expr<N> &label) :
+scale_eval<N, T>::scale_eval(
+    const scale_core<N, T> &core,
+    const letter_expr<N> &label) :
 
-    m_expr(e),
-    m_core(dynamic_cast< scale_core<N, T>& >(m_expr.get_core())),
+    m_core(core),
     m_unscaled_cont(m_core.get_unscaled_expr().get_core().
         create_container(label)) {
 
-}
-
-
-template<size_t N, typename T>
-scale_eval<N, T>::~scale_eval() {
-
-    delete m_unscaled_cont;
 }
 
 
@@ -181,12 +175,33 @@ void scale_eval<N, T>::clean() {
 
 
 template<size_t N, typename T>
-template<typename Tag>
-inline arg<N, T, Tag> scale_eval<N, T>::get_arg(const Tag &tag, size_t i)
-    const throw(exception) {
+size_t scale_eval<N, T>::get_ntensor() const {
 
-    arg<N, T, Tag> argument = m_unscaled_cont.get_arg(tag, i);
-    argument.scale(m_expr.get_core().get_coeff());
+    return m_unscaled_cont->get_ntensor();
+}
+
+
+template<size_t N, typename T>
+size_t scale_eval<N, T>::get_noper() const {
+
+    return m_unscaled_cont->get_noper();
+}
+
+
+template<size_t N, typename T>
+arg<N, T, tensor_tag> scale_eval<N, T>::get_tensor_arg(size_t i) {
+
+    arg<N, T, tensor_tag> argument = m_unscaled_cont->get_tensor_arg(i);
+    argument.scale(m_core.get_coeff());
+    return argument;
+}
+
+
+template<size_t N, typename T>
+arg<N, T, oper_tag> scale_eval<N, T>::get_oper_arg(size_t i) {
+
+    arg<N, T, oper_tag> argument = m_unscaled_cont->get_oper_arg(i);
+    argument.scale(m_core.get_coeff());
     return argument;
 }
 

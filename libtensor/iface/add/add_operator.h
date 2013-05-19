@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_ADD_OPERATOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_ADD_OPERATOR_H
 
-#include "../ident/core_ident.h"
+#include "../ident/ident_core.h"
 #include "add_core.h"
 
 namespace libtensor {
@@ -30,7 +30,7 @@ expr<N, T> operator+(
     labeled_btensor<N, T, A1> lhs,
     expr<N, T> rhs) {
 
-    return expr<N, T>(core_ident<N, T, A1>(lhs)) + rhs;
+    return expr<N, T>(ident_core<N, T, A1>(lhs)) + rhs;
 }
 
 
@@ -43,7 +43,7 @@ expr<N, T> operator+(
     expr<N, T> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return lhs + expr<N, T>(core_ident<N, T, A2>(rhs));
+    return lhs + expr<N, T>(ident_core<N, T, A2>(rhs));
 }
 
 
@@ -56,8 +56,9 @@ expr<N, T> operator+(
     labeled_btensor<N, T, A1> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return expr<N, T>(core_ident<N, T, A1>(lhs)) +
-        expr<N, T>(core_ident<N, T, A2>(rhs));
+    return
+        expr<N, T>(ident_core<N, T, A1>(lhs)) +
+        expr<N, T>(ident_core<N, T, A2>(rhs));
 }
 
 
