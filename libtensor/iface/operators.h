@@ -8,7 +8,7 @@
 #include "add/sub_operator.h"
 #include "contract/contract_operator.h"
 #include "diag/diag_operator.h"
-//#include "direct_product/direct_product_operator.h"
+#include "direct_product/direct_product_operator.h"
 //#include "dirsum/dirsum_operator.h"
 //#include "ewmult/ewmult_operator.h"
 //#include "mult/div_operator.h"

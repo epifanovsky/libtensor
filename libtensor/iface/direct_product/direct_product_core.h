@@ -12,9 +12,6 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, size_t M, typename T> class direct_product_eval;
-
-
 /** \brief Direct product operation expression core
     \tparam N Order of the first tensor (A).
     \tparam M Order of the second tensor (B).
@@ -25,10 +22,6 @@ template<size_t N, size_t M, typename T>
 class direct_product_core : public expr_core_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
-
-public:
-     //! Evaluating container type
-    typedef direct_product_eval<N, M, T> eval_container_t;
 
 private:
     expr<N, T> m_expr1; //!< First expression
@@ -42,6 +35,16 @@ public:
         \throw expr_exception If letters are inconsistent.
      **/
     direct_product_core(const expr<N, T> &expr1, const expr<M, T> &expr2);
+
+    /** \brief Virtual destructor
+     **/
+    virtual ~direct_product_core() { }
+
+    /** \brief Clones this object using new
+     **/
+    virtual expr_core_i<N + M, T> *clone() const {
+        return new direct_product_core(*this);
+    }
 
     /** \brief Returns the first expression (A)
      **/
@@ -67,6 +70,11 @@ public:
         return m_expr2;
     }
 
+    /** \brief Creates evaluation container using new
+     **/
+    virtual eval_container_i<N + M, T> *create_container(
+        const letter_expr<N + M> &label) const;
+
     /** \brief Returns whether the result's label contains a letter
         \param let Letter.
      **/
@@ -88,21 +96,35 @@ public:
 };
 
 
+} // namespace labeled_btensor_expr
+} // namespace libtensor
+
+#include "../contract/contract_subexpr_labels.h"
+#include "../contract/contract_eval_functor.h"
+
+namespace libtensor {
+namespace labeled_btensor_expr {
+
+
 /** \brief Evaluating container for the direct product of two tensors
-    \tparam N Order of the first %tensor (A).
-    \tparam M Order of the second %tensor (B).
+    \tparam N Order of the first tensor (A).
+    \tparam M Order of the second tensor (B).
     \tparam Expr1 First expression (A) type.
     \tparam Expr2 Second expression (B) type.
 
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T, typename E1, typename E2>
-class direct_product_eval : public eval_i<N + M, T> {
+class direct_product_eval : public eval_container_i<N + M, T> {
 public:
-    static const char *k_clazz; //!< Class name
-    static const size_t k_ordera = N; //!< Order of the first %tensor
-    static const size_t k_orderb = M; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
+    static const char k_clazz[]; //!< Class name
+
+public:
+    enum {
+        NA = N,
+        NB = M,
+        NC = N + M
+    };
 
     //!    Contraction expression core type
     typedef direct_product_core<N, M, T, E1, E2> core_t;
@@ -147,16 +169,19 @@ public:
     };
 
 private:
-    subexpr_labels_t m_sub_labels;
-    functor_t m_func; //!< Sub-expression evaluation functor
+    direct_product_core<N, M, T> m_core; //!< Expression core
+    contract_subexpr_labels<N, M, 0, T>
+        m_sub_labels; //!< Labels for sub-expressions
+    contract_eval_functor<N, M, 0, T>
+        m_func; //!< Sub-expression evaluation functor
 
 public:
     /** \brief Initializes the container with given expression and
             result recipient
      **/
     direct_product_eval(
-        expression_t &expr, const letter_expr<k_orderc> &label)
-        throw(exception);
+        const direct_product_core<N, M, T> &core,
+        const letter_expr<NC> &label);
 
     /** \brief Virtual destructor
      **/
@@ -164,25 +189,34 @@ public:
 
     /** \brief Evaluates sub-expressions into temporary tensors
      **/
-    void prepare();
+    virtual void prepare();
 
     /** \brief Cleans temporary tensors
      **/
-    void clean();
+    virtual void clean();
 
-    template<typename Tag>
-    arg<N + M, T, Tag> get_arg(const Tag &tag, size_t i) const
-        throw(exception);
-
-    /** \brief Returns a single argument
+    /** \brief Returns the number of tensors in expression
      **/
-    arg<N + M, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const
-        throw(exception);
+    virtual size_t get_ntensor() const {
+        return 0;
+    }
 
-private:
-    static contraction2<N, M, 0> mk_contr(expression_t &expr,
-        labeled_btensor<k_orderc, T, true> &result)
-        throw(exception);
+    /** \brief Returns the number of tensor operations in expression
+     **/
+    virtual size_t get_noper() const {
+        return 1;
+    }
+
+    /** \brief Returns tensor arguments (not valid)
+        \param i Argument number.
+     **/
+    virtual arg<N + M, T, tensor_tag> get_tensor_arg(size_t i);
+
+    /** \brief Returns operation arguments
+        \param i Argument number (0 is the only valid value).
+     **/
+    virtual arg<N + M, T, oper_tag> get_oper_arg(size_t i);
+
 };
 
 
@@ -258,16 +292,9 @@ const letter&direct_product_core<N, M, T>::letter_at(size_t i) const {
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-const char *direct_product_eval<N, M, T, E1, E2>::k_clazz =
-    "direct_product_eval<N, M, T, E1, E2>";
-
-
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-template<int Dummy>
-struct direct_product_eval<N, M, T, E1, E2>::narg<oper_tag, Dummy> {
-    static const size_t k_narg = 1;
-};
+template<size_t N, size_t M, typename T>
+const char direct_product_eval<N, M, T>::k_clazz[] =
+    "direct_product_eval<N, M, T>";
 
 
 template<size_t N, size_t M, typename T, typename E1, typename E2>
