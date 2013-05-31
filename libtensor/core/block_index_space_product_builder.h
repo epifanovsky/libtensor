@@ -11,7 +11,7 @@ namespace libtensor {
     \tparam M Order of the second space.
 
     Constructs a block %index space from two smaller block %index
-    space by concatenating the dimensions.
+    spaces by concatenating the dimensions.
 
     \ingroup libtensor_core
  **/

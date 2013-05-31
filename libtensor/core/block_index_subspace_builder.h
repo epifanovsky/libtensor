@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-/** \brief Builds a block %index subspace
+/** \brief Constructs a subspace of a block %index space
     \tparam N Order of the resulting space.
     \tparam M Number of removed dimensions.
 

@@ -9,12 +9,19 @@ namespace libtensor {
 
 /** \brief Representation of elements of block tensors
 
+	The class represents a single element of a block tensor by storing
+	the block index and the index within the block and the value of the
+	element.
+
+	\sa gen_bto_select
+
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
 class block_tensor_element {
 public:
     typedef T element_type;
+
 private:
     index<N> m_bidx; //!< Block index of %tensor element
     index<N> m_iblidx; //!< Index of %tensor element with in %tensor block

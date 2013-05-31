@@ -8,8 +8,28 @@
 
 namespace libtensor {
 
+/** \brief Builder for optimized lists of contraction loops
+    \tparam N Order of the first %tensor (a) less the contraction degree
+    \tparam M Order of the second %tensor (b) less the contraction degree
+    \tparam K Contraction degree (the number of indexes over which the
+        tensors are contracted)
 
-template<size_t N, size_t M, size_t K, typename ListT>
+	Given a contraction sequence the class constructs a minimum set of
+	loops by fusing successive dimensions in the input and output tensors.
+	This set of loops is then translated into a list of loop parameters
+	using the function \c populate according to the tensor dimensions
+	passed to the function. The list object has to provide the function
+	\code
+	void append(size_t weight, size_t inca, size_t incb, size_t incc);
+	\endcode
+	where \c weight is the length of the current loop while \c inca, \c incb,
+	and \c incc are the increments for each tensor.
+
+	\sa tod_contract2
+
+	\ingroup libtensor_core
+ **/
+template<size_t N, size_t M, size_t K>
 class contraction2_list_builder {
 public:
     static const char *k_clazz; //!< Class name
@@ -28,9 +48,20 @@ private:
     sequence<k_totidx, size_t> m_nodesz; //!< Fused node sizes (weights)
 
 public:
+    /** \brief Constructor
+    	\param contr Object describing the contraction
+     **/
     contraction2_list_builder(const contraction2<N, M, K> &contr)
         throw(bad_parameter, out_of_bounds);
 
+    /** \brief Populate the optimized list according to the tensor dimensions
+    		given
+        \param list Resulting list of contraction loops
+        \param dima Dimension of tensor A
+        \param dimb Dimension of tensor B
+        \param dimc Dimension of tensor C
+     **/
+    template<typename ListT>
     void populate(ListT &list, const dimensions<k_ordera> &dima,
         const dimensions<k_orderb> &dimb,
         const dimensions<k_orderc> &dimc) const throw(exception);
@@ -40,13 +71,13 @@ private:
 };
 
 
-template<size_t N, size_t M, size_t K, typename ListT>
-const char *contraction2_list_builder<N, M, K, ListT>::k_clazz =
-    "contraction2_list_builder<N, M, K, ListT>";
+template<size_t N, size_t M, size_t K>
+const char *contraction2_list_builder<N, M, K>::k_clazz =
+    "contraction2_list_builder<N, M, K>";
 
 
-template<size_t N, size_t M, size_t K, typename ListT>
-contraction2_list_builder<N, M, K, ListT>::contraction2_list_builder(
+template<size_t N, size_t M, size_t K>
+contraction2_list_builder<N, M, K>::contraction2_list_builder(
     const contraction2<N, M, K> &contr) throw(bad_parameter, out_of_bounds)
 : m_contr(contr), m_num_nodes(0), m_nodes(0), m_nodesz(0) {
 
@@ -62,8 +93,9 @@ contraction2_list_builder<N, M, K, ListT>::contraction2_list_builder(
 }
 
 
-template<size_t N, size_t M, size_t K, typename ListT>
-void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
+template<size_t N, size_t M, size_t K>
+template<typename ListT>
+void contraction2_list_builder<N, M, K>::populate<ListT>(ListT &list,
     const dimensions<k_ordera> &dima, const dimensions<k_orderb> &dimb,
     const dimensions<k_orderc> &dimc) const throw (exception) {
 
@@ -147,8 +179,8 @@ void contraction2_list_builder<N, M, K, ListT>::populate(ListT &list,
 }
 
 
-template<size_t N, size_t M, size_t K, typename ListT>
-void contraction2_list_builder<N, M, K, ListT>::fuse() throw(out_of_bounds) {
+template<size_t N, size_t M, size_t K>
+void contraction2_list_builder<N, M, K>::fuse() throw(out_of_bounds) {
 
     const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
 
