@@ -520,7 +520,7 @@ void tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
 
     std::list< loop_list_node<2, 1> > loop_in, loop_out;
     loop_list_adapter list_adapter(loop_in);
-    contraction2_list_builder<N, M, K, loop_list_adapter>(contr1).
+    contraction2_list_builder<N, M, K>(contr1).
         populate(list_adapter, dimsa1, dimsb1, dimsc);
 
     {

@@ -95,7 +95,7 @@ contraction2_list_builder<N, M, K>::contraction2_list_builder(
 
 template<size_t N, size_t M, size_t K>
 template<typename ListT>
-void contraction2_list_builder<N, M, K>::populate<ListT>(ListT &list,
+void contraction2_list_builder<N, M, K>::populate(ListT &list,
     const dimensions<k_ordera> &dima, const dimensions<k_orderb> &dimb,
     const dimensions<k_orderc> &dimc) const throw (exception) {
 
