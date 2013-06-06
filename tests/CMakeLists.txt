@@ -84,6 +84,7 @@ set(SRC_CTF_DENSE_TENSOR
     ctf_dense_tensor/ctf_tod_contract2_test.C
     ctf_dense_tensor/ctf_tod_copy_test.C
     ctf_dense_tensor/ctf_tod_distribute_test.C
+    ctf_dense_tensor/ctf_tod_dotprod_test.C
 )
 
 set(SRC_SYMMETRY

@@ -10,6 +10,7 @@ libtensor_ctf_dense_tensor_suite::libtensor_ctf_dense_tensor_suite() :
     add_test("ctf_tod_contract2", m_utf_ctf_tod_contract2);
     add_test("ctf_tod_copy", m_utf_ctf_tod_copy);
     add_test("ctf_tod_distribute", m_utf_ctf_tod_distribute);
+    add_test("ctf_tod_dotprod", m_utf_ctf_tod_dotprod);
 }
 
 
