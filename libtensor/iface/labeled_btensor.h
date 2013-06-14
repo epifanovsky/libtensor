@@ -67,7 +67,6 @@ public:
 
     labeled_btensor<N, T, true> &operator=(
         const labeled_btensor<N, T, false> &rhs);
-
 };
 
 } // namespace libtensor
