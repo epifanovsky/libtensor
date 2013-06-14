@@ -169,12 +169,9 @@ mult_core<N, T, Recip>::mult_core(
     static const char method[] =
         "mult_core(const expr<N, T>&, const expr<N, T>&)";
 
-    const expr_core_i<N, T> &core1 = expr1.get_core();
-    const expr_core_i<N, T> &core2 = expr2.get_core();
-
     for(size_t i = 0; i < N; i++) {
-        const letter &l = core1.letter_at(i);
-        if(! core2.contains(l)) {
+        const letter &l = expr1.get_core().letter_at(i);
+        if(! expr2.get_core().contains(l)) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                     "Unique index in A.");
         }

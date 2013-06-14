@@ -75,8 +75,12 @@ void mult_eval_functor<N, T, Recip>::evaluate() {
     arg<N, T, tensor_tag> arga = m_interm_a.get_arg();
     arg<N, T, tensor_tag> argb = m_interm_b.get_arg();
 
-    m_op = new btod_mult<N>(arga.get_btensor(), argb.get_btensor(), Recip);
-    m_arg = new arg<N, T, oper_tag>(*m_op, arga.get_coeff() * argb.get_coeff());
+    m_op = new btod_mult<N>(
+        arga.get_btensor(), arga.get_perm(),
+        argb.get_btensor(), argb.get_perm(), Recip);
+    m_arg = new arg<N, T, oper_tag>(*m_op,
+        Recip ?  arga.get_coeff() /  argb.get_coeff() :
+                arga.get_coeff() * argb.get_coeff());
 
 }
 
