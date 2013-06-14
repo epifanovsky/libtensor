@@ -88,6 +88,9 @@ public:
         m_expr.unfold(seq);
         seq[N - 1] = &m_let;
     }
+
+private:
+    letter_expr<N> &operator=(const letter_expr<N> &);
 };
 
 template<>
@@ -137,6 +140,9 @@ public:
     void unfold(const letter *(&seq)[M]) const {
         seq[0] = &m_let;
     }
+
+private:
+    letter_expr<1> &operator=(const letter_expr<1> &);
 };
 
 
