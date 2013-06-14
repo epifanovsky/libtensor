@@ -5,7 +5,7 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, typename T, typename Core> class expr;
+template<size_t N, typename T> class expr;
 
 
 /** \brief Label builder for sub-expressions in dirsum
@@ -19,9 +19,9 @@ private:
     private:
         const letter *m_let[N];
     public:
-        template<typename T, typename Core>
+        template<typename T>
         letter_array(const letter_expr<N + M> &label_c,
-            const expr<N, T, Core> &e);
+            const expr<N, T> &e);
         const letter *at(size_t i) const { return m_let[i]; }
     };
     template<size_t L>
@@ -30,9 +30,9 @@ private:
     letter_expr<N> m_label;
 
 public:
-    template<typename T, typename Core>
+    template<typename T>
     dirsum_subexpr_label_builder(const letter_expr<N + M> &label_c,
-        const expr<N, T, Core> &e);
+        const expr<N, T> &e);
 
     const letter_expr<N> &get_label() const { return m_label; }
 
@@ -46,9 +46,9 @@ protected:
 };
 
 
-template<size_t N, size_t M> template<typename T, typename Core>
+template<size_t N, size_t M> template<typename T>
 dirsum_subexpr_label_builder<N, M>::dirsum_subexpr_label_builder(
-    const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) :
+    const letter_expr<N + M> &label_c, const expr<N, T> &e) :
 
     m_let(label_c, e),
     m_label(mk_label(dummy<N>(), m_let, N - 1)) {
@@ -56,9 +56,9 @@ dirsum_subexpr_label_builder<N, M>::dirsum_subexpr_label_builder(
 }
 
 
-template<size_t N, size_t M> template<typename T, typename Core>
+template<size_t N, size_t M> template<typename T>
 dirsum_subexpr_label_builder<N, M>::letter_array::letter_array(
-    const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) {
+    const letter_expr<N + M> &label_c, const expr<N, T> &e) {
 
     for(size_t i = 0; i < N; i++) m_let[i] = &e.letter_at(i);
 }

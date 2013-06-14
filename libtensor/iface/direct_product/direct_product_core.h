@@ -43,7 +43,7 @@ public:
     /** \brief Clones this object using new
      **/
     virtual expr_core_i<N + M, T> *clone() const {
-        return new direct_product_core(*this);
+        return new direct_product_core<N, M, T>(*this);
     }
 
     /** \brief Returns the first expression (A)
@@ -265,14 +265,14 @@ direct_product_eval<N, M, T>::direct_product_eval(
 
 
 template<size_t N, size_t M, typename T>
-void direct_product_eval<N, M, T>::prepare() {
+inline void direct_product_eval<N, M, T>::prepare() {
 
     m_func.evaluate();
 }
 
 
 template<size_t N, size_t M, typename T>
-void direct_product_eval<N, M, T>::clean() {
+inline void direct_product_eval<N, M, T>::clean() {
 
     m_func.clean();
 }

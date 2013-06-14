@@ -23,10 +23,6 @@ class dirsum_core : public expr_core_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
-public:
-     //! Evaluating container type
-    typedef dirsum_eval<N, M, T> eval_container_t;
-
 private:
     expr<N, T> m_expr1; //!< First expression
     expr<M, T> m_expr2; //!< Second expression
@@ -38,11 +34,17 @@ public:
         \param expr2 Second expression (B).
         \throw expr_exception If letters are inconsistent.
      **/
-    dirsum_core(const expr<N, T> &expr1, const expr<M, T> &expr2)
+    dirsum_core(const expr<N, T> &expr1, const expr<M, T> &expr2);
 
     /** \brief Virtual destructor
      **/
     virtual ~dirsum_core() { }
+
+    /** \brief Clones this object using new
+     **/
+    virtual expr_core_i<N + M, T> *clone() const {
+        return new dirsum_core<N, M, T>(*this);
+    }
 
     /** \brief Returns the first expression (A)
      **/
@@ -68,26 +70,40 @@ public:
         return m_expr2;
     }
 
+    /** \brief Creates evaluation container using new
+     **/
+    virtual eval_container_i<N + M, T> *create_container(
+        const letter_expr<N + M> &label) const;
+
     /** \brief Returns whether the result's label contains a letter
         \param let Letter.
      **/
-    bool contains(const letter &let) const;
+    virtual bool contains(const letter &let) const;
 
     /** \brief Returns the index of a letter in the result's label
         \param let Letter.
         \throw expr_exception If the label does not contain the
             requested letter.
      **/
-    size_t index_of(const letter &let) const;
+    virtual size_t index_of(const letter &let) const;
 
     /** \brief Returns the letter at a given position in the result's label
         \param i Letter index.
         \throw out_of_bounds If the index is out of bounds.
      **/
-    const letter &letter_at(size_t i) const;
+    virtual const letter &letter_at(size_t i) const;
 
 };
 
+
+} // namespace labeled_btensor_expr
+} // namespace libtensor
+
+#include "dirsum_subexpr_labels.h"
+#include "dirsum_eval_functor.h"
+
+namespace libtensor {
+namespace labeled_btensor_expr {
 
 /** \brief Evaluating container for the direct sum of two tensors
     \tparam N Order of the first tensor (A).
@@ -96,70 +112,27 @@ public:
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T>
-class dirsum_eval : public eval_i<N + M, T> {
+class dirsum_eval : public eval_container_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
-    static const size_t k_ordera = N; //!< Order of the first %tensor
-    static const size_t k_orderb = M; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
 
+public:
     enum {
         NC = N + M
     };
 
-    //!    Contraction expression core type
-    typedef dirsum_core<N, M, T, E1, E2> core_t;
-
-    //!    Contraction expression type
-    typedef expr<k_orderc, T, core_t> expression_t;
-
-    //!    Evaluating container type of the first expression (A)
-    typedef typename E1::eval_container_t eval_container_a_t;
-
-    //!    Evaluating container type of the second expression (B)
-    typedef typename E2::eval_container_t eval_container_b_t;
-
-    //!    Number of %tensor arguments in expression A
-    static const size_t k_narg_tensor_a =
-        eval_container_a_t::template narg<tensor_tag>::k_narg;
-
-    //!    Number of operation arguments in expression A
-    static const size_t k_narg_oper_a =
-        eval_container_a_t::template narg<oper_tag>::k_narg;
-
-    //!    Number of %tensor arguments in expression B
-    static const size_t k_narg_tensor_b =
-        eval_container_b_t::template narg<tensor_tag>::k_narg;
-
-    //!    Number of operation arguments in expression A
-    static const size_t k_narg_oper_b =
-        eval_container_b_t::template narg<oper_tag>::k_narg;
-
-    //!    Labels for sub-expressions
-    typedef dirsum_subexpr_labels<N, M, T, E1, E2> subexpr_labels_t;
-
-    //!    Evaluating functor type (specialized for A and B)
-    typedef dirsum_eval_functor<N, M, T, E1, E2,
-        k_narg_tensor_a, k_narg_oper_a, k_narg_tensor_b, k_narg_oper_b>
-        functor_t;
-
-    //!    Number of arguments in the expression
-    template<typename Tag, int Dummy = 0>
-    struct narg {
-        static const size_t k_narg = 0;
-    };
-
 private:
-    expr<NC, T> m_expr; //!< Expression
-    dirsum_core<N, M, T> &m_core; //!< Expression core
-    subexpr_labels_t m_sub_labels;
-    functor_t m_func; //!< Sub-expression evaluation functor
+    dirsum_core<N, M, T> m_core; //!< Expression core
+    dirsum_subexpr_labels<N, M, T> m_sub_labels;
+    dirsum_eval_functor<N, M, T> m_func; //!< Sub-expression evaluation functor
 
 public:
     /** \brief Initializes the container with given expression and
             result recipient
      **/
-    dirsum_eval(const expr<NC, T> &e, const letter_expr<NC> &label);
+    dirsum_eval(
+        const dirsum_core<N, M, T> &core,
+        const letter_expr<NC> &label);
 
     /** \brief Virtual destructor
      **/
@@ -173,15 +146,28 @@ public:
      **/
     void clean();
 
-    template<typename Tag>
-    arg<N + M, T, Tag> get_arg(const Tag &tag, size_t i) const
-        throw(exception);
-
-    /** \brief Returns a single argument
+    /** \brief Returns the number of tensors in expression
      **/
-    arg<N + M, T, oper_tag> get_arg(const oper_tag &tag, size_t i) const
-        throw(exception);
+    virtual size_t get_ntensor() const {
+        return 0;
+    }
 
+    /** \brief Returns the number of tensor operations in expression
+     **/
+    virtual size_t get_noper() const {
+        return 1;
+    }
+
+
+    /** \brief Returns tensor arguments (not valid)
+        \param i Argument number.
+     **/
+    virtual arg<N + M, T, tensor_tag> get_tensor_arg(size_t i);
+
+    /** \brief Returns operation arguments
+        \param i Argument number (0 is the only valid value).
+     **/
+    virtual arg<N + M, T, oper_tag> get_oper_arg(size_t i);
 };
 
 
@@ -198,10 +184,13 @@ dirsum_core<N, M, T>::dirsum_core(
     static const char method[] =
         "dirsum_core(const expr<N, T>&, const expr<M, T>&)";
 
+    const expr_core_i<N, T> &core1 = expr1.get_core();
+    const expr_core_i<M, T> &core2 = expr2.get_core();
+
     size_t j = 0;
     for(size_t i = 0; i < N; i++) {
-        const letter &l = expr1.letter_at(i);
-        if(expr2.contains(l)) {
+        const letter &l = core1.letter_at(i);
+        if(core2.contains(l)) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Duplicate uncontracted index in A.");
         } else {
@@ -209,8 +198,8 @@ dirsum_core<N, M, T>::dirsum_core(
         }
     }
     for(size_t i = 0; i < M; i++) {
-        const letter &l = expr2.letter_at(i);
-        if(expr1.contains(l)) {
+        const letter &l = core2.letter_at(i);
+        if(core1.contains(l)) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Duplicate uncontracted index in B.");
         } else {
@@ -261,53 +250,43 @@ template<size_t N, size_t M, typename T>
 const char dirsum_eval<N, M, T>::k_clazz[] = "dirsum_eval<N, M, T>";
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-template<int Dummy>
-struct dirsum_eval<N, M, T, E1, E2>::narg<oper_tag, Dummy> {
-    static const size_t k_narg = 1;
-};
-
-
 template<size_t N, size_t M, typename T>
 dirsum_eval<N, M, T>::dirsum_eval(
-    expr<NC, T> &e, const letter_expr<NC> &label) :
+const dirsum_core<N, M, T> &core,
+const letter_expr<NC> &label) :
 
-    m_expr(e),
-    m_core(dynamic_cast< dirsum_core<N, M, T>& >(m_expr.get_core())),
-    m_sub_labels(expr, label),
-    m_func(expr, m_sub_labels, label) {
+m_core(core),
+m_sub_labels(core, label),
+m_func(core, m_sub_labels, label) {
 
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-inline void dirsum_eval<N, M, T, E1, E2>::prepare() {
+template<size_t N, size_t M, typename T>
+inline void dirsum_eval<N, M, T>::prepare() {
 
     m_func.evaluate();
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-inline void dirsum_eval<N, M, T, E1, E2>::clean() {
+template<size_t N, size_t M, typename T>
+inline void dirsum_eval<N, M, T>::clean() {
 
     m_func.clean();
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-template<typename Tag>
-arg<N + M, T, Tag> dirsum_eval<N, M, T, E1, E2>::get_arg(
-    const Tag &tag, size_t i) const throw(exception) {
+template<size_t N, size_t M, typename T>
+arg<N + M, T, tensor_tag> dirsum_eval<N, M, T>::get_tensor_arg(size_t i) {
 
-    static const char *method = "get_arg(const Tag&, size_t)";
+    static const char *method = "get_arg(size_t)";
     throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
         "Invalid method.");
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-arg<N + M, T, oper_tag> dirsum_eval<N, M, T, E1, E2>::get_arg(
-    const oper_tag &tag, size_t i) const throw(exception) {
+template<size_t N, size_t M, typename T>
+arg<N + M, T, oper_tag> dirsum_eval<N, M, T>::get_oper_arg(size_t i) {
 
     static const char *method = "get_arg(const oper_tag&, size_t)";
 
