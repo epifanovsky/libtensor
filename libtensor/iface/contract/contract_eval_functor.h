@@ -10,28 +10,6 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/** \brief Functor for evaluating contractions (base class)
-
-    \ingroup libtensor_btensor_expr
- **/
-template<size_t N, size_t M, size_t K, typename T>
-class contract_eval_functor_base {
-public:
-    enum {
-        NA = N + K,
-        NB = M + K,
-        NC = N + M
-    };
-
-public:
-    virtual ~contract_eval_functor_base() { }
-    virtual void evaluate() = 0;
-    virtual void clean() = 0;
-    virtual arg<NC, T, oper_tag> get_arg() const = 0;
-
-};
-
-
 /** \brief Functor for evaluating contractions (top-level wrapper)
 
     \ingroup libtensor_btensor_expr
@@ -49,14 +27,12 @@ public:
     };
 
 private:
-//    contract_eval_functor_base<N, M, K, T> *m_func;
     contract_core<N, M, K, T> &m_core;
     letter_expr<NA> m_label_a;
     letter_expr<NB> m_label_b;
     letter_expr<NC> m_label_c;
     interm<NA, T> m_interm_a;
     interm<NB, T> m_interm_b;
-//    contract_contraction2_builder<N, M, K> m_contr_bld; //!< Contraction builder
     btod_contract2<N, M, K> *m_op; //!< Contraction operation
     arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
 
@@ -70,28 +46,13 @@ public:
 
     void evaluate();
 
-    void clean() {
-//        m_func->clean();
-    }
+    void clean();
 
     arg<NC, T, oper_tag> get_arg() const {
         return *m_arg;
-//        return m_func->get_arg();
     }
 
 };
-
-
-} // namespace labeled_btensor_expr
-} // namespace libtensor
-
-//#include "contract_eval_functor_xxxx.h"
-//#include "contract_eval_functor_xx10.h"
-//#include "contract_eval_functor_10xx.h"
-//#include "contract_eval_functor_1010.h"
-
-namespace libtensor {
-namespace labeled_btensor_expr {
 
 
 template<size_t N, size_t M, size_t K, typename T>
@@ -142,6 +103,16 @@ void contract_eval_functor<N, M, K, T>::evaluate() {
         arga.get_btensor(), argb.get_btensor());
     m_arg = new arg<NC, T, oper_tag>(*m_op,
         arga.get_coeff() * argb.get_coeff());
+}
+
+
+template<size_t N, size_t M, size_t K, typename T>
+void contract_eval_functor<N, M, K, T>::clean() {
+
+    delete m_arg; m_arg = 0;
+    delete m_op; m_op = 0;
+    m_interm_a.clean();
+    m_interm_b.clean();
 }
 
 

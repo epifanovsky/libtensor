@@ -2,7 +2,7 @@
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_MULT_EVAL_FUNCTOR_H
 
 #include <libtensor/block_tensor/btod_mult.h>
-#include "../expr/anon_eval.h"
+#include "../expr/interm.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -20,7 +20,6 @@ private:
     mult_core<N, T, Recip> m_core; //!< Multiply core
     interm<N, T> m_interm_a;
     interm<N, T> m_interm_b;
-
     btod_mult<N> *m_op; //!< Element-wise multiplication operation
     arg<N, T, oper_tag> *m_arg; //!< Composed operation argument
 
@@ -90,6 +89,8 @@ void mult_eval_functor<N, T, Recip>::clean() {
 
     delete m_op; m_op = 0;
     delete m_arg; m_arg = 0;
+    m_interm_a.clean();
+    m_interm_b.clean();
 }
 
 

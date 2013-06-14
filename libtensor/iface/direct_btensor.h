@@ -10,7 +10,6 @@
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr.h"
 #include "expr/expr.h"
-#include "expr/eval_i.h"
 #include "expr/evalfunctor.h"
 
 namespace libtensor {

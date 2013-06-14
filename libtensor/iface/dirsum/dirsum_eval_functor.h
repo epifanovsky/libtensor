@@ -9,25 +9,6 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/** \brief Functor for evaluating direct sums (base class)
-
-    \ingroup libtensor_btensor_expr
- **/
-template<size_t N, size_t M, typename T>
-class dirsum_eval_functor_base {
-public:
-    enum {
-        NC = N + M
-    };
-
-public:
-    virtual ~dirsum_eval_functor_base() { }
-    virtual void evaluate() = 0;
-    virtual void clean() = 0;
-    virtual arg<NC, T, oper_tag> get_arg() const = 0;
-
-};
-
 /** \brief Functor for evaluating direct sums
 
     \ingroup libtensor_btensor_expr
@@ -49,7 +30,6 @@ private:
     letter_expr<N + M> m_label_c;
     interm<N, T> m_interm_a;
     interm<M, T> m_interm_b;
-
     btod_dirsum<N, M> *m_op; //!< Direct sum operation
     arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
 
@@ -66,6 +46,7 @@ public:
     void clean();
 
     arg<NC, T, oper_tag> get_arg() const { return *m_arg; }
+
 };
 
 
@@ -126,6 +107,8 @@ void dirsum_eval_functor<N, M, T>::clean() {
 
     delete m_op; m_op = 0;
     delete m_arg; m_arg = 0;
+    m_interm_a.clean();
+    m_interm_b.clean();
 }
 
 

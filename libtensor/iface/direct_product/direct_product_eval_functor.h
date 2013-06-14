@@ -33,7 +33,6 @@ private:
     letter_expr<NC> m_label_c;
     interm<NA, T> m_interm_a;
     interm<NB, T> m_interm_b;
-
     btod_contract2<N, M, 0> *m_op; //!< Contraction operation
     arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
 
@@ -112,6 +111,8 @@ void direct_product_eval_functor<N, M, T>::clean() {
 
     delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
+    m_interm_a.clean();
+    m_interm_b.clean();
 }
 
 

@@ -16,8 +16,6 @@ namespace labeled_btensor_expr {
     \tparam N Order of the first tensor (A) less number of shared indexes.
     \tparam M Order of the second tensor (B) less number of shared indexes.
     \tparam K Number of shared indexes.
-    \tparam E1 First expression (A) type.
-    \tparam E2 Second expression (B) type.
 
     \ingroup libtensor_btensor_expr
  **/
@@ -32,6 +30,7 @@ public:
         NB = M + K,
         NC = N + M + K
     };
+
 private:
     expr<NA, T> m_expr1; //!< First expression
     expr<NB, T> m_expr2; //!< Second expression
@@ -248,13 +247,6 @@ ewmult_core<N, M, K, T>::ewmult_core(const letter_expr<K> &ewidx,
 
 
 template<size_t N, size_t M, size_t K, typename T>
-eval_container_i<N + M + K, T> *ewmult_core<N, M, K, T>::create_container(
-    const letter_expr<N + M + K> &label) const {
-
-    return new ewmult_eval<N, M, K, T>(*this, label);
-}
-
-template<size_t N, size_t M, size_t K, typename T>
 bool ewmult_core<N, M, K, T>::contains(const letter &let) const {
 
     for(register size_t i = 0; i < N + M; i++) {
@@ -343,6 +335,14 @@ arg<N + M + K, T, oper_tag> ewmult_eval<N, M, K, T>::get_oper_arg(
     }
 
     return m_func.get_arg();
+}
+
+
+template<size_t N, size_t M, size_t K, typename T>
+eval_container_i<N + M + K, T> *ewmult_core<N, M, K, T>::create_container(
+    const letter_expr<N + M + K> &label) const {
+
+    return new ewmult_eval<N, M, K, T>(*this, label);
 }
 
 

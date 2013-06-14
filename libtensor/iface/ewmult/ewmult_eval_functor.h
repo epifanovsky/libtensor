@@ -11,26 +11,7 @@
 namespace libtensor {
 namespace labeled_btensor_expr {
 
-/** \brief Functor for evaluating direct sums (base class)
 
-    \ingroup libtensor_btensor_expr
- **/
-template<size_t N, size_t M, size_t K, typename T>
-class ewmult_eval_functor_base {
-public:
-    enum {
-        NA = N + K,
-        NB = M + K,
-        NC = N + M + K
-    };
-
-public:
-    virtual ~ewmult_eval_functor_base() { }
-    virtual void evaluate() = 0;
-    virtual void clean() = 0;
-    virtual arg<NC, T, oper_tag> get_arg() const = 0;
-
-};
 /** \brief Functor for evaluating element-wise products
 
     \ingroup libtensor_btensor_expr
@@ -54,7 +35,6 @@ private:
     letter_expr<NC> m_label_c;
     interm<NA, T> m_interm_a;
     interm<NB, T> m_interm_b;
-
     btod_ewmult2<N, M, K> *m_op; //!< Operation
     arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
 
@@ -132,6 +112,8 @@ void ewmult_eval_functor<N, M, K, T>::clean() {
 
     delete m_op; m_op = 0;
     delete m_arg; m_arg = 0;
+    m_interm_a.clean();
+    m_interm_b.clean();
 }
 
 

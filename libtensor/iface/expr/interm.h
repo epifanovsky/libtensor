@@ -36,6 +36,10 @@ public:
      **/
     void evaluate();
 
+    /** \brief Cleans up the intermediates
+     **/
+    void clean();
+
     /** \brief Returns the block tensor argument
      **/
     const arg<N, T, tensor_tag> &get_arg();
@@ -77,6 +81,16 @@ void interm<N, T>::evaluate() {
         m_eval->evaluate();
         m_arg = new arg<N, T, tensor_tag>(m_eval->get_btensor(),
             permutation<N>(), T(1));
+    }
+}
+
+
+template<size_t N, typename T>
+void interm<N, T>::clean() {
+
+    if(m_eval) {
+        delete m_arg; m_arg = 0;
+        m_eval->clean();
     }
 }
 
