@@ -140,11 +140,11 @@ public:
 
     /** \brief Evaluates sub-expressions into temporary tensors
      **/
-    void prepare();
+    virtual void prepare();
 
     /** \brief Cleans up temporary tensors
      **/
-    void clean();
+    virtual void clean();
 
     /** \brief Returns the number of tensors in expression
      **/

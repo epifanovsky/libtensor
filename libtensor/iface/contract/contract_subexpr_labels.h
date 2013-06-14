@@ -46,11 +46,15 @@ public:
 
     /** \brief Returns the label for the first sub-expression
      **/
-    const letter_expr<N + K> &get_label_a() const;
+    const letter_expr<N + K> &get_label_a() const {
+        return m_bld_a.get_label();
+    }
 
     /** \brief Returns the label for the second sub-expression
      **/
-    const letter_expr<M + K> &get_label_b() const;
+    const letter_expr<M + K> &get_label_b() const {
+        return m_bld_b.get_label();
+    }
 };
 
 
@@ -61,22 +65,6 @@ contract_subexpr_labels<N, M, K, T>::contract_subexpr_labels(
     m_bld_a(label_c, core.get_contr(), core.get_expr_1()),
     m_bld_b(label_c, core.get_contr(), core.get_expr_2()) {
 
-}
-
-
-template<size_t N, size_t M, size_t K, typename T>
-const letter_expr<N + K>&
-contract_subexpr_labels<N, M, K, T>::get_label_a() const {
-
-    return m_bld_a.get_label();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T>
-const letter_expr<M + K>&
-contract_subexpr_labels<N, M, K, T>::get_label_b() const {
-
-    return m_bld_b.get_label();
 }
 
 

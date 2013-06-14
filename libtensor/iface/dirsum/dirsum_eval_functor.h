@@ -84,6 +84,7 @@ dirsum_eval_functor<N, M, T>::dirsum_eval_functor(
     m_core(core),
     m_label_a(labels_ab.get_label_a()),
     m_label_b(labels_ab.get_label_b()),
+    m_label_c(label_c),
     m_interm_a(core.get_expr_1(), m_label_a),
     m_interm_a(core.get_expr_2(), m_label_b),
     m_op(0), m_arg(0) {

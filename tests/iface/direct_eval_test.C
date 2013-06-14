@@ -57,7 +57,7 @@ void invoke_eval(
     compare_ref<N>::compare(testname, bt, ref, thresh);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        throw libtest::test_exception(testname, __FILE__, __LINE__, e.what());
     }
 }
 

@@ -115,29 +115,6 @@ contract_eval_functor<N, M, K, T>::contract_eval_functor(
     m_interm_b(core.get_expr_2(), m_label_b),
     m_op(0), m_arg(0) {
 
-/*
-    std::auto_ptr< eval_container_i<NA, T> > conta(core.get_expr_1().
-        get_core().create_container(labels_ab.get_label_a()));
-    std::auto_ptr< eval_container_i<NB, T> > contb(core.get_expr_2().
-        get_core().create_container(labels_ab.get_label_b()));
-
-    bool ta = (conta->get_ntensor() == 1 && conta->get_noper() == 0);
-    bool tb = (contb->get_ntensor() == 1 && contb->get_noper() == 0);
-    
-    if(ta && tb) {
-        m_func = new contract_eval_functor_1010<N, M, K, T>(
-            core, labels_ab, label_c);
-    } else if(ta) {
-        m_func = new contract_eval_functor_10xx<N, M, K, T>(
-            core, labels_ab, label_c);
-    } else if(tb) {
-        m_func = new contract_eval_functor_xx10<N, M, K, T>(
-            core, labels_ab, label_c);
-    } else {
-        m_func = new contract_eval_functor_xxxx<N, M, K, T>(
-            core, labels_ab, label_c);
-    }
-*/
 }
 
 

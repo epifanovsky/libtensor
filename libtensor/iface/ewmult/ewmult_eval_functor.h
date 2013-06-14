@@ -11,51 +11,58 @@
 namespace libtensor {
 namespace labeled_btensor_expr {
 
+/** \brief Functor for evaluating direct sums (base class)
+
+    \ingroup libtensor_btensor_expr
+ **/
+template<size_t N, size_t M, size_t K, typename T>
+class ewmult_eval_functor_base {
+public:
+    enum {
+        NA = N + K,
+        NB = M + K,
+        NC = N + M + K
+    };
+
+public:
+    virtual ~ewmult_eval_functor_base() { }
+    virtual void evaluate() = 0;
+    virtual void clean() = 0;
+    virtual arg<NC, T, oper_tag> get_arg() const = 0;
+
+};
 /** \brief Functor for evaluating element-wise products
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
+template<size_t N, size_t M, size_t K, typename T>
 class ewmult_eval_functor {
 public:
-    static const char *k_clazz; //!< Class name
-    static const size_t k_ordera = N + K; //!< Order of the first %tensor
-    static const size_t k_orderb = M + K; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M + K; //!< Order of the result
-
-    //!    Contraction expression core type
-    typedef ewmult_core<N, M, K, T, E1, E2> core_t;
-
-    //!    Contraction expression type
-    typedef expr<k_orderc, T, core_t> expression_t;
-
-    //!    Expression core type of A
-    typedef typename E1::core_t core_a_t;
-
-    //!    Expression core type of B
-    typedef typename E2::core_t core_b_t;
-
-    //!    Anonymous evaluator type of A
-    typedef anon_eval<k_ordera, T, core_a_t> anon_eval_a_t;
-
-    //!    Anonymous evaluator type of B
-    typedef anon_eval<k_orderb, T, core_b_t> anon_eval_b_t;
-
-    //!    Sub-expression labels
-    typedef ewmult_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels_t;
-
-private:
-    anon_eval_a_t m_eval_a; //!< Anonymous evaluator for sub-expression A
-    anon_eval_b_t m_eval_b; //!< Anonymous evaluator for sub-expression B
-    ewmult_perm_builder<N, M, K> m_perm_bld;
-    btod_ewmult2<N, M, K> *m_op; //!< Operation
-    arg<k_orderc, T, oper_tag> *m_arg; //!< Composed operation argument
+    static const char k_clazz[]; //!< Class name
 
 public:
-    ewmult_eval_functor(expression_t &expr,
-        const subexpr_labels_t &labels_ab,
-        const letter_expr<k_orderc> &label_c);
+    enum {
+        NA = N + K,
+        NB = M + K,
+        NC = N + M + K
+    };
+
+private:
+    ewmult_core<N, M, K, T> m_core;
+    letter_expr<N> m_label_a;
+    letter_expr<N> m_label_b;
+    letter_expr<N> m_label_c;
+    interm<N, T> m_interm_a;
+    interm<N, T> m_interm_b;
+
+    btod_ewmult2<N, M, K> *m_op; //!< Operation
+    arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
+
+public:
+    ewmult_eval_functor(
+        ewmult_core<N, M, K, T> &expr,
+        const ewmult_subexpr_labels<N, M, K, T> &labels_ab,
+        const letter_expr<NC> &label_c);
 
     ~ewmult_eval_functor();
 
@@ -64,91 +71,73 @@ public:
     void clean();
 
     arg<N + M + K, T, oper_tag> get_arg() const { return *m_arg; }
-
-private:
-    void create_arg();
-    void destroy_arg();
-
 };
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-const char *ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::
-k_clazz = "ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>";
+template<size_t N, size_t M, size_t K, typename T>
+const char ewmult_eval_functor<N, M, K, T>::k_clazz[] =
+         "ewmult_eval_functor<N, M, K, T>";
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::
-ewmult_eval_functor(expression_t &expr, const subexpr_labels_t &labels_ab,
-    const letter_expr<k_orderc> &label_c) :
+template<size_t N, size_t M, size_t K, typename T>
+ewmult_eval_functor<N, M, K, T>::ewmult_eval_functor(
+    ewmult_core<N, M, K, T> &core,
+    const ewmult_subexpr_labels<N, M, K, T> &labels_ab,
+    const letter_expr<NC> &label_c) :
 
-    m_eval_a(expr.get_core().get_expr_1(), labels_ab.get_label_a()),
-    m_eval_b(expr.get_core().get_expr_2(), labels_ab.get_label_b()),
-    m_perm_bld(labels_ab.get_label_a(), labels_ab.get_label_b(), label_c,
-        expr.get_core().get_ewidx()),
+    m_core(core),
+    m_label_a(labels_ab.get_label_a()),
+    m_label_b(labels_ab.get_label_b()),
+    m_label_c(label_c),
+    m_interm_a(core.get_expr_1(), m_label_a),
+    m_interm_b(core.get_expr_2(), m_label_b),
     m_op(0), m_arg(0) {
 
 }
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::
-~ewmult_eval_functor() {
+template<size_t N, size_t M, size_t K, typename T>
+ewmult_eval_functor<N, M, K, T>::~ewmult_eval_functor() {
 
-    destroy_arg();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-void ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::evaluate() {
-
-    m_eval_a.evaluate();
-    m_eval_b.evaluate();
-    create_arg();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-void ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::clean() {
-
-    destroy_arg();
-    m_eval_a.clean();
-    m_eval_b.clean();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-void ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::create_arg() {
-
-    destroy_arg();
-    m_op = new btod_ewmult2<N, M, K>(m_eval_a.get_btensor(),
-        m_perm_bld.get_perma(), m_eval_b.get_btensor(),
-        m_perm_bld.get_permb(), m_perm_bld.get_permc());
-    m_arg = new arg<k_orderc, T, oper_tag>(*m_op, 1.0);
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2,
-    size_t NT1, size_t NO1, size_t NT2, size_t NO2>
-void ewmult_eval_functor<N, M, K, T, E1, E2, NT1, NO1, NT2, NO2>::destroy_arg() {
-
-    delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
+    delete m_arg; m_arg = 0;
+}
+
+
+template<size_t N, size_t M, size_t K, typename T>
+void ewmult_eval_functor<N, M, K, T>::evaluate() {
+
+    m_interm_a.evaluate();
+    m_interm_b.evaluate();
+
+    arg<N, T, tensor_tag> arga = m_interm_a.get_arg();
+    arg<M, T, tensor_tag> argb = m_interm_b.get_arg();
+
+    ewmult_perm_builder<N, M, K> pb(
+        m_label_a, permutation<N>(arga.get_perm(), true),
+        m_label_b, permutation<M>(argb.get_perm(), true),
+        m_label_c);
+
+    m_op = new btod_ewmult2<N, M, K>(arga.get_btensor(),
+            argb.get_btensor(), pb.get_perm());
+    m_arg = new arg<NC, T, oper_tag>(*m_op,
+            arga.get_coeff() * argb.get_coeff());
+}
+
+
+template<size_t N, size_t M, size_t K, typename T>
+void ewmult_eval_functor<N, M, K, T>::clean() {
+
+    delete m_op; m_op = 0;
+    delete m_arg; m_arg = 0;
+
+    m_interm_a.clean();
+    m_interm_b.clean();
 }
 
 
 } // namespace labeled_btensor_expr
 } // namespace libtensor
 
-// Template specializations
-#include "ewmult_eval_functor_xx10.h"
-#include "ewmult_eval_functor_10xx.h"
-#include "ewmult_eval_functor_1010.h"
 
 #endif // LIBTENSOR_LABELED_BTENSOR_EXPR_EWMULT_EVAL_FUNCTOR_H

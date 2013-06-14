@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EWMULT_OPERATOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EWMULT_OPERATOR_H
 
-#include "../ident/core_ident.h"
 #include "ewmult_core.h"
 
 namespace libtensor {

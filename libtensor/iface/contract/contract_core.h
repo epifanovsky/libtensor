@@ -47,7 +47,7 @@ public:
     /** \brief Clones this object using new
      **/
     virtual expr_core_i<N + M, T> *clone() const {
-        return new contract_core(*this);
+        return new contract_core<N, M, K, T>(*this);
     }
 
     /** \brief Returns the first expression (A)

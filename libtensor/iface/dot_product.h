@@ -15,10 +15,10 @@ namespace labeled_btensor_expr {
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool Assignable1, bool Assignable2>
+template<size_t N, typename T, bool A1, bool A2>
 double dot_product(
-    labeled_btensor<N, T, Assignable1> bt1,
-    labeled_btensor<N, T, Assignable2> bt2) {
+    labeled_btensor<N, T, A1> bt1,
+    labeled_btensor<N, T, A2> bt2) {
 
     size_t seq1[N], seq2[N];
     for(size_t i = 0; i < N; i++) {
@@ -37,9 +37,9 @@ double dot_product(
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool Assignable1>
+template<size_t N, typename T, bool A1>
 double dot_product(
-    labeled_btensor<N, T, Assignable1> bt1,
+    labeled_btensor<N, T, A1> bt1,
     expr<N, T> expr2) {
 
     anon_eval<N, T> eval2(expr2, bt1.get_label());
@@ -52,10 +52,10 @@ double dot_product(
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, typename T, bool Assignable2>
+template<size_t N, typename T, bool A2>
 double dot_product(
     expr<N, T> expr1,
-    labeled_btensor<N, T, Assignable2> bt2) {
+    labeled_btensor<N, T, A2> bt2) {
 
     return dot_product(bt2, expr1);
 }

@@ -23,17 +23,13 @@ class ident_core : public expr_core_i<N, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
-public:
-    //! Labeled block tensor type
-    typedef labeled_btensor<N, T, Assignable> labeled_btensor_t;
-
 private:
-    labeled_btensor_t m_t; //!< Labeled block tensor
+    labeled_btensor<N, T, Assignable> m_t; //!< Labeled block tensor
 
 public:
     /** \brief Initializes the operation with a tensor reference
      **/
-    ident_core(const labeled_btensor_t &t) : m_t(t) { }
+    ident_core(const labeled_btensor<N, T, Assignable> &t) : m_t(t) { }
 
     /** \brief Virtual destructor
      **/
@@ -42,12 +38,12 @@ public:
     /** \brief Clones this object using new
      **/
     virtual expr_core_i<N, T> *clone() const {
-        return new ident_core(*this);
+        return new ident_core<N, T, Assignable>(*this);
     }
 
     /** \brief Returns the labeled block tensor
      **/
-    labeled_btensor_t &get_tensor() {
+    labeled_btensor<N, T, Assignable> &get_tensor() {
         return m_t;
     }
 
