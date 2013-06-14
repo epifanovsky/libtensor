@@ -212,6 +212,14 @@ direct_product_core<N, M, T>::direct_product_core(
 
 
 template<size_t N, size_t M, typename T>
+eval_container_i<N + M, T> *direct_product_core<N, M, T>::create_container(
+    const letter_expr<N + M> &label) const {
+
+    return new direct_product_eval<N, M, T>(*this, label);
+}
+
+
+template<size_t N, size_t M, typename T>
 bool direct_product_core<N, M, T>::contains(const letter &let) const {
 
     for(register size_t i = 0; i < N + M; i++) {

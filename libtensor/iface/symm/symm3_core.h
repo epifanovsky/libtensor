@@ -92,7 +92,7 @@ public:
         \param let Letter.
      **/
     virtual bool contains(const letter &let) const {
-        return m_subexpr.contains(let);
+        return m_subexpr.get_core().contains(let);
     }
 
     /** \brief Returns the index of a letter in the result's label
@@ -101,7 +101,7 @@ public:
             requested letter.
      **/
     virtual size_t index_of(const letter &let) const {
-        return m_subexpr.index_of(let);
+        return m_subexpr.get_core().index_of(let);
     }
 
     /** \brief Returns the letter at a given position in the result's label
@@ -109,7 +109,7 @@ public:
         \throw out_of_bounds If the index is out of bounds.
      **/
     virtual const letter &letter_at(size_t i) const {
-        return m_subexpr.letter_at(i);
+        return m_subexpr.get_core().letter_at(i);
     }
 
 };
@@ -122,7 +122,7 @@ public:
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, bool Sym, typename T>
-class symm3_eval : public eval_i<N, T> {
+class symm3_eval : public eval_container_i<N, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -258,7 +258,7 @@ void symm3_eval<N, Sym, T>::clean() {
 
     delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
-    m_sub_eval_cont.clean();
+    m_sub_eval_cont->clean();
 }
 
 

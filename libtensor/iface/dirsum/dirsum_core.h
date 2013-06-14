@@ -260,12 +260,12 @@ const char dirsum_eval<N, M, T>::k_clazz[] = "dirsum_eval<N, M, T>";
 
 template<size_t N, size_t M, typename T>
 dirsum_eval<N, M, T>::dirsum_eval(
-const dirsum_core<N, M, T> &core,
-const letter_expr<NC> &label) :
+    const dirsum_core<N, M, T> &core,
+    const letter_expr<NC> &label) :
 
-m_core(core),
-m_sub_labels(core, label),
-m_func(m_core, m_sub_labels, label) {
+    m_core(core),
+    m_sub_labels(core, label),
+    m_func(m_core, m_sub_labels, label) {
 
 }
 

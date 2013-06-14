@@ -14,8 +14,8 @@ namespace labeled_btensor_expr {
  **/
 template<size_t N, typename T>
 expr<N, T> div(
-    expr<N, T, E1> lhs,
-    expr<N, T, E2> rhs) {
+    expr<N, T> lhs,
+    expr<N, T> rhs) {
 
     return expr<N, T>(mult_core<N, T, true>(lhs, rhs));
 }

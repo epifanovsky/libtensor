@@ -43,7 +43,7 @@ expr<N, T> mult(
     expr<N, T> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return mult(lhs, expr<N, T>(ident_core<N, T>(rhs)));
+    return mult(lhs, expr<N, T>(ident_core<N, T, A2>(rhs)));
 }
 
 

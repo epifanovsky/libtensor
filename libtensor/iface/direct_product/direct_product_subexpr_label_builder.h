@@ -35,7 +35,9 @@ public:
         const letter_expr<N + M> &label_c,
         const expr<N, T> &e);
 
-    const letter_expr<N> &get_label() const { return m_label; }
+    const letter_expr<N> &get_label() const {
+        return m_label;
+    }
 
 protected:
     template<size_t L>
@@ -47,7 +49,8 @@ protected:
 };
 
 
-template<size_t N, size_t M> template<typename T>
+template<size_t N, size_t M>
+template<typename T>
 direct_product_subexpr_label_builder<N, M>::direct_product_subexpr_label_builder(
     const letter_expr<N + M> &label_c, const expr<N, T> &e) :
 
@@ -57,7 +60,8 @@ direct_product_subexpr_label_builder<N, M>::direct_product_subexpr_label_builder
 }
 
 
-template<size_t N, size_t M> template<typename T>
+template<size_t N, size_t M>
+template<typename T>
 direct_product_subexpr_label_builder<N, M>::letter_array::letter_array(
     const letter_expr<N + M> &label_c, const expr<N, T> &e) :
 
@@ -71,8 +75,7 @@ direct_product_subexpr_label_builder<N, M>::letter_array::letter_array(
                 throw_exc("direct_product_subexpr_label_builder::letter_array",
                     "letter_array()", "Inconsistent expression");
             }
-            m_let[j] = &l;
-            j++;
+            m_let[j++] = &l;
         }
     }
     if(j != N) {
@@ -82,7 +85,8 @@ direct_product_subexpr_label_builder<N, M>::letter_array::letter_array(
 }
 
 
-template<size_t N, size_t M> template<size_t L>
+template<size_t N, size_t M>
+template<size_t L>
 letter_expr<L> direct_product_subexpr_label_builder<N, M>::mk_label(
     const dummy<L>&, const letter_array &let, size_t i) {
 

@@ -39,8 +39,8 @@ double trace(
  **/
 template<size_t N, size_t N2, typename T, bool A>
 double trace(
-    letter_expr<N> le1,
-    letter_expr<N> le2,
+    const letter_expr<N> le1,
+    const letter_expr<N> le2,
     labeled_btensor<N2, T, A> bt) {
 
     size_t seq1[2 * N], seq2[2 * N];
@@ -64,7 +64,7 @@ template<typename T>
 double trace(
     const letter &l1,
     const letter &l2,
-    expr<2, T> expr) {
+    const expr<2, T> &expr) {
 
     letter_expr<2> le(l1|l2);
     anon_eval<2, T> eval(expr, le);
@@ -79,8 +79,8 @@ double trace(
  **/
 template<size_t N, size_t N2, typename T>
 double trace(
-    letter_expr<N> le1,
-    letter_expr<N> le2,
+    const letter_expr<N> le1,
+    const letter_expr<N> le2,
     expr<N2, T> expr) {
 
     trace_subexpr_label_builder<N> lb(le1, le2);

@@ -63,7 +63,7 @@ direct_product_subexpr_labels<N, M, T>::direct_product_subexpr_labels(
 
 
 template<size_t N, size_t M, typename T>
-const letter_expr<N>&
+inline const letter_expr<N>&
 direct_product_subexpr_labels<N, M, T>::get_label_a() const {
 
     return m_bld_a.get_label();
@@ -71,7 +71,7 @@ direct_product_subexpr_labels<N, M, T>::get_label_a() const {
 
 
 template<size_t N, size_t M, typename T>
-const letter_expr<M>&
+inline const letter_expr<M>&
 direct_product_subexpr_labels<N, M, T>::get_label_b() const {
 
     return m_bld_b.get_label();

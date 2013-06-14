@@ -2,7 +2,6 @@
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRSUM_EVAL_FUNCTOR_H
 
 #include <libtensor/block_tensor/btod_dirsum.h>
-#include "../expr/anon_eval.h"
 #include "dirsum_permutation_builder.h"
 #include "dirsum_subexpr_labels.h"
 
@@ -95,8 +94,8 @@ dirsum_eval_functor<N, M, T>::dirsum_eval_functor(
 template<size_t N, size_t M, typename T>
 dirsum_eval_functor<N, M, T>::~dirsum_eval_functor() {
 
-    delete m_op;
-    delete m_arg;
+    delete m_op; m_op = 0;
+    delete m_arg; m_arg = 0;
 }
 
 
@@ -128,8 +127,6 @@ void dirsum_eval_functor<N, M, T>::clean() {
     delete m_op; m_op = 0;
     delete m_arg; m_arg = 0;
 }
-
-
 
 
 } // namespace labeled_btensor_expr
