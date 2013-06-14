@@ -191,8 +191,8 @@ template<size_t N, typename T>
 arg<N, T, tensor_tag> add_eval<N, T>::get_tensor_arg(size_t i) {
 
     size_t nl = m_cont_l->get_ntensor(), nr = m_cont_r->get_ntensor();
-    if(i > nl) return m_cont_r->get_tensor_arg(i - nl);
-    else return m_cont_l->get_tensor_arg(i);
+    if(i < nl) return m_cont_l->get_tensor_arg(i);
+    else return m_cont_r->get_tensor_arg(i - nl);
 }
 
 
@@ -200,8 +200,8 @@ template<size_t N, typename T>
 arg<N, T, oper_tag> add_eval<N, T>::get_oper_arg(size_t i) {
 
     size_t nl = m_cont_l->get_noper(), nr = m_cont_r->get_noper();
-    if(i > nl) return m_cont_r->get_oper_arg(i - nl);
-    else return m_cont_l->get_oper_arg(i);
+    if(i < nl) return m_cont_l->get_oper_arg(i);
+    else return m_cont_r->get_oper_arg(i - nl);
 }
 
 
