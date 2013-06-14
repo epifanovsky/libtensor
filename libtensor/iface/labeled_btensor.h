@@ -27,13 +27,13 @@ template<size_t N, typename T, bool Assignable> class labeled_btensor;
 template<size_t N, typename T>
 class labeled_btensor<N, T, false> : public labeled_btensor_base<N> {
 private:
-    btensor_rd_i<N, T> &m_bt;
+    btensor_i<N, T> &m_bt;
 
 public:
-    labeled_btensor(btensor_rd_i<N, T> &bt, const letter_expr<N> &label) :
+    labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label) :
         labeled_btensor_base<N>(label), m_bt(bt) { }
 
-    btensor_rd_i<N, T> &get_btensor() { return m_bt; }
+    btensor_i<N, T> &get_btensor() { return m_bt; }
 };
 
 /** \brief Partial specialization of the assignable labeled tensor
