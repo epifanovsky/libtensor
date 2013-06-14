@@ -11,6 +11,8 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T> class expr;
 } // namespace labeled_btensor_expr
 
+template<size_t N, typename T> class btensor_i;
+
 
 /** \brief Block %tensor with an attached label
     \tparam N Tensor order.
@@ -19,11 +21,19 @@ template<size_t N, typename T> class expr;
 
     \ingroup libtensor_iface
  **/
-template<size_t N, typename T, bool Assignable>
-class labeled_btensor : public labeled_btensor_rd_base<N, T> {
+template<size_t N, typename T, bool Assignable> class labeled_btensor;
+
+
+template<size_t N, typename T>
+class labeled_btensor<N, T, false> : public labeled_btensor_base<N> {
+private:
+    btensor_rd_i<N, T> &m_bt;
+
 public:
     labeled_btensor(btensor_rd_i<N, T> &bt, const letter_expr<N> &label) :
-        labeled_btensor_rd_base<N, T>(bt, label) { }
+        labeled_btensor_base<N>(label), m_bt(bt) { }
+
+    btensor_rd_i<N, T> &get_btensor() { return m_bt; }
 };
 
 /** \brief Partial specialization of the assignable labeled tensor
@@ -31,26 +41,24 @@ public:
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T>
-class labeled_btensor<N, T, true> : public labeled_btensor_rd_base<N, T> {
+class labeled_btensor<N, T, true> : public labeled_btensor_base<N> {
 private:
     btensor_i<N, T> &m_bt;
 public:
     labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label) :
-        labeled_btensor_rd_base<N, T>(bt, label), m_bt(bt) { }
+        labeled_btensor_base<N>(label), m_bt(bt) { }
 
     btensor_i<N, T> &get_btensor() { return m_bt; }
 
     /** \brief Assigns this %tensor to an expression
      **/
     labeled_btensor<N, T, true> &operator=(
-        const labeled_btensor_expr::expr<N, T> rhs);
+        labeled_btensor_expr::expr<N, T> rhs);
 
-    template<bool AssignableR>
+    template<bool Assignable>
     labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, AssignableR> rhs);
+        labeled_btensor<N, T, Assignable> rhs);
 
-    labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, true> rhs);
 
 };
 
