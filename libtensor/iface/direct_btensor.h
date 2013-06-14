@@ -133,7 +133,7 @@ direct_btensor<N, T, Traits>::mk_func(
     ptrs.m_pexpr = pexpr.release();
     ptrs.m_peval = peval.release();
     ptrs.m_pfunc = new labeled_btensor_expr::evalfunctor<N, T>(
-        *pexpr, *peval);
+        *ptrs.m_pexpr, *ptrs.m_peval);
     return ptrs;
 }
 
