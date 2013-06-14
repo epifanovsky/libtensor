@@ -123,6 +123,7 @@ public:
 private:
     symm2_core<N, M, Sym, T> m_core; //!< Expression core
     std::auto_ptr< eval_container_i<N, T> > m_sub_eval_cont; //!< Evaluation of the sub-expression
+    evalfunctor<N, T> m_functor;
     letter_expr<N> m_label;
 
     btod_symmetrize2<N> *m_op; //!< Symmetrization operation
@@ -224,6 +225,7 @@ symm2_eval<N, M, Sym, T>::symm2_eval(
 
     m_core(core),
     m_sub_eval_cont(m_core.get_sub_expr().get_core().create_container(label)),
+    m_functor(m_core.get_sub_expr(), *m_sub_eval_cont),
     m_label(label),
     m_op(0), m_arg(0) {
 
@@ -252,8 +254,7 @@ void symm2_eval<N, M, Sym, T>::prepare() {
         perm.permute(i1, i2);
     }
 
-    m_op = new btod_symmetrize2<N>(
-            m_sub_eval_cont->get_oper_arg(0).get_operation(), perm, Sym);
+    m_op = new btod_symmetrize2<N>(m_functor.get_bto(), perm, Sym);
     m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 
 }

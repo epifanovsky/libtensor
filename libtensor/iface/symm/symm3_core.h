@@ -130,6 +130,7 @@ public:
 private:
     symm3_core<N, Sym, T> m_core; //!< Sub-expression
     std::auto_ptr< eval_container_i<N, T> > m_sub_eval_cont; //!< Evaluation of the sub-expression
+    evalfunctor<N, T> m_functor;
     letter_expr<N> m_label;
 
     btod_symmetrize3<N> *m_op; //!< Symmetrization operation
@@ -221,6 +222,7 @@ symm3_eval<N, Sym, T>::symm3_eval(
 
     m_core(core),
     m_sub_eval_cont(m_core.get_sub_expr().get_core().create_container(label)),
+    m_functor(m_core.get_sub_expr(), *m_sub_eval_cont),
     m_label(label),
     m_op(0), m_arg(0) {
 
@@ -247,8 +249,7 @@ void symm3_eval<N, Sym, T>::prepare() {
     if (m_arg != 0) delete m_arg;
     if (m_op != 0) delete m_op;
 
-    m_op = new btod_symmetrize3<N>(
-            m_sub_eval_cont->get_oper_arg(0).get_operation(), i1, i2, i3, Sym);
+    m_op = new btod_symmetrize3<N>(m_functor.get_bto(), i1, i2, i3, Sym);
     m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
