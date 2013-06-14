@@ -43,7 +43,7 @@ expr<N, T> operator-(
     labeled_btensor<N, T, A1> lhs,
     expr<N, T> rhs) {
 
-    return expr<N, T>(ident_core<N, T, A1(lhs)) - rhs;
+    return expr<N, T>(ident_core<N, T, A1>(lhs)) - rhs;
 }
 
 

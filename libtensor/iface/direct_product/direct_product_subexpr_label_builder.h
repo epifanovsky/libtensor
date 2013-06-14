@@ -1,11 +1,10 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_SUBEXPR_LABEL_BUILDER_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRECT_PRODUCT_SUBEXPR_LABEL_BUILDER_H
 
+#include <libtensor/core/sequence.h>
+
 namespace libtensor {
 namespace labeled_btensor_expr {
-
-
-template<size_t N, typename T, typename Core> class expr;
 
 
 /** \brief Label builder for sub-expressions in direct products
@@ -17,11 +16,12 @@ class direct_product_subexpr_label_builder {
 private:
     struct letter_array {
     private:
-        const letter *m_let[N];
+        sequence<N, const letter*> m_let;
     public:
-        template<typename T, typename Core>
-        letter_array(const letter_expr<N + M> &label_c,
-            const expr<N, T, Core> &e);
+        template<typename T>
+        letter_array(
+            const letter_expr<N + M> &label_c,
+            const expr<N, T> &e);
         const letter *at(size_t i) const { return m_let[i]; }
     };
     template<size_t L>
@@ -30,9 +30,10 @@ private:
     letter_expr<N> m_label;
 
 public:
-    template<typename T, typename Core>
+    template<typename T>
     direct_product_subexpr_label_builder(
-        const letter_expr<N + M> &label_c, const expr<N, T, Core> &e);
+        const letter_expr<N + M> &label_c,
+        const expr<N, T> &e);
 
     const letter_expr<N> &get_label() const { return m_label; }
 
@@ -46,9 +47,9 @@ protected:
 };
 
 
-template<size_t N, size_t M> template<typename T, typename Core>
+template<size_t N, size_t M> template<typename T>
 direct_product_subexpr_label_builder<N, M>::direct_product_subexpr_label_builder(
-    const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) :
+    const letter_expr<N + M> &label_c, const expr<N, T> &e) :
 
     m_let(label_c, e),
     m_label(mk_label(dummy<N>(), m_let, N - 1)) {
@@ -56,16 +57,16 @@ direct_product_subexpr_label_builder<N, M>::direct_product_subexpr_label_builder
 }
 
 
-template<size_t N, size_t M> template<typename T, typename Core>
+template<size_t N, size_t M> template<typename T>
 direct_product_subexpr_label_builder<N, M>::letter_array::letter_array(
-    const letter_expr<N + M> &label_c, const expr<N, T, Core> &e) {
+    const letter_expr<N + M> &label_c, const expr<N, T> &e) :
 
-    for(size_t i = 0; i < N; i++) m_let[i] = NULL;
+    m_let(0) {
 
     size_t j = 0;
     for(size_t i = 0; i < N + M; i++) {
         const letter &l = label_c.letter_at(i);
-        if(e.contains(l)) {
+        if(e.get_core().contains(l)) {
             if(j == N) {
                 throw_exc("direct_product_subexpr_label_builder::letter_array",
                     "letter_array()", "Inconsistent expression");

@@ -139,6 +139,9 @@ public:
 };
 
 
+template<> class letter_expr<0>;
+
+
 /** \brief Bitwise OR (|) operator for two letters
 
     \ingroup libtensor_letter_expr

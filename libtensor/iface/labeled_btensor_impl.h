@@ -22,7 +22,8 @@ template<bool AssignableR>
 labeled_btensor<N, T, true> &labeled_btensor<N, T, true>::operator=(
     labeled_btensor<N, T, AssignableR> rhs) {
 
-    expr<N, T> e(ident_core<N, T, AssignableR>(rhs));
+    labeled_btensor_expr::expr<N, T> e(
+        labeled_btensor_expr::ident_core<N, T, AssignableR>(rhs));
     labeled_btensor_expr::eval<N, T>(e, *this).evaluate();
     return *this;
 }
@@ -31,9 +32,9 @@ template<size_t N, typename T>
 labeled_btensor<N, T, true> &labeled_btensor<N, T, true>::operator=(
     labeled_btensor<N, T, true> rhs) {
 
-    expr<N, T> e(ident_core<N, T, true>(rhs));
+    labeled_btensor_expr::expr<N, T> e(
+        labeled_btensor_expr::ident_core<N, T, true>(rhs));
     labeled_btensor_expr::eval<N, T>(e, *this).evaluate();
-    eval.evaluate();
     return *this;
 }
 

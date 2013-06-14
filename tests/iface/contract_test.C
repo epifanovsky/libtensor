@@ -57,7 +57,9 @@ void test_subexpr_labels_tpl(
     expr<NM, T> e,
     letter_expr<NM> label_c) {
 
-    contract_subexpr_labels<N, M, K, T> subexpr_labels(e, label_c);
+    const contract_core<N, M, K, T> &core =
+        dynamic_cast<const contract_core<N, M, K, T>&>(e.get_core());
+    contract_subexpr_labels<N, M, K, T> subexpr_labels(core, label_c);
 }
 
 } // unnamed namespace

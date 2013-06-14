@@ -39,7 +39,6 @@ expr<N - M + 1, T> diag(
     const letter_expr<M> lab_diag,
     labeled_btensor<N, T, A> bt) {
 
-    typedef expr< N, T, core_ident<N, T, A> > sub_expr_t;
     return diag(let_diag, lab_diag, expr<N, T>(ident_core<N, T, A>(bt)));
 }
 

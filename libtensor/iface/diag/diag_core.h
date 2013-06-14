@@ -114,7 +114,7 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, typename T>
-class diag_eval : public eval_i<N - M + 1, T> {
+class diag_eval : public eval_container_i<N - M + 1, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -159,12 +159,12 @@ public:
     /** \brief Returns tensor arguments
         \param i Argument number.
      **/
-    virtual arg<N - M + 1, T, tensor_tag> get_tensor_arg(size_t i) const;
+    virtual arg<N - M + 1, T, tensor_tag> get_tensor_arg(size_t i);
 
     /** \brief Returns operation arguments
         \param i Argument number.
      **/
-    virtual arg<N - M + 1, T, oper_tag> get_oper_arg(size_t i) const;
+    virtual arg<N - M + 1, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -192,7 +192,7 @@ diag_core<N, M, T>::diag_core(const letter &diag_letter,
         }
     }
     for(size_t i = 0; i < M; i++) {
-        if(!m_expr.contains(m_diag_lab.letter_at(i))) {
+        if(!m_subexpr.get_core().contains(m_diag_lab.letter_at(i))) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Bad index in diagonal.");
         }
@@ -201,7 +201,7 @@ diag_core<N, M, T>::diag_core(const letter &diag_letter,
     size_t j = 0;
     bool first = true;
     for(size_t i = 0; i < N; i++) {
-        const letter &l = m_expr.letter_at(i);
+        const letter &l = m_subexpr.get_core().letter_at(i);
         bool indiag = m_diag_lab.contains(l);
         if(!indiag) m_defout[j++] = &l;
         else if(first && indiag) {
@@ -254,14 +254,14 @@ const char diag_eval<N, M, T>::k_clazz[] = "diag_eval<N, M, T>";
 
 
 template<size_t N, size_t M, typename T>
-diag_eval<N, M, T>::diag_eval(const expr<N - M + 1, T> &e,
+diag_eval<N, M, T>::diag_eval(
+    const expr<N - M + 1, T> &e,
     const letter_expr<N - M + 1> &label) :
 
     m_expr(e),
     m_core(dynamic_cast< diag_core<N, M, T>& >(m_expr.get_core())),
-    m_sub_label(label, expr.get_core().get_diag_letter(),
-        expr.get_core().get_diag_label()),
-    m_func(expr, m_sub_label, label) {
+    m_sub_label(label, m_core.get_diag_letter(), m_core.get_diag_label()),
+    m_func(m_core, m_sub_label, label) {
 
 }
 
@@ -281,8 +281,7 @@ void diag_eval<N, M, T>::clean() {
 
 
 template<size_t N, size_t M, typename T>
-arg<N - M + 1, T, tensor_tag> diag_eval<N, M, T>::get_tensor_arg(
-    size_t i) const {
+arg<N - M + 1, T, tensor_tag> diag_eval<N, M, T>::get_tensor_arg(size_t i) {
 
     static const char method[] = "get_tensor_arg(size_t)";
 
@@ -292,8 +291,7 @@ arg<N - M + 1, T, tensor_tag> diag_eval<N, M, T>::get_tensor_arg(
 
 
 template<size_t N, size_t M, typename T>
-arg<N - M + 1, T, oper_tag> diag_eval<N, M, T>::get_oper_arg(
-    size_t i) const {
+arg<N - M + 1, T, oper_tag> diag_eval<N, M, T>::get_oper_arg(size_t i)  {
 
     static const char method[] = "get_oper_arg(size_t)";
 

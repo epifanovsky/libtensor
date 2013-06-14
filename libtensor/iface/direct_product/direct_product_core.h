@@ -99,8 +99,8 @@ public:
 } // namespace labeled_btensor_expr
 } // namespace libtensor
 
-#include "../contract/contract_subexpr_labels.h"
-#include "../contract/contract_eval_functor.h"
+#include "direct_product_subexpr_labels.h"
+#include "direct_product_eval_functor.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -109,12 +109,10 @@ namespace labeled_btensor_expr {
 /** \brief Evaluating container for the direct product of two tensors
     \tparam N Order of the first tensor (A).
     \tparam M Order of the second tensor (B).
-    \tparam Expr1 First expression (A) type.
-    \tparam Expr2 Second expression (B) type.
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, typename T, typename E1, typename E2>
+template<size_t N, size_t M, typename T>
 class direct_product_eval : public eval_container_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
@@ -126,53 +124,11 @@ public:
         NC = N + M
     };
 
-    //!    Contraction expression core type
-    typedef direct_product_core<N, M, T, E1, E2> core_t;
-
-    //!    Contraction expression type
-    typedef expr<k_orderc, T, core_t> expression_t;
-
-    //!    Evaluating container type of the first expression (A)
-    typedef typename E1::eval_container_t eval_container_a_t;
-
-    //!    Evaluating container type of the second expression (B)
-    typedef typename E2::eval_container_t eval_container_b_t;
-
-    //!    Number of %tensor arguments in expression A
-    static const size_t k_narg_tensor_a =
-        eval_container_a_t::template narg<tensor_tag>::k_narg;
-
-    //!    Number of operation arguments in expression A
-    static const size_t k_narg_oper_a =
-        eval_container_a_t::template narg<oper_tag>::k_narg;
-
-    //!    Number of %tensor arguments in expression B
-    static const size_t k_narg_tensor_b =
-        eval_container_b_t::template narg<tensor_tag>::k_narg;
-
-    //!    Number of operation arguments in expression A
-    static const size_t k_narg_oper_b =
-        eval_container_b_t::template narg<oper_tag>::k_narg;
-
-    //!    Labels for sub-expressions
-    typedef direct_product_subexpr_labels<N, M, T, E1, E2> subexpr_labels_t;
-
-    //!    Evaluating functor type (specialized for A and B)
-    typedef direct_product_eval_functor<N, M, T, E1, E2,
-        k_narg_tensor_a, k_narg_oper_a, k_narg_tensor_b, k_narg_oper_b>
-        functor_t;
-
-    //!    Number of arguments in the expression
-    template<typename Tag, int Dummy = 0>
-    struct narg {
-        static const size_t k_narg = 0;
-    };
-
 private:
     direct_product_core<N, M, T> m_core; //!< Expression core
-    contract_subexpr_labels<N, M, 0, T>
+    direct_product_subexpr_labels<N, M, T>
         m_sub_labels; //!< Labels for sub-expressions
-    contract_eval_functor<N, M, 0, T>
+    direct_product_eval_functor<N, M, T>
         m_func; //!< Sub-expression evaluation functor
 
 public:
@@ -235,8 +191,8 @@ direct_product_core<N, M, T>::direct_product_core(
         "direct_product_core(const expr<N, T>&, const expr<M, T>&)";
 
     for(size_t i = 0; i < N; i++) {
-        const letter &l = expr1.letter_at(i);
-        if(expr2.contains(l)) {
+        const letter &l = expr1.get_core().letter_at(i);
+        if(expr2.get_core().contains(l)) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Duplicate letter index.");
         } else {
@@ -244,8 +200,8 @@ direct_product_core<N, M, T>::direct_product_core(
         }
     }
     for(size_t i = 0; i < M; i++) {
-        const letter &l = expr2.letter_at(i);
-        if(expr1.contains(l)) {
+        const letter &l = expr2.get_core().letter_at(i);
+        if(expr1.get_core().contains(l)) {
             throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "Duplicate letter index.");
         } else {
@@ -280,7 +236,7 @@ size_t direct_product_core<N, M, T>::index_of(const letter &let) const {
 
 
 template<size_t N, size_t M, typename T>
-const letter&direct_product_core<N, M, T>::letter_at(size_t i) const {
+const letter& direct_product_core<N, M, T>::letter_at(size_t i) const {
 
     static const char method[] = "letter_at(size_t)";
 
@@ -297,47 +253,47 @@ const char direct_product_eval<N, M, T>::k_clazz[] =
     "direct_product_eval<N, M, T>";
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-inline direct_product_eval<N, M, T, E1, E2>::direct_product_eval(
-    expression_t &expr, const letter_expr<k_orderc> &label)
-    throw(exception) :
+template<size_t N, size_t M, typename T>
+direct_product_eval<N, M, T>::direct_product_eval(
+    const direct_product_core<N, M, T> &core, const letter_expr<NC> &label) :
 
-    m_sub_labels(expr, label),
-    m_func(expr, m_sub_labels, label) {
+    m_core(core),
+    m_sub_labels(core, label),
+    m_func(m_core, m_sub_labels, label) {
 
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-inline void direct_product_eval<N, M, T, E1, E2>::prepare() {
+template<size_t N, size_t M, typename T>
+void direct_product_eval<N, M, T>::prepare() {
 
     m_func.evaluate();
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-inline void direct_product_eval<N, M, T, E1, E2>::clean() {
+template<size_t N, size_t M, typename T>
+void direct_product_eval<N, M, T>::clean() {
 
     m_func.clean();
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-template<typename Tag>
-arg<N + M, T, Tag> direct_product_eval<N, M, T, E1, E2>::get_arg(
-    const Tag &tag, size_t i) const throw(exception) {
+template<size_t N, size_t M, typename T>
+arg<N + M, T, tensor_tag> direct_product_eval<N, M, T>::get_tensor_arg(
+    size_t i) {
 
-    static const char *method = "get_arg(const Tag&, size_t)";
+    static const char method[] = "get_tensor_arg(size_t)";
+
     throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
         "Invalid method.");
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-arg<N + M, T, oper_tag> direct_product_eval<N, M, T, E1, E2>::get_arg(
-    const oper_tag &tag, size_t i) const throw(exception) {
+template<size_t N, size_t M, typename T>
+arg<N + M, T, oper_tag> direct_product_eval<N, M, T>::get_oper_arg(
+    size_t i) {
 
-    static const char *method = "get_arg(const oper_tag&, size_t)";
+    static const char method[] = "get_oper_arg(size_t)";
 
     if(i != 0) {
         throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -348,19 +304,11 @@ arg<N + M, T, oper_tag> direct_product_eval<N, M, T, E1, E2>::get_arg(
 }
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-contraction2<N, M, 0> direct_product_eval<N, M, T, E1, E2>::mk_contr(
-    expression_t &expr, labeled_btensor<k_orderc, T, true> &result)
-    throw(exception) {
+template<size_t N, size_t M, typename T>
+eval_container_i<N + M, T> *direct_product_core<N, M, T>::create_container(
+    const letter_expr<N + M> &label) const {
 
-    size_t seq1[N + M], seq2[N + M];
-    for(size_t i = 0; i < N + M; i++) {
-        seq1[i] = i;
-        seq2[i] = expr.index_of(result.letter_at(i));
-    }
-    permutation_builder<N + M> permc(seq1, seq2);
-    contraction2<N, M, 0> contr(permc.get_perm());
-    return contr;
+    return new direct_product_eval<N, M, T>(*this, label);
 }
 
 

@@ -97,7 +97,7 @@ expr<N + M - 2 * K, T> contract(
     expr<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return contract(contr, bta, expr<N, T>(ident_core<M, T, A2>(btb)));
+    return contract(contr, bta, expr<M, T>(ident_core<M, T, A2>(btb)));
 }
 
 

@@ -83,14 +83,14 @@ diag_eval_functor<N, M, T>::diag_eval_functor(
     const letter_expr<N - M + 1> &label_b) {
 
     std::auto_ptr< eval_container_i<N, T> > conta(
-        core.get_sub_expr().create_container(label_a.get_label()));
+        core.get_sub_expr().get_core().create_container(labels_a.get_label()));
 
     bool ta = (conta->get_ntensor() == 1 && conta->get_noper() == 0);
 
     if(ta) {
-        m_func = new diag_eval_functor_10(core, labels_a, label_b);
+        m_func = new diag_eval_functor_10<N, M, T>(core, labels_a, label_b);
     } else {
-        m_func = new diag_eval_functor_xx(core, labels_a, label_b);
+        m_func = new diag_eval_functor_xx<N, M, T>(core, labels_a, label_b);
     }
 }
 

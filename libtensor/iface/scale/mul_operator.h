@@ -69,7 +69,7 @@ expr<N, T> operator/(
     expr<N, T> lhs,
     T rhs) {
 
-    return expr<N, T>(scale_core(1.0 / rhs, lhs));
+    return expr<N, T>(scale_core<N, T>(1.0 / rhs, lhs));
 }
 
 

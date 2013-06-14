@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_DIRECT_BTENSOR_H
 #define LIBTENSOR_DIRECT_BTENSOR_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include <memory>
+#include <libtensor/exception.h>
 #include <libtensor/block_tensor/direct_block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "btensor_i.h"
@@ -28,7 +28,7 @@ public:
 private:
     typedef struct {
         labeled_btensor_expr::expr<N, T> *m_pexpr;
-        labeled_btensor_expr::eval_i<N, T> *m_peval;
+        labeled_btensor_expr::eval_container_i<N, T> *m_peval;
         labeled_btensor_expr::evalfunctor_i<N, T> *m_pfunc;
     } ptrs_t;
 
@@ -123,13 +123,15 @@ direct_btensor<N, T, Traits>::mk_func(
     const letter_expr<N> &label,
     const labeled_btensor_expr::expr<N, T> &e) {
 
-    expr<N, T> *pexpr = new labeled_btensor_expr::expr<N, T>(e);
-    eval_container_i<N, T> *peval = pexpr->create_container(label);
+    std::auto_ptr< labeled_btensor_expr::expr<N, T> > pexpr(
+        new labeled_btensor_expr::expr<N, T>(e));
+    std::auto_ptr< labeled_btensor_expr::eval_container_i<N, T> > peval(
+        pexpr->get_core().create_container(label));
     peval->prepare();
 
     ptrs_t ptrs;
-    ptrs.m_pexpr = pexpr;
-    ptrs.m_peval = peval;
+    ptrs.m_pexpr = pexpr.release();
+    ptrs.m_peval = peval.release();
     ptrs.m_pfunc = new labeled_btensor_expr::evalfunctor<N, T>(
         *pexpr, *peval);
     return ptrs;
