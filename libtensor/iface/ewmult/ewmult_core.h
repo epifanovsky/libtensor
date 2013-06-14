@@ -90,27 +90,27 @@ public:
 
     /** \brief Creates evaluation container using new
      **/
-    virtual eval_container_i<NC, T> *create_container(
-        const letter_expr<NC> &label) const;
+    virtual eval_container_i<N + M + K, T> *create_container(
+        const letter_expr<N + M + K> &label) const;
 
 
     /** \brief Returns whether the result's label contains a letter
         \param let Letter.
      **/
-    bool contains(const letter &let) const;
+    virtual bool contains(const letter &let) const;
 
     /** \brief Returns the index of a letter in the result's label
         \param let Letter.
         \throw expr_exception If the label does not contain the
             requested letter.
      **/
-    size_t index_of(const letter &let) const;
+    virtual size_t index_of(const letter &let) const;
 
     /** \brief Returns the letter at a given position in the result's label
         \param i Letter index.
         \throw out_of_bounds If the index is out of bounds.
      **/
-    const letter &letter_at(size_t i) const;
+    virtual const letter &letter_at(size_t i) const;
 
 };
 
@@ -248,6 +248,13 @@ ewmult_core<N, M, K, T>::ewmult_core(const letter_expr<K> &ewidx,
 
 
 template<size_t N, size_t M, size_t K, typename T>
+eval_container_i<N + M + K, T> *ewmult_core<N, M, K, T>::create_container(
+    const letter_expr<N + M + K> &label) const {
+
+    return new ewmult_eval<N, M, K, T>(*this, label);
+}
+
+template<size_t N, size_t M, size_t K, typename T>
 bool ewmult_core<N, M, K, T>::contains(const letter &let) const {
 
     for(register size_t i = 0; i < N + M; i++) {
@@ -295,7 +302,7 @@ ewmult_eval<N, M, K, T>::ewmult_eval(
 
     m_core(core),
     m_sub_labels(core, label),
-    m_func(core, m_sub_labels, label) {
+    m_func(m_core, m_sub_labels, label) {
 
 }
 

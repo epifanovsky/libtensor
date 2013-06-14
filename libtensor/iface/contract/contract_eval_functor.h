@@ -68,9 +68,7 @@ public:
 
     ~contract_eval_functor();
 
-    void evaluate();// {
-//        m_func->evaluate();
-//    }
+    void evaluate();
 
     void clean() {
 //        m_func->clean();

@@ -14,7 +14,7 @@
 //#include "mult/div_operator.h"
 //#include "mult/mult_operator.h"
 #include "scale/mul_operator.h"
-//#include "symm/symm_operator.h"
+#include "symm/symm_operator.h"
 #include "dot_product.h"
 #include "trace/trace_operator.h"
 

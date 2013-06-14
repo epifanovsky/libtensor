@@ -17,7 +17,7 @@ namespace libtensor {
 **/
 template<size_t N, typename T>
 class btensor_i : virtual public block_tensor_i<N, T> {
-
+public:
     /** \brief Attaches a label to this %tensor and returns it as a
                 labeled %tensor
      **/
@@ -31,7 +31,7 @@ class btensor_i : virtual public block_tensor_i<N, T> {
 **/
 template<typename T>
 class btensor_i<1, T> : virtual public block_tensor_i<1, T> {
-
+public:
     labeled_btensor<1, T, false> operator()(letter_expr<1> expr);
 
     labeled_btensor<1, T, false> operator()(const letter &expr);

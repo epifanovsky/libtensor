@@ -46,10 +46,10 @@ public:
 private:
     dirsum_core<N, M, T> m_core; //!< Direct sum core
     letter_expr<N> m_label_a;
-    letter_expr<N> m_label_b;
-    letter_expr<N> m_label_c;
+    letter_expr<M> m_label_b;
+    letter_expr<N + M> m_label_c;
     interm<N, T> m_interm_a;
-    interm<N, T> m_interm_b;
+    interm<M, T> m_interm_b;
 
     btod_dirsum<N, M> *m_op; //!< Direct sum operation
     arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
@@ -58,7 +58,7 @@ public:
     dirsum_eval_functor(
         dirsum_core<N, M, T> &core,
         const dirsum_subexpr_labels<N, M, T> &labels_ab,
-        const letter_expr<NC> &label_c);
+        const letter_expr<N + M> &label_c);
 
     ~dirsum_eval_functor();
 
@@ -79,14 +79,14 @@ template<size_t N, size_t M, typename T>
 dirsum_eval_functor<N, M, T>::dirsum_eval_functor(
     dirsum_core<N, M, T> &core,
     const dirsum_subexpr_labels<N, M, T> &labels_ab,
-    const letter_expr<NC> &label_c) :
+    const letter_expr<N + M> &label_c) :
 
     m_core(core),
     m_label_a(labels_ab.get_label_a()),
     m_label_b(labels_ab.get_label_b()),
     m_label_c(label_c),
     m_interm_a(core.get_expr_1(), m_label_a),
-    m_interm_a(core.get_expr_2(), m_label_b),
+    m_interm_b(core.get_expr_2(), m_label_b),
     m_op(0), m_arg(0) {
 
 }
@@ -114,10 +114,11 @@ void dirsum_eval_functor<N, M, T>::evaluate() {
         m_label_b, permutation<M>(argb.get_perm(), true),
         m_label_c);
 
-    m_op = new btod_dirsum<N, M>(arga.get_btensor(),
-            argb.get_btensor(), pb.get_perm());
-    m_arg = new arg<NC, T, oper_tag>(*m_op,
-        arga.get_coeff() * argb.get_coeff());
+    m_op = new btod_dirsum<N, M>(
+            arga.get_btensor(), arga.get_coeff(),
+            argb.get_btensor(), argb.get_coeff(),
+            pb.get_perm());
+    m_arg = new arg<NC, T, oper_tag>(*m_op, 1.0);
 }
 
 
@@ -126,9 +127,6 @@ void dirsum_eval_functor<N, M, T>::clean() {
 
     delete m_op; m_op = 0;
     delete m_arg; m_arg = 0;
-
-    m_interm_a.clean();
-    m_interm_b.clean();
 }
 
 

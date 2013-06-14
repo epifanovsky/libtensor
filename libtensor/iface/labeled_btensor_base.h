@@ -18,17 +18,15 @@ namespace libtensor {
 template<size_t N>
 class labeled_btensor_base {
 private:
-    typedef letter_expr<N> label_t;
-
-private:
     letter_expr<N> m_label;
 
 public:
     /** \brief Constructs the labeled block %tensor
      **/
     labeled_btensor_base(const letter_expr<N> &label) : m_label(label) {
-
     }
+
+
 
     /** \brief Returns the label
      **/

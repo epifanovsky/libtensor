@@ -21,7 +21,6 @@ expr<N, T> symm(
     const letter_expr<M> sym2,
     expr<N, T> subexpr) {
 
-    typedef expr<N, T, core_t> expr_t;
     return expr<N, T>(symm2_core<N, M, true, T>(sym1, sym2, subexpr));
 }
 

@@ -60,7 +60,7 @@ template<size_t N, size_t M> template<typename T>
 dirsum_subexpr_label_builder<N, M>::letter_array::letter_array(
     const letter_expr<N + M> &label_c, const expr<N, T> &e) {
 
-    for(size_t i = 0; i < N; i++) m_let[i] = &e.letter_at(i);
+    for(size_t i = 0; i < N; i++) m_let[i] = &e.get_core().letter_at(i);
 }
 
 

@@ -210,6 +210,14 @@ dirsum_core<N, M, T>::dirsum_core(
 
 
 template<size_t N, size_t M, typename T>
+eval_container_i<N + M, T> *dirsum_core<N, M, T>::create_container(
+    const letter_expr<N + M> &label) const {
+
+    return new dirsum_eval<N, M, T>(*this, label);
+}
+
+
+template<size_t N, size_t M, typename T>
 bool dirsum_core<N, M, T>::contains(const letter &let) const {
 
     for(register size_t i = 0; i < N + M; i++) {
@@ -257,7 +265,7 @@ const letter_expr<NC> &label) :
 
 m_core(core),
 m_sub_labels(core, label),
-m_func(core, m_sub_labels, label) {
+m_func(m_core, m_sub_labels, label) {
 
 }
 

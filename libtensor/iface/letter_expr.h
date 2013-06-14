@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_LETTER_EXPR_H
 #define LIBTENSOR_LETTER_EXPR_H
 
+#include <vector>
 #include <libtensor/exception.h>
 #include <libtensor/core/permutation_builder.h>
 

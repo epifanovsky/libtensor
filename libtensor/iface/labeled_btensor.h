@@ -21,7 +21,10 @@ template<size_t N, typename T> class btensor_i;
 
     \ingroup libtensor_iface
  **/
-template<size_t N, typename T, bool Assignable> class labeled_btensor;
+template<size_t N, typename T, bool Assignable>
+class labeled_btensor {
+
+};
 
 
 template<size_t N, typename T>
@@ -34,6 +37,9 @@ public:
         labeled_btensor_base<N>(label), m_bt(bt) { }
 
     btensor_i<N, T> &get_btensor() { return m_bt; }
+
+private:
+    labeled_btensor<N, T, false> &operator=(const labeled_btensor<N, T, false> &);
 };
 
 /** \brief Partial specialization of the assignable labeled tensor
@@ -44,6 +50,7 @@ template<size_t N, typename T>
 class labeled_btensor<N, T, true> : public labeled_btensor_base<N> {
 private:
     btensor_i<N, T> &m_bt;
+
 public:
     labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label) :
         labeled_btensor_base<N>(label), m_bt(bt) { }
@@ -53,12 +60,13 @@ public:
     /** \brief Assigns this %tensor to an expression
      **/
     labeled_btensor<N, T, true> &operator=(
-        labeled_btensor_expr::expr<N, T> rhs);
+        const labeled_btensor_expr::expr<N, T> &rhs);
 
-    template<bool Assignable>
     labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, Assignable> rhs);
+        const labeled_btensor<N, T, true> &rhs);
 
+    labeled_btensor<N, T, true> &operator=(
+        const labeled_btensor<N, T, false> &rhs);
 
 };
 

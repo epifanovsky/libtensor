@@ -11,7 +11,7 @@ namespace libtensor {
 
 template<size_t N, typename T>
 labeled_btensor<N, T, true> &labeled_btensor<N, T, true>::operator=(
-    labeled_btensor_expr::expr<N, T> rhs) {
+    const labeled_btensor_expr::expr<N, T> &rhs) {
 
     labeled_btensor_expr::eval<N, T>(rhs, *this).evaluate();
     return *this;

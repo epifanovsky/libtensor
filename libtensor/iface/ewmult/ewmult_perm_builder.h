@@ -31,7 +31,9 @@ private:
 public:
     ewmult_perm_builder(
         const letter_expr<NA> &label_a,
+        const permutation<NA> &perm_a,
         const letter_expr<NB> &label_b,
+        const permutation<NB> &perm_b,
         const letter_expr<NC> &label_c,
         const letter_expr<K> &ewidx);
 
@@ -53,7 +55,9 @@ public:
 template<size_t N, size_t M, size_t K>
 ewmult_perm_builder<N, M, K>::ewmult_perm_builder(
     const letter_expr<NA> &label_a,
+    const permutation<NA> &perm_a,
     const letter_expr<NB> &label_b,
+    const permutation<NB> &perm_b,
     const letter_expr<NC> &label_c, const letter_expr<K> &ewidx) {
 
     sequence<NA, const letter*> seqa1(0), seqa2(0);
@@ -84,7 +88,9 @@ ewmult_perm_builder<N, M, K>::ewmult_perm_builder(
     for(size_t i = 0; i < NC; i++) seqc2[i] = &label_c.letter_at(i);
 
     m_perma.permute(permutation_builder<NA>(seqa2, seqa1).get_perm());
+    m_perma.permute(perm_a);
     m_permb.permute(permutation_builder<NB>(seqb2, seqb1).get_perm());
+    m_permb.permute(perm_b);
     m_permc.permute(permutation_builder<NC>(seqc2, seqc1).get_perm());
 }
 
