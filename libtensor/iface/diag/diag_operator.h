@@ -18,8 +18,8 @@ namespace labeled_btensor_expr {
 template<size_t N, size_t M, typename T>
 expr<N - M + 1, T> diag(
     const letter &let_diag,
-    const letter_expr<M> lab_diag,
-    expr<N, T> subexpr) {
+    const letter_expr<M> &lab_diag,
+    const expr<N, T> &subexpr) {
 
     return expr<N - M + 1, T>(diag_core<N, M, T>(let_diag, lab_diag, subexpr));
 }
@@ -36,8 +36,8 @@ expr<N - M + 1, T> diag(
 template<size_t N, size_t M, typename T, bool A>
 expr<N - M + 1, T> diag(
     const letter &let_diag,
-    const letter_expr<M> lab_diag,
-    labeled_btensor<N, T, A> bt) {
+    const letter_expr<M> &lab_diag,
+    const labeled_btensor<N, T, A> bt) {
 
     return diag(let_diag, lab_diag, expr<N, T>(ident_core<N, T, A>(bt)));
 }
