@@ -21,40 +21,42 @@ namespace labeled_btensor_expr {
 template<size_t N, size_t M, size_t K>
 class contract_contraction2_builder {
 public:
-    static const size_t k_ordera = N + K; //!< Order of the first %tensor
-    static const size_t k_orderb = M + K; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
+    enum {
+        NA = N + K, //!< Order of the first %tensor
+        NB = M + K, //!< Order of the second %tensor
+        NC = N + M //!< Order of the result
+    };
 
 private:
     contraction2<N, M, K> m_contr;
 
 public:
     contract_contraction2_builder(
-        const letter_expr<k_ordera> &label_a,
-        const permutation<k_ordera> &perm_a,
-        const letter_expr<k_orderb> &label_b,
-        const permutation<k_orderb> &perm_b,
-        const letter_expr<k_orderc> &label_c,
+        const letter_expr<NA> &label_a,
+        const permutation<NA> &perm_a,
+        const letter_expr<NB> &label_b,
+        const permutation<NB> &perm_b,
+        const letter_expr<NC> &label_c,
         const letter_expr<K> &contr);
 
     const contraction2<N, M, K> &get_contr() const { return m_contr; }
 
 private:
     static contraction2<N, M, K> mk_contr(
-        const letter_expr<k_ordera> &label_a,
-        const letter_expr<k_orderb> &label_b,
-        const letter_expr<k_orderc> &label_c,
+        const letter_expr<NA> &label_a,
+        const letter_expr<NB> &label_b,
+        const letter_expr<NC> &label_c,
         const letter_expr<K> &contr);
 };
 
 
 template<size_t N, size_t M, size_t K>
 contract_contraction2_builder<N, M, K>::contract_contraction2_builder(
-    const letter_expr<k_ordera> &label_a,
-    const permutation<k_ordera> &perm_a,
-    const letter_expr<k_orderb> &label_b,
-    const permutation<k_orderb> &perm_b,
-    const letter_expr<k_orderc> &label_c, const letter_expr<K> &contr) :
+    const letter_expr<NA> &label_a,
+    const permutation<NA> &perm_a,
+    const letter_expr<NB> &label_b,
+    const permutation<NB> &perm_b,
+    const letter_expr<NC> &label_c, const letter_expr<K> &contr) :
 
     m_contr(mk_contr(label_a, label_b, label_c, contr)) {
 
@@ -66,17 +68,17 @@ contract_contraction2_builder<N, M, K>::contract_contraction2_builder(
 
 template<size_t N, size_t M, size_t K>
 contraction2<N, M, K> contract_contraction2_builder<N, M, K>::mk_contr(
-    const letter_expr<k_ordera> &label_a,
-    const letter_expr<k_orderb> &label_b,
-    const letter_expr<k_orderc> &label_c, const letter_expr<K> &contr) {
+    const letter_expr<NA> &label_a,
+    const letter_expr<NB> &label_b,
+    const letter_expr<NC> &label_c, const letter_expr<K> &contr) {
 
     size_t contr_a[K], contr_b[K];
-    size_t seq1[k_orderc], seq2[k_orderc];
+    size_t seq1[NC], seq2[NC];
 
-    for(size_t i = 0; i < k_orderc; i++) seq1[i] = i;
+    for(size_t i = 0; i < NC; i++) seq1[i] = i;
 
     size_t j = 0, k = 0;
-    for(size_t i = 0; i < k_ordera; i++) {
+    for(size_t i = 0; i < NA; i++) {
         const letter &l = label_a.letter_at(i);
         if(label_c.contains(l)) {
             seq2[j] = label_c.index_of(l);
@@ -91,7 +93,7 @@ contraction2<N, M, K> contract_contraction2_builder<N, M, K>::mk_contr(
             k++;
         }
     }
-    for(size_t i = 0; i < k_orderb; i++) {
+    for(size_t i = 0; i < NB; i++) {
         const letter &l = label_b.letter_at(i);
         if(label_c.contains(l)) {
             seq2[j] = label_c.index_of(l);
@@ -99,7 +101,7 @@ contraction2<N, M, K> contract_contraction2_builder<N, M, K>::mk_contr(
         }
     }
 
-    permutation_builder<k_orderc> permc(seq1, seq2);
+    permutation_builder<NC> permc(seq1, seq2);
     contraction2<N, M, K> c(permc.get_perm());
 
     for(size_t i = 0; i < K; i++) {

@@ -8,8 +8,10 @@
 namespace libtensor {
 
 namespace labeled_btensor_expr {
-template<size_t N, typename T, typename Expr> class expr;
+template<size_t N, typename T> class expr;
 } // namespace labeled_btensor_expr
+
+template<size_t N, typename T> class btensor_i;
 
 
 /** \brief Block %tensor with an attached label
@@ -20,10 +22,24 @@ template<size_t N, typename T, typename Expr> class expr;
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T, bool Assignable>
-class labeled_btensor : public labeled_btensor_rd_base<N, T> {
+class labeled_btensor {
+
+};
+
+
+template<size_t N, typename T>
+class labeled_btensor<N, T, false> : public labeled_btensor_base<N> {
+private:
+    btensor_i<N, T> &m_bt;
+
 public:
-    labeled_btensor(btensor_rd_i<N, T> &bt, const letter_expr<N> &label) :
-        labeled_btensor_rd_base<N, T>(bt, label) { }
+    labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label) :
+        labeled_btensor_base<N>(label), m_bt(bt) { }
+
+    btensor_i<N, T> &get_btensor() { return m_bt; }
+
+private:
+    labeled_btensor<N, T, false> &operator=(const labeled_btensor<N, T, false> &);
 };
 
 /** \brief Partial specialization of the assignable labeled tensor
@@ -31,31 +47,26 @@ public:
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T>
-class labeled_btensor<N, T, true> : public labeled_btensor_rd_base<N, T> {
+class labeled_btensor<N, T, true> : public labeled_btensor_base<N> {
 private:
     btensor_i<N, T> &m_bt;
+
 public:
     labeled_btensor(btensor_i<N, T> &bt, const letter_expr<N> &label) :
-        labeled_btensor_rd_base<N, T>(bt, label), m_bt(bt) { }
+        labeled_btensor_base<N>(label), m_bt(bt) { }
 
     btensor_i<N, T> &get_btensor() { return m_bt; }
 
     /** \brief Assigns this %tensor to an expression
      **/
-    template<typename Expr>
     labeled_btensor<N, T, true> &operator=(
-        const labeled_btensor_expr::expr<N, T, Expr> rhs)
-        throw(exception);
-
-    template<bool AssignableR>
-    labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, AssignableR> rhs)
-        throw(exception);
+        const labeled_btensor_expr::expr<N, T> &rhs);
 
     labeled_btensor<N, T, true> &operator=(
-        labeled_btensor<N, T, true> rhs)
-        throw(exception);
+        const labeled_btensor<N, T, true> &rhs);
 
+    labeled_btensor<N, T, true> &operator=(
+        const labeled_btensor<N, T, false> &rhs);
 };
 
 } // namespace libtensor

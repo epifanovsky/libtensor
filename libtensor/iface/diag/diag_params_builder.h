@@ -1,9 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_PARAMS_BUILDER_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_PARAMS_BUILDER_H
 
-#include "../../defs.h"
-#include "../../exception.h"
-#include "../../core/permutation_builder.h"
+#include <libtensor/core/permutation_builder.h>
 #include "../letter_expr.h"
 
 namespace libtensor {

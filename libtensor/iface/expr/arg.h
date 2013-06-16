@@ -43,12 +43,12 @@ class arg {
 template<size_t N, typename T>
 class arg<N, T, tensor_tag> {
 private:
-    btensor_rd_i<N, T> &m_bt;
+    btensor_i<N, T> &m_bt;
     permutation<N> m_perm;
     T m_coeff;
 
 public:
-    arg(btensor_rd_i<N, T> &bt, const permutation<N> &perm, T coeff)
+    arg(btensor_i<N, T> &bt, const permutation<N> &perm, T coeff)
     : m_bt(bt), m_perm(perm), m_coeff(coeff) {
     }
 
@@ -56,7 +56,7 @@ public:
         m_coeff *= c;
     }
 
-    btensor_rd_i<N, T> &get_btensor() {
+    btensor_i<N, T> &get_btensor() {
         return m_bt;
     }
 

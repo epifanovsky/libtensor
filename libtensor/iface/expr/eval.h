@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVAL_H
 
-#include "../../defs.h"
-#include "../../exception.h"
+#include <memory>
+#include <libtensor/exception.h>
 #include "expr.h"
 #include "evalfunctor.h"
 
@@ -21,64 +21,41 @@ namespace labeled_btensor_expr {
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, typename T, typename Core>
-class eval {
-public:
-    //!    Expression type
-    typedef expr<N, T, Core> expression_t;
-
-    //!    Output labeled block %tensor type
-    typedef labeled_btensor<N, T, true> result_t;
-
-    //!    Evaluating container type
-    typedef typename expression_t::eval_container_t eval_container_t;
-
+template<size_t N, typename T>
+class eval : public noncopyable {
 private:
-    expression_t m_expr; //!< Expression
-    result_t &m_result; //!< Result
-    eval_container_t m_eval_container; //!< Container
+    expr<N, T> m_expr; //!< Expression
+    labeled_btensor<N, T, true> &m_result; //!< Result
+    std::auto_ptr< eval_container_i<N, T> > m_eval_container; //!< Container
 
 public:
-    //!    \name Construction and destruction
-    //@{
-    eval(const expression_t &expr, result_t &result);
-    //@}
-
-    //!    \name Evaluation
-    //@{
+    eval(const expr<N, T> &e, labeled_btensor<N, T, true> &result);
 
     /** \brief Evaluates the expression
      **/
-    void evaluate() throw(exception);
-
-    //@}
+    void evaluate();
 
 };
 
 
-template<size_t N, typename T, typename Core>
-eval<N, T, Core>::eval(const expression_t &expr, result_t &result) :
+template<size_t N, typename T>
+eval<N, T>::eval(const expr<N, T> &e, labeled_btensor<N, T, true> &result) :
 
-    m_expr(expr),
+    m_expr(e),
     m_result(result),
-    m_eval_container(m_expr, m_result.get_label()) {
+    m_eval_container(m_expr.get_core().create_container(
+        m_result.get_label())) {
 
 }
 
 
-template<size_t N, typename T, typename Core>
-inline void eval<N, T, Core>::evaluate() throw(exception) {
+template<size_t N, typename T>
+void eval<N, T>::evaluate() {
 
-    const size_t narg_tensor =
-        eval_container_t::template narg<tensor_tag>::k_narg;
-    const size_t narg_oper =
-        eval_container_t::template narg<oper_tag>::k_narg;
-
-    m_eval_container.prepare();
-    evalfunctor<N, T, Core, narg_tensor, narg_oper>(
-        m_expr, m_eval_container).get_bto().perform(
-            m_result.get_btensor());
-    m_eval_container.clean();
+    m_eval_container->prepare();
+    evalfunctor<N, T>(m_expr, *m_eval_container).get_bto().
+        perform(m_result.get_btensor());
+    m_eval_container->clean();
 }
 
 

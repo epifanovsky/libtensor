@@ -5,7 +5,7 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, typename T, typename Core> class expr;
+template<size_t N, typename T> class expr;
 
 
 /** \brief Label builder for sub-expressions in ewmult
@@ -19,10 +19,10 @@ private:
     private:
         sequence<N + K, const letter*> m_let;
     public:
-        template<typename T, typename Core>
+        template<typename T>
         letter_array(const letter_expr<N + M + K> &label_c,
             const letter_expr<K> &ewidx,
-            const expr<N + K, T, Core> &e);
+            const expr<N + K, T> &e);
         const letter *at(size_t i) const { return m_let[i]; }
     };
     template<size_t L>
@@ -31,9 +31,9 @@ private:
     letter_expr<N + K> m_label;
 
 public:
-    template<typename T, typename Core>
+    template<typename T>
     ewmult_subexpr_label_builder(const letter_expr<N + M + K> &label_c,
-        const letter_expr<K> &ewidx, const expr<N + K, T, Core> &e);
+        const letter_expr<K> &ewidx, const expr<N + K, T> &e);
 
     const letter_expr<N + K> &get_label() const { return m_label; }
 
@@ -47,10 +47,11 @@ protected:
 };
 
 
-template<size_t N, size_t M, size_t K> template<typename T, typename Core>
+template<size_t N, size_t M, size_t K>
+template<typename T>
 ewmult_subexpr_label_builder<N, M, K>::ewmult_subexpr_label_builder(
     const letter_expr<N + M + K> &label_c, const letter_expr<K> &ewidx,
-    const expr<N + K, T, Core> &e) :
+    const expr<N + K, T> &e) :
 
     m_let(label_c, ewidx, e),
     m_label(mk_label(dummy<N + K>(), m_let, N + K - 1)) {
@@ -58,10 +59,11 @@ ewmult_subexpr_label_builder<N, M, K>::ewmult_subexpr_label_builder(
 }
 
 
-template<size_t N, size_t M, size_t K> template<typename T, typename Core>
+template<size_t N, size_t M, size_t K>
+template<typename T>
 ewmult_subexpr_label_builder<N, M, K>::letter_array::letter_array(
     const letter_expr<N + M + K> &label_c, const letter_expr<K> &ewidx,
-    const expr<N + K, T, Core> &e) {
+    const expr<N + K, T> &e) {
 
     for(size_t i = 0; i < N + K; i++) m_let[i] = 0;
 
@@ -69,7 +71,7 @@ ewmult_subexpr_label_builder<N, M, K>::letter_array::letter_array(
     // Take the first indexes from c, not shared (max N)
     for(size_t i = 0; i < N + M + K; i++) {
         const letter &l = label_c.letter_at(i);
-        if(e.contains(l) && !ewidx.contains(l)) {
+        if(e.get_core().contains(l) && !ewidx.contains(l)) {
             if(j == N) {
                 throw_exc("ewmult_subexpr_label_builder::letter_array",
                     "letter_array()", "Inconsistent expression (1)");
@@ -80,7 +82,7 @@ ewmult_subexpr_label_builder<N, M, K>::letter_array::letter_array(
     // Take the shared indexes (max K)
     for(size_t i = 0; i < K; i++) {
         const letter &l = ewidx.letter_at(i);
-        if(!e.contains(l)) {
+        if(!e.get_core().contains(l)) {
             throw_exc("ewmult_subexpr_label_builder::letter_array",
                 "letter_array()", "Inconsistent expression (2)");
         }

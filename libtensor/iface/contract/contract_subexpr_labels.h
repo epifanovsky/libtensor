@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_SUBEXPR_LABELS_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_SUBEXPR_LABELS_H
 
-#include "core_contract.h"
 #include "contract_subexpr_label_builder.h"
 
 namespace libtensor {
@@ -21,24 +20,20 @@ namespace labeled_btensor_expr {
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t K, typename T>
 class contract_subexpr_labels {
 public:
-    static const size_t k_ordera = N + K; //!< Order of the first %tensor
-    static const size_t k_orderb = M + K; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
-
-    //!    Contraction expression core type
-    typedef core_contract<N, M, K, T, E1, E2> core_t;
-
-    //!    Contraction expression type
-    typedef expr<k_orderc, T, core_t> expression_t;
+    enum {
+        NA = N + K,
+        NB = M + K,
+        NC = N + M
+    };
 
 private:
-    //!    Label builder for the first sub-expression
+    //! Label builder for the first sub-expression
     contract_subexpr_label_builder<N, M, K> m_bld_a;
 
-    //!    Label builder for the second sub-expression
+    //! Label builder for the second sub-expression
     contract_subexpr_label_builder<M, N, K> m_bld_b;
 
 public:
@@ -46,43 +41,30 @@ public:
             a result label
      **/
     contract_subexpr_labels(
-        const expression_t &expr, const letter_expr<k_orderc> &label_c);
+        const contract_core<N, M, K, T> &core,
+        const letter_expr<NC> &label_c);
 
     /** \brief Returns the label for the first sub-expression
      **/
-    const letter_expr<N + K> &get_label_a() const;
+    const letter_expr<N + K> &get_label_a() const {
+        return m_bld_a.get_label();
+    }
 
     /** \brief Returns the label for the second sub-expression
      **/
-    const letter_expr<M + K> &get_label_b() const;
+    const letter_expr<M + K> &get_label_b() const {
+        return m_bld_b.get_label();
+    }
 };
 
 
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-contract_subexpr_labels<N, M, K, T, E1, E2>::contract_subexpr_labels(
-    const expression_t &expr, const letter_expr<k_orderc> &label_c) :
+template<size_t N, size_t M, size_t K, typename T>
+contract_subexpr_labels<N, M, K, T>::contract_subexpr_labels(
+    const contract_core<N, M, K, T> &core, const letter_expr<NC> &label_c) :
 
-    m_bld_a(label_c, expr.get_core().get_contr(),
-        expr.get_core().get_expr_1()),
-    m_bld_b(label_c, expr.get_core().get_contr(),
-        expr.get_core().get_expr_2()) {
+    m_bld_a(label_c, core.get_contr(), core.get_expr_1()),
+    m_bld_b(label_c, core.get_contr(), core.get_expr_2()) {
 
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline const letter_expr<N + K> &contract_subexpr_labels<N, M, K, T,
-E1, E2>::get_label_a() const {
-
-    return m_bld_a.get_label();
-}
-
-
-template<size_t N, size_t M, size_t K, typename T, typename E1, typename E2>
-inline const letter_expr<M + K> &contract_subexpr_labels<N, M, K, T,
-E1, E2>::get_label_b() const {
-
-    return m_bld_b.get_label();
 }
 
 

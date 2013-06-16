@@ -41,19 +41,19 @@ void direct_product_test::test_label_1() throw(libtest::test_exception) {
     btensor<2> t1(sp_ab), t2(sp_ab);
     letter a, b, c, d;
 
-    if(!(t1(a|b) * t2(c|d)).contains(a)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(a)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter a is missing from the result label.");
     }
-    if(!(t1(a|b) * t2(c|d)).contains(b)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(b)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter b is missing from the result label.");
     }
-    if(!(t1(a|b) * t2(c|d)).contains(c)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(c)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter c is missing from the result label.");
     }
-    if(!(t1(a|b) * t2(c|d)).contains(d)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(d)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter d is missing from the result label.");
     }

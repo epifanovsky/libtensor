@@ -39,23 +39,24 @@ void anon_eval_test::perform() throw(libtest::test_exception) {
 }
 
 
-template<size_t N, typename T, typename Core>
-void anon_eval_test::invoke_eval(
+namespace {
+
+
+template<size_t N, typename T>
+void invoke_eval(
     const char *testname,
-    const labeled_btensor_expr::expr<N, T, Core> &expr,
-    const letter_expr<N> &label, block_tensor_i<N, T> &ref, double thresh)
-    throw(libtest::test_exception) {
+    const labeled_btensor_expr::expr<N, T> &expr,
+    const letter_expr<N> &label,
+    block_tensor_i<N, T> &ref,
+    double thresh = 1e-14) {
 
-    try {
-
-    labeled_btensor_expr::anon_eval<N, T, Core> ev(expr, label);
+    labeled_btensor_expr::anon_eval<N, T> ev(expr, label);
     ev.evaluate();
     compare_ref<N>::compare(testname, ev.get_btensor(), ref, thresh);
-
-    } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    }
 }
+
+
+} // unnamed namespace
 
 
 void anon_eval_test::test_copy_1() throw(libtest::test_exception) {
@@ -65,7 +66,7 @@ void anon_eval_test::test_copy_1() throw(libtest::test_exception) {
     //  q(i|j|a|b) = p(i|j|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_copy_1()";
+    static const char testname[] = "anon_eval_test::test_copy_1()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -99,7 +100,7 @@ void anon_eval_test::test_copy_2() throw(libtest::test_exception) {
     //  q(i|a|j|b) = p(i|j|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_copy_2()";
+    static const char testname[] = "anon_eval_test::test_copy_2()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -135,7 +136,7 @@ void anon_eval_test::test_copy_3() throw(libtest::test_exception) {
     //  q(i|j|a|b) = p(i|j|a|b)*1.5
     //
 
-    static const char *testname = "anon_eval_test::test_copy_3()";
+    static const char testname[] = "anon_eval_test::test_copy_3()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -169,7 +170,7 @@ void anon_eval_test::test_copy_4() throw(libtest::test_exception) {
     //  q(i|a|j|b) = -1.5*p(i|j|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_copy_4()";
+    static const char testname[] = "anon_eval_test::test_copy_4()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -205,7 +206,7 @@ void anon_eval_test::test_copy_5() throw(libtest::test_exception) {
     //  q(i|j|a|b) = p(i|j|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_copy_5()";
+    static const char testname[] = "anon_eval_test::test_copy_5()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -245,7 +246,7 @@ void anon_eval_test::test_copy_6() throw(libtest::test_exception) {
     //  q(i|a|j|b) = p(i|j|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_copy_6()";
+    static const char testname[] = "anon_eval_test::test_copy_6()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -287,7 +288,7 @@ void anon_eval_test::test_add_1() throw(libtest::test_exception) {
     //  r(i|j|a|b) = p(i|j|a|b) + q(i|j|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_add_1()";
+    static const char testname[] = "anon_eval_test::test_add_1()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -323,7 +324,7 @@ void anon_eval_test::test_contr_1() throw(libtest::test_exception) {
     //  r(i|j|k|l) = p(i|j|a|b) * q(k|l|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_contr_1()";
+    static const char testname[] = "anon_eval_test::test_contr_1()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -363,7 +364,7 @@ void anon_eval_test::test_contr_2() throw(libtest::test_exception) {
     //  r(i|j|k|l) = p(i|j|a|b) * [q1(k|l|a|b) + q2(k|l|a|b)]
     //
 
-    static const char *testname = "anon_eval_test::test_contr_2()";
+    static const char testname[] = "anon_eval_test::test_contr_2()";
     typedef std_allocator<double> allocator_t;
 
     try {
@@ -405,7 +406,7 @@ void anon_eval_test::test_mixed_1() throw(libtest::test_exception) {
     //  s(i|j|k|l) = r(i|j|k|l) + p(i|j|a|b) * q(k|l|a|b)
     //
 
-    static const char *testname = "anon_eval_test::test_mixed_1()";
+    static const char testname[] = "anon_eval_test::test_mixed_1()";
     typedef std_allocator<double> allocator_t;
 
     try {

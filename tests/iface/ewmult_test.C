@@ -1,5 +1,6 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/block_tensor/btod_ewmult2.h>
 #include <libtensor/iface/iface.h>
 #include "../compare_ref.h"
 #include "ewmult_test.h"
