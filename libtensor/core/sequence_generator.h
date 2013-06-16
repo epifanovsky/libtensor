@@ -4,9 +4,7 @@
 #include <vector>
 #include <libtensor/exception.h>
 
-
 namespace libtensor {
-
 
 /** \brief Generates all ordered sequences of n numbers in the interval
         \f$ \left[0:m\right[ \f$ .

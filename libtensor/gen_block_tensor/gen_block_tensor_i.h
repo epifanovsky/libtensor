@@ -19,6 +19,9 @@ template<size_t N, typename BtiTraits> class gen_block_tensor_ctrl;
     \tparam N Tensor order.
     \tparam BtiTraits Block tensor interface traits.
 
+	This abstract base class defines methods for general block %tensors which
+	are common to both read-only and write-only interfaces.
+
     See gen_block_tensor_i for full documentation.
 
     \sa gen_block_tensor_rd_i, gen_block_tensor_wr_i, gen_block_tensor_i
@@ -54,6 +57,9 @@ protected:
 /** \brief Generalized block tensor read-only interface
     \tparam N Tensor order.
     \tparam BtiTraits Block tensor interface traits.
+
+	This abstract base class contains methods that provide read-only access
+	to generalized block tensors.
 
     See gen_block_tensor_i for full documentation.
 
@@ -105,9 +111,12 @@ protected:
 };
 
 
-/** \brief Generalized block tensor read-write interface
+/** \brief Generalized block tensor write-only interface
     \tparam N Tensor order.
     \tparam BtiTraits Block tensor interface traits.
+
+	This abstract base class contains methods which provide write-access to
+	generalized block tensors.
 
     See gen_block_tensor_i for full documentation.
 
@@ -185,6 +194,15 @@ protected:
 
     \sa gen_block_tensor_base_i, gen_block_tensor_rd_i, gen_block_tensor_wr_i,
         symmetry
+
+    <b>Block tensor interface traits</b>
+
+    Any class to be used as traits class has to define the following types
+    - \c element_type -- Type of data elements
+    - \c template rd_block_type<N>::type -- Read-only interface
+    	of %tensor blocks
+    - \c template wr_block_type<N>::type -- Write-only interface
+    	of %tensor blocks
 
     \ingroup libtensor_gen_block_tensor
  **/

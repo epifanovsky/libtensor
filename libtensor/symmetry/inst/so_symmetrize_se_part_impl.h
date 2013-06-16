@@ -45,6 +45,10 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     for (register size_t i = ngrp; i < N; i++) msk[i] = true;
 
 #ifdef LIBTENSOR_DEBUG
+//  FIXME: this check is incorrect: it fails in the case of
+//  partitioned + unpartitioned dimensions
+//  (see also code right after this)
+/*
     for (register size_t i = 1; i < ngrp; i++) {
         size_t in = i * nidx;
         for (register size_t j = 0; j < nidx; j++) {
@@ -54,7 +58,18 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
             }
         }
     }
+ */
 #endif // LIBTENSOR_DEBUG
+    //  If the elements are partitioned differently,
+    //  the result is no symmetry 
+    bool no_symmetry = false;
+    for(register size_t i = 1; i < ngrp; i++) {
+        size_t in = i * nidx;
+        for(register size_t j = 0; j < nidx; j++) {
+            if(pdims[map[in + j]] != pdims[map[j]]) no_symmetry = true;
+        }
+    }
+    if(no_symmetry) return;
 
     se_part<N, T> sp1(cp.get_bis(), pdims);
     cp.perform(sp1);

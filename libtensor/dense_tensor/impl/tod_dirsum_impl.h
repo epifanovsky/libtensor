@@ -4,7 +4,6 @@
 #include <memory>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/core/contraction2.h>
-#include <libtensor/core/contraction2_list_builder.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd2.h>
 #include <libtensor/kernels/loop_list_runner.h>

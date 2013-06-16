@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_ADDITION_SCHEDULE_IMPL_H
 #define LIBTENSOR_ADDITION_SCHEDULE_IMPL_H
 
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include <memory>
 #include <libutil/threads/auto_lock.h>
 #include <libutil/threads/spinlock.h>
 #include <libutil/thread_pool/thread_pool.h>
@@ -212,7 +213,7 @@ public:
             size_t acic = m_batch[i];
 
             combined_orbits<N, element_type> co(m_syma, m_symb, m_symc, acic);
-            schedule_group *grp = new schedule_group;
+            std::auto_ptr<schedule_group> grp(new schedule_group);
             bool first = true, already_visited = false;
             for(typename combined_orbits<N, element_type>::iterator i =
                 co.begin(); i != co.end(); ++i) {
@@ -264,7 +265,7 @@ public:
 
             if(!already_visited) {
                 libutil::auto_lock<libutil::spinlock> lock(m_lock);
-                m_sch.push_back(grp);
+                m_sch.push_back(grp.release());
             }
         }
     }

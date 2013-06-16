@@ -59,7 +59,7 @@ void contraction2_list_builder_test::test_1() throw(libtest::test_exception) {
 
     std::list<ns::loop_list_node> lst;
     ns::loop_list_adapter adapter(lst);
-    contraction2_list_builder<1, 3, 1, ns::loop_list_adapter> bldr(contr);
+    contraction2_list_builder<1, 3, 1> bldr(contr);
     bldr.populate(adapter, dima, dimb, dimc);
 
     } catch(exception &e) {

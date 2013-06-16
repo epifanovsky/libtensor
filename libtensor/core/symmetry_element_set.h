@@ -10,6 +10,13 @@ namespace libtensor {
 
 /** \brief Collection of same-type %symmetry elements
 
+	This class collects %symmetry elements of a specific type given by
+	the \c id string passed to the constructor. It provides STL-style
+	iterator functions to traverse the list of symmetry elements.
+
+	TODO: add debug check for id when adding symmetry elements
+	TODO: move to directory \c symmetry
+
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
