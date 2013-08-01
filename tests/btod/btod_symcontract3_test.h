@@ -21,6 +21,7 @@ private:
     void test_contr_4();
     void test_contr_5();
     void test_contr_6();
+    void test_contr_7();
 
 };
 

@@ -79,7 +79,6 @@ private:
     gen_bto_contract2_sym<N1 + N2, N3, K2, Traits> m_symd; //!< Symmetry of result (D)
 
     assignment_schedule<NAB, element_type> m_schab; //!< Schedule for AB
-    std::vector<size_t> m_nzblkab; //!< List of non-zero blocks in symmetrized AB
     assignment_schedule<ND, element_type> m_schd; //!< Schedule for result (D)
 
 public:

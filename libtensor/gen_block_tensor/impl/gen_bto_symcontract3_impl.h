@@ -225,11 +225,11 @@ void gen_bto_symcontract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
         //  symmetrized intermediate AB
         addition_schedule<NAB, Traits> addschab(m_symab.get_symmetry0(),
             m_symab.get_symmetry());
-        addschab.build(m_schab, m_nzblkab);
+        addschab.build(m_schab, std::vector<size_t>());
 
         typename addition_schedule<NAB, Traits>::iterator ibab =
             addschab.begin();
-        while (ibab != addschab.end()) {
+        while(ibab != addschab.end()) {
 
             batchab1.clear();
             batchab2.clear();
@@ -551,13 +551,15 @@ void gen_bto_symcontract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
     //  List of non-zero orbits after symmetrization of AB
     assignment_schedule<NAB, element_type> schab_sym(bidimsab);
 
+    //  Warning. This algorithm for forming schab_sym may have a bug in it
     const block_list<NAB> &blstab = nzorb1.get_blst();
     for(typename block_list<NAB>::iterator i = blstab.begin();
         i != blstab.end(); ++i) {
 
         m_schab.insert(blstab.get_abs_index(i));
 
-        orbit<NAB, element_type> oab(m_symab.get_symmetry0(), *i);
+        orbit<NAB, element_type> oab(m_symab.get_symmetry0(),
+            blstab.get_abs_index(i));
         for(typename orbit<NAB, element_type>::iterator io = oab.begin();
             io != oab.end(); ++io) {
 
@@ -577,8 +579,6 @@ void gen_bto_symcontract3<N1, N2, N3, K1, K2, Traits, Timed>::make_schedule() {
             }
         }
     }
-
-    m_nzblkab.insert(m_nzblkab.end(), schab_sym.begin(), schab_sym.end());
 
     //  List of nonzero orbits in the result of contraction of
     //  symmetrized AB with C
