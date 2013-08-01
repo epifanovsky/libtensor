@@ -160,9 +160,11 @@ void gen_bto_mult1<N, Traits, Timed>::perform(
             gen_bto_copy<N, Traits, Timed> copy(bta1,
                 tensor_transf<N, element_type>());
 
+            std::vector<size_t> nzblka;
+            ca.req_nonzero_blocks(nzblka);
             addition_schedule<N, Traits> asch(copy.get_symmetry(),
                 ca.req_const_symmetry());
-            asch.build(copy.get_schedule(), ca);
+            asch.build(copy.get_schedule(), nzblka);
 
             gen_bto_aux_add<N, Traits> out(copy.get_symmetry(), asch, bta,
                 scalar_transf<element_type>());

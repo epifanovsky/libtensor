@@ -38,9 +38,11 @@ void btod_symmetrize3<N>::perform(gen_block_tensor_i<N, bti_traits> &bt,
 
     gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
 
+    std::vector<size_t> nzblk;
+    ctrl.req_nonzero_blocks(nzblk);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
         ctrl.req_const_symmetry());
-    asch.build(get_schedule(), ctrl);
+    asch.build(get_schedule(), nzblk);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, bt, d);
     out.open();

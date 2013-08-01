@@ -44,7 +44,7 @@ class addition_schedule :
     public timings< addition_schedule<N, Traits> >, public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename Traits::element_type element_type;
@@ -59,12 +59,6 @@ public:
         bool zeroa, zerob;
         size_t cia, cib, cic;
         tensor_transf_type tra, trb;
-    };
-
-    struct book_node {
-        size_t cidx;
-        tensor_transf_type tr;
-        bool visited;
     };
 
     typedef std::list<node> schedule_group;
@@ -92,7 +86,7 @@ public:
      **/
     void build(
         const assignment_schedule_type &asch,
-        gen_block_tensor_rd_ctrl<N, bti_traits> &cb);
+        const std::vector<size_t> &nzlstb);
 
     iterator begin() const {
         return m_sch.begin();
