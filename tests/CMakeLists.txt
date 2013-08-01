@@ -159,6 +159,7 @@ set(SRC_BTOD
     btod/btod_set_elem_test.C
     btod/btod_set_test.C
     btod/btod_sum_test.C
+    btod/btod_symcontract3_test.C
     btod/btod_symmetrize2_test.C
     btod/btod_symmetrize3_test.C
     btod/btod_trace_test.C
@@ -168,6 +169,7 @@ set(SRC_BTOD
     btod/gen_bto_aux_copy_test.C
     btod/gen_bto_contract2_clst_builder_test.C
     btod/gen_bto_dirsum_sym_test.C
+    btod/gen_bto_symcontract2_sym_test.C
     btod/gen_bto_unfold_symmetry_test.C
 )
 

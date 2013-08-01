@@ -191,6 +191,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
     block_tensor/impl/btod_size.C
+    block_tensor/impl/btod_symcontract3.C
     block_tensor/impl/btod_symmetrize2.C
     block_tensor/impl/btod_symmetrize3.C
     block_tensor/impl/btod_trace.C
