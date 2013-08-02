@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_CORE_H
-#define LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_CORE_H
+#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT2_CORE_H
+#define LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT2_CORE_H
 
 #include <libtensor/core/sequence.h>
 #include "../expr_exception.h"
@@ -19,7 +19,7 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class contract_core : public expr_core_i<N + M, T> {
+class contract2_core : public expr_core_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -37,17 +37,17 @@ public:
         \param expr2 Second expression (B).
         \throw expr_exception If letters are inconsistent.
      **/
-    contract_core(const letter_expr<K> &contr,
+    contract2_core(const letter_expr<K> &contr,
         const expr<N + K, T> &expr1, const expr<M + K, T> &expr2);
 
     /** \brief Virtual destructor
      **/
-    virtual ~contract_core() { }
+    virtual ~contract2_core() { }
 
     /** \brief Clones this object using new
      **/
     virtual expr_core_i<N + M, T> *clone() const {
-        return new contract_core<N, M, K, T>(*this);
+        return new contract2_core<N, M, K, T>(*this);
     }
 
     /** \brief Returns the first expression (A)
@@ -125,7 +125,7 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, size_t M, size_t K, typename T>
-class contract_eval : public eval_container_i<N + M, T> {
+class contract2_eval : public eval_container_i<N + M, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -137,7 +137,7 @@ public:
     };
 
 private:
-    contract_core<N, M, K, T> m_core; //!< Expression core
+    contract2_core<N, M, K, T> m_core; //!< Expression core
     contract_subexpr_labels<N, M, K, T>
         m_sub_labels; //!< Labels for sub-expressions
     contract_eval_functor<N, M, K, T>
@@ -147,13 +147,13 @@ public:
     /** \brief Initializes the container with given expression and
             result recipient
      **/
-    contract_eval(
-        const contract_core<N, M, K, T> &core,
+    contract2_eval(
+        const contract2_core<N, M, K, T> &core,
         const letter_expr<NC> &label);
 
     /** \brief Virtual destructor
      **/
-    virtual ~contract_eval() { }
+    virtual ~contract2_eval() { }
 
     /** \brief Evaluates sub-expressions into temporary tensors
      **/
@@ -189,11 +189,11 @@ public:
 
 
 template<size_t N, size_t M, size_t K, typename T>
-const char contract_core<N, M, K, T>::k_clazz[] = "contract_core<N, M, K, T>";
+const char contract2_core<N, M, K, T>::k_clazz[] = "contract_core<N, M, K, T>";
 
 
 template<size_t N, size_t M, size_t K, typename T>
-contract_core<N, M, K, T>::contract_core(
+contract2_core<N, M, K, T>::contract2_core(
     const letter_expr<K> &contr,
     const expr<N + K, T> &expr1,
     const expr<M + K, T> &expr2) :
@@ -241,7 +241,7 @@ contract_core<N, M, K, T>::contract_core(
 
 
 template<size_t N, size_t M, size_t K, typename T>
-bool contract_core<N, M, K, T>::contains(const letter &let) const {
+bool contract2_core<N, M, K, T>::contains(const letter &let) const {
 
     for(register size_t i = 0; i < N + M; i++) {
         if(m_defout[i] == &let) return true;
@@ -251,7 +251,7 @@ bool contract_core<N, M, K, T>::contains(const letter &let) const {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-size_t contract_core<N, M, K, T>::index_of(const letter &let) const {
+size_t contract2_core<N, M, K, T>::index_of(const letter &let) const {
 
     static const char method[] = "index_of(const letter&)";
 
@@ -265,7 +265,7 @@ size_t contract_core<N, M, K, T>::index_of(const letter &let) const {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-const letter& contract_core<N, M, K, T>::letter_at(size_t i) const {
+const letter& contract2_core<N, M, K, T>::letter_at(size_t i) const {
 
     static const char method[] = "letter_at(size_t)";
 
@@ -278,12 +278,12 @@ const letter& contract_core<N, M, K, T>::letter_at(size_t i) const {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-const char contract_eval<N, M, K, T>::k_clazz[] = "contract_eval<N, M, K, T>";
+const char contract2_eval<N, M, K, T>::k_clazz[] = "contract_eval<N, M, K, T>";
 
 
 template<size_t N, size_t M, size_t K, typename T>
-contract_eval<N, M, K, T>::contract_eval(
-    const contract_core<N, M, K, T> &core,
+contract2_eval<N, M, K, T>::contract2_eval(
+    const contract2_core<N, M, K, T> &core,
     const letter_expr<NC> &label) :
 
     m_core(core),
@@ -294,21 +294,21 @@ contract_eval<N, M, K, T>::contract_eval(
 
 
 template<size_t N, size_t M, size_t K, typename T>
-void contract_eval<N, M, K, T>::prepare() {
+void contract2_eval<N, M, K, T>::prepare() {
 
     m_func.evaluate();
 }
 
 
 template<size_t N, size_t M, size_t K, typename T>
-void contract_eval<N, M, K, T>::clean() {
+void contract2_eval<N, M, K, T>::clean() {
 
     m_func.clean();
 }
 
 
 template<size_t N, size_t M, size_t K, typename T>
-arg<N + M, T, tensor_tag> contract_eval<N, M, K, T>::get_tensor_arg(
+arg<N + M, T, tensor_tag> contract2_eval<N, M, K, T>::get_tensor_arg(
     size_t i) {
 
     static const char method[] = "get_tensor_arg(size_t)";
@@ -319,7 +319,7 @@ arg<N + M, T, tensor_tag> contract_eval<N, M, K, T>::get_tensor_arg(
 
 
 template<size_t N, size_t M, size_t K, typename T>
-arg<N + M, T, oper_tag> contract_eval<N, M, K, T>::get_oper_arg(
+arg<N + M, T, oper_tag> contract2_eval<N, M, K, T>::get_oper_arg(
     size_t i) {
 
     static const char method[] = "get_oper_arg(size_t)";
@@ -334,14 +334,14 @@ arg<N + M, T, oper_tag> contract_eval<N, M, K, T>::get_oper_arg(
 
 
 template<size_t N, size_t M, size_t K, typename T>
-eval_container_i<N + M, T> *contract_core<N, M, K, T>::create_container(
+eval_container_i<N + M, T> *contract2_core<N, M, K, T>::create_container(
     const letter_expr<N + M> &label) const {
 
-    return new contract_eval<N, M, K, T>(*this, label);
+    return new contract2_eval<N, M, K, T>(*this, label);
 }
 
 
 } // namespace labeled_btensor_expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_CORE_H
+#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT2_CORE_H

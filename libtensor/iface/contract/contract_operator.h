@@ -2,7 +2,7 @@
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_CONTRACT_OPERATOR_H
 
 #include "../ident/ident_core.h"
-#include "contract_core.h"
+#include "contract2_core.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -22,7 +22,7 @@ expr<N + M - 2 * K, T> contract(
     expr<N, T> bta,
     expr<M, T> btb) {
 
-    typedef contract_core<N - K, M - K, K, T> core_t;
+    typedef contract2_core<N - K, M - K, K, T> core_t;
     typedef expr<N + M - 2 * K, T> expr_t;
     return expr_t(core_t(contr, bta, btb));
 }

@@ -49,7 +49,7 @@ void contract_test::perform() throw(libtest::test_exception) {
 namespace {
 
 using labeled_btensor_expr::expr;
-using labeled_btensor_expr::contract_core;
+using labeled_btensor_expr::contract2_core;
 using labeled_btensor_expr::contract_subexpr_labels;
 
 template<size_t N, size_t M, size_t NM, size_t K, typename T>
@@ -57,8 +57,8 @@ void test_subexpr_labels_tpl(
     expr<NM, T> e,
     letter_expr<NM> label_c) {
 
-    const contract_core<N, M, K, T> &core =
-        dynamic_cast<const contract_core<N, M, K, T>&>(e.get_core());
+    const contract2_core<N, M, K, T> &core =
+        dynamic_cast<const contract2_core<N, M, K, T>&>(e.get_core());
     contract_subexpr_labels<N, M, K, T> subexpr_labels(core, label_c);
 }
 
