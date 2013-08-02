@@ -11,7 +11,7 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-/** \brief Contraction operation expression core
+/** \brief Two-tensor contraction operation expression core
     \tparam N Order of the first tensor (A) less contraction degree.
     \tparam M Order of the second tensor (B) less contraction degree.
     \tparam K Number of indexes contracted.
@@ -189,7 +189,7 @@ public:
 
 
 template<size_t N, size_t M, size_t K, typename T>
-const char contract2_core<N, M, K, T>::k_clazz[] = "contract_core<N, M, K, T>";
+const char contract2_core<N, M, K, T>::k_clazz[] = "contract2_core<N, M, K, T>";
 
 
 template<size_t N, size_t M, size_t K, typename T>
@@ -200,7 +200,7 @@ contract2_core<N, M, K, T>::contract2_core(
 
     m_contr(contr), m_expr1(expr1), m_expr2(expr2), m_defout(0) {
 
-    static const char method[] = "contract_core(const letter_expr<K>&, "
+    static const char method[] = "contract2_core(const letter_expr<K>&, "
         "const expr<N + K, T>&, const expr<M + K, T>&)";
 
     const expr_core_i<N + K, T> &core1 = expr1.get_core();
@@ -278,7 +278,7 @@ const letter& contract2_core<N, M, K, T>::letter_at(size_t i) const {
 
 
 template<size_t N, size_t M, size_t K, typename T>
-const char contract2_eval<N, M, K, T>::k_clazz[] = "contract_eval<N, M, K, T>";
+const char contract2_eval<N, M, K, T>::k_clazz[] = "contract2_eval<N, M, K, T>";
 
 
 template<size_t N, size_t M, size_t K, typename T>
