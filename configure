@@ -3,6 +3,8 @@
 CC0=
 CXX0=
 BUILD_TYPE=
+DEFAULT_BLAS=
+BLAS=
 GENERATOR_UNIX="Unix Makefiles"
 GENERATOR_MINGW32="MinGW Makefiles"
 GENERATOR=$GENERATOR_UNIX
@@ -27,6 +29,12 @@ function set_build_type() {
   BUILD_TYPE=$1
 }
 
+function set_default_blas() {
+  if [ "x$DEFAULT_BLAS" == "x" ]; then
+    DEFAULT_BLAS=$1
+  fi
+}
+
 while [ $# -gt 0 ]; do
   case $1 in
     gcc )     set_compilers "gcc" "g++"
@@ -34,12 +42,23 @@ while [ $# -gt 0 ]; do
     mingw32 ) set_compilers "gcc" "g++" "$GENERATOR_MINGW"
               ;;
     intel )   set_compilers "icc" "icpc"
+              set_default_blas "mkl"
               ;;
     open64 )  set_compilers "opencc" "openCC"
               ;;
     pgi )     set_compilers "pgcc" "pgCC"
               ;;
     ibm )     set_compilers "xlc" "xlC"
+              ;;
+    mkl )     BLAS=mkl
+              ;;
+    acml )    BLAS=acml
+              ;;
+    essl )    BLAS=essl
+              ;;
+    atlas )   BLAS=atlas
+              ;;
+    openblas ) BLAS=openblas
               ;;
     debug )   set_build_type "DEBUG"
               ;;
@@ -62,7 +81,16 @@ if [ "x$CC" != "x" -o "x$CXX" != "x" ]; then
     fi
 fi
 
+if [ "x$BLAS" == "x" ]; then
+  BLAS=$DEFAULT_BLAS
+fi
+
 mkdir build
 cd build
-CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" ..
+
+if [ -e CMakeCache.txt ]; then
+    rm CMakeCache.txt
+fi
+
+CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" -D WITH_BLAS="$BLAS" ..
 
