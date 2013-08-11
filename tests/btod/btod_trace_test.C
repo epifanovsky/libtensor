@@ -320,7 +320,7 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
     double d = btod_trace<2>(bta, perm).calculate();
 
     //  Compare against the reference
-    if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
+    if(fabs(d - d_ref) > fabs(d_ref * 1e-13)) {
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
