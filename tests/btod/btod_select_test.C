@@ -567,7 +567,6 @@ void btod_select_test::test_4a(size_t n,
     static const char *testname = "btod_select_test::test_4a(size_t, bool)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -645,7 +644,6 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
     static const char *testname = "btod_select_test::test_4(size_t)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -728,7 +726,6 @@ void btod_select_test::test_4c(size_t n,
     static const char *testname = "btod_select_test::test_4c(size_t, bool)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -811,7 +808,6 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
     static const char *testname = "btod_select_test::test_5(size_t)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {

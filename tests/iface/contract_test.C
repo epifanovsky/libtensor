@@ -73,7 +73,7 @@ void contract_test::test_subexpr_labels_1() {
     try {
 
     bispace<1> spi(4), spa(5);
-    bispace<4> spijab(spi&spi|spa&spa);
+    bispace<4> spijab((spi&spi)|(spa&spa));
     btensor<4> ta(spijab), tb(spijab);
     letter i, j, k, l, a, b;
     test_subexpr_labels_tpl<2, 2, 4, 2, double>(
@@ -399,7 +399,7 @@ void contract_test::test_tt_7() {
     try {
 
     bispace<1> sp_i(13), sp_a(7);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a), sp_iabc(sp_i|sp_a&sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a)), sp_iabc(sp_i|(sp_a&sp_a&sp_a));
 
     btensor<4> t1(sp_iabc);
     btensor<4> t2(sp_ijab);
@@ -440,7 +440,7 @@ void contract_test::test_tt_8() {
     sp_i.split(5);
     sp_a.split(2);
     bispace<2> sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1(sp_ijka), t2(sp_ijka);
     btensor<2> t3(sp_ab), t3_ref(sp_ab);
@@ -486,8 +486,8 @@ void contract_test::test_tt_9() {
     bispace<1> sp_i(10), sp_a(20), sp_k(11);
     sp_i.split(3).split(5);
     sp_a.split(6).split(13);
-    bispace<4> sp_ijka(sp_i&sp_i|sp_k|sp_a), sp_kija(sp_k|sp_i&sp_i|sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i)|sp_k|sp_a), sp_kija(sp_k|(sp_i&sp_i)|sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_kija), t2(sp_ijab), t3(sp_ijka),
         t3_ref(sp_ijka);
@@ -502,7 +502,7 @@ void contract_test::test_tt_9() {
     contr.contract(3, 3);
     btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref);
 
-    letter i, j, k, l, a, b, c;
+    letter i, j, k, l, a, c;
     t3(i|j|k|a) = contract(l|c, t1(k|l|j|c), t2(i|l|a|c));
 
     {

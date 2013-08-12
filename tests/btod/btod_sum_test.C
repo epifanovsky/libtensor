@@ -244,7 +244,6 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
     static const char *testname = "btod_sum_test::test_5()";
 
     typedef std_allocator<double> allocator_t;
-    typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
     try {
 
@@ -313,7 +312,6 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
     tnss << "btod_sum_test::test_6(" << do_add << ")";
 
     typedef std_allocator<double> allocator_t;
-    typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
     try {
 

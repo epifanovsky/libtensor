@@ -397,7 +397,6 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
         mask<2> splmsk;
         splmsk[0] = true; splmsk[1] = true;
         bis.split(splmsk, 3);
-        dimensions<2> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -525,7 +524,6 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
         mask<2> splmsk;
         splmsk[0] = true; splmsk[1] = true;
         bis.split(splmsk, 3);
-        dimensions<2> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -631,7 +629,6 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
         mask<2> splmsk;
         splmsk[0] = true; splmsk[1] = true;
         bis.split(splmsk, 3);
-        dimensions<2> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -663,7 +660,6 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
             index<2> istart_01 = bis.get_block_start(i_01);
             index<2> istart_10 = bis.get_block_start(i_10);
             dimensions<2> dims_01 = bis.get_block_dims(i_01);
-            dimensions<2> dims_10 = bis.get_block_dims(i_10);
             double *p = NULL;
             permutation<2> perm; perm.permute(0, 1);
 
@@ -734,7 +730,6 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
         mask<2> splmsk;
         splmsk[0] = true; splmsk[1] = true;
         bis.split(splmsk, 3);
-        dimensions<2> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -770,7 +765,6 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
             index<2> istart_11 = bis.get_block_start(i_11);
             dimensions<2> dims_00 = bis.get_block_dims(i_00);
             dimensions<2> dims_01 = bis.get_block_dims(i_01);
-            dimensions<2> dims_10 = bis.get_block_dims(i_10);
             dimensions<2> dims_11 = bis.get_block_dims(i_11);
             double *p = NULL;
             permutation<2> perm; perm.permute(0, 1);
@@ -892,7 +886,6 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
         mask<4> splmsk;
         splmsk[0] = true; splmsk[1] = true; splmsk[2] = true; splmsk[3] = true;
         bis.split(splmsk, 3);
-        dimensions<4> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -928,13 +921,7 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
             i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
             i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
             index<4> istart_0001 = bis.get_block_start(i_0001);
-            index<4> istart_0010 = bis.get_block_start(i_0010);
-            index<4> istart_0100 = bis.get_block_start(i_0100);
-            index<4> istart_1000 = bis.get_block_start(i_1000);
             dimensions<4> dims_0001 = bis.get_block_dims(i_0001);
-            dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
-            dimensions<4> dims_0100 = bis.get_block_dims(i_0100);
-            dimensions<4> dims_1000 = bis.get_block_dims(i_1000);
             double *p = NULL;
             permutation<4> perm; perm.permute(0, 1).permute(1, 2).permute(2, 3);
             permutation<4> perm1, perm2, perm3, perm4, perm5;
@@ -1040,7 +1027,6 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
         mask<4> splmsk;
         splmsk[0] = true; splmsk[1] = true; splmsk[2] = true; splmsk[3] = true;
         bis.split(splmsk, 3);
-        dimensions<4> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -1066,14 +1052,8 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
             i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
             i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
             i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
-            index<4> istart_0001 = bis.get_block_start(i_0001);
             index<4> istart_0010 = bis.get_block_start(i_0010);
-            index<4> istart_0100 = bis.get_block_start(i_0100);
-            index<4> istart_1000 = bis.get_block_start(i_1000);
-            dimensions<4> dims_0001 = bis.get_block_dims(i_0001);
             dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
-            dimensions<4> dims_0100 = bis.get_block_dims(i_0100);
-            dimensions<4> dims_1000 = bis.get_block_dims(i_1000);
             double *p = NULL;
             permutation<4> perm; perm.permute(0, 2);
 
@@ -1142,7 +1122,6 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
         spl2[0] = false; spl2[1] = true; spl2[2] = false; spl2[3] = true;
         bis.split(spl1, 3);
         bis.split(spl2, 4);
-        dimensions<4> bidims = bis.get_block_index_dims();
 
         block_tensor_t bt(bis);
         block_tensor_ctrl_t btctrl(bt);
@@ -1177,14 +1156,8 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
             i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
             i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
             i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
-            index<4> istart_0001 = bis.get_block_start(i_0001);
             index<4> istart_0010 = bis.get_block_start(i_0010);
-            index<4> istart_0100 = bis.get_block_start(i_0100);
-            index<4> istart_1000 = bis.get_block_start(i_1000);
-            dimensions<4> dims_0001 = bis.get_block_dims(i_0001);
             dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
-            dimensions<4> dims_0100 = bis.get_block_dims(i_0100);
-            dimensions<4> dims_1000 = bis.get_block_dims(i_1000);
             double *p = NULL;
             permutation<4> perm; perm.permute(0, 2);
             permutation<4> perm1; perm1.permute(1, 3);

@@ -640,7 +640,6 @@ void btod_add_test::test_10(double d) throw(libtest::test_exception) {
     tnss << "btod_add_test::test_10(" << d << ")";
 
     typedef std_allocator<double> allocator_t;
-    typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
     try {
 
