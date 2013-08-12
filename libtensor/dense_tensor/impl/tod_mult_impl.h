@@ -24,7 +24,7 @@ tod_mult<N>::tod_mult(
         bool recip, const scalar_transf<double> &trc) :
 
         m_ta(ta), m_tb(tb), m_perma(tra.get_perm()), m_permb(trb.get_perm()),
-        m_dimsc(ta.get_dims()), m_recip(recip), m_c(trc.get_coeff()) {
+        m_recip(recip), m_c(trc.get_coeff()), m_dimsc(ta.get_dims()) {
 
     static const char *method = "tod_mult("
             "dense_tensor_rd_i<N, double>&, const tensor_transf<N, double> &, "
@@ -54,7 +54,7 @@ template<size_t N>
 tod_mult<N>::tod_mult(dense_tensor_rd_i<N, double> &ta,
     dense_tensor_rd_i<N, double> &tb, bool recip, double c) :
 
-    m_ta(ta), m_tb(tb), m_dimsc(ta.get_dims()), m_recip(recip), m_c(c) {
+    m_ta(ta), m_tb(tb), m_recip(recip), m_c(c), m_dimsc(ta.get_dims()) {
 
     static const char *method = "tod_mult(dense_tensor_rd_i<N, double>&, "
         "dense_tensor_rd_i<N, double>&, bool, double)";
@@ -73,7 +73,7 @@ tod_mult<N>::tod_mult(
         bool recip, double c) :
 
         m_ta(ta), m_tb(tb), m_perma(pa), m_permb(pb),
-        m_dimsc(ta.get_dims()), m_recip(recip), m_c(c) {
+        m_recip(recip), m_c(c), m_dimsc(ta.get_dims()) {
 
     static const char *method = "tod_mult("
             "dense_tensor_rd_i<N, double>&, permutation<N>, "

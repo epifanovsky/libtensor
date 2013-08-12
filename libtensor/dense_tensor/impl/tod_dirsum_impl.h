@@ -51,7 +51,7 @@ tod_dirsum<N, M>::tod_dirsum(
         dense_tensor_rd_i<k_orderb, double> &tb, double kb,
         const permutation<k_orderc> &permc) :
 
-    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_permc(permc), m_c(1.0),
+    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_c(1.0), m_permc(permc),
     m_dimsc(mk_dimsc(ta, tb)) {
 
     m_dimsc.permute(permc);

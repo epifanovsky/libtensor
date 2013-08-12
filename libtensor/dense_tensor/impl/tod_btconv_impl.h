@@ -103,8 +103,6 @@ void tod_btconv<N>::copy_block(double *optr, const dimensions<N> &odims,
     typename std::list< loop_list_node<1, 1> >::iterator inode = loop_in.end();
 
     for(size_t i = 0; i < N; i++) {
-        size_t inca = idims.get_increment(i);
-        size_t incb = odims.get_increment(ib[i]);
         inode = loop_in.insert(loop_in.end(), loop_list_node<1, 1>(idims[i]));
         inode->stepa(0) = idims.get_increment(i);
         inode->stepb(0) = odims.get_increment(ib[i]);
