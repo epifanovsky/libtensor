@@ -23,8 +23,8 @@ namespace libtensor {
  **/
 template<size_t N, typename T>
 class tensor_transf {
-    scalar_transf<T> m_st; //!< Element-wise transformation
     permutation<N> m_perm; //!< Permutation
+    scalar_transf<T> m_st; //!< Element-wise transformation
 
 public:
     /** \brief Default constructor

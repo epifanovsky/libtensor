@@ -366,7 +366,6 @@ void addition_schedule<N, Traits>::build(
     const assignment_schedule_type &asch,
     const std::vector<size_t> &nzlstb) {
 
-    typedef typename assignment_schedule_type::iterator asgsch_iterator;
     typedef book_node_struct<N, element_type> book_node;
 
     addition_schedule<N, Traits>::start_timer();

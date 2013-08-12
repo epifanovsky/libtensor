@@ -225,9 +225,6 @@ template<size_t N, size_t M, typename Traits, typename Timed>
 block_index_space<N - M + 1> gen_bto_diag<N, M, Traits, Timed>::mk_bis(
     const block_index_space<N> &bis, const mask<N> &msk) {
 
-    static const char *method =
-        "mk_bis(const block_index_space<N>&, const mask<N>&)";
-
     //  Create the mask for the subspace builder
     //
     mask<N> m;

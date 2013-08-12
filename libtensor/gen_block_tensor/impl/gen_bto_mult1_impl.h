@@ -110,7 +110,6 @@ void gen_bto_mult1<N, Traits, Timed>::perform(
     typedef typename Traits::template temp_block_tensor_type<N>::type
         temp_block_tensor_a_type;
     typedef gen_bto_mult1_task<N, Traits, Timed> task_type;
-    typedef typename Traits::template to_copy_type<N>::type to_copy;
 
     static const char method[] =
         "perform(bool, gen_block_tensor_i<N, bti_traits>&)";
@@ -240,8 +239,8 @@ gen_bto_mult1_task<N, Traits, Timed>::gen_bto_mult1_task(bool zero,
     const tensor_transf<N, element_type> &trb, bool recip,
     const scalar_transf<element_type> &c) :
 
-    m_zero(zero), m_bta(bta), m_idxa(idxa), m_btb(btb), m_idxb(idxb),
-    m_trb(trb), m_recip(recip), m_c(c) {
+    m_bta(bta), m_btb(btb), m_trb(trb), m_c(c), m_idxa(idxa), m_idxb(idxb),
+    m_recip(recip), m_zero(zero)  {
 
 }
 
@@ -252,7 +251,6 @@ void gen_bto_mult1_task<N, Traits, Timed>::perform() {
             rd_block_type;
     typedef typename bti_traits::template wr_block_type<N>::type
             wr_block_type;
-    typedef typename Traits::template to_mult_type<N>::type to_mult;
     typedef typename Traits::template to_mult1_type<N>::type to_mult1;
 
     gen_bto_mult1_task::start_timer();

@@ -51,7 +51,6 @@ void btod_print<N, Alloc>::perform(
     }
     m_stream << std::endl;
 
-    typedef std_allocator<double> allocator_t;
     dense_tensor<N, double, Alloc> ta(dims);
     tod_btconv<N>(bt).perform(ta);
 

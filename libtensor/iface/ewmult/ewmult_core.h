@@ -200,7 +200,7 @@ template<size_t N, size_t M, size_t K, typename T>
 ewmult_core<N, M, K, T>::ewmult_core(const letter_expr<K> &ewidx,
     const expr<NA, T> &expr1, const expr<NB, T> &expr2) :
 
-    m_ewidx(ewidx), m_expr1(expr1), m_expr2(expr2), m_defout(0) {
+    m_expr1(expr1), m_expr2(expr2), m_ewidx(ewidx), m_defout(0) {
 
     static const char method[] = "ewmult_core(const letter_expr<K>&, "
         "const expr<N + K, T>&, const expr<M + K, T>&)";

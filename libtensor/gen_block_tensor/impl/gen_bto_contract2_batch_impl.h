@@ -5,15 +5,15 @@
 #include <utility>
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/symmetry/so_permute.h>
-#include "../gen_bto_aux_copy.h"
 #include "../gen_block_tensor_ctrl.h"
+#include "../gen_bto_aux_copy.h"
+#include "gen_bto_contract2_batch.h"
 #include "gen_bto_contract2_block_impl.h"
 #include "gen_bto_contract2_block_list.h"
 #include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_copy_impl.h"
 #include "gen_bto_unfold_block_list.h"
 #include "gen_bto_unfold_symmetry.h"
-#include "gen_bto_contract2_batch.h"
 
 namespace libtensor {
 
@@ -175,18 +175,10 @@ void gen_bto_contract2_batch<N, M, K, Traits, Timed>::perform(
     const std::vector<size_t> &blst,
     gen_block_stream_i<NC, bti_traits> &out) {
 
-    typedef typename Traits::template temp_block_tensor_type<NA>::type
-        temp_block_tensor_a_type;
-    typedef typename Traits::template temp_block_tensor_type<NB>::type
-        temp_block_tensor_b_type;
     typedef typename Traits::template temp_block_tensor_type<NC>::type
         temp_block_tensor_c_type;
-
-    typedef gen_bto_copy< NA, Traits, Timed> gen_bto_copy_a_type;
-    typedef gen_bto_copy< NB, Traits, Timed> gen_bto_copy_b_type;
     typedef typename gen_bto_contract2_clst<N, M, K, element_type>::list_type
         contr_list;
-
     typedef std::pair<size_t, gen_bto_contract2_clst_builder<N, M, K, Traits>*>
         clst_pair_type;
 
@@ -346,7 +338,6 @@ void gen_bto_contract2_task<N, M, K, Traits, Timed>::perform() {
         rd_block_type;
     typedef typename bti_traits::template wr_block_type<N + M>::type
         wr_block_type;
-    typedef tensor_transf<N, element_type> tensor_transf_type;
 
     tensor_transf<N + M, element_type> tr0;
     gen_block_tensor_ctrl<N + M, bti_traits> cc(m_btc);

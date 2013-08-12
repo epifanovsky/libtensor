@@ -66,7 +66,6 @@ void gen_bto_symcontract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
     typedef gen_bto_set<NC, Traits, Timed> gen_bto_set_c_type;
     typedef gen_bto_copy<NAB, Traits, Timed> gen_bto_copy_ab_type;
     typedef gen_bto_copy<NC, Traits, Timed> gen_bto_copy_c_type;
-    typedef gen_bto_copy<ND, Traits, Timed> gen_bto_copy_d_type;
 
     gen_bto_symcontract3::start_timer();
 
@@ -410,8 +409,8 @@ void gen_bto_symcontract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
             cb.req_nonzero_blocks(blstb);
         }
 
-        size_t nblka = blsta.size(), nblkb = blstb.size(), nblkab = 0;
-        nblkab = std::distance(m_schab.begin(), m_schab.end());
+        size_t nblka = blsta.size(), nblkb = blstb.size();//, nblkab = 0;
+        //nblkab = std::distance(m_schab.begin(), m_schab.end());
 
         scalar_transf<element_type> kab;
 
