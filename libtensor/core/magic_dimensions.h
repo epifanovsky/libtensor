@@ -27,6 +27,7 @@ template<size_t N>
 class magic_dimensions {
 private:
     dimensions<N> m_dims;
+    bool m_incs;
     void *m_magic;
 
 public:
@@ -50,6 +51,10 @@ public:
         return m_dims;
     }
 
+    /** \brief Permutes the %imensions
+     **/
+    void permute(const permutation<N> &p);
+
     /** \brief Divides each element of index i1 by the dimensions and puts
             the result in i2.
      **/
@@ -59,8 +64,10 @@ public:
      **/
     size_t divide(size_t n, size_t i) const;
 
-    /** \brief Copy operator
-     **/
+private:
+    void make_magic();
+
+private:
     const magic_dimensions<N> &operator=(const magic_dimensions<N> &mdims);
 
 };
@@ -78,6 +85,10 @@ public:
 
     const dimensions<0> &get_dims() const {
         return m_dims;
+    }
+
+    void permute(const permutation<0> &p) {
+
     }
 
     void divide(const index<0> &i1, index<0> &i2) const {
