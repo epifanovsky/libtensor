@@ -15,8 +15,6 @@ void
 symmetry_operation_impl< so_dirprod<N, M, T>, se_label<NM, T> >::do_perform(
     symmetry_operation_params_t &params) const {
 
-    static const char *method = "do_perform(symmetry_operation_params_t&)";
-
     // Adapter type for the input groups
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;
     typedef symmetry_element_set_adapter< M, T, se_label<M, T> > adapter2_t;

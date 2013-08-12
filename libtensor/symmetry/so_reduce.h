@@ -79,6 +79,8 @@ public:
             const index_range<N> &rblrange, const index_range<N> &riblrange)
     { }
 
+    ~so_reduce() { }
+
     void perform(symmetry<0, T> &sym2) {
         sym2.clear();
     }

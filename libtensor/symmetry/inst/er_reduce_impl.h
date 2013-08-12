@@ -15,10 +15,11 @@ const char *er_reduce<N, M>::k_clazz = "er_reduce<N, M>";
 
 template<size_t N, size_t M>
 er_reduce<N, M>::er_reduce(
-        const evaluation_rule<N> &rule, const sequence<N, size_t> &rmap,
-        const sequence<M, label_group_t> &rdims, const std::string &id) :
-        m_rule(rule), m_rmap(rmap), m_rdims(rdims), m_nrsteps(0),
-        m_pt(product_table_container::get_instance().req_const_table(id)) {
+	const evaluation_rule<N> &rule, const sequence<N, size_t> &rmap,
+	const sequence<M, label_group_t> &rdims, const std::string &id) :
+	m_rule(rule),
+	m_pt(product_table_container::get_instance().req_const_table(id)),
+	m_rmap(rmap), m_rdims(rdims), m_nrsteps(0) {
 
     for (; m_nrsteps < M && ! m_rdims[m_nrsteps].empty(); m_nrsteps++) ;
 

@@ -459,9 +459,6 @@ template<size_t N, typename T>
 void permutation_group<N, T>::make_setstabilizer(const branching &br,
         const sequence<N, size_t> &msk, perm_list_t &gs) {
 
-    static const char *method = "make_set_stabilizer(const branching &, "
-            "const mask<N>&, perm_list_t&)";
-
     register size_t m = 0;
     for(register size_t i = 0; i < N; i++) if(msk[i] != 0) m++;
     // Handle two special cases first:

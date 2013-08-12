@@ -44,8 +44,6 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<NM, T> >::do_perform(
     const index<k_order1> &bib = params.rblrange.get_end();
     const index<k_order1> &ia = params.riblrange.get_begin();
     const index<k_order1> &ib = params.riblrange.get_end();
-    bool single_blk = (bia == params.rblrange.get_end());
-    bool single_idx = (single_blk && ia == params.riblrange.get_end());
 
     for (typename adapter_t::iterator it = g2.begin(); it != g2.end(); it++) {
 
