@@ -33,10 +33,10 @@ kernel_base<LA, 2, 1> *kern_dmul2<LA>::match(double d, list_t &in,
     kern_dmul2 zz;
     zz.m_d = d;
 
-    if(kern = kern_dmul2_i_i_x<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dmul2_i_x_i<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dmul2_x_p_p<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dmul2_i_i_i<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dmul2_i_i_x<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_i_x_i<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_x_p_p<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_i_i_i<LA>::match(zz, in, out))) return kern;
 
     return new kern_dmul2(zz);
 }
