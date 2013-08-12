@@ -106,8 +106,6 @@ void se_part<N, T>::add_map(
     static const char method[] =
         "add_map(const index<N>&, const index<N>&, scalar_transf<T>)";
 
-if(!m_mpdims.get_dims().equals(m_pdims)) {
-}
 #ifdef LIBTENSOR_DEBUG
     if(!is_valid_pidx(idx1)) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "idx1");
