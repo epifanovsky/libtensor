@@ -4,12 +4,14 @@
 namespace libtensor {
 
 
-template class gen_bto_dotprod<1, btod_traits, btod_dotprod<1> >;
-template class gen_bto_dotprod<2, btod_traits, btod_dotprod<2> >;
-template class gen_bto_dotprod<3, btod_traits, btod_dotprod<3> >;
-template class gen_bto_dotprod<4, btod_traits, btod_dotprod<4> >;
-template class gen_bto_dotprod<5, btod_traits, btod_dotprod<5> >;
-template class gen_bto_dotprod<6, btod_traits, btod_dotprod<6> >;
+template class gen_bto_dotprod< 1, btod_traits, btod_dotprod<1> >;
+template class gen_bto_dotprod< 2, btod_traits, btod_dotprod<2> >;
+template class gen_bto_dotprod< 3, btod_traits, btod_dotprod<3> >;
+template class gen_bto_dotprod< 4, btod_traits, btod_dotprod<4> >;
+template class gen_bto_dotprod< 5, btod_traits, btod_dotprod<5> >;
+template class gen_bto_dotprod< 6, btod_traits, btod_dotprod<6> >;
+template class gen_bto_dotprod< 7, btod_traits, btod_dotprod<7> >;
+template class gen_bto_dotprod< 8, btod_traits, btod_dotprod<8> >;
 
 
 template class btod_dotprod<1>;
@@ -18,6 +20,8 @@ template class btod_dotprod<3>;
 template class btod_dotprod<4>;
 template class btod_dotprod<5>;
 template class btod_dotprod<6>;
+template class btod_dotprod<7>;
+template class btod_dotprod<8>;
 
 
 } // namespace libtensor

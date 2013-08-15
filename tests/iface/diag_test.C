@@ -69,7 +69,7 @@ void diag_test::test_t_2() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(11);
     bispace<2> sp_ia(sp_i|sp_a);
-    bispace<3> sp_ija(sp_i&sp_i|sp_a);
+    bispace<3> sp_ija((sp_i&sp_i)|sp_a);
 
     btensor<3> t1(sp_ija);
     btensor<2> t2(sp_ia), t2_ref(sp_ia);
@@ -101,7 +101,7 @@ void diag_test::test_t_3() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(11), sp_j(sp_i);
     bispace<2> sp_ai(sp_a|sp_i);
-    bispace<3> sp_iaj(sp_i|sp_a|sp_j, sp_i&sp_j|sp_a);
+    bispace<3> sp_iaj(sp_i|sp_a|sp_j, (sp_i&sp_j)|sp_a);
 
     btensor<3> t1(sp_iaj);
     btensor<2> t2(sp_ai), t2_ref(sp_ai);

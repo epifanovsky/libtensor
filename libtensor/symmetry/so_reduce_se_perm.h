@@ -33,6 +33,9 @@ public:
     typedef se_perm<k_order2, T> el2_t;
     typedef symmetry_operation_params<op_t> symmetry_operation_params_t;
 
+public:
+    virtual ~symmetry_operation_impl() { }
+
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
 

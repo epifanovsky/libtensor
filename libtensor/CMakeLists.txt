@@ -78,6 +78,7 @@ set(SRC_INST
     dense_tensor/impl/tod_compare.C
     dense_tensor/impl/tod_contract2.C
     dense_tensor/impl/tod_copy.C
+    dense_tensor/impl/tod_copy_wnd.C
     dense_tensor/impl/tod_diag.C
     dense_tensor/impl/tod_dirsum.C
     dense_tensor/impl/tod_dotprod.C
@@ -151,6 +152,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_addition_schedule.C
     block_tensor/impl/btod_add.C
     block_tensor/impl/btod_aux_add.C
+    block_tensor/impl/btod_aux_chsym.C
     block_tensor/impl/btod_aux_copy.C
     block_tensor/impl/btod_aux_symmetrize.C
     block_tensor/impl/btod_aux_transform.C
@@ -161,6 +163,8 @@ set(SRC_BTOD
     block_tensor/impl/btod_contract2_4.C
     block_tensor/impl/btod_contract2_5.C
     block_tensor/impl/btod_contract2_6.C
+    block_tensor/impl/btod_contract2_7.C
+    block_tensor/impl/btod_contract2_8.C
     block_tensor/impl/btod_contract2_clst_builder.C
     block_tensor/impl/btod_contract2_clst_optimize.C
     block_tensor/impl/btod_contract2_nzorb.C
@@ -178,6 +182,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
     block_tensor/impl/btod_size.C
+    block_tensor/impl/btod_symcontract3.C
     block_tensor/impl/btod_symmetrize2.C
     block_tensor/impl/btod_symmetrize3.C
     block_tensor/impl/btod_trace.C
@@ -224,6 +229,8 @@ elseif(USE_ESSL)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ESSL})
 elseif(USE_MKL)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_MKL})
+else(USE_ACML)
+    set(SRC_LINALG ${SRC_LINALG_GENERIC})
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}

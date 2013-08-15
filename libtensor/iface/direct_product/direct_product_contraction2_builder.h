@@ -71,7 +71,7 @@ contraction2<N, M, 0> direct_product_contraction2_builder<N, M>::mk_contr(
 
     for(size_t i = 0; i < k_orderc; i++) seq1[i] = i;
 
-    size_t j = 0, k = 0;
+    size_t j = 0;
     for(size_t i = 0; i < k_ordera; i++) {
         const letter &l = label_a.letter_at(i);
         if(!label_c.contains(l)) {

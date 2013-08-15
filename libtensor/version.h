@@ -24,8 +24,8 @@ class version : public libutil::singleton<version> {
 
 private:
     static const unsigned k_major = 2; //!< Major %version number
-    static const unsigned k_minor = 1; //!< Minor %version number
-    static const char *k_status; //!< Version status
+    static const unsigned k_minor = 3; //!< Minor %version number
+    static const char k_status[]; //!< Version status
     static const char *k_authors[]; //!< List of authors
 
 private:

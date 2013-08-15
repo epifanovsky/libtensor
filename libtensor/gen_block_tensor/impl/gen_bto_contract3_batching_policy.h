@@ -63,7 +63,7 @@ gen_bto_contract3_batching_policy(
     size_t nblkab, size_t nblkd) {
 
     size_t batch_size = batching_policy_base::get_batch_size();
-    size_t nblktot = nblka + nblkb + nblkc + nblkab + nblkd;
+    //size_t nblktot = nblka + nblkb + nblkc + nblkab + nblkd;
     size_t bsza, bszb, bszc, bszab, bszd;
     size_t nbata, nbatb, nbatc, nbatab, nbatd;
 

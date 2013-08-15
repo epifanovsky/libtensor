@@ -47,7 +47,7 @@ void labeled_btensor_test::test_label() throw(libtest::test_exception) {
     bispace<4> sp_ijab((sp_i&sp_j)|(sp_a&sp_b));
     btensor<4> t(sp_ijab);
 
-    letter i, j, k, a, b, c;
+    letter i, j, k, a, b;
 
     if(!t(i|j|a|b).contains(i)) {
         fail_test(testname, __FILE__, __LINE__,

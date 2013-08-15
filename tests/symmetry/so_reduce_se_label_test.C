@@ -486,10 +486,13 @@ void so_reduce_se_label_test::test_nm1_6(
         mask<6> m1; m1[3] = true;
         for (size_t i = 0; i < 8; i++) bl1.assign(m1, i, i % 4);
         evaluation_rule<6> r1;
-        sequence<6, size_t> s1a(0);
+        sequence<6, size_t> s1a(0), s1b(0);
         s1a[3] = 1; s1a[5] = 1;
+        s1b[0] = 1; s1b[1] = 1; s1b[2] = 1; s1b[4] = 1;
+
         product_rule<6> &pr1 = r1.new_product();
-        pr1.add(s1a, product_table_i::k_invalid);
+        pr1.add(s1a, product_table_i::k_identity);
+        pr1.add(s1b, product_table_i::k_identity);
         el1.set_rule(r1);
     }
 
@@ -520,8 +523,6 @@ void so_reduce_se_label_test::test_nm1_6(
         fail_test(tns.c_str(), __FILE__, __LINE__,
                 "Expected only one element.");
     }
-    std::cout << el1 << std::endl;
-    std::cout << el2 << std::endl;
 
     const dimensions<4> &bidims2 = el2.get_labeling().get_block_index_dims();
     std::vector<bool> rx(bidims2.get_size(), true);

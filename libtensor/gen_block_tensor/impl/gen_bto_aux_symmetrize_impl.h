@@ -2,7 +2,6 @@
 #define LIBTENSOR_GEN_BTO_AUX_SYMMETRIZE_IMPL_H
 
 #include <libtensor/core/orbit.h>
-#include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_copy.h>
 #include "../block_stream_exception.h"
 #include "../gen_bto_aux_symmetrize.h"
@@ -11,7 +10,7 @@ namespace libtensor {
 
 
 template<size_t N, typename Traits>
-const char *gen_bto_aux_symmetrize<N, Traits>::k_clazz =
+const char gen_bto_aux_symmetrize<N, Traits>::k_clazz[] =
     "gen_bto_aux_symmetrize<N, Traits>";
 
 
@@ -80,9 +79,13 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
             __FILE__, __LINE__, "Stream is not ready.");
     }
 
+    dimensions<N> bidimsa = m_syma.get_bis().get_block_index_dims();
+    dimensions<N> bidimsb = m_symb.get_bis().get_block_index_dims();
+
     orbit<N, element_type> oa(m_syma, idxa, false);
     tensor_transf_type tra0inv(oa.get_transf(idxa), true);
-    dimensions<N> bidims = m_syma.get_bis().get_block_index_dims();
+
+    std::multimap<size_t, tensor_transf_type> symap;
 
     for(typename orbit<N, element_type>::iterator i = oa.begin();
         i != oa.end(); ++i) {
@@ -92,14 +95,34 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
             m_trlst.begin(); j != m_trlst.end(); ++j) {
 
             index<N> idxb;
-            abs_index<N>::get_index(oa.get_abs_index(i), bidims, idxb);
+            abs_index<N>::get_index(oa.get_abs_index(i), bidimsa, idxb);
             j->apply(idxb);
-            short_orbit<N, element_type> so(m_symb, idxb);
-            if(!so.get_cindex().equals(idxb)) continue;
+            size_t aidxb = abs_index<N>::get_abs_index(idxb, bidimsb);
 
             tensor_transf<N, double> trb(tr);
             trb.transform(tra0inv).transform(tra1).transform(*j);
-            m_out.put(idxb, blk, trb);
+            symap.insert(std::make_pair(aidxb, trb));
+        }
+    }
+
+    typedef typename std::multimap<size_t, tensor_transf_type>::iterator
+        symap_iterator;
+
+    while(!symap.empty()) {
+
+        size_t aidxb = symap.begin()->first;
+        index<N> idxb;
+        abs_index<N>::get_index(aidxb, bidimsb, idxb);
+        std::pair<symap_iterator, symap_iterator> irange =
+            symap.equal_range(aidxb);
+        for(symap_iterator i = irange.first; i != irange.second; ++i) {
+            m_out.put(idxb, blk, i->second);
+        }
+
+        orbit<N, element_type> ob(m_symb, idxb, false);
+        for(typename orbit<N, element_type>::iterator i = ob.begin();
+            i != ob.end(); ++i) {
+            symap.erase(ob.get_abs_index(i));
         }
     }
 }

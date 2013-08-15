@@ -82,7 +82,14 @@ template class so_merge<12, 9, double>;
 template class so_merge<12, 10, double>;
 template class so_merge<12, 11, double>;
 
+template class so_merge<13, 5, double>;
+template class so_merge<13, 6, double>;
+template class so_merge<13, 7, double>;
+
+template class so_merge<14, 6, double>;
 template class so_merge<14, 7, double>;
+
+template class so_merge<15, 7, double>;
 
 template class so_merge<16, 8, double>;
 

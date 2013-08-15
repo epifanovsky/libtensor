@@ -125,7 +125,7 @@ void tod_dotprod_p1<R,N,X>::do_calculate() {
     tca.ret_dataptr(ptra);
     tcb.ret_dataptr(ptrb);
 
-    double res = tod_dotprod<N>(ta, tb).calculate();
+    tod_dotprod<N>(ta, tb).calculate();
 }
 
 
@@ -150,7 +150,7 @@ void tod_dotprod_p2<R,N,X>::do_calculate() {
     tca.ret_dataptr(ptra);
     tcb.ret_dataptr(ptrb);
 
-    double res = tod_dotprod<N>(ta, perma, tb, permb).calculate();
+    tod_dotprod<N>(ta, perma, tb, permb).calculate();
 }
 
 
@@ -175,7 +175,7 @@ void tod_dotprod_p3<R,N,X>::do_calculate() {
     tca.ret_dataptr(ptra);
     tcb.ret_dataptr(ptrb);
 
-    double res = tod_dotprod<N>(ta, perma, tb, permb.invert()).calculate();
+    tod_dotprod<N>(ta, perma, tb, permb.invert()).calculate();
 }
 
 

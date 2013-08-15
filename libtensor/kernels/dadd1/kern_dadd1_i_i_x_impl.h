@@ -53,8 +53,8 @@ kernel_base<LA, 1, 1> *kern_dadd1_i_i_x<LA>::match(const kern_dadd1<LA> &z,
 
     kernel_base<LA, 1, 1> *kern = 0;
 
-    if(kern = kern_dadd1_ij_ij_x<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dadd1_ij_ji_x<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dadd1_ij_ij_x<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dadd1_ij_ji_x<LA>::match(zz, in, out))) return kern;
 
     return new kern_dadd1_i_i_x(zz);
 }

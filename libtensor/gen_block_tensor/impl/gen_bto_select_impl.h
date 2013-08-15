@@ -48,8 +48,6 @@ template<size_t N, typename Traits, typename ComparePolicy>
 void gen_bto_select<N, Traits, ComparePolicy>::perform(
         list_type &li, size_t n) {
 
-    static const char *method = "perform(list_type &, size_t)";
-
     if (n == 0) return;
     li.clear();
 
@@ -81,15 +79,91 @@ void gen_bto_select<N, Traits, ComparePolicy>::perform(
         // Create element list for canonical block (within the symmetry)
         to_list_type tlc;
         to_select(t, tra, m_cmp).perform(tlc, n);
+
+        dimensions<N> dims(t.get_dims());
+        dims.permute(tra.get_perm());
+        transf_list<N, element_type> trl(m_sym, idxa);
+        minimize_list(tlc, trl, dims);
         merge_lists(li, idxa, tlc, n);
 
         ctrl.ret_const_block(idxa0);
     }
 }
 
+
+template<size_t N, typename Traits, typename ComparePolicy>
+void gen_bto_select<N, Traits, ComparePolicy>::minimize_list(
+		to_list_type &lst, const transf_list<N, element_type> &trl,
+		const dimensions<N> &dims) {
+
+	typedef std::multimap<size_t, typename to_list_type::iterator> map_type;
+
+	// Loop over all tensor elements in lst and apply the tensor
+	// transformations to them that yield the minimal index
+	map_type map;
+	for (typename to_list_type::iterator it = lst.begin();
+			it != lst.end(); it++) {
+
+		const index<N> &idx = it->get_index();
+		size_t aimin = abs_index<N>::get_abs_index(idx, dims);
+
+		typename transf_list<N, element_type>::iterator itr0, itr;
+		itr = itr0 = trl.begin(); itr++;
+		for (; itr != trl.end(); itr++) {
+
+			index<N> ic(idx);
+			trl.get_transf(itr).apply(ic);
+
+			size_t aic = abs_index<N>::get_abs_index(ic, dims);
+			if (aic < aimin) {
+				aimin = aic;
+				itr0 = itr;
+			}
+		}
+
+		if (itr0 != trl.begin()) {
+			const tensor_transf<N, element_type> &tr = trl.get_transf(itr0);
+			index<N> ic(idx);
+			element_type val(it->get_value());
+
+			tr.apply(ic);
+			tr.apply(val);
+
+			*it = tensor_element_type(ic, val);
+		}
+
+		map.insert(typename map_type::value_type(aimin, it));
+	}
+
+	// Loop over all elements with the same index and remove duplicates
+	typename map_type::iterator it1 = map.begin();
+	while (it1 != map.end()) {
+
+		typename to_list_type::iterator il1 = it1->second;
+
+		typename map_type::iterator it2 = it1;
+		it2++;
+		for (; it2 != map.end() && it1->first == it2->first; it2++) {
+
+			typename to_list_type::iterator il2 = it2->second;
+			if (m_cmp(il1->get_value(), il2->get_value())) {
+				lst.erase(il2);
+			}
+			else {
+				lst.erase(il1);
+				il1 = il2;
+			}
+		}
+
+		it1 = it2;
+	}
+}
+
+
 template<size_t N, typename Traits, typename ComparePolicy>
 void gen_bto_select<N, Traits, ComparePolicy>::merge_lists(list_type &to,
         const index<N> &bidx, const to_list_type &from, size_t n) {
+
 
     typename list_type::iterator ibt = to.begin();
     for (typename to_list_type::const_iterator it = from.begin();

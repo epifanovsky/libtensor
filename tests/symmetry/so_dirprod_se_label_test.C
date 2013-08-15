@@ -8,8 +8,6 @@ namespace libtensor {
 
 void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
 
-    static const char *testname = "so_dirprod_se_label_test::perform()";
-
     std::string table_id("S6");
     setup_pg_table(table_id);
 

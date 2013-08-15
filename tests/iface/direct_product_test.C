@@ -41,19 +41,19 @@ void direct_product_test::test_label_1() throw(libtest::test_exception) {
     btensor<2> t1(sp_ab), t2(sp_ab);
     letter a, b, c, d;
 
-    if(!(t1(a|b) * t2(c|d)).contains(a)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(a)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter a is missing from the result label.");
     }
-    if(!(t1(a|b) * t2(c|d)).contains(b)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(b)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter b is missing from the result label.");
     }
-    if(!(t1(a|b) * t2(c|d)).contains(c)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(c)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter c is missing from the result label.");
     }
-    if(!(t1(a|b) * t2(c|d)).contains(d)) {
+    if(!(t1(a|b) * t2(c|d)).get_core().contains(d)) {
         fail_test(testname, __FILE__, __LINE__,
             "Letter d is missing from the result label.");
     }
@@ -285,7 +285,7 @@ void direct_product_test::test_ee_2() throw(libtest::test_exception) {
     btod_contract2<1, 2, 0> op(contr, t1, t2);
     op.perform(t3_ref);
 
-    letter a, b, c, d;
+    letter a, c, d;
     t3(a|c|d) = (1.5*t1a(a) + 2.0*t1b(a)) * (t2a(c|d) - 0.5*t2b(c|d));
 
     compare_ref<3>::compare(testname, t3, t3_ref, 1e-15);

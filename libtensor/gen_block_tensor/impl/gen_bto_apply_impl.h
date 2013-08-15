@@ -85,7 +85,7 @@ gen_bto_apply<N, Functor, Traits, Timed>::gen_bto_apply(
         gen_block_tensor_rd_i<N, bti_traits> &bta, const functor_type &fn,
         const scalar_transf_type &tr1, const tensor_transf_type &tr2) :
 
-    m_bta(bta), m_fn(fn), m_tr1(tr1), m_tr2(tr2),
+	m_fn(fn), m_bta(bta), m_tr1(tr1), m_tr2(tr2),
     m_bis(mk_bis(m_bta.get_bis(), tr2.get_perm())),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 

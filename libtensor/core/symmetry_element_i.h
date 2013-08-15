@@ -16,6 +16,8 @@ namespace libtensor {
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
+	TODO Move to folder symmetry/
+
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>

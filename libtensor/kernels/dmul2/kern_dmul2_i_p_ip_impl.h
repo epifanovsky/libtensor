@@ -59,7 +59,7 @@ kernel_base<LA, 2, 1> *kern_dmul2_i_p_ip<LA>::match(
 
     kernel_base<LA, 2, 1> *kern = 0;
 
-    if(kern = kern_dmul2_ij_ip_jp<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dmul2_ij_ip_jp<LA>::match(zz, in, out))) return kern;
 
     return new kern_dmul2_i_p_ip(zz);
 }

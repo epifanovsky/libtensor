@@ -1,9 +1,7 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_TRACE_OPERATOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_TRACE_OPERATOR_H
 
-#include "../../defs.h"
-#include "../../exception.h"
-#include "../../core/permutation_builder.h"
+#include <libtensor/core/permutation_builder.h>
 #include <libtensor/block_tensor/btod_trace.h>
 #include "../labeled_btensor.h"
 #include "../letter.h"
@@ -11,7 +9,6 @@
 #include "trace_subexpr_label_builder.h"
 
 namespace libtensor {
-
 namespace labeled_btensor_expr {
 
 
@@ -42,8 +39,8 @@ double trace(
  **/
 template<size_t N, size_t N2, typename T, bool A>
 double trace(
-    letter_expr<N> le1,
-    letter_expr<N> le2,
+    const letter_expr<N> le1,
+    const letter_expr<N> le2,
     labeled_btensor<N2, T, A> bt) {
 
     size_t seq1[2 * N], seq2[2 * N];
@@ -63,31 +60,31 @@ double trace(
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<typename T, typename E>
+template<typename T>
 double trace(
     const letter &l1,
     const letter &l2,
-    expr<2, T, E> expr) {
+    const expr<2, T> &expr) {
 
     letter_expr<2> le(l1|l2);
-    anon_eval<2, T, E> eval(expr, le);
+    anon_eval<2, T> eval(expr, le);
     eval.evaluate();
     return btod_trace<1>(eval.get_btensor()).calculate();
 }
 
 
-/** \brief Trace of a %tensor expression
+/** \brief Trace of a tensor expression
 
     \ingroup libtensor_btensor_expr_op
  **/
-template<size_t N, size_t N2, typename T, typename E>
+template<size_t N, size_t N2, typename T>
 double trace(
-    letter_expr<N> le1,
-    letter_expr<N> le2,
-    expr<N2, T, E> expr) {
+    const letter_expr<N> le1,
+    const letter_expr<N> le2,
+    expr<N2, T> expr) {
 
     trace_subexpr_label_builder<N> lb(le1, le2);
-    anon_eval<2 * N, T, E> eval(expr, lb.get_label());
+    anon_eval<2 * N, T> eval(expr, lb.get_label());
     eval.evaluate();
     return btod_trace<N>(eval.get_btensor()).calculate();
 }

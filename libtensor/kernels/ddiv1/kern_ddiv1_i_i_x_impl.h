@@ -49,8 +49,6 @@ kernel_base<LA, 1, 1> *kern_ddiv1_i_i_x<LA>::match(const kern_ddiv1<LA> &z,
     zz.m_sib = 1;
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 1, 1> *kern = 0;
-
     return new kern_ddiv1_i_i_x(zz);
 }
 

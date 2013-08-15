@@ -11,6 +11,7 @@
 #include "gen_bto_contract2_nzorb.h"
 #include "gen_bto_contract2_sym_impl.h"
 #include "gen_bto_contract3_batching_policy.h"
+#include "gen_bto_symcontract2_sym_impl.h"
 #include "gen_bto_set_impl.h"
 #include "gen_bto_unfold_symmetry.h"
 #include "../gen_block_tensor_ctrl.h"
@@ -60,7 +61,6 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
     typedef gen_bto_set<NC, Traits, Timed> gen_bto_set_c_type;
     typedef gen_bto_copy<NAB, Traits, Timed> gen_bto_copy_ab_type;
     typedef gen_bto_copy<NC, Traits, Timed> gen_bto_copy_c_type;
-    typedef gen_bto_copy<ND, Traits, Timed> gen_bto_copy_d_type;
 
     gen_bto_contract3::start_timer();
 
@@ -245,7 +245,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
             {
                 tensor_transf<NAB, element_type> trab(permab);
-                gen_bto_aux_copy<NAB, Traits> cpabout(symab2, btab2, false);
+                gen_bto_aux_copy<NAB, Traits> cpabout(symab2, btab2);
                 cpabout.open();
                 gen_bto_copy_ab_type(btab1, trab).perform(cpabout);
                 cpabout.close();
@@ -282,7 +282,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
                 gen_bto_set_c_type(Traits::zero()).perform(btc2);
                 {
                     tensor_transf<NC, element_type> trc(permc);
-                    gen_bto_aux_copy<NC, Traits> cpcout(symc2, btc2, false);
+                    gen_bto_aux_copy<NC, Traits> cpcout(symc2, btc2);
                     cpcout.open();
                     gen_bto_copy_c_type(m_btc, trc).perform(batchc, cpcout);
                     cpcout.close();
@@ -373,9 +373,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
             cb.req_nonzero_blocks(blstb);
         }
 
-        size_t nblka = blsta.size(), nblkb = blstb.size(), nblkab = 0;
-        nblkab = std::distance(m_schab.begin(), m_schab.end());
-
+        size_t nblka = blsta.size(), nblkb = blstb.size();
         scalar_transf<element_type> kab;
 
         block_index_space<NA> bisa2(m_bta.get_bis());
@@ -432,7 +430,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
             gen_bto_set_a_type(Traits::zero()).perform(bta2);
             {
                 tensor_transf<NA, element_type> tra(perma);
-                gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2, false);
+                gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2);
                 cpaout.open();
                 gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
                 cpaout.close();
@@ -468,7 +466,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::compute_batch_ab(
                 gen_bto_set_b_type(Traits::zero()).perform(btb2);
                 {
                     tensor_transf<NB, element_type> trb(permb);
-                    gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2, false);
+                    gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2);
                     cpbout.open();
                     gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
                     cpbout.close();

@@ -19,11 +19,6 @@ void
 symmetry_operation_impl< so_reduce<N, M, T>, se_part<NM, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    static const char *method =
-            "do_perform(const symmetry_operation_params_t&)";
-
-    typedef symmetry_element_set_adapter<k_order1, T, el1_t> adapter_t;
-
     // Create the inverse of the mask
     mask<k_order1> invmsk;
     for (register size_t i = 0; i < k_order1; i++)

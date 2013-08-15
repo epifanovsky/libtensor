@@ -1752,6 +1752,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
 void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 
+	/*
     static const char *testname = "btod_copy_test::test_dir_1()";
 
     typedef std_allocator<double> allocator_t;
@@ -1759,7 +1760,6 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
     typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
-/*
     try {
 
     index<2> i1, i2;
@@ -1792,8 +1792,8 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 
 void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
 
+	/*
     static const char *testname = "btod_copy_test::test_dir_2()";
-/*
     typedef std_allocator<double> allocator_t;
     typedef tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
@@ -1848,10 +1848,10 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
     //  Sym(B) = Sym(A)
     //
 
+	/*
     static const char *testname = "btod_copy_test::test_dir_3()";
 
     typedef std_allocator<double> allocator_t;
-/*
     try {
 
     index<4> i1, i2;
@@ -1916,6 +1916,7 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
 
 void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
 
+	/*
     //
     //  b_ijkl = 2.0 * a_ijkl
     //  Dimensions [ij]=10, [kl]=12, permutational symmetry
@@ -1926,7 +1927,6 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
     static const char *testname = "btod_copy_test::test_dir_4()";
 
     typedef std_allocator<double> allocator_t;
-/*
     try {
 
     index<4> i1, i2;

@@ -372,7 +372,6 @@ void gen_bto_contract2_nzorb<N, M, K, Traits>::build() {
     gen_bto_contract2_nzorb_task_observer<N, M, K> to;
     libutil::thread_pool::submit(ti, to);
 
-    dimensions<NC> bidimsc = m_symc.get_bis().get_block_index_dims();
     for(size_t i = 0; i < blstc.size(); i++) m_blstc.add(blstc[i]);
 }
 

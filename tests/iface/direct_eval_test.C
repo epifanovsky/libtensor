@@ -39,24 +39,30 @@ void direct_eval_test::perform() throw(libtest::test_exception) {
 }
 
 
-template<size_t N, typename T, typename Core>
-void direct_eval_test::invoke_eval(
+namespace {
+
+
+template<size_t N, typename T>
+void invoke_eval(
     const char *testname,
-    const labeled_btensor_expr::expr<N, T, Core> &expr,
-    const letter_expr<N> &label, block_tensor_i<N, T> &ref, double thresh)
+    const labeled_btensor_expr::expr<N, T> &expr,
+    const letter_expr<N> &label, block_tensor_i<N, T> &ref, double thresh = 1e-14)
     throw(libtest::test_exception) {
 
     try {
 
-    labeled_btensor_expr::direct_eval<N, T, Core> ev(expr, label);
+    labeled_btensor_expr::direct_eval<N, T> ev(expr, label);
     btensor<N, T> bt(ev.get_btensor().get_bis());
     btod_copy<N>(ev.get_btensor()).perform(bt);
     compare_ref<N>::compare(testname, bt, ref, thresh);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        throw libtest::test_exception(testname, __FILE__, __LINE__, e.what());
     }
 }
+
+
+} // unnamed namespace
 
 
 void direct_eval_test::test_copy_1() throw(libtest::test_exception) {
@@ -216,7 +222,7 @@ void direct_eval_test::test_copy_5() throw(libtest::test_exception) {
     sj.split(3);
     sa.split(6);
     sb.split(6);
-    bispace<4> sijab(si&sj|sa&sb);
+    bispace<4> sijab((si&sj)|(sa&sb));
 
     btensor<4> tp(sijab);
     scalar_transf<double> tr0;
@@ -256,7 +262,7 @@ void direct_eval_test::test_copy_6() throw(libtest::test_exception) {
     sj.split(3);
     sa.split(6);
     sb.split(6);
-    bispace<4> sijab(si&sj|sa&sb), siajb(si|sa|sj|sb, si&sj|sa&sb);
+    bispace<4> sijab((si&sj)|(sa&sb)), siajb(si|sa|sj|sb, (si&sj)|(sa&sb));
 
     btensor<4> tp(sijab);
     scalar_transf<double> tr0;
@@ -298,7 +304,7 @@ void direct_eval_test::test_add_1() throw(libtest::test_exception) {
     sj.split(3);
     sa.split(6);
     sb.split(6);
-    bispace<4> sijab(si&sj|sa&sb);
+    bispace<4> sijab((si&sj)|(sa&sb));
     btensor<4> tp(sijab), tq(sijab);
     btod_random<4>().perform(tp);
     btod_random<4>().perform(tq);
@@ -334,7 +340,7 @@ void direct_eval_test::test_contr_1() throw(libtest::test_exception) {
     sj.split(3);
     sa.split(6);
     sb.split(6);
-    bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
+    bispace<4> sijab((si&sj)|(sa&sb)), sijkl(si&sj&si&sj);
 
     btensor<4> tp(sijab), tq(sijab);
     btod_random<4>().perform(tp);
@@ -374,7 +380,7 @@ void direct_eval_test::test_contr_2() throw(libtest::test_exception) {
     sj.split(3);
     sa.split(6);
     sb.split(6);
-    bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
+    bispace<4> sijab((si&sj)|(sa&sb)), sijkl(si&sj&si&sj);
 
     btensor<4> tp(sijab), tq1(sijab), tq2(sijab);
     btod_random<4>().perform(tp);
@@ -416,7 +422,7 @@ void direct_eval_test::test_mixed_1() throw(libtest::test_exception) {
     sj.split(3);
     sa.split(6);
     sb.split(6);
-    bispace<4> sijab(si&sj|sa&sb), sijkl(si&sj&si&sj);
+    bispace<4> sijab((si&sj)|(sa&sb)), sijkl(si&sj&si&sj);
 
     btensor<4> tp(sijab), tq(sijab), tr(sijkl);
     btod_random<4>().perform(tp);

@@ -8,12 +8,6 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M>
-class btod_dirsum_clazz {
-public:
-    static const char *k_clazz;
-};
-
 
 /** \brief Computes the direct sum of two block tensors
     \tparam N Order of the first %tensor.
@@ -34,7 +28,7 @@ class btod_dirsum :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;

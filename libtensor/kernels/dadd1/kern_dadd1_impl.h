@@ -29,7 +29,7 @@ kernel_base<LA, 1, 1> *kern_dadd1<LA>::match(double d, list_t &in,
     kern_dadd1 zz;
     zz.m_d = d;
 
-    if(kern = kern_dadd1_i_i_x<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dadd1_i_i_x<LA>::match(zz, in, out))) return kern;
 
     return new kern_dadd1(zz);
 }

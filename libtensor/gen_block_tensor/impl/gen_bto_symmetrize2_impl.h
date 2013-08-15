@@ -22,7 +22,7 @@ gen_bto_symmetrize2<N, Traits, Timed>::gen_bto_symmetrize2(
     const permutation<N> &perm,
     bool symm) :
 
-    m_op(op), m_symm(symm), m_perm1(perm), m_bis(op.get_bis()),
+    m_op(op), m_perm1(perm), m_symm(symm), m_bis(op.get_bis()),
     m_sym(m_bis), m_sch(m_bis.get_block_index_dims()) {
 
     static const char *method =

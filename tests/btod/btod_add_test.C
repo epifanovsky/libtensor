@@ -1,11 +1,12 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/dense_tensor/tod_btconv.h>
+#include <libtensor/dense_tensor/tod_copy.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/se_perm.h>
-#include <libtensor/dense_tensor/tod_btconv.h>
 #include "btod_add_test.h"
 #include "../compare_ref.h"
 
@@ -41,6 +42,9 @@ void btod_add_test::perform() throw(libtest::test_exception) {
     test_7();
     test_8();
     test_9();
+    test_10(0.0);
+    test_10(0.5);
+    test_10(-1.0);
 
     test_exc();
 
@@ -626,6 +630,91 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_add_test::test_10(double d) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "btod_add_test::test_10(" << d << ")";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> i1, i2;
+    i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
+    dimensions<4> dims_iiaa(index_range<4>(i1, i2));
+    i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
+    block_index_space<4> bis_iiaa(dims_iiaa);
+    mask<4> m1, m2;
+    m1[0] = true; m1[1] = true; m2[2] = true; m2[3] = true;
+    bis_iiaa.split(m1, 3);
+    bis_iiaa.split(m1, 7);
+    bis_iiaa.split(m1, 10);
+    bis_iiaa.split(m2, 2);
+    bis_iiaa.split(m2, 3);
+    bis_iiaa.split(m2, 5);
+
+    block_tensor<4, double, allocator_t> bta(bis_iiaa);
+    block_tensor<4, double, allocator_t> btb(bis_iiaa);
+    block_tensor<4, double, allocator_t> btc(bis_iiaa);
+
+    {
+    block_tensor_ctrl<4, double> ctrl_a(bta), ctrl_b(btb);
+    block_tensor_ctrl<4, double> ctrl_c(btc);
+    permutation<4> p1023, p0132;
+    p1023.permute(0, 1);
+    p0132.permute(2, 3);
+    scalar_transf<double> tr0, tr1(-1.);
+    se_perm<4, double> sp1023(p1023, tr0), sp0132(p0132, tr1);
+    ctrl_a.req_symmetry().insert(sp1023);
+    ctrl_a.req_symmetry().insert(sp0132);
+    ctrl_b.req_symmetry().insert(sp1023);
+    ctrl_c.req_symmetry().insert(sp1023);
+    ctrl_c.req_symmetry().insert(sp0132);
+    }
+
+    //  Load random data for input
+
+    btod_random<4>().perform(bta);
+    btod_random<4>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    //  Prepare reference
+
+    if(d != 0.0) {
+        btod_random<4>().perform(btc);
+    }
+
+    dense_tensor<4, double, allocator_t> ta(dims_iiaa), tb(dims_iiaa),
+        tc(dims_iiaa), tc_ref(dims_iiaa);
+    tod_btconv<4>(bta).perform(ta);
+    tod_btconv<4>(btb).perform(tb);
+    tod_btconv<4>(btc).perform(tc_ref);
+
+    if(d != 0.0) {
+        tod_copy<4>(ta, d).perform(false, tc_ref);
+        tod_copy<4>(tb, d).perform(false, tc_ref);
+    } else {
+        tod_copy<4>(ta).perform(true, tc_ref);
+        tod_copy<4>(tb).perform(false, tc_ref);
+    }
+
+    //  Run addition operation
+
+    btod_add<4> op(bta);
+    op.add_op(btb);
+    if(d != 0.0) op.perform(btc, d);
+    else op.perform(btc);
+    tod_btconv<4>(btc).perform(tc);
+
+    compare_ref<4>::compare(tnss.str().c_str(), tc, tc_ref, 1e-14);
+
+    } catch(exception &e) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
 

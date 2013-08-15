@@ -7,6 +7,12 @@
 namespace libtensor {
 
 
+/** \brief Base class to provide the batch size for batches of tensor blocks
+
+	\sa gen_bto_contract2_batching_policy, gen_bto_contract3_batching_policy
+
+	\ingroup libtensor_core
+ **/
 class batching_policy_base : public libutil::singleton<batching_policy_base> {
     friend class libutil::singleton<batching_policy_base>;
 
@@ -19,7 +25,6 @@ protected:
 public:
     static void set_batch_size(size_t batchsz);
     static size_t get_batch_size();
-
 };
 
 

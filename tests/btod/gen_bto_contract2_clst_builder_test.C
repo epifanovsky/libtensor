@@ -37,7 +37,6 @@ void gen_bto_contract2_clst_builder_test::test_1() {
     static const char *testname =
         "gen_bto_contract2_clst_builder_test::test_1()";
 
-    typedef std_allocator<double> allocator_type;
     typedef gen_bto_contract2_clst<2, 2, 2, double>::list_type clst_type;
 
     try {
@@ -128,7 +127,6 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     static const char *testname =
         "gen_bto_contract2_clst_builder_test::test_2()";
 
-    typedef std_allocator<double> allocator_type;
     typedef gen_bto_contract2_clst<2, 2, 2, double>::list_type clst_type;
 
     try {
@@ -237,7 +235,6 @@ void gen_bto_contract2_clst_builder_test::test_3() {
     static const char *testname =
         "gen_bto_contract2_clst_builder_test::test_3()";
 
-    typedef std_allocator<double> allocator_type;
     typedef gen_bto_contract2_clst<2, 2, 2, double>::list_type clst_type;
 
     try {

@@ -8,6 +8,9 @@ namespace libtensor {
 
 /** \brief Representation of elements of simple tensors
 
+	The class represents a single element of a tensor by storing its index
+	and its value.
+
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>

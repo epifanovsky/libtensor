@@ -447,7 +447,6 @@ void gen_bto_aux_copy_test::test_exc_1() {
     static const char *testname = "gen_bto_aux_copy_test::test_exc_1()";
 
     typedef std_allocator<double> allocator_type;
-    typedef block_tensor_i_traits<double> bti_traits;
 
     try {
 

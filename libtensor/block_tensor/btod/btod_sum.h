@@ -30,7 +30,7 @@ class btod_sum :
     public timings< btod_sum<N> > {
 
 public:
-    static const char* k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;

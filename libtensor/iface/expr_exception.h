@@ -1,8 +1,7 @@
 #ifndef LIBTENSOR_EXPR_EXCEPTION_H
 #define LIBTENSOR_EXPR_EXCEPTION_H
 
-#include "../defs.h"
-#include "../exception.h"
+#include <libtensor/exception.h>
 
 namespace libtensor {
 

@@ -16,8 +16,6 @@ gen_bto_contract2_bis<N, M, K>::gen_bto_contract2_bis(
     m_bis(m_dims.get_dims()) {
 
     const sequence<2 * (N + M + K), size_t> &conn = contr.get_conn();
-    const dimensions<N + K> &dimsa = bisa.get_dims();
-    const dimensions<M + K> &dimsb = bisb.get_dims();
 
     mask<N + K> mdonea;
     mask<M + K> mdoneb;
@@ -66,8 +64,6 @@ gen_bto_contract2_bis<N, M, 0>::gen_bto_contract2_bis(
     m_bis(m_dims.get_dims()) {
 
     const sequence<2 * (N + M), size_t> &conn = contr.get_conn();
-    const dimensions<N> &dimsa = bisa.get_dims();
-    const dimensions<M> &dimsb = bisb.get_dims();
 
     mask<N> mdonea;
     mask<M> mdoneb;

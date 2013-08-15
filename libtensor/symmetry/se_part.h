@@ -8,19 +8,19 @@
 namespace libtensor {
 
 
-/** \brief Symmetry between %tensor partitions
-    \tparam N Symmetry cardinality (%tensor order).
+/** \brief Symmetry between tensor partitions
+    \tparam N Symmetry cardinality (tensor order).
     \tparam T Tensor element type.
 
-    This %symmetry element establishes relationships between partitions
-    of a block %tensor. Each partition consists of one or more adjacent
+    This symmetry element establishes relationships between partitions
+    of a block tensor. Each partition consists of one or more adjacent
     blocks.
 
-    Tensor indexes that are affected by this %symmetry element are
+    Tensor indexes that are affected by this symmetry element are
     specified using a mask.
 
     The number of partitions specifies how blocks will be grouped together.
-    For the block %index space to be valid with the %symmetry element,
+    For the block index space to be valid with the symmetry element,
     the number of blocks along each affected dimension must be divisible
     by the number of partitions. Moreover, block sizes must correspond
     correctly from partition to partition. That is, if the partitions must
@@ -31,33 +31,34 @@ namespace libtensor {
 template<size_t N, typename T>
 class se_part : public symmetry_element_i<N, T> {
 public:
-    static const char *k_clazz; //!< Class name
-    static const char *k_sym_type; //!< Symmetry type
+    static const char k_clazz[]; //!< Class name
+    static const char k_sym_type[]; //!< Symmetry type
 
 private:
-    block_index_space<N> m_bis; //!< Block %index space
+    block_index_space<N> m_bis; //!< Block index space
     dimensions<N> m_bidims; //!< Block index space dimensions
+    dimensions<N> m_pdims; //!< Partition dimensions
+    magic_dimensions<N> m_mpdims; //!< Magic partition dimensions
     dimensions<N> m_bipdims; //!< Block index space dimensions of one partition
     magic_dimensions<N> m_mbipdims; //!< Magic m_bipdims
-    dimensions<N> m_pdims; //!< Partition dimensions
     std::vector< size_t > m_fmap; //!< Forward mapping
     std::vector< index<N> > m_fmapi; //!< Forward mapping copy (index version)
     std::vector< size_t > m_rmap; //!< Reverse mapping
     std::vector< scalar_transf<T> > m_ftr; //!< Transforms of the mappings
 
 public:
-    //!    \name Construction and destruction / assignment
+    //! \name Construction and destruction / assignment
     //@{
 
-    /** \brief Initializes the %symmetry element
-        \param bis Block %index space.
+    /** \brief Initializes the symmetry element
+        \param bis Block index space.
         \param msk Mask of affected dimensions.
         \param npart Number of partitions along each dimension.
     **/
     se_part(const block_index_space<N> &bis, const mask<N> &msk, size_t npart);
 
-    /** \brief Initializes the %symmetry element (varying number of partitions)
-        \param bis Block %index space.
+    /** \brief Initializes the symmetry element (varying number of partitions)
+        \param bis Block index space.
         \param pdims Partition dimensions.
     **/
     se_part(const block_index_space<N> &bis, const dimensions<N> &pdims);
@@ -72,16 +73,16 @@ public:
 
     //@}
 
-    //!    \name Manipulations
+    //! \name Manipulations
     //@{
 
     /** \brief Adds a mapping between two partitions
-        \param idx1 First partition %index.
-        \param idx2 Second partition %index.
+        \param idx1 First partition index.
+        \param idx2 Second partition index.
         \param sign Sign of the mapping (true positive, false negative)
     **/
     void add_map(const index<N> &idx1, const index<N> &idx2,
-            const scalar_transf<T> &tr = scalar_transf<T>());
+        const scalar_transf<T> &tr = scalar_transf<T>());
 
     /** \brief Marks a partition as not allowed (i.e. all blocks in it
         are not allowed)
@@ -89,7 +90,7 @@ public:
         If a mapping exist that includes the partition, all partitions in the
         mapping are marked as forbidden.
 
-        \param idx Partition %index.
+        \param idx Partition index.
     **/
     void mark_forbidden(const index<N> &idx);
 
@@ -112,7 +113,7 @@ public:
     }
 
     /** \brief Checks if the partition is forbidden
-        \param idx Partition %index
+        \param idx Partition index
 
         This function yields similar functionality as is_allowed(), but it
         answers the negative question for partitions instead of blocks.
@@ -147,7 +148,7 @@ public:
 
     //@}
 
-    //!    \name Implementation of symmetry_element_i<N, T>
+    //! \name Implementation of symmetry_element_i<N, T>
     //@{
 
     /** \copydoc symmetry_element_i<N, T>::get_type()
@@ -182,29 +183,29 @@ public:
     //@}
 
 private:
-    /** \brief Builds the partition %dimensions, throws an exception
+    /** \brief Builds the partition dimensions, throws an exception
         if the arguments are invalid
      **/
     static dimensions<N> make_pdims(const block_index_space<N> &bis,
-            const mask<N> &msk, size_t npart);
+        const mask<N> &msk, size_t npart);
 
-    /** \brief Builds the block %index %dimensions of one partition,
+    /** \brief Builds the block index dimensions of one partition,
             throws an exception if the arguments are invalid
      **/
     static dimensions<N> make_bipdims(
-            const dimensions<N> &bidims, const dimensions<N> &pdims);
+        const dimensions<N> &bidims, const dimensions<N> &pdims);
 
-    /** \brief Returns true if the partition %dimensions are valid in the
+    /** \brief Returns true if the partition dimensions are valid in the
         block index space
      **/
     static bool is_valid_pdims(const block_index_space<N> &bis,
-            const dimensions<N> &d);
+        const dimensions<N> &d);
 
     /** Adds the map a->b to the loop a is in.
      **/
     void add_to_loop(size_t a, size_t b, const scalar_transf<T> &tr);
 
-    /** \brief Returns true if the %index is a valid partition %index,
+    /** \brief Returns true if the index is a valid partition index,
         false otherwise
      **/
     bool is_valid_pidx(const index<N> &idx);

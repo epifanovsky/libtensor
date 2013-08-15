@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIRSUM_SUBEXPR_LABELS_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIRSUM_SUBEXPR_LABELS_H
 
-#include "core_dirsum.h"
 #include "dirsum_subexpr_label_builder.h"
 
 namespace libtensor {
@@ -12,18 +11,12 @@ namespace labeled_btensor_expr {
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, size_t M, typename T, typename E1, typename E2>
+template<size_t N, size_t M, typename T>
 class dirsum_subexpr_labels {
 public:
-    static const size_t k_ordera = N; //!< Order of the first %tensor
-    static const size_t k_orderb = M; //!< Order of the second %tensor
-    static const size_t k_orderc = N + M; //!< Order of the result
-
-    //!    Contraction expression core type
-    typedef core_dirsum<N, M, T, E1, E2> core_t;
-
-    //!    Contraction expression type
-    typedef expr<k_orderc, T, core_t> expression_t;
+    enum {
+        NC = N + M
+    };
 
 private:
     //!    Label builder for the first sub-expression
@@ -36,8 +29,9 @@ public:
     /** \brief Initializes the object using a contract expression and
             a result label
      **/
-    dirsum_subexpr_labels(const expression_t &expr,
-        const letter_expr<k_orderc> &label_c);
+    dirsum_subexpr_labels(
+        const dirsum_core<N, M, T> &core,
+        const letter_expr<NC> &label_c);
 
     /** \brief Returns the label for the first sub-expression
      **/
@@ -53,12 +47,12 @@ public:
 };
 
 
-template<size_t N, size_t M, typename T, typename E1, typename E2>
-dirsum_subexpr_labels<N, M, T, E1, E2>::dirsum_subexpr_labels(
-    const expression_t &expr, const letter_expr<k_orderc> &label_c) :
+template<size_t N, size_t M, typename T>
+dirsum_subexpr_labels<N, M, T>::dirsum_subexpr_labels(
+    const dirsum_core<N, M, T> &core, const letter_expr<NC> &label_c) :
 
-    m_bld_a(label_c, expr.get_core().get_expr_1()),
-    m_bld_b(label_c, expr.get_core().get_expr_2()) {
+    m_bld_a(label_c, core.get_expr_1()),
+    m_bld_b(label_c, core.get_expr_2()) {
 
 }
 

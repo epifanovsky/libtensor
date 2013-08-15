@@ -56,7 +56,7 @@ private:
     permutation<N> m_perm2; //!< Second symmetrization permutation
     bool m_symm; //!< Symmetrization/anti-symmetrization
     symmetry<N, element_type> m_sym; //!< Symmetry of the result
-    assignment_schedule<N, element_type> m_sch; //!< Schedule
+    mutable assignment_schedule<N, element_type> *m_sch; //!< Schedule
 
 public:
     /** \brief Initializes the operation
@@ -70,6 +70,10 @@ public:
         const permutation<N> &perm1,
         const permutation<N> &perm2,
         bool symm);
+
+    /** \brief Destructor
+     **/
+    ~gen_bto_symmetrize3();
 
     /** \brief Returns the block index space of the result
      **/
@@ -89,7 +93,8 @@ public:
      **/
     const assignment_schedule<N, element_type> &get_schedule() const {
 
-        return m_sch;
+        if(m_sch == 0) make_schedule();
+        return *m_sch;
     }
 
     /** \brief Writes the blocks of the result to an output stream
@@ -108,7 +113,7 @@ public:
 
 private:
     void make_symmetry();
-    void make_schedule();
+    void make_schedule() const;
     void make_schedule_blk(const abs_index<N> &ai,
         sym_schedule_type &sch) const;
 
