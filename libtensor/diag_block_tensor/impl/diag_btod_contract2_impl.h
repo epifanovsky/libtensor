@@ -32,9 +32,11 @@ void diag_btod_contract2<N, M, K>::perform(
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     gen_block_tensor_ctrl<NC, bti_traits> cc(btc);
+    std::vector<size_t> nzblkc;
+    cc.req_nonzero_blocks(nzblkc);
     addition_schedule<NC, diag_btod_traits> asch(get_symmetry(),
         cc.req_const_symmetry());
-    asch.build(get_schedule(), cc);
+    asch.build(get_schedule(), nzblkc);
 
     gen_bto_aux_add<NC, diag_btod_traits> out(get_symmetry(), asch, btc,
         scalar_transf<double>(d));
