@@ -179,6 +179,12 @@ const diag_tensor_subspace<N> &diag_tensor_space<N>::get_subspace(
 
 
 template<size_t N>
+void diag_tensor_subspace<N>::simplify() {
+
+}
+
+
+template<size_t N>
 size_t diag_tensor_space<N>::get_subspace_size(size_t n) const {
 
     const diag_tensor_subspace<N> &ss = get_subspace(n);
@@ -205,14 +211,15 @@ size_t diag_tensor_space<N>::add_subspace(const diag_tensor_subspace<N> &ss) {
 
     static const char *method = "add_subspace(const diag_tensor_subspace<N>&)";
 
-    mask<N> msk(ss.get_total_mask());
-    size_t d = 0;
-    for(size_t i = 0; i < N; i++) {
-        if(!msk[i]) continue;
-        if(d == 0) d = m_dims[i];
-        if(d != m_dims[i]) {
-            throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "ss");
+    for(size_t id = 0; id < ss.get_ndiag(); id++) {
+        const mask<N> &msk = ss.get_diag_mask(id);
+        size_t d = 0;
+        for(size_t i = 0; i < N; i++) if(msk[i]) {
+            if(d == 0) d = m_dims[i];
+            else if(d != m_dims[i]) {
+                throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__,
+                    "ss");
+            }
         }
     }
 

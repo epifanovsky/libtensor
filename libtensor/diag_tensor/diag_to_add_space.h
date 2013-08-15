@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_DIAG_TO_ADD_SPACE_H
 #define LIBTENSOR_DIAG_TO_ADD_SPACE_H
 
+#include <libtensor/core/noncopyable.h>
 #include "diag_tensor_space.h"
 
 namespace libtensor {
@@ -18,7 +19,7 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N>
-class diag_to_add_space {
+class diag_to_add_space : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 

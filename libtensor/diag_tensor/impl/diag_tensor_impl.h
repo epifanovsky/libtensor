@@ -239,6 +239,12 @@ void diag_tensor<N, T, Alloc>::on_ret_dataptr(const session_handle_type &h,
 
 
 template<size_t N, typename T, typename Alloc>
+void diag_tensor<N, T, Alloc>::on_set_immutable() {
+
+}
+
+
+template<size_t N, typename T, typename Alloc>
 bool diag_tensor<N, T, Alloc>::verify_nocoptr() {
 
     typename std::map<size_t, pointer_record>::iterator iptr = m_ptr.begin();

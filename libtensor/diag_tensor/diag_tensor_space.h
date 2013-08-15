@@ -66,6 +66,10 @@ public:
      **/
     void permute(const permutation<N> &perm);
 
+    /** \brief Simplifies the subspace by removing all trivial diagonals
+     **/
+    void simplify();
+
 };
 
 

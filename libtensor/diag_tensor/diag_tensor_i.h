@@ -165,7 +165,8 @@ protected:
 
 template<size_t N, typename T>
 class diag_tensor_i :
-    public diag_tensor_rd_i<N, T>, public diag_tensor_wr_i<N, T> {
+    virtual public diag_tensor_rd_i<N, T>,
+    virtual public diag_tensor_wr_i<N, T> {
 
 };
 

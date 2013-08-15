@@ -74,8 +74,24 @@ set(SRC_DIAG_TENSOR
     diag_tensor/diag_to_add_space_test.C
     diag_tensor/diag_to_contract2_space_test.C
     diag_tensor/diag_tod_adjust_space_test.C
+    diag_tensor/diag_tod_contract2_test.C
+    diag_tensor/diag_tod_contract2_part_test.C
+    diag_tensor/diag_tod_copy_test.C
+    diag_tensor/diag_tod_dotprod_test.C
+    diag_tensor/diag_tod_mult1_test.C
+    diag_tensor/diag_tod_random_test.C
     diag_tensor/diag_tod_set_test.C
     diag_tensor/tod_conv_diag_tensor_test.C
+)
+
+set(SRC_DIAG_BLOCK_TENSOR
+    diag_block_tensor/libtensor_diag_block_tensor_tests.C
+    diag_block_tensor/libtensor_diag_block_tensor_suite.C
+    diag_block_tensor/diag_block_tensor_test.C
+    diag_block_tensor/diag_btod_contract2_test.C
+    diag_block_tensor/diag_btod_copy_test.C
+    diag_block_tensor/diag_btod_random_test.C
+    diag_block_tensor/tod_conv_diag_block_tensor_test.C
 )
 
 set(SRC_SYMMETRY
@@ -220,6 +236,7 @@ set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
     libtensor_diag_tensor_tests
+    libtensor_diag_block_tensor_tests
     libtensor_btod_tests
     libtensor_iface_tests
     libtensor_linalg_tests
@@ -233,6 +250,7 @@ add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
+add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 

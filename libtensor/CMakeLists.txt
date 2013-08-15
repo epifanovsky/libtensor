@@ -140,15 +140,6 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
     block_tensor/btod/impl/btod_sum.C
-    diag_tensor/impl/diag_tensor_space.C
-    diag_tensor/impl/diag_tensor.C
-    diag_tensor/impl/tod_conv_diag_tensor.C
-    diag_tensor/impl/diag_to_add_space.C
-    diag_tensor/impl/diag_to_contract2_space.C
-    diag_tensor/impl/diag_tod_adjust_space.C
-    diag_tensor/impl/diag_tod_contract2.C
-    diag_tensor/impl/diag_tod_copy.C
-    diag_tensor/impl/diag_tod_set.C
 )
 
 set(SRC_GEN_BTOD
@@ -200,6 +191,36 @@ set(SRC_BTOD
     block_tensor/impl/btod_vmpriority.C
 )
 
+set(SRC_DIAG_TENSOR
+    diag_block_tensor/impl/diag_block_tensor.C
+    diag_block_tensor/impl/diag_btod_addition_schedule.C
+    diag_block_tensor/impl/diag_btod_aux_add.C
+    diag_block_tensor/impl/diag_btod_aux_copy.C
+    diag_block_tensor/impl/diag_btod_contract2.C
+    diag_block_tensor/impl/diag_btod_contract2_clst_builder.C
+    diag_block_tensor/impl/diag_btod_copy.C
+    diag_block_tensor/impl/diag_btod_dotprod.C
+    diag_block_tensor/impl/diag_btod_random.C
+    diag_block_tensor/impl/diag_btod_unfold_block_list.C
+    diag_block_tensor/impl/tod_conv_diag_block_tensor.C
+    diag_tensor/impl/diag_tensor_space.C
+    diag_tensor/impl/diag_tensor.C
+    diag_tensor/impl/tod_conv_diag_tensor.C
+    diag_tensor/impl/diag_to_add_space.C
+    diag_tensor/impl/diag_to_contract2_space.C
+    diag_tensor/impl/diag_tod_adjust_space.C
+    diag_tensor/impl/diag_tod_aux_constr_add.C
+    diag_tensor/impl/diag_tod_aux_constr_base.C
+    diag_tensor/impl/diag_tod_aux_dotprod.C
+    diag_tensor/impl/diag_tod_contract2.C
+    diag_tensor/impl/diag_tod_contract2s.C
+    diag_tensor/impl/diag_tod_copy.C
+    diag_tensor/impl/diag_tod_dotprod.C
+    diag_tensor/impl/diag_tod_mult1.C
+    diag_tensor/impl/diag_tod_random.C
+    diag_tensor/impl/diag_tod_set.C
+)
+
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
 elseif(USE_CBLAS OR USE_GSL)
@@ -213,7 +234,7 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_INST} ${SRC_MP})
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
