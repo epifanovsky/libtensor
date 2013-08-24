@@ -174,6 +174,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_dirsum.C
     block_tensor/impl/btod_dotprod.C
     block_tensor/impl/btod_ewmult2.C
+    block_tensor/impl/btod_export.C
     block_tensor/impl/btod_extract.C
     block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_mult1.C
