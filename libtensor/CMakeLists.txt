@@ -222,6 +222,14 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_tod_set.C
 )
 
+if(WITH_ARMADILLO)
+    set(SRC_ARMA
+        arma/impl/btod_export_arma.C
+    )
+else(WITH_ARMADILLO)
+    set(SRC_ARMA "")
+endif(WITH_ARMADILLO)
+
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
 elseif(USE_CBLAS OR USE_GSL)
@@ -235,7 +243,7 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP})
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP} ${SRC_ARMA})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
