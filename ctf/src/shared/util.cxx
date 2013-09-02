@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -236,9 +214,9 @@ void __CM(const int     end,
  * \param[in] sym tensor symmetries
  * \return size of tensor in packed layout
  */
-int64_t sy_packed_size(const int ndim, const int* len, const int* sym){
+long_int sy_packed_size(const int ndim, const int* len, const int* sym){
   int i, k, mp;
-  int64_t size, tmp;
+  long_int size, tmp;
 
   if (ndim == 0) return 1;
 
@@ -276,10 +254,10 @@ int64_t sy_packed_size(const int ndim, const int* len, const int* sym){
  * \param[in] sym tensor symmetries
  * \return size of tensor in packed layout
  */
-int64_t packed_size(const int ndim, const int* len, const int* sym){
+long_int packed_size(const int ndim, const int* len, const int* sym){
 
   int i, k, mp;
-  int64_t size, tmp;
+  long_int size, tmp;
 
   if (ndim == 0) return 1;
 
@@ -332,9 +310,9 @@ void factorize(int n, int *nfactor, int **factor){
     }
   }
   if (nf == 0){
-    *nfactor    = 0;
+    *nfactor = nf;
   } else {
-    ff  = (int*)malloc(sizeof(int)*nf);
+    ff  = (int*)CTF_alloc(sizeof(int)*nf);
     tmp = n;
     nf = 0;
     while (tmp > 1){
@@ -351,3 +329,115 @@ void factorize(int n, int *nfactor, int **factor){
     *nfactor = nf;
   }
 }
+
+int conv_idx(int const  ndim,
+             char const *  cidx,
+             int **     iidx){
+  int i, j, n;
+  char c;
+
+  *iidx = (int*)CTF_alloc(sizeof(int)*ndim);
+
+  n = 0;
+  for (i=0; i<ndim; i++){
+    c = cidx[i];
+    for (j=0; j<i; j++){
+      if (c == cidx[j]){
+        (*iidx)[i] = (*iidx)[j];
+        break;
+      }
+    }
+    if (j==i){
+      (*iidx)[i] = n;
+      n++;
+    }
+  }
+  return n;
+}
+
+int  conv_idx(int const         ndim_A,
+              char const *         cidx_A,
+              int **            iidx_A,
+              int const         ndim_B,
+              char const *         cidx_B,
+              int **            iidx_B){
+  int i, j, n;
+  char c;
+
+  *iidx_B = (int*)CTF_alloc(sizeof(int)*ndim_B);
+
+  n = conv_idx(ndim_A, cidx_A, iidx_A);
+  for (i=0; i<ndim_B; i++){
+    c = cidx_B[i];
+    for (j=0; j<ndim_A; j++){
+      if (c == cidx_A[j]){
+        (*iidx_B)[i] = (*iidx_A)[j];
+        break;
+      }
+    }
+    if (j==ndim_A){
+      for (j=0; j<i; j++){
+        if (c == cidx_B[j]){
+          (*iidx_B)[i] = (*iidx_B)[j];
+          break;
+        }
+      }
+      if (j==i){
+        (*iidx_B)[i] = n;
+        n++;
+      }
+    }
+  }
+  return n;
+}
+
+
+int  conv_idx(int const         ndim_A,
+              char const *         cidx_A,
+              int **            iidx_A,
+              int const         ndim_B,
+              char const *         cidx_B,
+              int **            iidx_B,
+              int const         ndim_C,
+              char const *         cidx_C,
+              int **            iidx_C){
+  int i, j, n;
+  char c;
+
+  *iidx_C = (int*)CTF_alloc(sizeof(int)*ndim_C);
+
+  n = conv_idx(ndim_A, cidx_A, iidx_A,
+               ndim_B, cidx_B, iidx_B);
+
+  for (i=0; i<ndim_C; i++){
+    c = cidx_C[i];
+    for (j=0; j<ndim_B; j++){
+      if (c == cidx_B[j]){
+        (*iidx_C)[i] = (*iidx_B)[j];
+        break;
+      }
+    }
+    if (j==ndim_B){
+      for (j=0; j<ndim_A; j++){
+        if (c == cidx_A[j]){
+          (*iidx_C)[i] = (*iidx_A)[j];
+          break;
+        }
+      }
+      if (j==ndim_A){
+        for (j=0; j<i; j++){
+          if (c == cidx_C[j]){
+            (*iidx_C)[i] = (*iidx_C)[j];
+            break;
+          }
+        }
+        if (j==i){
+          (*iidx_C)[i] = n;
+          n++;
+        }
+      }
+    }
+  }
+  return n;
+}
+

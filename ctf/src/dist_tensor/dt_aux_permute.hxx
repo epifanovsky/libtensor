@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #ifndef __DIST_TENSOR_PERMUTE_HXX__
 #define __DIST_TENSOR_PERMUTE_HXX__
@@ -61,7 +39,7 @@ int strip_diag(int const                ndim,
   int * pmap, * edge_len, * sdim, * sidx;
   strp_tsr<dtype> * stripper;
 
-  get_buffer_space(ndim_tot*sizeof(int), (void**)&pmap);
+  CTF_alloc_ptr(ndim_tot*sizeof(int), (void**)&pmap);
 
   std::fill(pmap, pmap+ndim_tot, -1);
 
@@ -79,13 +57,13 @@ int strip_diag(int const                ndim,
       need_strip = 1;
   }
   if (need_strip == 0) {
-    free_buffer_space(pmap);
+    CTF_free(pmap);
     return 0;
   }
 
-  get_buffer_space(ndim*sizeof(int), (void**)&edge_len);
-  get_buffer_space(ndim*sizeof(int), (void**)&sdim);
-  get_buffer_space(ndim*sizeof(int), (void**)&sidx);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&edge_len);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&sdim);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&sidx);
   stripper = new strp_tsr<dtype>;
 
   std::fill(sdim, sdim+ndim, 1);
@@ -121,7 +99,7 @@ int strip_diag(int const                ndim,
 
   *stpr = stripper;
 
-  free_buffer_space(pmap);
+  CTF_free(pmap);
 
   return 1;
 }
@@ -197,7 +175,7 @@ void inv_idx(int const          ndim_A,
   dim_max++;
 
   *ndim_tot = dim_max;
-  get_buffer_space(sizeof(int)*dim_max, (void**)idx_arr);
+  CTF_alloc_ptr(sizeof(int)*dim_max, (void**)idx_arr);
   std::fill((*idx_arr), (*idx_arr)+dim_max, -1);
 
   for (i=0; i<ndim_A; i++){
@@ -242,7 +220,7 @@ void inv_idx(int const          ndim_A,
   dim_max++;
 
   *ndim_tot = dim_max;
-  get_buffer_space(sizeof(int)*2*dim_max, (void**)idx_arr);
+  CTF_alloc_ptr(sizeof(int)*2*dim_max, (void**)idx_arr);
   std::fill((*idx_arr), (*idx_arr)+2*dim_max, -1);
 
   for (i=0; i<ndim_A; i++){
@@ -303,7 +281,7 @@ void inv_idx(int const          ndim_A,
   }
   dim_max++;
   *ndim_tot = dim_max;
-  get_buffer_space(sizeof(int)*3*dim_max, (void**)idx_arr);
+  CTF_alloc_ptr(sizeof(int)*3*dim_max, (void**)idx_arr);
   std::fill((*idx_arr), (*idx_arr)+3*dim_max, -1);
 
   for (i=0; i<ndim_A; i++){
@@ -399,9 +377,9 @@ void calc_cnt_displs(int const          ndim,
 
 #ifdef USE_OMP
 //  int max_ntd = MIN(omp_get_max_threads(),REDIST_MAX_THREADS);
-  get_buffer_space(nbuf*sizeof(int)*omp_get_max_threads(), (void**)&all_virt_counts);
+  CTF_mst_alloc_ptr(nbuf*sizeof(int)*omp_get_max_threads(), (void**)&all_virt_counts);
 #else
-  get_buffer_space(nbuf*sizeof(int), (void**)&all_virt_counts);
+  CTF_mst_alloc_ptr(nbuf*sizeof(int), (void**)&all_virt_counts);
 #endif
 
 
@@ -435,8 +413,8 @@ void calc_cnt_displs(int const          ndim,
       {
       int start_ldim, end_ldim, i_st, vc;
       int * virt_counts;
-      int * old_virt_idx, * virt_rank;
-      int * idx;
+      long_int * old_virt_idx, * virt_rank;
+      long_int * idx;
       long_int * idx_offs;
       int * spad;
       int last_len = old_edge_len[ndim-1]/old_phase[ndim-1]+1;
@@ -444,19 +422,19 @@ void calc_cnt_displs(int const          ndim,
       start_ldim = 0;
       end_ldim = last_len;
 #endif
-      get_buffer_space(ndim*sizeof(int), (void**)&idx);
-      get_buffer_space(ndim*sizeof(long_int), (void**)&idx_offs);
-      get_buffer_space(ndim*sizeof(int), (void**)&old_virt_idx);
-      get_buffer_space(ndim*sizeof(int), (void**)&virt_rank);
-      get_buffer_space(ndim*sizeof(int), (void**)&spad);
+      CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx);
+      CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx_offs);
+      CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&old_virt_idx);
+      CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&virt_rank);
+      CTF_alloc_ptr(ndim*sizeof(int), (void**)&spad);
       memset(virt_counts, 0, nbuf*sizeof(int));
-      memset(old_virt_idx, 0, ndim*sizeof(int));
+      memset(old_virt_idx, 0, ndim*sizeof(long_int));
       /* virt_rank = physical_rank*num_virtual_ranks + virtual_rank */
       for (i=0; i<ndim; i++){ 
         virt_rank[i] = old_rank[i]*old_virt_dim[i]; 
       }
       for (;;){
-        memset(idx, 0, ndim*sizeof(int));
+        memset(idx, 0, ndim*sizeof(long_int));
         memset(idx_offs, 0, ndim*sizeof(long_int));
         idx_offset = 0; 
         virt_offset = 0;
@@ -579,11 +557,11 @@ void calc_cnt_displs(int const          ndim,
         }
         if (act_lda == ndim) break;
       }
-      free_buffer_space(idx);
-      free_buffer_space(idx_offs);
-      free_buffer_space(old_virt_idx);
-      free_buffer_space(virt_rank);
-      free_buffer_space(spad);
+      CTF_free(idx);
+      CTF_free(idx_offs);
+      CTF_free(old_virt_idx);
+      CTF_free(virt_rank);
+      CTF_free(spad);
       }
 #ifdef USE_OMP
       for (j=1; j<omp_get_max_threads(); j++){
@@ -596,15 +574,15 @@ void calc_cnt_displs(int const          ndim,
   } else
     memset(all_virt_counts, 0, sizeof(int)*nbuf);
   int * virt_counts = all_virt_counts;
-  int * idx;
+  long_int * idx;
   long_int * idx_offs;
 
   /* reduce virtual counts to phyiscal processor counts */
-  get_buffer_space(ndim*sizeof(long_int), (void**)&idx_offs);
-  get_buffer_space(ndim*sizeof(int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx_offs);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx);
 
   /* FIXME: unnecessary memset */
-  memset(idx, 0, ndim*sizeof(int));
+  memset(idx, 0, ndim*sizeof(long_int));
   memset(idx_offs, 0, ndim*sizeof(long_int));
   memset(send_counts, 0, np*sizeof(int));
   idx_offset = 0;
@@ -679,9 +657,9 @@ void calc_cnt_displs(int const          ndim,
     ALL_TO_ALL(svirt_displs, new_nvirt, COMM_INT_T, 
                rvirt_displs, new_nvirt, COMM_INT_T, ord_glb_comm);
   
-  free_buffer_space(all_virt_counts);
-  free_buffer_space(idx);
-  free_buffer_space(idx_offs);
+  CTF_free(all_virt_counts);
+  CTF_free(idx);
+  CTF_free(idx_offs);
 
 }
 
@@ -738,26 +716,28 @@ void pup_virt_buff(int const            ndim,
                    int const            p_or_up,
                    int const            was_cyclic,
                    int const            is_cyclic){
-  int i, imax, padimax, act_lda, act_max; 
-  int poutside, pe_idx, virt_idx, overt_idx;
+  long_int i, imax, padimax, act_lda, act_max; 
+  long_int poutside, pe_idx, virt_idx, overt_idx;
   long_int arr_idx, tmp1;
   long_int vr, vr_max, pact_max, ispm;
   int outside;
   long_int idx_offset, virt_offset;
-  int * virt_counts, * idx, * old_virt_idx, * virt_rank;
+  long_int *  idx, * old_virt_idx, * virt_rank;
+  int * virt_counts;
   long_int * idx_offs;
-  int * acc_idx, * spad;
+  long_int * acc_idx;
+  int * spad;
 
-  get_buffer_space(nbuf*sizeof(int), (void**)&virt_counts);
-  get_buffer_space(ndim*sizeof(int), (void**)&idx);
-  get_buffer_space(ndim*sizeof(int), (void**)&acc_idx);
-  get_buffer_space(ndim*sizeof(long_int), (void**)&idx_offs);
-  get_buffer_space(ndim*sizeof(int), (void**)&old_virt_idx);
-  get_buffer_space(ndim*sizeof(int), (void**)&virt_rank);
-  get_buffer_space(ndim*sizeof(int), (void**)&spad);
+  CTF_mst_alloc_ptr(nbuf*sizeof(int), (void**)&virt_counts);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&acc_idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx_offs);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&old_virt_idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&virt_rank);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&spad);
 
-  memset(old_virt_idx, 0, ndim*sizeof(int));
-  memset(acc_idx, 0, ndim*sizeof(int));
+  memset(old_virt_idx, 0, ndim*sizeof(long_int));
+  memset(acc_idx, 0, ndim*sizeof(long_int));
   memset(virt_counts, 0, nbuf*sizeof(int));
   for (i=0; i<ndim; i++){ virt_rank[i] = old_rank[i]*old_virt_dim[i]; }
 
@@ -765,7 +745,7 @@ void pup_virt_buff(int const            ndim,
      subtensors. We should move through one of the arrays contiguously */
   arr_idx = 0;
   overt_idx = 0;
-  memset(idx, 0, ndim*sizeof(int));
+  memset(idx, 0, ndim*sizeof(long_int));
   memset(idx_offs, 0, ndim*sizeof(long_int));
 
   idx_offset = 0;
@@ -951,13 +931,13 @@ void pup_virt_buff(int const            ndim,
             virt_displs[i]-virt_displs[i-1]+
             (pe_displs[i/new_nvirt]-pe_displs[(i-1)/new_nvirt]));
   }*/
-  free_buffer_space(virt_counts);
-  free_buffer_space(idx);
-  free_buffer_space(acc_idx);
-  free_buffer_space(idx_offs);
-  free_buffer_space(old_virt_idx);
-  free_buffer_space(virt_rank);
-  free_buffer_space(spad);
+  CTF_free(virt_counts);
+  CTF_free(idx);
+  CTF_free(acc_idx);
+  CTF_free(idx_offs);
+  CTF_free(old_virt_idx);
+  CTF_free(virt_rank);
+  CTF_free(spad);
 }
 
 /**
@@ -998,10 +978,10 @@ void opt_pup_virt_buff(int const        ndim,
     else printf("case with no last sym\n");
   }*/
 
-  int old_size, new_size, ntd, tid, pe_idx, virt_idx;
+  long_int old_size, new_size, ntd, tid, pe_idx, virt_idx;
   long_int i, tmp1;
-  int ** par_virt_counts;
-  int * pe_idx_store, * target_store;
+  long_int ** par_virt_counts;
+  long_int * pe_idx_store, * target_store;
   int * sub_old_edge_len, * sub_new_edge_len;
 
 #ifdef USE_OMP
@@ -1013,14 +993,14 @@ void opt_pup_virt_buff(int const        ndim,
   int const max_ntd = 1;
   ntd = 1;
 #endif
-  get_buffer_space(sizeof(int*)*max_ntd, (void**)&par_virt_counts);
+  CTF_alloc_ptr(sizeof(long_int*)*max_ntd, (void**)&par_virt_counts);
   for (i=0; i<max_ntd; i++)
-    get_buffer_space(nbuf*sizeof(int), (void**)&par_virt_counts[i]);
-  get_buffer_space(ndim*sizeof(int), (void**)&sub_old_edge_len);
+    CTF_mst_alloc_ptr(nbuf*sizeof(long_int), (void**)&par_virt_counts[i]);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&sub_old_edge_len);
   for (i=0; i<ndim; i++){
     sub_old_edge_len[i] = old_edge_len[i]/old_phase[i];
   }
-  get_buffer_space(ndim*sizeof(int), (void**)&sub_new_edge_len);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&sub_new_edge_len);
   for (i=0; i<ndim; i++){
     sub_new_edge_len[i] = new_edge_len[i]/new_phase[i];
   }
@@ -1031,13 +1011,13 @@ void opt_pup_virt_buff(int const        ndim,
     old_size = sy_packed_size(ndim, sub_old_edge_len, sym)*new_nvirt;
     new_size = sy_packed_size(ndim, sub_new_edge_len, sym)*old_nvirt;
   }
-  get_buffer_space(sizeof(int)*MAX(old_size,new_size), 
-                   (void**)&pe_idx_store);
-  get_buffer_space(sizeof(int)*MAX(old_size,new_size), 
-                   (void**)&target_store);
+  CTF_mst_alloc_ptr(sizeof(long_int)*MAX(old_size,new_size), 
+                    (void**)&pe_idx_store);
+  CTF_mst_alloc_ptr(sizeof(long_int)*MAX(old_size,new_size), 
+                    (void**)&target_store);
   std::fill(target_store, target_store+MAX(old_size,new_size), -1);
   for (i=0; i<max_ntd; i++)
-    memset(par_virt_counts[i], 0, nbuf*sizeof(int));
+    memset(par_virt_counts[i], 0, nbuf*sizeof(long_int));
   TAU_FSTART(opt_pup_virt_buf_calc_off);
 #ifdef USE_OMP
 #pragma omp parallel private(ntd, tid, pe_idx, virt_idx, i, tmp1)
@@ -1047,14 +1027,14 @@ void opt_pup_virt_buff(int const        ndim,
 {
 /*  TAU_FSTART(thread_loop_time);
   if (tid != 1) TAU_FSTOP(thread_loop_time);*/
-  int imax, padimax, act_lda, act_max, ledge_len_max, ledge_len_st, cptr;
+  long_int imax, padimax, act_lda, act_max, ledge_len_max, ledge_len_st, cptr;
   long_int poutside, overt_idx, part_size, idx_offset, csize, allsize;
   long_int virt_offset, arr_idx;
   long_int vr, outside, vr_max, pact_max, ispm;
-  int * virt_counts, * idx, * old_virt_idx, * virt_rank;
+  long_int * virt_counts, * idx, * old_virt_idx, * virt_rank;
   int * off_edge_len, * sub_edge_len;
   long_int * idx_offs;
-  int * acc_idx, * spad;
+  long_int * acc_idx, * spad;
 #ifdef USE_OMP
   tid = omp_get_thread_num();
   ntd = omp_get_num_threads();
@@ -1092,7 +1072,7 @@ void opt_pup_virt_buff(int const        ndim,
             + (old_edge_len[ndim-1]/old_phase[ndim-1])%ntd;
         ledge_len_max = ledge_len_st+part_size;
       } else {
-        get_buffer_space(ndim*sizeof(int), (void**)&sub_edge_len);
+        CTF_alloc_ptr(ndim*sizeof(int), (void**)&sub_edge_len);
         part_size = (old_edge_len[ndim-1]/old_phase[ndim-1])/ntd;
         cptr = 0;
         for (i=0; i<ndim; i++){
@@ -1125,21 +1105,21 @@ void opt_pup_virt_buff(int const        ndim,
 
   if (ledge_len_max!=ledge_len_st) {
 
-  //get_buffer_space(nbuf*sizeof(int), (void**)&virt_counts);
-  get_buffer_space(ndim*sizeof(int), (void**)&idx);
-  get_buffer_space(ndim*sizeof(int), (void**)&acc_idx);
-  get_buffer_space(ndim*sizeof(long_int), (void**)&idx_offs);
-  get_buffer_space(ndim*sizeof(int), (void**)&old_virt_idx);
-  get_buffer_space(ndim*sizeof(int), (void**)&virt_rank);
-  get_buffer_space(ndim*sizeof(int), (void**)&spad);
-  get_buffer_space(ndim*sizeof(int), (void**)&off_edge_len);
+  //CTF_alloc_ptr(nbuf*sizeof(long_int), (void**)&virt_counts);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&acc_idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx_offs);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&old_virt_idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&virt_rank);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&spad);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&off_edge_len);
 
   virt_counts = par_virt_counts[tid];
 // + tid*nbuf;
 
-  memset(old_virt_idx, 0, ndim*sizeof(int));
-  memset(acc_idx, 0, ndim*sizeof(int));
-//  memset(virt_counts, 0, nbuf*sizeof(int));
+  memset(old_virt_idx, 0, ndim*sizeof(long_int));
+  memset(acc_idx, 0, ndim*sizeof(long_int));
+//  memset(virt_counts, 0, nbuf*sizeof(long_int));
 
   for (i=0; i<ndim; i++){ virt_rank[i] = old_rank[i]*old_virt_dim[i]; }
 
@@ -1147,7 +1127,7 @@ void opt_pup_virt_buff(int const        ndim,
      subtensors. We should move through one of the arrays contiguously */
   arr_idx = 0;
   overt_idx = 0;
-  memset(idx, 0, ndim*sizeof(int));
+  memset(idx, 0, ndim*sizeof(long_int));
   memset(idx_offs, 0, ndim*sizeof(long_int));
 
   if (ndim != 0){
@@ -1385,18 +1365,18 @@ void opt_pup_virt_buff(int const        ndim,
     }
   }
 
-  free_buffer_space(idx);
-  free_buffer_space(acc_idx);
-  free_buffer_space(idx_offs);
-  free_buffer_space(old_virt_idx);
-  free_buffer_space(virt_rank);
-  free_buffer_space(spad);
-  free_buffer_space(off_edge_len);
+  CTF_free(idx);
+  CTF_free(acc_idx);
+  CTF_free(idx_offs);
+  CTF_free(old_virt_idx);
+  CTF_free(virt_rank);
+  CTF_free(spad);
+  CTF_free(off_edge_len);
   }
   //if (tid == 1) TAU_FSTOP(thread_loop_time);
 }
   TAU_FSTOP(opt_pup_virt_buf_calc_off);
-  int par_i, par_j, par_tmp;
+  long_int par_i, par_j, par_tmp;
   for (par_i=0; par_i<nbuf; par_i++){
     par_tmp = 0;
     for (par_j=0; par_j<max_ntd; par_j++){
@@ -1442,13 +1422,13 @@ void opt_pup_virt_buff(int const        ndim,
   }
 
   TAU_FSTOP(opt_pup_virt_buf_move);
-  free_buffer_space(sub_old_edge_len);
-  free_buffer_space(sub_new_edge_len);
-  free_buffer_space(pe_idx_store);
-  free_buffer_space(target_store);
+  CTF_free(sub_old_edge_len);
+  CTF_free(sub_new_edge_len);
+  CTF_free(pe_idx_store);
+  CTF_free(target_store);
   for (i=0; i<ntd; i++)
-    free(par_virt_counts[i]);
-  free_buffer_space(par_virt_counts);
+    CTF_free(par_virt_counts[i]);
+  CTF_free(par_virt_counts);
 //#endif
 }
 
@@ -1512,9 +1492,9 @@ int padded_reshuffle(int const          tid,
 
   numPes = ord_glb_comm->np;
 
-  get_buffer_space(ndim*sizeof(int), (void**)&virt_phase_rank);
-  get_buffer_space(ndim*sizeof(int), (void**)&old_virt_phase_rank);
-  get_buffer_space(ndim*sizeof(int), (void**)&sub_edge_len);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&virt_phase_rank);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&old_virt_phase_rank);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&sub_edge_len);
 
   new_num_virt = 1;
   old_num_virt = 1;
@@ -1565,7 +1545,7 @@ int padded_reshuffle(int const          tid,
           ord_glb_comm->np*(swp_nval/(double)old_size));
   }
 
-  get_buffer_space(swp_nval*sizeof(dtype), (void**)&tsr_new_data);
+  CTF_alloc_ptr(swp_nval*sizeof(dtype), (void**)&tsr_new_data);
 
   std::fill(tsr_new_data, tsr_new_data+swp_nval, get_zero<dtype>());
 
@@ -1573,8 +1553,8 @@ int padded_reshuffle(int const          tid,
   wr_pairs_layout(ndim,
                   numPes,
                   new_nval,
-                  1.0,
-                  0.0,
+                  (dtype)1.0,
+                  (dtype)0.0,
                   (is_old_pad | is_new_pad),
                   'w',
                   new_num_virt,
@@ -1592,10 +1572,10 @@ int padded_reshuffle(int const          tid,
   *tsr_cyclic_data = tsr_new_data;
 
 
-  free_buffer_space(old_virt_phase_rank);
-  free_buffer_space(pairs);
-  free_buffer_space(virt_phase_rank);
-  free_buffer_space(sub_edge_len);
+  CTF_free(old_virt_phase_rank);
+  CTF_free(pairs);
+  CTF_free(virt_phase_rank);
+  CTF_free(sub_edge_len);
   TAU_FSTOP(padded_reshuffle);
 
   return DIST_TENSOR_SUCCESS;
@@ -1676,12 +1656,12 @@ int cyclic_reshuffle(int const          ndim,
   else
     np = ord_glb_comm->np;
 
-  get_buffer_space(ndim*sizeof(int), (void**)&hsym);
-  get_buffer_space(ndim*sizeof(int), (void**)&idx);
-  get_buffer_space(ndim*sizeof(long_int), (void**)&idx_offs);
-  get_buffer_space(ndim*sizeof(int), (void**)&old_virt_lda);
-  get_buffer_space(ndim*sizeof(int), (void**)&new_virt_lda);
-  get_buffer_space(ndim*sizeof(int), (void**)&buf_lda);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&hsym);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(long_int), (void**)&idx_offs);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&old_virt_lda);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&new_virt_lda);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&buf_lda);
 
   nbuf = 1;
   new_nvirt = 1;
@@ -1721,14 +1701,14 @@ int cyclic_reshuffle(int const          ndim,
   vbs_old = nval/old_nvirt;
   nbuf = np*new_nvirt;
 
-  get_buffer_space(np*sizeof(int), (void**)&recv_counts);
-  get_buffer_space(np*sizeof(int), (void**)&send_counts);
-  get_buffer_space(nbuf*sizeof(int), (void**)&rvirt_displs);
-  get_buffer_space(nbuf*sizeof(int), (void**)&svirt_displs);
-  get_buffer_space(np*sizeof(int), (void**)&send_displs);
-  get_buffer_space(np*sizeof(int), (void**)&recv_displs);
-  get_buffer_space(ndim*sizeof(int), (void**)&old_sub_edge_len);
-  get_buffer_space(ndim*sizeof(int), (void**)&new_sub_edge_len);
+  CTF_mst_alloc_ptr(np*sizeof(int), (void**)&recv_counts);
+  CTF_mst_alloc_ptr(np*sizeof(int), (void**)&send_counts);
+  CTF_mst_alloc_ptr(nbuf*sizeof(int), (void**)&rvirt_displs);
+  CTF_mst_alloc_ptr(nbuf*sizeof(int), (void**)&svirt_displs);
+  CTF_mst_alloc_ptr(np*sizeof(int), (void**)&send_displs);
+  CTF_mst_alloc_ptr(np*sizeof(int), (void**)&recv_displs);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&old_sub_edge_len);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&new_sub_edge_len);
 
   TAU_FSTART(calc_cnt_displs);
   /* Calculate bucket counts to begin exchange */
@@ -1759,7 +1739,7 @@ int cyclic_reshuffle(int const          ndim,
   hvbs_old = sy_packed_size(ndim-1, old_sub_edge_len+1, hsym);
   hvbs_new = sy_packed_size(ndim-1, new_sub_edge_len+1, hsym);
   swp_nval = new_nvirt*sy_packed_size(ndim, new_sub_edge_len, sym);
-  get_buffer_space(MAX(nval,swp_nval)*sizeof(dtype), (void**)&tsr_cyclic_data);
+  CTF_mst_alloc_ptr(MAX(nval,swp_nval)*sizeof(dtype), (void**)&tsr_cyclic_data);
 
   if (ord_glb_comm != NULL){
     DPRINTF(4,"[%d] send = %d, had= %lld recv = %d, should get = %lld\n", 
@@ -1783,8 +1763,8 @@ int cyclic_reshuffle(int const          ndim,
   TAU_FSTOP(pack_virt_buf);
 
   if (swp_nval > nval){
-    free_buffer_space(tsr_data);
-    get_buffer_space(swp_nval*sizeof(dtype), (void**)&tsr_data);
+    CTF_free(tsr_data);
+    CTF_mst_alloc_ptr(swp_nval*sizeof(dtype), (void**)&tsr_data);
   }
 
   /* Communicate data */
@@ -1832,23 +1812,171 @@ int cyclic_reshuffle(int const          ndim,
   *ptr_tsr_data = tsr_data;
 
 
-  free_buffer_space(hsym);
-  free_buffer_space(idx);
-  free_buffer_space(idx_offs);
-  free_buffer_space(old_virt_lda);
-  free_buffer_space(new_virt_lda);
-  free_buffer_space(buf_lda);
-  free_buffer_space(recv_counts);
-  free_buffer_space(send_counts);
-  free_buffer_space(rvirt_displs);
-  free_buffer_space(svirt_displs);
-  free_buffer_space(send_displs);
-  free_buffer_space(recv_displs);
-  free_buffer_space(old_sub_edge_len);
-  free_buffer_space(new_sub_edge_len);
+  CTF_free(hsym);
+  CTF_free(idx);
+  CTF_free(idx_offs);
+  CTF_free(old_virt_lda);
+  CTF_free(new_virt_lda);
+  CTF_free(buf_lda);
+  CTF_free(recv_counts);
+  CTF_free(send_counts);
+  CTF_free(rvirt_displs);
+  CTF_free(svirt_displs);
+  CTF_free(send_displs);
+  CTF_free(recv_displs);
+  CTF_free(old_sub_edge_len);
+  CTF_free(new_sub_edge_len);
 
 
   TAU_FSTOP(cyclic_reshuffle);
   return DIST_TENSOR_SUCCESS;
+}
+
+/**
+ * \brief Reshuffle elements given the global phases stay the same
+ *
+ * \param[in] ndim number of tensor dimensions
+ * \param[in] phase physical*virtual phase
+ * \param[in] old_size number of elements in the subtensor each proc owned
+ * \param[in] old_virt_dim current virtualization dimensions on each process
+ * \param[in] old_rank current physical rank
+ * \param[in] old_pe_lda old lda of processor grid
+ * \param[in] new_size number of elements in the subtensor each proc owns
+ * \param[in] new_virt_dim new virtualization dimensions on each process
+ * \param[in] new_rank new physical rank
+ * \param[in] new_pe_lda new lda of processor grid
+ * \param[in] tsr_data current tensor data
+ * \param[out] ptr_tsr_cyclic_data pointer to a new tensor of 
+              data that will be filled
+ * \param[in] glb_comm the global communicator
+ */
+template<typename dtype>
+void block_reshuffle(int const        ndim,
+                     int const *      phase,
+                     long_int const   old_size,
+                     int const *      old_virt_dim,
+                     int const *      old_rank,
+                     int const *      old_pe_lda,
+                     long_int const   new_size,
+                     int const *      new_virt_dim,
+                     int const *      new_rank,
+                     int const *      new_pe_lda,
+                     dtype *          tsr_data,
+                     dtype *&         tsr_cyclic_data,
+                     CommData_t *     glb_comm){
+  int i, idx_lyr_new, idx_lyr_old, blk_idx, prc_idx, loc_idx;
+  int num_old_virt, num_new_virt;
+  int * idx, * old_loc_lda, * new_loc_lda, * phase_lda;
+  long_int blk_sz;
+  MPI_Request * reqs;
+
+  if (ndim == 0){
+    CTF_alloc_ptr(sizeof(dtype)*new_size, (void**)&tsr_cyclic_data);
+    tsr_cyclic_data[0] = tsr_data[0];
+    return;
+  }
+
+  TAU_FSTART(block_reshuffle);
+
+  CTF_mst_alloc_ptr(sizeof(dtype)*new_size, (void**)&tsr_cyclic_data);
+  CTF_alloc_ptr(sizeof(int)*ndim, (void**)&idx);
+  CTF_alloc_ptr(sizeof(int)*ndim, (void**)&old_loc_lda);
+  CTF_alloc_ptr(sizeof(int)*ndim, (void**)&new_loc_lda);
+  CTF_alloc_ptr(sizeof(int)*ndim, (void**)&phase_lda);
+
+  blk_sz = old_size;
+  idx_lyr_old = glb_comm->rank;
+  idx_lyr_new = glb_comm->rank;
+  old_loc_lda[0] = 1;
+  new_loc_lda[0] = 1;
+  phase_lda[0] = 1;
+  num_old_virt = 1;
+  num_new_virt = 1;
+  for (i=0; i<ndim; i++){
+    num_old_virt *= old_virt_dim[i];
+    num_new_virt *= new_virt_dim[i];
+    blk_sz = blk_sz/old_virt_dim[i];
+    idx_lyr_old -= old_rank[i]*old_pe_lda[i];
+    idx_lyr_new -= new_rank[i]*new_pe_lda[i];
+    if (i>0){
+      old_loc_lda[i] = old_loc_lda[i-1]*old_virt_dim[i-1];
+      new_loc_lda[i] = new_loc_lda[i-1]*new_virt_dim[i-1];
+      phase_lda[i] = phase_lda[i-1]*phase[i-1];
+    }
+  }
+  
+  CTF_alloc_ptr(sizeof(MPI_Request)*(num_old_virt+num_new_virt), (void**)&reqs);
+
+  if (idx_lyr_new == 0){
+    memset(idx, 0, sizeof(int)*ndim);
+
+    for (;;){
+      loc_idx = 0;
+      blk_idx = 0;
+      prc_idx = 0;
+      for (i=0; i<ndim; i++){
+        loc_idx += idx[i]*new_loc_lda[i];
+        blk_idx += ( idx[i] + new_rank[i]*new_virt_dim[i])                 *phase_lda[i];
+        prc_idx += ((idx[i] + new_rank[i]*new_virt_dim[i])/old_virt_dim[i])*old_pe_lda[i];
+      }
+      DPRINTF(3,"proc %d receiving blk %d (loc %d, size %lld) from proc %d\n", 
+              glb_comm->rank, blk_idx, loc_idx, blk_sz, prc_idx);
+      MPI_Irecv(tsr_cyclic_data+loc_idx*blk_sz, blk_sz*sizeof(dtype), 
+                MPI_CHAR, prc_idx, blk_idx, glb_comm->cm, reqs+loc_idx);
+      for (i=0; i<ndim; i++){
+        idx[i]++;
+        if (idx[i] >= new_virt_dim[i])
+          idx[i] = 0;
+        else 
+          break;
+      }
+      if (i==ndim) break;
+    }
+  }
+
+  if (idx_lyr_old == 0){
+    memset(idx, 0, sizeof(int)*ndim);
+
+    for (;;){
+      loc_idx = 0;
+      blk_idx = 0;
+      prc_idx = 0;
+      for (i=0; i<ndim; i++){
+        loc_idx += idx[i]*old_loc_lda[i];
+        blk_idx += ( idx[i] + old_rank[i]*old_virt_dim[i])                 *phase_lda[i];
+        prc_idx += ((idx[i] + old_rank[i]*old_virt_dim[i])/new_virt_dim[i])*new_pe_lda[i];
+      }
+      DPRINTF(3,"proc %d sending blk %d (loc %d) to proc %d\n", 
+              glb_comm->rank, blk_idx, loc_idx, prc_idx);
+      MPI_Isend(tsr_data+loc_idx*blk_sz, blk_sz*sizeof(dtype), 
+                MPI_CHAR, prc_idx, blk_idx, glb_comm->cm, reqs+num_new_virt+loc_idx);
+      for (i=0; i<ndim; i++){
+        idx[i]++;
+        if (idx[i] >= old_virt_dim[i])
+          idx[i] = 0;
+        else 
+          break;
+      }
+      if (i==ndim) break;
+    }
+  }
+
+  if (idx_lyr_new == 0 && idx_lyr_old == 0){
+    MPI_Waitall(num_new_virt+num_old_virt, reqs, MPI_STATUSES_IGNORE);
+  } else if (idx_lyr_new == 0){
+    MPI_Waitall(num_new_virt, reqs, MPI_STATUSES_IGNORE);
+  } else if (idx_lyr_old == 0){
+    MPI_Waitall(num_old_virt, reqs+num_new_virt, MPI_STATUSES_IGNORE);
+  } else {
+    std::fill(tsr_cyclic_data, tsr_cyclic_data+new_size, get_zero<dtype>());
+  }
+
+  CTF_free(idx);
+  CTF_free(old_loc_lda);
+  CTF_free(new_loc_lda);
+  CTF_free(phase_lda);
+  CTF_free(reqs);
+
+  TAU_FSTOP(block_reshuffle);
 }
 #endif

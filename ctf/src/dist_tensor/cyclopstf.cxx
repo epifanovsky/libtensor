@@ -1,27 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
-
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #include "dist_tensor_internal.h"
 #include "cyclopstf.hpp"
@@ -35,6 +12,12 @@
 #include "../unit_test/unit_test_ctr.h"
 #endif
 
+#ifdef HPM
+extern "C" void HPM_Start(char *);  
+extern "C" void HPM_Stop(char *);
+#endif
+
+#define DEF_INNER_SIZE 256
 
 /** 
  * \brief destructor
@@ -52,36 +35,21 @@ tCTF<dtype>::tCTF(){
   initialized = 0;
 }
 
-/**
- * \brief  initializes library. 
- *      Sets topology to be a mesh of dimension ndim with
- *      edge lengths dim_len. 
- *
- * \param[in] global_context communicator decated to this library instance
- * \param[in] rank this pe rank within the global context
- * \param[in] np number of processors
- */
-template<typename dtype>
-int tCTF<dtype>::init(MPI_Comm const  global_context,
-                      int const       rank, 
-                      int const       np){      
-  int ret;
-#ifdef BGQ
-  ret = tCTF<dtype>::init(global_context, MACHINE_BGQ, rank, np);
-#else
-  #ifdef BGP
-    ret = tCTF<dtype>::init(global_context, MACHINE_BGP, rank, np);
-  #else
-    ret = tCTF<dtype>::init(global_context, MACHINE_8D, rank, np);
-  #endif
-#endif
-  return ret;
-}
-
 template<typename dtype>
 MPI_Comm tCTF<dtype>::get_MPI_Comm(){
   return (dt->get_global_comm())->cm;
 }
+    
+/* return MPI processor rank */
+template<typename dtype>
+int tCTF<dtype>::get_rank(){
+  return (dt->get_global_comm())->rank;
+}
+/* return number of MPI processes in the defined global context */
+template<typename dtype>
+int tCTF<dtype>::get_num_pes(){
+  return (dt->get_global_comm())->np;
+}
 
 /**
  * \brief  initializes library. 
@@ -89,22 +57,25 @@ MPI_Comm tCTF<dtype>::get_MPI_Comm(){
  *      edge lengths dim_len. 
  *
  * \param[in] global_context communicator decated to this library instance
- * \param[in] mach the type of machine we are running on
  * \param[in] rank this pe rank within the global context
  * \param[in] np number of processors
- * \param[in] inner_size is the total block size of dgemm calls 
+ * \param[in] mach the type of machine we are running on
+ * \param[in] argc number of arguments passed to main
+ * \param[in] argv arguments passed to main
  */
 template<typename dtype>
 int tCTF<dtype>::init(MPI_Comm const  global_context,
-                      CTF_MACHINE           mach,
                       int const       rank, 
                       int const       np,
-                      int const       inner_size){      
+                      CTF_MACHINE     mach,
+                      int const       argc,
+                      const char * const *  argv){
   int ndim, ret;
   int * dim_len;
   get_topo(np, mach, &ndim, &dim_len);
-  ret = tCTF<dtype>::init(global_context, rank, np, ndim, dim_len, inner_size);
-  free(dim_len);
+  ret = tCTF<dtype>::init(global_context, rank, np, ndim, dim_len, argc, argv);
+  if (np > 1)
+    CTF_free(dim_len);
   return ret;
 }
 
@@ -118,7 +89,8 @@ int tCTF<dtype>::init(MPI_Comm const  global_context,
  * \param[in] np number of processors
  * \param[in] ndim is the number of dimensions in the topology
  * \param[in] dim_len is the number of processors along each dimension
- * \param[in] inner_size is the total block size of dgemm calls 
+ * \param[in] argc number of arguments passed to main
+ * \param[in] argv arguments passed to main
  */
 template<typename dtype>
 int tCTF<dtype>::init(MPI_Comm const  global_context,
@@ -126,12 +98,63 @@ int tCTF<dtype>::init(MPI_Comm const  global_context,
                       int const       np, 
                       int const       ndim, 
                       int const *     dim_len,
-                      int const       inner_size){
+                      int const       argc,
+                      const char * const *  argv){
+  char * mst_size, * stack_size, * mem_size, * ppn;
+  
+  TAU_FSTART(CTF);
+#ifdef HPM
+  HPM_Start("CTF");
+#endif
+  CTF_set_context(global_context);
+  CTF_set_main_args(argc, argv);
+
+  
+  mst_size = getenv("CTF_MST_SIZE");
+  stack_size = getenv("CTF_STACK_SIZE");
+  if (mst_size == NULL && stack_size == NULL){
+#ifdef USE_MST
+    if (rank == 0)
+      DPRINTF(1,"Creating CTF stack of size %lld\n",1000*(long_int)1E6);
+    CTF_mst_create(1000*(long_int)1E6);
+#else
+    if (rank == 0){
+      DPRINTF(1,"Running CTF without stack, define CTF_STACK_SIZE ");
+      DPRINTF(1,"environment variable to activate stack\n");
+    }
+#endif
+  } else {
+    uint64_t imst_size = 0 ;
+    if (mst_size != NULL) 
+      imst_size = strtoull(mst_size,NULL,0);
+    if (stack_size != NULL)
+      imst_size = MAX(imst_size,strtoull(stack_size,NULL,0));
+    if (rank == 0)
+      DPRINTF(1,"Creating CTF stack of size %llu due to CTF_STACK_SIZE enviroment variable\n",
+                imst_size);
+    CTF_mst_create(imst_size);
+  }
+  mem_size = getenv("CTF_MEMORY_SIZE");
+  if (mem_size != NULL){
+    uint64_t imem_size = strtoull(mem_size,NULL,0);
+    if (rank == 0)
+      DPRINTF(1,"CTF memory size set to %llu by CTF_MEMORY_SIZE environment variable\n",
+                imem_size);
+    CTF_set_mem_size(imem_size);
+  }
+  ppn = getenv("CTF_PPN");
+  if (ppn != NULL){
+    if (rank == 0)
+      DPRINTF(1,"CTF assuming %lld processes per node due to CTF_PPN environment variable\n",
+                atoi(ppn));
+    LIBT_ASSERT(atoi(ppn)>=1);
+    CTF_set_memcap(.75/atof(ppn));
+  }
   initialized = 1;
-  CommData_t * glb_comm = (CommData_t*)malloc(sizeof(CommData_t));
+  CommData_t * glb_comm = (CommData_t*)CTF_alloc(sizeof(CommData_t));
   SET_COMM(global_context, rank, np, glb_comm);
   dt = new dist_tensor<dtype>();
-  return dt->initialize(glb_comm, ndim, dim_len, inner_size);
+  return dt->initialize(glb_comm, ndim, dim_len, DEF_INNER_SIZE);
 }
 
 
@@ -142,13 +165,18 @@ int tCTF<dtype>::init(MPI_Comm const  global_context,
  * \param[in] edge_len global edge lengths of tensor
  * \param[in] sym symmetry relations of tensor
  * \param[out] tensor_id the tensor index (handle)
+ * \param[in] name string name for tensor (optionary)
+ * \param[in] profile wether to make profile calls for the tensor
  */
 template<typename dtype>
-int tCTF<dtype>::define_tensor(int const          ndim,             
+int tCTF<dtype>::define_tensor(int const        ndim,             
                                int const *      edge_len, 
                                int const *      sym,
-                               int *        tensor_id){
-  return dt->define_tensor(ndim, edge_len, sym, tensor_id);
+                               int *            tensor_id,
+                               char const *     name,
+                               int              profile){
+  return dt->define_tensor(ndim, edge_len, sym, 
+                           tensor_id, 1, name, profile);
 }
     
 /* \brief clone a tensor object
@@ -162,6 +190,27 @@ int tCTF<dtype>::clone_tensor(int const tensor_id,
                               int *     new_tensor_id){
   dt->clone_tensor(tensor_id, copy_data, new_tensor_id);
   return DIST_TENSOR_SUCCESS;
+}
+   
+
+template<typename dtype>
+int tCTF<dtype>::get_name(int const tensor_id, char const ** name){
+  return dt->get_name(tensor_id, name);
+}
+ 
+template<typename dtype>
+int tCTF<dtype>::set_name(int const tensor_id, char const * name){
+  return dt->set_name(tensor_id, name);
+}
+
+template<typename dtype>
+int tCTF<dtype>::profile_on(int const tensor_id){
+  return dt->profile_on(tensor_id);
+}
+
+template<typename dtype>
+int tCTF<dtype>::profile_off(int const tensor_id){
+  return dt->profile_off(tensor_id);
 }
     
 /* \brief get dimension of a tensor 
@@ -180,7 +229,10 @@ int tCTF<dtype>::get_dimension(int const tensor_id, int *ndim) const{
  */
 template<typename dtype>
 int tCTF<dtype>::get_lengths(int const tensor_id, int **edge_len) const{
-  *edge_len = dt->get_edge_len(tensor_id);
+  int ndim, * sym;
+  dt->get_tsr_info(tensor_id, &ndim, edge_len, &sym);
+  CTF_untag_mem(edge_len);
+  CTF_free(sym);
   return DIST_TENSOR_SUCCESS;
 }
     
@@ -191,6 +243,7 @@ int tCTF<dtype>::get_lengths(int const tensor_id, int **edge_len) const{
 template<typename dtype>
 int tCTF<dtype>::get_symmetry(int const tensor_id, int **sym) const{
   *sym = dt->get_sym(tensor_id);
+  CTF_untag_mem(*sym);
   return DIST_TENSOR_SUCCESS;
 }
     
@@ -199,7 +252,7 @@ int tCTF<dtype>::get_symmetry(int const tensor_id, int **sym) const{
  * \param[out] data raw local data
  */
 template<typename dtype>
-int tCTF<dtype>::get_raw_data(int const tensor_id, dtype ** data, int64_t * size) {
+int tCTF<dtype>::get_raw_data(int const tensor_id, dtype ** data, long_int * size) {
   *data = dt->get_raw_data(tensor_id, size);
   return DIST_TENSOR_SUCCESS;
 }
@@ -217,6 +270,8 @@ int tCTF<dtype>::info_tensor(int const  tensor_id,
                              int **     edge_len,
                              int **     sym) const{
   dt->get_tsr_info(tensor_id, ndim, edge_len, sym);
+  CTF_untag_mem(*sym);
+  CTF_untag_mem(*edge_len);
   return DIST_TENSOR_SUCCESS;
 }
 
@@ -229,9 +284,9 @@ int tCTF<dtype>::info_tensor(int const  tensor_id,
  */
 template<typename dtype>
 int tCTF<dtype>::write_tensor(int const               tensor_id, 
-                              int64_t const           num_pair,  
-                              tkv_pair<dtype> * const mapped_data){
-  return dt->write_pairs(tensor_id, num_pair, 1.0, 0.0, mapped_data, 'w');
+                              long_int const           num_pair,  
+                              tkv_pair<dtype> const * mapped_data){
+  return dt->write_pairs(tensor_id, num_pair, 1.0, 0.0, const_cast<tkv_pair<dtype>*>(mapped_data), 'w');
 }
 
 /** 
@@ -245,11 +300,11 @@ int tCTF<dtype>::write_tensor(int const               tensor_id,
  */
 template<typename dtype>
 int tCTF<dtype>::write_tensor(int const               tensor_id, 
-                              int64_t const           num_pair,  
-                              double const            alpha,
-                              double const            beta,
-                              tkv_pair<dtype> * const mapped_data){
-  return dt->write_pairs(tensor_id, num_pair, alpha, beta, mapped_data, 'w');
+                              long_int const           num_pair,  
+                              dtype const             alpha,
+                              dtype const             beta,
+                              tkv_pair<dtype> const * mapped_data){
+  return dt->write_pairs(tensor_id, num_pair, alpha, beta, const_cast<tkv_pair<dtype>*>(mapped_data), 'w');
 }
 
 /**
@@ -261,9 +316,22 @@ int tCTF<dtype>::write_tensor(int const               tensor_id,
  */
 template<typename dtype>
 int tCTF<dtype>::read_tensor(int const                tensor_id, 
-                             int64_t const            num_pair, 
+                             long_int const            num_pair, 
                              tkv_pair<dtype> * const  mapped_data){
   return dt->write_pairs(tensor_id, num_pair, 1.0, 0.0, mapped_data, 'r');
+}
+
+template<typename dtype>
+int tCTF<dtype>::slice_tensor( int const    tid_A,
+                               int const *  offsets_A,
+                               int const *  ends_A,
+                               double const alpha,
+                               int const    tid_B,
+                               int const *  offsets_B,
+                               int const *  ends_B,
+                               double const beta){
+  return dt->slice_tensor(tid_A, offsets_A, ends_A, alpha,
+                          tid_B, offsets_B, ends_B, beta);
 }
 
 /**
@@ -275,11 +343,12 @@ int tCTF<dtype>::read_tensor(int const                tensor_id,
  */
 template<typename dtype>
 int tCTF<dtype>::allread_tensor(int const   tensor_id, 
-                                int64_t *   num_pair, 
+                                long_int *   num_pair, 
                                 dtype **    all_data){
   int ret;
   long_int np;
   ret = dt->allread_tsr(tensor_id, &np, all_data);
+  CTF_untag_mem(*all_data);
   *num_pair = np;
   return ret;
 }
@@ -308,11 +377,13 @@ int tCTF<dtype>::set_zero_tensor(int const tensor_id){
  */
 template<typename dtype>
 int tCTF<dtype>::read_local_tensor(int const          tensor_id, 
-                                   int64_t *          num_pair,  
+                                   long_int *          num_pair,  
                                    tkv_pair<dtype> ** mapped_data){
   int ret;
   long_int np;
   ret = dt->read_local_pairs(tensor_id, &np, mapped_data);
+  if (np > 0)
+    CTF_untag_mem(*mapped_data);
   *num_pair = np;
   return ret;
 }
@@ -330,57 +401,111 @@ int tCTF<dtype>::contract(CTF_ctr_type_t const *  type,
                           dtype const             beta){
   fseq_tsr_ctr<dtype> fs;
   fs.func_ptr=sym_seq_ctr_ref<dtype>;
-  return contract(type, NULL, 0, fs, alpha, beta, 1);
+  return contract(type, fs, alpha, beta, 1);
 }
 
-/**
- * \brief contracts tensors alpha*A*B+beta*C -> C,
- *      accepts custom-sized buffer-space,
- *      uses standard symmetric contraction sequential kernel 
- * \param[in] type the contraction type (defines contraction actors)
- * \param[in] buffer the buffer space to use, or NULL to allocate
- * \param[in] buffer_len length of buffer 
- * \param[in] alpha scaling factor for A*B
- * \param[in] beta scaling factor for C
- */
-template<typename dtype>
-int tCTF<dtype>::contract(CTF_ctr_type_t const *  type,
-                          dtype *                 buffer, 
-                          int const               buffer_len, 
-                          dtype const             alpha,
-                          dtype const             beta){
-  fseq_tsr_ctr<dtype> fs;
-  fs.func_ptr=sym_seq_ctr_ref<dtype>;
-  return contract(type, buffer, buffer_len, fs, alpha, beta, 1);
-}
 
 /**
  * \brief contracts tensors alpha*A*B+beta*C -> C. 
         Accepts custom-sized buffer-space (set to NULL for dynamic allocs).
- *      seq_func used to perform sequential op 
+ *      seq_func used to perform sequential block op 
  * \param[in] type the contraction type (defines contraction actors)
- * \param[in] buffer the buffer space to use, or NULL to allocate
- * \param[in] buffer_len length of buffer 
- * \param[in] func_ptr sequential ctr func pointer 
+ * \param[in] func_ptr sequential block ctr func pointer 
  * \param[in] alpha scaling factor for A*B
  * \param[in] beta scaling factor for C
  */
 template<typename dtype>
 int tCTF<dtype>::contract(CTF_ctr_type_t const *    type,
-                          dtype *                   buffer, 
-                          int const                 buffer_len, 
                           fseq_tsr_ctr<dtype> const func_ptr, 
                           dtype const               alpha,
                           dtype const               beta,
                           int const                 map_inner){
+  int i, ret;
 #if DEBUG >= 1
   if (dt->get_global_comm()->rank == 0)
     printf("Head contraction :\n");
-  dt->print_ctr(type);
+  dt->print_ctr(type,alpha,beta);
 #endif
+  fseq_elm_ctr<dtype> felm;
+  felm.func_ptr = NULL;
 
-  return dt->sym_contract(type, buffer, buffer_len, func_ptr, alpha,
-                                      beta, map_inner);
+  if ((*dt->get_tensors())[type->tid_A]->profile &&
+      (*dt->get_tensors())[type->tid_B]->profile &&
+      (*dt->get_tensors())[type->tid_C]->profile){
+    char cname[200];
+    cname[0] = '\0';
+    if ((*dt->get_tensors())[type->tid_C]->name != NULL)
+      sprintf(cname, (*dt->get_tensors())[type->tid_C]->name);
+    else
+      sprintf(cname, "%d", type->tid_C);
+    sprintf(cname+strlen(cname),"[");
+    for (i=0; i<(*dt->get_tensors())[type->tid_C]->ndim; i++){
+      if (i>0)
+        sprintf(cname+strlen(cname)," %d",type->idx_map_C[i]);
+      else 
+        sprintf(cname+strlen(cname),"%d",type->idx_map_C[i]);
+    }
+    sprintf(cname+strlen(cname),"]=");
+    if ((*dt->get_tensors())[type->tid_A]->name != NULL)
+      sprintf(cname+strlen(cname), (*dt->get_tensors())[type->tid_A]->name);
+    else
+      sprintf(cname+strlen(cname), "%d", type->tid_A);
+    sprintf(cname+strlen(cname),"[");
+    for (i=0; i<(*dt->get_tensors())[type->tid_A]->ndim; i++){
+      if (i>0)
+        sprintf(cname+strlen(cname)," %d",type->idx_map_A[i]);
+      else
+        sprintf(cname+strlen(cname),"%d",type->idx_map_A[i]);
+    }
+    sprintf(cname+strlen(cname),"]*");
+    if ((*dt->get_tensors())[type->tid_B]->name != NULL)
+      sprintf(cname+strlen(cname), (*dt->get_tensors())[type->tid_B]->name);
+    else
+      sprintf(cname+strlen(cname), "%d", type->tid_B);
+    sprintf(cname+strlen(cname),"[");
+    for (i=0; i<(*dt->get_tensors())[type->tid_B]->ndim; i++){
+      if (i>0)
+        sprintf(cname+strlen(cname)," %d",type->idx_map_B[i]);
+      else 
+        sprintf(cname+strlen(cname),"%d",type->idx_map_B[i]);
+    }
+    sprintf(cname+strlen(cname),"]");
+    
+   
+    CTF_Timer tctr(cname);
+    tctr.start(); 
+    ret = dt->home_contract(type, func_ptr, felm, alpha, beta, map_inner);
+    tctr.stop();
+  } else 
+    ret = dt->home_contract(type, func_ptr, felm, alpha, beta, map_inner);
+
+  return ret;
+
+}
+    
+/**
+ * \brief contracts tensors alpha*A*B+beta*C -> C. 
+        Accepts custom-sized buffer-space (set to NULL for dynamic allocs).
+ *      seq_func used to perform elementwise sequential op 
+ * \param[in] type the contraction type (defines contraction actors)
+ * \param[in] felm sequential elementwise ctr func ptr
+ * \param[in] alpha scaling factor for A*B
+ * \param[in] beta scaling factor for C
+ */
+template<typename dtype>
+int tCTF<dtype>::contract(CTF_ctr_type_t const *     type,
+                          fseq_elm_ctr<dtype> const  felm,
+                          dtype const                alpha,
+                          dtype const                beta){
+#if DEBUG >= 1
+  if (dt->get_global_comm()->rank == 0)
+    printf("Head custom contraction :\n");
+  dt->print_ctr(type,alpha,beta);
+#endif
+  fseq_tsr_ctr<dtype> fs;
+  fs.func_ptr=sym_seq_ctr_ref<dtype>;
+  return dt->home_contract(type, fs, felm, alpha, beta, 0);
+
 }
 
 /**
@@ -414,9 +539,10 @@ int tCTF<dtype>::scale_tensor(dtype const               alpha,
                               int const *               idx_map){
   fseq_tsr_scl<dtype> fs;
   fs.func_ptr=sym_seq_scl_ref<dtype>;
-  return dt->scale_tsr(alpha, tid, idx_map, fs);
+  fseq_elm_scl<dtype> felm;
+  felm.func_ptr = NULL;
+  return dt->scale_tsr(alpha, tid, idx_map, fs, felm);
 }
-
 
 /**
  * \brief scales a tensor by alpha iterating on idx_map
@@ -430,8 +556,27 @@ int tCTF<dtype>::scale_tensor(dtype const               alpha,
                               int const                 tid, 
                               int const *               idx_map,
                               fseq_tsr_scl<dtype> const func_ptr){
-    return dt->scale_tsr(alpha, tid, idx_map, func_ptr);
-  }
+  fseq_elm_scl<dtype> felm;
+  felm.func_ptr = NULL;
+  return dt->scale_tsr(alpha, tid, idx_map, func_ptr, felm);
+}
+
+/**
+ * \brief scales a tensor by alpha iterating on idx_map
+ * \param[in] alpha scaling factor
+ * \param[in] tid tensor handle
+ * \param[in] idx_map indexer to the tensor
+ * \param[in] felm pointer to sequential elemtwise scale function
+ */
+template<typename dtype>
+int tCTF<dtype>::scale_tensor(dtype const               alpha, 
+                              int const                 tid, 
+                              int const *               idx_map,
+                              fseq_elm_scl<dtype> const felm){
+  fseq_tsr_scl<dtype> fs;
+  fs.func_ptr=sym_seq_scl_ref<dtype>;
+  return dt->scale_tsr(alpha, tid, idx_map, fs, felm);
+}
 
   /**
    * \brief computes a dot product of two tensors A dot B
@@ -477,6 +622,20 @@ int tCTF<dtype>::map_tensor(int const tid,
                                               dtype const elem)){
   return dt->map_tsr(tid, map_func);
 }
+
+/**
+ * \brief obtains a small number of the biggest elements of the 
+ *        tensor in sorted order (e.g. eigenvalues)
+ * \param[in] tid index of tensor
+ * \param[in] n number of elements to collect
+ * \param[in] data output data (should be preallocated to size at least n)
+ */
+template<typename dtype>
+int tCTF<dtype>::get_max_abs(int const  tid,
+                             int const  n,
+                             dtype *    data){
+  return dt->get_max_abs(tid, n, data);
+}
     
 /**
  * \brief DAXPY: a*idx_map_A(A) + b*idx_map_B(B) -> idx_map_B(B). 
@@ -510,7 +669,7 @@ int tCTF<dtype>::sum_tensors(CTF_sum_type_t const *     type,
                              dtype const                beta,
                              fseq_tsr_sum<dtype> const  func_ptr){
   return sum_tensors(alpha, beta, type->tid_A, type->tid_B, 
-                                 type->idx_map_A, type->idx_map_B, func_ptr);
+                     type->idx_map_A, type->idx_map_B, func_ptr);
 
 }
 
@@ -532,7 +691,32 @@ int tCTF<dtype>::sum_tensors(dtype const                alpha,
                              int const *                idx_map_A,
                              int const *                idx_map_B,
                              fseq_tsr_sum<dtype> const  func_ptr){
-  return dt->sum_tensors(alpha, beta, tid_A, tid_B, idx_map_A, idx_map_B, func_ptr);
+  fseq_elm_sum<dtype> felm;
+  felm.func_ptr = NULL;
+  return dt->home_sum_tsr(alpha, beta, tid_A, tid_B, idx_map_A, idx_map_B, func_ptr, felm);
+}
+
+/**
+ * \brief DAXPY: a*idx_map_A(A) + b*idx_map_B(B) -> idx_map_B(B). 
+ * \param[in] alpha scaling factor for A*B
+ * \param[in] beta scaling factor for C
+ * \param[in] tid_A tensor handle to A
+ * \param[in] tid_B tensor handle to B
+ * \param[in] idx_map_A index map of A
+ * \param[in] idx_map_B index map of B
+ * \param[in] func_ptr sequential ctr func pointer 
+ */
+template<typename dtype>
+int tCTF<dtype>::sum_tensors(dtype const                alpha,
+                             dtype const                beta,
+                             int const                  tid_A,
+                             int const                  tid_B,
+                             int const *                idx_map_A,
+                             int const *                idx_map_B,
+                             fseq_elm_sum<dtype> const  felm){
+  fseq_tsr_sum<dtype> fs;
+  fs.func_ptr=sym_seq_sum_ref<dtype>;
+  return dt->home_sum_tsr(alpha, beta, tid_A, tid_B, idx_map_A, idx_map_B, fs, felm);
 }
 
 /**
@@ -559,20 +743,53 @@ int tCTF<dtype>::sum_tensors(dtype const  alpha,
   return dt->daxpy_local_tensor_pair(alpha, tid_A, tid_B);
 }
 
+/**
+ * \brief align mapping of tensor A to that of B
+ * \param[in] tid_A tensor handle of A
+ * \param[in] tid_B tensor handle of B
+ */
 template<typename dtype>
-int tCTF<dtype>::print_tensor(FILE * stream, int const tid) {
-  return dt->print_tsr(stream, tid);
+int tCTF<dtype>::align(int const    tid_A,
+                       int const    tid_B){
+  int stat;
+  
+  /* check if the mappings of A and B are the same */
+  stat = dt->check_pair_mapping(tid_A, tid_B);
+  if (stat == 0){
+    /* Align the mappings of A and B */
+    stat = dt->map_tensor_pair(tid_B, tid_A);
+    if (stat != DIST_TENSOR_SUCCESS)
+      return stat;
+  }
+  return DIST_TENSOR_SUCCESS;
 }
+
+template<typename dtype>
+int tCTF<dtype>::print_tensor(FILE * stream, int const tid, double cutoff) {
+  return dt->print_tsr(stream, tid, cutoff);
+}
+
+template<typename dtype>
+int tCTF<dtype>::compare_tensor(FILE * stream, int const tid_A, int const tid_B, double cutoff) {
+  int stat = align(tid_A, tid_B);
+  if (stat != DIST_TENSOR_SUCCESS) return stat;
+  return dt->compare_tsr(stream, tid_A, tid_B, cutoff);
+}
+
 /* Prints contraction type. */
 template<typename dtype>
-int tCTF<dtype>::print_ctr(CTF_ctr_type_t const * ctype) const {
-  return dt->print_ctr(ctype);
+int tCTF<dtype>::print_ctr(CTF_ctr_type_t const * ctype,
+                           dtype const            alpha,
+                           dtype const            beta) const {
+  return dt->print_ctr(ctype,alpha,beta);
 }
 
 /* Prints sum type. */
 template<typename dtype>
-int tCTF<dtype>::print_sum(CTF_sum_type_t const * stype) const{
-  return dt->print_sum(stype);
+int tCTF<dtype>::print_sum(CTF_sum_type_t const * stype,
+                           dtype const            alpha,
+                           dtype const            beta) const {
+  return dt->print_sum(stype,alpha,beta);
 }
 
 
@@ -585,7 +802,7 @@ int tCTF<dtype>::clean_tensors(){
   std::vector< tensor<dtype>* > * tensors = dt->get_tensors();
   for (i=0; i<tensors->size(); i++){
     dt->del_tsr(i);
-    free((*tensors)[i]);
+//    CTF_free((*tensors)[i]);
   }
   tensors->clear();
   return DIST_TENSOR_SUCCESS;
@@ -608,6 +825,10 @@ template<typename dtype>
 int tCTF<dtype>::exit(){
   int ret;
   if (initialized){
+    TAU_FSTOP(CTF);
+#ifdef HPM
+    HPM_Stop("CTF");
+#endif
     ret = tCTF<dtype>::clean_tensors();
     LIBT_ASSERT(ret == DIST_TENSOR_SUCCESS);
     delete dt;
@@ -653,7 +874,7 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
   CTF_ctr_type ct;
   fseq_tsr_ctr<dtype> fs;
   std::vector< tensor<dtype>* > * tensors = dt->get_tensors();
-  get_buffer_space(3*sizeof(int), (void**)&need_free);
+  CTF_alloc_ptr(3*sizeof(int), (void**)&need_free);
   ret = dt->pgemm(TRANSA, TRANSB, M, N, K, ALPHA, A, IA, JA, DESCA,
                   B, IB, JB, DESCB,
                   BETA, C, IC, JC, DESCC, &ct, &fs, need_free);
@@ -666,6 +887,9 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
 #if (!REDIST)
   ret = dt->try_topo_morph(otid_A, otid_B, otid_C);
   LIBT_ASSERT(ret == DIST_TENSOR_SUCCESS);
+/*  dt->print_map(stdout, otid_A);
+  dt->print_map(stdout, otid_B);
+  dt->print_map(stdout, otid_C);*/
   redist = dt->check_contraction_mapping(&ct);
   if (redist == 0) {
     printf("REDISTRIBUTING\n");
@@ -680,8 +904,7 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
   }
 #endif
 
-  ret = this->contract(&ct, NULL, 0, fs, ALPHA, BETA);
-  (*tensors)[ct.tid_C]->need_remap = 0;
+  ret = this->contract(&ct, fs, ALPHA, BETA);
   if (ret != DIST_TENSOR_SUCCESS)
     return ret;
 #if (!REDIST)
@@ -703,7 +926,7 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
                    &old_padding_C, &old_edge_len_C, 
                    dt->get_topo(tsr_nC->itopo));
       if (need_free[2])
-        free(tsr_oC->data);
+        CTF_free(tsr_oC->data);
       tsr_oC->data = tsr_nC->data;
       remap_tensor(otid_C, tsr_oC, dt->get_topo(tsr_oC->itopo), old_size_C, 
                    old_phase_C, old_rank_C, old_virt_dim_C, 
@@ -711,14 +934,14 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
                    old_padding_C, old_edge_len_C, dt->get_global_comm());
     } else{
       if (need_free[2])
-              free(tsr_oC->data);
+              CTF_free(tsr_oC->data);
       tsr_oC->data = tsr_nC->data;
     }
     /* If this process owns any data */
     if (!need_free[2]){
       memcpy(C,tsr_oC->data,tsr_oC->size*sizeof(dtype));
     } else
-      free(tsr_oC->data);
+      CTF_free(tsr_oC->data);
     if (need_free[0])
       dt->del_tsr(otid_A);
     if (need_free[1])
@@ -731,30 +954,37 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
 #if (!REDIST)
   }
 #endif
-  if ((*tensors)[otid_A]->padding[0] != 0 ||
-      (*tensors)[otid_A]->padding[1] != 0){
-    free((*tensors)[otid_A]->data);
+  if ((*tensors)[otid_A]->scp_padding[0] != 0 ||
+      (*tensors)[otid_A]->scp_padding[1] != 0){
+    CTF_free((*tensors)[otid_A]->data);
   }
-  if ((*tensors)[otid_B]->padding[0] != 0 ||
-      (*tensors)[otid_B]->padding[1] != 0){
-    free((*tensors)[otid_B]->data);
+  if ((*tensors)[otid_B]->scp_padding[0] != 0 ||
+      (*tensors)[otid_B]->scp_padding[1] != 0){
+    CTF_free((*tensors)[otid_B]->data);
   }
-  if ((*tensors)[otid_C]->padding[0] != 0 ||
-      (*tensors)[otid_C]->padding[1] != 0){
+  if ((*tensors)[otid_C]->scp_padding[0] != 0 ||
+      (*tensors)[otid_C]->scp_padding[1] != 0){
     int brow, bcol;
     brow = DESCC[4];
     bcol = DESCC[5];
-    for (i=0; i<bcol-(*tensors)[otid_C]->padding[1]; i++){
-      for (j=0; j<brow-(*tensors)[otid_C]->padding[0]; j++){
-        C[i*(brow-(*tensors)[otid_C]->padding[0])+j] 
+    for (i=0; i<bcol-(*tensors)[otid_C]->scp_padding[1]; i++){
+      for (j=0; j<brow-(*tensors)[otid_C]->scp_padding[0]; j++){
+        C[i*(brow-(*tensors)[otid_C]->scp_padding[0])+j] 
           = (*tensors)[otid_C]->data[i*brow+j];
       }
     }
-    free((*tensors)[otid_C]->data);
+    CTF_free((*tensors)[otid_C]->data);
   }
-  (*tensors)[otid_A]->is_alloced = 0;
-  (*tensors)[otid_B]->is_alloced = 0;
-  (*tensors)[otid_C]->is_alloced = 0;
+  (*tensors)[otid_A]->is_data_aliased = 1;
+  (*tensors)[otid_B]->is_data_aliased = 1;
+  (*tensors)[otid_C]->is_data_aliased = 1;
+  dt->del_tsr(otid_A);
+  dt->del_tsr(otid_B);
+  dt->del_tsr(otid_C);
+  CTF_free(ct.idx_map_A);
+  CTF_free(ct.idx_map_B);
+  CTF_free(ct.idx_map_C);
+  CTF_free(need_free);
   return DIST_TENSOR_SUCCESS;
 }
 
@@ -777,7 +1007,7 @@ int tCTF<dtype>::def_scala_mat(int const * DESCA,
   std::vector< tensor<dtype>* > * tensors = dt->get_tensors();
   tensor<dtype> * stsr = (*tensors)[stid];
   tensor<dtype> * tsr = (*tensors)[*tid];
-  free(stsr->data);
+  CTF_free(stsr->data);
   stsr->is_alloced = 0;
   tsr->is_matrix = 1;
   tsr->slay = stid;
@@ -806,7 +1036,7 @@ int tCTF<dtype>::read_scala_mat(int const tid,
                &old_padding, &old_edge_len, 
                dt->get_topo(tsr->itopo));
   LIBT_ASSERT(tsr->is_matrix);
-  get_buffer_space(sizeof(dtype)*tsr->size, (void**)&stsr->data);
+  CTF_alloc_ptr(sizeof(dtype)*tsr->size, (void**)&stsr->data);
   memcpy(stsr->data, tsr->data, sizeof(dtype)*tsr->size);
   remap_tensor(tsr->slay, stsr, dt->get_topo(stsr->itopo), old_size, 
                old_phase, old_rank, old_virt_dim, 
@@ -814,7 +1044,7 @@ int tCTF<dtype>::read_scala_mat(int const tid,
                old_padding, old_edge_len, dt->get_global_comm());
   if (data!=NULL)
     memcpy(data, stsr->data, stsr->size*sizeof(dtype));  
-  free(stsr->data);
+  CTF_free(stsr->data);
   return DIST_TENSOR_SUCCESS;
 }
 /**
@@ -838,9 +1068,9 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
   ct.tid_B = tid_B;
   ct.tid_C = tid_C;
 
-  ct.idx_map_A = (int*)malloc(sizeof(int)*2);
-  ct.idx_map_B = (int*)malloc(sizeof(int)*2);
-  ct.idx_map_C = (int*)malloc(sizeof(int)*2);
+  ct.idx_map_A = (int*)CTF_alloc(sizeof(int)*2);
+  ct.idx_map_B = (int*)CTF_alloc(sizeof(int)*2);
+  ct.idx_map_C = (int*)CTF_alloc(sizeof(int)*2);
   ct.idx_map_C[0] = 1;
   ct.idx_map_C[1] = 2;
   herm_A = 0;
@@ -873,9 +1103,11 @@ int tCTF<dtype>::pgemm(char const   TRANSA,
     fs.func_ptr = &gemm_ctr<dtype,0,1>;
   else
     fs.func_ptr = &gemm_ctr<dtype,0,0>;
-  ret = this->contract(&ct, NULL, 0, fs, ALPHA, BETA);
+  ret = this->contract(&ct, fs, ALPHA, BETA);
   std::vector< tensor<dtype>* > * tensors = dt->get_tensors();
-  (*tensors)[ct.tid_C]->need_remap = 0;
+  CTF_free(ct.idx_map_A);
+  CTF_free(ct.idx_map_B);
+  CTF_free(ct.idx_map_C);
   return ret;
 };
   

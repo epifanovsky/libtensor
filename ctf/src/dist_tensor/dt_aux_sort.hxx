@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #ifndef __DIST_TENSOR_SORT_HXX__
 #define __DIST_TENSOR_SORT_HXX__
@@ -40,6 +18,7 @@
  * \param[in] edge_len tensor edge lengths
  * \param[in] sym symmetry types of tensor
  * \param[in] padding padding of tensor (included in edge_len)
+ * \param[in] prepadding padding at start of tensor (included in edge_len)
  * \param[in] pairs padded array of pairs
  * \param[out] new_pairs unpadded pairs
  * \param[out] new_num_pair number of unpadded pairs
@@ -51,6 +30,7 @@ void depad_tsr(int const                ndim,
                int const *              edge_len,
                int const *              sym,
                int const *              padding,
+               int const *              prepadding,
                tkv_pair<dtype> const *  pairs,
                tkv_pair<dtype> *        new_pairs,
                long_int *               new_num_pair){
@@ -58,8 +38,8 @@ void depad_tsr(int const                ndim,
 
   long_int num_ins;
   int ntd = omp_get_max_threads();
-  long_int * num_ins_t = (long_int*)malloc(sizeof(long_int)*ntd);
-  long_int * pre_ins_t = (long_int*)malloc(sizeof(long_int)*ntd);
+  long_int * num_ins_t = (long_int*)CTF_alloc(sizeof(long_int)*ntd);
+  long_int * pre_ins_t = (long_int*)CTF_alloc(sizeof(long_int)*ntd);
 
   TAU_FSTART(depad_tsr_cnt);
   #pragma omp parallel
@@ -67,7 +47,7 @@ void depad_tsr(int const                ndim,
     long_int i, j, st, end, tid;
     key * kparts;
     key k;
-    get_buffer_space(sizeof(key)*ndim, (void**)&kparts);
+    CTF_alloc_ptr(sizeof(key)*ndim, (void**)&kparts);
     tid = omp_get_thread_num();
 
     st = (num_pair/ntd)*tid;
@@ -81,7 +61,8 @@ void depad_tsr(int const                ndim,
       k = pairs[i].k;
       for (j=0; j<ndim; j++){
         kparts[j] = k%(edge_len[j]+padding[j]);
-        if (kparts[j] >= (key)edge_len[j]) break;
+        if (kparts[j] >= (key)edge_len[j] ||
+            kparts[j] < prepadding[j]) break;
         k = k/(edge_len[j]+padding[j]);
       } 
       if (j==ndim){
@@ -100,7 +81,7 @@ void depad_tsr(int const                ndim,
         }
       }
     }
-    free_buffer_space(kparts);
+    CTF_free(kparts);
   }
   TAU_FSTOP(depad_tsr_cnt);
 
@@ -115,7 +96,7 @@ void depad_tsr(int const                ndim,
     long_int i, j, st, end, tid;
     key * kparts;
     key k;
-    get_buffer_space(sizeof(key)*ndim, (void**)&kparts);
+    CTF_alloc_ptr(sizeof(key)*ndim, (void**)&kparts);
     tid = omp_get_thread_num();
 
     st = (num_pair/ntd)*tid;
@@ -128,7 +109,8 @@ void depad_tsr(int const                ndim,
       k = pairs[i].k;
       for (j=0; j<ndim; j++){
         kparts[j] = k%(edge_len[j]+padding[j]);
-        if (kparts[j] >= (key)edge_len[j]) break;
+        if (kparts[j] >= (key)edge_len[j] ||
+            kparts[j] < prepadding[j]) break;
         k = k/(edge_len[j]+padding[j]);
       } 
       if (j==ndim){
@@ -148,14 +130,14 @@ void depad_tsr(int const                ndim,
         }
       }
     }
-    free_buffer_space(kparts);
+    CTF_free(kparts);
   }
   TAU_FSTOP(depad_tsr_move);
   num_ins = pre_ins_t[ntd-1];
 
   *new_num_pair = num_ins;
-  free_buffer_space(pre_ins_t);
-  free_buffer_space(num_ins_t);
+  CTF_free(pre_ins_t);
+  CTF_free(num_ins_t);
 
   TAU_FSTOP(depad_tsr);
 }
@@ -176,7 +158,7 @@ void depad_tsr(int const                ndim,
   key k;
 
 
-  get_buffer_space(sizeof(key)*ndim, (void**)&kparts);
+  CTF_alloc_ptr(sizeof(key)*ndim, (void**)&kparts);
 
   num_ins = 0;
   for (i=0; i<num_pair; i++){
@@ -204,7 +186,7 @@ void depad_tsr(int const                ndim,
     }
   }
   *new_num_pair = num_ins;
-  free_buffer_space(kparts);
+  CTF_free(kparts);
 
   TAU_FSTOP(depad_tsr);
 }
@@ -273,7 +255,7 @@ void pad_tsr(int const                ndim,
   long_int new_el, pad_el;
   int pad_max, virt_lda, outside, offset, edge_lda;
   int * idx;  
-  get_buffer_space(ndim*sizeof(int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&idx);
   tkv_pair<dtype> * padded_pairs;
   
   pad_el = 0;
@@ -306,7 +288,7 @@ void pad_tsr(int const                ndim,
     }
     if (act_lda == ndim) break;
   }
-  get_buffer_space(pad_el*sizeof(tkv_pair<dtype>), (void**)&padded_pairs);
+  CTF_alloc_ptr(pad_el*sizeof(tkv_pair<dtype>), (void**)&padded_pairs);
   new_el = 0;
   offset = 0;
   outside = -1;
@@ -454,9 +436,9 @@ void assign_keys(int const          ndim,
   }
 
   TAU_FSTART(assign_keys);
-  get_buffer_space(ndim*sizeof(int), (void**)&idx);
-  get_buffer_space(ndim*sizeof(int), (void**)&virt_rank);
-  get_buffer_space(ndim*sizeof(int), (void**)&edge_lda);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&virt_rank);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&edge_lda);
   
   memset(virt_rank, 0, sizeof(int)*ndim);
   
@@ -464,7 +446,6 @@ void assign_keys(int const          ndim,
   for (i=1; i<ndim; i++){
     edge_lda[i] = edge_lda[i-1]*edge_len[i-1];
   }
-  buf_offset = 0;
   for (p=0;;p++){
     data = vdata + p*(size/nvirt);
     pairs = vpairs + p*(size/nvirt);
@@ -520,9 +501,9 @@ void assign_keys(int const          ndim,
     if (act_lda >= ndim) break;
   }
   LIBT_ASSERT(buf_offset == size/nvirt);
-  free_buffer_space(idx);
-  free_buffer_space(virt_rank);
-  free_buffer_space(edge_lda);
+  CTF_free(idx);
+  CTF_free(virt_rank);
+  CTF_free(edge_lda);
   TAU_FSTOP(assign_keys);
 }
        
@@ -546,8 +527,8 @@ void bucket_by_pe( int const                ndim,
 //  int * inv_edge_len, * inv_virt_phase;
   key k;
 
-/*  get_buffer_space(ndim*sizeof(int), (void**)&inv_edge_len);
-  get_buffer_space(ndim*sizeof(int), (void**)&inv_virt_phase);
+/*  CTF_alloc_ptr(ndim*sizeof(int), (void**)&inv_edge_len);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&inv_virt_phase);
 
 
   for (i=0; i<ndim; i++){
@@ -557,8 +538,8 @@ void bucket_by_pe( int const                ndim,
   memset(bucket_counts, 0, sizeof(int)*np); 
 #ifdef USE_OMP
   int * sub_counts, * sub_offs;
-  get_buffer_space(np*sizeof(int)*omp_get_max_threads(), (void**)&sub_counts);
-  get_buffer_space(np*sizeof(int)*omp_get_max_threads(), (void**)&sub_offs);
+  CTF_alloc_ptr(np*sizeof(int)*omp_get_max_threads(), (void**)&sub_counts);
+  CTF_alloc_ptr(np*sizeof(int)*omp_get_max_threads(), (void**)&sub_offs);
   memset(sub_counts, 0, np*sizeof(int)*omp_get_max_threads());
 #endif
 
@@ -566,22 +547,23 @@ void bucket_by_pe( int const                ndim,
   TAU_FSTART(bucket_by_pe_count);
   /* Calculate counts */
 #ifdef USE_OMP
-  #pragma omp parallel for schedule(static) private(j, loc, k)
+  #pragma omp parallel for schedule(static,256) private(i, j, loc, k)
 #endif
   for (i=0; i<num_pair; i++){
     k = mapped_data[i].k;
     loc = 0;
-    int tmp_arr[ndim];
+//    int tmp_arr[ndim];
     for (j=0; j<ndim; j++){
-      tmp_arr[j] = (k%edge_len[j])%phase[j];
+/*      tmp_arr[j] = (k%edge_len[j])%phase[j];
       tmp_arr[j] = tmp_arr[j]/virt_phase[j];
-      tmp_arr[j] = tmp_arr[j]*bucket_lda[j];
-//      loc += ((k%phase[j])/virt_phase[j])*bucket_lda[j];
+      tmp_arr[j] = tmp_arr[j]*bucket_lda[j];*/
+      loc += ((k%phase[j])/virt_phase[j])*bucket_lda[j];
       k = k/edge_len[j];
     }
-    for (j=0; j<ndim; j++){
+/*    for (j=0; j<ndim; j++){
       loc += tmp_arr[j];
-    }
+    }*/
+    LIBT_ASSERT(loc<np);
 #ifdef USE_OMP
     sub_counts[loc+omp_get_thread_num()*np]++;
 #else
@@ -619,18 +601,14 @@ void bucket_by_pe( int const                ndim,
   /* bucket data */
   TAU_FSTART(bucket_by_pe_move);
 #ifdef USE_OMP
-  #pragma omp parallel for schedule(static) private(j, loc, k)
+  #pragma omp parallel for schedule(static,256) private(i, j, loc, k)
 #endif
   for (i=0; i<num_pair; i++){
     k = mapped_data[i].k;
     loc = 0;
-    int tmp_arr[ndim];
     for (j=0; j<ndim; j++){
-      tmp_arr[j] = (((k%edge_len[j])%phase[j])/virt_phase[j])*bucket_lda[j];
+      loc += ((k%phase[j])/virt_phase[j])*bucket_lda[j];
       k = k/edge_len[j];
-    }
-    for (j=0; j<ndim; j++){
-      loc += tmp_arr[j];
     }
 #ifdef USE_OMP
     bucket_data[bucket_off[loc] + sub_offs[loc+omp_get_thread_num()*np]] 
@@ -642,8 +620,8 @@ void bucket_by_pe( int const                ndim,
 #endif
   }
 #ifdef USE_OMP
-  free_buffer_space(sub_counts);
-  free_buffer_space(sub_offs);
+  CTF_free(sub_counts);
+  CTF_free(sub_offs);
 #endif
   TAU_FSTOP(bucket_by_pe_move);
 }
@@ -664,9 +642,9 @@ void bucket_by_virt(int const               ndim,
   key k;
   TAU_FSTART(bucket_by_virt);
   
-  get_buffer_space(num_virt*sizeof(int), (void**)&virt_counts);
-  get_buffer_space(num_virt*sizeof(int), (void**)&virt_prefix);
-  get_buffer_space(ndim*sizeof(int), (void**)&virt_lda);
+  CTF_alloc_ptr(num_virt*sizeof(int), (void**)&virt_counts);
+  CTF_alloc_ptr(num_virt*sizeof(int), (void**)&virt_prefix);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&virt_lda);
  
  
   if (ndim > 0){
@@ -680,8 +658,8 @@ void bucket_by_virt(int const               ndim,
   memset(virt_counts, 0, sizeof(int)*num_virt); 
 #ifdef USE_OMP
   int * sub_counts, * sub_offs;
-  get_buffer_space(num_virt*sizeof(int)*omp_get_max_threads(), (void**)&sub_counts);
-  get_buffer_space(num_virt*sizeof(int)*omp_get_max_threads(), (void**)&sub_offs);
+  CTF_alloc_ptr(num_virt*sizeof(int)*omp_get_max_threads(), (void**)&sub_counts);
+  CTF_alloc_ptr(num_virt*sizeof(int)*omp_get_max_threads(), (void**)&sub_offs);
   memset(sub_counts, 0, num_virt*sizeof(int)*omp_get_max_threads());
 #endif
 
@@ -773,13 +751,141 @@ void bucket_by_virt(int const               ndim,
         bucket_data+(virt_prefix[i]+virt_counts[i]));
   }
   TAU_FSTOP(bucket_by_virt_sort);
-#ifdef USE_OMP
-  free_buffer_space(sub_counts);
-  free_buffer_space(sub_offs);
+#if DEBUG >= 1
+  for (i=1; i<num_pair; i++){
+    LIBT_ASSERT(bucket_data[i].k != bucket_data[i-1].k);
+  }
 #endif
-  free_buffer_space(virt_prefix);
-  free_buffer_space(virt_counts);
-  free_buffer_space(virt_lda);
+#ifdef USE_OMP
+  CTF_free(sub_counts);
+  CTF_free(sub_offs);
+#endif
+  CTF_free(virt_prefix);
+  CTF_free(virt_counts);
+  CTF_free(virt_lda);
   TAU_FSTOP(bucket_by_virt);
 }
+
+/**
+ * \brief assigns keys to an array of values
+ * \param[in] ndim tensor dimension
+ * \param[in] size number of values
+ * \param[in] nvirt total virtualization factor
+ * \param[in] edge_len tensor edge lengths with padding
+ * \param[in] sym symmetries of tensor
+ * \param[in] padding how much of the edge lengths is padding
+ * \param[in] phase phase of the tensor on virtualized processor grid
+ * \param[in] virt_dim virtual phase in each dimension
+ * \param[in] phase_rank physical phase rank multiplied by virtual phase
+ * \param[in,out] vdata array of all local data
+ */
+template<typename dtype>
+void zero_padding( int const          ndim,
+                   long_int const     size,
+                   int const          nvirt,
+                   int const *        edge_len,
+                   int const *        sym,
+                   int const *        padding,
+                   int const *        phase,
+                   int const *        virt_dim,
+                   int const *        cphase_rank,
+                   dtype *            vdata){
+  if (ndim == 0) return;
+  TAU_FSTART(zero_padding);
+#ifdef USE_OMP
+#pragma omp parallel
+#endif
+{
+  int tid, ntd, vst, vend;
+#ifdef USE_OMP
+  tid = omp_get_thread_num();
+  ntd = omp_get_num_threads();
+#else
+  tid = 0;
+  ntd = 1;
+#endif
+  vst = (nvirt/ntd)*tid;
+  vst += MIN(nvirt%ntd,tid);
+  vend = vst+(nvirt/ntd);
+  if (tid < nvirt % ntd) vend++;
+  LIBT_ASSERT(tid != ntd-1 || vend == nvirt);
+  int i, act_lda, act_max, buf_offset, curr_idx, sym_idx;
+  int is_outside;
+  long_int p;
+  int * idx, * virt_rank, * phase_rank;
+  dtype* data;
+
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&idx);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&virt_rank);
+  CTF_alloc_ptr(ndim*sizeof(int), (void**)&phase_rank);
+
+  memcpy(phase_rank, cphase_rank, ndim*sizeof(int));
+  memset(virt_rank, 0, sizeof(int)*ndim);
+  for (p=0; p<nvirt; p++){
+    if (p>=vst && p<vend){
+      buf_offset = 0;
+      data = vdata + p*(size/nvirt);
+
+      //printf("size = %d\n", size); 
+      memset(idx, 0, ndim*sizeof(int));
+      for (;;){
+        is_outside = 0;
+        for (i=0; i<ndim; i++){
+          curr_idx = idx[i]*phase[i]+phase_rank[i];
+          if (curr_idx >= edge_len[i] - padding[i]){
+            is_outside = 1;
+            break;
+          } else if (i < ndim-1) {
+            sym_idx   = idx[i+1]*phase[i+1]+phase_rank[i+1];
+            if (((sym[i] == AS || sym[i] == SH) && curr_idx >= sym_idx) ||
+                ( sym[i] == SY                  && curr_idx >  sym_idx) ) {
+              is_outside = 1;
+              break;
+            }
+          }
+        }
+/*        for (i=0; i<ndim; i++){
+          printf("phase_rank[%d] = %d, idx[%d] = %d, ",i,phase_rank[i],i,idx[i]);
+        }
+        printf("\n");
+        printf("data[%lld]=%lf is_outside = %d\n", buf_offset+p*(size/nvirt), data[buf_offset], is_outside);*/
+        if (is_outside)
+          data[buf_offset] = 0.0;
+        buf_offset++;
+        /* Increment indices and set up offsets */
+        for (i=0; i < ndim; i++){
+          idx[i]++;
+          act_max = edge_len[i]/phase[i];
+          if (sym[i] != NS){
+//            sym_idx   = idx[i+1]*phase[i+1]+phase_rank[i+1];
+//            act_max   = MIN(act_max,((sym_idx-phase_rank[i])/phase[i]+1));
+            act_max = MIN(act_max,idx[i+1]+1);
+          }
+          if (idx[i] >= act_max)
+            idx[i] = 0;
+          LIBT_ASSERT(edge_len[i]%phase[i] == 0);
+          if (idx[i] > 0)
+            break;
+        }
+        if (i >= ndim) break;
+      }
+    }
+    for (act_lda=0; act_lda < ndim; act_lda++){
+      phase_rank[act_lda] -= virt_rank[act_lda];
+      virt_rank[act_lda]++;
+      if (virt_rank[act_lda] >= virt_dim[act_lda])
+        virt_rank[act_lda] = 0;
+      phase_rank[act_lda] += virt_rank[act_lda];
+      if (virt_rank[act_lda] > 0)
+        break;
+    }
+  }
+  //LIBT_ASSERT(buf_offset == size/nvirt);
+  CTF_free(idx);
+  CTF_free(virt_rank);
+  CTF_free(phase_rank);
+}
+  TAU_FSTOP(zero_padding);
+}
+     
 #endif

@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #include "../shared/util.h"
 #include "ctr_comm.h"
@@ -30,7 +8,7 @@
  */
 template<typename dtype>
 ctr<dtype>::~ctr(){
-  if (buffer != NULL) free(buffer);
+  if (buffer != NULL) CTF_free(buffer);
 }
 
 /**
@@ -213,11 +191,11 @@ template<typename dtype>
 ctr_replicate<dtype>::~ctr_replicate() {
   delete rec_ctr;
   if (ncdt_A > 0)
-    free(cdt_A);
+    CTF_free(cdt_A);
   if (ncdt_B > 0)
-    free(cdt_B);
+    CTF_free(cdt_B);
   if (ncdt_C > 0)
-    free(cdt_C);
+    CTF_free(cdt_C);
 }
 
 /**
@@ -326,19 +304,21 @@ long_int ctr_replicate<dtype>::mem_rec() {
  */
 template<typename dtype>
 void ctr_replicate<dtype>::run(){
-  int crank, i;
+  int arank, brank, crank, i;
 
+  arank = 0, brank = 0, crank = 0;
   for (i=0; i<ncdt_A; i++){
+    arank += cdt_A[i]->rank;
     POST_BCAST(this->A, size_A*sizeof(dtype), COMM_CHAR_T, 0, cdt_A[i], 0);
   }
   for (i=0; i<ncdt_B; i++){
+    brank += cdt_B[i]->rank;
     POST_BCAST(this->B, size_B*sizeof(dtype), COMM_CHAR_T, 0, cdt_B[i], 0);
   }
-  crank = 0;
   for (i=0; i<ncdt_C; i++){
     crank += cdt_C[i]->rank;
   }
-  if (crank != 0) std::fill(this->C, this->C+size_C, 0.0);
+  if (crank != 0) std::fill(this->C, this->C+size_C, get_zero<dtype>());
   else {
     for (i=0; i<size_C; i++){
       this->C[i] = this->beta * this->C[i];
@@ -357,6 +337,13 @@ void ctr_replicate<dtype>::run(){
   for (i=0; i<ncdt_C; i++){
     /* FIXME Won't work for single precision */
     ALLREDUCE(MPI_IN_PLACE, this->C, size_C*(sizeof(dtype)/sizeof(double)), MPI_DOUBLE, MPI_SUM, cdt_C[i]);
+  }
+
+  if (arank != 0){
+    std::fill(this->A, this->A+size_A, get_zero<dtype>());
+  }
+  if (brank != 0){
+    std::fill(this->B, this->B+size_B, get_zero<dtype>());
   }
 
 

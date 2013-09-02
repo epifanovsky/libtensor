@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #include "../shared/util.h"
 #include "ctr_comm.h"
@@ -38,7 +16,7 @@
  */
 template<typename dtype>
 ctr_virt<dtype>::~ctr_virt() {
-  free(virt_dim);
+  CTF_free(virt_dim);
   delete rec_ctr;
 }
 
@@ -50,7 +28,7 @@ ctr_virt<dtype>::ctr_virt(ctr<dtype> * other) : ctr<dtype>(other) {
   ctr_virt<dtype> * o   = (ctr_virt<dtype>*)other;
   rec_ctr       = o->rec_ctr->clone();
   num_dim       = o->num_dim;
-  virt_dim      = (int*)malloc(sizeof(int)*num_dim);
+  virt_dim      = (int*)CTF_alloc(sizeof(int)*num_dim);
   memcpy(virt_dim, o->virt_dim, sizeof(int)*num_dim);
 
   ndim_A        = o->ndim_A;
@@ -86,6 +64,7 @@ void ctr_virt<dtype>::print() {
   for (i=0; i<num_dim; i++){
     printf("virt_dim[%d] = %d\n", i, virt_dim[i]);
   }
+  rec_ctr->print();
 }
 
 
@@ -127,9 +106,7 @@ void ctr_virt<dtype>::run(){
     idx_arr = (int*)this->buffer;
   } else {
     alloced = 1;
-    ret = posix_memalign((void**)&idx_arr,
-                         ALIGN_BYTES,
-                         mem_fp());
+    ret = CTF_alloc_ptr(mem_fp(), (void**)&idx_arr);
     LIBT_ASSERT(ret==0);
   }
 
@@ -159,7 +136,7 @@ do {                                                                    \
 #undef SET_LDA_X
  
   /* dynammically determined size */ 
-  beta_arr = (int*)malloc(sizeof(int)*nb_C);
+  beta_arr = (int*)CTF_alloc(sizeof(int)*nb_C);
   memset(beta_arr, 0, nb_C*sizeof(int));
 #if (VIRT_NTD>1)
 #pragma omp parallel private(off_A,off_B,off_C,tidx_arr,i) 
@@ -229,10 +206,10 @@ do {                                                                    \
     }
   }
   if (alloced){
-    free(idx_arr);
+    CTF_free(idx_arr);
     this->buffer = NULL;
   }
-  free(beta_arr);
+  CTF_free(beta_arr);
   TAU_FSTOP(ctr_virt);
 }
 

@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #ifndef __CYCLOPSTF_HPP__
 #define __CYCLOPSTF_HPP__
@@ -44,6 +22,11 @@
  */
 
 /**
+ * \brief reduction types for tensor data
+ */
+enum CTF_OP { CTF_OP_SUM, CTF_OP_SUMABS, CTF_OP_SQNRM2,
+              CTF_OP_MAX, CTF_OP_MIN, CTF_OP_MAXABS, CTF_OP_MINABS };
+/**
  * labels corresponding to symmetry of each tensor dimension
  * NS = 0 - nonsymmetric
  * SY = 1 - symmetric
@@ -57,13 +40,9 @@
 #define SH 3
 #endif
 
-/**
- * \brief reduction types for tensor data
- */
-enum CTF_OP { CTF_OP_SUM, CTF_OP_SUMABS, CTF_OP_SQNRM2,
-              CTF_OP_MAX, CTF_OP_MIN, CTF_OP_MAXABS, CTF_OP_MINABS };
 
-typedef uint64_t key;
+typedef int64_t long_int;
+typedef long_int key;
 
 /* Force redistributions always by setting to 1 (use 2.5D algorithms) */
 #define REDIST 0
@@ -71,8 +50,11 @@ typedef uint64_t key;
 #define VERIFY_REMAP 0
 #define INNER_MAP 0
 #define FOLD_TSR 1
-#define DEF_INNER_SIZE 256
 #define PERFORM_DESYM 1
+#define DIAG_RESCALE
+//#define USE_SYM_SUM 
+#define HOME_CONTRACT
+#define USE_BLOCK_RESHUFFLE
 
 template<typename dtype>
 struct tkv_pair {
@@ -113,26 +95,12 @@ enum { DIST_TENSOR_SUCCESS, DIST_TENSOR_ERROR, DIST_TENSOR_NEGATIVE };
 enum CTF_MACHINE { MACHINE_GENERIC, MACHINE_BGP, MACHINE_BGQ,
                    MACHINE_8D, NO_TOPOLOGY };
 
-/**
- * labels corresponding to symmetry of each tensor dimension
- * NS = 0 - nonsymmetric
- * SY = 1 - symmetric
- * AS = 2 - antisymmetric
- * SH = 3 - symmetric hollow
- */
-#ifndef NS
-#define NS 0
-#define SY 1
-#define AS 2
-#define SH 3
-#endif
-
 
 /* These now have to live in a struct due to being templated, since one
    cannot typedef. */
 template<typename dtype>
 struct fseq_tsr_scl {
-  /* Function signature for sub-tensor summation recrusive call */
+  /* Function signature for sub-tensor scale recrusive call */
   int  (*func_ptr) ( dtype const        alpha,
                      dtype *            A,
                      int const          ndim_A,
@@ -141,7 +109,15 @@ struct fseq_tsr_scl {
                      int const *        sym_A,
                      int const *        idx_map_A);
 };
-    /* Function signature for sub-tensor summation recrusive call */
+
+/* custom element-wise function for tensor scale */
+template<typename dtype>
+struct fseq_elm_scl {
+  void  (*func_ptr)(dtype const alpha, 
+                    dtype &     a);
+};
+
+/* Function signature for sub-tensor summation recrusive call */
 template<typename dtype>
 struct fseq_tsr_sum {
   int  (*func_ptr) ( dtype const          alpha,
@@ -158,6 +134,14 @@ struct fseq_tsr_sum {
                      int const *          lda_B,
                      int const *          sym_B,
                      int const *          idx_map_B);
+};
+
+/* custom element-wise function for tensor sum */
+template<typename dtype>
+struct fseq_elm_sum {
+  void  (*func_ptr)(dtype const alpha, 
+                    dtype const a,
+                    dtype &     b);
 };
 
 
@@ -187,6 +171,15 @@ struct fseq_tsr_ctr {
                        int const *      idx_map_C);
 };
 
+/* custom element-wise function for tensor sum */
+template<typename dtype>
+struct fseq_elm_ctr {
+  void  (*func_ptr)(dtype const alpha, 
+                    dtype const a, 
+                    dtype const b,
+                    dtype &     c);
+};
+
 template<typename dtype>
 class dist_tensor;
 
@@ -203,17 +196,13 @@ class tCTF{
     ~tCTF();
 
     /* initializes library. Sets topology to be a torus of edge lengths equal to the
-       factorization of np. */
+       factorization of np. Main args can be sset for profiler output. */
     int init(MPI_Comm const global_context,
-             int const      rank,
-             int const      np);
-
-    /* initializes library. Sets topology to be that of a predefined machine 'mach'. */
-    int init(MPI_Comm const global_context,
-             CTF_MACHINE    mach,
              int const      rank,
              int const      np,
-             int const      inner_size = DEF_INNER_SIZE);
+             CTF_MACHINE    mach = MACHINE_GENERIC,
+             int const      argc = 0,
+             const char * const * argv = NULL);
 
 
     /* initializes library. Sets topology to be a mesh of dimension ndim with
@@ -223,17 +212,26 @@ class tCTF{
              int const      np,
              int const      ndim,
              int const *    dim_len,
-             int const      inner_size = DEF_INNER_SIZE);
+             int const      argc = 0,
+             const char * const * argv = NULL);
 
 
     /* return MPI_Comm global_context */
     MPI_Comm get_MPI_Comm();
+    
+    /* return MPI processor rank */
+    int get_rank();
+    
+    /* return number of MPI processes in the defined global context */
+    int get_num_pes();
 
     /* define a tensor and retrive handle */
-    int define_tensor(int const   ndim,
-                      int const * edge_len,
-                      int const * sym,
-                      int *       tensor_id);
+    int define_tensor(int const     ndim,
+                      int const *   edge_len,
+                      int const *   sym,
+                      int *         tensor_id,
+                      char const *  name = NULL,
+                      int           profile = 0);
 
     /* Create identical tensor with identical data if copy_data=1 */
     int clone_tensor(int const  tensor_id,
@@ -246,6 +244,18 @@ class tCTF{
                     int **    edge_len,
                     int **    sym) const;
 
+    /* set the tensor name */
+    int set_name(int const tensor_id, char const * name);
+    
+    /* get the tensor name */
+    int get_name(int const tensor_id, char const ** name);
+
+    /* turn on profiling */
+    int profile_on(int const tensor_id);
+    
+    /* turn off profiling */
+    int profile_off(int const tensor_id);
+
     /* get dimension of a tensor */
     int get_dimension(int const tensor_id, int *ndim) const;
 
@@ -256,34 +266,52 @@ class tCTF{
     int get_symmetry(int const tensor_id, int **sym) const;
 
     /* get raw data pointer WARNING: includes padding */
-    int get_raw_data(int const tensor_id, dtype ** data, int64_t * size);
+    int get_raw_data(int const tensor_id, dtype ** data, long_int * size);
 
     /* Input tensor data with <key, value> pairs where key is the
        global index for the value. */
     int write_tensor(int const                tensor_id,
-                     int64_t const            num_pair,
-                     tkv_pair<dtype> * const  mapped_data);
+                     long_int const           num_pair,
+                     tkv_pair<dtype> const *  mapped_data);
     
     /* Add tensor data new=alpha*new+beta*old
        with <key, value> pairs where key is the 
        global index for the value. */
     int write_tensor(int const                tensor_id,
-                     int64_t const            num_pair,
-                     double const             alpha,
-                     double const             beta,
-                     tkv_pair<dtype> * const  mapped_data);
+                     long_int const           num_pair,
+                     dtype const              alpha,
+                     dtype const              beta,
+                     tkv_pair<dtype> const *  mapped_data);
+
+    /* Add tensor data from A to a block of B, 
+       B[offsets_B:ends_B] = beta*B[offsets_B:ends_B] + alpha*A[offsets_A:ends_A] */
+    int slice_tensor(int const    tid_A,
+                     int const *  offsets_A,
+                     int const *  ends_A,
+                     double const alpha,
+                     int const    tid_B,
+                     int const *  offsets_B,
+                     int const *  ends_B,
+                     double const beta);
+
+    /* read a block from tensor_id, 
+       new_tensor_id = tensor_id[offsets:ends] */
+/*    int read_block_tensor(int const   tensor_id,
+                          int const * offsets,
+                          int const * ends,
+                          int *       new_tensor_id);*/
 
 
     /* read tensor data with <key, value> pairs where key is the
        global index for the value, which gets filled in. */
     int read_tensor(int const               tensor_id,
-                    int64_t const           num_pair,
+                    long_int const          num_pair,
                     tkv_pair<dtype> * const mapped_data);
 
     /* read entire tensor with each processor (in packed layout).
        WARNING: will use a lot of memory. */
     int allread_tensor(int const  tensor_id,
-                       int64_t *  num_pair,
+                       long_int * num_pair,
                        dtype **   all_data);
 
 
@@ -292,7 +320,7 @@ class tCTF{
 
     /* read tensor data pairs local to processor. */
     int read_local_tensor(int const           tensor_id,
-                          int64_t *           num_pair,
+                          long_int *          num_pair,
                           tkv_pair<dtype> **  mapped_data);
 
     /* contracts tensors alpha*A*B + beta*C -> C,
@@ -302,24 +330,19 @@ class tCTF{
                  dtype const            beta);
 
     /* contracts tensors alpha*A*B + beta*C -> C,
-       accepts custom-sized buffer-space,
-       uses standard symmetric contraction sequential kernel */
-    int contract(CTF_ctr_type_t const * type,
-                 dtype *                buffer,
-                 int const              buffer_len,
-                 dtype const            alpha,
-                 dtype const            beta);
-
-    /* contracts tensors alpha*A*B + beta*C -> C,
-       accepts custom-sized buffer-space (set to NULL for dynamic allocs),
        seq_func used to perform sequential op */
     int contract(CTF_ctr_type_t const *     type,
-                 dtype *                    buffer,
-                 int const                  buffer_len,
                  fseq_tsr_ctr<dtype> const  func_ptr,
                  dtype const                alpha,
                  dtype const                beta,
                  int const                  map_inner = 0);
+    
+    /* contracts tensors alpha*A*B + beta*C -> C,
+       seq_func used to perform element-wise sequential op */
+    int contract(CTF_ctr_type_t const *     type,
+                 fseq_elm_ctr<dtype> const  felm,
+                 dtype const                alpha,
+                 dtype const                beta);
 
     /* DAXPY: a*A + B -> B. */
     int sum_tensors(dtype const  alpha,
@@ -345,7 +368,15 @@ class tCTF{
                     dtype const               alpha,
                     dtype const               beta,
                     fseq_tsr_sum<dtype> const func_ptr);
-
+    
+    /* DAXPY: a*idx_map_A(A) + b*idx_map_B(B) -> idx_map_B(B). */
+    int sum_tensors(dtype const               alpha,
+                    dtype const               beta,
+                    int const                 tid_A,
+                    int const                 tid_B,
+                    int const *               idx_map_A,
+                    int const *               idx_map_B,
+                    fseq_elm_sum<dtype> const felm);
 
     /* copy A into B. Realloc if necessary */
     int copy_tensor(int const tid_A, int const tid_B);
@@ -363,6 +394,16 @@ class tCTF{
                      int const                  tid,
                      int const *                idx_map_A,
                      fseq_tsr_scl<dtype> const  func_ptr);
+    
+    /* scale tensor by alpha. A <- a*A */
+    int scale_tensor(dtype const                alpha,
+                     int const                  tid,
+                     int const *                idx_map_A,
+                     fseq_elm_scl<dtype> const  felm);
+    
+    /* aligns tensor mapping of tid_A to that of tid_B */
+    int align(int const    tid_A,   
+              int const    tid_B);
 
     /* product will contain the dot prodiuct if tsr_A and tsr_B */
     int dot_tensor(int const tid_A, int const tid_B, dtype *product);
@@ -375,14 +416,24 @@ class tCTF{
                    dtype (*map_func)(int const ndim, int const * indices,
                                      dtype const elem));
 
+    /* obtains the largest n elements (in absolute value) of the tensor */
+    int get_max_abs(int const tid, int const n, dtype * data);
+
     /* Prints a tensor on one processor. */
-    int print_tensor(FILE * stream, int const tid);
+    int print_tensor(FILE * stream, int const tid, double cutoff = -1.0);
+
+    /* Compares two tensors on one processor. */
+    int compare_tensor(FILE * stream, int const tid_A, int const tid_B, double cutoff = -1.0);
 
     /* Prints contraction type. */
-    int print_ctr(CTF_ctr_type_t const * ctype) const;
+    int print_ctr(CTF_ctr_type_t const * ctype,
+                  dtype const            alpha,
+                  dtype const            beta) const;
 
     /* Prints sum type. */
-    int print_sum(CTF_sum_type_t const * stype) const;
+    int print_sum(CTF_sum_type_t const * stype,
+                  dtype const            alpha,
+                  dtype const            beta) const;
 
     /* Deletes all tensor handles. Invalidates all tensor ids. */
     int clean_tensors();
@@ -430,7 +481,6 @@ class tCTF{
                int const          tid_B,
                dtype const        BETA,
                int const          tid_C);
-
 
 };
 

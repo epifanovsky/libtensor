@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #ifndef __DIST_TENSOR_INTERNAL_H__
 #define __DIST_TENSOR_INTERNAL_H__
@@ -35,6 +13,9 @@
 #include "../ctr_seq/sym_seq_scl_ref.hxx"
 #include "../ctr_seq/sym_seq_sum_ref.hxx"
 #include "../ctr_seq/sym_seq_ctr_ref.hxx"
+#include "../ctr_seq/sym_seq_scl_cust.hxx"
+#include "../ctr_seq/sym_seq_sum_cust.hxx"
+#include "../ctr_seq/sym_seq_ctr_cust.hxx"
 #if VERIFY
 #include "../unit_test/unit_test.h"
 #endif
@@ -73,6 +54,8 @@ struct tensor {
   int * edge_len;
   int is_padded;
   int * padding;
+  int is_scp_padded;
+  int * scp_padding; /* to be used by scalapack wrapper */
   int * sym;
   int * sym_table; /* can be compressed into bitmap */
   int is_mapped;
@@ -88,18 +71,22 @@ struct tensor {
   int is_matrix;
   int is_data_aliased;
   int slay;
-  int need_remap;
   int has_zero_edge_len;
   union {
     dtype * data;
     tkv_pair <dtype> * pairs;
   };
+  dtype * home_buffer;
+  long_int home_size;
+  int is_home;
+  int has_home;
+  char const * name;
+  int profile;
 };
 
 
 
-int get_buffer_space(int const len, void ** const ptr);
-int free_buffer_space(void * ptr);
+
 template<typename dtype>
 int padded_reshuffle(int const          tid,
                      int const          ndim,
@@ -153,26 +140,31 @@ class seq_tsr_ctr : public ctr<dtype> {
     int ndim_A;
     int * edge_len_A;
     int const * idx_map_A;
-    int const * sym_A;
+    int * sym_A;
     int ndim_B;
     int * edge_len_B;
     int const * idx_map_B;
-    int const * sym_B;
+    int * sym_B;
     int ndim_C;
     int * edge_len_C;
     int const * idx_map_C;
-    int const * sym_C;
+    int * sym_C;
     fseq_tsr_ctr<dtype> func_ptr;
 
     int is_inner;
     iparam inner_params;
+    
+    int is_custom;
+    fseq_elm_ctr<dtype> custom_params;
 
     void run();
+    void print();
     long_int mem_fp();
     ctr<dtype> * clone();
 
     seq_tsr_ctr(ctr<dtype> * other);
-    ~seq_tsr_ctr(){ free(edge_len_A), free(edge_len_B), free(edge_len_C); };
+    ~seq_tsr_ctr(){ CTF_free(edge_len_A), CTF_free(edge_len_B), CTF_free(edge_len_C), 
+                    CTF_free(sym_A), CTF_free(sym_B), CTF_free(sym_C); }
     seq_tsr_ctr(){}
 };
 
@@ -182,22 +174,27 @@ class seq_tsr_sum : public tsum<dtype> {
     int ndim_A;
     int * edge_len_A;
     int const * idx_map_A;
-    int const * sym_A;
+    int * sym_A;
     int ndim_B;
     int * edge_len_B;
     int const * idx_map_B;
-    int const * sym_B;
+    int * sym_B;
     fseq_tsr_sum<dtype> func_ptr;
 
     int is_inner;
     int inr_stride;
+    
+    int is_custom;
+    fseq_elm_sum<dtype> custom_params;
 
     void run();
+    void print();
     long_int mem_fp();
     tsum<dtype> * clone();
 
     seq_tsr_sum(tsum<dtype> * other);
-    ~seq_tsr_sum(){ free(edge_len_A), free(edge_len_B); };
+    ~seq_tsr_sum(){ CTF_free(edge_len_A), CTF_free(edge_len_B), 
+                    CTF_free(sym_A), CTF_free(sym_B); };
     seq_tsr_sum(){}
 };
 
@@ -210,12 +207,16 @@ class seq_tsr_scl : public scl<dtype> {
     int const * sym;
     fseq_tsr_scl<dtype> func_ptr;
 
+    int is_custom;
+    fseq_elm_scl<dtype> custom_params;
+
     void run();
+    void print();
     long_int mem_fp();
     scl<dtype> * clone();
 
     seq_tsr_scl(scl<dtype> * other);
-    ~seq_tsr_scl(){ free(edge_len); };
+    ~seq_tsr_scl(){ CTF_free(edge_len); };
     seq_tsr_scl(){}
 };
 
@@ -231,10 +232,11 @@ class dist_tensor{
     int * phys_lda;
     std::vector< tensor<dtype>* > tensors;
     std::vector<topology> topovec;
+    std::vector<topology> rejected_topos;
 
     int inner_size;
     std::vector<topology> inner_topovec;
-
+    
 
   public:
 
@@ -261,7 +263,9 @@ class dist_tensor{
                       int const *       edge_len,
                       int const *       sym,
                       int *             tensor_id,
-                      int const         alloc_data = 1);
+                      int const         alloc_data = 1,
+                      char const *      name = NULL,
+                      int               profile = 0);
 
 
     int set_tsr_data(int const  tensor_id,
@@ -272,17 +276,39 @@ class dist_tensor{
     int get_dim(int const tensor_id) const;
     int * get_edge_len(int const tensor_id) const;
     int * get_sym(int const tensor_id) const;
-    dtype * get_raw_data(int const tensor_id, int64_t * size);
+    dtype * get_raw_data(int const tensor_id, long_int * size);
+    
+    /* set the tensor name */
+    int set_name(int const tensor_id, char const * name);
+    
+    /* get the tensor name */
+    int get_name(int const tensor_id, char const ** name);
+    
+    /* turn on profiling */
+    int profile_on(int const tensor_id);
+    
+    /* turn off profiling */
+    int profile_off(int const tensor_id);
+
 
     int get_tsr_info(int const tensor_id,
                      int * ndim,
                      int ** edge_len,
                      int ** sym) const;
 
+    int slice_tensor(int const    tid_A,
+                     int const *  offsets_A,
+                     int const *  ends_A,
+                     double const alpha,
+                     int const    tid_B,
+                     int const *  offsets_B,
+                     int const *  ends_B,
+                     double const beta);
+    
     int write_pairs(int const                 tensor_id,
                     long_int const            num_pair,
-                    double const              alpha,
-                    double const              beta,
+                    dtype const               alpha,
+                    dtype const               beta,
                     tkv_pair<dtype> * const   mapped_data,
                     char const                rw);
 
@@ -301,8 +327,37 @@ class dist_tensor{
                                 int const *                     idx_A,
                                 int const                       tid_B,
                                 int const *                     idx_B,
-                                fseq_tsr_sum<dtype> const       func_ptr,
-                                int const               inr_str=-1);
+                                fseq_tsr_sum<dtype> const       ftsr,
+                                fseq_elm_sum<dtype> const       felm,
+                                int const                       inr_str=-1);
+
+    int check_contraction(CTF_ctr_type_t const * type);
+    
+    int check_sum(CTF_sum_type_t const * type);
+
+    int check_sum(int const   tid_A, 
+                  int const   tid_B, 
+                  int const * idx_map_A, 
+                  int const * idx_map_B);
+    
+    /* DAXPY: a*idx_map_A(A) + b*idx_map_B(B) -> idx_map_B(B). */
+    int sym_sum_tsr(dtype const                 alpha,
+                    dtype const                 beta,
+                    CTF_sum_type_t const *      type,
+                    fseq_tsr_sum<dtype> const   ftsr,
+                    fseq_elm_sum<dtype> const   felm,
+                    int const                   run_diag = 0);
+
+    /* DAXPY: a*idx_map_A(A) + b*idx_map_B(B) -> idx_map_B(B). */
+    int home_sum_tsr( dtype const                 alpha,
+                      dtype const                 beta,
+                      int const                   tid_A,
+                      int const                   tid_B,
+                      int const *                 idx_map_A,
+                      int const *                 idx_map_B,
+                      fseq_tsr_sum<dtype> const   ftsr,
+                      fseq_elm_sum<dtype> const   felm,
+                      int const                   run_diag = 0);
 
     /* DAXPY: a*idx_map_A(A) + b*idx_map_B(B) -> idx_map_B(B). */
     int sum_tensors(dtype const                 alpha,
@@ -311,17 +366,18 @@ class dist_tensor{
                     int const                   tid_B,
                     int const *                 idx_map_A,
                     int const *                 idx_map_B,
-                    fseq_tsr_sum<dtype> const   func_ptr);
+                    fseq_tsr_sum<dtype> const   ftsr,
+                    fseq_elm_sum<dtype> const   felm,
+                    int const                   run_diag = 0);
 
-    ctr<dtype> * construct_contraction( CTF_ctr_type_t const *  type,
-                                        dtype *                 buffer,
-                                        int const               buffer_len,
-                                        fseq_tsr_ctr<dtype>     func_ptr,
-                                        dtype const             alpha,
-                                        dtype const             beta,
-                                        int const               is_inner=0,
-                                        iparam const *          inner_params=NULL,
-                                        int *                   nvirt_C = NULL);
+    ctr<dtype> * construct_contraction( CTF_ctr_type_t const *    type,
+                                        fseq_tsr_ctr<dtype> const ftsr,
+                                        fseq_elm_ctr<dtype> const felm,
+                                        dtype const               alpha,
+                                        dtype const               beta,
+                                        int const                 is_inner=0,
+                                        iparam const *            inner_params=NULL,
+                                        int *                     nvirt_C = NULL);
 
 /*    dtype align_symmetric_indices(int ndim_A, int* idx_A, int* sym_A,
                                 int ndim_B, int* idx_B, int* sym_B);
@@ -334,26 +390,30 @@ class dist_tensor{
                             int ndim_B, int* idx_B, int* sym_B,
                             int ndim_C, int* idx_C, int* sym_C);
 */
+    int home_contract(CTF_ctr_type_t const *    type,
+                      fseq_tsr_ctr<dtype> const ftsr,
+                      fseq_elm_ctr<dtype> const felm,
+                      dtype const               alpha,
+                      dtype const               beta,
+                      int const                 map_inner);
+
     int sym_contract( CTF_ctr_type_t const *    type,
-                      dtype *                   buffer,
-                      int const                 buffer_len,
-                      fseq_tsr_ctr<dtype> const func_ptr,
+                      fseq_tsr_ctr<dtype> const ftsr,
+                      fseq_elm_ctr<dtype> const felm,
                       dtype const               alpha,
                       dtype const               beta,
                       int const                 map_inner);
 
     int contract( CTF_ctr_type_t const *        type,
-                  dtype *                       buffer,
-                  int const                     buffer_len,
-                  fseq_tsr_ctr<dtype> const     func_ptr,
+                  fseq_tsr_ctr<dtype> const     ftsr,
+                  fseq_elm_ctr<dtype> const     felm,
                   dtype const                   alpha,
                   dtype const                   beta,
                   int const                     map_inner);
 
     int map_tensors(CTF_ctr_type_t const *      type,
-                    dtype *                     buffer,
-                    int const                   buffer_len,
-                    fseq_tsr_ctr<dtype>         func_ptr,
+                    fseq_tsr_ctr<dtype> const   ftsr,
+                    fseq_elm_ctr<dtype> const   felm,
                     dtype const                 alpha,
                     dtype const                 beta,
                     ctr<dtype> **               ctrf,
@@ -368,6 +428,14 @@ class dist_tensor{
                         topology const *        topo,
                         int const               idx_num);
 
+    int map_weigh_indices(int const *             idx_arr,
+                          int const *             idx_weigh,
+                          int const               num_tot,
+                          int const               num_weigh,
+                          int const               tid_A,
+                          int const               tid_B,
+                          int const               tid_C,
+                          topology const *        topo);
 
     int map_ctr_indices(int const *             idx_arr,
                         int const *             idx_ctr,
@@ -418,13 +486,6 @@ class dist_tensor{
 
     int daxpy_local_tensor_pair(dtype alpha, const int tid_A, const int tid_B);
 
-    int sum_tsr(dtype const             alpha,
-                dtype const             beta,
-                int const               tid_A,
-                int const               tid_B,
-                int const *             idx_A,
-                int const *             idx_B,
-                fseq_tsr_sum<dtype>     func_ptr);
 
     int cpy_tsr(int const tid_A, int const tid_B);
 
@@ -433,10 +494,11 @@ class dist_tensor{
 
     int scale_tsr(dtype const alpha, int const tid);
 
-    int scale_tsr(dtype const                           alpha,
-                  int const                               tid,
-                  int const *                           idx_map,
-                  fseq_tsr_scl<dtype> const     func_ptr);
+    int scale_tsr(dtype const                   alpha,
+                  int const                     tid,
+                  int const *                   idx_map,
+                  fseq_tsr_scl<dtype> const     ftsr,
+                  fseq_elm_scl<dtype> const     felm);
 
     int dot_loc_tsr(int const tid_A, int const tid_B, dtype *product);
 
@@ -448,16 +510,26 @@ class dist_tensor{
                 dtype (*map_func)(int const ndim, int const * indices,
                        dtype const elem));
 
+    int get_max_abs( int const  tid,
+                     int const  n,
+                     dtype *    data);
+
     int set_zero_tsr(int const tensor_id);
 
-    int print_tsr(FILE * stream, int const tid);
+    int print_tsr(FILE * stream, int const tid, double cutoff = -1.0);
+
+    int compare_tsr(FILE * stream, int const tid_A, int const tid_B, double cutoff = -1.0);
 
     int print_map(FILE * stream, int const tid,
                   int const all=1, int const is_inner=0) const;
 
-    int print_ctr(CTF_ctr_type_t const * ctype) const;
+    int print_ctr(CTF_ctr_type_t const * ctype,
+                  dtype const            alpha,
+                  dtype const            beta) const;
 
-    int print_sum(CTF_sum_type_t const * stype) const;
+    int print_sum(CTF_sum_type_t const * stype,
+                  dtype const            alpha,
+                  dtype const            beta) const;
 
     int zero_out_padding(int const tensor_id);
 
@@ -476,7 +548,8 @@ class dist_tensor{
                         int *           idx_arr,
                         int *           idx_ctr,
                         int *           idx_extra,
-                        int *           idx_no_ctr);
+                        int *           idx_no_ctr,
+                        int *           idx_weigh);
 
     int map_inner(CTF_ctr_type_t const * type,
                   iparam * inner_params);
@@ -543,6 +616,9 @@ class dist_tensor{
     int unfold_broken_sym(CTF_ctr_type_t const *        type,
                           CTF_ctr_type_t *              new_type);
 
+    int unfold_broken_sym(CTF_sum_type_t const *        type,
+                          CTF_sum_type_t *              new_type);
+
     void dealias(int const sym_tid, int const nonsym_tid);
 
     void desymmetrize(int const sym_tid,
@@ -559,11 +635,6 @@ class dist_tensor{
     int is_equal_type(CTF_ctr_type_t const *       old_type,
                       CTF_ctr_type_t const *       new_type);
 
-/*  void get_sym_perms(CTF_ctr_type_t const *   type,
-                       dtype const              alpha,
-                       int *                    nperm,
-                       CTF_ctr_type_t **        perms,
-                       dtype **                 signs);*/
     void order_perm(tensor<dtype> const * tsr_A,
                     tensor<dtype> const * tsr_B,
                     tensor<dtype> const * tsr_C,
@@ -586,6 +657,34 @@ class dist_tensor{
                       std::vector<dtype>&             signs, 
                       CTF_ctr_type_t const *          new_perm,
                       dtype const                     new_sign);
+    
+    void copy_type(CTF_sum_type_t const *       old_type,
+                   CTF_sum_type_t *             new_type);
+    
+    void free_type(CTF_sum_type_t * old_type);
+    
+    int is_equal_type(CTF_sum_type_t const *       old_type,
+                      CTF_sum_type_t const *       new_type);
+
+    void order_perm(tensor<dtype> const * tsr_A,
+                    tensor<dtype> const * tsr_B,
+                    int *                 idx_arr,
+                    int const             off_A,
+                    int const             off_B,
+                    int *                 idx_map_A,
+                    int *                 idx_map_B,
+                    dtype &               add_sign,
+                    int &                  mod);
+
+    void get_sym_perms(CTF_sum_type_t const *           type,
+                       dtype const                      alpha,
+                       std::vector<CTF_sum_type_t>&     perms,
+                       std::vector<dtype>&              signs);
+
+    void add_sym_perm(std::vector<CTF_sum_type_t>&    perms,
+                      std::vector<dtype>&             signs, 
+                      CTF_sum_type_t const *          new_perm,
+                      dtype const                     new_sign);
 
     void get_len_ordering(CTF_sum_type_t const *        type,
                           int **                        new_ordering_A,
@@ -596,6 +695,13 @@ class dist_tensor{
                           int **                        new_ordering_B,
                           int **                        new_ordering_C);
 
+    int extract_diag(int const    tid,
+                     int const *  idx_map,
+                     int const    rw,
+                     int *        tid_new,
+                     int **       idx_map_new);
+
+    void contract_mst();
 
     int elementalize(int const          tid,
                      int const          x_rank,
@@ -634,8 +740,13 @@ class dist_tensor{
                fseq_tsr_ctr<dtype> * pfs,
                int *            need_free);
 
-    double GET_REAL(dtype const d) const;
 };
+inline double GET_REAL(double const d) {
+  return d;
+}
+inline  double GET_REAL(std::complex<double> const d) {
+  return d.real();
+}
 
 #include "dist_tensor_internal.cxx"
 #include "scala_backend.cxx"

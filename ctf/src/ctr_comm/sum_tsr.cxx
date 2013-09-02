@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #include "../shared/util.h"
 #include "sum_tsr.h"
@@ -42,7 +20,7 @@ tsum<dtype>::tsum(tsum<dtype> * other){
  */
 template<typename dtype>
 tsum_virt<dtype>::~tsum_virt() {
-  free(virt_dim);
+  CTF_free(virt_dim);
   delete rec_tsum;
 }
 
@@ -54,7 +32,7 @@ tsum_virt<dtype>::tsum_virt(tsum<dtype> * other) : tsum<dtype>(other) {
   tsum_virt * o         = (tsum_virt*)other;
   rec_tsum      = o->rec_tsum->clone();
   num_dim       = o->num_dim;
-  virt_dim      = (int*)malloc(sizeof(int)*num_dim);
+  virt_dim      = (int*)CTF_alloc(sizeof(int)*num_dim);
   memcpy(virt_dim, o->virt_dim, sizeof(int)*num_dim);
 
   ndim_A        = o->ndim_A;
@@ -101,9 +79,7 @@ void tsum_virt<dtype>::run(){
     idx_arr = (int*)this->buffer;
   } else {
     alloced = 1;
-    ret = posix_memalign((void**)&idx_arr,
-                         ALIGN_BYTES,
-                         mem_fp());
+    ret = CTF_alloc_ptr(mem_fp(), (void**)&idx_arr);
     LIBT_ASSERT(ret==0);
   }
   
@@ -130,7 +106,7 @@ do {                                                                    \
 #undef SET_LDA_X
   
   /* dynammically determined size */ 
-  beta_arr = (int*)malloc(sizeof(int)*nb_B);
+  beta_arr = (int*)CTF_alloc(sizeof(int)*nb_B);
  
   memset(idx_arr, 0, num_dim*sizeof(int));
   memset(beta_arr, 0, nb_B*sizeof(int));
@@ -157,9 +133,9 @@ do {                                                                    \
     if (i==num_dim) break;
   }
   if (alloced){
-    free(idx_arr);
+    CTF_free(idx_arr);
   }
-  free(beta_arr);
+  CTF_free(beta_arr);
   TAU_FSTOP(sum_virt);
 }
 
@@ -172,9 +148,9 @@ template<typename dtype>
 tsum_replicate<dtype>::~tsum_replicate() {
   delete rec_tsum;
   if (ncdt_A > 0)
-    free(cdt_A);
+    CTF_free(cdt_A);
   if (ncdt_B > 0)
-    free(cdt_B);
+    CTF_free(cdt_B);
 }
 
 /**

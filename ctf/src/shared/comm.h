@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following 
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #ifndef __COMM_H__
 #define __COMM_H__
@@ -39,6 +17,7 @@
  *                                                       *
  *********************************************************/
 #include "mpi.h"
+#include "util.h"
 
 //typedef MPI_Comm COMM;
 
@@ -63,7 +42,7 @@ do {                                    \
     _cdt->nreq  = 10;                   \
     _cdt->nbcast = 10;                  \
     _cdt->req = (MPI_Request*)          \
-        malloc(sizeof(MPI_Request)*10); \
+        CTF_alloc(sizeof(MPI_Request)*10); \
 } while (0)
     
 #define RINIT_COMM(numPes, myRank, nr, nb, cdt)                 \
@@ -80,7 +59,7 @@ do {                                    \
   MPI_Comm_size(MPI_COMM_WORLD, &numPes);                       \
   cdt->alive = 1;                                               \
   MPI_Comm_rank(MPI_COMM_WORLD, &myRank);                       \
-  cdt->req = (MPI_Request*)malloc(sizeof(MPI_Request)*nr);      \
+  cdt->req = (MPI_Request*)CTF_alloc(sizeof(MPI_Request)*nr);      \
   cdt->cm = MPI_COMM_WORLD;                                     \
   cdt->np = numPes;                                             \
   cdt->rank = myRank;                                           \
@@ -95,7 +74,7 @@ do {                                    \
 #define SETUP_SUB_COMM(cdt_master, cdt, commrank, bcolor, p, nr, nb)    \
   do {                                                                  \
   cdt->alive    = 1;                                                    \
-  cdt->req      = (MPI_Request*)malloc(sizeof(MPI_Request)*nr);         \
+  cdt->req      = (MPI_Request*)CTF_alloc(sizeof(MPI_Request)*nr);         \
   cdt->nreq     = nr;                                                   \
   cdt->nbcast   = nb;                                                   \
   cdt->rank     = commrank;                                             \
@@ -241,7 +220,7 @@ do {                                    \
 #define FREE_CDT(cdt)                           \
   do {                                          \
   if (cdt->alive == 1){                         \
-    free(cdt->req);                             \
+    CTF_free(cdt->req);                         \
     if (cdt->cm != MPI_COMM_WORLD)              \
       MPI_Comm_free(&(cdt->cm));                \
     cdt->alive = 0;                             \

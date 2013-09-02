@@ -1,26 +1,4 @@
-/* Copyright (c) 2011, Edgar Solomonik>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following
- * conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *        notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *        notice, this list of conditions and the following disclaimer in the
- *        documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL EDGAR SOLOMONIK BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE. */
+/*Copyright (c) 2011, Edgar Solomonik, all rights reserved.*/
 
 #ifndef __UTIL_H__
 #define __UTIL_H__
@@ -32,11 +10,18 @@
 #include <stdint.h>
 #include <math.h>
 #include <algorithm>
+#include <list>
 #include <vector>
 #include <complex>
 #include <unistd.h>
 #include "comm.h"
 
+#ifdef PROFILE
+#define TAU
+#endif
+#include "timer.h"
+
+#define USE_OMP
 
 typedef int64_t long_int;
 volatile static long_int long_int_max = INT64_MAX;
@@ -50,13 +35,20 @@ volatile static long_int long_int_max = INT64_MAX;
 #define ENABLE_ASSERT 0
 #endif
 #endif
-#ifndef HOPPER
+#ifdef _SC_PHYS_PAGES
 inline
 uint64_t getTotalSystemMemory()
 {
   uint64_t pages = (uint64_t)sysconf(_SC_PHYS_PAGES);
   uint64_t page_size = (uint64_t)sysconf(_SC_PAGE_SIZE);
   return pages * page_size;
+}
+#else
+inline
+uint64_t getTotalSystemMemory()
+{
+  //Assume system memory is 1 GB
+  return ((uint64_t)1)<<30;
 }
 #endif
 
@@ -193,7 +185,7 @@ do { printf("warning: "); printf(__VA_ARGS__); printf("\n"); } while(0)
   #endif
 #endif
 
-#ifdef TAU
+/*#ifdef TAU
 #include <stddef.h>
 #include <Profile/Profiler.h>
 #define TAU_FSTART(ARG)                                 \
@@ -203,16 +195,20 @@ do { printf("warning: "); printf(__VA_ARGS__); printf("\n"); } while(0)
 #define TAU_FSTOP(ARG)                                  \
     TAU_PROFILE_STOP(timer##ARG)
 
-#else
+#else*/
+#ifndef TAU
 #define TAU_PROFILE(NAME,ARG,USER)
 #define TAU_PROFILE_TIMER(ARG1, ARG2, ARG3, ARG4)
+#define TAU_PROFILER_CREATE(ARG1, ARG2, ARG3, ARG4)
 #define TAU_PROFILE_STOP(ARG)
 #define TAU_PROFILE_START(ARG)
+#define TAU_PROFILE_SET_NODE(ARG)
+#define TAU_PROFILE_SET_CONTEXT(ARG)
 #define TAU_FSTART(ARG)
 #define TAU_FSTOP(ARG)
 #endif
 
-#if (defined(TAU) || defined(COMM_TIME))
+#if (defined(COMM_TIME))
 #define INIT_IDLE_TIME                  \
   volatile double __idleTime=0.0;       \
   volatile double __idleTimeDelta=0.0;
@@ -304,6 +300,36 @@ void __CM(const int     end,
 #define SUM_CRIT_TIME(cdt, p)
 #endif
 
+#define MST_ALIGN_BYTES ALIGN_BYTES
+
+/*class CTF_mst {
+
+  public:
+    CTF_mst(int64_t size);
+    ~CTF_mst();
+
+    void alloc(int const len);
+
+
+}*/
+
+struct mem_transfer {
+  void * old_ptr;
+  void * new_ptr;
+};
+
+std::list<mem_transfer> CTF_contract_mst();
+int CTF_alloc_ptr(int const len, void ** const ptr);
+int CTF_mst_alloc_ptr(int const len, void ** const ptr);
+void * CTF_alloc(int const len);
+void * CTF_mst_alloc(int const len);
+int CTF_free(void * ptr, int const tid);
+int CTF_free(void * ptr);
+int CTF_untag_mem(void * ptr);
+int CTF_free_cond(void * ptr);
+void CTF_mem_create();
+void CTF_mst_create(long_int size);
+void CTF_mem_exit(int rank);
 
 void cdgemm(const char transa,  const char transb,
             const int m,        const int n,
@@ -378,9 +404,9 @@ void print_matrix(double *M, int n, int m);
 
 //double util_dabs(double x);
 
-int64_t sy_packed_size(const int ndim, const int* len, const int* sym);
+long_int sy_packed_size(const int ndim, const int* len, const int* sym);
 
-int64_t packed_size(const int ndim, const int* len, const int* sym);
+long_int packed_size(const int ndim, const int* len, const int* sym);
 
 void factorize(int n, int *nfactor, int **factor);
 
@@ -557,5 +583,24 @@ void cxaxpy< std::complex<double> >
 }
 
 
+int conv_idx(int const  ndim,
+             char const *  cidx,
+             int **     iidx);
 
+int  conv_idx(int const         ndim_A,
+              char const *         cidx_A,
+              int **            iidx_A,
+              int const         ndim_B,
+              char const *         cidx_B,
+              int **            iidx_B);
+
+int  conv_idx(int const         ndim_A,
+              char const *         cidx_A,
+              int **            iidx_A,
+              int const         ndim_B,
+              char const *         cidx_B,
+              int **            iidx_B,
+              int const         ndim_C,
+              char const *         cidx_C,
+              int **            iidx_C);
 #endif
