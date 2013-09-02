@@ -12,14 +12,14 @@ namespace libtensor {
 /** \brief Elementwise multiplication of two block tensors
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_mult :
     public additive_gen_bto<N, btod_traits::bti_traits>,
     public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;

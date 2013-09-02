@@ -22,7 +22,7 @@ namespace libtensor {
 
     Marked deprecated!!! Will be removed when interface has been generalized.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_sum :
@@ -30,7 +30,7 @@ class btod_sum :
     public timings< btod_sum<N> > {
 
 public:
-    static const char* k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;

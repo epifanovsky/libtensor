@@ -2,6 +2,8 @@
 #define LIBTENSOR_DIAG_TENSOR_H
 
 #include <map>
+#include <libtensor/core/immutable.h>
+#include <libtensor/core/noncopyable.h>
 #include "diag_tensor_i.h"
 #include "diag_tensor_space.h"
 
@@ -16,7 +18,9 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N, typename T, typename Alloc>
-class diag_tensor : public diag_tensor_i<N, T> {
+class diag_tensor :
+    public diag_tensor_i<N, T>, public immutable, public noncopyable {
+
 public:
     static const char *k_clazz; //!< Class name
 
@@ -136,16 +140,18 @@ protected:
 
     //@}
 
+    //! \name Implementation of immutable
+    //@{
+
+    virtual void on_set_immutable();
+
+    //@}
+
 private:
     /** \brief Returns true if there are no checked-out pointers,
             false otherwise
      **/
     bool verify_nocoptr();
-
-private:
-    /** \brief Private copy constructor
-     **/
-    diag_tensor(const diag_tensor&);
 
 };
 

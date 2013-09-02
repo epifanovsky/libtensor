@@ -368,7 +368,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
     std::cout<<std::endl;
     index<2> idxi;
     idxi[0] = 0;
-    int pos0 = 0;
+    size_t pos0 = 0;
 
     for(size_t i =0;i < size;i++)
     {
@@ -379,7 +379,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
         }
 
         idxi[1] = 0;
-        int pos1 = 0;
+        size_t pos1 = 0;
 
         for(size_t j =0;j < size;j++)
         {
@@ -446,7 +446,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
         }
 
         idxi[1] = 0;
-        int pos1 = 0;
+        size_t pos1 = 0;
 
         for(size_t j = 0; j < size; j++)
         {
@@ -496,7 +496,7 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
         }
 
         idxi[1] = 0;
-        int pos1 = 0;
+        size_t pos1 = 0;
 
         for(size_t j =0;j < size;j++)
         {

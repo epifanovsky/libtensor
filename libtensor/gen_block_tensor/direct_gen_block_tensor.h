@@ -13,7 +13,7 @@ namespace libtensor {
     \tparam N Tensor order.
     \tparam BtTraits Block tensor traits.
 
-    \ingroup libtensor_core
+    \ingroup libtensor_gen_block_tensor
  **/
 template<size_t N, typename BtTraits>
 class direct_gen_block_tensor :

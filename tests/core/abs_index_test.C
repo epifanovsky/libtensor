@@ -1,3 +1,4 @@
+#include <sstream>
 #include <libtensor/core/abs_index.h>
 #include "abs_index_test.h"
 
@@ -17,12 +18,13 @@ void abs_index_test::perform() throw(libtest::test_exception) {
     test_inc_4();
     test_last_1();
     test_get_index_1();
+    test_get_index_2();
 }
 
 
-void abs_index_test::test_ctor_1() throw(libtest::test_exception) {
+void abs_index_test::test_ctor_1() {
 
-    static const char *testname = "abs_index_test::test_ctor_1()";
+    static const char testname[] = "abs_index_test::test_ctor_1()";
 
     try {
 
@@ -44,9 +46,9 @@ void abs_index_test::test_ctor_1() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_ctor_2() throw(libtest::test_exception) {
+void abs_index_test::test_ctor_2() {
 
-    static const char *testname = "abs_index_test::test_ctor_2()";
+    static const char testname[] = "abs_index_test::test_ctor_2()";
 
     try {
 
@@ -68,9 +70,9 @@ void abs_index_test::test_ctor_2() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_ctor_3() throw(libtest::test_exception) {
+void abs_index_test::test_ctor_3() {
 
-    static const char *testname = "abs_index_test::test_ctor_3()";
+    static const char testname[] = "abs_index_test::test_ctor_3()";
 
     try {
 
@@ -92,9 +94,9 @@ void abs_index_test::test_ctor_3() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_ctor_4() throw(libtest::test_exception) {
+void abs_index_test::test_ctor_4() {
 
-    static const char *testname = "abs_index_test::test_ctor_4()";
+    static const char testname[] = "abs_index_test::test_ctor_4()";
 
     try {
 
@@ -116,9 +118,9 @@ void abs_index_test::test_ctor_4() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_ctor_5() throw(libtest::test_exception) {
+void abs_index_test::test_ctor_5() {
 
-    static const char *testname = "abs_index_test::test_ctor_5()";
+    static const char testname[] = "abs_index_test::test_ctor_5()";
 
     try {
 
@@ -144,9 +146,9 @@ void abs_index_test::test_ctor_5() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_inc_1() throw(libtest::test_exception) {
+void abs_index_test::test_inc_1() {
 
-    static const char *testname = "abs_index_test::test_inc_1()";
+    static const char testname[] = "abs_index_test::test_inc_1()";
 
     try {
 
@@ -176,9 +178,9 @@ void abs_index_test::test_inc_1() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_inc_2() throw(libtest::test_exception) {
+void abs_index_test::test_inc_2() {
 
-    static const char *testname = "abs_index_test::test_inc_2()";
+    static const char testname[] = "abs_index_test::test_inc_2()";
 
     try {
 
@@ -247,9 +249,9 @@ void abs_index_test::test_inc_2() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_inc_3() throw(libtest::test_exception) {
+void abs_index_test::test_inc_3() {
 
-    static const char *testname = "abs_index_test::test_inc_3()";
+    static const char testname[] = "abs_index_test::test_inc_3()";
 
     try {
 
@@ -293,9 +295,9 @@ void abs_index_test::test_inc_3() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_inc_4() throw(libtest::test_exception) {
+void abs_index_test::test_inc_4() {
 
-    static const char *testname = "abs_index_test::test_inc_4()";
+    static const char testname[] = "abs_index_test::test_inc_4()";
 
     try {
 
@@ -325,9 +327,9 @@ void abs_index_test::test_inc_4() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_inc_5() throw(libtest::test_exception) {
+void abs_index_test::test_inc_5() {
 
-    static const char *testname = "abs_index_test::test_inc_5()";
+    static const char testname[] = "abs_index_test::test_inc_5()";
 
     try {
 
@@ -370,9 +372,9 @@ void abs_index_test::test_inc_5() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_last_1() throw(libtest::test_exception) {
+void abs_index_test::test_last_1() {
 
-    static const char *testname = "abs_index_test::test_last_1()";
+    static const char testname[] = "abs_index_test::test_last_1()";
 
     try {
 
@@ -402,9 +404,9 @@ void abs_index_test::test_last_1() throw(libtest::test_exception) {
 }
 
 
-void abs_index_test::test_get_index_1() throw(libtest::test_exception) {
+void abs_index_test::test_get_index_1() {
 
-    static const char *testname = "abs_index_test::test_get_index_1()";
+    static const char testname[] = "abs_index_test::test_get_index_1()";
 
     try {
 
@@ -424,6 +426,74 @@ void abs_index_test::test_get_index_1() throw(libtest::test_exception) {
     if(!i2.equals(i_ref)) {
         fail_test(testname, __FILE__, __LINE__, "!i2.equals(i_ref)");
     }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void abs_index_test::test_get_index_2() {
+
+    static const char testname[] = "abs_index_test::test_get_index_2()";
+
+    try {
+
+        index<2> i1, i2;
+        i2[0] = 5; i2[1] = 9;
+        dimensions<2> dims1(index_range<2>(i1, i2));
+        i2[0] = 9; i2[1] = 5;
+        dimensions<2> dims2(index_range<2>(i1, i2));
+
+        index<2> i, i_ref;
+
+        magic_dimensions<2> mdims1(dims1, true);
+        if(!mdims1.get_dims().equals(dims1)) {
+            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (1)");
+        }
+        abs_index<2>::get_index(34, mdims1, i);
+        i_ref[0] = 3; i_ref[1] = 4;
+        if(!i.equals(i_ref)) {
+            std::ostringstream ss;
+            ss << "Bad index (1): " << i << " vs. " << i_ref << " (ref)";
+            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        }
+
+        magic_dimensions<2> mdims2(mdims1);
+        if(!mdims2.get_dims().equals(dims1)) {
+            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (2)");
+        }
+        abs_index<2>::get_index(34, mdims2, i);
+        i_ref[0] = 3; i_ref[1] = 4;
+        if(!i.equals(i_ref)) {
+            std::ostringstream ss;
+            ss << "Bad index (2): " << i << " vs. " << i_ref << " (ref)";
+            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        }
+
+        mdims1.permute(permutation<2>().permute(0, 1));
+        if(!mdims1.get_dims().equals(dims2)) {
+            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (3)");
+        }
+        abs_index<2>::get_index(34, mdims1, i);
+        i_ref[0] = 5; i_ref[1] = 4;
+        if(!i.equals(i_ref)) {
+            std::ostringstream ss;
+            ss << "Bad index (3): " << i << " vs. " << i_ref << " (ref)";
+            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        }
+
+        mdims2.permute(permutation<2>());
+        if(!mdims2.get_dims().equals(dims1)) {
+            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (4)");
+        }
+        abs_index<2>::get_index(34, mdims2, i);
+        i_ref[0] = 3; i_ref[1] = 4;
+        if(!i.equals(i_ref)) {
+            std::ostringstream ss;
+            ss << "Bad index (4): " << i << " vs. " << i_ref << " (ref)";
+            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        }
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

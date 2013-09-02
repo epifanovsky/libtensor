@@ -20,6 +20,7 @@ private:
     void test_4(const std::string &id) throw(libtest::test_exception);
     void test_5(const std::string &id) throw(libtest::test_exception);
     void test_6(const std::string &id) throw(libtest::test_exception);
+    void test_7(const std::string &id) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

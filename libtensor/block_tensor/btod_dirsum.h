@@ -8,12 +8,6 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M>
-class btod_dirsum_clazz {
-public:
-    static const char *k_clazz;
-};
-
 
 /** \brief Computes the direct sum of two block tensors
     \tparam N Order of the first %tensor.
@@ -26,7 +20,7 @@ public:
     The order of %tensor indexes in the result can be specified using
     a permutation.
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M>
 class btod_dirsum :
@@ -34,10 +28,12 @@ class btod_dirsum :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;
+    typedef typename bti_traits::template wr_block_type<N + M>::type
+            wr_block_type;
     typedef tensor_transf<N + M, double> tensor_transf_type;
 
 private:
@@ -122,7 +118,7 @@ public:
 
     virtual void compute_block(
             const index<N + M> &ic,
-            dense_tensor_wr_i<N + M, double> &blkc) {
+            wr_block_type &blkc) {
 
         compute_block(true, ic, tensor_transf<N + M, double>(), blkc);
     }

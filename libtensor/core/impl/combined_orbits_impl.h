@@ -133,41 +133,90 @@ combined_orbits<N, T>::combined_orbits(
     q1.push_back(aidx);
     w1.push_back(aidx);
 
+    //  Q: queue for work to do
+    //  W: visited indices (including those in queue)
+    //  T: temporary arrays
+
     while(!q1.empty() || !q2.empty()) {
 
         if(!q1.empty()) {
+
+            //  O1 := orbit(S1, idx)
             build_orbit(sym1, q1.back(), o1);
             q1.pop_back();
+
+            //  T1 := union(O1, W2)
             t1.resize(o1.size() + w2.size());
-            t2.resize(o1.size());
             typename std::vector<size_t>::iterator i1 = std::set_union(
                 o1.begin(), o1.end(), w2.begin(), w2.end(), t1.begin());
+            t1.resize(i1 - t1.begin());
+
+            //  T2 := diff(O1, W2) -- not yet visited in S2, to be added to Q2
+            t2.resize(o1.size());
             typename std::vector<size_t>::iterator i2 = std::set_difference(
                 o1.begin(), o1.end(), w2.begin(), w2.end(), t2.begin());
-            t1.resize(i1 - t1.begin());
+            t2.resize(i2 - t2.begin());
+
+            //  W2 := T1
             std::swap(w2, t1);
-            q2.insert(q2.end(), t2.begin(), i2);
+
+            //  Q2 := union(Q2, T2)
+            t1.resize(q2.size() + t2.size());
+            typename std::vector<size_t>::iterator i3 = std::set_union(
+                q2.begin(), q2.end(), t2.begin(), t2.end(), t1.begin());
+            t1.resize(i3 - t1.begin());
+            std::swap(q2, t1);
+
+            //  Q1 := diff(Q1, O1)
+            t1.resize(q1.size());
+            typename std::vector<size_t>::iterator i4 = std::set_difference(
+                q1.begin(), q1.end(), o1.begin(), o1.end(), t1.begin());
+            t1.resize(i4 - t1.begin());
+            std::swap(q1, t1);
         }
 
         if(!q2.empty()) {
+
+            //  O1 := orbit(S2, idx)
             build_orbit(sym2, q2.back(), o1);
             q2.pop_back();
+
+            //  T1 := union(O1, W1)
             t1.resize(o1.size() + w1.size());
-            t2.resize(o1.size());
             typename std::vector<size_t>::iterator i1 = std::set_union(
                 o1.begin(), o1.end(), w1.begin(), w1.end(), t1.begin());
+            t2.resize(o1.size());
+            t1.resize(i1 - t1.begin());
+
+            //  T2 := diff(O1, W1)
             typename std::vector<size_t>::iterator i2 = std::set_difference(
                 o1.begin(), o1.end(), w1.begin(), w1.end(), t2.begin());
-            t1.resize(i1 - t1.begin());
+            t2.resize(i2 - t2.begin());
+
+            //  W1 := T1
             std::swap(w1, t1);
-            q1.insert(q1.end(), t2.begin(), i2);
+
+            //  Q1 := union(Q1, T2)
+            t1.resize(q1.size() + t2.size());
+            typename std::vector<size_t>::iterator i3 = std::set_union(
+                q1.begin(), q1.end(), t2.begin(), t2.end(), t1.begin());
+            t1.resize(i3 - t1.begin());
+            std::swap(q1, t1);
+
+            //  Q2 := diff(Q2, O1)
+            t1.resize(q2.size());
+            typename std::vector<size_t>::iterator i4 = std::set_difference(
+                q2.begin(), q2.end(), o1.begin(), o1.end(), t1.begin());
+            t1.resize(i4 - t1.begin());
+            std::swap(q2, t1);
         }
     }
+
+    //  O1 := W1 (all visited indices)
     std::swap(w1, o1);
 
     while(!o1.empty()) {
         m_orb.push_back(o1[0]);
-        o2.clear();
         build_orbit(sym3, o1[0], o2);
         o3.resize(o1.size());
         typename std::vector<size_t>::iterator i = std::set_difference(

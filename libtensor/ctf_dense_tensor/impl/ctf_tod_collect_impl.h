@@ -5,11 +5,10 @@
 #include <vector>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
+#include <ctf/src/dist_tensor/dist_tensor_internal.h> // for free_buffer_space
 #include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_collect.h"
-
-int free_buffer_space(void * ptr);
 
 namespace libtensor {
 

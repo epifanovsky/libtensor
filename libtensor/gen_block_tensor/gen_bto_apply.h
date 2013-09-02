@@ -45,7 +45,7 @@ namespace libtensor {
     The symmetry of the result tensor is determined by the symmetry operation
     so_apply. The use of this symmetry operation can result in the need to
     construct %tensor blocks from forbidden input %tensor blocks. Forbidden
-    %tensor blocks are then treated as if they where zero.
+    %tensor blocks are then treated as if they were zero.
 
     The traits class has to provide definitions for
     - \c element_type -- Type of data elements

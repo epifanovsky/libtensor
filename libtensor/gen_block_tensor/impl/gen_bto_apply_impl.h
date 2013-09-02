@@ -85,7 +85,7 @@ gen_bto_apply<N, Functor, Traits, Timed>::gen_bto_apply(
         gen_block_tensor_rd_i<N, bti_traits> &bta, const functor_type &fn,
         const scalar_transf_type &tr1, const tensor_transf_type &tr2) :
 
-    m_bta(bta), m_fn(fn), m_tr1(tr1), m_tr2(tr2),
+	m_fn(fn), m_bta(bta), m_tr1(tr1), m_tr2(tr2),
     m_bis(mk_bis(m_bta.get_bis(), tr2.get_perm())),
     m_bidims(m_bis.get_block_index_dims()), m_sym(m_bis), m_sch(m_bidims) {
 
@@ -196,7 +196,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
     }
 
     //  Find the canonical index in A
-    abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
+    abs_index<N> acia(oa.get_acindex(), bidimsa);
 
     //  Transformation for block from canonical A to B
     const tensor_transf_type &tra = oa.get_transf(ia);
@@ -263,7 +263,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::make_schedule() {
             orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
             if (! oa.is_allowed()) continue;
 
-            abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
+            abs_index<N> acia(oa.get_acindex(), bidimsa);
             if (ctrla.req_is_zero_block(acia.get_index())) continue;
 
             m_sch.insert(ol.get_abs_index(io));

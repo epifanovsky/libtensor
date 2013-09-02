@@ -14,15 +14,17 @@ namespace libtensor {
     \tparam T Tensor element type.
 
     The transformation of a tensor is described by a permutation of tensor
-    indexes and a element-wise transformation applied to all tensor elements
+    indexes and an element-wise transformation applied to all tensor elements
     individually.
+
+    \sa scalar_transf
 
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>
 class tensor_transf {
-    scalar_transf<T> m_st; //!< Element-wise transformation
     permutation<N> m_perm; //!< Permutation
+    scalar_transf<T> m_st; //!< Element-wise transformation
 
 public:
     /** \brief Default constructor

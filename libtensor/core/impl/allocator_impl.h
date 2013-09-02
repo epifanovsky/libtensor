@@ -10,6 +10,7 @@
 #endif // WITHOUT_LIBVMM
 
 #include "../allocator.h"
+#include "../batching_policy_base.h"
 
 namespace libtensor {
 
@@ -74,6 +75,8 @@ void allocator<T>::init(size_t base_sz, size_t min_sz, size_t max_sz,
     m_base_sz = base_sz;
     m_min_sz = min_sz;
     m_max_sz = max_sz;
+    batching_policy_base::set_batch_size(
+        mem_limit / min_sz / base_sz / base_sz / base_sz / 2);
 }
 
 

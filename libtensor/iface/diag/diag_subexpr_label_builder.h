@@ -1,11 +1,10 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_SUBEXPR_LABEL_BUILDER_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_DIAG_SUBEXPR_LABEL_BUILDER_H
 
+#include <libtensor/core/sequence.h>
+
 namespace libtensor {
 namespace labeled_btensor_expr {
-
-
-template<size_t N, typename T, typename Core> class expr;
 
 
 /** \brief Label builder for sub-expressions in diag
@@ -17,7 +16,7 @@ class diag_subexpr_label_builder {
 private:
     struct letter_array {
     private:
-        const letter *m_let[N];
+        sequence<N, const letter*> m_let;
     public:
         letter_array(const letter_expr<N - M + 1> &label_b,
             const letter &letter_diag,

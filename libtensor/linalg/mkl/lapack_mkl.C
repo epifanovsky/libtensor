@@ -148,6 +148,16 @@ int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
 }
 
 
+int lapack_dpotri(char uplo, size_t n, double *a, size_t lda) {
+
+    int mkl_n = n;
+    int mkl_lda = lda;
+    int mkl_info = 0;
+    dpotri(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
+    return mkl_info;
+}
+
+
 int lapack_dlarnv(size_t idist, int * iseed, size_t n, double *x) {
 
     int mkl_idist = idist;

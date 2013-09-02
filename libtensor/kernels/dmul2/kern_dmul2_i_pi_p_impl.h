@@ -61,10 +61,10 @@ kernel_base<LA, 2, 1> *kern_dmul2_i_pi_p<LA>::match(
 
     kernel_base<LA, 2, 1> *kern = 0;
 
-    if(kern = kern_dmul2_ij_pi_jp<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dmul2_ij_pi_pj<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dmul2_ij_pj_ip<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dmul2_ij_pj_pi<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dmul2_ij_pi_jp<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_ij_pi_pj<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_ij_pj_ip<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_ij_pj_pi<LA>::match(zz, in, out))) return kern;
 
     return new kern_dmul2_i_pi_p(zz);
 }

@@ -12,7 +12,7 @@ namespace libtensor {
 
 template<size_t N, size_t M, size_t K>
 struct btod_contract2_clazz {
-    static const char *k_clazz;
+    static const char k_clazz[];
 };
 
 
@@ -31,7 +31,7 @@ class btod_contract2 :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     enum {

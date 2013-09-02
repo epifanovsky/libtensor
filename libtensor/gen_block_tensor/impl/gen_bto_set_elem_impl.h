@@ -37,7 +37,7 @@ void gen_bto_set_elem<N, Traits>::perform(
                 "Block index not allowed by symmetry.");
 
     const tensor_transf<N, element_type> &tr = o.get_transf(bidx);
-    abs_index<N> abidx(o.get_abs_canonical_index(), bidims);
+    abs_index<N> abidx(o.get_acindex(), bidims);
 
     bool zero = ctrl.req_is_zero_block(abidx.get_index());
     wr_block_type &blk = ctrl.req_block(abidx.get_index());

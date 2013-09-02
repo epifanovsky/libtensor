@@ -42,7 +42,7 @@ namespace libtensor {
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_mult1 : public timings<Timed>, public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     //! Type of tensor elements
@@ -68,20 +68,22 @@ private:
 
 public:
     gen_bto_mult1(
-            gen_block_tensor_rd_i<N, bti_traits> &btb,
-            const tensor_transf_type &trb,
-            bool recip = false,
-            const scalar_transf<element_type> &c =
-                    scalar_transf<element_type>());
+        gen_block_tensor_rd_i<N, bti_traits> &btb,
+        const tensor_transf_type &trb,
+        bool recip = false,
+        const scalar_transf<element_type> &c = scalar_transf<element_type>());
 
     /** \brief Computes and writes the blocks of the result
         \param zero If false, add the result of the operation to the tensor
         \param bta Output tensor
      **/
-    void perform(bool zero, gen_block_tensor_i<N, bti_traits> &bta);
+    void perform(
+        bool zero,
+        gen_block_tensor_i<N, bti_traits> &bta);
+
 };
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_MULT1_H
+#endif // LIBTENSOR_GEN_BTO_MULT1_H

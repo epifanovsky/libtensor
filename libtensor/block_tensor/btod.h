@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_BTOD_H
 #define LIBTENSOR_BTOD_H
 
-namespace libtensor {
-
 #include "btod_add.h"
 #include "btod_apply.h"
 #include "btod_compare.h"
@@ -22,7 +20,5 @@ namespace libtensor {
 #include "btod_set.h"
 #include "btod_trace.h"
 #include "btod_vmpriority.h"
-
-} // namespace libtensor
 
 #endif // LIBTENSOR_BTOD_H

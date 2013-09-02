@@ -37,7 +37,7 @@ tod_dotprod<N>::tod_dotprod(dense_tensor_rd_i<N, double> &ta,
     const permutation<N> &perma, dense_tensor_rd_i<N, double> &tb,
     const permutation<N> &permb) :
 
-    m_ta(ta), m_perma(perma), m_tb(tb), m_permb(permb), m_c(1.0) {
+    m_ta(ta), m_tb(tb), m_perma(perma), m_permb(permb), m_c(1.0) {
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "
         "const permutation<N>&, dense_tensor_rd_i<N, double>&, "
@@ -57,7 +57,7 @@ tod_dotprod<N>::tod_dotprod(
         dense_tensor_rd_i<N, double> &tb,
         const tensor_transf<N, double> &trb) :
 
-    m_ta(ta), m_perma(tra.get_perm()), m_tb(tb), m_permb(trb.get_perm()),
+    m_ta(ta), m_tb(tb), m_perma(tra.get_perm()), m_permb(trb.get_perm()),
     m_c(tra.get_scalar_tr().get_coeff() * trb.get_scalar_tr().get_coeff()){
 
     static const char *method = "tod_dotprod(dense_tensor_rd_i<N, double>&, "

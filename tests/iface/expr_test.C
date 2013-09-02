@@ -86,11 +86,11 @@ void expr_test::test_2() throw(libtest::test_exception) {
     bispace<1> sv(7); sv.split(2).split(3).split(5);
 
     bispace<2> sov(so|sv);
-    bispace<4> sooov(so&so&so|sv), soovv(so&so|sv&sv), sovvv(so|sv&sv&sv),
-        svvvv(sv&sv&sv&sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)),
+		sovvv(so|(sv&sv&sv)), svvvv(sv&sv&sv&sv);
 
     bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
-    bispace<4> sovov(so1|sv1|so2|sv2, so1&so2|sv1&sv2);
+    bispace<4> sovov(so1|sv1|so2|sv2, (so1&so2)|(sv1&sv2));
 
     btensor<2> t1(sov);
     btensor<4> t2(soovv);
@@ -107,7 +107,7 @@ void expr_test::test_2() throw(libtest::test_exception) {
     btod_random<4>().perform(i_ovvv);
     btod_random<4>().perform(i5_vvvv);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, j, k, a, b, c, d;
 
     i3_ovvv(i|a|b|c) =
           i_ovvv(i|a|b|c)
@@ -133,11 +133,11 @@ void expr_test::test_3() throw(libtest::test_exception) {
     bispace<1> sv(4); sv.split(2);
 
     bispace<2> sov(so|sv);
-    bispace<4> sooov(so&so&so|sv), soovv(so&so|sv&sv), sovvv(so|sv&sv&sv),
-        svvvv(sv&sv&sv&sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)),
+		sovvv(so|(sv&sv&sv)), svvvv(sv&sv&sv&sv);
 
     bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
-    bispace<4> sovov(so1|sv1|so2|sv2, so1&so2|sv1&sv2);
+    bispace<4> sovov(so1|sv1|so2|sv2, (so1&so2)|(sv1&sv2));
 
     btensor<2> t1(sov);
     btensor<4> t2(soovv);
@@ -158,7 +158,7 @@ void expr_test::test_3() throw(libtest::test_exception) {
     btod_random<4>().perform(t2);
     btod_random<4>().perform(i1_ovov);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, k, b, c;
 
     i1_ovov(i|b|k|c) = t2(i|k|b|c) - t1(i|c) * t1(k|b);
 
@@ -178,11 +178,11 @@ void expr_test::test_4() throw(libtest::test_exception) {
     bispace<1> sv(4); sv.split(2);
 
     bispace<2> sov(so|sv);
-    bispace<4> sooov(so&so&so|sv), soovv(so&so|sv&sv), sovvv(so|sv&sv&sv),
-        svvvv(sv&sv&sv&sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)),
+		sovvv(so|(sv&sv&sv)), svvvv(sv&sv&sv&sv);
 
     bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
-    bispace<4> sovov(so1|sv1|so2|sv2, so1&so2|sv1&sv2);
+    bispace<4> sovov(so1|sv1|so2|sv2, (so1&so2)|(sv1&sv2));
 
     btensor<4> i_oovv(soovv), i_ovov(sovov), t2(soovv);
     btensor<4> i2_oovv(soovv);
@@ -211,7 +211,7 @@ void expr_test::test_4() throw(libtest::test_exception) {
     btod_random<4>().perform(i_ovov);
     btod_random<4>().perform(t2);
 
-    letter i, j, k, l, a, b, c, d;
+    letter j, k, l, a, b, c;
 
     i2_oovv(j|k|a|b) =
         i_ovov(k|a|j|b) - contract(l|c, i_oovv(k|l|b|c), t2(j|l|a|c));
@@ -232,8 +232,8 @@ void expr_test::test_5() throw(libtest::test_exception) {
     bispace<1> sv(4); sv.split(2);
 
     bispace<2> soo(so&so);
-    bispace<4> sooov(so&so&so|sv), soovv(so&so|sv&sv), sovvv(so|sv&sv&sv),
-        svvvv(sv&sv&sv&sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)),
+		sovvv(so|(sv&sv&sv)), svvvv(sv&sv&sv&sv);
 
     btensor<4> t1_oovv(soovv), t2_oovv(soovv);
     btensor<2> t3_oo(soo), t3_oo_ref(soo);
@@ -250,7 +250,7 @@ void expr_test::test_5() throw(libtest::test_exception) {
     btod_random<4>().perform(t1_oovv);
     btod_random<4>().perform(t2_oovv);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, j, k, a, b;
 
     t3_oo(i|j) = contract(k|a|b, t1_oovv(j|k|a|b), t2_oovv(i|k|a|b));
 
@@ -279,7 +279,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
     bispace<1> sv(4); sv.split(1).split(2).split(3);
 
     bispace<2> sov(so|sv);
-    bispace<4> soooo(so&so&so&so), sooov(so&so&so|sv), soovv(so&so|sv&sv);
+    bispace<4> soooo(so&so&so&so), sooov((so&so&so)|sv), soovv((so&so)|(sv&sv));
 
     btensor<4> i_oooo(soooo), i_ooov(sooov), i_oovv(soovv);
     btensor<2> t1(sov);
@@ -317,7 +317,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
     btod_random<2>().perform(t1);
     btod_random<4>().perform(t2);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, j, k, l, a, b;
 
     i4_oooo(i|j|k|l) =
           i_oooo(i|j|k|l)
@@ -405,10 +405,10 @@ void expr_test::test_7() throw(libtest::test_exception) {
     bispace<1> sv(4); sv.split(1).split(2).split(3);
 
     bispace<2> sov(so|sv);
-    bispace<4> sooov(so&so&so|sv), soovv(so&so|sv&sv), sovvv(so|sv&sv&sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)), sovvv(so|(sv&sv&sv));
 
     bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
-    bispace<4> sovov(so1|sv1|so2|sv2, so1&so2|sv1&sv2);
+    bispace<4> sovov(so1|sv1|so2|sv2, (so1&so2)|(sv1&sv2));
 
     btensor<4> i_ooov(sooov), i_oovv(soovv), i_ovov(sovov), i_ovvv(sovvv);
     btensor<2> t1(sov);
@@ -422,7 +422,7 @@ void expr_test::test_7() throw(libtest::test_exception) {
     btod_random<2>().perform(t1);
     btod_random<4>().perform(t2);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, j, k, a, b, c;
 
     i1_ovov(i|a|j|b) =
           i_ovov(i|a|j|b)
@@ -524,7 +524,7 @@ void expr_test::test_8() throw(libtest::test_exception) {
     bispace<1> sv(8); sv.split(2).split(4).split(6);
 
     bispace<2> soo(so&so);
-    bispace<4> soovv(so&so|sv&sv);
+    bispace<4> soovv((so&so)|(sv&sv));
 
     btensor<4> i_oovv(soovv), t2(soovv);
     btensor<2> f_oo(soo), f2_oo(soo);
@@ -578,7 +578,7 @@ void expr_test::test_8() throw(libtest::test_exception) {
     btod_random<4>().perform(i_oovv);
     btod_random<4>().perform(t2);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, j, k, a, b;
 
     f2_oo(i|j) = f_oo(i|j) + contract(k|a|b, i_oovv(j|k|a|b), t2(i|k|a|b));
 
@@ -645,7 +645,7 @@ void expr_test::test_9() throw(libtest::test_exception) {
     btod_set_diag<2>(1.0).perform(d1_oo);
     btod_random<2>().perform(f_oo);
 
-    letter i, j, k, l, a, b, c, d;
+    letter i, j;
 
         d2_oo(i|j) = dirsum(diag(i, i|j, f_oo(i|j)), -diag(j, i|j, f_oo(i|j)))
             + d1_oo(i|j);
@@ -685,7 +685,7 @@ void expr_test::test_10() throw(libtest::test_exception) {
 
     bispace<1> so(10); so.split(2).split(5).split(7);
     bispace<1> sx(15); sx.split(4);
-    bispace<3> soox(so&so|sx);
+    bispace<3> soox((so&so)|sx);
     bispace<4> soooo(so&so&so&so);
 
     btensor<3, double> b_oox(soox);

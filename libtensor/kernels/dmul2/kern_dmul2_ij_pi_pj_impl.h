@@ -61,8 +61,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_ij_pi_pj<LA>::match(
     zz.m_sic = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 2, 1> *kern = 0;
-
     return new kern_dmul2_ij_pi_pj(zz);
 }
 
@@ -83,7 +81,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_ij_pi_pj<LA>::match(
     //
 
     iterator_t ij = in.end();
-    size_t sjb_min = 0;
     for(iterator_t i = in.begin(); i != in.end(); i++) {
         if(i->stepa(0) == 0 && i->stepa(1) == 1 && i->stepb(0) == 1) {
             if(z.m_sic % i->weight()) continue;
@@ -101,8 +98,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_ij_pi_pj<LA>::match(
     zz.m_spb = z.m_spb;
     zz.m_sic = z.m_sic;
     in.splice(out.begin(), out, ij);
-
-    kernel_base<LA, 2, 1> *kern = 0;
 
     return new kern_dmul2_ij_pi_pj(zz);
 }

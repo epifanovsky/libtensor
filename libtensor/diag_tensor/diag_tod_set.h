@@ -2,6 +2,7 @@
 #define LIBTENSOR_DIAG_TOD_SET_H
 
 #include <libtensor/timings.h>
+#include <libtensor/core/noncopyable.h>
 #include "diag_tensor_i.h"
 
 namespace libtensor {
@@ -17,7 +18,7 @@ namespace libtensor {
     \ingroup libtensor_diag_tensor
  **/
 template<size_t N>
-class diag_tod_set : public timings< diag_tod_set<N> > {
+class diag_tod_set : public timings< diag_tod_set<N> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -34,9 +35,6 @@ public:
         \param ta Output tensor.
      **/
     void perform(diag_tensor_wr_i<N, double> &ta);
-
-private:
-    diag_tod_set(const diag_tod_set&);
 
 };
 

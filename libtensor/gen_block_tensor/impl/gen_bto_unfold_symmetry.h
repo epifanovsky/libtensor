@@ -29,6 +29,7 @@ public:
         gen_block_tensor_i<N, bti_traits> &bt);
 
     void perform(
+        const symmetry<N, element_type> &sym,
         const std::vector<size_t> &blst,
         gen_block_tensor_i<N, bti_traits> &bt);
 

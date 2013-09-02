@@ -132,6 +132,18 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
 }
 
 
+/** \brief LAPACK function dpotri (ESSL)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dpotri(char uplo, size_t n, double *a, size_t lda) {
+
+    int info = 0;
+    dpotri(&uplo, n, a, lda, info);
+    return info;
+}
+
+
 /** \brief LAPACK function dlarnv (ESSL)
 
     \ingroup libtensor_linalg

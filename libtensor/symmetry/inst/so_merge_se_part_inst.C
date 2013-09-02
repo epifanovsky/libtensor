@@ -148,8 +148,20 @@ template class symmetry_operation_impl< so_merge<12, 10, double>,
 template class symmetry_operation_impl< so_merge<12, 11, double>,
     se_part<1, double> >;
 
+template class symmetry_operation_impl< so_merge<13, 5, double>,
+    se_part<8, double> >;
+template class symmetry_operation_impl< so_merge<13, 6, double>,
+    se_part<7, double> >;
+template class symmetry_operation_impl< so_merge<13, 7, double>,
+    se_part<6, double> >;
+
+template class symmetry_operation_impl< so_merge<14, 6, double>,
+    se_part<8, double> >;
 template class symmetry_operation_impl< so_merge<14, 7, double>,
     se_part<7, double> >;
+
+template class symmetry_operation_impl< so_merge<15, 7, double>,
+    se_part<8, double> >;
 
 template class symmetry_operation_impl< so_merge<16, 8, double>,
     se_part<8, double> >;

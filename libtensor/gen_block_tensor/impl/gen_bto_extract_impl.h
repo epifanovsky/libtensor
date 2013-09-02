@@ -86,8 +86,9 @@ gen_bto_extract<N, M, Traits, Timed>::gen_bto_extract(
         const index<NA> &idxbl, const index<NA> &idxibl,
         const tensor_transf_type &tr) :
 
-    m_bta(bta), m_msk(m), m_idxbl(idxbl), m_idxibl(idxibl), m_tr(tr),
-    m_bis(mk_bis(bta.get_bis(), m_msk, m_tr.get_perm())), m_sym(m_bis),
+    m_bta(bta), m_msk(m), m_tr(tr),
+    m_bis(mk_bis(bta.get_bis(), m_msk, m_tr.get_perm())),
+    m_idxbl(idxbl), m_idxibl(idxibl), m_sym(m_bis),
     m_sch(m_bis.get_block_index_dims()) {
 
     permutation<NB> pinv(m_tr.get_perm(), true);
@@ -186,7 +187,7 @@ void gen_bto_extract<N, M, Traits, Timed>::compute_block_untimed(
 
     orbit<NA, element_type> oa(ca.req_const_symmetry(), idxa);
 
-    abs_index<NA> cidxa(oa.get_abs_canonical_index(),
+    abs_index<NA> cidxa(oa.get_acindex(),
             m_bta.get_bis().get_block_index_dims());
     tensor_transf<NA, element_type> tra(oa.get_transf(idxa));
     tra.invert();
@@ -298,7 +299,6 @@ void gen_bto_extract<N, M, Traits, Timed>::make_schedule() {
     gen_bto_extract::start_timer("make_schedule");
 
     gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
-    dimensions<NA> bidimsa = m_bta.get_bis().get_block_index_dims();
 
     permutation<NB> pinv(m_tr.get_perm(), true);
 
@@ -319,7 +319,7 @@ void gen_bto_extract<N, M, Traits, Timed>::make_schedule() {
 
         orbit<NA, element_type> oa(ca.req_const_symmetry(), idxa);
 
-        abs_index<NA> cidxa(oa.get_abs_canonical_index(),
+        abs_index<NA> cidxa(oa.get_acindex(),
                 m_bta.get_bis().get_block_index_dims());
 
         if(!oa.is_allowed()) continue;

@@ -1,35 +1,43 @@
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/so_reduce_se_label.h>
+#include <libtensor/symmetry/print_symmetry.h>
 #include "so_reduce_se_label_test.h"
 
 namespace libtensor {
 
 void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string table_id = "S6";
-    setup_pg_table(table_id);
+    std::string id1 = "S6", id2 = "C2v";
+    setup_pg_table(id1);
+    setup_pg_table(id2);
 
     try {
 
-        test_empty_1(table_id);
-        test_empty_2(table_id);
-        test_nm1_1(table_id);
-        test_nm1_2(table_id, true);
-        test_nm1_2(table_id, false);
-        test_nm1_3(table_id, true);
-        test_nm1_3(table_id, false);
-        test_nm1_4(table_id);
-        test_nm1_5(table_id);
-        test_nmk_1(table_id);
-        test_nmk_2(table_id, true);
-        test_nmk_2(table_id, false);
+        test_empty_1(id1);
+        test_empty_2(id1);
+        test_nm1_1(id1);
+        test_nm1_2(id1, true);
+        test_nm1_2(id1, false);
+        test_nm1_3(id1, true);
+        test_nm1_3(id1, false);
+        test_nm1_4(id1);
+        test_nm1_5(id1);
+        test_nmk_1(id1);
+        test_nmk_2(id1, true);
+        test_nmk_2(id1, false);
+
+        test_nm1_6(id2);
 
     } catch (libtest::test_exception &e) {
-        clear_pg_table(table_id);
+        clear_pg_table(id1);
+        clear_pg_table(id2);
         throw;
     }
 
-    clear_pg_table(table_id);
+    clear_pg_table(id1);
+    clear_pg_table(id2);
+
+
 }
 
 
@@ -451,6 +459,76 @@ void so_reduce_se_label_test::test_nm1_5(
     std::vector<bool> rx(bidims2.get_size(), true);
 
     check_allowed(tns.c_str(), "el2", el2, rx);
+}
+
+
+/** \test Reduction of 2 dim of a 3-space on a 1-space in one step, with one
+        term being all-allowed.
+ **/
+void so_reduce_se_label_test::test_nm1_6(
+        const std::string &table_id) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_reduce_se_label_test::test_nm1_6(" << table_id << ")";
+    std::string tns(tnss.str());
+
+    typedef se_label<4, double> se4_t;
+    typedef se_label<6, double> se6_t;
+    typedef so_reduce<6, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
+
+    index<6> i1a, i1b;
+    i1b[0] = 1; i1b[1] = 1; i1b[2] = 1; i1b[3] = 7; i1b[4] = 1; i1b[5] = 1;
+    dimensions<6> bidims1(index_range<6>(i1a, i1b));
+    se6_t el1(bidims1, table_id);
+    {
+        block_labeling<6> &bl1 = el1.get_labeling();
+        mask<6> m1; m1[3] = true;
+        for (size_t i = 0; i < 8; i++) bl1.assign(m1, i, i % 4);
+        evaluation_rule<6> r1;
+        sequence<6, size_t> s1a(0), s1b(0);
+        s1a[3] = 1; s1a[5] = 1;
+        s1b[0] = 1; s1b[1] = 1; s1b[2] = 1; s1b[4] = 1;
+
+        product_rule<6> &pr1 = r1.new_product();
+        pr1.add(s1a, product_table_i::k_identity);
+        pr1.add(s1b, product_table_i::k_identity);
+        el1.set_rule(r1);
+    }
+
+    symmetry_element_set<6, double> set1(se6_t::k_sym_type);
+    symmetry_element_set<4, double> set2(se4_t::k_sym_type);
+
+    set1.insert(el1);
+    mask<6> m; m[4] = m[5] = true;
+    sequence<6, size_t> seq(0);
+    index<6> i2a, i2b;
+    i2b[0] = 4; i2b[1] = 4; i2b[2] = 4; i2b[3] = 0; i2b[4] = 4; i2b[5] = 4;
+    index_range<6> bir(i1a, i1b), ir(i2a, i2b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, bir, ir, set2);
+
+    so_reduce_se_t().perform(params);
+
+    if(set2.is_empty()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected a non-empty set.");
+    }
+
+    symmetry_element_set_adapter<4, double, se4_t> adapter(set2);
+    symmetry_element_set_adapter<4, double, se4_t>::iterator it =
+            adapter.begin();
+    const se4_t &el2 = adapter.get_elem(it);
+    it++;
+    if(it != adapter.end()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected only one element.");
+    }
+
+    const dimensions<4> &bidims2 = el2.get_labeling().get_block_index_dims();
+    std::vector<bool> rx(bidims2.get_size(), true);
+
+    check_allowed(tns.c_str(), "el2", el2, rx);
+
 }
 
 

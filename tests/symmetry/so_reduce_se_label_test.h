@@ -28,6 +28,8 @@ private:
             const std::string &table_id) throw(libtest::test_exception);
     void test_nm1_5(
             const std::string &table_id) throw(libtest::test_exception);
+    void test_nm1_6(
+    		const std::string &table_id) throw(libtest::test_exception);
     void test_nmk_1(
             const std::string &table_id) throw(libtest::test_exception);
     void test_nmk_2(const std::string &table_id,

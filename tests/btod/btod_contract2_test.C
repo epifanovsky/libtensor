@@ -2481,9 +2481,9 @@ throw(libtest::test_exception) {
 }
 
 /** \test Tests contraction \f$ c_{ij} = a_{ip} b_{jp} \f$.
-Dimensions [ij] = 10 (two blocks), [p] = 12 (two blocks).
-No symmetry in A, partition symmetry in B.
-Zero non-diagonal blocks.
+    Dimensions [ij] = 10 (two blocks), [p] = 12 (two blocks).
+    No symmetry in A, partition symmetry in B.
+    Zero non-diagonal blocks.
  **/
 void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
 
@@ -3070,9 +3070,9 @@ void btod_contract2_test::test_contr_25() {
     block_tensor<4, double, allocator_t> btc(bisc);
 
     {
-        block_tensor_wr_ctrl<3, double> ca(bta), cb(btb);
-        so_copy<3, double>(syma).perform(ca.req_symmetry());
-        so_copy<3, double>(symb).perform(cb.req_symmetry());
+    block_tensor_wr_ctrl<3, double> ca(bta), cb(btb);
+    so_copy<3, double>(syma).perform(ca.req_symmetry());
+    so_copy<3, double>(symb).perform(cb.req_symmetry());
     }
 
     btod_random<3>().perform(bta);

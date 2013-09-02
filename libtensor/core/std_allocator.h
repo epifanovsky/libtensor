@@ -2,6 +2,8 @@
 #define LIBTENSOR_STD_ALLOCATOR_H
 
 #include <new>
+#include "../defs.h"
+#include "batching_policy_base.h"
 
 namespace libtensor {
 
@@ -34,8 +36,11 @@ public:
         \param max_sz Largest block size in data elements.
         \param mem_limit Memory limit in data elements.
      **/
-    static void init(size_t base_sz, size_t min_sz, size_t max_sz, size_t mem_limit) {
+    static void init(size_t base_sz, size_t min_sz, size_t max_sz,
+        size_t mem_limit) {
 
+        batching_policy_base::set_batch_size(
+            mem_limit / min_sz / base_sz / base_sz / base_sz / 2);
     }
 
     /** \brief Shuts down the memory manager

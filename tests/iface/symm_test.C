@@ -192,7 +192,7 @@ void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(20);
     bispace<2> sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t0(sp_ijab);
     btensor<4> t1(sp_ijab);
@@ -236,7 +236,7 @@ void symm_test::test_asymm2_contr_tt_3() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(20);
     bispace<2> sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_ijab);
     btensor<2> t2(sp_ab);
@@ -274,7 +274,7 @@ void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(20);
     bispace<2> sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_ijab);
     btensor<2> t2(sp_ab);
@@ -314,8 +314,8 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
     bispace<1> sp_i(10), sp_a(20), sp_k(11);
     sp_i.split(3).split(5);
     sp_a.split(6).split(13);
-    bispace<4> sp_ijka(sp_i&sp_i|sp_k|sp_a), sp_kija(sp_k|sp_i&sp_i|sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i)|sp_k|sp_a), sp_kija(sp_k|(sp_i&sp_i)|sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_ijka), t2(sp_kija), t3(sp_ijab), t4(sp_ijka),
         t4_ref(sp_ijka), tt1(sp_ijka);
@@ -336,7 +336,7 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
     btod_copy<4>(t1).perform(t4_ref);
     btod_copy<4>(tt1).perform(t4_ref, -1.0);
 
-    letter i, j, k, l, a, b, c;
+    letter i, j, k, l, a, c;
     t4(i|j|k|a) = t1(i|j|k|a) - asymm(i, j, contract(l|c,
         t2(k|l|j|c), t3(i|l|a|c)));
 
@@ -367,7 +367,7 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
     sp_i.split(3).split(5).split(8);
     sp_a.split(6).split(10).split(16);
     bispace<2> sp_ia(sp_i|sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<2, double> t1(sp_ia);
     btensor<4, double> t2(sp_ijab), t3(sp_ijab), t3_ref(sp_ijab);
@@ -434,7 +434,7 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
     btod_copy<4>(t2).perform(t3_ref);
     op_symm.perform(t3_ref, 1.0);
 
-    letter i, j, k, l, a, b, c;
+    letter i, j, a, b;
     t3(i|j|a|b) = t2(i|j|a|b) + asymm(i, j, t1(i|a) * t1(j|b));
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
@@ -556,7 +556,7 @@ void symm_test::test_symm22_t_1() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_ijab), t2(sp_ijab), t2_ref(sp_ijab),
         t2_ref_tmp(sp_ijab);
@@ -593,7 +593,7 @@ void symm_test::test_asymm22_t_1() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_ijab), t2(sp_ijab), t2_ref(sp_ijab),
         t2_ref_tmp(sp_ijab);
@@ -630,7 +630,7 @@ void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2_ref(sp_ijka);
 
@@ -666,7 +666,7 @@ void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1(sp_ijka), t2a(sp_ijka), t2b(sp_ijka), t2_ref(sp_ijka);
 
@@ -702,7 +702,7 @@ void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1a(sp_ijab), t1b(sp_ijab), t1(sp_ijab),
         t2(sp_ijab), t2_ref(sp_ijab), t2_ref_tmp(sp_ijab);
@@ -743,7 +743,7 @@ void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1a(sp_ijab), t1b(sp_ijab), t1(sp_ijab),
         t2(sp_ijab), t2_ref(sp_ijab), t2_ref_tmp(sp_ijab);
@@ -784,7 +784,7 @@ void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1a(sp_ijka), t1b(sp_ijka), t1(sp_ijka), t2a(sp_ijka),
         t2b(sp_ijka), t2_ref(sp_ijka);
@@ -825,7 +825,7 @@ void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
     try {
 
     bispace<1> sp_i(10), sp_a(20);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1a(sp_ijka), t1b(sp_ijka), t1(sp_ijka), t2a(sp_ijka),
         t2b(sp_ijka), t2_ref(sp_ijka);

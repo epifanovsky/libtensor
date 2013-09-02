@@ -178,7 +178,7 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
     //  Find canonical index cia, transformation cia->ia
     //
     orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
-    abs_index<N> acia(oa.get_abs_canonical_index(), bidimsa);
+    abs_index<N> acia(oa.get_acindex(), bidimsa);
     const tensor_transf<N, element_type> &tra = oa.get_transf(ia);
 
     //  Build new diagonal mask and permutation in b
@@ -224,9 +224,6 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
 template<size_t N, size_t M, typename Traits, typename Timed>
 block_index_space<N - M + 1> gen_bto_diag<N, M, Traits, Timed>::mk_bis(
     const block_index_space<N> &bis, const mask<N> &msk) {
-
-    static const char *method =
-        "mk_bis(const block_index_space<N>&, const mask<N>&)";
 
     //  Create the mask for the subspace builder
     //
@@ -299,9 +296,9 @@ void gen_bto_diag<N, M, Traits, Timed>::make_schedule() {
         for(size_t i = 0; i < N; i++) idxa[i] = idxb[map[i]];
 
         orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
-        if(! ola.contains(oa.get_abs_canonical_index())) continue;
+        if(! ola.contains(oa.get_acindex())) continue;
 
-        abs_index<N> cidxa(oa.get_abs_canonical_index(), bidimsa);
+        abs_index<N> cidxa(oa.get_acindex(), bidimsa);
 
         if(ctrla.req_is_zero_block(cidxa.get_index())) continue;
 

@@ -149,7 +149,7 @@ void dot_product_test::test_et_1() throw(libtest::test_exception) {
     si.split(5);
     sa.split(10);
     bispace<2> sia(si|sa);
-    bispace<4> sijab(si&si|sa&sa);
+    bispace<4> sijab((si&si)|(sa&sa));
     btensor<2> bt1(sia), bt1a(sia);
     btensor<4> bt2(sijab);
 

@@ -36,6 +36,7 @@ void contract_test::perform() throw(libtest::test_exception) {
         test_et_3();
         test_ee_1();
         test_ee_2();
+        test_contract3_ttt_1();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -46,35 +47,36 @@ void contract_test::perform() throw(libtest::test_exception) {
 }
 
 
-namespace contract_test_ns {
+namespace {
 
 using labeled_btensor_expr::expr;
-using labeled_btensor_expr::core_contract;
+using labeled_btensor_expr::contract2_core;
 using labeled_btensor_expr::contract_subexpr_labels;
 
-template<size_t N, size_t M, size_t NM, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t NM, size_t K, typename T>
 void test_subexpr_labels_tpl(
-    expr<NM, T, core_contract<N, M, K, T, E1, E2> > e,
+    expr<NM, T> e,
     letter_expr<NM> label_c) {
 
-    contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels(e, label_c);
+    const contract2_core<N, M, K, T> &core =
+        dynamic_cast<const contract2_core<N, M, K, T>&>(e.get_core());
+    contract_subexpr_labels<N, M, K, T> subexpr_labels(core, label_c);
 }
 
-} // namespace contract_test_ns
-namespace ns = contract_test_ns;
+} // unnamed namespace
 
 
-void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
+void contract_test::test_subexpr_labels_1() {
 
-    const char *testname = "contract_test::test_subexpr_labels_1()";
+    const char testname[] = "contract_test::test_subexpr_labels_1()";
 
     try {
 
     bispace<1> spi(4), spa(5);
-    bispace<4> spijab(spi&spi|spa&spa);
+    bispace<4> spijab((spi&spi)|(spa&spa));
     btensor<4> ta(spijab), tb(spijab);
     letter i, j, k, l, a, b;
-    ns::test_subexpr_labels_tpl(
+    test_subexpr_labels_tpl<2, 2, 4, 2, double>(
         contract(a|b, ta(i|j|a|b), tb(k|l|a|b)),
         i|j|k|l);
 
@@ -84,9 +86,9 @@ void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_contr_bld_1() throw(libtest::test_exception) {
+void contract_test::test_contr_bld_1() {
 
-    const char *testname = "contract_test::test_contr_bld_1()";
+    const char testname[] = "contract_test::test_contr_bld_1()";
 
     try {
 
@@ -124,9 +126,9 @@ void contract_test::test_contr_bld_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_contr_bld_2() throw(libtest::test_exception) {
+void contract_test::test_contr_bld_2() {
 
-    const char *testname = "contract_test::test_contr_bld_2()";
+    const char testname[] = "contract_test::test_contr_bld_2()";
 
     try {
 
@@ -164,9 +166,9 @@ void contract_test::test_contr_bld_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_1() throw(libtest::test_exception) {
+void contract_test::test_tt_1() {
 
-    const char *testname = "contract_test::test_tt_1()";
+    const char testname[] = "contract_test::test_tt_1()";
 
     try {
 
@@ -200,9 +202,9 @@ void contract_test::test_tt_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_2() throw(libtest::test_exception) {
+void contract_test::test_tt_2() {
 
-    const char *testname = "contract_test::test_tt_2()";
+    const char testname[] = "contract_test::test_tt_2()";
 
     try {
 
@@ -237,9 +239,9 @@ void contract_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_3() throw(libtest::test_exception) {
+void contract_test::test_tt_3() {
 
-    const char *testname = "contract_test::test_tt_3()";
+    const char testname[] = "contract_test::test_tt_3()";
 
     try {
 
@@ -274,9 +276,9 @@ void contract_test::test_tt_3() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_4() throw(libtest::test_exception) {
+void contract_test::test_tt_4() {
 
-    const char *testname = "contract_test::test_tt_4()";
+    const char testname[] = "contract_test::test_tt_4()";
 
     try {
 
@@ -312,9 +314,9 @@ void contract_test::test_tt_4() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_5() throw(libtest::test_exception) {
+void contract_test::test_tt_5() {
 
-    const char *testname = "contract_test::test_tt_5()";
+    const char testname[] = "contract_test::test_tt_5()";
 
     try {
 
@@ -355,9 +357,9 @@ void contract_test::test_tt_5() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_6() throw(libtest::test_exception) {
+void contract_test::test_tt_6() {
 
-    const char *testname = "contract_test::test_tt_6()";
+    const char testname[] = "contract_test::test_tt_6()";
 
     try {
 
@@ -390,14 +392,14 @@ void contract_test::test_tt_6() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_7() throw(libtest::test_exception) {
+void contract_test::test_tt_7() {
 
-    const char *testname = "contract_test::test_tt_7()";
+    const char testname[] = "contract_test::test_tt_7()";
 
     try {
 
     bispace<1> sp_i(13), sp_a(7);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a), sp_iabc(sp_i|sp_a&sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a)), sp_iabc(sp_i|(sp_a&sp_a&sp_a));
 
     btensor<4> t1(sp_iabc);
     btensor<4> t2(sp_ijab);
@@ -428,9 +430,9 @@ void contract_test::test_tt_7() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_8() throw(libtest::test_exception) {
+void contract_test::test_tt_8() {
 
-    const char *testname = "contract_test::test_tt_8()";
+    const char testname[] = "contract_test::test_tt_8()";
 
     try {
 
@@ -438,7 +440,7 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
     sp_i.split(5);
     sp_a.split(2);
     bispace<2> sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1(sp_ijka), t2(sp_ijka);
     btensor<2> t3(sp_ab), t3_ref(sp_ab);
@@ -475,17 +477,17 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_9() throw(libtest::test_exception) {
+void contract_test::test_tt_9() {
 
-    const char *testname = "contract_test::test_tt_9()";
+    const char testname[] = "contract_test::test_tt_9()";
 
     try {
 
     bispace<1> sp_i(10), sp_a(20), sp_k(11);
     sp_i.split(3).split(5);
     sp_a.split(6).split(13);
-    bispace<4> sp_ijka(sp_i&sp_i|sp_k|sp_a), sp_kija(sp_k|sp_i&sp_i|sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i)|sp_k|sp_a), sp_kija(sp_k|(sp_i&sp_i)|sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_kija), t2(sp_ijab), t3(sp_ijka),
         t3_ref(sp_ijka);
@@ -500,7 +502,7 @@ void contract_test::test_tt_9() throw(libtest::test_exception) {
     contr.contract(3, 3);
     btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref);
 
-    letter i, j, k, l, a, b, c;
+    letter i, j, k, l, a, c;
     t3(i|j|k|a) = contract(l|c, t1(k|l|j|c), t2(i|l|a|c));
 
     {
@@ -520,9 +522,9 @@ void contract_test::test_tt_9() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_1() throw(libtest::test_exception) {
+void contract_test::test_te_1() {
 
-    const char *testname = "contract_test::test_te_1()";
+    const char testname[] = "contract_test::test_te_1()";
 
     try {
 
@@ -564,9 +566,9 @@ void contract_test::test_te_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_2() throw(libtest::test_exception) {
+void contract_test::test_te_2() {
 
-    const char *testname = "contract_test::test_te_2()";
+    const char testname[] = "contract_test::test_te_2()";
 
     try {
 
@@ -608,9 +610,9 @@ void contract_test::test_te_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_3() throw(libtest::test_exception) {
+void contract_test::test_te_3() {
 
-    const char *testname = "contract_test::test_te_3()";
+    const char testname[] = "contract_test::test_te_3()";
 
     try {
 
@@ -653,9 +655,9 @@ void contract_test::test_te_3() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_4() throw(libtest::test_exception) {
+void contract_test::test_te_4() {
 
-    const char *testname = "contract_test::test_te_4()";
+    const char testname[] = "contract_test::test_te_4()";
 
     try {
 
@@ -698,9 +700,9 @@ void contract_test::test_te_4() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_et_1() throw(libtest::test_exception) {
+void contract_test::test_et_1() {
 
-    const char *testname = "contract_test::test_et_1()";
+    const char testname[] = "contract_test::test_et_1()";
 
     try {
 
@@ -742,9 +744,9 @@ void contract_test::test_et_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_et_2() throw(libtest::test_exception) {
+void contract_test::test_et_2() {
 
-    const char *testname = "contract_test::test_et_2()";
+    const char testname[] = "contract_test::test_et_2()";
 
     try {
 
@@ -786,9 +788,9 @@ void contract_test::test_et_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_et_3() throw(libtest::test_exception) {
+void contract_test::test_et_3() {
 
-    const char *testname = "contract_test::test_et_3()";
+    const char testname[] = "contract_test::test_et_3()";
 
     try {
 
@@ -831,9 +833,9 @@ void contract_test::test_et_3() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_ee_1() throw(libtest::test_exception) {
+void contract_test::test_ee_1() {
 
-    const char *testname = "contract_test::test_ee_1()";
+    const char testname[] = "contract_test::test_ee_1()";
 
     try {
 
@@ -883,9 +885,9 @@ void contract_test::test_ee_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_ee_2() throw(libtest::test_exception) {
+void contract_test::test_ee_2() {
 
-    const char *testname = "contract_test::test_ee_2()";
+    const char testname[] = "contract_test::test_ee_2()";
 
     try {
 
@@ -934,6 +936,43 @@ void contract_test::test_ee_2() throw(libtest::test_exception) {
         i, t1a(a|c|d|i) + t1b(a|i|c|d), t2a(i|b) + t2b(b|i));
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void contract_test::test_contract3_ttt_1() {
+
+    const char testname[] = "contract_test::test_contract3_ttt_1()";
+
+    try {
+
+    bispace<1> o(10), v(20);
+    bispace<2> oo(o&o), ov(o|v);
+
+    btensor<2> t1(ov), t2(ov), t3(ov), t4(ov), t4_ref(ov);
+    btensor<2> tt(oo);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t2);
+    btod_random<2>().perform(t3);
+    t1.set_immutable();
+    t2.set_immutable();
+    t3.set_immutable();
+
+    contraction2<1, 1, 1> contr1;
+    contr1.contract(1, 1);
+    btod_contract2<1, 1, 1>(contr1, t1, t2).perform(tt);
+    contraction2<1, 1, 1> contr2;
+    contr2.contract(1, 0);
+    btod_contract2<1, 1, 1>(contr2, tt, t3).perform(t4_ref);
+
+    letter a, b, i, j;
+    t4(i|a) = contract(b, t1(i|b), t2(j|b), j, t3(j|a));
+
+    compare_ref<2>::compare(testname, t4, t4_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

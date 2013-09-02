@@ -289,7 +289,7 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
     std::cout<<std::endl;
     index<2> idxi;
     idxi[0] = 0;
-    int posv = 0;
+    size_t posv = 0;
 
     for(size_t i =0;i < size;i++)
     {
@@ -300,7 +300,7 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
         }
 
         idxi[1] = 0;
-        int posh = 0;
+        size_t posh = 0;
 
         for(size_t j =0;j < size;j++)
         {
@@ -351,7 +351,7 @@ void btod_tridiagonalize::print(block_tensor_i<2, double> &btb)
         }
 
         idxi[1] = 0;
-        int posh = 0;
+        size_t posh = 0;
 
         for(size_t j =0;j < size;j++)
         {

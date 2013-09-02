@@ -14,7 +14,7 @@ namespace libtensor {
 
     \sa gen_bto_copy
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N>
 class btod_copy :
@@ -22,7 +22,7 @@ class btod_copy :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;

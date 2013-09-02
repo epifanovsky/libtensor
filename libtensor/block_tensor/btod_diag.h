@@ -15,14 +15,14 @@ namespace libtensor {
 
     \sa gen_bto_diag
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M>
 class btod_diag :
     public additive_gen_bto<N - M + 1, btod_traits::bti_traits>,
     public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     typedef typename btod_traits::bti_traits bti_traits;

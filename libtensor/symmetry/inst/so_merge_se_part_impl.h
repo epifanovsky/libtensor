@@ -20,8 +20,6 @@ void
 symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    static const char *method = "do_perform(symmetry_operation_params_t&)";
-
     params.grp2.clear();
     if (params.grp1.is_empty()) return;
 

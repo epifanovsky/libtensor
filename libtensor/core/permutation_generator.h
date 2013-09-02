@@ -1,10 +1,8 @@
 #ifndef LIBTENSOR_PERMUTATION_GENERATOR_H
 #define LIBTENSOR_PERMUTATION_GENERATOR_H
 
-
 #include <vector>
 #include "mask.h"
-
 
 namespace libtensor {
 
@@ -25,7 +23,7 @@ namespace libtensor {
     The generated permutations in subsequent steps only differ by one pair
     permutation of successive items.
 
-    \ingroup libtensor_symmetry
+    \ingroup libtensor_core
  **/
 template<size_t N>
 class permutation_generator {

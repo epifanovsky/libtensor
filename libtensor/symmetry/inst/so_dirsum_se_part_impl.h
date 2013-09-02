@@ -18,8 +18,6 @@ void
 symmetry_operation_impl< so_dirsum<N, M, T>, se_part<NM, T> >::do_perform(
     symmetry_operation_params_t &params) const {
 
-    static const char *method = "do_perform(symmetry_operation_params_t&)";
-
     params.g3.clear();
 
     // Identity transform

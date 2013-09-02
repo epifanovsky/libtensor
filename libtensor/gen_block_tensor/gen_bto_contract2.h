@@ -29,7 +29,7 @@ namespace libtensor {
     The batch-wise formation of the result is done as follows
     \f[
       C = \sum_{ij} A_i B_j \qquad
-      A=\sum_i A_i \text{ and } B=\sum_i B_i
+      A=\sum_i A_i \mbox{ and } B=\sum_i B_i
     \f]
 
     TODO: Improve the way the batches are determined.

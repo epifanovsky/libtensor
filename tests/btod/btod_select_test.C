@@ -256,28 +256,7 @@ void btod_select_test::test_3a(size_t n,
 
     //  Fill in random data
     btod_random<2>().perform(bt);
-    {
-        block_tensor<2, double, allocator_t> btmp(bis);
-
-        block_tensor_ctrl<2, double> ca(bt), cb(btmp);
-        orbit_list<2, double> ol(ca.req_const_symmetry());
-        for (orbit_list<2, double>::iterator it = ol.begin();
-                it != ol.end(); it++) {
-
-            index<2> ia, ib;
-            ol.get_index(it, ia);
-            ol.get_index(it, ib);
-            dense_tensor_rd_i<2, double> &ta = ca.req_const_block(ia);
-            dense_tensor_wr_i<2, double> &tb = cb.req_block(ib);
-
-            tod_copy<2>(ta).perform(true, tb);
-
-            ca.ret_const_block(ia);
-            cb.ret_block(ib);
-        }
-
-        tod_btconv<2>(btmp).perform(t_ref);
-    }
+    tod_btconv<2>(bt).perform(t_ref);
 
     // Compute list
     ComparePolicy cmp;
@@ -286,7 +265,7 @@ void btod_select_test::test_3a(size_t n,
 
     // Compute reference list
     typename tod_select_t::list_type tlist;
-    tod_select_t(t_ref, cmp).perform(tlist, n);
+    tod_select_t(t_ref, cmp).perform(tlist, n * 2);
 
     // Compare against reference
     double last_value = 0.0;
@@ -567,7 +546,6 @@ void btod_select_test::test_4a(size_t n,
     static const char *testname = "btod_select_test::test_4a(size_t, bool)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -645,7 +623,6 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
     static const char *testname = "btod_select_test::test_4(size_t)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -728,7 +705,6 @@ void btod_select_test::test_4c(size_t n,
     static const char *testname = "btod_select_test::test_4c(size_t, bool)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -811,7 +787,6 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
     static const char *testname = "btod_select_test::test_5(size_t)";
 
     typedef std_allocator<double> allocator_t;
-    typedef tod_select<2, ComparePolicy> tod_select_t;
     typedef btod_select<2, ComparePolicy> btod_select_t;
 
     try {
@@ -873,7 +848,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 
             const tensor_transf<2, double> &tra = oa.get_transf(ib);
 
-            abs_index<2> ai(oa.get_abs_canonical_index(), bidims);
+            abs_index<2> ai(oa.get_acindex(), bidims);
             dense_tensor_rd_i<2, double> &ta =
                     ca.req_const_block(ai.get_index());
             dense_tensor_wr_i<2, double> &tb = cb.req_block(ib);

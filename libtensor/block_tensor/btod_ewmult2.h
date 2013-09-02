@@ -24,7 +24,7 @@ namespace libtensor {
 
     \sa tod_ewmult2, btod_contract2
 
-    \ingroup libtensor_btod
+    \ingroup libtensor_block_tensor_btod
  **/
 template<size_t N, size_t M, size_t K>
 class btod_ewmult2 :
@@ -32,7 +32,7 @@ class btod_ewmult2 :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     enum {

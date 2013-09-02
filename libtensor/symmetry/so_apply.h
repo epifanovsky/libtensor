@@ -60,11 +60,11 @@ public:
             (ignored if is_asym is true).
      **/
     so_apply(const symmetry<N, T> &sym1, const permutation<N> &perm1,
-            const scalar_transf<T> &s1, const scalar_transf<T> &s2,
-            bool keep_zero) :
-                m_sym1(sym1), m_perm1(perm1), m_keep_zero(keep_zero),
-                m_s1(s1), m_s2(s2)
-    { }
+		const scalar_transf<T> &s1, const scalar_transf<T> &s2,
+		bool keep_zero) : m_sym1(sym1), m_perm1(perm1),
+		m_s1(s1), m_s2(s2), m_keep_zero(keep_zero) {
+
+    }
 
     /** \brief Performs the operation
         \param sym Destination %symmetry container.
@@ -97,8 +97,8 @@ public:
             bool keep_zero_,
             symmetry_element_set<N, T> &grp2_) :
 
-                grp1(grp1_), perm1(perm1_), keep_zero(keep_zero_),
-                s1(s1_), s2(s2_), grp2(grp2_) { }
+                grp1(grp1_), perm1(perm1_), s1(s1_), s2(s2_),
+                keep_zero(keep_zero_), grp2(grp2_) { }
 
     virtual ~symmetry_operation_params() { }
 };

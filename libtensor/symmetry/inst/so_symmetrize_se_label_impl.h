@@ -11,7 +11,7 @@ namespace libtensor {
 template<size_t N, typename T>
 const char *
 symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::k_clazz =
-    "symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >";
+    "symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >";
 
 
 template<size_t N, typename T>

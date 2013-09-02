@@ -92,7 +92,7 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
         io != ol.end(); ++io) {
 
         orbit<N, double> o(sym, ol.get_abs_index(io));
-        abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+        abs_index<N> aci(o.get_acindex(), bidims);
 
         if(ctrl.req_is_zero_block(aci.get_index())) {
             verify_zero_orbit(ctrl, bidims, o);
@@ -106,7 +106,7 @@ void btod_import_raw_base<N, Alloc>::verify_and_set_symmetry(
         if (ol.contains(ai.get_abs_index())) continue;
 
         orbit<N, double> o(sym, ai.get_index());
-	if (ai.get_abs_index() != o.get_abs_canonical_index()) continue;
+	if (ai.get_abs_index() != o.get_acindex()) continue;
 
         if (! ctrl.req_is_zero_block(o.get_cindex())) {
             std::ostringstream ss;
@@ -136,12 +136,12 @@ void btod_import_raw_base<N, Alloc>::verify_zero_orbit(
     for(iterator_t i = o.begin(); i != o.end(); ++i) {
 
         //  Skip the canonical block
-        if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
+        if(o.get_abs_index(i) == o.get_acindex()) continue;
 
         //  Make sure the block is strictly zero
         abs_index<N> ai(o.get_abs_index(i), bidims);
         if(!ctrl.req_is_zero_block(ai.get_index())) {
-            abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+            abs_index<N> aci(o.get_acindex(), bidims);
             std::ostringstream ss;
             ss << "Asymmetry in zero block " << aci.get_index() << "->"
                 << ai.get_index() << ".";
@@ -164,13 +164,13 @@ void btod_import_raw_base<N, Alloc>::verify_nonzero_orbit(
     typedef typename orbit<N, double>::iterator iterator_t;
 
     //  Get the canonical block
-    abs_index<N> aci(o.get_abs_canonical_index(), bidims);
+    abs_index<N> aci(o.get_acindex(), bidims);
     dense_tensor_rd_i<N, double> &cblk = ctrl.req_const_block(aci.get_index());
 
     for(iterator_t i = o.begin(); i != o.end(); ++i) {
 
         //  Skip the canonical block
-        if(o.get_abs_index(i) == o.get_abs_canonical_index()) continue;
+        if(o.get_abs_index(i) == o.get_acindex()) continue;
 
         //  Current index and transformation
         abs_index<N> ai(o.get_abs_index(i), bidims);

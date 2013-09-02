@@ -8,6 +8,7 @@ namespace libtensor {
 void diag_tensor_space_test::perform() throw(libtest::test_exception) {
 
     test_1();
+    test_2();
 
     test_exc_1();
 }
@@ -107,6 +108,75 @@ void diag_tensor_space_test::test_1() throw(libtest::test_exception) {
         if(dts.get_nsubspaces() != 2) {
             fail_test(testname, __FILE__, __LINE__,
                 "dts.get_nsubspaces() != 2");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void diag_tensor_space_test::test_2() throw(libtest::test_exception) {
+
+    static const char *testname = "diag_tensor_space_test::test_2()";
+
+    try {
+
+        index<4> i1, i2;
+        i2[0] = 5; i2[1] = 6; i2[2] = 5; i2[3] = 6;
+        dimensions<4> dims(index_range<4>(i1, i2));
+
+        mask<4> m0101, m1010, m1111;
+        m0101[1] = true; m0101[3] = true;
+        m1010[0] = true; m1010[2] = true;
+        m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+        diag_tensor_subspace<4> dts1(2);
+        dts1.set_diag_mask(0, m0101);
+        dts1.set_diag_mask(1, m1010);
+
+        diag_tensor_space<4> dts(dims);
+
+        if(dts.get_nsubspaces() != 0) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_nsubspaces() != 0");
+        }
+
+        size_t ssn1 = dts.add_subspace(dts1);
+
+        if(dts.get_nsubspaces() != 1) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_nsubspaces() != 1");
+        }
+        if(dts.get_subspace_size(ssn1) != 7 * 6) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_subspace_size(ssn1) != 7 * 6");
+        }
+
+        std::vector<size_t> ssn;
+        dts.get_all_subspaces(ssn);
+        if(ssn.size() != 1) {
+            fail_test(testname, __FILE__, __LINE__, "ssn.size() != 1");
+        }
+        if(ssn[0] != ssn1) {
+            fail_test(testname, __FILE__, __LINE__, "ssn[0] != ssn1");
+        }
+
+        if(!m1111.equals(dts.get_subspace(ssn1).get_total_mask())) {
+            fail_test(testname, __FILE__, __LINE__,
+                "subspace 0101+1010 not found");
+        }
+        dts.remove_subspace(ssn1);
+
+        if(dts.get_nsubspaces() != 0) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_nsubspaces() != 0");
+        }
+
+        ssn1 = dts.add_subspace(dts1);
+        if(dts.get_nsubspaces() != 1) {
+            fail_test(testname, __FILE__, __LINE__,
+                "dts.get_nsubspaces() != 1");
         }
 
     } catch(exception &e) {
