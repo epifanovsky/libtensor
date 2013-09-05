@@ -5,7 +5,6 @@
 #include <vector>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <ctf/src/dist_tensor/dist_tensor_internal.h> // for free_buffer_space
 #include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_collect.h"
@@ -35,7 +34,8 @@ void ctf_tod_collect<N>::perform(dense_tensor_wr_i<N, double> &t) {
     ctf::get().allread_tensor(tid, &n, &data);
 
     if(n != sz) {
-        free_buffer_space(data);
+        //free_buffer_space(data);
+        free(data);
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "dt");
     }
 
@@ -44,7 +44,8 @@ void ctf_tod_collect<N>::perform(dense_tensor_wr_i<N, double> &t) {
     ::memcpy(p, data, sz * sizeof(double));
     ctrl.ret_dataptr(p);
 
-    free_buffer_space(data);
+    //free_buffer_space(data);
+    free(data);
 }
 
 

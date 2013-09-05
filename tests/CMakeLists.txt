@@ -276,6 +276,9 @@ else(HAVE_LIBVMM)
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
+set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
+    LINK_FLAGS ${OpenMP_CXX_FLAGS})
+
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor ctf ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)

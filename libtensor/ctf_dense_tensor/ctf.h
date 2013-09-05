@@ -1,8 +1,7 @@
 #ifndef LIBTENSOR_CTF_H
 #define LIBTENSOR_CTF_H
 
-#include <mpi.h>
-#include <ctf/src/dist_tensor/cyclopstf.hpp>
+#include <ctf.hpp>
 #include <libutil/singleton.h>
 
 namespace libtensor {

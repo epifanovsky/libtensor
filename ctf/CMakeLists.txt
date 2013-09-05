@@ -14,7 +14,8 @@ set(SRC_CTF
     src/shared/util.cxx
 )
 
-include_directories(include)
+set_property(SOURCE ${SRC_CTF} APPEND PROPERTY
+    COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
 
 add_definitions(-DINT64_MAX=9223372036854775807L)
 add_definitions(-DUINT64_MAX=18446744073709551615UL)

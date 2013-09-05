@@ -87,6 +87,10 @@ else()
     set(BLAS_LAPACK_LIBRARIES ${LAPACK_LIBRARIES})
 endif()
 
+#   Find OpenMP settings
+#
+find_package(OpenMP REQUIRED)
+
 #   Find MPI library
 #
 find_package(MPI REQUIRED)
@@ -95,6 +99,10 @@ if(MPI_CXX_FOUND)
 elseif(MPI_FOUND)
     include_directories(${MPI_INCLUDE_PATH})
 endif(MPI_CXX_FOUND)
+
+#   CTF directory
+#
+set(CTF_INCLUDE_DIR "${LIBTENSOR_DIR}/ctf/include")
 
 #   Libtensor dependencies (libraries)
 #

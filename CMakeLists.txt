@@ -19,7 +19,7 @@ if(HAVE_LIBVMM)
 endif(HAVE_LIBVMM)
 include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
-include_directories(${LIBTENSOR_DIR})
+include_directories(${LIBTENSOR_DIR} ${CTF_INCLUDE_DIR})
 
 add_subdirectory(ctf)
 add_subdirectory(libtensor)
