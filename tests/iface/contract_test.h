@@ -37,6 +37,7 @@ private:
     void test_et_3();
     void test_ee_1();
     void test_ee_2();
+    void test_ee_3();
 
     void test_contract3_ttt_1();
 
