@@ -3361,14 +3361,6 @@ void btod_contract2_test::test_contr_27() {
     btod_contract2<1, 1, 1>(c1, bta, btb).perform(btt);
     btod_contract2<1, 1, 1>(c2, btb, btt).perform(btc);
 
-    {
-    	block_tensor_base_ctrl<2, double> ct(btt), cc(btc);
-    	std::cout << "Sym(btt) ";
-    	std::cout << ct.req_const_symmetry() << std::endl;
-    	std::cout << "Sym(btc) ";
-    	std::cout << cc.req_const_symmetry() << std::endl;
-    }
-
     dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb),
     		tt(dimsb), tt_ref(dimsb), tc(dimsc), tc_ref(dimsc);
 

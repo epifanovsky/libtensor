@@ -2,6 +2,7 @@
 #define LIBTENSOR_SO_DIRPROD_SE_LABEL_IMPL_H
 
 #include "../combine_label.h"
+#include "../er_optimize.h"
 
 namespace libtensor {
 
@@ -160,7 +161,9 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
         }
 
         e3.get_labeling().match();
-        e3.set_rule(r3);
+        evaluation_rule<N + M> r3opt;
+        er_optimize<N + M>(r3, cl1.get_table_id()).perform(r3opt);
+        e3.set_rule(r3opt);
         params.g3.insert(e3);
     }
 
@@ -215,7 +218,9 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
 
         // Set the rule and finish off
         e3.get_labeling().match();
-        e3.set_rule(r3);
+        evaluation_rule<N + M> r3opt;
+        er_optimize<N + M>(r3, cl2.get_table_id()).perform(r3opt);
+        e3.set_rule(r3opt);
         params.g3.insert(e3);
     }
 }
