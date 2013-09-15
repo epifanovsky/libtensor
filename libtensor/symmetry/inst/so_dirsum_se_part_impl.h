@@ -4,7 +4,7 @@
 #include <map>
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/permutation_builder.h>
-#include "../combine_part.h"
+#include "combine_part.h"
 
 namespace libtensor {
 

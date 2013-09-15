@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_SO_DIRPROD_SE_LABEL_IMPL_H
 #define LIBTENSOR_SO_DIRPROD_SE_LABEL_IMPL_H
 
-#include "../combine_label.h"
-#include "../er_optimize.h"
+#include "combine_label.h"
+#include "er_optimize.h"
 
 namespace libtensor {
 

@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/er_optimize.h>
+#include <libtensor/symmetry/inst/er_optimize.h>
 #include "er_optimize_test.h"
 
 namespace libtensor {

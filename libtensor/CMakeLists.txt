@@ -14,7 +14,7 @@ set(SRC
     core/impl/subgroup_orbits.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
-    symmetry/adjacency_list.C
+    symmetry/inst/adjacency_list.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C

@@ -3,10 +3,10 @@
 
 #include <libtensor/defs.h>
 #include "../bad_symmetry.h"
-#include "../combine_label.h"
-#include "../er_merge.h"
-#include "../er_optimize.h"
 #include "../product_table_container.h"
+#include "combine_label.h"
+#include "er_merge.h"
+#include "er_optimize.h"
 
 namespace libtensor {
 

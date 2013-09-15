@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_COMBINE_PART_H
 #define LIBTENSOR_COMBINE_PART_H
 
-#include "se_part.h"
-#include "symmetry_element_set_adapter.h"
+#include "../se_part.h"
+#include "../symmetry_element_set_adapter.h"
 
 namespace libtensor {
 

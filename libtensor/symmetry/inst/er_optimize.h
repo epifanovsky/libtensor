@@ -2,7 +2,7 @@
 #define LIBTENSOR_ER_OPTIMIZE_H
 
 #include <libtensor/timings.h>
-#include "evaluation_rule.h"
+#include "../evaluation_rule.h"
 
 
 namespace libtensor {

@@ -5,7 +5,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
-#include "../combine_part.h"
+#include "combine_part.h"
 
 namespace libtensor {
 

@@ -1,5 +1,5 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include "../er_reduce.h"
+#include "er_reduce.h"
 #include "er_reduce_impl.h"
 
 namespace libtensor {

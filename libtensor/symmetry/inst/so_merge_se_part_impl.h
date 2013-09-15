@@ -6,7 +6,7 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/block_index_subspace_builder.h>
 #include <libtensor/core/abs_index.h>
-#include "../combine_part.h"
+#include "combine_part.h"
 
 namespace libtensor {
 

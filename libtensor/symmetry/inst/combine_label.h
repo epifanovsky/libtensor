@@ -2,7 +2,7 @@
 #define LIBTENSOR_COMBINE_LABEL_H
 
 #include <libtensor/exception.h>
-#include "se_label.h"
+#include "../se_label.h"
 
 namespace libtensor {
 

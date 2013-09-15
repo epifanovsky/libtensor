@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_SO_DIRSUM_SE_LABEL_IMPL_H
 #define LIBTENSOR_SO_DIRSUM_SE_LABEL_IMPL_H
 
-#include "../combine_label.h"
+#include "combine_label.h"
 
 namespace libtensor {
 
