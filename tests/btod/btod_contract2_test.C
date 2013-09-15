@@ -7,6 +7,7 @@
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/symmetry/permutation_group.h>
 #include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/print_symmetry.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
@@ -76,6 +77,7 @@ void btod_contract2_test::perform() throw(libtest::test_exception) {
     test_contr_24();
     test_contr_25();
     test_contr_26();
+    test_contr_27();
 
     //  Tests for the contraction of a block tensor with itself
 
@@ -3260,6 +3262,134 @@ void btod_contract2_test::test_contr_26() {
         throw;
     }
     product_table_container::get_instance().erase("d2h");
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+void btod_contract2_test::test_contr_27() {
+
+    const char testname[] = "btod_contract2_test::test_contr_27()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    point_group_table::label_t a1 = 0, a2 = 1, b1 = 2, b2 = 3;
+    std::vector<std::string> im(4);
+    im[a1] = "A1"; im[a2] = "A2"; im[b1] = "B1"; im[b2] = "B2";
+    point_group_table c2v("c2v", im, "A1");
+    c2v.add_product(a2, a2, a1);
+    c2v.add_product(a2, b1, b2);
+    c2v.add_product(a2, b2, b1);
+    c2v.add_product(b1, b1, a1);
+    c2v.add_product(b1, b2, a2);
+    c2v.add_product(b2, b2, a1);
+    c2v.check();
+    product_table_container::get_instance().add(c2v);
+
+    try {
+
+    index<2> i2a, i2b;
+    i2b[0] = 15; i2b[1] = 15;
+    dimensions<2> dimsa(index_range<2>(i2a, i2b));
+    i2b[1] = 13;
+    dimensions<2> dimsb(index_range<2>(i2a, i2b));
+    i2b[0] = 13; i2b[1] = 13;
+    dimensions<2> dimsc(index_range<2>(i2a, i2b));
+
+    mask<2> ma, mb;
+    ma[0] = ma[1] = mb[0] = true;
+
+    block_index_space<2> bisa(dimsa), bisb(dimsb), bisc(dimsc);
+    bisa.split(ma,  4); bisa.split(ma,  7);
+    bisa.split(ma,  8);
+    bisa.split(ma, 12); bisa.split(ma, 15);
+    bisb.split(mb,  4); bisb.split(mb,  7);
+    bisb.split(mb,  8);
+    bisb.split(mb, 12); bisb.split(mb, 15);
+
+    block_tensor<2, double, allocator_t> bta(bisa), btb(bisb),
+    		btt(bisb), btc(bisc);
+
+    // Setup symmetry
+    {
+    	block_tensor_wr_ctrl<2, double> ca(bta), cb(btb);
+    	symmetry<2, double> &sa = ca.req_symmetry(), &sb = cb.req_symmetry();
+
+    	sa.insert(se_perm<2, double>(permutation<2>().permute(0, 1),
+    			scalar_transf<double>(1.0)));
+
+        se_part<2, double> pa(bisa, ma, 2);
+        se_part<2, double> pb(bisb, mb, 2);
+        index<2> i00, i01, i10, i11;
+        i10[0] = 1; i01[1] = 1;
+        i11[0] = 1; i11[1] = 1;
+        pa.add_map(i00, i11, scalar_transf<double>(1.0));
+        pa.add_map(i01, i10, scalar_transf<double>(1.0));
+        pa.mark_forbidden(i01);
+        pb.add_map(i00, i10, scalar_transf<double>(1.0));
+        sa.insert(pa);
+        sb.insert(pb);
+
+        dimensions<2> bidimsa = bisa.get_block_index_dims();
+    	dimensions<2> bidimsb = bisb.get_block_index_dims();
+
+        se_label<2, double> la(bidimsa, "c2v");
+        se_label<2, double> lb(bidimsb, "c2v");
+        block_labeling<2> &bla = la.get_labeling();
+        block_labeling<2> &blb = lb.get_labeling();
+    	bla.assign(ma, 0, 0); bla.assign(ma, 1, 2); bla.assign(ma, 2, 3);
+    	bla.assign(ma, 3, 0); bla.assign(ma, 4, 2); bla.assign(ma, 5, 3);
+    	blb.assign(mb, 0, 0); blb.assign(mb, 1, 2); blb.assign(mb, 2, 3);
+    	blb.assign(mb, 3, 0); blb.assign(mb, 4, 2); blb.assign(mb, 5, 3);
+    	la.set_rule(0);
+    	lb.set_rule(product_table_i::k_invalid);
+    	sa.insert(la);
+    	sb.insert(lb);
+    }
+
+    btod_random<2>().perform(bta);
+    btod_random<2>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    contraction2<1, 1, 1> c1, c2;
+    c1.contract(1, 0);
+    c2.contract(0, 0);
+    btod_contract2<1, 1, 1>(c1, bta, btb).perform(btt);
+    btod_contract2<1, 1, 1>(c2, btb, btt).perform(btc);
+
+    {
+    	block_tensor_base_ctrl<2, double> ct(btt), cc(btc);
+    	std::cout << "Sym(btt) ";
+    	std::cout << ct.req_const_symmetry() << std::endl;
+    	std::cout << "Sym(btc) ";
+    	std::cout << cc.req_const_symmetry() << std::endl;
+    }
+
+    dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb),
+    		tt(dimsb), tt_ref(dimsb), tc(dimsc), tc_ref(dimsc);
+
+    tod_btconv<2>(bta).perform(ta);
+    tod_btconv<2>(btb).perform(tb);
+    tod_btconv<2>(btt).perform(tt);
+    tod_btconv<2>(btc).perform(tc);
+
+    tod_contract2<1, 1, 1>(c1, ta, tb).perform(true, tt_ref);
+    tod_contract2<1, 1, 1>(c2, tb, tt_ref).perform(true, tc_ref);
+
+    std::ostringstream ss_tb;
+    ss_tb << testname << " [tt]";
+    compare_ref<2>::compare(ss_tb.str().c_str(), tt, tt_ref, 1e-14);
+    compare_ref<2>::compare(testname, tc, tc_ref, 1e-14);
+
+    } catch(...) {
+        product_table_container::get_instance().erase("c2v");
+        throw;
+    }
+    product_table_container::get_instance().erase("c2v");
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
