@@ -26,6 +26,10 @@ public:
     symmetry_operation_params_t;
 
 public:
+    /** \brief Virtual destructor
+     **/
+    virtual ~symmetry_operation_impl_base() { }
+
     /** \brief Returns the %symmetry element class id
      **/
     virtual const char *get_id() const {

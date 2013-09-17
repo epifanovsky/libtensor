@@ -121,8 +121,6 @@ template<size_t N, typename T, typename Alloc>
 size_t diag_tensor<N, T, Alloc>::on_req_add_subspace(
     const session_handle_type &h, const diag_tensor_subspace<N> &ss) {
 
-    static const char *method = "on_req_add_subspace()";
-
     if(!verify_nocoptr()) {
         throw 0;
     }
@@ -167,8 +165,6 @@ void diag_tensor<N, T, Alloc>::on_req_remove_subspace(
 template<size_t N, typename T, typename Alloc>
 void diag_tensor<N, T, Alloc>::on_req_remove_all_subspaces(
     const session_handle_type &h) {
-
-    static const char *method = "on_req_remove_all_subspaces()";
 
     if(!verify_nocoptr()) {
         throw 0;
@@ -239,6 +235,12 @@ void diag_tensor<N, T, Alloc>::on_ret_dataptr(const session_handle_type &h,
     Alloc::unlock_rw(pr.vptr);
     pr.ptrcnt = 0;
     pr.dataptr = 0;
+}
+
+
+template<size_t N, typename T, typename Alloc>
+void diag_tensor<N, T, Alloc>::on_set_immutable() {
+
 }
 
 

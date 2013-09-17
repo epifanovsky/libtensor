@@ -9,7 +9,7 @@ namespace libtensor {
 
 
 template<size_t N>
-const char *btod_mult<N>::k_clazz = "btod_mult<N>";
+const char btod_mult<N>::k_clazz[] = "btod_mult<N>";
 
 
 template<size_t N>
@@ -29,9 +29,11 @@ void btod_mult<N>::perform(gen_block_tensor_i<N, bti_traits> &btc,
     typedef block_tensor_i_traits<double> bti_traits;
 
     gen_block_tensor_rd_ctrl<N, bti_traits> cc(btc);
+    std::vector<size_t> nzblkc;
+    cc.req_nonzero_blocks(nzblkc);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
             cc.req_const_symmetry());
-    asch.build(get_schedule(), cc);
+    asch.build(get_schedule(), nzblkc);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, btc, d);
     out.open();

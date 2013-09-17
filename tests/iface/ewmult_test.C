@@ -93,7 +93,7 @@ void ewmult_test::test_tt_2() throw(libtest::test_exception) {
     perm3.permute(1, 2).permute(0, 1);
     btod_ewmult2<1, 1, 1>(t1, perm1, t2, perm2, perm3).perform(t3_ref);
 
-    letter a, b, c, i;
+    letter a, b, i;
     t3(i|a|b) = ewmult(i, t1(i|a), t2(i|b));
 
     compare_ref<3>::compare(testname, t3, t3_ref, 1e-15);

@@ -5,6 +5,7 @@
 #include <libtensor/core/block_tensor_element.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/symmetry.h>
+#include <libtensor/core/transf_list.h>
 #include "gen_block_tensor_i.h"
 
 
@@ -118,6 +119,16 @@ public:
 
 
 private:
+    /** \brief Minimizes the list of tensor elements according to the list of
+     		block transformations
+        \param lst List of tensor elements
+        \param trl List of block transformations
+        \param dims Dimensions of current block
+     **/
+    void minimize_list(to_list_type &lst,
+    		const transf_list<N, element_type> &trl,
+    		const dimensions<N> &dims);
+
     void merge_lists(list_type &to, const index<N> &bidx,
             const to_list_type &from, size_t n);
 

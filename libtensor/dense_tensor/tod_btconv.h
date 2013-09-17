@@ -1,10 +1,8 @@
 #ifndef LIBTENSOR_TOD_BTCONV_H
 #define LIBTENSOR_TOD_BTCONV_H
 
-#include <list>
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/core/bad_dimensions.h>
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include "dense_tensor_i.h"
 
@@ -18,7 +16,7 @@ namespace libtensor {
 template<size_t N>
 class tod_btconv : public timings< tod_btconv<N> >, public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     block_tensor_rd_i<N, double> &m_bt; //!< Source block %tensor
@@ -39,11 +37,6 @@ public:
 
     //@}
 
-private:
-    void copy_block(double *optr, const dimensions<N> &odims,
-        const index<N> &ooffs, const double *iptr,
-        const dimensions<N> &idims, const permutation<N> &iperm,
-        double icoeff);
 };
 
 

@@ -9,7 +9,7 @@ namespace libtensor {
 
 
 template<size_t N, size_t M>
-const char *btod_diag<N, M>::k_clazz = "btod_diag<N, M>";
+const char btod_diag<N, M>::k_clazz[] = "btod_diag<N, M>";
 
 
 template<size_t N, size_t M>
@@ -29,9 +29,11 @@ void btod_diag<N, M>::perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb,
     typedef block_tensor_i_traits<double> bti_traits;
 
     gen_block_tensor_rd_ctrl<N - M + 1, bti_traits> cb(btb);
+    std::vector<size_t> nzblkb;
+    cb.req_nonzero_blocks(nzblkb);
     addition_schedule<N - M + 1, btod_traits> asch(get_symmetry(),
-            cb.req_const_symmetry());
-    asch.build(get_schedule(), cb);
+        cb.req_const_symmetry());
+    asch.build(get_schedule(), nzblkb);
 
     gen_bto_aux_add<N - M + 1, btod_traits> out(get_symmetry(), asch, btb, c);
     out.open();

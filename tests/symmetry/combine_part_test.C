@@ -1,5 +1,5 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/symmetry/combine_part.h>
+#include <libtensor/symmetry/inst/combine_part.h>
 #include "../compare_ref.h"
 #include "combine_part_test.h"
 

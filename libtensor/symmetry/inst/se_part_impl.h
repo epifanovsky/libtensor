@@ -9,11 +9,11 @@ namespace libtensor {
 
 
 template<size_t N, typename T>
-const char *se_part<N, T>::k_clazz = "se_part<N, T>";
+const char se_part<N, T>::k_clazz[] = "se_part<N, T>";
 
 
 template<size_t N, typename T>
-const char *se_part<N, T>::k_sym_type = "part";
+const char se_part<N, T>::k_sym_type[] = "part";
 
 
 template<size_t N, typename T>
@@ -25,8 +25,8 @@ se_part<N, T>::se_part(
     m_bis(bis),
     m_bidims(m_bis.get_block_index_dims()),
     m_pdims(make_pdims(bis, msk, npart)),
-    m_bipdims(make_bipdims(
-        m_bis.get_block_index_dims(), make_pdims(bis, msk, npart))),
+    m_mpdims(m_pdims, true),
+    m_bipdims(make_bipdims(m_bis.get_block_index_dims(), m_pdims)),
     m_mbipdims(m_bipdims, false),
     m_fmap(m_pdims.get_size()),
     m_fmapi(m_pdims.get_size()),
@@ -34,9 +34,9 @@ se_part<N, T>::se_part(
     m_ftr(m_pdims.get_size()) {
 
     size_t mapsz = m_pdims.get_size();
-    for (size_t i = 0; i < mapsz; i++) {
+    for(size_t i = 0; i < mapsz; i++) {
         m_fmap[i] = m_rmap[i] = i;
-        abs_index<N>::get_index(i, m_pdims, m_fmapi[i]);
+        abs_index<N>::get_index(i, m_mpdims, m_fmapi[i]);
     }
 }
 
@@ -49,7 +49,8 @@ se_part<N, T>::se_part(
     m_bis(bis),
     m_bidims(m_bis.get_block_index_dims()),
     m_pdims(pdims),
-    m_bipdims(make_bipdims(m_bis.get_block_index_dims(), pdims)),
+    m_mpdims(m_pdims, true),
+    m_bipdims(make_bipdims(m_bis.get_block_index_dims(), m_pdims)),
     m_mbipdims(m_bipdims, false),
     m_fmap(m_pdims.get_size()),
     m_fmapi(m_pdims.get_size()),
@@ -57,7 +58,7 @@ se_part<N, T>::se_part(
     m_ftr(m_pdims.get_size()) {
 
 #ifdef LIBTENSOR_DEBUG
-    static const char *method =
+    static const char method[] =
         "se_part(const block_index_space<N>&, const dimensions<N>&)";
 
     if(!is_valid_pdims(bis, pdims)) {
@@ -66,9 +67,9 @@ se_part<N, T>::se_part(
 #endif
 
     size_t mapsz = m_pdims.get_size();
-    for (size_t i = 0; i < mapsz; i++) {
+    for(size_t i = 0; i < mapsz; i++) {
         m_fmap[i] = m_rmap[i] = i;
-        abs_index<N>::get_index(i, m_pdims, m_fmapi[i]);
+        abs_index<N>::get_index(i, m_mpdims, m_fmapi[i]);
     }
 }
 
@@ -79,6 +80,7 @@ se_part<N, T>::se_part(const se_part<N, T> &elem) :
     m_bis(elem.m_bis),
     m_bidims(elem.m_bidims),
     m_pdims(elem.m_pdims),
+    m_mpdims(elem.m_mpdims),
     m_bipdims(elem.m_bipdims),
     m_mbipdims(elem.m_mbipdims),
     m_fmap(elem.m_fmap),
@@ -101,7 +103,7 @@ void se_part<N, T>::add_map(
     const index<N> &idx2,
     const scalar_transf<T> &tr) {
 
-    static const char *method =
+    static const char method[] =
         "add_map(const index<N>&, const index<N>&, scalar_transf<T>)";
 
 #ifdef LIBTENSOR_DEBUG
@@ -166,7 +168,7 @@ void se_part<N, T>::add_map(
         // remove b from its loop
         sx = m_ftr[b];
         m_fmap[br] = bf;
-        abs_index<N>::get_index(bf, m_pdims, m_fmapi[br]);
+        abs_index<N>::get_index(bf, m_mpdims, m_fmapi[br]);
         m_rmap[bf] = br;
         m_ftr[br].transform(sx);
 
@@ -187,7 +189,7 @@ template<size_t N, typename T>
 void se_part<N, T>::mark_forbidden(const index<N> &idx) {
 
 #ifdef LIBTENSOR_DEBUG
-    static const char *method = "mark_forbidden(const index<N>&)";
+    static const char method[] = "mark_forbidden(const index<N>&)";
 
     if(!is_valid_pidx(idx)) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "idx");
@@ -218,7 +220,7 @@ void se_part<N, T>::mark_forbidden(const index<N> &idx) {
 template<size_t N, typename T>
 const index<N> &se_part<N, T>::get_direct_map(const index<N> &idx) const {
 
-    static const char *method = "get_direct_map(const index<N>&)";
+    static const char method[] = "get_direct_map(const index<N>&)";
 
     size_t aidx = abs_index<N>::get_abs_index(idx, m_pdims);
 
@@ -237,7 +239,7 @@ scalar_transf<T> se_part<N, T>::get_transf(
     const index<N> &from,
     const index<N> &to) const {
 
-    static const char *method = "get_transf(const index<N>&, const index<N>&)";
+    static const char method[] = "get_transf(const index<N>&, const index<N>&)";
 
     size_t a = abs_index<N>::get_abs_index(from, m_pdims);
     size_t b = abs_index<N>::get_abs_index(to, m_pdims);
@@ -257,7 +259,7 @@ scalar_transf<T> se_part<N, T>::get_transf(
             "No mapping.");
     }
 
-    if (swapped) tr.invert();
+    if(swapped) tr.invert();
     return tr;
 }
 
@@ -298,12 +300,12 @@ bool se_part<N, T>::is_allowed(const index<N> &idx) const {
 template<size_t N, typename T>
 void se_part<N, T>::permute(const permutation<N> &perm) {
 
-    if (perm.is_identity()) return;
+    if(perm.is_identity()) return;
 
     m_bis.permute(perm);
     m_bidims.permute(perm);
     m_bipdims.permute(perm);
-    m_mbipdims = magic_dimensions<N>(m_bipdims, false);
+    m_mbipdims.permute(perm);
 
     bool affects_map = false;
     for(size_t i = 0; i < N; i++) {
@@ -314,6 +316,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
     dimensions<N> pdims(m_pdims);
     m_pdims.permute(perm);
+    m_mpdims.permute(perm);
 
     size_t mapsz = m_pdims.get_size();
     std::vector<size_t> fmap(mapsz), rmap(mapsz);
@@ -322,7 +325,7 @@ void se_part<N, T>::permute(const permutation<N> &perm) {
 
     for(size_t i = 0; i < mapsz; i++) {
         fmap[i] = rmap[i] = i;
-        abs_index<N>::get_index(i, m_pdims, fmapi[i]);
+        abs_index<N>::get_index(i, m_mpdims, fmapi[i]);
     }
     std::swap(m_fmap, fmap);
     std::swap(m_fmapi, fmapi);
@@ -362,7 +365,7 @@ void se_part<N, T>::apply(index<N> &idx) const {
     //  Map the partition index
     //
     size_t apidx = abs_index<N>::get_abs_index(pidx1, m_pdims);
-    if (m_fmap[apidx] == size_t(-1)) return;
+    if(m_fmap[apidx] == size_t(-1)) return;
     const index<N> &pidx2 = m_fmapi[apidx];
 
     //  Construct a mapped block index
@@ -384,7 +387,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
     //  Map the partition index
     //
     size_t apidx = abs_index<N>::get_abs_index(pidx1, m_pdims);
-    if (m_fmap[apidx] == size_t(-1)) return;
+    if(m_fmap[apidx] == size_t(-1)) return;
     const index<N> &pidx2 = m_fmapi[apidx];
 
     //  Construct a mapped block index
@@ -403,7 +406,7 @@ dimensions<N> se_part<N, T>::make_pdims(
     const mask<N> &msk,
     size_t npart) {
 
-    static const char *method = "make_pdims(const block_index_space<N>&, "
+    static const char method[] = "make_pdims(const block_index_space<N>&, "
         "const mask<N>&, size_t)";
 
     if(npart < 2) {
@@ -444,7 +447,7 @@ dimensions<N> se_part<N, T>::make_bipdims(
     const dimensions<N> &bidims,
     const dimensions<N> &pdims) {
 
-    static const char *method = "make_bipdims(const dimensions<N>&, "
+    static const char method[] = "make_bipdims(const dimensions<N>&, "
         "const dimensions<N>&)";
 
     index<N> i1, i2;
@@ -513,9 +516,9 @@ void se_part<N, T>::add_to_loop(size_t a, size_t b,
     }
     tx.transform(m_ftr[a]);
     m_fmap[a] = b; m_rmap[b] = a;
-    abs_index<N>::get_index(b, m_pdims, m_fmapi[a]);
+    abs_index<N>::get_index(b, m_mpdims, m_fmapi[a]);
     m_fmap[b] = af; m_rmap[af] = b;
-    abs_index<N>::get_index(af, m_pdims, m_fmapi[b]);
+    abs_index<N>::get_index(af, m_mpdims, m_fmapi[b]);
     m_ftr[b] = tx;
     m_ftr[a].transform(tx.invert());
 }

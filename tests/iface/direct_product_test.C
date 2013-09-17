@@ -285,7 +285,7 @@ void direct_product_test::test_ee_2() throw(libtest::test_exception) {
     btod_contract2<1, 2, 0> op(contr, t1, t2);
     op.perform(t3_ref);
 
-    letter a, b, c, d;
+    letter a, c, d;
     t3(a|c|d) = (1.5*t1a(a) + 2.0*t1b(a)) * (t2a(c|d) - 0.5*t2b(c|d));
 
     compare_ref<3>::compare(testname, t3, t3_ref, 1e-15);

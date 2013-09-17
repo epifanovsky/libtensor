@@ -9,7 +9,7 @@ namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K>
-const char *btod_ewmult2<N, M, K>::k_clazz = "btod_ewmult2<N, M, K>";
+const char btod_ewmult2<N, M, K>::k_clazz[] = "btod_ewmult2<N, M, K>";
 
 
 template<size_t N, size_t M, size_t K>
@@ -69,9 +69,11 @@ void btod_ewmult2<N, M, K>::perform(gen_block_tensor_i<NC, bti_traits> &btc,
     typedef typename btod_traits::bti_traits bti_traits;
 
     gen_block_tensor_rd_ctrl<NC, bti_traits> cc(btc);
+    std::vector<size_t> nzblkc;
+    cc.req_nonzero_blocks(nzblkc);
     addition_schedule<NC, btod_traits> asch(get_symmetry(),
             cc.req_const_symmetry());
-    asch.build(get_schedule(), cc);
+    asch.build(get_schedule(), nzblkc);
 
     gen_bto_aux_add<NC, btod_traits> out(get_symmetry(), asch, btc, d);
     out.open();

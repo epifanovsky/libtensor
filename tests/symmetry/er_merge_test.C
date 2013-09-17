@@ -1,5 +1,5 @@
-#include <libtensor/symmetry/er_merge.h>
-#include <libtensor/symmetry/er_optimize.h>
+#include <libtensor/symmetry/inst/er_merge.h>
+#include <libtensor/symmetry/inst/er_optimize.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/print_symmetry.h>
 #include "er_merge_test.h"

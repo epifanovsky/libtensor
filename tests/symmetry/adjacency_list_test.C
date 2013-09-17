@@ -1,5 +1,5 @@
 #include <libtensor/exception.h>
-#include <libtensor/symmetry/adjacency_list.h>
+#include <libtensor/symmetry/inst/adjacency_list.h>
 #include "adjacency_list_test.h"
 
 

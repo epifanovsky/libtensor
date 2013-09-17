@@ -54,8 +54,8 @@ public:
 private:
     symmetry<N, element_type> m_sym; //!< Symmetry of target block tensor
     gen_block_tensor_wr_i<N, bti_traits> &m_bt; //!< Target block tensor
-    dimensions<N> m_bidims; //!< Block index dims
     gen_block_tensor_wr_ctrl<N, bti_traits> m_ctrl; //!< Block tensor control
+    dimensions<N> m_bidims; //!< Block index dims
     bool m_open; //!< Open state
     bool m_sync; //!< Explicit synchronization
     libutil::mutex m_mtx; //!< Global mutex

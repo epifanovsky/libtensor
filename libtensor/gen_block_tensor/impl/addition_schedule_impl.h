@@ -21,7 +21,7 @@ namespace libtensor {
 
 
 template<size_t N, typename Traits>
-const char *addition_schedule<N, Traits>::k_clazz =
+const char addition_schedule<N, Traits>::k_clazz[] =
     "addition_schedule<N, Traits>";
 
 
@@ -58,12 +58,20 @@ addition_schedule<N, Traits>::~addition_schedule() {
 namespace {
 
 
+template<size_t N, typename T>
+struct book_node_struct {
+    size_t cidx;
+    tensor_transf<N, T> tr;
+    bool visited;
+};
+
+
 template<size_t N, typename Traits>
 class addition_schedule_task_1 : public libutil::task_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename addition_schedule<N, Traits>::book_node book_node;
+    typedef book_node_struct<N, element_type> book_node;
 
 private:
     std::vector<size_t> m_nzorb;
@@ -119,7 +127,7 @@ class addition_schedule_task_iterator_1 : public libutil::task_iterator_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename addition_schedule<N, Traits>::book_node book_node;
+    typedef book_node_struct<N, element_type> book_node;
 
 private:
     Iterator m_ibegin;
@@ -172,10 +180,10 @@ public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
     typedef typename addition_schedule<N, Traits>::node node;
-    typedef typename addition_schedule<N, Traits>::book_node book_node;
     typedef typename addition_schedule<N, Traits>::schedule_group
         schedule_group;
     typedef typename addition_schedule<N, Traits>::schedule_type schedule_type;
+    typedef book_node_struct<N, element_type> book_node;
 
 private:
     std::vector<size_t> m_batch;
@@ -278,8 +286,8 @@ class addition_schedule_task_iterator_2 : public libutil::task_iterator_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename addition_schedule<N, Traits>::book_node book_node;
     typedef typename addition_schedule<N, Traits>::schedule_type schedule_type;
+    typedef book_node_struct<N, element_type> book_node;
 
 private:
     const symmetry<N, element_type> &m_syma;
@@ -356,9 +364,9 @@ public:
 template<size_t N, typename Traits>
 void addition_schedule<N, Traits>::build(
     const assignment_schedule_type &asch,
-    gen_block_tensor_rd_ctrl<N, bti_traits> &cb) {
+    const std::vector<size_t> &nzlstb) {
 
-    typedef typename assignment_schedule_type::iterator asgsch_iterator;
+    typedef book_node_struct<N, element_type> book_node;
 
     addition_schedule<N, Traits>::start_timer();
 
@@ -367,9 +375,6 @@ void addition_schedule<N, Traits>::build(
         clear_schedule();
 
         dimensions<N> bidims(m_syma.get_bis().get_block_index_dims());
-
-        std::vector<size_t> nzlstb;
-        cb.req_nonzero_blocks(nzlstb);
 
         std::map<size_t, book_node> booka, bookb;
 

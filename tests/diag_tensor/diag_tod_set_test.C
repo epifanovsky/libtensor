@@ -16,9 +16,20 @@ namespace libtensor {
 
 void diag_tod_set_test::perform() throw(libtest::test_exception) {
 
+    allocator<double>::init(16, 16, 16777216, 16777216);
+
+    try {
+
     test_1();
     test_2();
     test_3();
+
+    } catch(...) {
+        allocator<double>::shutdown();
+        throw;
+    }
+
+    allocator<double>::shutdown();
 }
 
 

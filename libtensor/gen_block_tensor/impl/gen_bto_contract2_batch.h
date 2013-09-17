@@ -7,6 +7,7 @@
 #include <libtensor/core/noncopyable.h>
 #include "../gen_block_stream_i.h"
 #include "../gen_block_tensor_i.h"
+#include "gen_bto_contract2_block_list.h"
 
 namespace libtensor {
 

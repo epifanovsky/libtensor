@@ -55,8 +55,6 @@ kernel_base<LA, 1, 1> *kern_dcopy_ij_ji_x<LA>::match(
     zz.m_sib = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 1, 1> *kern = 0;
-
     return new kern_dcopy_ij_ji_x(zz);
 }
 

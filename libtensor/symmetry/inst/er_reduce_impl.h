@@ -15,10 +15,11 @@ const char *er_reduce<N, M>::k_clazz = "er_reduce<N, M>";
 
 template<size_t N, size_t M>
 er_reduce<N, M>::er_reduce(
-        const evaluation_rule<N> &rule, const sequence<N, size_t> &rmap,
-        const sequence<M, label_group_t> &rdims, const std::string &id) :
-        m_rule(rule), m_rmap(rmap), m_rdims(rdims), m_nrsteps(0),
-        m_pt(product_table_container::get_instance().req_const_table(id)) {
+	const evaluation_rule<N> &rule, const sequence<N, size_t> &rmap,
+	const sequence<M, label_group_t> &rdims, const std::string &id) :
+	m_rule(rule),
+	m_pt(product_table_container::get_instance().req_const_table(id)),
+	m_rmap(rmap), m_rdims(rdims), m_nrsteps(0) {
 
     for (; m_nrsteps < M && ! m_rdims[m_nrsteps].empty(); m_nrsteps++) ;
 
@@ -70,7 +71,7 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &to) const {
 
         const product_rule<N> &pra = m_rule.get_product(it);
 
-        if (! reduce_product(pra, slist,  rsteps_in_seq, to)) {
+        if (! reduce_product(pra, slist, rsteps_in_seq, to)) {
             to.clear();
             product_rule<N - M> &pr = to.new_product();
             pr.add(sequence<N - M, size_t>(1), product_table_i::k_invalid);

@@ -57,8 +57,6 @@ template<typename Functor>
 kernel_base<linalg, 1, 1> *kern_apply<Functor>::match(Functor &fn,
         double c1, double c2, list_t &in, list_t &out) {
 
-    kernel_base<linalg, 1, 1> *kern = 0;
-
     kern_apply zz;
     zz.m_fn = &fn;
     zz.m_c1 = c1;

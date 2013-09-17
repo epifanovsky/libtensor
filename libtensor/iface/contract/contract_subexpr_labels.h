@@ -41,7 +41,7 @@ public:
             a result label
      **/
     contract_subexpr_labels(
-        const contract_core<N, M, K, T> &core,
+        const contract2_core<N, M, K, T> &core,
         const letter_expr<NC> &label_c);
 
     /** \brief Returns the label for the first sub-expression
@@ -60,7 +60,7 @@ public:
 
 template<size_t N, size_t M, size_t K, typename T>
 contract_subexpr_labels<N, M, K, T>::contract_subexpr_labels(
-    const contract_core<N, M, K, T> &core, const letter_expr<NC> &label_c) :
+    const contract2_core<N, M, K, T> &core, const letter_expr<NC> &label_c) :
 
     m_bld_a(label_c, core.get_contr(), core.get_expr_1()),
     m_bld_b(label_c, core.get_contr(), core.get_expr_2()) {

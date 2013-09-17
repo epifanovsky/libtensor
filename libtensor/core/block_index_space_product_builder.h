@@ -18,7 +18,7 @@ namespace libtensor {
 template<size_t N, size_t M>
 class block_index_space_product_builder {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     block_index_space<N + M> m_bis; //!< Result
@@ -44,7 +44,7 @@ private:
 
 
 template<size_t N, size_t M>
-const char *block_index_space_product_builder<N, M>::k_clazz =
+const char block_index_space_product_builder<N, M>::k_clazz[] =
     "block_index_space_product_builder<N, M>";
 
 
@@ -112,10 +112,6 @@ block_index_space_product_builder<N, M>::block_index_space_product_builder(
 template<size_t N, size_t M>
 dimensions<N + M> block_index_space_product_builder<N, M>::make_dims(
     const block_index_space<N> &bisa, const block_index_space<M> &bisb) {
-
-    static const char *method =
-        "make_dims(const block_index_space<N>&, "
-        "const block_index_space<M>&, const permutation<N + M> &)";
 
     index<N + M> i1, i2;
     const dimensions<N> &dimsa = bisa.get_dims();

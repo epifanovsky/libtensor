@@ -88,7 +88,7 @@ void tod_extract<N, M>::perform(bool zero, dense_tensor_wr_i<NB, double> &tb) {
         size_t iboffs = 0;
         for(size_t idxa = 0; idxa < N; idxa++) {
 
-            size_t inca = 0, incb = 0, len = 0;
+            size_t len = 0;
             if(! m_mask[idxa]) {
                 iboffs++; continue;
             }

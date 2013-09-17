@@ -15,9 +15,6 @@ template<size_t N, typename T>
 void symmetry_operation_impl< so_permute<N, T>, se_perm<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    static const char *method =
-            "do_perform(symmetry_operation_params_t&)";
-
     //  Adapter type for the input group
     //
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> >

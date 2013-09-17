@@ -355,7 +355,6 @@ void gen_bto_add_task<N, Traits, Timed>::perform() {
 
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
-    typedef tensor_transf<N, element_type> tensor_transf_type;
 
     tensor_transf<N, element_type> tr0;
     gen_block_tensor_ctrl<N, bti_traits> cb(m_btb);

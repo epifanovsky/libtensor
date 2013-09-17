@@ -54,8 +54,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_x_pq_qp<LA>::match(
     zz.m_sqb = iq->stepa(1);
     in.splice(out.begin(), out, iq);
 
-    kernel_base<LA, 2, 1> *kern = 0;
-
     return new kern_dmul2_x_pq_qp(zz);
 }
 

@@ -4,7 +4,7 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
-#include "../er_optimize.h"
+#include "er_optimize.h"
 
 namespace libtensor {
 

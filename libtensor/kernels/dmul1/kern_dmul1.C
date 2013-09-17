@@ -15,8 +15,6 @@ void kern_dmul1::run(void*, const loop_registers<1, 1> &r) {
 kernel_base<linalg, 1, 1> *kern_dmul1::match(double d, list_t &in,
     list_t &out) {
 
-    kernel_base<linalg, 1, 1> *kern = 0;
-
     kern_dmul1 zz;
     zz.m_d = d;
 

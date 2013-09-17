@@ -52,8 +52,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_i_i_i<LA>::match(const kern_dmul2<LA> &z,
     zz.m_sic = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 2, 1> *kern = 0;
-
     return new kern_dmul2_i_i_i(zz);
 }
 

@@ -13,9 +13,6 @@ template<size_t N, typename T>
 void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    static const char *method =
-            "do_perform(const symmetry_operation_params_t&)";
-
     typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
 
     params.grp2.clear();

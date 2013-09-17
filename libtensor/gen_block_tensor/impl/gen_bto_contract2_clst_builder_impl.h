@@ -240,7 +240,6 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
     dimensions<N> dimsi(index_range<N>(ii1, ii2));
     dimensions<M> dimsj(index_range<M>(ij1, ij2));
     dimensions<K> dimsk(index_range<K>(ik1, ik2));
-    size_t nk = dimsk.get_size();
 
     size_t aii = abs_index<N>::get_abs_index(ii, dimsi);
     size_t aij = abs_index<M>::get_abs_index(ij, dimsj);
@@ -344,7 +343,7 @@ void gen_bto_contract2_clst_builder<N, M, 0, Traits>::build_list(
     const index<N + M> &ic = m_ic;
 
     //  Determine ia, ib from ic
-    for(size_t i = 0, j = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         ia[i] = ic[conn[NC + i]];
     }
     for(size_t i = 0; i < M; i++) {

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_COMBINE_LABEL_IMPL_H
 #define LIBTENSOR_COMBINE_LABEL_IMPL_H
 
-#include "../er_optimize.h"
+#include "er_optimize.h"
 
 namespace libtensor {
 

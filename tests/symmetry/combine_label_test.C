@@ -1,4 +1,4 @@
-#include <libtensor/symmetry/combine_label.h>
+#include <libtensor/symmetry/inst/combine_label.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include "combine_label_test.h"
 

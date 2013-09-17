@@ -235,7 +235,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
             gen_bto_set_a_type(Traits::zero()).perform(bta2);
             {
                 tensor_transf<NA, element_type> tra(perma);
-                gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2, false);
+                gen_bto_aux_copy<NA, Traits> cpaout(syma2, bta2);
                 cpaout.open();
                 gen_bto_copy_a_type(m_bta, tra).perform(batcha, cpaout);
                 cpaout.close();
@@ -258,7 +258,7 @@ void gen_bto_contract2<N, M, K, Traits, Timed>::perform(
                 gen_bto_set_b_type(Traits::zero()).perform(btb2);
                 {
                     tensor_transf<NB, element_type> trb(permb);
-                    gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2, false);
+                    gen_bto_aux_copy<NB, Traits> cpbout(symb2, btb2);
                     cpbout.open();
                     gen_bto_copy_b_type(m_btb, trb).perform(batchb, cpbout);
                     cpbout.close();

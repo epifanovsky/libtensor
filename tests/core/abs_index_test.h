@@ -15,18 +15,19 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_ctor_1() throw(libtest::test_exception);
-    void test_ctor_2() throw(libtest::test_exception);
-    void test_ctor_3() throw(libtest::test_exception);
-    void test_ctor_4() throw(libtest::test_exception);
-    void test_ctor_5() throw(libtest::test_exception);
-    void test_inc_1() throw(libtest::test_exception);
-    void test_inc_2() throw(libtest::test_exception);
-    void test_inc_3() throw(libtest::test_exception);
-    void test_inc_4() throw(libtest::test_exception);
-    void test_inc_5() throw(libtest::test_exception);
-    void test_last_1() throw(libtest::test_exception);
-    void test_get_index_1() throw(libtest::test_exception);
+    void test_ctor_1();
+    void test_ctor_2();
+    void test_ctor_3();
+    void test_ctor_4();
+    void test_ctor_5();
+    void test_inc_1();
+    void test_inc_2();
+    void test_inc_3();
+    void test_inc_4();
+    void test_inc_5();
+    void test_last_1();
+    void test_get_index_1();
+    void test_get_index_2();
 
 };
 

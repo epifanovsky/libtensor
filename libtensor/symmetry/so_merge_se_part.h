@@ -17,9 +17,9 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-template<size_t N, size_t M, size_t NM, typename T>
-class symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> > :
-public symmetry_operation_impl_base< so_merge<N, M, T>, se_part<NM, T> > {
+template<size_t N, size_t M, typename T>
+class symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> > :
+public symmetry_operation_impl_base< so_merge<N, M, T>, se_part<N - M, T> > {
 
 public:
     static const char *k_clazz; //!< Class name
@@ -31,6 +31,9 @@ public:
     typedef se_part<N, T> el1_t;
     typedef se_part<N - M, T> el2_t;
     typedef symmetry_operation_params<operation_t> symmetry_operation_params_t;
+
+public:
+    virtual ~symmetry_operation_impl() { }
 
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;

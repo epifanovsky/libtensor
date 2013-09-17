@@ -129,7 +129,7 @@ void direct_btensor_test::test_4() throw(libtest::test_exception) {
     bispace<1> si(5), sa(6);
     si.split(2); sa.split(3);
     bispace<2> sia(si|sa), sai(sa|si);
-    bispace<4> sijab(si&si|sa&sa);
+    bispace<4> sijab((si&si)|(sa&sa));
 
     btensor<2> bt1(sia), bt2(sia);
     btod_random<2>().perform(bt1);

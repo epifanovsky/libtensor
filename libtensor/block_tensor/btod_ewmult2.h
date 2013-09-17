@@ -32,7 +32,7 @@ class btod_ewmult2 :
     public noncopyable {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     enum {

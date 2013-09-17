@@ -27,7 +27,7 @@ public:
     };
 
 private:
-    contract_core<N, M, K, T> &m_core;
+    contract2_core<N, M, K, T> &m_core;
     letter_expr<NA> m_label_a;
     letter_expr<NB> m_label_b;
     letter_expr<NC> m_label_c;
@@ -38,7 +38,7 @@ private:
 
 public:
     contract_eval_functor(
-        contract_core<N, M, K, T> &core,
+        contract2_core<N, M, K, T> &core,
         const contract_subexpr_labels<N, M, K, T> &labels_ab,
         const letter_expr<NC> &label_c);
 
@@ -62,7 +62,7 @@ const char contract_eval_functor<N, M, K, T>::k_clazz[] =
 
 template<size_t N, size_t M, size_t K, typename T>
 contract_eval_functor<N, M, K, T>::contract_eval_functor(
-    contract_core<N, M, K, T> &core,
+    contract2_core<N, M, K, T> &core,
     const contract_subexpr_labels<N, M, K, T> &labels_ab,
     const letter_expr<NC> &label_c) :
 

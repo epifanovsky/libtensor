@@ -9,11 +9,7 @@ namespace libtensor {
 
 
 template<size_t N, size_t M>
-const char *btod_dirsum_clazz<N, M>::k_clazz = "btod_dirsum<N, M>";
-
-
-template<size_t N, size_t M>
-const char *btod_dirsum<N, M>::k_clazz = btod_dirsum_clazz<N, M>::k_clazz;
+const char btod_dirsum<N, M>::k_clazz[] = "btod_dirsum<N, M>";
 
 
 template<size_t N, size_t M>
@@ -33,9 +29,11 @@ void btod_dirsum<N, M>::perform(gen_block_tensor_i<N + M, bti_traits> &btb,
     typedef block_tensor_i_traits<double> bti_traits;
 
     gen_block_tensor_rd_ctrl<N + M, bti_traits> cb(btb);
+    std::vector<size_t> nzblkb;
+    cb.req_nonzero_blocks(nzblkb);
     addition_schedule<N + M, btod_traits> asch(get_symmetry(),
         cb.req_const_symmetry());
-    asch.build(get_schedule(), cb);
+    asch.build(get_schedule(), nzblkb);
 
     gen_bto_aux_add<N + M, btod_traits> out(get_symmetry(), asch, btb, c);
     out.open();

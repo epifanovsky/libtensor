@@ -62,7 +62,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
 
             size_t idxa = it->first * nel;
             for (size_t j = 0; j < nel; j++) {
-                size_t idxb = idxa + j, k = 1, ix = idxb;
+                size_t idxb = idxa + j, ix = idxb;
                 while (idxb != 0) {
                     if (done.count(ix % nel)) break;
                     ix /= nel;

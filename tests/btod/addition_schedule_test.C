@@ -131,7 +131,7 @@ using namespace addition_schedule_test_ns;
  **/
 void addition_schedule_test::test_1() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_1()";
+//	static const char *testname = "addition_schedule_test::test_1()";
 
 //  typedef addition_schedule<2, double>::schedule_node_t schedule_node_t;
 //
@@ -188,7 +188,7 @@ void addition_schedule_test::test_1() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_2() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_2()";
+//    static const char *testname = "addition_schedule_test::test_2()";
 
 //  typedef addition_schedule<2, double>::schedule_node_t schedule_node_t;
 //  typedef addition_schedule<2, double>::tier3_list_t tier3_list_t;
@@ -253,7 +253,7 @@ void addition_schedule_test::test_2() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_3() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_3()";
+//    static const char *testname = "addition_schedule_test::test_3()";
 
 //  typedef addition_schedule<2, double>::schedule_node_t schedule_node_t;
 //  typedef addition_schedule<2, double>::tier2_node_t tier2_node_t;
@@ -317,7 +317,7 @@ void addition_schedule_test::test_3() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_4() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_4()";
+//    static const char *testname = "addition_schedule_test::test_4()";
 
 //  typedef addition_schedule<2, double>::schedule_node_t schedule_node_t;
 //  typedef addition_schedule<2, double>::tier4_list_t tier4_list_t;
@@ -384,7 +384,7 @@ void addition_schedule_test::test_4() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_5() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_5()";
+//    static const char *testname = "addition_schedule_test::test_5()";
 
 //  typedef addition_schedule<4, double>::schedule_node_t schedule_node_t;
 //
@@ -445,7 +445,7 @@ void addition_schedule_test::test_5() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_6() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_6()";
+//    static const char *testname = "addition_schedule_test::test_6()";
 
 //  typedef addition_schedule<4, double>::schedule_node_t schedule_node_t;
 //
@@ -508,7 +508,7 @@ void addition_schedule_test::test_6() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_7() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_7()";
+//    static const char *testname = "addition_schedule_test::test_7()";
 
 //  typedef addition_schedule<4, double>::schedule_node_t schedule_node_t;
 //
@@ -571,7 +571,7 @@ void addition_schedule_test::test_7() throw(libtest::test_exception) {
  **/
 void addition_schedule_test::test_8() throw(libtest::test_exception) {
 
-    static const char *testname = "addition_schedule_test::test_8()";
+//    static const char *testname = "addition_schedule_test::test_8()";
 
 //  typedef addition_schedule<4, double>::schedule_node_t schedule_node_t;
 //

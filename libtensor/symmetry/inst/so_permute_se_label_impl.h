@@ -20,9 +20,6 @@ void
 symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    static const char *method =
-            "do_perform(const symmetry_operation_params_t&)";
-
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
     adapter_t adapter1(params.grp1);
 
