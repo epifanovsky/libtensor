@@ -33,6 +33,7 @@
 #include "btod_symcontract3_test.h"
 #include "btod_symmetrize2_test.h"
 #include "btod_symmetrize3_test.h"
+#include "btod_symmetrize4_test.h"
 #include "btod_trace_test.h"
 #include "btod_tridiagonalize_test.h"
 #include "btod_vmpriority_test.h"
@@ -48,12 +49,12 @@ using libtest::unit_test_factory;
 namespace libtensor {
 
 /** \defgroup libtensor_tests_btod Tests of block tensor operations
-    \brief Unit tests of block %tensor operations.
+    \brief Unit tests of block tensor operations.
     \ingroup libtensor_tests
  **/
 
 
-/** \brief Test suite for the block %tensor operations in libtensor
+/** \brief Test suite for the block tensor operations in libtensor
     \ingroup libtensor_tests
 
     This suite runs the following tests:
@@ -88,6 +89,7 @@ namespace libtensor {
     \li libtensor::btod_symcontract3_test
     \li libtensor::btod_symmetrize2_test
     \li libtensor::btod_symmetrize3_test
+    \li libtensor::btod_symmetrize4_test
     \li libtensor::btod_trace_test
     \li libtensor::btod_tridiagonalize_test
     \li libtensor::btod_vmpriority_test
@@ -132,6 +134,7 @@ private:
     unit_test_factory<btod_symcontract3_test> m_utf_btod_symcontract3;
     unit_test_factory<btod_symmetrize2_test> m_utf_btod_symmetrize2;
     unit_test_factory<btod_symmetrize3_test> m_utf_btod_symmetrize3;
+    unit_test_factory<btod_symmetrize4_test> m_utf_btod_symmetrize4;
     unit_test_factory<btod_trace_test> m_utf_btod_trace;
     unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
     unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;

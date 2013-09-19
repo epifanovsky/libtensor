@@ -178,6 +178,7 @@ set(SRC_BTOD
     btod/btod_symcontract3_test.C
     btod/btod_symmetrize2_test.C
     btod/btod_symmetrize3_test.C
+    btod/btod_symmetrize4_test.C
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C

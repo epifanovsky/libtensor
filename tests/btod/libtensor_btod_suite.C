@@ -37,6 +37,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_symcontract3", m_utf_btod_symcontract3);
     add_test("btod_symmetrize2", m_utf_btod_symmetrize2);
     add_test("btod_symmetrize3", m_utf_btod_symmetrize3);
+    add_test("btod_symmetrize4", m_utf_btod_symmetrize4);
     add_test("btod_trace", m_utf_btod_trace);
 //    add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);
     add_test("btod_vmpriority", m_utf_btod_vmpriority);
