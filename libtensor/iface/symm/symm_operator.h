@@ -21,7 +21,7 @@ expr<N, T> symm(
     const letter_expr<M> sym2,
     expr<N, T> subexpr) {
 
-    return expr<N, T>(symm2_core<N, M, true, T>(sym1, sym2, subexpr));
+    return expr<N, T>(new symm2_core<N, M, true, T>(sym1, sym2, subexpr));
 }
 
 
@@ -38,7 +38,7 @@ expr<N, T> asymm(
     const letter_expr<M> sym2,
     expr<N, T> subexpr) {
 
-    return expr<N, T>(symm2_core<N, M, false, T>(sym1, sym2, subexpr));
+    return expr<N, T>(new symm2_core<N, M, false, T>(sym1, sym2, subexpr));
 }
 
 
@@ -55,7 +55,7 @@ expr<N, T> symm(
     const letter &l3,
     expr<N, T> subexpr) {
 
-    return expr<N, T>(symm3_core<N, true, T>(l1, l2, l3, subexpr));
+    return expr<N, T>(new symm3_core<N, true, T>(l1, l2, l3, subexpr));
 }
 
 
@@ -72,7 +72,7 @@ expr<N, T> asymm(
     const letter &l3,
     expr<N, T> subexpr) {
 
-    return expr<N, T>(symm3_core<N, false, T>(l1, l2, l3, subexpr));
+    return expr<N, T>(new symm3_core<N, false, T>(l1, l2, l3, subexpr));
 }
 
 
@@ -122,7 +122,7 @@ expr<N, T> symm(
     const letter_expr<M> sym2,
     labeled_btensor<N, T, A> bt) {
 
-    return symm(sym1, sym2, expr<N, T>(ident_core<N, T, A>(bt)));
+    return symm(sym1, sym2, expr<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 
@@ -140,7 +140,7 @@ expr<N, T> asymm(
     const letter_expr<M> sym2,
     labeled_btensor<N, T, A> bt) {
 
-    return asymm(sym1, sym2, expr<N, T>(ident_core<N, T, A>(bt)));
+    return asymm(sym1, sym2, expr<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 
@@ -194,7 +194,7 @@ expr<N, T> symm(
     const letter &l3,
     labeled_btensor<N, T, A> bt) {
 
-    return symm(l1, l2, l3, expr<N, T>(ident_core<N, T, A>(bt)));
+    return symm(l1, l2, l3, expr<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 
@@ -212,7 +212,7 @@ expr<N, T> asymm(
     const letter &l3,
     labeled_btensor<N, T, A> bt) {
 
-    return asymm(l1, l2, l3, expr<N, T>(ident_core<N, T, A>(bt)));
+    return asymm(l1, l2, l3, expr<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 

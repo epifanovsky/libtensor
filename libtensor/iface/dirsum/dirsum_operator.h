@@ -20,7 +20,7 @@ expr<N + M, T> dirsum(
     expr<N, T> bta,
     expr<M, T> btb) {
 
-    return expr<N + M, T>(dirsum_core<N, M, T>(bta, btb));
+    return expr<N + M, T>(new dirsum_core<N, M, T>(bta, btb));
 }
 
 
@@ -37,7 +37,7 @@ expr<N + M, T> dirsum(
     labeled_btensor<N, T, A1> bta,
     expr<M, T> btb) {
 
-    return dirsum(expr<N, T>(ident_core<N, T, A1>(bta)), btb);
+    return dirsum(expr<N, T>(new ident_core<N, T, A1>(bta)), btb);
 }
 
 
@@ -54,7 +54,7 @@ expr<N + M, T> dirsum(
     expr<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return dirsum(bta, expr<M, T>(ident_core<M, T, A2>(btb)));
+    return dirsum(bta, expr<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 
@@ -73,8 +73,8 @@ expr<N + M, T> dirsum(
     labeled_btensor<M, T, A2> btb) {
 
     return dirsum(
-        expr<N, T>(ident_core<N, T, A1>(bta)),
-        expr<M, T>(ident_core<M, T, A2>(btb)));
+        expr<N, T>(new ident_core<N, T, A1>(bta)),
+        expr<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 

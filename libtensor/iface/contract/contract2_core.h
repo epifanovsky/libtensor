@@ -50,11 +50,11 @@ public:
         return new contract2_core<N, M, K, T>(*this);
     }
 
-    /** \brief Returns the first expression (A)
-     **/
-    expr<N + K, T> &get_expr_1() {
-        return m_expr1;
-    }
+//    /** \brief Returns the first expression (A)
+//     **/
+//    expr<N + K, T> &get_expr_1() {
+//        return m_expr1;
+//    }
 
     /** \brief Returns the first expression (A), const version
      **/
@@ -62,11 +62,11 @@ public:
         return m_expr1;
     }
 
-    /** \brief Returns the second expression (B)
-     **/
-    expr<M + K, T> &get_expr_2() {
-        return m_expr2;
-    }
+//    /** \brief Returns the second expression (B)
+//     **/
+//    expr<M + K, T> &get_expr_2() {
+//        return m_expr2;
+//    }
 
     /** \brief Returns the second expression (B), const version
      **/

@@ -17,7 +17,7 @@ expr<N, T> mult(
     expr<N, T> lhs,
     expr<N, T> rhs) {
 
-    return expr<N, T>(mult_core<N, T, false>(lhs, rhs));
+    return expr<N, T>(new mult_core<N, T, false>(lhs, rhs));
 }
 
 
@@ -30,7 +30,7 @@ expr<N, T> mult(
     labeled_btensor<N, T, A1> lhs,
     expr<N, T> rhs) {
 
-    return mult(expr<N, T>(ident_core<N, T, A1>(lhs)), rhs);
+    return mult(expr<N, T>(new ident_core<N, T, A1>(lhs)), rhs);
 }
 
 
@@ -43,7 +43,7 @@ expr<N, T> mult(
     expr<N, T> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return mult(lhs, expr<N, T>(ident_core<N, T, A2>(rhs)));
+    return mult(lhs, expr<N, T>(new ident_core<N, T, A2>(rhs)));
 }
 
 
@@ -57,8 +57,8 @@ expr<N, T> mult(
     labeled_btensor<N, T, A2> rhs) {
 
     return mult(
-        expr<N, T>(ident_core<N, T, A1>(lhs)),
-        expr<N, T>(ident_core<N, T, A2>(rhs)));
+        expr<N, T>(new ident_core<N, T, A1>(lhs)),
+        expr<N, T>(new ident_core<N, T, A2>(rhs)));
 }
 
 

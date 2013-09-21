@@ -24,7 +24,7 @@ expr<N + M - 2 * K, T> contract(
 
     typedef contract2_core<N - K, M - K, K, T> core_t;
     typedef expr<N + M - 2 * K, T> expr_t;
-    return expr_t(core_t(contr, bta, btb));
+    return expr_t(new core_t(contr, bta, btb));
 }
 
 
@@ -60,7 +60,7 @@ expr<N + M - 2 * K, T> contract(
     labeled_btensor<N, T, A1> bta,
     expr<M, T> btb) {
 
-    return contract(contr, expr<N, T>(ident_core<N, T, A1>(bta)), btb);
+    return contract(contr, expr<N, T>(new ident_core<N, T, A1>(bta)), btb);
 }
 
 
@@ -97,7 +97,7 @@ expr<N + M - 2 * K, T> contract(
     expr<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return contract(contr, bta, expr<M, T>(ident_core<M, T, A2>(btb)));
+    return contract(contr, bta, expr<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 
@@ -135,8 +135,9 @@ expr<N + M - 2 * K, T> contract(
     labeled_btensor<N, T, A1> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return contract(contr, expr<N, T>(ident_core<N, T, A1>(bta)),
-        expr<M, T>(ident_core<M, T, A2>(btb)));
+    return contract(contr,
+        expr<N, T>(new ident_core<N, T, A1>(bta)),
+        expr<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 

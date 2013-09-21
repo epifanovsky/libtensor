@@ -20,7 +20,7 @@ expr<N + M, T> operator*(
     expr<N, T> bta,
     expr<M, T> btb) {
 
-    return expr<N + M, T>(direct_product_core<N, M, T>(bta, btb));
+    return expr<N + M, T>(new direct_product_core<N, M, T>(bta, btb));
 }
 
 
@@ -37,7 +37,7 @@ expr<N + M, T> operator*(
     labeled_btensor<N, T, A1> bta,
     expr<M, T> btb) {
 
-    return expr<N, T>(ident_core<N, T, A1>(bta)) * btb;
+    return expr<N, T>(new ident_core<N, T, A1>(bta)) * btb;
 }
 
 
@@ -54,7 +54,7 @@ expr<N + M, T> operator*(
     expr<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return bta * expr<M, T>(ident_core<M, T, A2>(btb));
+    return bta * expr<M, T>(new ident_core<M, T, A2>(btb));
 }
 
 
@@ -72,8 +72,8 @@ expr<N + M, T> operator*(
     labeled_btensor<N, T, A1> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return expr<N, T>(ident_core<N, T, A1>(bta)) *
-        expr<M, T>(ident_core<M, T, A2>(btb));
+    return expr<N, T>(new ident_core<N, T, A1>(bta)) *
+        expr<M, T>(new ident_core<M, T, A2>(btb));
 }
 
 

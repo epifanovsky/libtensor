@@ -61,9 +61,9 @@ public:
      **/
     virtual ~expr_core_i() { }
 
-    /** \brief Clones this expression core
-     **/
-    virtual expr_core_i<N, T> *clone() const = 0;
+//    /** \brief Clones this expression core
+//     **/
+//    virtual expr_core_i<N, T> *clone() const = 0;
 
     /** \brief Creates an evaluation container using new, caller responsible
             to call delete
@@ -104,54 +104,74 @@ public:
 template<size_t N, typename T>
 class expr : public noncopyable {
 private:
-    expr_core_i<N, T> *m_core; //!< Expression core
+    struct core_ptr {
+        expr_core_i<N, T> *m_core; //!< Expression core
+        size_t m_ncnt;
+        core_ptr(expr_core_i<N, T> *core) : m_core(core), m_ncnt(1) {
+
+        }
+    };
+    core_ptr *m_expr;
+    expr_core_i<N, T> &m_core;
 
 public:
     /** \brief Constructs the expression using a core
      **/
-    expr(const expr_core_i<N, T> &core) : m_core(core.clone()) { }
+    expr(expr_core_i<N, T> *core) :
+        m_expr(new core_ptr(core)), m_core(*m_expr->m_core) {
+
+    }
 
     /** \brief Copy constructor
      **/
-    expr(const expr<N, T> &expr) : m_core(expr.m_core->clone()) { }
+    expr(const expr<N, T> &expr) :
+        m_expr(expr.m_expr), m_core(*m_expr->m_core) {
+
+        m_expr->m_ncnt++;
+    }
 
     /** \brief Virtual destructor
      **/
     virtual ~expr() {
-        delete m_core;
+        if (m_expr != 0) {
+            m_expr->m_ncnt--;
+            if (m_expr->m_ncnt == 0) {
+                delete m_expr->m_core;
+                delete m_expr;
+            }
+            m_expr = 0;
+        }
     }
 
     /** \brief Returns the core of the expression
      **/
     expr_core_i<N, T> &get_core() {
-        return *m_core;
+        return m_core;
     }
 
     /** \brief Returns the core of the expression (const version)
      **/
     const expr_core_i<N, T> &get_core() const {
-        return *m_core;
+        return m_core;
     }
 
-#if 0
     /** \brief Returns whether the label contains a letter
      **/
     bool contains(const letter &let) const {
-        return m_core->contains(let);
+        return m_core.contains(let);
     }
 
     /** \brief Returns the %index of a %letter in the label
      **/
     size_t index_of(const letter &let) const {
-        return m_core->index_of(let);
+        return m_core.index_of(let);
     }
 
     /** \brief Returns the %letter at a given position in the label
      **/
     const letter &letter_at(size_t i) const {
-        return m_core->letter_at(i);
+        return m_core.letter_at(i);
     }
-#endif
 
 };
 

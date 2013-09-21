@@ -18,7 +18,7 @@ expr<N + M - K, T> ewmult(
     expr<M, T> btb) {
 
     typedef ewmult_core<N - K, M - K, K, T> ewmult_core_t;
-    return expr<N + M - K, T>(ewmult_core_t(ewidx, bta, btb));
+    return expr<N + M - K, T>(new ewmult_core_t(ewidx, bta, btb));
 }
 
 
@@ -46,7 +46,7 @@ expr<N + M - K, T> ewmult(
     labeled_btensor<N, T, A1> bta,
     expr<M, T> btb) {
 
-    return ewmult(ewidx, expr<N, T>(ident_core<N, T, A1>(bta)), btb);
+    return ewmult(ewidx, expr<N, T>(new ident_core<N, T, A1>(bta)), btb);
 }
 
 
@@ -74,7 +74,7 @@ expr<N + M - K, T> ewmult(
     expr<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return ewmult(ewidx, bta, expr<M, T>(ident_core<M, T, A2>(btb)));
+    return ewmult(ewidx, bta, expr<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 
@@ -104,8 +104,8 @@ expr<N + M - K, T> ewmult(
 
     return ewmult(
         ewidx,
-        expr<N, T>(ident_core<N, T, A1>(bta)),
-        expr<M, T>(ident_core<M, T, A2>(btb)));
+        expr<N, T>(new ident_core<N, T, A1>(bta)),
+        expr<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 

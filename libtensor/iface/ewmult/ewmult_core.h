@@ -51,11 +51,11 @@ public:
      **/
     virtual ~ewmult_core() { }
 
-    /** \brief Clones this object using new
-     **/
-    virtual expr_core_i<NC, T> *clone() const {
-        return new ewmult_core<N, M, K, T>(*this);
-    }
+//    /** \brief Clones this object using new
+//     **/
+//    virtual expr_core_i<NC, T> *clone() const {
+//        return new ewmult_core<N, M, K, T>(*this);
+//    }
 
     /** \brief Returns the first expression (A)
      **/
