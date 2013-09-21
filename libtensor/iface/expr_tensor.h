@@ -39,9 +39,18 @@ public:
 
 /** \brief User-friendly block %tensor
 
-    After creation expr_tensor only contains tensor factory, expression core is
-    empty.
+    After creation expr_tensor only contains tensor factory,
+    expression and tensor are empty;
+    they are filled by assignment (expression only) or if requested by get_tensor()
+    or get_expr()
 
+    problems with this setup:
+    - currently no distinction between read-only and read-write tensors
+        - is it possible to implement any_tensor with read-only and read-write
+          interfaces? probably not, since we don't know if a user would want
+          to use an explicit tensor type w/o read-only interface...
+    - no mechanism to detect existence of input tensors which went out of scope
+      (probably at the level of ident_core?)
 
     \ingroup libtensor_iface
  **/
@@ -59,6 +68,7 @@ public:
 
     }
 
+    // Assign expression to expr_tensor
     expr_tensor<N, T> &operator=(const expr_core_i<N, T> &expr) {
         if (m_tensor != 0) { delete m_tensor; m_tensor = 0; }
         if (m_expr != 0) { delete m_expr; m_expr = 0; }
@@ -67,11 +77,13 @@ public:
         return *this;
     }
 
+    // Retrieve tensor object (maybe templated version to retrieve proper tensor type)
     any_tensor<N, T> &get_tensor() {
         init_tensor();
         return *m_tensor;
     }
 
+    // Retrieve expression (at minimum ident_expr)
     const expr_core_i<N, T> &get_expr() {
         init_expr();
         return *m_expr;
@@ -83,6 +95,7 @@ public:
     labeled_tensor<N, T> operator()(const letter_expr<N> &expr);
 
 private:
+    // Initialize expr if zero (ident_core)
     void init_expr() {
         if (m_expr != 0) return;
 
@@ -94,6 +107,7 @@ private:
         }
     }
 
+    // Initialize tensor if zero (empty tensor or from expression)
     void init_tensor() {
         if (m_tensor != 0) return;
 
