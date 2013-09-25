@@ -6,21 +6,21 @@
 #include <libtensor/defs.h>
 #include <libtensor/core/abs_index.h>
 #include "../bad_symmetry.h"
-#include "../combine_label.h"
-#include "../er_reduce.h"
-#include "../er_optimize.h"
 #include "../product_table_container.h"
+#include "combine_label.h"
+#include "er_reduce.h"
+#include "er_optimize.h"
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::k_clazz =
+symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::k_clazz =
         "symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >";
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_reduce<N, M, T>, se_label<NM, T> >::do_perform(
+symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     static const char *method =

@@ -12,7 +12,9 @@ namespace libtensor {
 /** \brief Symmetrizes the result of another block tensor operation
     \tparam N Tensor order.
 
-    \ingroup libtensor_btod
+    \sa gen_bto_symmetrize3, gen_bto_symmetrize4
+
+    \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
 class gen_bto_symmetrize2 : public timings<Timed>, public noncopyable {

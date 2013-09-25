@@ -1,5 +1,5 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include "../combine_part.h"
+#include "combine_part.h"
 #include "combine_part_impl.h"
 
 namespace libtensor {

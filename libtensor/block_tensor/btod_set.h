@@ -19,7 +19,7 @@ namespace libtensor {
 template<size_t N>
 class btod_set : public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     gen_bto_set< N, btod_traits, btod_set<N> > m_gbto;
@@ -35,7 +35,7 @@ public:
     /** \brief Performs the operation
         \param bta Output block tensor.
      **/
-    void perform(block_tensor_i<N, double> &bta) {
+    void perform(block_tensor_wr_i<N, double> &bta) {
 
         m_gbto.perform(bta);
     }

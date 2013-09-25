@@ -1,4 +1,4 @@
-#include "../er_merge.h"
+#include "er_merge.h"
 #include "er_merge_impl.h"
 
 namespace libtensor {

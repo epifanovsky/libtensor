@@ -3,8 +3,8 @@
 
 #include <libtensor/timings.h>
 #include "adjacency_list.h"
-#include "evaluation_rule.h"
-#include "product_table_i.h"
+#include "../evaluation_rule.h"
+#include "../product_table_i.h"
 
 
 namespace libtensor {

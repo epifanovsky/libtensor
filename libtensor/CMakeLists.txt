@@ -14,7 +14,7 @@ set(SRC
     core/impl/subgroup_orbits.C
     btod/btod_diagonalize.C
     btod/btod_tridiagonalize.C
-    symmetry/adjacency_list.C
+    symmetry/inst/adjacency_list.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
@@ -186,6 +186,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_symcontract3.C
     block_tensor/impl/btod_symmetrize2.C
     block_tensor/impl/btod_symmetrize3.C
+    block_tensor/impl/btod_symmetrize4.C
     block_tensor/impl/btod_trace.C
     block_tensor/impl/btod_unfold_block_list.C
     block_tensor/impl/btod_unfold_symmetry.C

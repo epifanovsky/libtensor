@@ -8,7 +8,7 @@ namespace libtensor {
 
 
 template<size_t N>
-const char *btod_set<N>::k_clazz = "btod_set<N>";
+const char btod_set<N>::k_clazz[] = "btod_set<N>";
 
 
 } // namespace libtensor

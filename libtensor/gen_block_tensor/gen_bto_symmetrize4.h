@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_GEN_BTO_SYMMETRIZE3_H
-#define LIBTENSOR_GEN_BTO_SYMMETRIZE3_H
+#ifndef LIBTENSOR_GEN_BTO_SYMMETRIZE4_H
+#define LIBTENSOR_GEN_BTO_SYMMETRIZE4_H
 
 #include <map>
 #include <libtensor/timings.h>
@@ -9,27 +9,28 @@
 namespace libtensor {
 
 
-/** \brief (Anti-)symmetrizes the result of a block %tensor operation
-        over three groups of indexes
+/** \brief (Anti-)symmetrizes the result of a block tensor operation
+        over four groups of indexes
     \tparam N Tensor order.
 
     The operation symmetrizes or anti-symmetrizes the result of another
-    block %tensor operation over three indexes or groups of indexes.
+    block tensor operation over four indexes or groups of indexes.
 
     \f[
-        b_{ijk} = P_{\pm} a_{ijk} = a_{ijk} \pm a_{jik} \pm a_{kji} \pm
-            a_{ikj} + a_{jki} + a_{kij}
+        b_{ijkl} = P_{\pm}(ijkl) a_{ijkl} =
+            P_{\pm}(jkl) a_{ijkl} + P_{\pm}(ikl) a_{jkli} +
+            P_{\pm}(ijl) a_{klij} + P_{\pm}(ijk) a_{lijk}
     \f]
 
-    The constructor takes three different unitary permutations to be used
-    as generators for the symmetrization operation.
+    The constructor takes four different unitary permutations to be used as
+    generators for the symmetrization operation.
 
-    \sa gen_bto_symmetrize2, gen_bto_symmetrize4
+    \sa gen_bto_symmetrize2, gen_bto_symmetrize3
 
     \ingroup libtensor_gen_bto
  **/
 template<size_t N, typename Traits, typename Timed>
-class gen_bto_symmetrize3 : public timings<Timed>, public noncopyable {
+class gen_bto_symmetrize4 : public timings<Timed>, public noncopyable {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -57,6 +58,7 @@ private:
     additive_gen_bto<N, bti_traits> &m_op; //!< Symmetrized operation
     permutation<N> m_perm1; //!< First symmetrization permutation
     permutation<N> m_perm2; //!< Second symmetrization permutation
+    permutation<N> m_perm3; //!< Third symmetrization permutation
     bool m_symm; //!< Symmetrization/anti-symmetrization
     symmetry<N, element_type> m_sym; //!< Symmetry of the result
     mutable assignment_schedule<N, element_type> *m_sch; //!< Schedule
@@ -66,17 +68,19 @@ public:
         \param op Operation to be symmetrized.
         \param perm1 First unitary permutation.
         \param perm2 Second unitary permutation.
+        \param perm3 Third unitary permutation.
         \param symm True for symmetrization, false for anti-symmetrization.
      **/
-    gen_bto_symmetrize3(
+    gen_bto_symmetrize4(
         additive_gen_bto<N, bti_traits> &op,
         const permutation<N> &perm1,
         const permutation<N> &perm2,
+        const permutation<N> &perm3,
         bool symm);
 
     /** \brief Destructor
      **/
-    ~gen_bto_symmetrize3();
+    ~gen_bto_symmetrize4();
 
     /** \brief Returns the block index space of the result
      **/
@@ -125,4 +129,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_GEN_BTO_SYMMETRIZE3_H
+#endif // LIBTENSOR_GEN_BTO_SYMMETRIZE4_H
