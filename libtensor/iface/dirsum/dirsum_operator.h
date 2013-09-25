@@ -16,11 +16,11 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr<N + M, T> dirsum(
-    expr<N, T> bta,
-    expr<M, T> btb) {
+expr_rhs<N + M, T> dirsum(
+    expr_rhs<N, T> bta,
+    expr_rhs<M, T> btb) {
 
-    return expr<N + M, T>(new dirsum_core<N, M, T>(bta, btb));
+    return expr_rhs<N + M, T>(new dirsum_core<N, M, T>(bta, btb));
 }
 
 
@@ -33,11 +33,11 @@ expr<N + M, T> dirsum(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A1>
-expr<N + M, T> dirsum(
+expr_rhs<N + M, T> dirsum(
     labeled_btensor<N, T, A1> bta,
-    expr<M, T> btb) {
+    expr_rhs<M, T> btb) {
 
-    return dirsum(expr<N, T>(new ident_core<N, T, A1>(bta)), btb);
+    return dirsum(expr_rhs<N, T>(new ident_core<N, T, A1>(bta)), btb);
 }
 
 
@@ -50,11 +50,11 @@ expr<N + M, T> dirsum(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A2>
-expr<N + M, T> dirsum(
-    expr<N, T> bta,
+expr_rhs<N + M, T> dirsum(
+    expr_rhs<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return dirsum(bta, expr<M, T>(new ident_core<M, T, A2>(btb)));
+    return dirsum(bta, expr_rhs<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 
@@ -68,13 +68,13 @@ expr<N + M, T> dirsum(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A1, bool A2>
-expr<N + M, T> dirsum(
+expr_rhs<N + M, T> dirsum(
     labeled_btensor<N, T, A1> bta,
     labeled_btensor<M, T, A2> btb) {
 
     return dirsum(
-        expr<N, T>(new ident_core<N, T, A1>(bta)),
-        expr<M, T>(new ident_core<M, T, A2>(btb)));
+        expr_rhs<N, T>(new ident_core<N, T, A1>(bta)),
+        expr_rhs<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 

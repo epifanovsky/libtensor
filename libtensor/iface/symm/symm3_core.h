@@ -27,7 +27,7 @@ private:
     const letter &m_l1; //!< First %index
     const letter &m_l2; //!< Second %index
     const letter &m_l3; //!< Third %index
-    expr<N, T> m_subexpr; //!< Sub-expression
+    expr_rhs<N, T> m_subexpr; //!< Sub-expression
 
 public:
     /** \brief Creates the expression core
@@ -40,7 +40,7 @@ public:
         const letter &l1,
         const letter &l2,
         const letter &l3,
-        const expr<N, T> &subexpr);
+        const expr_rhs<N, T> &subexpr);
 
     /** \brief Virtual destructor
      **/
@@ -78,13 +78,13 @@ public:
 
     /** \brief Returns the sub-expression
      **/
-    expr<N, T> &get_sub_expr() {
+    expr_rhs<N, T> &get_sub_expr() {
         return m_subexpr;
     }
 
     /** \brief Returns the sub-expression, const version
      **/
-    const expr<N, T> &get_sub_expr() const {
+    const expr_rhs<N, T> &get_sub_expr() const {
         return m_subexpr;
     }
 
@@ -189,7 +189,7 @@ symm3_core<N, Sym, T>::symm3_core(
     const letter &l1,
     const letter &l2,
     const letter &l3,
-    const expr<N, T> &subexpr) :
+    const expr_rhs<N, T> &subexpr) :
 
     m_l1(l1), m_l2(l2), m_l3(l3), m_subexpr(subexpr) {
 

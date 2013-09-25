@@ -5,7 +5,7 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/noncopyable.h>
 #include "../btensor.h"
-#include "expr.h"
+#include "expr_rhs.h"
 #include "evalfunctor.h"
 
 namespace libtensor {
@@ -21,7 +21,7 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T>
 class anon_eval : public noncopyable {
 private:
-    expr<N, T> m_expr; //!< Expression
+    expr_rhs<N, T> m_expr; //!< Expression
     std::auto_ptr< eval_container_i<N, T> > m_eval_container; //!< Container
     evalfunctor<N, T> m_functor; //!< Evaluation functor
     btensor<N, T> *m_bt; //!< Block tensor
@@ -30,7 +30,7 @@ public:
     //!    \name Construction and destruction
     //@{
 
-    anon_eval(const expr<N, T> &e, const letter_expr<N> &label);
+    anon_eval(const expr_rhs<N, T> &e, const letter_expr<N> &label);
 
     ~anon_eval();
 
@@ -60,7 +60,7 @@ public:
 
 template<size_t N, typename T>
 anon_eval<N, T>::anon_eval(
-    const expr<N, T> &e, const letter_expr<N> &label) :
+    const expr_rhs<N, T> &e, const letter_expr<N> &label) :
 
     m_expr(e), m_eval_container(m_expr.get_core().create_container(label)),
     m_functor(m_expr, *m_eval_container), m_bt(0) {

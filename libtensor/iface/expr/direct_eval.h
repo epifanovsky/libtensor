@@ -3,7 +3,7 @@
 
 #include <libtensor/exception.h>
 #include "../direct_btensor.h"
-#include "expr.h"
+#include "expr_rhs.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -25,7 +25,7 @@ public:
     //!    \name Construction and destruction
     //@{
 
-    direct_eval(const expr<N, T> &e, const letter_expr<N> &label) :
+    direct_eval(const expr_rhs<N, T> &e, const letter_expr<N> &label) :
         m_bt(label, e) { }
 
     ~direct_eval() { }

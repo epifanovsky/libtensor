@@ -64,7 +64,7 @@ template<typename T>
 double trace(
     const letter &l1,
     const letter &l2,
-    const expr<2, T> &expr) {
+    const expr_rhs<2, T> &expr) {
 
     letter_expr<2> le(l1|l2);
     anon_eval<2, T> eval(expr, le);
@@ -81,7 +81,7 @@ template<size_t N, size_t N2, typename T>
 double trace(
     const letter_expr<N> le1,
     const letter_expr<N> le2,
-    expr<N2, T> expr) {
+    expr_rhs<N2, T> expr) {
 
     trace_subexpr_label_builder<N> lb(le1, le2);
     anon_eval<2 * N, T> eval(expr, lb.get_label());

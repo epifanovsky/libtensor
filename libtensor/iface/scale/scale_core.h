@@ -24,13 +24,13 @@ public:
 
 private:
     T m_coeff; //!< Scaling coefficient
-    expr<N, T> m_expr; //!< Unscaled expression
+    expr_rhs<N, T> m_expr; //!< Unscaled expression
 
 public:
     /** \brief Constructs the scaling expression using a coefficient
             and the underlying unscaled expression
      **/
-    scale_core(const T &coeff, const expr<N, T> &subexpr) :
+    scale_core(const T &coeff, const expr_rhs<N, T> &subexpr) :
         m_coeff(coeff), m_expr(subexpr)
     { }
 
@@ -46,13 +46,13 @@ public:
 
     /** \brief Returns the unscaled expression
      **/
-    expr<N, T> &get_unscaled_expr() {
+    expr_rhs<N, T> &get_unscaled_expr() {
         return m_expr;
     }
 
     /** \brief Returns the unscaled expression (const version)
      **/
-    const expr<N, T> &get_unscaled_expr() const {
+    const expr_rhs<N, T> &get_unscaled_expr() const {
         return m_expr;
     }
 

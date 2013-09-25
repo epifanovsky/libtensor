@@ -8,7 +8,7 @@
 namespace libtensor {
 
 namespace labeled_btensor_expr {
-template<size_t N, typename T> class expr;
+template<size_t N, typename T> class expr_rhs;
 } // namespace labeled_btensor_expr
 
 template<size_t N, typename T> class btensor_i;
@@ -60,7 +60,7 @@ public:
     /** \brief Assigns this %tensor to an expression
      **/
     labeled_btensor<N, T, true> &operator=(
-        const labeled_btensor_expr::expr<N, T> &rhs);
+        const labeled_btensor_expr::expr_rhs<N, T> &rhs);
 
     labeled_btensor<N, T, true> &operator=(
         const labeled_btensor<N, T, true> &rhs);

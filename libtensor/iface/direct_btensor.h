@@ -9,7 +9,7 @@
 #include "btensor_traits.h"
 #include "labeled_btensor.h"
 #include "labeled_btensor_expr.h"
-#include "expr/expr.h"
+#include "expr/expr_rhs.h"
 #include "expr/evalfunctor.h"
 
 namespace libtensor {
@@ -26,7 +26,7 @@ public:
 
 private:
     typedef struct {
-        labeled_btensor_expr::expr<N, T> *m_pexpr;
+        labeled_btensor_expr::expr_rhs<N, T> *m_pexpr;
         labeled_btensor_expr::eval_container_i<N, T> *m_peval;
         labeled_btensor_expr::evalfunctor_i<N, T> *m_pfunc;
     } ptrs_t;
@@ -45,7 +45,7 @@ public:
      **/
     direct_btensor(
         const letter_expr<N> &label,
-        const labeled_btensor_expr::expr<N, T> &e);
+        const labeled_btensor_expr::expr_rhs<N, T> &e);
 
     /** \brief Virtual destructor
      **/
@@ -91,7 +91,7 @@ protected:
 private:
     static ptrs_t mk_func(
         const letter_expr<N> &label,
-        const labeled_btensor_expr::expr<N, T> &expr);
+        const labeled_btensor_expr::expr_rhs<N, T> &expr);
 
 };
 
@@ -99,7 +99,7 @@ private:
 template<size_t N, typename T, typename Traits>
 direct_btensor<N, T, Traits>::direct_btensor(
     const letter_expr<N> &label,
-    const labeled_btensor_expr::expr<N, T> &e) :
+    const labeled_btensor_expr::expr_rhs<N, T> &e) :
 
     m_label(label), m_ptrs(mk_func(m_label, e)),
     m_bt(m_ptrs.m_pfunc->get_bto()), m_ctrl(m_bt) {
@@ -120,10 +120,10 @@ template<size_t N, typename T, typename Traits>
 typename direct_btensor<N, T, Traits>::ptrs_t
 direct_btensor<N, T, Traits>::mk_func(
     const letter_expr<N> &label,
-    const labeled_btensor_expr::expr<N, T> &e) {
+    const labeled_btensor_expr::expr_rhs<N, T> &e) {
 
-    std::auto_ptr< labeled_btensor_expr::expr<N, T> > pexpr(
-        new labeled_btensor_expr::expr<N, T>(e));
+    std::auto_ptr< labeled_btensor_expr::expr_rhs<N, T> > pexpr(
+        new labeled_btensor_expr::expr_rhs<N, T>(e));
     std::auto_ptr< labeled_btensor_expr::eval_container_i<N, T> > peval(
         pexpr->get_core().create_container(label));
     peval->prepare();

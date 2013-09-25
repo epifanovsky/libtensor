@@ -27,7 +27,7 @@ public:
 private:
     letter_expr<M> m_sym1; //!< First set of symmetrized indexes
     letter_expr<M> m_sym2; //!< Second set of symmetrized indexes
-    expr<N, T> m_subexpr; //!< Sub-expression
+    expr_rhs<N, T> m_subexpr; //!< Sub-expression
 
 public:
     /** \brief Creates the expression core
@@ -38,7 +38,7 @@ public:
     symm2_core(
         const letter_expr<M> &sym1,
         const letter_expr<M> &sym2,
-        const expr<N, T> &subexpr);
+        const expr_rhs<N, T> &subexpr);
 
     /** \brief Virtual destructor
      **/
@@ -70,13 +70,13 @@ public:
 
     /** \brief Returns the sub-expression
      **/
-    expr<N, T> &get_sub_expr() {
+    expr_rhs<N, T> &get_sub_expr() {
         return m_subexpr;
     }
 
     /** \brief Returns the sub-expression, const version
      **/
-    const expr<N, T> &get_sub_expr() const {
+    const expr_rhs<N, T> &get_sub_expr() const {
         return m_subexpr;
     }
 
@@ -181,7 +181,7 @@ template<size_t N, size_t M, bool Sym, typename T>
 symm2_core<N, M, Sym, T>::symm2_core(
     const letter_expr<M> &sym1,
     const letter_expr<M> &sym2,
-    const expr<N, T> &subexpr) :
+    const expr_rhs<N, T> &subexpr) :
 
     m_sym1(sym1), m_sym2(sym2), m_subexpr(subexpr) {
 

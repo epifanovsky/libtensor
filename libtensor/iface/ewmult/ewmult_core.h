@@ -32,8 +32,8 @@ public:
     };
 
 private:
-    expr<NA, T> m_expr1; //!< First expression
-    expr<NB, T> m_expr2; //!< Second expression
+    expr_rhs<NA, T> m_expr1; //!< First expression
+    expr_rhs<NB, T> m_expr2; //!< Second expression
     letter_expr<K> m_ewidx; //!< Shared indexes
     sequence<NC, const letter*> m_defout; //!< Default output label
 
@@ -45,7 +45,7 @@ public:
         \throw expr_exception If letters are inconsistent.
      **/
     ewmult_core(const letter_expr<K> &ewidx,
-        const expr<NA, T> &expr1, const expr<NB, T> &expr2);
+        const expr_rhs<NA, T> &expr1, const expr_rhs<NB, T> &expr2);
 
     /** \brief Virtual destructor
      **/
@@ -59,25 +59,25 @@ public:
 
     /** \brief Returns the first expression (A)
      **/
-    expr<NA, T> &get_expr_1() {
+    expr_rhs<NA, T> &get_expr_1() {
         return m_expr1;
     }
 
     /** \brief Returns the first expression (A), const version
      **/
-    const expr<NA, T> &get_expr_1() const {
+    const expr_rhs<NA, T> &get_expr_1() const {
         return m_expr1;
     }
 
     /** \brief Returns the second expression (B)
      **/
-    expr<NB, T> &get_expr_2() {
+    expr_rhs<NB, T> &get_expr_2() {
         return m_expr2;
     }
 
     /** \brief Returns the second expression (B), const version
      **/
-    const expr<NB, T> &get_expr_2() const {
+    const expr_rhs<NB, T> &get_expr_2() const {
         return m_expr2;
     }
 
@@ -198,7 +198,7 @@ const char ewmult_core<N, M, K, T>::k_clazz[] = "ewmult_core<N, M, K, T>";
 
 template<size_t N, size_t M, size_t K, typename T>
 ewmult_core<N, M, K, T>::ewmult_core(const letter_expr<K> &ewidx,
-    const expr<NA, T> &expr1, const expr<NB, T> &expr2) :
+    const expr_rhs<NA, T> &expr1, const expr_rhs<NB, T> &expr2) :
 
     m_expr1(expr1), m_expr2(expr2), m_ewidx(ewidx), m_defout(0) {
 

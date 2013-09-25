@@ -25,8 +25,8 @@ public:
 
 private:
     letter_expr<K> m_contr; //!< Contracted indexes
-    expr<N + K, T> m_expr1; //!< First expression
-    expr<M + K, T> m_expr2; //!< Second expression
+    expr_rhs<N + K, T> m_expr1; //!< First expression
+    expr_rhs<M + K, T> m_expr2; //!< Second expression
     sequence<N + M, const letter*> m_defout; //!< Default output label
 
 public:
@@ -38,7 +38,7 @@ public:
         \throw expr_exception If letters are inconsistent.
      **/
     contract2_core(const letter_expr<K> &contr,
-        const expr<N + K, T> &expr1, const expr<M + K, T> &expr2);
+        const expr_rhs<N + K, T> &expr1, const expr_rhs<M + K, T> &expr2);
 
     /** \brief Virtual destructor
      **/
@@ -52,25 +52,25 @@ public:
 
 //    /** \brief Returns the first expression (A)
 //     **/
-//    expr<N + K, T> &get_expr_1() {
+//    expr_rhs<N + K, T> &get_expr_1() {
 //        return m_expr1;
 //    }
 
     /** \brief Returns the first expression (A), const version
      **/
-    const expr<N + K, T> &get_expr_1() const {
+    const expr_rhs<N + K, T> &get_expr_1() const {
         return m_expr1;
     }
 
 //    /** \brief Returns the second expression (B)
 //     **/
-//    expr<M + K, T> &get_expr_2() {
+//    expr_rhs<M + K, T> &get_expr_2() {
 //        return m_expr2;
 //    }
 
     /** \brief Returns the second expression (B), const version
      **/
-    const expr<M + K, T> &get_expr_2() const {
+    const expr_rhs<M + K, T> &get_expr_2() const {
         return m_expr2;
     }
 
@@ -195,8 +195,8 @@ const char contract2_core<N, M, K, T>::k_clazz[] = "contract2_core<N, M, K, T>";
 template<size_t N, size_t M, size_t K, typename T>
 contract2_core<N, M, K, T>::contract2_core(
     const letter_expr<K> &contr,
-    const expr<N + K, T> &expr1,
-    const expr<M + K, T> &expr2) :
+    const expr_rhs<N + K, T> &expr1,
+    const expr_rhs<M + K, T> &expr2) :
 
     m_contr(contr), m_expr1(expr1), m_expr2(expr2), m_defout(0) {
 

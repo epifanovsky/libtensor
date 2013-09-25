@@ -39,9 +39,9 @@ public:
 private:
     letter_expr<K1> m_contr1; //!< Contracted indexes (A*B)
     letter_expr<K2> m_contr2; //!< Contracted indexes (AB * C)
-    expr<NA, T> m_expr1; //!< First expression (A)
-    expr<NB, T> m_expr2; //!< Second expression (B)
-    expr<NC, T> m_expr3; //!< Third expression (C)
+    expr_rhs<NA, T> m_expr1; //!< First expression (A)
+    expr_rhs<NB, T> m_expr2; //!< Second expression (B)
+    expr_rhs<NC, T> m_expr3; //!< Third expression (C)
     sequence<ND, const letter*> m_defout; //!< Default output label
 
 public:
@@ -56,8 +56,8 @@ public:
      **/
     contract3_core(
         const letter_expr<K1> &contr1, const letter_expr<K2> &contr2,
-        const expr<NA, T> &expr1, const expr<NB, T> &expr2,
-        const expr<NC, T> &expr3);
+        const expr_rhs<NA, T> &expr1, const expr_rhs<NB, T> &expr2,
+        const expr_rhs<NC, T> &expr3);
 
     /** \brief Virtual destructor
      **/
@@ -71,37 +71,37 @@ public:
 
     /** \brief Returns the first expression (A)
      **/
-    expr<N1 + K1 + K2a, T> &get_expr_1() {
+    expr_rhs<N1 + K1 + K2a, T> &get_expr_1() {
         return m_expr1;
     }
 
     /** \brief Returns the first expression (A), const version
      **/
-    const expr<N1 + K1 + K2a, T> &get_expr_1() const {
+    const expr_rhs<N1 + K1 + K2a, T> &get_expr_1() const {
         return m_expr1;
     }
 
     /** \brief Returns the second expression (B)
      **/
-    expr<N2 + K1 + K2b, T> &get_expr_2() {
+    expr_rhs<N2 + K1 + K2b, T> &get_expr_2() {
         return m_expr2;
     }
 
     /** \brief Returns the second expression (B), const version
      **/
-    const expr<N2 + K1 + K2b, T> &get_expr_2() const {
+    const expr_rhs<N2 + K1 + K2b, T> &get_expr_2() const {
         return m_expr2;
     }
 
     /** \brief Returns the third expression (C)
      **/
-    expr<N3 + K2a + K2b, T> &get_expr_3() {
+    expr_rhs<N3 + K2a + K2b, T> &get_expr_3() {
         return m_expr3;
     }
 
     /** \brief Returns the third expression (C), const version
      **/
-    const expr<N3 + K2a + K2b, T> &get_expr_3() const {
+    const expr_rhs<N3 + K2a + K2b, T> &get_expr_3() const {
         return m_expr3;
     }
 
@@ -243,8 +243,8 @@ template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
     typename T>
 contract3_core<N1, N2, N3, K1, K2a, K2b, T>::contract3_core(
     const letter_expr<K1> &contr1, const letter_expr<K2> &contr2,
-    const expr<NA, T> &expr1, const expr<NB, T> &expr2,
-    const expr<NC, T> &expr3) :
+    const expr_rhs<NA, T> &expr1, const expr_rhs<NB, T> &expr2,
+    const expr_rhs<NC, T> &expr3) :
 
     m_contr1(contr1), m_contr2(contr2), m_expr1(expr1), m_expr2(expr2),
     m_expr3(expr3), m_defout(0) {

@@ -13,11 +13,11 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> operator*(
+expr_rhs<N, T> operator*(
     const T &lhs,
-    const expr<N, T> &rhs) {
+    const expr_rhs<N, T> &rhs) {
 
-    return expr<N, T>(new scale_core<N, T>(lhs, rhs));
+    return expr_rhs<N, T>(new scale_core<N, T>(lhs, rhs));
 }
 
 
@@ -26,11 +26,11 @@ expr<N, T> operator*(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> operator*(
-    const expr<N, T> &lhs,
+expr_rhs<N, T> operator*(
+    const expr_rhs<N, T> &lhs,
     const T &rhs) {
 
-    return expr<N, T>(new scale_core<N, T>(rhs, lhs));
+    return expr_rhs<N, T>(new scale_core<N, T>(rhs, lhs));
 }
 
 
@@ -39,11 +39,11 @@ expr<N, T> operator*(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> operator*(
+expr_rhs<N, T> operator*(
     const T &lhs,
     labeled_btensor<N, T, A> rhs) {
 
-    return lhs * expr<N, T>(new ident_core<N, T, A>(rhs));
+    return lhs * expr_rhs<N, T>(new ident_core<N, T, A>(rhs));
 }
 
 
@@ -52,11 +52,11 @@ expr<N, T> operator*(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> operator*(
+expr_rhs<N, T> operator*(
     labeled_btensor<N, T, A> lhs,
     const T &rhs) {
 
-    return expr<N, T>(new ident_core<N, T, A>(lhs)) * rhs;
+    return expr_rhs<N, T>(new ident_core<N, T, A>(lhs)) * rhs;
 }
 
 
@@ -65,11 +65,11 @@ expr<N, T> operator*(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> operator/(
-    const expr<N, T> &lhs,
+expr_rhs<N, T> operator/(
+    const expr_rhs<N, T> &lhs,
     const T &rhs) {
 
-    return expr<N, T>(new scale_core<N, T>(1.0 / rhs, lhs));
+    return expr_rhs<N, T>(new scale_core<N, T>(1.0 / rhs, lhs));
 }
 
 
@@ -78,11 +78,11 @@ expr<N, T> operator/(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> operator/(
+expr_rhs<N, T> operator/(
     labeled_btensor<N, T, A> lhs,
     const T &rhs) {
 
-    return expr<N, T>(new ident_core<N, T, A>(lhs)) / rhs;
+    return expr_rhs<N, T>(new ident_core<N, T, A>(lhs)) / rhs;
 }
 
 

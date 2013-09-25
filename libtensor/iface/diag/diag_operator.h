@@ -16,12 +16,12 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr<N - M + 1, T> diag(
+expr_rhs<N - M + 1, T> diag(
     const letter &let_diag,
     const letter_expr<M> &lab_diag,
-    const expr<N, T> &subexpr) {
+    const expr_rhs<N, T> &subexpr) {
 
-    return expr<N - M + 1, T>(new diag_core<N, M, T>(let_diag,
+    return expr_rhs<N - M + 1, T>(new diag_core<N, M, T>(let_diag,
             lab_diag, subexpr));
 }
 
@@ -35,12 +35,12 @@ expr<N - M + 1, T> diag(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A>
-expr<N - M + 1, T> diag(
+expr_rhs<N - M + 1, T> diag(
     const letter &let_diag,
     const letter_expr<M> &lab_diag,
     const labeled_btensor<N, T, A> bt) {
 
-    return diag(let_diag, lab_diag, expr<N, T>(new ident_core<N, T, A>(bt)));
+    return diag(let_diag, lab_diag, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 

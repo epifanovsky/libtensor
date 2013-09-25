@@ -45,7 +45,7 @@ namespace {
 template<size_t N, typename T>
 void invoke_eval(
     const char *testname,
-    const labeled_btensor_expr::expr<N, T> &expr,
+    const labeled_btensor_expr::expr_rhs<N, T> &expr,
     const letter_expr<N> &label,
     block_tensor_i<N, T> &ref,
     double thresh = 1e-14) {

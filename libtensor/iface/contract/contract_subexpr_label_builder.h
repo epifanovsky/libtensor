@@ -22,7 +22,7 @@ private:
         letter_array(
             const letter_expr<N + M> &label_c,
             const letter_expr<K> &contr,
-            const expr<N + K, T> &e);
+            const expr_rhs<N + K, T> &e);
         const letter *at(size_t i) const { return m_let[i]; }
     };
     template<size_t L>
@@ -35,7 +35,7 @@ public:
     contract_subexpr_label_builder(
         const letter_expr<N + M> &label_c,
         const letter_expr<K> &contr,
-        const expr<N + K, T> &e);
+        const expr_rhs<N + K, T> &e);
 
     const letter_expr<N + K> &get_label() const {
         return m_label;
@@ -55,7 +55,7 @@ template<size_t N, size_t M, size_t K> template<typename T>
 contract_subexpr_label_builder<N, M, K>::contract_subexpr_label_builder(
     const letter_expr<N + M> &label_c,
     const letter_expr<K> &contr,
-    const expr<N + K, T> &e) :
+    const expr_rhs<N + K, T> &e) :
 
     m_let(label_c, contr, e),
     m_label(mk_label(dummy<N + K>(), m_let, N + K - 1)) {
@@ -66,7 +66,7 @@ contract_subexpr_label_builder<N, M, K>::contract_subexpr_label_builder(
 template<size_t N, size_t M, size_t K> template<typename T>
 contract_subexpr_label_builder<N, M, K>::letter_array::letter_array(
     const letter_expr<N + M> &label_c, const letter_expr<K> &contr,
-    const expr<N + K, T> &e) :
+    const expr_rhs<N + K, T> &e) :
 
     m_let(0) {
 

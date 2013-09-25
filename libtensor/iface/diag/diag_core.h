@@ -26,7 +26,7 @@ public:
 private:
     const letter &m_diag_let; //!< Diagonal letter
     letter_expr<M> m_diag_lab; //!< Indexes defining a diagonal
-    expr<N, T> m_subexpr; //!< Sub-expression
+    expr_rhs<N, T> m_subexpr; //!< Sub-expression
     sequence<N - M + 1, const letter*> m_defout; //!< Default output label
 
 public:
@@ -36,7 +36,7 @@ public:
         \param subexpr Sub-expression.
      **/
     diag_core(const letter &diag_letter, const letter_expr<M> &diag_label,
-        const expr<N, T> &subexpr);
+        const expr_rhs<N, T> &subexpr);
 
     /** \brief Virtual destructor
      **/
@@ -62,13 +62,13 @@ public:
 
     /** \brief Returns the sub-expression
      **/
-    expr<N, T> &get_sub_expr() {
+    expr_rhs<N, T> &get_sub_expr() {
         return m_subexpr;
     }
 
     /** \brief Returns the sub-expression, const version
      **/
-    const expr<N, T> &get_sub_expr() const {
+    const expr_rhs<N, T> &get_sub_expr() const {
         return m_subexpr;
     }
 
@@ -174,7 +174,7 @@ const char diag_core<N, M, T>::k_clazz[] = "diag_core<N, M, T>";
 
 template<size_t N, size_t M, typename T>
 diag_core<N, M, T>::diag_core(const letter &diag_letter,
-    const letter_expr<M> &diag_label, const expr<N, T> &subexpr) :
+    const letter_expr<M> &diag_label, const expr_rhs<N, T> &subexpr) :
 
     m_diag_let(diag_letter), m_diag_lab(diag_label), m_subexpr(subexpr),
     m_defout(0) {

@@ -13,11 +13,11 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> operator-(
-    expr<N, T> lhs,
-    expr<N, T> rhs) {
+expr_rhs<N, T> operator-(
+    expr_rhs<N, T> lhs,
+    expr_rhs<N, T> rhs) {
 
-    return lhs + expr<N, T>(new scale_core<N, T>(T(-1), rhs));
+    return lhs + expr_rhs<N, T>(new scale_core<N, T>(T(-1), rhs));
 }
 
 
@@ -26,11 +26,11 @@ expr<N, T> operator-(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A2>
-expr<N, T> operator-(
-    expr<N, T> lhs,
+expr_rhs<N, T> operator-(
+    expr_rhs<N, T> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return lhs - expr<N, T>(new ident_core<N, T, A2>(rhs));
+    return lhs - expr_rhs<N, T>(new ident_core<N, T, A2>(rhs));
 }
 
 
@@ -39,11 +39,11 @@ expr<N, T> operator-(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A1>
-expr<N, T> operator-(
+expr_rhs<N, T> operator-(
     labeled_btensor<N, T, A1> lhs,
-    expr<N, T> rhs) {
+    expr_rhs<N, T> rhs) {
 
-    return expr<N, T>(new ident_core<N, T, A1>(lhs)) - rhs;
+    return expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)) - rhs;
 }
 
 
@@ -52,12 +52,13 @@ expr<N, T> operator-(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A1, bool A2>
-expr<N, T> operator-(
+expr_rhs<N, T> operator-(
     labeled_btensor<N, T, A1> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return expr<N, T>(new ident_core<N, T, A1>(lhs)) -
-        expr<N, T>(new ident_core<N, T, A2>(rhs));
+    return
+        expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)) -
+        expr_rhs<N, T>(new ident_core<N, T, A2>(rhs));
 }
 
 
@@ -66,10 +67,10 @@ expr<N, T> operator-(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> operator-(
-    expr<N, T> e) {
+expr_rhs<N, T> operator-(
+    expr_rhs<N, T> e) {
 
-    return expr<N, T>(new scale_core<N, T>(T(-1), e));
+    return expr_rhs<N, T>(new scale_core<N, T>(T(-1), e));
 }
 
 
@@ -78,10 +79,10 @@ expr<N, T> operator-(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> operator-(
+expr_rhs<N, T> operator-(
     labeled_btensor<N, T, A> t) {
 
-    return -expr<N, T>(new ident_core<N, T, A>(t));
+    return -expr_rhs<N, T>(new ident_core<N, T, A>(t));
 }
 
 

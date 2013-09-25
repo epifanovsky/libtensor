@@ -23,7 +23,7 @@ public:
     //!    \name Construction and destruction
     //@{
 
-    interm(const expr<N, T> &e, const letter_expr<N> &label);
+    interm(const expr_rhs<N, T> &e, const letter_expr<N> &label);
 
     ~interm();
 
@@ -51,7 +51,7 @@ public:
 
 template<size_t N, typename T>
 interm<N, T>::interm(
-    const expr<N, T> &e, const letter_expr<N> &label) :
+    const expr_rhs<N, T> &e, const letter_expr<N> &label) :
 
     m_eval(0), m_arg(0) {
 

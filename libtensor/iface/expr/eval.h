@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <libtensor/exception.h>
-#include "expr.h"
+#include "expr_rhs.h"
 #include "evalfunctor.h"
 
 namespace libtensor {
@@ -24,12 +24,12 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T>
 class eval : public noncopyable {
 private:
-    expr<N, T> m_expr; //!< Expression
+    expr_rhs<N, T> m_expr; //!< Expression
     labeled_btensor<N, T, true> &m_result; //!< Result
     std::auto_ptr< eval_container_i<N, T> > m_eval_container; //!< Container
 
 public:
-    eval(const expr<N, T> &e, labeled_btensor<N, T, true> &result);
+    eval(const expr_rhs<N, T> &e, labeled_btensor<N, T, true> &result);
 
     /** \brief Evaluates the expression
      **/
@@ -39,7 +39,7 @@ public:
 
 
 template<size_t N, typename T>
-eval<N, T>::eval(const expr<N, T> &e, labeled_btensor<N, T, true> &result) :
+eval<N, T>::eval(const expr_rhs<N, T> &e, labeled_btensor<N, T, true> &result) :
 
     m_expr(e),
     m_result(result),

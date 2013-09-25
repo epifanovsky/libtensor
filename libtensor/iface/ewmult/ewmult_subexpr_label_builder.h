@@ -5,7 +5,7 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, typename T> class expr;
+template<size_t N, typename T> class expr_rhs;
 
 
 /** \brief Label builder for sub-expressions in ewmult
@@ -22,7 +22,7 @@ private:
         template<typename T>
         letter_array(const letter_expr<N + M + K> &label_c,
             const letter_expr<K> &ewidx,
-            const expr<N + K, T> &e);
+            const expr_rhs<N + K, T> &e);
         const letter *at(size_t i) const { return m_let[i]; }
     };
     template<size_t L>
@@ -33,7 +33,7 @@ private:
 public:
     template<typename T>
     ewmult_subexpr_label_builder(const letter_expr<N + M + K> &label_c,
-        const letter_expr<K> &ewidx, const expr<N + K, T> &e);
+        const letter_expr<K> &ewidx, const expr_rhs<N + K, T> &e);
 
     const letter_expr<N + K> &get_label() const { return m_label; }
 
@@ -51,7 +51,7 @@ template<size_t N, size_t M, size_t K>
 template<typename T>
 ewmult_subexpr_label_builder<N, M, K>::ewmult_subexpr_label_builder(
     const letter_expr<N + M + K> &label_c, const letter_expr<K> &ewidx,
-    const expr<N + K, T> &e) :
+    const expr_rhs<N + K, T> &e) :
 
     m_let(label_c, ewidx, e),
     m_label(mk_label(dummy<N + K>(), m_let, N + K - 1)) {
@@ -63,7 +63,7 @@ template<size_t N, size_t M, size_t K>
 template<typename T>
 ewmult_subexpr_label_builder<N, M, K>::letter_array::letter_array(
     const letter_expr<N + M + K> &label_c, const letter_expr<K> &ewidx,
-    const expr<N + K, T> &e) {
+    const expr_rhs<N + K, T> &e) {
 
     for(size_t i = 0; i < N + K; i++) m_let[i] = 0;
 

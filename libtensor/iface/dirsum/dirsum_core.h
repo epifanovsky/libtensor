@@ -24,8 +24,8 @@ public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    expr<N, T> m_expr1; //!< First expression
-    expr<M, T> m_expr2; //!< Second expression
+    expr_rhs<N, T> m_expr1; //!< First expression
+    expr_rhs<M, T> m_expr2; //!< Second expression
     sequence<N + M, const letter*> m_defout; //!< Default output label
 
 public:
@@ -34,7 +34,7 @@ public:
         \param expr2 Second expression (B).
         \throw expr_exception If letters are inconsistent.
      **/
-    dirsum_core(const expr<N, T> &expr1, const expr<M, T> &expr2);
+    dirsum_core(const expr_rhs<N, T> &expr1, const expr_rhs<M, T> &expr2);
 
     /** \brief Virtual destructor
      **/
@@ -48,25 +48,25 @@ public:
 
     /** \brief Returns the first expression (A)
      **/
-    expr<N, T> &get_expr_1() {
+    expr_rhs<N, T> &get_expr_1() {
         return m_expr1;
     }
 
     /** \brief Returns the first expression (A), const version
      **/
-    const expr<N, T> &get_expr_1() const {
+    const expr_rhs<N, T> &get_expr_1() const {
         return m_expr1;
     }
 
     /** \brief Returns the second expression (B)
      **/
-    expr<M, T> &get_expr_2() {
+    expr_rhs<M, T> &get_expr_2() {
         return m_expr2;
     }
 
     /** \brief Returns the second expression (B), const version
      **/
-    const expr<M, T> &get_expr_2() const {
+    const expr_rhs<M, T> &get_expr_2() const {
         return m_expr2;
     }
 
@@ -177,7 +177,7 @@ const char dirsum_core<N, M, T>::k_clazz[] = "dirsum_core<N, M, T>";
 
 template<size_t N, size_t M, typename T>
 dirsum_core<N, M, T>::dirsum_core(
-    const expr<N, T> &expr1, const expr<M, T> &expr2) :
+    const expr_rhs<N, T> &expr1, const expr_rhs<M, T> &expr2) :
 
     m_expr1(expr1), m_expr2(expr2), m_defout(0) {
 

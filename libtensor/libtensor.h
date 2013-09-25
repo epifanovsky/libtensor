@@ -47,7 +47,7 @@
 #include "iface/letter_expr.h"
 #include "iface/labeled_btensor_base.h"
 #include "iface/labeled_btensor.h"
-#include "iface/expr/expr.h"
+#include "iface/expr/expr_rhs.h"
 #include "iface/expr/eval.h"
 #include "iface/expr/anon_eval.h"
 #include "iface/operators.h"

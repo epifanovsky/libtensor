@@ -13,11 +13,11 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> div(
-    expr<N, T> lhs,
-    expr<N, T> rhs) {
+expr_rhs<N, T> div(
+    expr_rhs<N, T> lhs,
+    expr_rhs<N, T> rhs) {
 
-    return expr<N, T>(new mult_core<N, T, true>(lhs, rhs));
+    return expr_rhs<N, T>(new mult_core<N, T, true>(lhs, rhs));
 }
 
 
@@ -26,11 +26,11 @@ expr<N, T> div(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A2>
-expr<N, T> div(
-    expr<N, T> lhs,
+expr_rhs<N, T> div(
+    expr_rhs<N, T> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
-    return div(lhs, expr<N, T>(new ident_core<N, T, A2>(rhs)));
+    return div(lhs, expr_rhs<N, T>(new ident_core<N, T, A2>(rhs)));
 }
 
 
@@ -39,11 +39,11 @@ expr<N, T> div(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A1>
-expr<N, T> div(
+expr_rhs<N, T> div(
     labeled_btensor<N, T, A1> lhs,
-    expr<N, T> rhs) {
+    expr_rhs<N, T> rhs) {
 
-    return div(expr<N, T>(new ident_core<N, T, A1>(lhs)), rhs);
+    return div(expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)), rhs);
 }
 
 
@@ -52,13 +52,13 @@ expr<N, T> div(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A1, bool A2>
-expr<N, T> div(
+expr_rhs<N, T> div(
     labeled_btensor<N, T, A1> lhs,
     labeled_btensor<N, T, A2> rhs) {
 
     return div(
-        expr<N, T>(new ident_core<N, T, A1>(lhs)),
-        expr<N, T>(new ident_core<N, T, A2>(rhs)));
+        expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)),
+        expr_rhs<N, T>(new ident_core<N, T, A2>(rhs)));
 }
 
 

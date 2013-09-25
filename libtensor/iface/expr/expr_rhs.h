@@ -102,7 +102,7 @@ public:
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class expr : public noncopyable {
+class expr_rhs : public noncopyable {
 private:
     struct core_ptr {
         expr_core_i<N, T> *m_core; //!< Expression core
@@ -117,14 +117,14 @@ private:
 public:
     /** \brief Constructs the expression using a core
      **/
-    expr(expr_core_i<N, T> *core) :
+    expr_rhs(expr_core_i<N, T> *core) :
         m_expr(new core_ptr(core)), m_core(*m_expr->m_core) {
 
     }
 
     /** \brief Copy constructor
      **/
-    expr(const expr<N, T> &expr) :
+    expr_rhs(const expr_rhs<N, T> &expr) :
         m_expr(expr.m_expr), m_core(*m_expr->m_core) {
 
         m_expr->m_ncnt++;
@@ -132,7 +132,7 @@ public:
 
     /** \brief Virtual destructor
      **/
-    virtual ~expr() {
+    virtual ~expr_rhs() {
         if (m_expr != 0) {
             m_expr->m_ncnt--;
             if (m_expr->m_ncnt == 0) {

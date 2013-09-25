@@ -19,13 +19,13 @@ namespace labeled_btensor_expr {
 template<size_t N, typename T>
 class add_core : public expr_core_i<N, T> {
 private:
-    expr<N, T> m_expr_l; //!< Left expression
-    expr<N, T> m_expr_r; //!< Right expression
+    expr_rhs<N, T> m_expr_l; //!< Left expression
+    expr_rhs<N, T> m_expr_r; //!< Right expression
 
 public:
     /** \brief Initializes the core with left and right expressions
      **/
-    add_core(const expr<N, T> &expr_l, const expr<N, T> &expr_r) :
+    add_core(const expr_rhs<N, T> &expr_l, const expr_rhs<N, T> &expr_r) :
         m_expr_l(expr_l), m_expr_r(expr_r)
     { }
 
@@ -41,13 +41,13 @@ public:
 
     /** \brief Returns the left expression
      **/
-    const expr<N, T> &get_expr_l() {
+    const expr_rhs<N, T> &get_expr_l() {
         return m_expr_l;
     }
 
     /** \brief Returns the right expression
      **/
-    const expr<N, T> &get_expr_r() {
+    const expr_rhs<N, T> &get_expr_r() {
         return m_expr_r;
     }
 

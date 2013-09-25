@@ -34,7 +34,7 @@ public:
 template<size_t N>
 class evalfunctor<N, double> : public evalfunctor_i<N, double> {
 private:
-    expr<N, double> &m_expr;
+    expr_rhs<N, double> &m_expr;
     eval_container_i<N, double> &m_eval_container;
     btod_copy<N> *m_op_copy;
     btod_add<N> *m_op_add;
@@ -45,7 +45,7 @@ private:
 public:
     /** \brief Initializes the functor
      **/
-    evalfunctor(expr<N, double> &e, eval_container_i<N, double> &cont);
+    evalfunctor(expr_rhs<N, double> &e, eval_container_i<N, double> &cont);
 
     /** \brief Virtual destructor
      **/
@@ -71,7 +71,7 @@ private:
 
 template<size_t N>
 evalfunctor<N, double>::evalfunctor(
-    expr<N, double> &e,
+    expr_rhs<N, double> &e,
     eval_container_i<N, double> &cont) :
 
     m_expr(e), m_eval_container(cont),

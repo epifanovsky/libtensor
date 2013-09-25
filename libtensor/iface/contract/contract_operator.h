@@ -17,13 +17,13 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t K, size_t N, size_t M, typename T>
-expr<N + M - 2 * K, T> contract(
+expr_rhs<N + M - 2 * K, T> contract(
     const letter_expr<K> contr,
-    expr<N, T> bta,
-    expr<M, T> btb) {
+    expr_rhs<N, T> bta,
+    expr_rhs<M, T> btb) {
 
     typedef contract2_core<N - K, M - K, K, T> core_t;
-    typedef expr<N + M - 2 * K, T> expr_t;
+    typedef expr_rhs<N + M - 2 * K, T> expr_t;
     return expr_t(new core_t(contr, bta, btb));
 }
 
@@ -36,10 +36,10 @@ expr<N + M - 2 * K, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr<N + M - 2, T> contract(
+expr_rhs<N + M - 2, T> contract(
     const letter &let,
-    expr<N, T> bta,
-    expr<M, T> btb) {
+    expr_rhs<N, T> bta,
+    expr_rhs<M, T> btb) {
 
     return contract(letter_expr<1>(let), bta, btb);
 }
@@ -55,12 +55,12 @@ expr<N + M - 2, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t K, size_t N, size_t M, typename T, bool A1>
-expr<N + M - 2 * K, T> contract(
+expr_rhs<N + M - 2 * K, T> contract(
     const letter_expr<K> contr,
     labeled_btensor<N, T, A1> bta,
-    expr<M, T> btb) {
+    expr_rhs<M, T> btb) {
 
-    return contract(contr, expr<N, T>(new ident_core<N, T, A1>(bta)), btb);
+    return contract(contr, expr_rhs<N, T>(new ident_core<N, T, A1>(bta)), btb);
 }
 
 
@@ -73,10 +73,10 @@ expr<N + M - 2 * K, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A1>
-expr<N + M - 2, T> contract(
+expr_rhs<N + M - 2, T> contract(
     const letter &let,
     labeled_btensor<N, T, A1> bta,
-    expr<M, T> btb) {
+    expr_rhs<M, T> btb) {
 
     return contract(letter_expr<1>(let), bta, btb);
 }
@@ -92,12 +92,12 @@ expr<N + M - 2, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t K, size_t N, size_t M, typename T, bool A2>
-expr<N + M - 2 * K, T> contract(
+expr_rhs<N + M - 2 * K, T> contract(
     const letter_expr<K> contr,
-    expr<N, T> bta,
+    expr_rhs<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
-    return contract(contr, bta, expr<M, T>(new ident_core<M, T, A2>(btb)));
+    return contract(contr, bta, expr_rhs<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 
@@ -110,9 +110,9 @@ expr<N + M - 2 * K, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A2>
-expr<N + M - 2, T> contract(
+expr_rhs<N + M - 2, T> contract(
     const letter &let,
-    expr<N, T> bta,
+    expr_rhs<N, T> bta,
     labeled_btensor<M, T, A2> btb) {
 
     return contract(letter_expr<1>(let), bta, btb);
@@ -130,14 +130,14 @@ expr<N + M - 2, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t K, size_t N, size_t M, typename T, bool A1, bool A2>
-expr<N + M - 2 * K, T> contract(
+expr_rhs<N + M - 2 * K, T> contract(
     const letter_expr<K> contr,
     labeled_btensor<N, T, A1> bta,
     labeled_btensor<M, T, A2> btb) {
 
     return contract(contr,
-        expr<N, T>(new ident_core<N, T, A1>(bta)),
-        expr<M, T>(new ident_core<M, T, A2>(btb)));
+        expr_rhs<N, T>(new ident_core<N, T, A1>(bta)),
+        expr_rhs<M, T>(new ident_core<M, T, A2>(btb)));
 }
 
 
@@ -151,7 +151,7 @@ expr<N + M - 2 * K, T> contract(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A1, bool A2>
-expr<N + M - 2, T> contract(
+expr_rhs<N + M - 2, T> contract(
     const letter &let,
     labeled_btensor<N, T, A1> bta,
     labeled_btensor<M, T, A2> btb) {
@@ -161,12 +161,12 @@ expr<N + M - 2, T> contract(
 
 
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
-expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
+expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K1> contr1,
-    expr<N1, T> bta,
-    expr<N2, T> btb,
+    expr_rhs<N1, T> bta,
+    expr_rhs<N2, T> btb,
     const letter_expr<K2> contr2,
-    expr<N3, T> btc) {
+    expr_rhs<N3, T> btc) {
 
 
 }
@@ -174,7 +174,7 @@ expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
 
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T,
     bool A1, bool A2, bool A3>
-expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
+expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K1> contr1,
     labeled_btensor<N1, T, A1> bta,
     labeled_btensor<N2, T, A2> btb,
@@ -183,15 +183,15 @@ expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
 
     return contract(
         contr1,
-        expr<N1, T>(ident_core<N1, T, A1>(bta)),
-        expr<N2, T>(ident_core<N2, T, A2>(btb)),
+        expr_rhs<N1, T>(ident_core<N1, T, A1>(bta)),
+        expr_rhs<N2, T>(ident_core<N2, T, A2>(btb)),
         contr2,
-        expr<N2, T>(ident_core<N3, T, A3>(btc)));
+        expr_rhs<N2, T>(ident_core<N3, T, A3>(btc)));
 }
 
 
 template<size_t N1, size_t N2, size_t N3, typename T, bool A1, bool A2, bool A3>
-expr<N1 + N2 + N3 - 4, T> contract(
+expr_rhs<N1 + N2 + N3 - 4, T> contract(
     const letter &let1,
     labeled_btensor<N1, T, A1> bta,
     labeled_btensor<N2, T, A2> btb,
@@ -200,10 +200,10 @@ expr<N1 + N2 + N3 - 4, T> contract(
 
     return contract(
         letter_expr<1>(let1),
-        expr<N1, T>(ident_core<N1, T, A1>(bta)),
-        expr<N2, T>(ident_core<N2, T, A2>(btb)),
+        expr_rhs<N1, T>(ident_core<N1, T, A1>(bta)),
+        expr_rhs<N2, T>(ident_core<N2, T, A2>(btb)),
         letter_expr<1>(let2),
-        expr<N2, T>(ident_core<N3, T, A3>(btc)));
+        expr_rhs<N2, T>(ident_core<N3, T, A3>(btc)));
 }
 
 

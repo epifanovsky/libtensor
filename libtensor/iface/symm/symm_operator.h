@@ -16,12 +16,12 @@ namespace labeled_btensor_expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr<N, T> symm(
+expr_rhs<N, T> symm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
-    expr<N, T> subexpr) {
+    expr_rhs<N, T> subexpr) {
 
-    return expr<N, T>(new symm2_core<N, M, true, T>(sym1, sym2, subexpr));
+    return expr_rhs<N, T>(new symm2_core<N, M, true, T>(sym1, sym2, subexpr));
 }
 
 
@@ -33,12 +33,12 @@ expr<N, T> symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr<N, T> asymm(
+expr_rhs<N, T> asymm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
-    expr<N, T> subexpr) {
+    expr_rhs<N, T> subexpr) {
 
-    return expr<N, T>(new symm2_core<N, M, false, T>(sym1, sym2, subexpr));
+    return expr_rhs<N, T>(new symm2_core<N, M, false, T>(sym1, sym2, subexpr));
 }
 
 
@@ -49,13 +49,13 @@ expr<N, T> asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> symm(
+expr_rhs<N, T> symm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
-    expr<N, T> subexpr) {
+    expr_rhs<N, T> subexpr) {
 
-    return expr<N, T>(new symm3_core<N, true, T>(l1, l2, l3, subexpr));
+    return expr_rhs<N, T>(new symm3_core<N, true, T>(l1, l2, l3, subexpr));
 }
 
 
@@ -66,13 +66,13 @@ expr<N, T> symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> asymm(
+expr_rhs<N, T> asymm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
-    expr<N, T> subexpr) {
+    expr_rhs<N, T> subexpr) {
 
-    return expr<N, T>(new symm3_core<N, false, T>(l1, l2, l3, subexpr));
+    return expr_rhs<N, T>(new symm3_core<N, false, T>(l1, l2, l3, subexpr));
 }
 
 
@@ -83,10 +83,10 @@ expr<N, T> asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> symm(
+expr_rhs<N, T> symm(
     const letter &l1,
     const letter &l2,
-    expr<N, T> subexpr) {
+    expr_rhs<N, T> subexpr) {
 
     return symm(letter_expr<1>(l1), letter_expr<1>(l2), subexpr);
 }
@@ -99,10 +99,10 @@ expr<N, T> symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr<N, T> asymm(
+expr_rhs<N, T> asymm(
     const letter &l1,
     const letter &l2,
-    expr<N, T> subexpr) {
+    expr_rhs<N, T> subexpr) {
 
     return asymm(letter_expr<1>(l1), letter_expr<1>(l2), subexpr);
 }
@@ -117,12 +117,12 @@ expr<N, T> asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A>
-expr<N, T> symm(
+expr_rhs<N, T> symm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
     labeled_btensor<N, T, A> bt) {
 
-    return symm(sym1, sym2, expr<N, T>(new ident_core<N, T, A>(bt)));
+    return symm(sym1, sym2, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 
@@ -135,12 +135,12 @@ expr<N, T> symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T, bool A>
-expr<N, T> asymm(
+expr_rhs<N, T> asymm(
     const letter_expr<M> sym1,
     const letter_expr<M> sym2,
     labeled_btensor<N, T, A> bt) {
 
-    return asymm(sym1, sym2, expr<N, T>(new ident_core<N, T, A>(bt)));
+    return asymm(sym1, sym2, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 
@@ -153,7 +153,7 @@ expr<N, T> asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> symm(
+expr_rhs<N, T> symm(
     const letter &l1,
     const letter &l2,
     labeled_btensor<N, T, A> bt) {
@@ -171,7 +171,7 @@ expr<N, T> symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> asymm(
+expr_rhs<N, T> asymm(
     const letter &l1,
     const letter &l2,
     labeled_btensor<N, T, A> bt) {
@@ -188,13 +188,13 @@ expr<N, T> asymm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> symm(
+expr_rhs<N, T> symm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
     labeled_btensor<N, T, A> bt) {
 
-    return symm(l1, l2, l3, expr<N, T>(new ident_core<N, T, A>(bt)));
+    return symm(l1, l2, l3, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 
@@ -206,13 +206,13 @@ expr<N, T> symm(
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T, bool A>
-expr<N, T> asymm(
+expr_rhs<N, T> asymm(
     const letter &l1,
     const letter &l2,
     const letter &l3,
     labeled_btensor<N, T, A> bt) {
 
-    return asymm(l1, l2, l3, expr<N, T>(new ident_core<N, T, A>(bt)));
+    return asymm(l1, l2, l3, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
 
 

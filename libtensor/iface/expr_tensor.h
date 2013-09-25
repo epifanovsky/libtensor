@@ -32,7 +32,7 @@ public:
     // Create tensor by evaluating an expression
     virtual any_tensor<N, T> *create(expr_core_i<N, T> &expr) const;
 
-    // Check expr for consistency with the tensor to be created by the factory
+    // Check expr_rhs for consistency with the tensor to be created by the factory
     virtual bool check(expr_core_i<N, T> &core) const;
 };
 
@@ -95,7 +95,7 @@ public:
     labeled_tensor<N, T> operator()(const letter_expr<N> &expr);
 
 private:
-    // Initialize expr if zero (ident_core)
+    // Initialize expr_rhs if zero (ident_core)
     void init_expr() {
         if (m_expr != 0) return;
 

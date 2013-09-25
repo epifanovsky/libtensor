@@ -23,13 +23,13 @@ class mult_core : public expr_core_i<N, T> {
 public:
     static const char k_clazz[]; //!< Class name
 private:
-    expr<N, T> m_expr1; //!< Left expression
-    expr<N, T> m_expr2; //!< Right expression
+    expr_rhs<N, T> m_expr1; //!< Left expression
+    expr_rhs<N, T> m_expr2; //!< Right expression
 
 public:
     /** \brief Initializes the core with left and right expressions
      **/
-    mult_core(const expr<N, T> &expr1, const expr<N, T> &expr2);
+    mult_core(const expr_rhs<N, T> &expr1, const expr_rhs<N, T> &expr2);
 
     /** \brief Virtual destructor
      **/
@@ -43,25 +43,25 @@ public:
 
     /** \brief Returns the first expression
      **/
-    expr<N, T> &get_expr_1() {
+    expr_rhs<N, T> &get_expr_1() {
         return m_expr1;
     }
 
     /** \brief Returns the first expression (const version)
      **/
-    const expr<N, T> &get_expr_1() const {
+    const expr_rhs<N, T> &get_expr_1() const {
         return m_expr1;
     }
 
     /** \brief Returns the second expression
      **/
-    expr<N, T> &get_expr_2() {
+    expr_rhs<N, T> &get_expr_2() {
         return m_expr2;
     }
 
     /** \brief Returns the second expression (const version)
      **/
-    const expr<N, T> &get_expr_2() const {
+    const expr_rhs<N, T> &get_expr_2() const {
         return m_expr2;
     }
 
@@ -162,7 +162,7 @@ const char mult_core<N, T, Recip>::k_clazz[] = "mult_core<N, T, Recip>";
 
 template<size_t N, typename T, bool Recip>
 mult_core<N, T, Recip>::mult_core(
-    const expr<N, T> &expr1, const expr<N, T> &expr2) :
+    const expr_rhs<N, T> &expr1, const expr_rhs<N, T> &expr2) :
 
     m_expr1(expr1), m_expr2(expr2) {
 
