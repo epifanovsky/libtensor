@@ -23,7 +23,13 @@ public:
         labeled_lhs<N, T>(lhs, label), expr_rhs<N, T>(rhs)
     { }
 
-    using labeled_lhs<N, T>::operator=;
+    const expr_rhs<N, T> &operator=(const expr_rhs<N, T> &rhs) {
+        return labeled_lhs<N, T>::operator=(rhs);
+    }
+
+    const expr_rhs<N, T> &operator=(const labeled_lhs_rhs<N, T> &rhs) {
+        return labeled_lhs<N, T>::operator=((const expr_rhs<N, T>&)rhs);
+    }
 
 };
 
