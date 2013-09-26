@@ -224,6 +224,8 @@ set(SRC_DIAG_TENSOR
 )
 
 set(SRC_CTF
+    ctf_block_tensor/impl/ctf_block_tensor.C
+    ctf_block_tensor/impl/ctf_btod_collect.C
     ctf_dense_tensor/impl/ctf_dense_tensor.C
     ctf_dense_tensor/impl/ctf_tod_collect.C
     ctf_dense_tensor/impl/ctf_tod_contract2.C

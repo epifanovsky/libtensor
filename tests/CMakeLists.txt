@@ -104,6 +104,12 @@ set(SRC_CTF_DENSE_TENSOR
     ctf_dense_tensor/ctf_tod_dotprod_test.C
 )
 
+set(SRC_CTF_BLOCK_TENSOR
+    ctf_block_tensor/libtensor_ctf_block_tensor_tests.C
+    ctf_block_tensor/libtensor_ctf_block_tensor_suite.C
+    ctf_block_tensor/ctf_btod_collect_test.C
+)
+
 set(SRC_SYMMETRY
     symmetry/adjacency_list_test.C
     symmetry/block_labeling_test.C
@@ -249,6 +255,7 @@ set(TARGETS
     libtensor_diag_tensor_tests
     libtensor_diag_block_tensor_tests
     libtensor_ctf_dense_tensor_tests
+    libtensor_ctf_block_tensor_tests
     libtensor_btod_tests
     libtensor_iface_tests
     libtensor_linalg_tests
@@ -264,6 +271,7 @@ add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
+add_executable(libtensor_ctf_block_tensor_tests ${SRC_CTF_BLOCK_TENSOR})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -278,6 +286,8 @@ else(HAVE_LIBVMM)
 endif(HAVE_LIBVMM)
 
 set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
+    LINK_FLAGS ${OpenMP_CXX_FLAGS})
+set_property(TARGET libtensor_ctf_block_tensor_tests APPEND PROPERTY
     LINK_FLAGS ${OpenMP_CXX_FLAGS})
 
 foreach(TARGET ${TARGETS})
