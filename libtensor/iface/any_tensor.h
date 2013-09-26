@@ -1,14 +1,12 @@
 #ifndef LIBTENSOR_IFACE_ANY_TENSOR_H
 #define LIBTENSOR_IFACE_ANY_TENSOR_H
 
-#include <cstring> // for size_t
+#include <cstddef> // for size_t
 #include <typeinfo>
-#include "expr/expr_rhs.h"
+#include "expr_rhs.h"
 
 namespace libtensor {
 namespace iface {
-
-using labeled_btensor_expr::expr_rhs; // temporary
 
 
 /** \brief Any tensor type
@@ -54,6 +52,12 @@ public:
     template<typename Tensor>
     any_tensor(Tensor &t);
 
+    /** \brief Copy constructor
+     **/
+    any_tensor(const any_tensor<N, T> &other) :
+        m_tensor(other.m_tensor ? other.m_tensor->clone() : 0)
+    { }
+
     /** \brief Destructor
      **/
     ~any_tensor();
@@ -76,6 +80,9 @@ protected:
             classes if necessary
      **/
     virtual expr_rhs<N, T> make_rhs(const letter_expr<N> &label);
+
+private:
+    const any_tensor &operator=(const any_tensor&);
 
 };
 
@@ -109,13 +116,6 @@ template<size_t N, typename T>
 expr_rhs<N, T> any_tensor<N, T>::operator()(const letter_expr<N> &label) {
 
     return make_rhs(label);
-}
-
-
-template<size_t N, typename T>
-expr_rhs<N, T> any_tensor<N, T>::make_rhs(const letter_expr<N> &label) {
-
-//    return expr_rhs<N, T>(new ident_core<N, T>(lhs));
 }
 
 

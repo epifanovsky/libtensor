@@ -21,7 +21,7 @@ private:
     interm<N, T> m_interm_a;
     interm<N, T> m_interm_b;
     btod_mult<N> *m_op; //!< Element-wise multiplication operation
-    arg<N, T, oper_tag> *m_arg; //!< Composed operation argument
+//    arg<N, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
     mult_eval_functor(
@@ -34,7 +34,7 @@ public:
 
     void clean();
 
-    arg<N, T, oper_tag> get_arg() const { return *m_arg; }
+//    arg<N, T, oper_tag> get_arg() const { return *m_arg; }
 };
 
 
@@ -49,7 +49,7 @@ mult_eval_functor<N, T, Recip>::mult_eval_functor(
     m_core(core),
     m_interm_a(core.get_expr_1(), label),
     m_interm_b(core.get_expr_2(), label),
-    m_op(0), m_arg(0) {
+    m_op(0)/*, m_arg(0)*/ {
 
 }
 
@@ -58,7 +58,7 @@ template<size_t N, typename T, bool Recip>
 mult_eval_functor<N, T, Recip>::~mult_eval_functor() {
 
     delete m_op; m_op = 0;
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
 }
 
 
@@ -68,18 +68,18 @@ void mult_eval_functor<N, T, Recip>::evaluate() {
     m_interm_a.evaluate();
     m_interm_b.evaluate();
 
-    if (m_arg != 0) delete m_arg;
-    if (m_op != 0) delete m_op;
-
-    arg<N, T, tensor_tag> arga = m_interm_a.get_arg();
-    arg<N, T, tensor_tag> argb = m_interm_b.get_arg();
-
-    m_op = new btod_mult<N>(
-        arga.get_btensor(), arga.get_perm(),
-        argb.get_btensor(), argb.get_perm(), Recip);
-    m_arg = new arg<N, T, oper_tag>(*m_op,
-        Recip ?  arga.get_coeff() /  argb.get_coeff() :
-                arga.get_coeff() * argb.get_coeff());
+//    if (m_arg != 0) delete m_arg;
+//    if (m_op != 0) delete m_op;
+//
+//    arg<N, T, tensor_tag> arga = m_interm_a.get_arg();
+//    arg<N, T, tensor_tag> argb = m_interm_b.get_arg();
+//
+//    m_op = new btod_mult<N>(
+//        arga.get_btensor(), arga.get_perm(),
+//        argb.get_btensor(), argb.get_perm(), Recip);
+//    m_arg = new arg<N, T, oper_tag>(*m_op,
+//        Recip ?  arga.get_coeff() /  argb.get_coeff() :
+//                arga.get_coeff() * argb.get_coeff());
 
 }
 
@@ -88,7 +88,7 @@ template<size_t N, typename T, bool Recip>
 void mult_eval_functor<N, T, Recip>::clean() {
 
     delete m_op; m_op = 0;
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
     m_interm_a.clean();
     m_interm_b.clean();
 }

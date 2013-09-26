@@ -3,7 +3,7 @@
 
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/block_tensor/btod_dotprod.h>
-#include "labeled_btensor.h"
+//#include "labeled_btensor.h"
 #include "letter.h"
 #include "letter_expr.h"
 
@@ -11,6 +11,7 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
+#if 0
 /** \brief Dot product (tensor + tensor)
 
     \ingroup libtensor_btensor_expr_op
@@ -59,6 +60,7 @@ double dot_product(
 
     return dot_product(bt2, expr1);
 }
+#endif
 
 
 /** \brief Dot product (expression + expression)

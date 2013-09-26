@@ -1,11 +1,9 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_ARG_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_ARG_H
 
-#include "../../defs.h"
-#include "../../exception.h"
+#include <libtensor/core/permutation.h>
 #include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/gen_block_tensor/additive_gen_bto.h>
-#include "../../core/permutation.h"
 #include "../btensor_i.h"
 
 namespace libtensor {

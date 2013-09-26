@@ -5,7 +5,7 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/noncopyable.h>
 #include "../btensor.h"
-#include "expr_rhs.h"
+#include "../expr_rhs.h"
 #include "evalfunctor.h"
 
 namespace libtensor {

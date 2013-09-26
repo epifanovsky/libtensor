@@ -24,7 +24,7 @@ private:
     direct_eval<N, T> m_eval_a; //!< Direct evaluator for the sub-expression
     diag_params_builder<N, M> m_params_bld; //!< Parameters builder
     btod_diag<N, M> *m_op; //!< Diagonal extraction operation
-    arg<N - M + 1, T, oper_tag> *m_arg; //!< Composed operation argument
+//    arg<N - M + 1, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
     diag_eval_functor_xx(
@@ -38,9 +38,9 @@ public:
 
     virtual void clean();
 
-    virtual arg<N - M + 1, T, oper_tag> get_arg() const {
-        return *m_arg;
-    }
+//    virtual arg<N - M + 1, T, oper_tag> get_arg() const {
+//        return *m_arg;
+//    }
 
 private:
     void create_arg();
@@ -63,7 +63,7 @@ diag_eval_functor_xx<N, M, T>::diag_eval_functor_xx(
     m_params_bld(
         label_a.get_label(), permutation<N>(), label_b,
         core.get_diag_letter(), core.get_diag_label()),
-    m_op(0), m_arg(0) {
+    m_op(0)/*, m_arg(0)*/ {
 
 }
 
@@ -97,14 +97,14 @@ void diag_eval_functor_xx<N, M, T>::create_arg() {
     destroy_arg();
     m_op = new btod_diag<N, M>(m_eval_a.get_btensor(),
         m_params_bld.get_mask(), m_params_bld.get_perm());
-    m_arg = new arg<N - M + 1, T, oper_tag>(*m_op, 1.0);
+//    m_arg = new arg<N - M + 1, T, oper_tag>(*m_op, 1.0);
 }
 
 
 template<size_t N, size_t M, typename T>
 void diag_eval_functor_xx<N, M, T>::destroy_arg() {
 
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
 }
 

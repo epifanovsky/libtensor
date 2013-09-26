@@ -147,12 +147,12 @@ public:
     /** \brief Returns tensor arguments (not valid)
         \param i Argument number.
      **/
-    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
+//    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
 
     /** \brief Returns operation arguments
         \param i Argument number (0 is the only valid value).
      **/
-    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
+//    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
 };
 
 
@@ -215,26 +215,26 @@ void mult_eval<N, T, Recip>::clean() {
 }
 
 
-template<size_t N, typename T, bool Recip>
-arg<N, T, tensor_tag> mult_eval<N, T, Recip>::get_tensor_arg(size_t i) {
-
-    static const char *method = "get_tensor_arg(size_t)";
-    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-        "Invalid method.");
-}
-
-template<size_t N, typename T, bool Recip>
-arg<N, T, oper_tag> mult_eval<N, T, Recip>::get_oper_arg(size_t i) {
-
-    static const char *method = "get_oper_arg(size_t)";
-
-    if(i != 0) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Argument index is out of bounds.");
-    }
-
-    return m_func.get_arg();
-}
+//template<size_t N, typename T, bool Recip>
+//arg<N, T, tensor_tag> mult_eval<N, T, Recip>::get_tensor_arg(size_t i) {
+//
+//    static const char *method = "get_tensor_arg(size_t)";
+//    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+//        "Invalid method.");
+//}
+//
+//template<size_t N, typename T, bool Recip>
+//arg<N, T, oper_tag> mult_eval<N, T, Recip>::get_oper_arg(size_t i) {
+//
+//    static const char *method = "get_oper_arg(size_t)";
+//
+//    if(i != 0) {
+//        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+//            "Argument index is out of bounds.");
+//    }
+//
+//    return m_func.get_arg();
+//}
 
 
 } // namespace labeled_btensor_expr

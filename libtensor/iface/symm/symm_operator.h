@@ -108,6 +108,7 @@ expr_rhs<N, T> asymm(
 }
 
 
+#if 0
 /** \brief Symmetrization of a tensor over two sets of indexes
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
@@ -214,6 +215,7 @@ expr_rhs<N, T> asymm(
 
     return asymm(l1, l2, l3, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

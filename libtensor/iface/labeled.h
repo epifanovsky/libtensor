@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_LABELED_H
 #define LIBTENSOR_IFACE_LABELED_H
 
-#include <cstring> // for size_t
+#include <cstddef> // for size_t
 #include "letter_expr.h"
 
 namespace libtensor {

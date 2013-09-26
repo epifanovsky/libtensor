@@ -23,7 +23,7 @@ expr_rhs<N + M, T> dirsum(
     return expr_rhs<N + M, T>(new dirsum_core<N, M, T>(bta, btb));
 }
 
-
+#if 0
 /** \brief Direct sum of a tensor and an expression
     \tparam N Order of the first tensor.
     \tparam M Order of the second tensor.
@@ -76,6 +76,7 @@ expr_rhs<N + M, T> dirsum(
         expr_rhs<N, T>(new ident_core<N, T, A1>(bta)),
         expr_rhs<M, T>(new ident_core<M, T, A2>(btb)));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

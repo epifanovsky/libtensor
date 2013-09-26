@@ -34,6 +34,7 @@ expr_rhs<N, T> operator*(
 }
 
 
+#if 0
 /** \brief Multiplication of a tensor by a scalar from the left
 
     \ingroup libtensor_btensor_expr_op
@@ -58,6 +59,7 @@ expr_rhs<N, T> operator*(
 
     return expr_rhs<N, T>(new ident_core<N, T, A>(lhs)) * rhs;
 }
+#endif
 
 
 /** \brief Division of an expression by a scalar
@@ -73,6 +75,7 @@ expr_rhs<N, T> operator/(
 }
 
 
+#if 0
 /** \brief Division of a tensor by a scalar
 
     \ingroup libtensor_btensor_expr_op
@@ -84,6 +87,7 @@ expr_rhs<N, T> operator/(
 
     return expr_rhs<N, T>(new ident_core<N, T, A>(lhs)) / rhs;
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

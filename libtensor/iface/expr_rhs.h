@@ -3,11 +3,12 @@
 
 #include <libtensor/exception.h>
 #include <libtensor/core/noncopyable.h>
-#include "../labeled_btensor.h"
-#include "arg.h"
+//#include "expr/arg.h"
+#include "letter_expr.h"
+
 
 namespace libtensor {
-namespace labeled_btensor_expr {
+namespace iface {
 
 
 /** \brief Evaluation container base class
@@ -40,12 +41,12 @@ public:
     /** \brief Returns tensor arguments
         \param i Argument number.
      **/
-    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i) = 0;
+//    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i) = 0;
 
     /** \brief Returns operation arguments
         \param i Argument number.
      **/
-    virtual arg<N, T, oper_tag> get_oper_arg(size_t i) = 0;
+//    virtual arg<N, T, oper_tag> get_oper_arg(size_t i) = 0;
 
 };
 
@@ -176,8 +177,7 @@ public:
 };
 
 
-} // namespace labeled_btensor_expr
+} // namespace iface
 } // namespace libtensor
 
 #endif // LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
-

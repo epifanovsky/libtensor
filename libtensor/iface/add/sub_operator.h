@@ -20,7 +20,7 @@ expr_rhs<N, T> operator-(
     return lhs + expr_rhs<N, T>(new scale_core<N, T>(T(-1), rhs));
 }
 
-
+#if 0
 /** \brief Subtraction of a tensor from an expression
 
     \ingroup libtensor_btensor_expr_op
@@ -60,6 +60,7 @@ expr_rhs<N, T> operator-(
         expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)) -
         expr_rhs<N, T>(new ident_core<N, T, A2>(rhs));
 }
+#endif
 
 
 /** \brief Unary minus (expression), effectively multiplies by -1
@@ -74,6 +75,7 @@ expr_rhs<N, T> operator-(
 }
 
 
+#if 0
 /** \brief Unary minus on a tensor, effectively multiplies by -1
 
     \ingroup libtensor_btensor_expr_op
@@ -84,6 +86,7 @@ expr_rhs<N, T> operator-(
 
     return -expr_rhs<N, T>(new ident_core<N, T, A>(t));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

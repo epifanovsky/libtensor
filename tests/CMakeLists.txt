@@ -225,7 +225,7 @@ set(SRC_IFACE
     iface/dot_product_test.C
     iface/ewmult_test.C
     iface/expr_test.C
-    iface/labeled_btensor_test.C
+#    iface/labeled_btensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
     iface/mult_test.C

@@ -125,12 +125,12 @@ public:
     /** \brief Returns tensor arguments
         \param i Argument number.
      **/
-    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
+//    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
 
     /** \brief Returns operation arguments
         \param i Argument number.
      **/
-    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
+//    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -187,22 +187,22 @@ size_t add_eval<N, T>::get_noper() const {
 }
 
 
-template<size_t N, typename T>
-arg<N, T, tensor_tag> add_eval<N, T>::get_tensor_arg(size_t i) {
-
-    size_t nl = m_cont_l->get_ntensor();
-    if(i < nl) return m_cont_l->get_tensor_arg(i);
-    else return m_cont_r->get_tensor_arg(i - nl);
-}
-
-
-template<size_t N, typename T>
-arg<N, T, oper_tag> add_eval<N, T>::get_oper_arg(size_t i) {
-
-    size_t nl = m_cont_l->get_noper();
-    if(i < nl) return m_cont_l->get_oper_arg(i);
-    else return m_cont_r->get_oper_arg(i - nl);
-}
+//template<size_t N, typename T>
+//arg<N, T, tensor_tag> add_eval<N, T>::get_tensor_arg(size_t i) {
+//
+//    size_t nl = m_cont_l->get_ntensor();
+//    if(i < nl) return m_cont_l->get_tensor_arg(i);
+//    else return m_cont_r->get_tensor_arg(i - nl);
+//}
+//
+//
+//template<size_t N, typename T>
+//arg<N, T, oper_tag> add_eval<N, T>::get_oper_arg(size_t i) {
+//
+//    size_t nl = m_cont_l->get_noper();
+//    if(i < nl) return m_cont_l->get_oper_arg(i);
+//    else return m_cont_r->get_oper_arg(i - nl);
+//}
 
 
 template<size_t N, typename T>

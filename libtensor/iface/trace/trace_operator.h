@@ -3,7 +3,7 @@
 
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/block_tensor/btod_trace.h>
-#include "../labeled_btensor.h"
+//#include "../labeled_btensor.h"
 #include "../letter.h"
 #include "../letter_expr.h"
 #include "trace_subexpr_label_builder.h"
@@ -12,6 +12,7 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
+#if 0
 /** \brief Trace of a matrix
 
     \ingroup libtensor_btensor_expr_op
@@ -54,6 +55,7 @@ double trace(
     permutation_builder<2 * N> pb(seq1, seq2);
     return btod_trace<N>(bt.get_btensor(), pb.get_perm()).calculate();
 }
+#endif
 
 
 /** \brief Trace of a matrix expression

@@ -127,7 +127,7 @@ private:
     letter_expr<N> m_label;
 
     btod_symmetrize2<N> *m_op; //!< Symmetrization operation
-    arg<N, T, oper_tag> *m_arg; //!< Argument
+//    arg<N, T, oper_tag> *m_arg; //!< Argument
 
 public:
     /** \brief Initializes the container with given expression and
@@ -164,12 +164,12 @@ public:
     /** \brief Returns tensor arguments (not valid)
         \param i Argument number.
      **/
-   virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
+//   virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
 
    /** \brief Returns operation arguments
        \param i Argument number (0 is the only valid value).
     **/
-    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
+//    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
 };
 
 
@@ -227,7 +227,7 @@ symm2_eval<N, M, Sym, T>::symm2_eval(
     m_sub_eval_cont(m_core.get_sub_expr().get_core().create_container(label)),
     m_functor(m_core.get_sub_expr(), *m_sub_eval_cont),
     m_label(label),
-    m_op(0), m_arg(0) {
+    m_op(0)/*, m_arg(0)*/ {
 
 }
 
@@ -235,7 +235,7 @@ symm2_eval<N, M, Sym, T>::symm2_eval(
 template<size_t N, size_t M, bool Sym, typename T>
 symm2_eval<N, M, Sym, T>::~symm2_eval() {
 
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
 }
 
@@ -244,7 +244,7 @@ template<size_t N, size_t M, bool Sym, typename T>
 void symm2_eval<N, M, Sym, T>::prepare() {
 
     m_sub_eval_cont->prepare();
-    delete m_arg;
+//    delete m_arg;
     delete m_op;
 
     permutation<N> perm;
@@ -255,7 +255,7 @@ void symm2_eval<N, M, Sym, T>::prepare() {
     }
 
     m_op = new btod_symmetrize2<N>(m_functor.get_bto(), perm, Sym);
-    m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
+//    m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 
 }
 
@@ -264,33 +264,33 @@ template<size_t N, size_t M, bool Sym, typename T>
 void symm2_eval<N, M, Sym, T>::clean() {
 
     m_sub_eval_cont->clean();
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
 }
 
 
-template<size_t N, size_t M, bool Sym, typename T>
-arg<N, T, tensor_tag> symm2_eval<N, M, Sym, T>::get_tensor_arg(size_t i) {
-
-    static const char *method = "get_tensor_arg(size_t)";
-
-    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-        "Invalid method.");
-}
-
-
-template<size_t N, size_t M, bool Sym, typename T>
-arg<N, T, oper_tag> symm2_eval<N, M, Sym, T>::get_oper_arg(size_t i) {
-
-    static const char *method = "get_oper_oper_arg(size_t)";
-
-    if(i != 0) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Argument index is out of bounds.");
-    }
-
-    return *m_arg;
-}
+//template<size_t N, size_t M, bool Sym, typename T>
+//arg<N, T, tensor_tag> symm2_eval<N, M, Sym, T>::get_tensor_arg(size_t i) {
+//
+//    static const char *method = "get_tensor_arg(size_t)";
+//
+//    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+//        "Invalid method.");
+//}
+//
+//
+//template<size_t N, size_t M, bool Sym, typename T>
+//arg<N, T, oper_tag> symm2_eval<N, M, Sym, T>::get_oper_arg(size_t i) {
+//
+//    static const char *method = "get_oper_oper_arg(size_t)";
+//
+//    if(i != 0) {
+//        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+//            "Argument index is out of bounds.");
+//    }
+//
+//    return *m_arg;
+//}
 
 
 } // namespace labeled_btensor_expr

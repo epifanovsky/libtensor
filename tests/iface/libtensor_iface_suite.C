@@ -19,7 +19,7 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("dot_product", m_utf_dot_product);
     add_test("ewmult", m_utf_ewmult);
     add_test("expr", m_utf_expr);
-    add_test("labeled_btensor", m_utf_labeled_btensor);
+//    add_test("labeled_btensor", m_utf_labeled_btensor);
     add_test("letter", m_utf_letter);
     add_test("letter_expr", m_utf_letter_expr);
     add_test("mult", m_utf_mult);

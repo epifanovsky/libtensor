@@ -134,12 +134,12 @@ public:
     /** \brief Returns tensor arguments
         \param i Argument number.
      **/
-    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
+//    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
 
     /** \brief Returns operation arguments
         \param i Argument number.
      **/
-    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
+//    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -188,22 +188,22 @@ size_t scale_eval<N, T>::get_noper() const {
 }
 
 
-template<size_t N, typename T>
-arg<N, T, tensor_tag> scale_eval<N, T>::get_tensor_arg(size_t i) {
-
-    arg<N, T, tensor_tag> argument = m_unscaled_cont->get_tensor_arg(i);
-    argument.scale(m_core.get_coeff());
-    return argument;
-}
-
-
-template<size_t N, typename T>
-arg<N, T, oper_tag> scale_eval<N, T>::get_oper_arg(size_t i) {
-
-    arg<N, T, oper_tag> argument = m_unscaled_cont->get_oper_arg(i);
-    argument.scale(m_core.get_coeff());
-    return argument;
-}
+//template<size_t N, typename T>
+//arg<N, T, tensor_tag> scale_eval<N, T>::get_tensor_arg(size_t i) {
+//
+//    arg<N, T, tensor_tag> argument = m_unscaled_cont->get_tensor_arg(i);
+//    argument.scale(m_core.get_coeff());
+//    return argument;
+//}
+//
+//
+//template<size_t N, typename T>
+//arg<N, T, oper_tag> scale_eval<N, T>::get_oper_arg(size_t i) {
+//
+//    arg<N, T, oper_tag> argument = m_unscaled_cont->get_oper_arg(i);
+//    argument.scale(m_core.get_coeff());
+//    return argument;
+//}
 
 
 template<size_t N, typename T>

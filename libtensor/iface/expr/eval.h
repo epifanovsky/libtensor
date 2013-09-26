@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <libtensor/exception.h>
-#include "expr_rhs.h"
+#include "../expr_rhs.h"
 #include "evalfunctor.h"
 
 namespace libtensor {

@@ -3,7 +3,7 @@
 
 #include <libtensor/exception.h>
 #include "../direct_btensor.h"
-#include "expr_rhs.h"
+#include "../expr_rhs.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {

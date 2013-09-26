@@ -36,6 +36,7 @@ expr_rhs<N + M - 1, T> ewmult(
 }
 
 
+#if 0
 /** \brief Element-wise multiplication of a tensor and an expression
 
     \ingroup libtensor_btensor_expr_op
@@ -121,6 +122,7 @@ expr_rhs<N + M - 1, T> ewmult(
 
     return ewmult(letter_expr<1>(l), bta, btb);
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

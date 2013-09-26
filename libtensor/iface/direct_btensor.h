@@ -7,9 +7,9 @@
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include "btensor_i.h"
 #include "btensor_traits.h"
-#include "labeled_btensor.h"
+//#include "labeled_btensor.h"
 #include "labeled_btensor_expr.h"
-#include "expr/expr_rhs.h"
+#include "expr_rhs.h"
 #include "expr/evalfunctor.h"
 
 namespace libtensor {
@@ -56,7 +56,7 @@ public:
     /** \brief Attaches a label to this %tensor and returns it as a
             labeled %tensor
      **/
-    labeled_btensor<N, T, false> operator()(const letter_expr<N> &expr);
+//    labeled_btensor<N, T, false> operator()(const letter_expr<N> &expr);
 
 
     //!    \name Implementation of block_tensor_i<N, T>
@@ -137,12 +137,12 @@ direct_btensor<N, T, Traits>::mk_func(
 }
 
 
-template<size_t N, typename T, typename Traits>
-labeled_btensor<N, T, false> direct_btensor<N, T, Traits>::operator()(
-    const letter_expr<N> &label) {
-
-    return labeled_btensor<N, T, false>(*this, label);
-}
+//template<size_t N, typename T, typename Traits>
+//labeled_btensor<N, T, false> direct_btensor<N, T, Traits>::operator()(
+//    const letter_expr<N> &label) {
+//
+//    return labeled_btensor<N, T, false>(*this, label);
+//}
 
 
 template<size_t N, typename T, typename Traits>

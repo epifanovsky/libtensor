@@ -21,7 +21,7 @@ public:
 
     virtual void clean() = 0;
 
-    virtual arg<N - M + 1, T, oper_tag> get_arg() const = 0;
+//    virtual arg<N - M + 1, T, oper_tag> get_arg() const = 0;
 
 };
 
@@ -54,9 +54,9 @@ public:
         m_func->clean();
     }
 
-    arg<N - M + 1, T, oper_tag> get_arg() const {
-        return m_func->get_arg();
-    }
+//    arg<N - M + 1, T, oper_tag> get_arg() const {
+//        return m_func->get_arg();
+//    }
 
 };
 

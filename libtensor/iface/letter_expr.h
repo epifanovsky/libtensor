@@ -4,6 +4,7 @@
 #include <vector>
 #include <libtensor/exception.h>
 #include <libtensor/core/permutation_builder.h>
+#include "letter.h"
 
 /** \defgroup libtensor_letter_expr Letter index expressions
     \ingroup libtensor_iface
@@ -18,7 +19,6 @@
 
 namespace libtensor {
 
-class letter;
 
 /** \brief Base class for %letter %index expressions
 

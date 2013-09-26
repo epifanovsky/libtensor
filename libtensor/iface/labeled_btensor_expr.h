@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_H
 
-#include "expr/expr_rhs.h"
-
 /** \defgroup libtensor_btensor_expr Labeled block tensor expressions
     \ingroup libtensor_iface
  **/

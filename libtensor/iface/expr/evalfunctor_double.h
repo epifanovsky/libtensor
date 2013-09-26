@@ -7,9 +7,12 @@
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/block_tensor/btod/btod_sum.h>
 #include <libtensor/gen_block_tensor/additive_gen_bto.h>
+#include "../expr_rhs.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
+using iface::expr_rhs;
+using iface::eval_container_i;
 
 
 template<size_t N>
@@ -94,7 +97,7 @@ void evalfunctor<N, double>::make_bto() {
 
     size_t ntensor = m_eval_container.get_ntensor();
     size_t noper = m_eval_container.get_noper();
-
+#if 0
     typedef arg<N, double, tensor_tag> targ_t;
     typedef arg<N, double, oper_tag> oarg_t;
 
@@ -150,6 +153,7 @@ void evalfunctor<N, double>::make_bto() {
         m_bto = m_op_sum;
 
     }
+#endif
 }
 
 

@@ -16,7 +16,7 @@
 #include "dot_product_test.h"
 #include "ewmult_test.h"
 #include "expr_test.h"
-#include "labeled_btensor_test.h"
+//#include "labeled_btensor_test.h"
 #include "letter_expr_test.h"
 #include "letter_test.h"
 #include "mult_test.h"
@@ -50,7 +50,7 @@ namespace libtensor {
      - libtensor::dot_product_test
      - libtensor::ewmult_test
      - libtensor::expr_test
-     - libtensor::labeled_btensor_test
+     ------ libtensor::labeled_btensor_test
      - libtensor::letter_test
      - libtensor::letter_expr_test
      - libtensor::mult_test
@@ -75,7 +75,7 @@ private:
     unit_test_factory<dot_product_test> m_utf_dot_product;
     unit_test_factory<ewmult_test> m_utf_ewmult;
     unit_test_factory<expr_test> m_utf_expr;
-    unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
+//    unit_test_factory<labeled_btensor_test> m_utf_labeled_btensor;
     unit_test_factory<letter_test> m_utf_letter;
     unit_test_factory<letter_expr_test> m_utf_letter_expr;
     unit_test_factory<mult_test> m_utf_mult;

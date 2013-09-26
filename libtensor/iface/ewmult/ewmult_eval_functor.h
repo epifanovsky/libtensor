@@ -36,7 +36,7 @@ private:
     interm<NA, T> m_interm_a;
     interm<NB, T> m_interm_b;
     btod_ewmult2<N, M, K> *m_op; //!< Operation
-    arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
+//    arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
     ewmult_eval_functor(
@@ -50,7 +50,7 @@ public:
 
     void clean();
 
-    arg<N + M + K, T, oper_tag> get_arg() const { return *m_arg; }
+//    arg<N + M + K, T, oper_tag> get_arg() const { return *m_arg; }
 };
 
 
@@ -71,7 +71,7 @@ ewmult_eval_functor<N, M, K, T>::ewmult_eval_functor(
     m_label_c(label_c),
     m_interm_a(core.get_expr_1(), m_label_a),
     m_interm_b(core.get_expr_2(), m_label_b),
-    m_op(0), m_arg(0) {
+    m_op(0)/*, m_arg(0)*/ {
 
 }
 
@@ -80,7 +80,7 @@ template<size_t N, size_t M, size_t K, typename T>
 ewmult_eval_functor<N, M, K, T>::~ewmult_eval_functor() {
 
     delete m_op; m_op = 0;
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
 }
 
 
@@ -90,20 +90,20 @@ void ewmult_eval_functor<N, M, K, T>::evaluate() {
     m_interm_a.evaluate();
     m_interm_b.evaluate();
 
-    arg<NA, T, tensor_tag> arga = m_interm_a.get_arg();
-    arg<NB, T, tensor_tag> argb = m_interm_b.get_arg();
-
-    ewmult_perm_builder<N, M, K> pb(
-        m_label_a, permutation<NA>(arga.get_perm(), true),
-        m_label_b, permutation<NB>(argb.get_perm(), true),
-        m_label_c, m_core.get_ewidx());
-
-    m_op = new btod_ewmult2<N, M, K>(
-            arga.get_btensor(), pb.get_perma(),
-            argb.get_btensor(), pb.get_permb(),
-            pb.get_permc());
-    m_arg = new arg<NC, T, oper_tag>(*m_op,
-            arga.get_coeff() * argb.get_coeff());
+//    arg<NA, T, tensor_tag> arga = m_interm_a.get_arg();
+//    arg<NB, T, tensor_tag> argb = m_interm_b.get_arg();
+//
+//    ewmult_perm_builder<N, M, K> pb(
+//        m_label_a, permutation<NA>(arga.get_perm(), true),
+//        m_label_b, permutation<NB>(argb.get_perm(), true),
+//        m_label_c, m_core.get_ewidx());
+//
+//    m_op = new btod_ewmult2<N, M, K>(
+//            arga.get_btensor(), pb.get_perma(),
+//            argb.get_btensor(), pb.get_permb(),
+//            pb.get_permc());
+//    m_arg = new arg<NC, T, oper_tag>(*m_op,
+//            arga.get_coeff() * argb.get_coeff());
 }
 
 
@@ -111,7 +111,7 @@ template<size_t N, size_t M, size_t K, typename T>
 void ewmult_eval_functor<N, M, K, T>::clean() {
 
     delete m_op; m_op = 0;
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
     m_interm_a.clean();
     m_interm_b.clean();
 }

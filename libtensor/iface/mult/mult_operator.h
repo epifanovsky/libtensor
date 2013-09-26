@@ -21,6 +21,7 @@ expr_rhs<N, T> mult(
 }
 
 
+#if 0
 /** \brief Element-wise multiplication of a tensor and an expression
 
     \ingroup libtensor_btensor_expr_op
@@ -60,6 +61,7 @@ expr_rhs<N, T> mult(
         expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)),
         expr_rhs<N, T>(new ident_core<N, T, A2>(rhs)));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

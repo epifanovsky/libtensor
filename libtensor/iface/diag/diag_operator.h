@@ -25,7 +25,7 @@ expr_rhs<N - M + 1, T> diag(
             lab_diag, subexpr));
 }
 
-
+#if 0
 /** \brief Extraction of a general tensor diagonal (tensor)
     \tparam N Tensor order.
     \tparam M Diagonal order.
@@ -42,6 +42,7 @@ expr_rhs<N - M + 1, T> diag(
 
     return diag(let_diag, lab_diag, expr_rhs<N, T>(new ident_core<N, T, A>(bt)));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

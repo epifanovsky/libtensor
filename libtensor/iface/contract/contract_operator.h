@@ -44,7 +44,7 @@ expr_rhs<N + M - 2, T> contract(
     return contract(letter_expr<1>(let), bta, btb);
 }
 
-
+#if 0
 /** \brief Contraction of a tensor and an expression over multiple indexes
     \tparam K Number of contracted indexes.
     \tparam N Order of the first tensor.
@@ -205,6 +205,7 @@ expr_rhs<N1 + N2 + N3 - 4, T> contract(
         letter_expr<1>(let2),
         expr_rhs<N2, T>(ident_core<N3, T, A3>(btc)));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

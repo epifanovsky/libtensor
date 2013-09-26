@@ -166,12 +166,12 @@ public:
     /** \brief Returns tensor arguments (not valid)
         \param i Argument number.
      **/
-    virtual arg<N + M, T, tensor_tag> get_tensor_arg(size_t i);
+//    virtual arg<N + M, T, tensor_tag> get_tensor_arg(size_t i);
 
     /** \brief Returns operation arguments
         \param i Argument number (0 is the only valid value).
      **/
-    virtual arg<N + M, T, oper_tag> get_oper_arg(size_t i);
+//    virtual arg<N + M, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -278,30 +278,30 @@ inline void direct_product_eval<N, M, T>::clean() {
 }
 
 
-template<size_t N, size_t M, typename T>
-arg<N + M, T, tensor_tag> direct_product_eval<N, M, T>::get_tensor_arg(
-    size_t i) {
-
-    static const char method[] = "get_tensor_arg(size_t)";
-
-    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-        "Invalid method.");
-}
-
-
-template<size_t N, size_t M, typename T>
-arg<N + M, T, oper_tag> direct_product_eval<N, M, T>::get_oper_arg(
-    size_t i) {
-
-    static const char method[] = "get_oper_arg(size_t)";
-
-    if(i != 0) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Argument index is out of bounds.");
-    }
-
-    return m_func.get_arg();
-}
+//template<size_t N, size_t M, typename T>
+//arg<N + M, T, tensor_tag> direct_product_eval<N, M, T>::get_tensor_arg(
+//    size_t i) {
+//
+//    static const char method[] = "get_tensor_arg(size_t)";
+//
+//    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+//        "Invalid method.");
+//}
+//
+//
+//template<size_t N, size_t M, typename T>
+//arg<N + M, T, oper_tag> direct_product_eval<N, M, T>::get_oper_arg(
+//    size_t i) {
+//
+//    static const char method[] = "get_oper_arg(size_t)";
+//
+//    if(i != 0) {
+//        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+//            "Argument index is out of bounds.");
+//    }
+//
+//    return m_func.get_arg();
+//}
 
 
 template<size_t N, size_t M, typename T>

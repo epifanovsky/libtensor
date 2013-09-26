@@ -47,7 +47,7 @@ void invoke_eval(
     const char *testname,
     const labeled_btensor_expr::expr_rhs<N, T> &expr,
     const letter_expr<N> &label,
-    block_tensor_i<N, T> &ref,
+    block_tensor_rd_i<N, T> &ref,
     double thresh = 1e-14) {
 
     labeled_btensor_expr::anon_eval<N, T> ev(expr, label);

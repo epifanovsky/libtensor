@@ -20,7 +20,7 @@ expr_rhs<N, T> operator+(
     return expr_rhs<N, T>(new add_core<N, T>(lhs, rhs));
 }
 
-
+#if 0
 /** \brief Addition of a tensor and an expression
 
     \ingroup libtensor_btensor_expr_op
@@ -60,6 +60,7 @@ expr_rhs<N, T> operator+(
         expr_rhs<N, T>(new ident_core<N, T, A1>(lhs)) +
         expr_rhs<N, T>(new ident_core<N, T, A2>(rhs));
 }
+#endif
 
 
 } // namespace labeled_btensor_expr

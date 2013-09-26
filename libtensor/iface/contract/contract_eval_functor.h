@@ -34,7 +34,7 @@ private:
     interm<NA, T> m_interm_a;
     interm<NB, T> m_interm_b;
     btod_contract2<N, M, K> *m_op; //!< Contraction operation
-    arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
+//    arg<NC, T, oper_tag> *m_arg; //!< Composed operation argument
 
 public:
     contract_eval_functor(
@@ -48,9 +48,9 @@ public:
 
     void clean();
 
-    arg<NC, T, oper_tag> get_arg() const {
-        return *m_arg;
-    }
+//    arg<NC, T, oper_tag> get_arg() const {
+//        return *m_arg;
+//    }
 
 };
 
@@ -72,7 +72,7 @@ contract_eval_functor<N, M, K, T>::contract_eval_functor(
     m_label_c(label_c),
     m_interm_a(core.get_expr_1(), m_label_a),
     m_interm_b(core.get_expr_2(), m_label_b),
-    m_op(0), m_arg(0) {
+    m_op(0)/*, m_arg(0)*/ {
 
 }
 
@@ -81,7 +81,7 @@ template<size_t N, size_t M, size_t K, typename T>
 contract_eval_functor<N, M, K, T>::~contract_eval_functor() {
 
     delete m_op;
-    delete m_arg;
+//    delete m_arg;
 }
 
 
@@ -91,25 +91,25 @@ void contract_eval_functor<N, M, K, T>::evaluate() {
     m_interm_a.evaluate();
     m_interm_b.evaluate();
 
-    arg<NA, T, tensor_tag> arga = m_interm_a.get_arg();
-    arg<NB, T, tensor_tag> argb = m_interm_b.get_arg();
-
-    contract_contraction2_builder<N, M, K> cb(
-        m_label_a, permutation<NA>(arga.get_perm(), true),
-        m_label_b, permutation<NB>(argb.get_perm(), true),
-        m_label_c, m_core.get_contr());
-
-    m_op = new btod_contract2<N, M, K>(cb.get_contr(),
-        arga.get_btensor(), argb.get_btensor());
-    m_arg = new arg<NC, T, oper_tag>(*m_op,
-        arga.get_coeff() * argb.get_coeff());
+//    arg<NA, T, tensor_tag> arga = m_interm_a.get_arg();
+//    arg<NB, T, tensor_tag> argb = m_interm_b.get_arg();
+//
+//    contract_contraction2_builder<N, M, K> cb(
+//        m_label_a, permutation<NA>(arga.get_perm(), true),
+//        m_label_b, permutation<NB>(argb.get_perm(), true),
+//        m_label_c, m_core.get_contr());
+//
+//    m_op = new btod_contract2<N, M, K>(cb.get_contr(),
+//        arga.get_btensor(), argb.get_btensor());
+//    m_arg = new arg<NC, T, oper_tag>(*m_op,
+//        arga.get_coeff() * argb.get_coeff());
 }
 
 
 template<size_t N, size_t M, size_t K, typename T>
 void contract_eval_functor<N, M, K, T>::clean() {
 
-    delete m_arg; m_arg = 0;
+//    delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
     m_interm_a.clean();
     m_interm_b.clean();
