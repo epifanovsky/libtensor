@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "anon_eval_test.h"
+#include "any_tensor_test.h"
 #include "bispace_test.h"
 #include "bispace_expr_test.h"
 #include "btensor_test.h"
@@ -26,39 +27,42 @@ using libtest::unit_test_factory;
 
 namespace libtensor {
 
+
 /** \defgroup libtensor_tests_iface Tests of the easy-to-use interface
     \brief Unit tests of the easy-to-use interface of libtensor
     \ingroup libtensor_tests
  **/
 
-/**
-    \brief Test suite for the easy-to-use interface of libtensor
-    \ingroup libtensor_tests
+/** \brief Test suite for the easy-to-use interface of libtensor
 
     This suite runs the following tests:
-    \li libtensor::anon_eval_test
-    \li libtensor::bispace_test
-    \li libtensor::bispace_expr_test
-    \li libtensor::btensor_test
-    \li libtensor::contract_test
-    \li libtensor::diag_test
-    \li libtensor::direct_btensor_test
-    \li libtensor::direct_eval_test
-    \li libtensor::direct_product_test
-    \li libtensor::dirsum_test
-    \li libtensor::dot_product_test
-    \li libtensor::ewmult_test
-    \li libtensor::expr_test
-    \li libtensor::labeled_btensor_test
-    \li libtensor::letter_test
-    \li libtensor::letter_expr_test
-    \li libtensor::mult_test
-    \li libtensor::symm_test
-    \li libtensor::trace_test
-**/
+     - libtensor::anon_eval_test
+     - libtensor::any_tensor_test
+     - libtensor::bispace_test
+     - libtensor::bispace_expr_test
+     - libtensor::btensor_test
+     - libtensor::contract_test
+     - libtensor::diag_test
+     - libtensor::direct_btensor_test
+     - libtensor::direct_eval_test
+     - libtensor::direct_product_test
+     - libtensor::dirsum_test
+     - libtensor::dot_product_test
+     - libtensor::ewmult_test
+     - libtensor::expr_test
+     - libtensor::labeled_btensor_test
+     - libtensor::letter_test
+     - libtensor::letter_expr_test
+     - libtensor::mult_test
+     - libtensor::symm_test
+     - libtensor::trace_test
+
+    \ingroup libtensor_tests
+ **/
 class libtensor_iface_suite : public libtest::test_suite {
 private:
     unit_test_factory<anon_eval_test> m_utf_anon_eval;
+    unit_test_factory<any_tensor_test> m_utf_any_tensor;
     unit_test_factory<bispace_test> m_utf_bispace;
     unit_test_factory<bispace_expr_test> m_utf_bispace_expr;
     unit_test_factory<btensor_test> m_utf_btensor;
@@ -81,7 +85,9 @@ private:
 public:
     //! Creates the suite
     libtensor_iface_suite();
+
 };
+
 
 } // namespace libtensor
 

@@ -6,6 +6,7 @@ libtensor_iface_suite::libtensor_iface_suite() :
     libtest::test_suite("libtensor") {
 
     add_test("anon_eval", m_utf_anon_eval);
+    add_test("any_tensor", m_utf_any_tensor);
     add_test("bispace", m_utf_bispace);
     add_test("bispace_expr", m_utf_bispace_expr);
     add_test("btensor", m_utf_btensor);
@@ -26,5 +27,4 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("trace", m_utf_trace);
 }
 
-}
-
+} // namespace libtensor

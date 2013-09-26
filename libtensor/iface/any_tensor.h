@@ -1,10 +1,14 @@
 #ifndef LIBTENSOR_IFACE_ANY_TENSOR_H
 #define LIBTENSOR_IFACE_ANY_TENSOR_H
 
+#include <cstring> // for size_t
 #include <typeinfo>
+#include "expr/expr_rhs.h"
 
 namespace libtensor {
 namespace iface {
+
+using labeled_btensor_expr::expr_rhs; // temporary
 
 
 /** \brief Any tensor type
@@ -31,30 +35,94 @@ private:
     public:
         Tensor &m_t;
     public:
-        holder(Tensor &t);
-        virtual ~holder();
-        virtual const std::type_info &type_info() const;
-        virtual placeholder *clone() const;
+        holder(Tensor &t) : m_t(t) { }
+        virtual ~holder() { }
+        virtual const std::type_info &type_info() const {
+            return typeid(Tensor);
+        }
+        virtual holder_base *clone() const {
+            return new holder(m_t);
+        }
     };
 
 private:
-    placeholder *m_tensor; // !< Tensor held inside
+    holder_base *m_tensor; // !< Tensor held inside
 
 public:
+    /** \brief Creates any_tensor and places a tensor object inside
+     **/
     template<typename Tensor>
-    Tensor &recast_as();
+    any_tensor(Tensor &t);
+
+    /** \brief Destructor
+     **/
+    ~any_tensor();
+
+    /** \brief Returns the tensor object held inside as a concrete tensor type
+     **/
+    template<typename Tensor>
+    Tensor &get_tensor();
+
+    /** \brief Attaches a letter label to the tensor
+     **/
+    expr_rhs<N, T> operator()(const letter_expr<N> &label);
+
+protected:
+    /** \brief Actual implementation of operator(), to be redefined in derived
+            classes if necessary
+     **/
+    virtual expr_rhs<N, T> make_rhs(const letter_expr<N> &label);
 
 };
 
 
 template<size_t N, typename T> template<typename Tensor>
-Tensor &any_tensor::recast_as() {
+any_tensor<N, T>::any_tensor(Tensor &t) {
 
-    return dynamic_cast<Tensor&>(m_tensor->m_t);
+    m_tensor = new holder<Tensor>(t);
+}
+
+
+template<size_t N, typename T>
+any_tensor<N, T>::~any_tensor() {
+
+    delete m_tensor;
+}
+
+
+template<size_t N, typename T> template<typename Tensor>
+Tensor &any_tensor<N, T>::get_tensor() {
+
+    if(m_tensor->type_info() == typeid(Tensor)) {
+        return static_cast< holder<Tensor>* >(m_tensor)->m_t;
+    } else {
+        throw std::bad_cast();
+    }
+}
+
+
+template<size_t N, typename T>
+expr_rhs<N, T> any_tensor<N, T>::operator()(const letter_expr<N> &label) {
+
+    return make_rhs(label);
+}
+
+
+template<size_t N, typename T>
+expr_rhs<N, T> any_tensor<N, T>::make_rhs(const letter_expr<N> &label) {
+
+//    return expr_rhs<N, T>(new ident_core<N, T>(lhs));
 }
 
 
 } // namespace iface
+} // namespace libtensor
+
+
+namespace libtensor {
+
+using iface::any_tensor;
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_IFACE_ANY_TENSOR_H
