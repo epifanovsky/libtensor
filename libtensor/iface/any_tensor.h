@@ -68,6 +68,10 @@ public:
     expr_rhs<N, T> operator()(const letter_expr<N> &label);
 
 protected:
+    /** \brief Default constructor that can only be used by derived classes
+     **/
+    any_tensor() : m_tensor(0) { }
+
     /** \brief Actual implementation of operator(), to be redefined in derived
             classes if necessary
      **/
