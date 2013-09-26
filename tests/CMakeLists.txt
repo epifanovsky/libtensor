@@ -208,6 +208,12 @@ set(SRC_LINALG
     linalg/linalg_mul2_ij_pi_pj_x_test.C
 )
 
+set(SRC_EXPR
+    expr/libtensor_expr_tests.C
+    expr/libtensor_expr_suite.C
+    expr/eval_plan_test.C
+)
+
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
@@ -240,6 +246,7 @@ set(TARGETS
     libtensor_diag_tensor_tests
     libtensor_diag_block_tensor_tests
     libtensor_btod_tests
+    libtensor_expr_tests
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
@@ -247,6 +254,7 @@ set(TARGETS
 
 add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_btod_tests ${SRC_BTOD})
+add_executable(libtensor_expr_tests ${SRC_EXPR})
 add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
