@@ -33,6 +33,12 @@ public:
         return new node_assign(*this);
     }
 
+    /** \brief Returns the tensor ID on the left-hand side of the assignment
+     **/
+    unsigned get_tid() const {
+        return m_tid;
+    }
+
     /** \brief Returns the right-hand side of the assignment
      **/
     const node &get_rhs() const {
