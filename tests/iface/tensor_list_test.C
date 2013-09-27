@@ -1,0 +1,164 @@
+#include <libtensor/exception.h>
+#include <libtensor/iface/btensor.h>
+#include <libtensor/iface/tensor_list.h>
+#include <libtensor/iface/btensor.h>
+#include "tensor_list_test.h"
+
+namespace libtensor {
+
+
+void tensor_list_test::perform() throw(libtest::test_exception) {
+
+    test_1();
+    test_2();
+    test_3();
+}
+
+
+namespace {
+
+class tensor_i {
+public:
+    bool equals(const tensor_i &other) const {
+        return this == &other;
+    }
+};
+
+class tensor : public tensor_i {
+
+};
+
+} // unnamed namespace
+
+
+void tensor_list_test::test_1() {
+
+    static const char testname[] = "tensor_list_test::test_1()";
+
+    try {
+
+    tensor t;
+    tensor_i &ti = t;
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
+
+    iface::tensor_list lst;
+    unsigned tid1 = lst.get_tensor_id(tt1);
+    unsigned tid2 = lst.get_tensor_id(tt2);
+
+    if(lst.get_tensor_order(tid1) != 1) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
+    }
+    if(lst.get_tensor_type(tid1) != typeid(int)) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
+    }
+    if(lst.get_tensor_order(tid2) != 2) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
+    }
+    if(lst.get_tensor_type(tid2) != typeid(double)) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    } catch(std::exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void tensor_list_test::test_2() {
+
+    static const char testname[] = "tensor_list_test::test_2()";
+
+    try {
+
+    bispace<1> o(10);
+    bispace<2> oo(o&o);
+
+    btensor<1> bt1(o);
+    btensor<2> bt2(oo);
+
+    any_tensor<1, double> &at1 = bt1;
+    any_tensor<2, double> &at2 = bt2;
+
+    iface::tensor_list lst;
+    unsigned tid1 = lst.get_tensor_id(at1);
+    unsigned tid2 = lst.get_tensor_id(at2);
+
+    if(lst.get_tensor_order(tid1) != 1) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
+    }
+    if(lst.get_tensor_type(tid1) != typeid(double)) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
+    }
+    if(lst.get_tensor_order(tid2) != 2) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
+    }
+    if(lst.get_tensor_type(tid2) != typeid(double)) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
+    }
+
+    if(lst.get_tensor_id(bt1) != tid1) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (1).");
+    }
+    if(lst.get_tensor_id(bt2) != tid2) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (2).");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    } catch(std::exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void tensor_list_test::test_3() {
+
+    static const char testname[] = "tensor_list_test::test_3()";
+
+    try {
+
+    bispace<1> o(10);
+    bispace<2> oo(o&o);
+
+    btensor<1> bt1(o);
+    btensor<2> bt2(oo);
+
+    any_tensor<1, double> &at1 = bt1;
+    any_tensor<2, double> &at2 = bt2;
+
+    iface::tensor_list lst;
+    unsigned tid1 = lst.get_tensor_id(bt1);
+    unsigned tid2 = lst.get_tensor_id(bt2);
+
+    if(lst.get_tensor_order(tid1) != 1) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
+    }
+    if(lst.get_tensor_type(tid1) != typeid(double)) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
+    }
+    if(lst.get_tensor_order(tid2) != 2) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
+    }
+    if(lst.get_tensor_type(tid2) != typeid(double)) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
+    }
+
+    if(lst.get_tensor_id(at1) != tid1) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (1).");
+    }
+    if(lst.get_tensor_id(at2) != tid2) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (2).");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    } catch(std::exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+} // namespace libtensor

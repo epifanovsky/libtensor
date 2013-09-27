@@ -2,8 +2,9 @@
 
 namespace libtensor {
 
+
 libtensor_iface_suite::libtensor_iface_suite() :
-    libtest::test_suite("libtensor") {
+    libtest::test_suite("libtensor_iface") {
 
     add_test("anon_eval", m_utf_anon_eval);
     add_test("any_tensor", m_utf_any_tensor);
@@ -25,7 +26,9 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("letter_expr", m_utf_letter_expr);
     add_test("mult", m_utf_mult);
     add_test("symm", m_utf_symm);
+    add_test("tensor_list", m_utf_tensor_list);
     add_test("trace", m_utf_trace);
 }
+
 
 } // namespace libtensor

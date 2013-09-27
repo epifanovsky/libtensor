@@ -18,6 +18,7 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
+    iface/tensor_list.C
 )
 
 set(SRC_LINALG_ACML
