@@ -30,7 +30,7 @@ private:
         virtual ~tensor_holder() { }
         virtual size_t get_n() const { return N; }
         virtual const std::type_info &get_t() const { return typeid(T); }
-        any_tensor<N, T> &get_tensor() { return m_t; }
+        any_tensor<N, T> &get_tensor() const { return m_t; }
         bool tensor_equals(any_tensor<N, T> &other) { return &m_t == &other; }
     };
 
@@ -59,11 +59,11 @@ public:
     /** \brief Returns tensor by previously assigned ID
      **/
     template<size_t N, typename T>
-    any_tensor<N, T> &get_tensor(unsigned tid);
+    any_tensor<N, T> &get_tensor(unsigned tid) const;
 
 private:
     template<size_t N, typename T>
-    bool check_type(unsigned tid);
+    bool check_type(unsigned tid) const;
 
 };
 
@@ -90,14 +90,14 @@ unsigned tensor_list::get_tensor_id(any_tensor<N, T> &t) {
 
 
 template<size_t N, typename T>
-any_tensor<N, T> &tensor_list::get_tensor(unsigned tid) {
+any_tensor<N, T> &tensor_list::get_tensor(unsigned tid) const {
 
     if(tid >= m_lst.size()) {
-        throw 0;
+        throw "Invalid tensor ID";
     }
 
     if(!check_type<N, T>(tid)) {
-        throw 0;
+        throw "Invalid tensor type";
     }
 
     return static_cast< tensor_holder<N, T>* >(m_lst[tid])->get_tensor();
@@ -105,7 +105,7 @@ any_tensor<N, T> &tensor_list::get_tensor(unsigned tid) {
 
 
 template<size_t N, typename T>
-bool tensor_list::check_type(unsigned tid) {
+bool tensor_list::check_type(unsigned tid) const {
 
     return (N == m_lst[tid]->get_n() && typeid(T) == m_lst[tid]->get_t());
 }

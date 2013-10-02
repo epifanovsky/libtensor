@@ -19,6 +19,7 @@ set(SRC
     symmetry/product_table_container.C
     symmetry/product_table_i.C
     iface/tensor_list.C
+    iface/btensor/impl/eval_btensor_double.C
 )
 
 set(SRC_LINALG_ACML

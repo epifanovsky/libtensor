@@ -44,6 +44,10 @@ public:
      **/
     virtual void assign(const expr_rhs<N, T> &rhs, const letter_expr<N> &label);
 
+    /** \brief Converts any_tensor to btensor
+     **/
+    static btensor<N, T> &from_any_tensor(any_tensor<N, T> &t);
+
 };
 
 
@@ -51,6 +55,14 @@ template<size_t N, typename T>
 void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     const letter_expr<N> &label) {
 
+}
+
+
+template<size_t N, typename T>
+btensor<N, T> &btensor<N, T>::from_any_tensor(any_tensor<N, T> &t) {
+
+    return dynamic_cast< btensor<N, T>& >(
+        t.template get_tensor< btensor_i<N, T> >());
 }
 
 

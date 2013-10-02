@@ -18,6 +18,7 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("direct_product", m_utf_direct_product);
     add_test("dirsum", m_utf_dirsum);
     add_test("dot_product", m_utf_dot_product);
+    add_test("eval_btensor_double", m_utf_eval_btensor_double);
     add_test("ewmult", m_utf_ewmult);
     add_test("expr", m_utf_expr);
     add_test("expr_tensor", m_utf_expr_tensor);

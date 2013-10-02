@@ -14,6 +14,7 @@
 #include "direct_product_test.h"
 #include "dirsum_test.h"
 #include "dot_product_test.h"
+#include "eval_btensor_double_test.h"
 #include "ewmult_test.h"
 #include "expr_test.h"
 #include "expr_tensor_test.h"
@@ -50,6 +51,7 @@ namespace libtensor {
      - libtensor::direct_product_test
      - libtensor::dirsum_test
      - libtensor::dot_product_test
+     - libtensor::eval_btensor_double_test
      - libtensor::ewmult_test
      - libtensor::expr_test
      - libtensor::expr_tensor_test
@@ -77,6 +79,7 @@ private:
     unit_test_factory<direct_product_test> m_utf_direct_product;
     unit_test_factory<dirsum_test> m_utf_dirsum;
     unit_test_factory<dot_product_test> m_utf_dot_product;
+    unit_test_factory<eval_btensor_double_test> m_utf_eval_btensor_double;
     unit_test_factory<ewmult_test> m_utf_ewmult;
     unit_test_factory<expr_test> m_utf_expr;
     unit_test_factory<expr_tensor_test> m_utf_expr_tensor;
