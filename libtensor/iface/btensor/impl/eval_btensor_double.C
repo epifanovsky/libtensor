@@ -56,6 +56,86 @@ private:
 
 };
 
+template<size_t N>
+struct tensor_with_transf {
+    btensor_i<N, double> &bt;
+    tensor_transf<N, double> tr;
+
+    tensor_with_transf(btensor_i<N, double> &bt_) : bt(bt_) { }
+
+};
+
+class node_inspector {
+private:
+    const node &m_node; //!< Expression node
+    bool m_tensor; //!< Whether the node is a tensor
+
+public:
+    node_inspector(const node &n);
+
+    bool is_tensor() const {
+        return m_tensor;
+    }
+
+    template<size_t N>
+    tensor_with_transf<N> get_tensor(const tensor_list &tl) const;
+
+};
+
+node_inspector::node_inspector(const node &n) : m_node(n), m_tensor(false) {
+
+    if(m_node.get_op().compare("ident") == 0) {
+        m_tensor = true;
+    } else if(m_node.get_op().compare("transform") == 0) {
+        const node_transform_base &nb = m_node.recast_as<node_transform_base>();
+        m_tensor = node_inspector(nb.get_arg()).is_tensor();
+    }
+}
+
+template<size_t N>
+tensor_with_transf<N> node_inspector::get_tensor(const tensor_list &tl) const {
+
+    if(!m_tensor) {
+        throw "Not a tensor";
+    }
+
+    if(m_node.get_op().compare("ident") == 0) {
+
+        const node_ident &n = m_node.recast_as<node_ident>();
+        btensor_i<N, double> &bt = tl.get_tensor<N, double>(n.get_tid()).
+            template get_tensor< btensor_i<N, double> >();
+        return tensor_with_transf<N>(bt);
+
+    } else if(m_node.get_op().compare("transform") == 0) {
+
+        const node_transform_base &nb = m_node.recast_as<node_transform_base>();
+        if(nb.get_type() != typeid(double)) {
+            throw "Bad type";
+        }
+        const node_transform_double &n = nb.recast_as<node_transform_double>();
+
+        const std::vector<size_t> &p = n.get_perm();
+        if(p.size() != N) {
+            throw "Bad transform node";
+        }
+        sequence<N, size_t> s0(0), s1(0);
+        for(size_t i = 0; i < N; i++) {
+            s0[i] = i;
+            s1[i] = p[i];
+        }
+        permutation_builder<N> pb(s1, s0);
+        tensor_transf<N, double> tr(pb.get_perm(),
+            scalar_transf<double>(n.get_coeff()));
+
+        tensor_with_transf<N> twt = node_inspector(n.get_arg()).
+            template get_tensor<N>(tl);
+        twt.tr.transform(tr);
+        return twt;
+    }
+
+    throw "Not a tensor (2)";
+}
+
 class eval_node {
 private:
     const tensor_list &m_tl; //!< Tensor list
@@ -67,88 +147,22 @@ public:
     { }
 
     template<size_t N>
-    void evaluate(const tensor_transf<N, double> &tr, btensor<N, double> &bt);
-
-};
-
-class eval_node_ident {
-private:
-    const tensor_list &m_tl; //!< Tensor list
-    const node_ident &m_node; //!< Identity node
-
-public:
-    eval_node_ident(const tensor_list &tl, const node_ident &n) :
-        m_tl(tl), m_node(n)
-    { }
-
-    template<size_t N>
-    void evaluate(const tensor_transf<N, double> &tra, btensor<N, double> &btb);
-
-};
-
-class eval_node_transform {
-private:
-    const tensor_list &m_tl; //!< Tensor list
-    const node_transform_double &m_node; //!< Transformation node
-
-public:
-    eval_node_transform(const tensor_list &tl, const node_transform_double &n) :
-        m_tl(tl), m_node(n)
-    { }
-
-    template<size_t N>
-    void evaluate(const tensor_transf<N, double> &tra, btensor<N, double> &btb);
+    void evaluate(btensor<N, double> &bt);
 
 };
 
 template<size_t N>
-void eval_node::evaluate(const tensor_transf<N, double> &tr,
-        btensor<N, double> &bt) {
+void eval_node::evaluate(btensor<N, double> &bt) {
 
-    if(m_node.get_op().compare("ident") == 0) {
-        const node_ident &n = m_node.recast_as<node_ident>();
-        eval_node_ident(m_tl, n).evaluate(tr, bt);
-    } else if(m_node.get_op().compare("transform") == 0) {
-        const node_transform_base &nb = m_node.recast_as<node_transform_base>();
-        if(nb.get_type() != typeid(double)) {
-            throw "Bad type";
-        }
-        const node_transform_double &n = nb.recast_as<node_transform_double>();
-        eval_node_transform(m_tl, n).evaluate(tr, bt);
+    node_inspector ni(m_node);
+
+    if(ni.is_tensor()) {
+        tensor_with_transf<N> twt = ni.template get_tensor<N>(m_tl);
+        btod_copy<N>(twt.bt, twt.tr.get_perm(),
+            twt.tr.get_scalar_tr().get_coeff()).perform(bt);
     } else {
         throw "Unknown node type";
     }
-}
-
-template<size_t N>
-void eval_node_ident::evaluate(const tensor_transf<N, double> &tra,
-    btensor<N, double> &btb) {
-
-    btensor_i<N, double> &bta = m_tl.get_tensor<N, double>(m_node.get_tid()).
-        template get_tensor< btensor_i<N, double> >();
-    btod_copy<N>(bta, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
-        perform(btb);
-}
-
-template<size_t N>
-void eval_node_transform::evaluate(const tensor_transf<N, double> &tra,
-    btensor<N, double> &btb) {
-
-    const std::vector<size_t> &p = m_node.get_perm();
-    if(p.size() != N) {
-        throw "Bad transform node";
-    }
-    sequence<N, size_t> s0(0), s1(0);
-    for(size_t i = 0; i < N; i++) {
-        s0[i] = i;
-        s1[i] = p[i];
-    }
-    permutation_builder<N> pb(s1, s0);
-    tensor_transf<N, double> tra1(pb.get_perm(),
-        scalar_transf<double>(m_node.get_coeff()));
-    tra1.transform(tra);
-
-    eval_node(m_tl, m_node.get_arg()).evaluate(tra1, btb);
 }
 
 class eval_assign {
@@ -166,7 +180,7 @@ public:
     void dispatch() {
         btensor<N, double> &bt = btensor<N, double>::from_any_tensor(
             m_tl.get_tensor<N, double>(m_tid));
-        eval_node(m_tl, m_rhs).evaluate(tensor_transf<N, double>(), bt);
+        eval_node(m_tl, m_rhs).evaluate(bt);
     }
 
 };
