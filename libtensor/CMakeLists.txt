@@ -18,6 +18,7 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
+    expr/node_transform_base.C
     iface/tensor_list.C
     iface/btensor/impl/eval_btensor_double.C
 )

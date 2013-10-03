@@ -29,7 +29,7 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node *clone() const {
+    virtual node_ident *clone() const {
         return new node_ident(*this);
     }
 
