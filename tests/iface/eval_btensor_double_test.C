@@ -1,6 +1,8 @@
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/expr/eval_plan.h>
 #include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_transform_double.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/iface/btensor/eval_btensor.h>
 #include "../compare_ref.h"
@@ -79,6 +81,48 @@ void eval_btensor_double_test::test_2() {
 
     try {
 
+    bispace<1> o(10), v(20);
+    bispace<2> oo(o&o), ov(o|v), vv(v&v);
+
+    btensor<2, double> t_oo(oo), t_ov(ov), t_vv(vv);
+    btensor<2, double> r_oo(oo), r_ov(ov), r_vv(vv);
+    btensor<2, double> r_oo_ref(oo), r_ov_ref(ov), r_vv_ref(vv);
+
+    btod_random<2>().perform(t_oo);
+    btod_random<2>().perform(t_ov);
+    btod_random<2>().perform(t_vv);
+
+    btod_copy<2>(t_oo, -2.0).perform(r_oo_ref);
+    btod_copy<2>(t_ov).perform(r_ov_ref);
+    btod_copy<2>(t_vv, permutation<2>().permute(0, 1), 1.5).perform(r_vv_ref);
+
+    tensor_list tl;
+
+    unsigned tid_oo = tl.get_tensor_id(t_oo);
+    unsigned tid_ov = tl.get_tensor_id(t_ov);
+    unsigned tid_vv = tl.get_tensor_id(t_vv);
+    unsigned rid_oo = tl.get_tensor_id(r_oo);
+    unsigned rid_ov = tl.get_tensor_id(r_ov);
+    unsigned rid_vv = tl.get_tensor_id(r_vv);
+
+    eval_plan plan;
+
+    std::vector<size_t> p01(2, 0), p10(2, 0);
+    p01[0] = 0; p01[1] = 1;
+    p10[0] = 1; p10[1] = 0;
+
+    node_ident nid1(tid_oo), nid2(tid_ov), nid3(tid_vv);
+    node_transform_double ntr1(nid1, p01, -2.0), ntr2(nid2, p01, 1.0),
+        ntr3(nid3, p10, 1.5);
+    plan.insert_assignment(node_assign(rid_oo, ntr1));
+    plan.insert_assignment(node_assign(rid_ov, ntr2));
+    plan.insert_assignment(node_assign(rid_vv, ntr3));
+
+    eval_btensor<double>().process_plan(plan, tl);
+
+    compare_ref<2>::compare(testname, r_oo, r_oo_ref, 1e-15);
+    compare_ref<2>::compare(testname, r_ov, r_ov_ref, 1e-15);
+    compare_ref<2>::compare(testname, r_vv, r_vv_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

@@ -1,6 +1,8 @@
+#include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_transform_double.h>
 #include "../eval_btensor.h"
 
 namespace libtensor {
@@ -65,7 +67,7 @@ public:
     { }
 
     template<size_t N>
-    void evaluate(btensor<N, double> &bt);
+    void evaluate(const tensor_transf<N, double> &tr, btensor<N, double> &bt);
 
 };
 
@@ -80,25 +82,73 @@ public:
     { }
 
     template<size_t N>
-    void evaluate(btensor<N, double> &btb);
+    void evaluate(const tensor_transf<N, double> &tra, btensor<N, double> &btb);
+
+};
+
+class eval_node_transform {
+private:
+    const tensor_list &m_tl; //!< Tensor list
+    const node_transform_double &m_node; //!< Transformation node
+
+public:
+    eval_node_transform(const tensor_list &tl, const node_transform_double &n) :
+        m_tl(tl), m_node(n)
+    { }
+
+    template<size_t N>
+    void evaluate(const tensor_transf<N, double> &tra, btensor<N, double> &btb);
 
 };
 
 template<size_t N>
-void eval_node::evaluate(btensor<N, double> &bt) {
+void eval_node::evaluate(const tensor_transf<N, double> &tr,
+        btensor<N, double> &bt) {
 
     if(m_node.get_op().compare("ident") == 0) {
         const node_ident &n = m_node.recast_as<node_ident>();
-        eval_node_ident(m_tl, n).evaluate(bt);
+        eval_node_ident(m_tl, n).evaluate(tr, bt);
+    } else if(m_node.get_op().compare("transform") == 0) {
+        const node_transform_base &nb = m_node.recast_as<node_transform_base>();
+        if(nb.get_type() != typeid(double)) {
+            throw "Bad type";
+        }
+        const node_transform_double &n = nb.recast_as<node_transform_double>();
+        eval_node_transform(m_tl, n).evaluate(tr, bt);
+    } else {
+        throw "Unknown node type";
     }
 }
 
 template<size_t N>
-void eval_node_ident::evaluate(btensor<N, double> &btb) {
+void eval_node_ident::evaluate(const tensor_transf<N, double> &tra,
+    btensor<N, double> &btb) {
 
     btensor_i<N, double> &bta = m_tl.get_tensor<N, double>(m_node.get_tid()).
         template get_tensor< btensor_i<N, double> >();
-    btod_copy<N>(bta).perform(btb);
+    btod_copy<N>(bta, tra.get_perm(), tra.get_scalar_tr().get_coeff()).
+        perform(btb);
+}
+
+template<size_t N>
+void eval_node_transform::evaluate(const tensor_transf<N, double> &tra,
+    btensor<N, double> &btb) {
+
+    const std::vector<size_t> &p = m_node.get_perm();
+    if(p.size() != N) {
+        throw "Bad transform node";
+    }
+    sequence<N, size_t> s0(0), s1(0);
+    for(size_t i = 0; i < N; i++) {
+        s0[i] = i;
+        s1[i] = p[i];
+    }
+    permutation_builder<N> pb(s1, s0);
+    tensor_transf<N, double> tra1(pb.get_perm(),
+        scalar_transf<double>(m_node.get_coeff()));
+    tra1.transform(tra);
+
+    eval_node(m_tl, m_node.get_arg()).evaluate(tra1, btb);
 }
 
 class eval_assign {
@@ -116,7 +166,7 @@ public:
     void dispatch() {
         btensor<N, double> &bt = btensor<N, double>::from_any_tensor(
             m_tl.get_tensor<N, double>(m_tid));
-        eval_node(m_tl, m_rhs).evaluate(bt);
+        eval_node(m_tl, m_rhs).evaluate(tensor_transf<N, double>(), bt);
     }
 
 };
