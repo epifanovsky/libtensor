@@ -21,6 +21,7 @@ void eval_btensor_double_test::perform() throw(libtest::test_exception) {
 
         test_1();
         test_2();
+        test_3();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -123,6 +124,50 @@ void eval_btensor_double_test::test_2() {
     compare_ref<2>::compare(testname, r_oo, r_oo_ref, 1e-15);
     compare_ref<2>::compare(testname, r_ov, r_ov_ref, 1e-15);
     compare_ref<2>::compare(testname, r_vv, r_vv_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void eval_btensor_double_test::test_3() {
+
+    static const char testname[] = "eval_btensor_double_test::test_3()";
+
+    try {
+
+    bispace<1> o(10);
+    bispace<3> ooo(o&o&o);
+
+    btensor<3, double> t_ooo(ooo);
+    btensor<3, double> r_ooo(ooo);
+    btensor<3, double> r_ooo_ref(ooo);
+
+    btod_random<3>().perform(t_ooo);
+
+    btod_copy<3>(t_ooo, permutation<3>().permute(0, 1).permute(1, 2)).
+        perform(r_ooo_ref);
+
+    tensor_list tl;
+
+    unsigned tid_ooo = tl.get_tensor_id(t_ooo);
+    unsigned rid_ooo = tl.get_tensor_id(r_ooo);
+
+    eval_plan plan;
+
+    std::vector<size_t> p012(3, 0), p102(3, 0), p021(3, 0);
+    p012[0] = 0; p012[1] = 1; p012[2] = 2;
+    p102[0] = 1; p102[1] = 0; p102[2] = 2;
+    p021[0] = 0; p021[1] = 2; p021[2] = 1;
+
+    node_ident nid(tid_ooo);
+    node_transform_double ntr1(nid, p102, 1.0), ntr2(ntr1, p021, 1.0);
+    plan.insert_assignment(node_assign(rid_ooo, ntr2));
+
+    eval_btensor<double>().process_plan(plan, tl);
+
+    compare_ref<3>::compare(testname, r_ooo, r_ooo_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
