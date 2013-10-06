@@ -3,7 +3,6 @@
 
 #include <typeinfo>
 #include <vector>
-#include <libtensor/exception.h>
 #include "unary_node_base.h"
 
 namespace libtensor {

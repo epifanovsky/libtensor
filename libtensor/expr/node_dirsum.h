@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_NODE_DIRSUM_H
 #define LIBTENSOR_EXPR_NODE_DIRSUM_H
 
-#include "binary_node_base.h"
+#include "nary_node_base.h"
 
 namespace libtensor {
 namespace expr {
@@ -11,13 +11,21 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_dirsum : public binary_node_base {
+class node_dirsum : public nary_node_base {
 public:
-    /** \brief Creates an identity node
-        \param tid Tensor ID.
+    /** \brief Creates an direct tensor sum node of two tensors
+        \param arg1 First argument
+        \param arg2 Second argument
      **/
-    node_dirsum(const node &left, const node &right) :
-        node("dirsum", left, right)
+    node_dirsum(const node &arg1, const node &arg2) :
+        nary_node_base("dirsum", arg1, arg2)
+    { }
+
+    /** \brief Creates an direct tensor sum node of n tensors
+        \param args List of arguments
+     **/
+    node_dirsum(std::vector<const node *> &args) :
+        nary_node_base("dirsum", args)
     { }
 
     /** \brief Virtual destructor

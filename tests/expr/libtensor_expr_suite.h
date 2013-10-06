@@ -3,7 +3,13 @@
 
 #include <libtest/test_suite.h>
 #include "eval_plan_test.h"
+#include "node_add_test.h"
 #include "node_contract_test.h"
+#include "node_diag_test.h"
+#include "node_dirprod_test.h"
+#include "node_dirsum_test.h"
+#include "node_ewmult_test.h"
+#include "node_mult_test.h"
 #include "node_transform_test.h"
 
 using libtest::unit_test_factory;
@@ -19,7 +25,13 @@ namespace libtensor {
 
     This suite runs the following tests:
      - libtensor::eval_plan_test
+     - libtensor::node_add_test
      - libtensor::node_contract_test
+     - libtensor::node_diag_test
+     - libtensor::node_dirprod_test
+     - libtensor::node_dirsum_test
+     - libtensor::node_ewmult_test
+     - libtensor::node_mult_test
      - libtensor::node_transform_test
 
     \ingroup libtensor_tests_expr
@@ -27,7 +39,13 @@ namespace libtensor {
 class libtensor_expr_suite : public libtest::test_suite {
 private:
     unit_test_factory<eval_plan_test> m_utf_eval_plan;
+    unit_test_factory<node_contract_test> m_utf_node_add;
     unit_test_factory<node_contract_test> m_utf_node_contract;
+    unit_test_factory<node_contract_test> m_utf_node_diag;
+    unit_test_factory<node_contract_test> m_utf_node_dirprod;
+    unit_test_factory<node_contract_test> m_utf_node_dirsum;
+    unit_test_factory<node_contract_test> m_utf_node_ewmult;
+    unit_test_factory<node_contract_test> m_utf_node_mult;
     unit_test_factory<node_transform_test> m_utf_node_transform;
 
 public:

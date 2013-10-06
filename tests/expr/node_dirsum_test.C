@@ -1,14 +1,14 @@
 #include <algorithm>
 #include <sstream>
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_contract.h>
+#include <libtensor/expr/node_dirsum.h>
 #include <libtensor/expr/node_ident.h>
-#include "node_contract_test.h"
+#include "node_dirsum_test.h"
 
 namespace libtensor {
 
 
-void node_contract_test::perform() throw(libtest::test_exception) {
+void node_dirsum_test::perform() throw(libtest::test_exception) {
 
     test_1();
     test_2();
@@ -18,24 +18,16 @@ void node_contract_test::perform() throw(libtest::test_exception) {
 using namespace expr;
 
 
-void node_contract_test::test_1() throw(libtest::test_exception) {
+void node_dirsum_test::test_1() throw(libtest::test_exception) {
 
-    static const char testname[] = "node_contract_test::test_1()";
+    static const char testname[] = "node_dirsum_test::test_1()";
 
     try {
 
-    std::map<size_t, size_t> contr;
-    contr[1] = 2;
-
-
     node_ident t1(2), t2(3);
-    node_contract c1(t1, t2, contr);
+    node_dirsum c1(t1, t2);
 
-    node_contract *c1copy = c1.clone();
-    if (c1copy->get_contraction().size() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
-                "Wrong length of contraction.");
-    }
+    node_dirsum *c1copy = c1.clone();
     if (c1copy->get_nargs() != 2) {
         fail_test(testname, __FILE__, __LINE__,
                 "Wrong number of arguments.");
@@ -62,31 +54,24 @@ void node_contract_test::test_1() throw(libtest::test_exception) {
     }
 }
 
+void node_dirsum_test::test_2() throw(libtest::test_exception) {
 
-void node_contract_test::test_2() throw(libtest::test_exception) {
-
-    static const char testname[] = "node_contract_test::test_2()";
+    static const char testname[] = "node_dirsum_test::test_2()";
 
     try {
 
-    std::map<size_t, size_t> contr;
-    contr[1] = 2;
-    contr[3] = 4;
+    node_ident t1(2), t2(3), t3(4);
+    std::vector<const node *> args(3);
+    args[0] = &t1; args[1] = &t2; args[2] = &t3;
+    node_dirsum c1(args);
 
-    node_ident t1(2), t2(3);
-    node_contract c1(t1, t2, t2, contr);
-
-    node_contract *c1copy = c1.clone();
-    if (c1copy->get_contraction().size() != 2) {
-        fail_test(testname, __FILE__, __LINE__,
-                "Wrong length of contraction.");
-    }
+    node_dirsum *c1copy = c1.clone();
     if (c1copy->get_nargs() != 3) {
         fail_test(testname, __FILE__, __LINE__,
                 "Wrong number of arguments.");
     }
 
-    std::vector<unsigned> ids(3); ids[0] = 2; ids[1] = 3; ids[2] = 3;
+    std::vector<unsigned> ids(3); ids[0] = 2; ids[1] = 3; ids[2] = 4;
     for (size_t i = 0; i < c1copy->get_nargs(); i++) {
         const node &ni = c1copy->get_arg(i);
         if (ni.get_op() != "ident") {
@@ -106,6 +91,7 @@ void node_contract_test::test_2() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 
 } // namespace libtensor

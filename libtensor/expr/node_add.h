@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_NODE_ADD_H
 #define LIBTENSOR_EXPR_NODE_ADD_H
 
-#include "binary_node_base.h"
+#include "nary_node_base.h"
 
 namespace libtensor {
 namespace expr {
@@ -13,13 +13,21 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_add : public binary_node_base {
+class node_add : public nary_node_base {
 public:
-    /** \brief Creates an identity node
-        \param tid Tensor ID.
+    /** \brief Creates an addition node
+        \param arg1 First argument.
+        \param arg2 Second argument.
      **/
-    node_add(const node &left, const node &right) :
-        binary_node_base("add", left, right)
+    node_add(const node &arg1, const node &arg2) :
+        nary_node_base("add", arg1, arg2)
+    { }
+
+    /** \brief Creates an addition node
+        \param args List of arguments.
+     **/
+    node_add(std::vector<const node *> &args) :
+        nary_node_base("add", args)
     { }
 
     /** \brief Virtual destructor

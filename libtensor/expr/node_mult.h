@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_NODE_MULT_H
 #define LIBTENSOR_EXPR_NODE_MULT_H
 
-#include "binary_node_base.h"
+#include "nary_node_base.h"
 
 namespace libtensor {
 namespace expr {
@@ -11,7 +11,7 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_mult : public binary_node_base {
+class node_mult : public nary_node_base {
 private:
     bool m_recip; //!< Perform division
 
@@ -22,7 +22,7 @@ public:
         \param recip Perform division (left / right).
      **/
     node_mult(const node &left, const node &right, bool recip) :
-        node("mult", left, right), m_recip(recip)
+        nary_node_base("mult", left, right), m_recip(recip)
     { }
 
     /** \brief Virtual destructor

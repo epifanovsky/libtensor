@@ -32,7 +32,7 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node *clone() const {
+    virtual node_transform_double *clone() const {
         return new node_transform_double(*this);
     }
 

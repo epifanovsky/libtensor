@@ -1,3 +1,4 @@
+#include <libtensor/exception.h>
 #include "node_transform_base.h"
 
 namespace libtensor {

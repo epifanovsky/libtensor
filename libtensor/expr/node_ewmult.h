@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_EWMULT_H
 
 #include <map>
-#include "binary_node_base.h"
+#include "nary_node_base.h"
 
 namespace libtensor {
 namespace expr {
@@ -11,14 +11,17 @@ namespace expr {
 /** \brief Hadamard tensor product node of the expression tree
 
     Represents a generalized element-wise multiplication of two expression
-    subtrees. The multiplication map determines the indexes of left and right
-    arguments which are combined into one. The resulting order of indexes
-    are the indexes of the left argument followed by the indexes of the right
-    argument which have not been combined by the operation.
+    subtrees. Assuming the tensor indexes are arranged successively starting
+    with the indexes of the first tensor argument the multiplication map
+    determines the index-pairs of the arguments which are combined into one.
+    The above order of indexes is retained in the result with only the second
+    index of the pairs removed.
+
+    TODO: extend to n tensors
 
     \ingroup libtensor_expr
  **/
-class node_ewmult: public binary_node_base {
+class node_ewmult: public nary_node_base {
 private:
     std::map<size_t, size_t> m_mmap; //!< Multiplication map
 
@@ -30,7 +33,7 @@ public:
      **/
     node_ewmult(const node &left, const node &right,
             const std::map<size_t, size_t> &multmap) :
-        binary_node_base("ewmult", left, right), m_mmap(multmap)
+        nary_node_base("ewmult", left, right), m_mmap(multmap)
     { }
 
     /** \brief Virtual destructor

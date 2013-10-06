@@ -23,7 +23,7 @@ public:
         \param tid Tensor ID.
      **/
     node_diag(const node &arg, const std::vector<size_t> &diagdims) :
-        node("diag", arg), m_ddims(diagdims)
+        unary_node_base("diag", arg), m_ddims(diagdims)
     { }
 
     /** \brief Virtual destructor

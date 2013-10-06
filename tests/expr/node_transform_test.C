@@ -34,10 +34,10 @@ void node_transform_test::test_1() {
     if (tr1copy->get_op() != "transform") {
         fail_test(testname, __FILE__, __LINE__, "Node name.");
     }
-    if (tr1copy->get_type() != "double") {
+    if (tr1copy->get_type() != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Node transform type.");
     }
-    if (tr1copy->get_order().size() != 4) {
+    if (tr1copy->get_perm().size() != 4) {
         fail_test(testname, __FILE__, __LINE__, "Length of index order.");
     }
     if (tr1copy->get_coeff() != 0.1) {
