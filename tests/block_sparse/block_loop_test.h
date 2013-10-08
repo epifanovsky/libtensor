@@ -12,9 +12,9 @@ private:
 
     void test_range() throw(libtest::test_exception);
 
-    void test_run_block_kernel_copy_1d() throw(libtest::test_exception);
-    void test_run_block_kernel_copy_2d() throw(libtest::test_exception);
-    void test_run_block_kernel_copy_2d_permute() throw(libtest::test_exception);
+    void test_run_block_copy_kernel_1d() throw(libtest::test_exception);
+    void test_run_block_copy_kernel_2d() throw(libtest::test_exception);
+    void test_run_block_copy_kernel_2d_permute() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

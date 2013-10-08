@@ -13,8 +13,8 @@ void block_loop_test::perform() throw(libtest::test_exception) {
 
     test_range();
 
-    test_run_block_kernel_copy_1d();
-    test_run_block_kernel_copy_2d();
+    test_run_block_copy_kernel_1d();
+    test_run_block_copy_kernel_2d();
 }
 
 void block_loop_test::test_range() throw(libtest::test_exception)
@@ -44,9 +44,9 @@ void block_loop_test::test_range() throw(libtest::test_exception)
     }
 }
 
-void block_loop_test::test_run_block_kernel_copy_1d() throw(libtest::test_exception)
+void block_loop_test::test_run_block_copy_kernel_1d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_run_block_kernel_copy_1d()";
+    static const char *test_name = "block_loop_test::test_run_block_copy_kernel_1d()";
 
     sparse_bispace<1> spb(8);
     std::vector<size_t> split_points;
@@ -94,9 +94,9 @@ void block_loop_test::test_run_block_kernel_copy_1d() throw(libtest::test_except
 
 //First nested loop test
 //Copy a 2d block-major array
-void block_loop_test::test_run_block_kernel_copy_2d() throw(libtest::test_exception)
+void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_run_block_kernel_copy_2d()";
+    static const char *test_name = "block_loop_test::test_run_block_copy_kernel_2d()";
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
@@ -175,9 +175,9 @@ void block_loop_test::test_run_block_kernel_copy_2d() throw(libtest::test_except
 
 #if 0
 //Copy and transpose a 2d array
-void block_loop_test::test_run_block_kernel_copy_2d() throw(libtest::test_exception)
+void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_run_block_kernel_copy_2d()";
+    static const char *test_name = "block_loop_test::test_run_block_copy_kernel_2d()";
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
