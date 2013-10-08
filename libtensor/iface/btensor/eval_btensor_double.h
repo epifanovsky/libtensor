@@ -14,7 +14,7 @@ namespace iface {
  **/
 template<>
 class eval_btensor<double> {
-private:
+public:
     enum {
         Nmax = 8
     };

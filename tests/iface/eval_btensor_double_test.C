@@ -1,7 +1,9 @@
+#include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/expr/eval_plan.h>
 #include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_transform_double.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/iface/btensor/eval_btensor.h>
@@ -19,9 +21,10 @@ void eval_btensor_double_test::perform() throw(libtest::test_exception) {
 
     try {
 
-        test_1();
-        test_2();
-        test_3();
+        test_copy_1();
+        test_copy_2();
+        test_copy_3();
+        test_contract_1();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -32,9 +35,9 @@ void eval_btensor_double_test::perform() throw(libtest::test_exception) {
 }
 
 
-void eval_btensor_double_test::test_1() {
+void eval_btensor_double_test::test_copy_1() {
 
-    static const char testname[] = "eval_btensor_double_test::test_1()";
+    static const char testname[] = "eval_btensor_double_test::test_copy_1()";
 
     try {
 
@@ -76,9 +79,9 @@ void eval_btensor_double_test::test_1() {
 }
 
 
-void eval_btensor_double_test::test_2() {
+void eval_btensor_double_test::test_copy_2() {
 
-    static const char testname[] = "eval_btensor_double_test::test_2()";
+    static const char testname[] = "eval_btensor_double_test::test_copy_2()";
 
     try {
 
@@ -131,9 +134,9 @@ void eval_btensor_double_test::test_2() {
 }
 
 
-void eval_btensor_double_test::test_3() {
+void eval_btensor_double_test::test_copy_3() {
 
-    static const char testname[] = "eval_btensor_double_test::test_3()";
+    static const char testname[] = "eval_btensor_double_test::test_copy_3()";
 
     try {
 
@@ -168,6 +171,61 @@ void eval_btensor_double_test::test_3() {
     eval_btensor<double>().process_plan(plan, tl);
 
     compare_ref<3>::compare(testname, r_ooo, r_ooo_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void eval_btensor_double_test::test_contract_1() {
+
+    static const char testname[] =
+        "eval_btensor_double_test::test_contract_1()";
+
+    try {
+
+    bispace<1> o(10), v(20);
+    bispace<2> oo(o&o), ov(o|v), vv(v&v);
+
+    btensor<2, double> t_oo(oo), t_ov(ov), t_vv(vv);
+    btensor<2, double> r1_ov(ov), r2_ov(ov);
+    btensor<2, double> r1_ov_ref(ov), r2_ov_ref(ov);
+
+    btod_random<2>().perform(t_oo);
+    btod_random<2>().perform(t_ov);
+    btod_random<2>().perform(t_vv);
+
+    {
+        contraction2<1, 1, 1> contr1, contr2;
+        contr1.contract(0, 0);
+        contr2.contract(1, 1);
+        btod_contract2<1, 1, 1>(contr1, t_oo, t_ov).perform(r1_ov_ref);
+        btod_contract2<1, 1, 1>(contr2, t_ov, t_vv).perform(r2_ov_ref);
+    }
+
+    tensor_list tl;
+
+    unsigned tid_oo = tl.get_tensor_id(t_oo);
+    unsigned tid_ov = tl.get_tensor_id(t_ov);
+    unsigned tid_vv = tl.get_tensor_id(t_vv);
+    unsigned rid1_ov = tl.get_tensor_id(r1_ov);
+    unsigned rid2_ov = tl.get_tensor_id(r2_ov);
+
+    eval_plan plan;
+
+    node_ident nid1(tid_oo), nid2(tid_ov), nid3(tid_vv);
+    std::map<size_t, size_t> contr1, contr2;
+    contr1[0] = 0;
+    contr2[1] = 1;
+    node_contract nco1(nid1, nid2, contr1), nco2(nid2, nid3, contr2);
+    plan.insert_assignment(node_assign(rid1_ov, nco1));
+    plan.insert_assignment(node_assign(rid2_ov, nco2));
+
+    eval_btensor<double>().process_plan(plan, tl);
+
+    compare_ref<2>::compare(testname, r1_ov, r1_ov_ref, 1e-15);
+    compare_ref<2>::compare(testname, r2_ov, r2_ov_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

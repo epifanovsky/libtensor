@@ -15,9 +15,10 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_1();
-    void test_2();
-    void test_3();
+    void test_copy_1();
+    void test_copy_2();
+    void test_copy_3();
+    void test_contract_1();
 
 };
 
