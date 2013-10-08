@@ -122,7 +122,7 @@ block_loop<M,N,T>::block_loop(sparse_bispace<1>& bispace,
                sequence<M,bool>& output_ignore,
                sequence<N,bool>& input_ignore,
                block_kernel_i<M,N,T>* kernel) : m_bispace(bispace),
-                                                m_output_bispace_indices(input_bispace_indices),
+                                                m_output_bispace_indices(output_bispace_indices),
                                                 m_input_bispace_indices(input_bispace_indices),
                                                 m_output_ignore(input_ignore),
                                                 m_input_ignore(input_ignore)
@@ -189,10 +189,9 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
 
                     //TODO: Rewrite passing explicit block indices for handling sparsity
                     size_t inner_size = 1;
-                    size_t cur_bispace_idx = m_output_bispace_indices[m];
                     for(size_t inner_size_idx = idx+1; inner_size_idx < cur_order; ++inner_size_idx)
                     {
-                        inner_size *= (*output_bispaces[m])[cur_bispace_idx].get_dim();
+                        inner_size *= (*output_bispaces[m])[inner_size_idx].get_dim();
                     }
 
                     offset += outer_size * output_block_offsets[m][idx] * inner_size;
@@ -219,8 +218,9 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
                     size_t cur_bispace_idx = m_input_bispace_indices[n];
                     for(size_t inner_size_idx = idx+1; inner_size_idx < cur_order; ++inner_size_idx)
                     {
-                        inner_size *= (*input_bispaces[n])[cur_bispace_idx].get_dim();
+                        inner_size *= (*input_bispaces[n])[inner_size_idx].get_dim();
                     }
+
                     offset += outer_size * input_block_offsets[n][idx] * inner_size;
                 }
                 input_block_ptrs[n] += offset;

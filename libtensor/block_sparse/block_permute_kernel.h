@@ -5,9 +5,6 @@
 #include <numeric>
 #include "block_kernel_i.h"
 
-//TODO REMOVE
-#include <iostream>
-
 namespace libtensor { 
 
 typedef std::map<size_t,size_t> permute_map;  

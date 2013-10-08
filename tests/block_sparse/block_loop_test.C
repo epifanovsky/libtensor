@@ -15,6 +15,8 @@ void block_loop_test::perform() throw(libtest::test_exception) {
 
     test_run_block_copy_kernel_1d();
     test_run_block_copy_kernel_2d();
+
+    test_run_block_permute_kernel_2d();
 }
 
 void block_loop_test::test_range() throw(libtest::test_exception)
@@ -173,11 +175,47 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
 
 }
 
-#if 0
-//Copy and transpose a 2d array
-void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_exception)
+//Permuted nested loops
+void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_run_block_copy_kernel_2d()";
+    static const char *test_name = "block_loop_test::test_run_block_permute_kernel_2d()";
+
+	//Indices in comments are block indices
+    double test_input_arr[20] = { //i = 0, j = 0
+                                  1,2,
+                                  6,7,
+
+                                 //i = 0, j = 1
+                                 3,4,5,
+                                 8,9,10,
+
+                                 //i = 1, j = 0
+                                 11,12,
+                                 16,17,
+
+                                 //i = 0, j = 1
+                                 13,14,15,
+                                 18,19,20 };
+
+    double correct_output_arr[20] = { //j = 0, i = 0
+                                 	  1,6,
+                                      2,7,
+
+									  //j = 0, i = 1
+									  11,16,
+									  12,17,
+
+									  //j = 1, i = 0
+									  3,8,
+									  4,9,
+									  5,10,
+
+									  //j = 1, i = 1
+									  13,18,
+									  14,19,
+									  15,20 };
+
+    double test_output_arr[20];
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
@@ -191,61 +229,51 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
-    sparse_bispace<2> two_d = spb_1 | spb_2;
+    sparse_bispace<2> two_d_input = spb_1 | spb_2;
+    sparse_bispace<2> two_d_output = spb_2 | spb_1;
 
-    block_copy_kernel<double> bck;
+	permute_map perm;
+	perm.insert(std::make_pair(0,1));
+	perm.insert(std::make_pair(1,0));
 
-    sequence<1,size_t> output_bispace_indices_1(0);
-    sequence<1,size_t> input_bispace_indices_1(0);
-    sequence<1,bool> output_ignore_1(false);
-    sequence<1,bool> input_ignore_1(false);
+    block_permute_kernel<double> bpk(perm);
 
-    sequence<1,size_t> output_bispace_indices_2(1);
+
+    sequence<1,size_t> output_bispace_indices_2(0);
     sequence<1,size_t> input_bispace_indices_2(1);
     sequence<1,bool> output_ignore_2(false);
     sequence<1,bool> input_ignore_2(false);
 
-    block_loop<1,1> bl_1(spb_1,
-                       output_bispace_indices_1,
-                       input_bispace_indices_1,
-                       output_ignore_1,
-                       input_ignore_1,
-                       bck);
+    sequence<1,size_t> output_bispace_indices_1(1);
+    sequence<1,size_t> input_bispace_indices_1(0);
+    sequence<1,bool> output_ignore_1(false);
+    sequence<1,bool> input_ignore_1(false);
 
-    bl_1.nest(spb_2,
-              output_bispace_indices_2,
-              input_bispace_indices_2,
-              output_ignore_2,
-              input_ignore_2);
+	block_loop<1,1> bl_2(spb_2,
+						 output_bispace_indices_2,
+						 input_bispace_indices_2,
+						 output_ignore_2,
+						 input_ignore_2,
+						 bpk);
 
-    double test_output_arr[20];
-    double test_input_arr[20] = { //i = 0, j = 0
-                                 1,2,
-                                 6,7,
+    bl_2.nest(spb_1,
+			  output_bispace_indices_1,
+			  input_bispace_indices_1,
+			  output_ignore_1,
+			  input_ignore_1);
 
-                                 //i = 0, j = 1
-                                 3,4,5,
-                                 8,9,10,
 
-                                 //i = 1, j = 0
-                                 11,12,
-                                 16,17,
-
-                                 //i = 0, j = 1
-                                 13,14,15,
-                                 18,19,20
-                                };
 
     sequence<1,double*> output_ptrs(test_output_arr); 
     sequence<1,double*> input_ptrs(test_input_arr); 
-    sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d);
-    sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d);
+    sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d_output);
+    sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d_input);
 
-    bl_1.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    bl_2.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 20; ++i)
     {
-        if(test_output_arr[i] != test_input_arr[i])
+        if(test_output_arr[i] != correct_output_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
                     "block_loop<M,N,T>::run(...) produced incorrect output");
@@ -253,6 +281,5 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
     }
 
 }
-#endif
 
 } // namespace libtensor
