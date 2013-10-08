@@ -211,7 +211,7 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_to_add_space.C
     diag_tensor/impl/diag_to_contract2_space.C
     diag_tensor/impl/diag_tod_adjust_space.C
-    diag_tensor/impl/diag_tod_aux_constr_add.C
+   diag_tensor/impl/diag_tod_aux_constr_add.C
     diag_tensor/impl/diag_tod_aux_constr_base.C
     diag_tensor/impl/diag_tod_aux_dotprod.C
     diag_tensor/impl/diag_tod_contract2.C

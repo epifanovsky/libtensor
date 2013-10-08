@@ -233,6 +233,15 @@ set(SRC_IFACE
     iface/trace_test.C
 )
 
+set(SRC_BLOCK_SPARSE
+    block_sparse/libtensor_block_sparse_tests.C
+    block_sparse/libtensor_block_sparse_suite.C
+    block_sparse/sparse_bispace_test.C
+    block_sparse/sparse_btensor_test.C
+    block_sparse/block_kernels_test.C
+    block_sparse/block_loop_test.C
+)
+
 set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
@@ -242,6 +251,7 @@ set(TARGETS
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
+    libtensor_block_sparse_tests
 )
 
 add_executable(libtensor_core_tests ${SRC_CORE})
@@ -252,6 +262,7 @@ add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
+add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
