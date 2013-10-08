@@ -22,9 +22,22 @@ private:
     void test_block_copy_kernel_2d() throw(libtest::test_exception);
     void test_block_copy_kernel_3d() throw(libtest::test_exception);
 
+    /*
+     * block_equality_kernel tests
+     */
     void test_block_equality_kernel_2d_true() throw(libtest::test_exception);
     void test_block_equality_kernel_2d_false() throw(libtest::test_exception);
     void test_block_equality_kernel_not_run_exception() throw(libtest::test_exception);
+
+    /*
+     * block_permute_kernel tests
+     */
+    void test_block_permute_kernel_2d() throw(libtest::test_exception);
+    void test_block_permute_kernel_2d_invalid_perm_incomplete() throw(libtest::test_exception);
+    void test_block_permute_kernel_2d_invalid_perm_oob() throw(libtest::test_exception);
+    void test_block_permute_kernel_2d_invalid_perm_duplicate() throw(libtest::test_exception);
+    void test_block_permute_kernel_3d_201() throw(libtest::test_exception);
+    void test_block_permute_kernel_3d_021() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

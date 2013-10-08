@@ -25,7 +25,6 @@ public:
     //Returns a pointer to a copy of this object
     block_kernel_i<0,1,T>* clone() const { return (block_kernel_i<0,1,T>*) new block_printer(*this); };  
 
-    //Abstract base class methods
     void operator()(sequence<0, T*>& output_ptrs, 
                     sequence<1, T*>& input_ptrs,
                     sequence<0, dim_list>& output_dims,
