@@ -34,7 +34,6 @@ public:
 private:
     block_loop<M,N,T>* m_inner_loop; //!< For nested loops
     block_kernel_i<M,N,T>* m_kernel;
-    sparse_bispace<1> m_bispace;
     sequence<M,size_t> m_output_bispace_indices; //!< Which index in each output tensor does this loop modify?
     sequence<N,size_t> m_input_bispace_indices; //!< Which index in each input tensor does this loop modify?
     sequence<M,bool> m_output_ignore; //!< Which output pointers are incremented by this loop?
@@ -93,8 +92,7 @@ block_loop<M,N,T>::block_loop(sparse_bispace<1>& bispace,
            sequence<N,size_t>& input_bispace_indices,
            sequence<M,bool>& output_ignore,
            sequence<N,bool>& input_ignore,
-           block_kernel_i<M,N,T>& kernel) : m_bispace(bispace),
-                                            m_output_bispace_indices(output_bispace_indices),
+           block_kernel_i<M,N,T>& kernel) : m_output_bispace_indices(output_bispace_indices),
                                             m_input_bispace_indices(input_bispace_indices),
                                             m_output_ignore(input_ignore),
                                             m_input_ignore(input_ignore)
@@ -121,8 +119,7 @@ block_loop<M,N,T>::block_loop(sparse_bispace<1>& bispace,
                sequence<N,size_t>& input_bispace_indices,
                sequence<M,bool>& output_ignore,
                sequence<N,bool>& input_ignore,
-               block_kernel_i<M,N,T>* kernel) : m_bispace(bispace),
-                                                m_output_bispace_indices(output_bispace_indices),
+               block_kernel_i<M,N,T>* kernel) : m_output_bispace_indices(output_bispace_indices),
                                                 m_input_bispace_indices(input_bispace_indices),
                                                 m_output_ignore(input_ignore),
                                                 m_input_ignore(input_ignore)
@@ -142,16 +139,17 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
              sequence<M,std::vector<size_t> >& output_block_offsets,
              sequence<N,std::vector<size_t> >& input_block_offsets)
 {
-    block_list block_idxs = range(0,m_bispace.get_n_blocks());
+	sparse_bispace<1>& cur_bispace = output_bispaces[m_output_bispace_indices[0]];
+    block_list block_idxs = range(0,cur_bispace.get_n_blocks());
 
     for(size_t i = 0; i < block_idxs.size(); ++i)
     {
         size_t block_idx = block_idxs[i];
-        size_t block_size = m_bispace.get_block_size(block_idx);
+        size_t block_size = cur_bispace.get_block_size(block_idx);
         
         //TODO: This will need to increment along block loop for SPARSITY
         //will NOT use abs index in that case, just increment it within this loop
-        size_t block_offset = m_bispace.get_block_abs_index(block_idx);
+        size_t block_offset = cur_bispace.get_block_abs_index(block_idx);
 
         for(size_t m = 0; m < M; ++m)
         {
