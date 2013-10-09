@@ -88,6 +88,15 @@ private:
      */
     //Positive tests (produce correct result)
     void test_get_nnz_dense() throw(libtest::test_exception);
+
+    /* 
+     * sparse_bispace<N>::get_tile_offset(...)  tests
+     */
+    void test_get_tile_offset_1d() throw(libtest::test_exception);
+    void test_get_tile_offset_1d_empty_vec() throw(libtest::test_exception);
+    void test_get_tile_offset_1d_oob() throw(libtest::test_exception);
+    void test_get_tile_offset_2d() throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor

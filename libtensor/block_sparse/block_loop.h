@@ -193,8 +193,8 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
              const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
              sequence<M,std::vector<size_t> >& output_block_dims,
              sequence<N,std::vector<size_t> >& input_block_dims,
-             sequence<M,std::vector<size_t> >& output_block_offsets,
-             sequence<N,std::vector<size_t> >& input_block_offsets)
+             sequence<M,std::vector<size_t> >& output_block_indices,
+             sequence<N,std::vector<size_t> >& input_block_indices)
 {
 	const sparse_bispace<1>& cur_bispace = (*output_bispaces[0])[m_output_bispace_indices[0]];
     block_list block_idxs = range(0,cur_bispace.get_n_blocks());
@@ -212,13 +212,13 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
         {
             size_t cur_bispace_idx = m_output_bispace_indices[m];
             output_block_dims[m][cur_bispace_idx] = block_size;
-            output_block_offsets[m][cur_bispace_idx] = block_offset;
+            output_block_indices[m][cur_bispace_idx] = block_idx;
         }
         for(size_t n = 0; n < N; ++n)
         {
             size_t cur_bispace_idx = m_input_bispace_indices[n];
             input_block_dims[n][cur_bispace_idx] = block_size;
-            input_block_offsets[n][cur_bispace_idx] = block_offset;
+            input_block_indices[n][cur_bispace_idx] = block_idx;
         }
 
         //Base case - use kernel to process the block 
@@ -230,55 +230,11 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
             //Locate the appropriate blocks
             for(size_t m = 0; m < M; ++m)
             {
-                size_t offset = 0; 
-                std::vector<size_t>& cur_output_block_dims = output_block_dims[m];
-                size_t cur_order = cur_output_block_dims.size();
-                for(size_t idx = 0; idx < cur_order; ++idx)
-                {
-                    //Compute outer size
-                    size_t outer_size = 1;
-                    for(size_t outer_size_idx = 0; outer_size_idx < idx; ++outer_size_idx)
-                    {
-                        outer_size *= cur_output_block_dims[outer_size_idx];
-                    }
-
-                    //TODO: Rewrite passing explicit block indices for handling sparsity
-                    size_t inner_size = 1;
-                    for(size_t inner_size_idx = idx+1; inner_size_idx < cur_order; ++inner_size_idx)
-                    {
-                        inner_size *= (*output_bispaces[m])[inner_size_idx].get_dim();
-                    }
-
-                    offset += outer_size * output_block_offsets[m][idx] * inner_size;
-                }
-
-                output_block_ptrs[m] += offset; 
+                output_block_ptrs[m] += output_bispaces[m]->get_tile_offset(output_block_indices[m]); 
             }
             for(size_t n = 0; n < N; ++n)
             {
-                size_t offset = 0; 
-                std::vector<size_t>& cur_input_block_dims = input_block_dims[n];
-                size_t cur_order = cur_input_block_dims.size();
-                for(size_t idx = 0; idx < cur_order; ++idx)
-                {
-                    //Compute outer size
-                    size_t outer_size = 1;
-                    for(size_t outer_size_idx = 0; outer_size_idx < idx; ++outer_size_idx)
-                    {
-                        outer_size *= cur_input_block_dims[outer_size_idx];
-                    }
-
-                    //TODO: Rewrite passing explicit block indices for handling sparsity
-                    size_t inner_size = 1;
-                    size_t cur_bispace_idx = m_input_bispace_indices[n];
-                    for(size_t inner_size_idx = idx+1; inner_size_idx < cur_order; ++inner_size_idx)
-                    {
-                        inner_size *= (*input_bispaces[n])[inner_size_idx].get_dim();
-                    }
-
-                    offset += outer_size * input_block_offsets[n][idx] * inner_size;
-                }
-                input_block_ptrs[n] += offset;
+                input_block_ptrs[n] += input_bispaces[n]->get_tile_offset(input_block_indices[n]);
             }
 
             (*m_kernel)(output_block_ptrs,input_block_ptrs,output_block_dims,input_block_dims);
@@ -287,7 +243,7 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
         else
         {
             m_inner_loop->_run_internal(output_ptrs,input_ptrs,output_bispaces,input_bispaces,
-                                output_block_dims,input_block_dims,output_block_offsets,input_block_offsets);
+                                output_block_dims,input_block_dims,output_block_indices,input_block_indices);
         }
     }
 }
@@ -304,107 +260,24 @@ void block_loop<M,N,T>::run(sequence<M,T*>& output_ptrs,
     //Prepare data structures for holding the current block dimensions and absolute indices for each tensor
     sequence<M,std::vector<size_t> > output_block_dims;
     sequence<N,std::vector<size_t> > input_block_dims;
-    sequence<M,std::vector<size_t> > output_block_offsets;
-    sequence<N,std::vector<size_t> > input_block_offsets;
+    sequence<M,std::vector<size_t> > output_block_indices;
+    sequence<N,std::vector<size_t> > input_block_indices;
 
     for(size_t m = 0; m < M; ++m)
     {
         output_block_dims[m].resize(output_bispaces[m]->get_order());
-        output_block_offsets[m].resize(output_bispaces[m]->get_order());
+        output_block_indices[m].resize(output_bispaces[m]->get_order());
 
     }  
     for(size_t n = 0; n < N; ++n)
     { 
         input_block_dims[n].resize(input_bispaces[n]->get_order());
-        input_block_offsets[n].resize(input_bispaces[n]->get_order());
+        input_block_indices[n].resize(input_bispaces[n]->get_order());
     }
 
     _run_internal(output_ptrs,input_ptrs,output_bispaces,input_bispaces,
-            output_block_dims,input_block_dims,output_block_offsets,input_block_offsets);
+            output_block_dims,input_block_dims,output_block_indices,input_block_indices);
 }
-
-#if 0
-template<size_t M,size_t N,typename T>
-void block_loop<M,N,T>::run(sequence<M,T*>& output_ptrs,
-                            sequence<N,T*>& input_ptrs,
-                            sequence<M,std::vector<size_t> >& output_block_dims,
-                            sequence<N,std::vector<size_t> >& input_block_dims,
-                            sequence<M,size_t>& output_outer_strides,
-                            sequence<N,size_t>& input_outer_strides)
-{
-    block_list block_idxs = range(0,m_bispace.get_n_blocks());
-
-    sequence<M,T*> output_block_ptrs(output_ptrs);
-    sequence<N,T*> input_block_ptrs(input_ptrs);
-
-    for(size_t i = 0; i < block_idxs.size(); ++i)
-    {
-        size_t block_idx = block_idxs[i];
-        size_t block_size = m_bispace.get_block_size(block_idx);
-
-        for(size_t m = 0; m < M; ++m)
-        {
-            output_block_dims[m].push_back(block_size);
-        }
-        for(size_t n = 0; n < N; ++n)
-        {
-            input_block_dims[n].push_back(block_size);
-        }
-        //Base case - use kernel to process the block 
-        if(m_kernel != NULL)
-        {
-            //Construct blocks for kernel
-            sequence<M, block<T> > output_blocks;
-            sequence<N, block<T> > input_blocks;
-            for(size_t m = 0; m < M; ++m)
-            {
-                output_blocks[m] = block<T>(output_block_ptrs[m],output_block_dims[m]);
-            }
-            for(size_t n = 0; n < N; ++n)
-            {
-                input_blocks[n] = block<T>(input_block_ptrs[n],input_block_dims[n]);
-            }
-
-            (*m_kernel)(output_blocks,input_blocks);
-        }
-        else
-        {
-            //TODO: this will break with sparsity!!!
-            //Inner tile size is now smaller 
-            
-            sequence<M, tile_size_pair > new_output_outer_strides(output_outer_strides);
-            sequence<N, tile_size_pair > new_input_outer_strides(input_outer_strides);
-
-            //Outer tile size is now bigger
-            for(size_t m = 0; m < M; ++m)
-            {
-                new_output_outer_strides[m] *= block_size;
-            }
-            for(size_t n = 0; n < N; ++n)
-            {
-                new_input_outer_strides[n] *= block_size;
-            }
-
-            //Run the next loop
-            m_next_loop->run(output_block_ptrs,input_block_ptrs,
-                             output_block_dims,input_block_dims,
-                             new_output_tile_sizes,new_input_tile_sizes);
-        }
-
-        //Move to the next block
-        for(size_t m = 0; m < M; ++m)
-        {
-            output_block_dims[m].pop_back();
-            output_block_ptrs[m] += output_tile_sizes[m].first * block_size * output_tile_sizes[m].second; 
-        }
-        for(size_t n = 0; n < N; ++n)
-        {
-            input_block_dims[n].pop_back();
-            input_block_ptrs[n] += input_tile_sizes[n].first * block_size * input_tile_sizes[n].second; 
-        }
-    }
-}
-#endif
 
 } // namespace libtensor
 
