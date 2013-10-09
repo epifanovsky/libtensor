@@ -353,15 +353,13 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
     sequence<1,bool> output_ignore_1(false);
     sequence<1,bool> input_ignore_1(false);
 
-	block_loop<1,1> bl_2(spb_2,
-						 output_bispace_indices_2,
+	block_loop<1,1> bl_2(output_bispace_indices_2,
 						 input_bispace_indices_2,
 						 output_ignore_2,
 						 input_ignore_2,
 						 bpk);
 
-    bl_2.nest(spb_1,
-			  output_bispace_indices_1,
+    bl_2.nest(output_bispace_indices_1,
 			  input_bispace_indices_1,
 			  output_ignore_1,
 			  input_ignore_1);

@@ -13,7 +13,7 @@ private:
     void test_range() throw(libtest::test_exception);
 
 
-	void test_run_invalid_bispaces() throw(libtest::test_exception)
+	void test_run_invalid_bispaces() throw(libtest::test_exception);
 	/*
 	 * Copying
 	 */
