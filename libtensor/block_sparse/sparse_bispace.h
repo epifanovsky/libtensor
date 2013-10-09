@@ -47,6 +47,10 @@ public:
     template<size_t M> 
     sparse_bispace<N+M> operator|(const sparse_bispace<M>& rhs);
 
+    /** \brief Overload to handle 1 dimensional bispaces 
+     **/
+    sparse_bispace<N+1> operator|(const sparse_bispace<1>& rhs);
+
     /** \brief Retrieves the appropriate index subspace of this multidimensional space
         \throw out_of_bounds If an inappropriate index is specified 
      **/
@@ -65,12 +69,12 @@ public:
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
      **/
-    bool operator==(sparse_bispace<N>& rhs) const;
+    bool operator==(const sparse_bispace<N>& rhs) const;
 
     /** \brief Returns whether this object is not equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
      **/
-    bool operator!=(sparse_bispace<N>& rhs) const;
+    bool operator!=(const sparse_bispace<N>& rhs) const;
 };
 
 template<size_t N> 
@@ -112,6 +116,14 @@ sparse_bispace<N+M> sparse_bispace<N>::operator|(const sparse_bispace<M>& rhs)
     return sparse_bispace<N+M>(this->m_subspaces,rhs.m_subspaces);
 }
 
+//Overload  to handle 1 dimensional bispaces
+//Special case because sparse_bispace<1> does not have subspaces
+template<size_t N>
+sparse_bispace<N+1> sparse_bispace<N>::operator|(const sparse_bispace<1>& rhs)
+{
+    return sparse_bispace<N+1>(this->m_subspaces,std::vector< sparse_bispace<1> >(1,rhs));
+}
+
 //TODO: Should make these check (N-1) instead of m_subspaces.size()
 template<size_t N>
 sparse_bispace<1> sparse_bispace<N>::operator[](size_t idx) const
@@ -131,7 +143,7 @@ size_t sparse_bispace<N>::get_order() const
 }
 
 template<size_t N>
-bool sparse_bispace<N>::operator==(sparse_bispace<N>& rhs) const
+bool sparse_bispace<N>::operator==(const sparse_bispace<N>& rhs) const
 {
     for(int i = 0; i < N; ++i)
     {
@@ -144,7 +156,7 @@ bool sparse_bispace<N>::operator==(sparse_bispace<N>& rhs) const
 }
 
 template<size_t N>
-bool sparse_bispace<N>::operator!=(sparse_bispace<N>& rhs) const
+bool sparse_bispace<N>::operator!=(const sparse_bispace<N>& rhs) const
 {
     return !(*this == rhs);
 }
@@ -211,12 +223,12 @@ public:
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
      **/
-    bool operator==(sparse_bispace<1>& rhs) const;
+    bool operator==(const sparse_bispace<1>& rhs) const;
 
     /** \brief Returns whether this object is not equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
      **/
-    bool operator!=(sparse_bispace<1>& rhs) const;
+    bool operator!=(const sparse_bispace<1>& rhs) const;
 };
 
 
@@ -311,12 +323,12 @@ inline size_t sparse_bispace<1>::get_order() const
 }
 
 
-inline bool sparse_bispace<1>::operator==(sparse_bispace<1>& rhs) const
+inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 {
     return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
 }
 
-inline bool sparse_bispace<1>::operator!=(sparse_bispace<1>& rhs) const
+inline bool sparse_bispace<1>::operator!=(const sparse_bispace<1>& rhs) const
 {
     return ! (*this == rhs);
 }

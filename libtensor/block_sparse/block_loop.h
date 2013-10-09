@@ -55,6 +55,10 @@ private:
                sequence<M,bool>& output_ignore,
                sequence<N,bool>& input_ignore,
                block_kernel_i<M,N,T>* kernel);
+
+    //Validates that all of the bispaces touched by this loop are equivalent
+    void validate_bispaces(const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
+                           const sequence<N,sparse_bispace_generic_i*>& input_bispaces);
 public:
 
     //Constructor for the innermost loop - only the innermost loop should have a kernel
@@ -94,8 +98,10 @@ block_loop<M,N,T>::block_loop(sequence<M,size_t>& output_bispace_indices,
 															   m_input_ignore(input_ignore)
 {
     m_kernel = kernel.clone();
+    m_inner_loop = NULL;
 }
 
+//Nest always puts the new loop inside the current innermost loop
 template<size_t M,size_t N,typename T>
 void block_loop<M,N,T>::nest(sequence<M,size_t>& output_bispace_indices,
 							 sequence<N,size_t>& input_bispace_indices,
@@ -103,8 +109,15 @@ void block_loop<M,N,T>::nest(sequence<M,size_t>& output_bispace_indices,
 							 sequence<N,bool>& input_ignore)
 
 {
-    m_inner_loop = new block_loop<M,N,T>(output_bispace_indices,input_bispace_indices,output_ignore,input_ignore,m_kernel);
-    m_kernel = NULL;
+    if(m_inner_loop != NULL)
+    {
+        m_inner_loop->nest(output_bispace_indices,input_bispace_indices,output_ignore,input_ignore);
+    }
+    else
+    {
+        m_inner_loop = new block_loop<M,N,T>(output_bispace_indices,input_bispace_indices,output_ignore,input_ignore,m_kernel);
+        m_kernel = NULL;
+    }
 }
 
 //Internal use only! Called by nest
@@ -119,6 +132,56 @@ block_loop<M,N,T>::block_loop(sequence<M,size_t>& output_bispace_indices,
 															   m_input_ignore(input_ignore)
 {
     m_kernel = kernel;
+    m_inner_loop = NULL;
+}
+
+template<size_t M,size_t N,typename T>
+void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
+                                          const sequence<N,sparse_bispace_generic_i*>& input_bispaces)
+{
+    if(M != 0)
+    {
+        //TODO: A lot of copies here...this could bottleneck
+        sparse_bispace<1> output_first = (*output_bispaces[0])[m_output_bispace_indices[0]];
+        for(size_t i = 1; i < M; ++i)
+        {
+            if(! (output_first == (*output_bispaces[i])[m_output_bispace_indices[i]]) )
+            {
+                throw bad_parameter(g_ns, k_clazz,"run(...)",
+                        __FILE__, __LINE__, "Incompatible bispaces specified");
+            }
+        }
+
+        if(N != 0)
+        {
+            for(size_t i = 0; i < N; ++i)
+            {
+                if(! (output_first == (*input_bispaces[i])[m_input_bispace_indices[i]]) )
+                {
+                    throw bad_parameter(g_ns, k_clazz,"run(...)",
+                            __FILE__, __LINE__, "Incompatible bispaces specified");
+                }
+            }
+        }
+
+    }
+    else if(N != 0)
+    {
+        sparse_bispace<1> input_first = (*input_bispaces[0])[m_input_bispace_indices[0]];
+        for(size_t i = 0; i < N; ++i)
+        {
+            if(! (input_first == (*input_bispaces[i])[m_input_bispace_indices[i]]) )
+            {
+                throw bad_parameter(g_ns, k_clazz,"run(...)",
+                        __FILE__, __LINE__, "Incompatible bispaces specified");
+            }
+        }
+    }
+
+    if(m_inner_loop != NULL)
+    {
+        m_inner_loop->validate_bispaces(output_bispaces,input_bispaces);
+    }
 }
 
 //Called recursively to run a kernel            
@@ -235,7 +298,9 @@ void block_loop<M,N,T>::run(sequence<M,T*>& output_ptrs,
          const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
          const sequence<N,sparse_bispace_generic_i*>& input_bispaces)
 {
-    //TODO: Should validate in here that all indices are traversed by the current nested loops
+    //Validate that the specified bispaces are all compatible
+    validate_bispaces(output_bispaces,input_bispaces);
+
     //Prepare data structures for holding the current block dimensions and absolute indices for each tensor
     sequence<M,std::vector<size_t> > output_block_dims;
     sequence<N,std::vector<size_t> > input_block_dims;
