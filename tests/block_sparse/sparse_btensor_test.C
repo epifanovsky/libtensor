@@ -1,5 +1,6 @@
 
 #include <libtensor/block_sparse/sparse_btensor.h>
+#include <libtensor/iface/letter.h>
 #include "sparse_btensor_test.h"
 
 //TODO REMOVE
@@ -18,6 +19,8 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_equality_different_nnz();
     test_equality_true();
     test_equality_false();
+
+    /*test_permute_2d_block_major();*/
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -296,5 +299,54 @@ void sparse_btensor_test::test_equality_false() throw(libtest::test_exception)
                 "sparse_btensor<N>::operator==(...) did not return false");
     }
 }
+
+#if 0
+void sparse_btensor_test::test_permute_2d_block_major() throw(libtest::test_exception)
+{
+    double mem_row_major[16] = { 1,2,3,4,
+                                 5,6,7,8,
+                                 9,10,11,12,
+                                 13,14,15,16}; 
+
+    
+    //All indices are block indices
+    //The benchmark values
+    double correct_mem_block_major[16] = { //j = 0, i = 0, j = 0
+                                           1,5,
+                                           2,6,
+
+                                           //j = 0, i = 1
+                                           9,13, 
+                                           10,14,
+
+                                           //j = 1, i = 0
+                                           3,7,
+                                           4,8,
+
+
+                                           //j = 1,i = 1
+                                           11,15,
+                                           12,16};
+
+
+    sparse_bispace<1> N(4);
+    std::vector<size_t> split_points;
+    split_points.push_back(2);
+    N.split(split_points);
+    sparse_bispace<2> N2 = N|N;
+    sparse_btensor<2> bt(N2,mem_row_major);
+
+    sparse_btensor<2> bt_trans(N2);
+    letter i,j;
+    bt_trans(i|j) = bt(j|i);
+
+    sparse_btensor<2> correct(N2,mem_block_major);
+    if(bt_trans != correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "labeled_btensor<N>::operator=(...) did not produce correct result");
+    }
+}
+#endif
 
 } // namespace libtensor

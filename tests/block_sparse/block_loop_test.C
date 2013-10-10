@@ -79,26 +79,27 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
     block_permute_kernel<double> bpk(perm);
 
 
-    sequence<1,size_t> output_bispace_indices_2(0);
-    sequence<1,size_t> input_bispace_indices_2(1);
-    sequence<1,bool> output_ignore_2(false);
-    sequence<1,bool> input_ignore_2(false);
-
-    sequence<1,size_t> output_bispace_indices_1(1);
-    sequence<1,size_t> input_bispace_indices_1(0);
+    sequence<1,size_t> output_bispace_indices_1(0);
+    sequence<1,size_t> input_bispace_indices_1(1);
     sequence<1,bool> output_ignore_1(false);
     sequence<1,bool> input_ignore_1(false);
 
-	block_loop<1,1> bl_2(output_bispace_indices_2,
-						 input_bispace_indices_2,
-						 output_ignore_2,
-						 input_ignore_2);
+    sequence<1,size_t> output_bispace_indices_2(1);
+    sequence<1,size_t> input_bispace_indices_2(0);
+    sequence<1,bool> output_ignore_2(false);
+    sequence<1,bool> input_ignore_2(false);
 
-    bl_2.nest(output_bispace_indices_1,
-			  input_bispace_indices_1,
-			  output_ignore_1,
-			  input_ignore_1);
 
+    std::vector< block_loop<1,1> > loop_list;
+	loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+                                        input_bispace_indices_1,
+                                        output_ignore_1,
+                                        input_ignore_1));
+
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+                        input_bispace_indices_1,
+                        output_ignore_1,
+                        input_ignore_1));
 
 
     sequence<1,double*> output_ptrs(test_output_arr); 
@@ -112,7 +113,7 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
     bool threw_exception = false;
     try
     {
-        bl_2.run(bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+        run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
     }
     catch(bad_parameter&)
     {
@@ -122,7 +123,7 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_loop<M,N,T>::run(...) did not throw exception when passed incompatible bispaces");
+                "run_loop_list(...) did not throw exception when passed incompatible bispaces");
     }
 
 }
@@ -161,14 +162,14 @@ void block_loop_test::test_run_block_copy_kernel_1d() throw(libtest::test_except
     sequence<1, sparse_bispace_generic_i*> output_bispaces(&spb);
     sequence<1, sparse_bispace_generic_i*> input_bispaces(&spb);
 
-    bl.run(bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    run_loop_list(bl,bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 8; ++i)
     {
         if(test_output_arr[i] != test_input_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_loop<M,N,T>::run(...) produced incorrect output");
+                    "run_loop_list(...) produced incorrect output");
         }
     }
 }
@@ -205,15 +206,17 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
     sequence<1,bool> output_ignore_2(false);
     sequence<1,bool> input_ignore_2(false);
 
-    block_loop<1,1> bl_1(output_bispace_indices_1,
-						 input_bispace_indices_1,
-						 output_ignore_1,
-						 input_ignore_1);
+    std::vector< block_loop<1,1> > loop_list;
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+						input_bispace_indices_1,
+						output_ignore_1,
+						input_ignore_1));
 
-    bl_1.nest(output_bispace_indices_2,
-              input_bispace_indices_2,
-              output_ignore_2,
-              input_ignore_2);
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
+                        input_bispace_indices_2,
+                        output_ignore_2,
+                        input_ignore_2));
+
 
     double test_output_arr[20];
     double test_input_arr[20] = { //i = 0, j = 0
@@ -238,14 +241,14 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
     sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d);
     sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d);
 
-    bl_1.run(bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    run_loop_list(loop_list,bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 20; ++i)
     {
         if(test_output_arr[i] != test_input_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_loop<M,N,T>::run(...) produced incorrect output");
+                    "run_loop_list(...) produced incorrect output");
         }
     }
 
@@ -325,24 +328,23 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
     sequence<1,bool> output_ignore_1(false);
     sequence<1,bool> input_ignore_1(false);
 
-	block_loop<1,1> bl_2(output_bispace_indices_2,
-						 input_bispace_indices_2,
-						 output_ignore_2,
-						 input_ignore_2);
+    std::vector< block_loop<1,1> > loop_list;
+	loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
+						input_bispace_indices_2,
+						output_ignore_2,
+						input_ignore_2));
 
-    bl_2.nest(output_bispace_indices_1,
-			  input_bispace_indices_1,
-			  output_ignore_1,
-			  input_ignore_1);
-
-
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+                        input_bispace_indices_1,
+                        output_ignore_1,
+                        input_ignore_1));
 
     sequence<1,double*> output_ptrs(test_output_arr); 
     sequence<1,double*> input_ptrs(test_input_arr); 
     sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d_output);
     sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d_input);
 
-    bl_2.run(bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 20; ++i)
     {
@@ -495,20 +497,21 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
     sequence<1,bool> output_ignore_3(false);
     sequence<1,bool> input_ignore_3(false);
 
-	block_loop<1,1> bl_1(output_bispace_indices_1,
-						 input_bispace_indices_1,
-						 output_ignore_1,
-						 input_ignore_1);
+    std::vector< block_loop<1,1> > loop_list;
+	loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+						input_bispace_indices_1,
+						output_ignore_1,
+						input_ignore_1));
 
-    bl_1.nest(output_bispace_indices_2,
-			  input_bispace_indices_2,
-			  output_ignore_2,
-			  input_ignore_2);
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
+                        input_bispace_indices_2,
+                        output_ignore_2,
+                        input_ignore_2));
 
-    bl_1.nest(output_bispace_indices_3,
-			  input_bispace_indices_3,
-			  output_ignore_3,
-			  input_ignore_3);
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_3,
+                        input_bispace_indices_3,
+                        output_ignore_3,
+                        input_ignore_3));
 
 
 
@@ -518,7 +521,7 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
     sequence<1,sparse_bispace_generic_i*> output_bispaces(&three_d_output);
     sequence<1,sparse_bispace_generic_i*> input_bispaces(&three_d_input);
 
-    bl_1.run(bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 60; ++i)
     {
