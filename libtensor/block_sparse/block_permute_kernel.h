@@ -20,8 +20,8 @@ private:
     //Recurse internal permutation handler
     void _permute(T* output_ptrs, 
                   T* input_ptrs,
-                  dim_list& output_dims,
-                  dim_list& input_dims,
+                  const dim_list& output_dims,
+                  const dim_list& input_dims,
                   size_t output_offset = 0,size_t input_offset = 0,size_t level = 0);
 public:
     block_permute_kernel(permute_map& perm);
@@ -29,10 +29,10 @@ public:
     //Returns a pointer to a copy of this object
     block_kernel_i<1,1,T>* clone() const { return (block_kernel_i<1,1,T>*) new block_permute_kernel(*this); };  
 
-    void operator()(sequence<1, T*>& output_ptrs, 
-                    sequence<1, T*>& input_ptrs,
-                    sequence<1, dim_list>& output_dims,
-                    sequence<1, dim_list>& input_dims);
+    void operator()(const sequence<1, T*>& output_ptrs, 
+                    const sequence<1, T*>& input_ptrs,
+                    const sequence<1, dim_list>& output_dims,
+                    const sequence<1, dim_list>& input_dims);
 
 };
 
@@ -68,8 +68,8 @@ std:
 template<typename T>
 void block_permute_kernel<T>::_permute(T* output_ptr, 
                                          T* input_ptr,
-                                         dim_list& output_dims,
-                                         dim_list& input_dims,
+                                         const dim_list& output_dims,
+                                         const dim_list& input_dims,
                                          size_t output_offset,size_t input_offset,size_t level)
 {
     //Is this index permuted?
@@ -115,10 +115,10 @@ void block_permute_kernel<T>::_permute(T* output_ptr,
 //Note: output_dims is ignored, as it is DEFINED by the permutation and the input dims
 //It is kept as an argument only for interface compatibility
 template<typename T>
-void block_permute_kernel<T>::operator()(sequence<1, T*>& output_ptrs, 
-        sequence<1, T*>& input_ptrs,
-        sequence<1, dim_list>& output_dims,
-        sequence<1, dim_list>& input_dims)
+void block_permute_kernel<T>::operator()(const sequence<1, T*>& output_ptrs, 
+                                         const sequence<1, T*>& input_ptrs,
+                                         const sequence<1, dim_list>& output_dims,
+                                         const sequence<1, dim_list>& input_dims)
 {
 
 

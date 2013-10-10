@@ -18,10 +18,10 @@ private:
     bool m_equal;
 public:
     block_equality_kernel() : m_run_once(false), m_equal(true) { };
-    void operator()(sequence<0, T*>& output_ptrs, 
-                    sequence<2, T*>& input_ptrs,
-                    sequence<0, dim_list>& output_dims,
-                    sequence<2, dim_list >& input_dims);
+    void operator()(const sequence<0, T*>& output_ptrs, 
+                    const sequence<2, T*>& input_ptrs,
+                    const sequence<0, dim_list>& output_dims,
+                    const sequence<2, dim_list >& input_dims);
 
     bool equal() const throw(bad_parameter);
 
@@ -36,14 +36,14 @@ template<typename T>
 const char *block_equality_kernel<T>::k_clazz = "block_equality_kernel<T>";
 
 template<typename T>
-void block_equality_kernel<T>::operator()(sequence<0, T*>& output_ptrs, 
-                                          sequence<2, T*>& input_ptrs,
-                                          sequence<0, dim_list>& output_dims,
-                                          sequence<2, dim_list >& input_dims)
+void block_equality_kernel<T>::operator()(const sequence<0, T*>& output_ptrs, 
+                                          const sequence<2, T*>& input_ptrs,
+                                          const sequence<0, dim_list>& output_dims,
+                                          const sequence<2, dim_list >& input_dims)
 {
 
-    dim_list& ib_0_dims = input_dims[0];
-    dim_list& ib_1_dims = input_dims[1];
+    const dim_list& ib_0_dims = input_dims[0];
+    const dim_list& ib_1_dims = input_dims[1];
 
     T* ib_0_data_ptr = input_ptrs[0];
     T* ib_1_data_ptr = input_ptrs[1];

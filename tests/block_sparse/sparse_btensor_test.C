@@ -11,12 +11,9 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_get_bispace();
 
-    /* Equality tests
-     *
-     */
     /*test_equality_true()*/
 
-    /*test_str();*/
+    test_str();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -45,6 +42,7 @@ void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
 
 void sparse_btensor_test::test_str() throw(libtest::test_exception)
 {
+    static const char *test_name = "sparse_btensor_test::test_str()";
     double mem_block_major[16] = { 1,2,5,6,
                                   3,4,7,8,
                                   9,10,13,14,
@@ -56,12 +54,14 @@ void sparse_btensor_test::test_str() throw(libtest::test_exception)
     split_points.push_back(2);
     N.split(split_points);
     sparse_bispace<2> N2 = N|N;
-    sparse_btensor<2> bt(N2,mem_block_major);
+    sparse_btensor<2> bt(N2,mem_block_major,true);
 
-    std::string correct_str("1 2\n5 6\n---\n3 4\n7 8\n---\n9 10\n13 14\n---\n11 12\n15 16\n");
-    std::cout << bt.str();
-    std::cout << "#########################\n"; 
-    std::cout << correct_str << "\n";
+    std::string correct_str("---\n 1 2\n 5 6\n---\n 3 4\n 7 8\n---\n 9 10\n 13 14\n---\n 11 12\n 15 16\n");
+    if(bt.str() != correct_str)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_btensor<N>::str(...) did not return correct string");
+    }
 }
 
 #if 0

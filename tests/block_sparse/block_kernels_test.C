@@ -2,6 +2,9 @@
 #include <sstream>
 #include "block_kernels_test.h" 
 
+//TODO REMOVE
+#include <iostream>
+
 namespace libtensor {
 
 void block_kernels_test::perform() throw(libtest::test_exception) {
@@ -43,7 +46,7 @@ void block_kernels_test::test_block_printer_2d() throw(libtest::test_exception)
     sequence<1, double*> input_ptrs(test_block_arr);
 
     bp(output_ptrs,input_ptrs,output_dims,input_dims);
-    std::string correct_str(" 1 2\n 3 4\n");
+    std::string correct_str("---\n 1 2\n 3 4\n");
 
     if(!(bp.str()  == correct_str))
     {
@@ -75,7 +78,7 @@ void block_kernels_test::test_block_printer_3d() throw(libtest::test_exception)
 
 
     bp(output_ptrs,input_ptrs,output_dims,input_dims);
-    std::string correct_str(" 1 2\n 3 4\n\n 5 6\n 7 8\n");
+    std::string correct_str("---\n 1 2\n 3 4\n\n 5 6\n 7 8\n");
 
     if(!(bp.str()  == correct_str))
     {

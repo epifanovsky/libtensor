@@ -16,7 +16,7 @@ namespace libtensor {
 typedef std::vector<size_t> block_list;
 typedef std::pair<size_t,size_t> tile_size_pair;
 
-block_list range(size_t min,size_t max)
+inline block_list range(size_t min,size_t max)
 {
     block_list the_range; 
     for(size_t i = min; i < max; ++i)
@@ -33,51 +33,44 @@ public:
     static const char *k_clazz; //!< Class name
 private:
     block_loop<M,N,T>* m_inner_loop; //!< For nested loops
-    block_kernel_i<M,N,T>* m_kernel;
     sequence<M,size_t> m_output_bispace_indices; //!< Which index in each output tensor does this loop modify?
     sequence<N,size_t> m_input_bispace_indices; //!< Which index in each input tensor does this loop modify?
     sequence<M,bool> m_output_ignore; //!< Which output pointers are incremented by this loop?
     sequence<N,bool> m_input_ignore; //!< Which input pointers are incremented by this loop?
 
     //Called recursively to run a kernel 
-    void _run_internal(sequence<M,T*>& output_ptrs,
-             sequence<N,T*>& input_ptrs,
-             const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-             const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
-             sequence<M,std::vector<size_t> >& output_block_dims,
-             sequence<N,std::vector<size_t> >& input_block_dims,
-             sequence<M,std::vector<size_t> >& output_block_offsets,
-             sequence<N,std::vector<size_t> >& input_block_offsets);
-
-    //Internal use only constructor called by nest
-    block_loop(sequence<M,size_t>& output_bispace_indices,
-               sequence<N,size_t>& input_bispace_indices,
-               sequence<M,bool>& output_ignore,
-               sequence<N,bool>& input_ignore,
-               block_kernel_i<M,N,T>* kernel);
+    void _run_internal(block_kernel_i<M,N,T>& kernel,
+                       const sequence<M,T*>& output_ptrs,
+                       const sequence<N,T*>& input_ptrs,
+                       const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
+                       const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
+                       sequence<M,std::vector<size_t> >& output_block_dims,
+                       sequence<N,std::vector<size_t> >& input_block_dims,
+                       sequence<M,std::vector<size_t> >& output_block_offsets,
+                       sequence<N,std::vector<size_t> >& input_block_offsets);
 
     //Validates that all of the bispaces touched by this loop are equivalent
     void validate_bispaces(const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
                            const sequence<N,sparse_bispace_generic_i*>& input_bispaces);
 public:
 
-    //Constructor for the innermost loop - only the innermost loop should have a kernel
-    block_loop(sequence<M,size_t>& output_bispace_indices,
-               sequence<N,size_t>& input_bispace_indices,
-               sequence<M,bool>& output_ignore,
-               sequence<N,bool>& input_ignore,
-               block_kernel_i<M,N,T>& kernel); 
+    //Constructor 
+    block_loop(const sequence<M,size_t>& output_bispace_indices,
+               const sequence<N,size_t>& input_bispace_indices,
+               const sequence<M,bool>& output_ignore,
+               const sequence<N,bool>& input_ignore); 
 
     //Embed a nested loop into this loop, which will be run instead of the kernel
-    void nest(sequence<M,size_t>& output_bispace_indices,
-              sequence<N,size_t>& input_bispace_indices,
-              sequence<M,bool>& output_ignore,
-              sequence<N,bool>& input_ignore);
+    void nest(const sequence<M,size_t>& output_bispace_indices,
+              const sequence<N,size_t>& input_bispace_indices,
+              const sequence<M,bool>& output_ignore,
+              const sequence<N,bool>& input_ignore);
     
 
     //TODO: Overloaded version that takes a lambda functor for generating a given block instead of a pointer!!!
-    void run(sequence<M,T*>& output_ptrs,
-             sequence<N,T*>& input_ptrs,
+    void run(block_kernel_i<M,N,T>& kernel,  
+             const sequence<M,T*>& output_ptrs,
+             const sequence<N,T*>& input_ptrs,
              const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
              const sequence<N,sparse_bispace_generic_i*>& input_bispaces);
 
@@ -88,25 +81,23 @@ template<size_t M,size_t N,typename T>
 const char *block_loop<M,N,T>::k_clazz = "block_loop<M,N>";
 
 template<size_t M,size_t N,typename T>
-block_loop<M,N,T>::block_loop(sequence<M,size_t>& output_bispace_indices,
-							  sequence<N,size_t>& input_bispace_indices,
-							  sequence<M,bool>& output_ignore,
-							  sequence<N,bool>& input_ignore,
-							  block_kernel_i<M,N,T>& kernel) : m_output_bispace_indices(output_bispace_indices),
-															   m_input_bispace_indices(input_bispace_indices),
-															   m_output_ignore(input_ignore),
-															   m_input_ignore(input_ignore)
+block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
+							  const sequence<N,size_t>& input_bispace_indices,
+							  const sequence<M,bool>& output_ignore,
+							  const sequence<N,bool>& input_ignore) : m_output_bispace_indices(output_bispace_indices),
+													  		          m_input_bispace_indices(input_bispace_indices),
+															          m_output_ignore(output_ignore),
+															          m_input_ignore(input_ignore)
 {
-    m_kernel = kernel.clone();
     m_inner_loop = NULL;
 }
 
 //Nest always puts the new loop inside the current innermost loop
 template<size_t M,size_t N,typename T>
-void block_loop<M,N,T>::nest(sequence<M,size_t>& output_bispace_indices,
-							 sequence<N,size_t>& input_bispace_indices,
-							 sequence<M,bool>& output_ignore,
-							 sequence<N,bool>& input_ignore)
+void block_loop<M,N,T>::nest(const sequence<M,size_t>& output_bispace_indices,
+							 const sequence<N,size_t>& input_bispace_indices,
+							 const sequence<M,bool>& output_ignore,
+							 const sequence<N,bool>& input_ignore)
 
 {
     if(m_inner_loop != NULL)
@@ -115,24 +106,8 @@ void block_loop<M,N,T>::nest(sequence<M,size_t>& output_bispace_indices,
     }
     else
     {
-        m_inner_loop = new block_loop<M,N,T>(output_bispace_indices,input_bispace_indices,output_ignore,input_ignore,m_kernel);
-        m_kernel = NULL;
+        m_inner_loop = new block_loop<M,N,T>(output_bispace_indices,input_bispace_indices,output_ignore,input_ignore);
     }
-}
-
-//Internal use only! Called by nest
-template<size_t M,size_t N,typename T>
-block_loop<M,N,T>::block_loop(sequence<M,size_t>& output_bispace_indices,
-							  sequence<N,size_t>& input_bispace_indices,
-							  sequence<M,bool>& output_ignore,
-							  sequence<N,bool>& input_ignore,
-							  block_kernel_i<M,N,T>* kernel) : m_output_bispace_indices(output_bispace_indices),
-															   m_input_bispace_indices(input_bispace_indices),
-															   m_output_ignore(input_ignore),
-															   m_input_ignore(input_ignore)
-{
-    m_kernel = kernel;
-    m_inner_loop = NULL;
 }
 
 template<size_t M,size_t N,typename T>
@@ -187,16 +162,19 @@ void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_generi
 //Called recursively to run a kernel            
 //INTERNAL USE ONLY                             
 template<size_t M,size_t N,typename T>
-void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
-             sequence<N,T*>& input_ptrs,
-             const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-             const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
-             sequence<M,std::vector<size_t> >& output_block_dims,
-             sequence<N,std::vector<size_t> >& input_block_dims,
-             sequence<M,std::vector<size_t> >& output_block_indices,
-             sequence<N,std::vector<size_t> >& input_block_indices)
+void block_loop<M,N,T>::_run_internal(block_kernel_i<M,N,T>& kernel,
+                                      const sequence<M,T*>& output_ptrs,
+                                      const sequence<N,T*>& input_ptrs,
+                                      const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
+                                      const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
+                                      sequence<M,std::vector<size_t> >& output_block_dims,
+                                      sequence<N,std::vector<size_t> >& input_block_dims,
+                                      sequence<M,std::vector<size_t> >& output_block_indices,
+                                      sequence<N,std::vector<size_t> >& input_block_indices)
 {
-	const sparse_bispace<1>& cur_bispace = (*output_bispaces[0])[m_output_bispace_indices[0]];
+    //We use the output bispaces, unless there are no outputs
+    const sparse_bispace<1>& cur_bispace = M != 0 ?  
+            (*output_bispaces[0])[m_output_bispace_indices[0]] : (*input_bispaces[0])[m_input_bispace_indices[0]];
     block_list block_idxs = range(0,cur_bispace.get_n_blocks());
 
     for(size_t i = 0; i < block_idxs.size(); ++i)
@@ -222,7 +200,7 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
         }
 
         //Base case - use kernel to process the block 
-        if(m_kernel != NULL)
+        if(m_inner_loop == NULL)
         {
             sequence<M,T*> output_block_ptrs(output_ptrs);
             sequence<N,T*> input_block_ptrs(input_ptrs);
@@ -237,22 +215,23 @@ void block_loop<M,N,T>::_run_internal(sequence<M,T*>& output_ptrs,
                 input_block_ptrs[n] += input_bispaces[n]->get_tile_offset(input_block_indices[n]);
             }
 
-            (*m_kernel)(output_block_ptrs,input_block_ptrs,output_block_dims,input_block_dims);
+            kernel(output_block_ptrs,input_block_ptrs,output_block_dims,input_block_dims);
 
         }
         else
         {
-            m_inner_loop->_run_internal(output_ptrs,input_ptrs,output_bispaces,input_bispaces,
+            m_inner_loop->_run_internal(kernel,output_ptrs,input_ptrs,output_bispaces,input_bispaces,
                                 output_block_dims,input_block_dims,output_block_indices,input_block_indices);
         }
     }
 }
 
 template<size_t M,size_t N,typename T>
-void block_loop<M,N,T>::run(sequence<M,T*>& output_ptrs,
-         sequence<N,T*>& input_ptrs,
-         const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-         const sequence<N,sparse_bispace_generic_i*>& input_bispaces)
+void block_loop<M,N,T>::run(block_kernel_i<M,N,T>& kernel,
+                            const sequence<M,T*>& output_ptrs,
+                            const sequence<N,T*>& input_ptrs,
+                            const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
+                            const sequence<N,sparse_bispace_generic_i*>& input_bispaces)
 {
     //Validate that the specified bispaces are all compatible
     validate_bispaces(output_bispaces,input_bispaces);
@@ -275,7 +254,7 @@ void block_loop<M,N,T>::run(sequence<M,T*>& output_ptrs,
         input_block_indices[n].resize(input_bispaces[n]->get_order());
     }
 
-    _run_internal(output_ptrs,input_ptrs,output_bispaces,input_bispaces,
+    _run_internal(kernel,output_ptrs,input_ptrs,output_bispaces,input_bispaces,
             output_block_dims,input_block_dims,output_block_indices,input_block_indices);
 }
 

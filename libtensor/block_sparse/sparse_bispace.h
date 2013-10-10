@@ -5,9 +5,6 @@
 #include "../defs.h"
 #include "../core/sequence.h"
 
-//TODO REMOVE
-#include <iostream>
-
 namespace libtensor {
 
 /* Forward declarations to enable a generic interface to all sparse_bispace degrees

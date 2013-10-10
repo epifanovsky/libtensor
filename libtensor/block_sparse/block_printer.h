@@ -4,6 +4,9 @@
 #include "block_kernel_i.h"
 #include <sstream>
 
+//TODO: REMOVE
+#include <iostream>
+
 namespace libtensor {
 
 template<typename T = double>
@@ -16,7 +19,6 @@ public:
 
     //Get the string representation of the last block processed
     std::string str() const { return m_ss.str(); };
-
     //Default constructor
     block_printer() { };
     //Copy constructor
@@ -25,10 +27,10 @@ public:
     //Returns a pointer to a copy of this object
     block_kernel_i<0,1,T>* clone() const { return (block_kernel_i<0,1,T>*) new block_printer(*this); };  
 
-    void operator()(sequence<0, T*>& output_ptrs, 
-                    sequence<1, T*>& input_ptrs,
-                    sequence<0, dim_list>& output_dims,
-                    sequence<1, dim_list>& input_dims);
+    void operator()(const sequence<0, T*>& output_ptrs, 
+                    const sequence<1, T*>& input_ptrs,
+                    const sequence<0, dim_list>& output_dims,
+                    const sequence<1, dim_list>& input_dims);
 };
 
 template<typename T> 
@@ -68,11 +70,12 @@ void block_printer<T>::_process_dimension(const dim_list& dims,T* data_ptr,size_
 }
 
 template<typename T>
-void block_printer<T>::operator()(sequence<0, T*>& output_ptrs, 
-                                  sequence<1, T*>& input_ptrs,
-                                  sequence<0, dim_list>& output_dims,
-                                  sequence<1, dim_list >& input_dims)
+void block_printer<T>::operator()(const sequence<0, T*>& output_ptrs, 
+                                  const sequence<1, T*>& input_ptrs,
+                                  const sequence<0, dim_list>& output_dims,
+                                  const sequence<1, dim_list >& input_dims)
 {
+    m_ss << "---\n";
     _process_dimension(input_dims[0],input_ptrs[0]);
 }
 

@@ -11,10 +11,10 @@ class block_copy_kernel : public block_kernel_i<1,1,T> {
 public: 
     static const char *k_clazz; //!< Class name
 public:
-    void operator()(sequence<1, T*>& output_ptrs, 
-                    sequence<1, T*>& input_ptrs,
-                    sequence<1, dim_list>& output_dims,
-                    sequence<1, dim_list >& input_dims);
+    void operator()(const sequence<1, T*>& output_ptrs, 
+                    const sequence<1, T*>& input_ptrs,
+                    const sequence<1, dim_list>& output_dims,
+                    const sequence<1, dim_list >& input_dims);
 
     //Default constructor
     block_copy_kernel() { };
@@ -29,13 +29,13 @@ template<typename T>
 const char *block_copy_kernel<T>::k_clazz = "block_copy_kernel<T>";
 
 template<typename T>
-void block_copy_kernel<T>::operator()(sequence<1, T*>& output_ptrs, 
-                                      sequence<1, T*>& input_ptrs,
-                                      sequence<1, dim_list>& output_dims,
-                                      sequence<1, dim_list >& input_dims)
+void block_copy_kernel<T>::operator()(const sequence<1, T*>& output_ptrs, 
+                                      const sequence<1, T*>& input_ptrs,
+                                      const sequence<1, dim_list>& output_dims,
+                                      const sequence<1, dim_list >& input_dims)
 {
-    dim_list& ob_dims = output_dims[0];
-    dim_list& ib_dims = input_dims[0];
+    const dim_list& ob_dims = output_dims[0];
+    const dim_list& ib_dims = input_dims[0];
 
     if(ob_dims.size() != ib_dims.size())
     {

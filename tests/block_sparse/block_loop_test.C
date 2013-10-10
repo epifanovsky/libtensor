@@ -92,8 +92,7 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
 	block_loop<1,1> bl_2(output_bispace_indices_2,
 						 input_bispace_indices_2,
 						 output_ignore_2,
-						 input_ignore_2,
-						 bpk);
+						 input_ignore_2);
 
     bl_2.nest(output_bispace_indices_1,
 			  input_bispace_indices_1,
@@ -113,7 +112,7 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
     bool threw_exception = false;
     try
     {
-        bl_2.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+        bl_2.run(bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
     }
     catch(bad_parameter&)
     {
@@ -149,8 +148,7 @@ void block_loop_test::test_run_block_copy_kernel_1d() throw(libtest::test_except
     block_loop<1,1> bl(output_bispace_indices,
                        input_bispace_indices,
                        output_ignore,
-                       input_ignore,
-                       bck);
+                       input_ignore);
 
 
     double test_output_arr[8];
@@ -163,7 +161,7 @@ void block_loop_test::test_run_block_copy_kernel_1d() throw(libtest::test_except
     sequence<1, sparse_bispace_generic_i*> output_bispaces(&spb);
     sequence<1, sparse_bispace_generic_i*> input_bispaces(&spb);
 
-    bl.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    bl.run(bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 8; ++i)
     {
@@ -210,8 +208,7 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
     block_loop<1,1> bl_1(output_bispace_indices_1,
 						 input_bispace_indices_1,
 						 output_ignore_1,
-						 input_ignore_1,
-						 bck);
+						 input_ignore_1);
 
     bl_1.nest(output_bispace_indices_2,
               input_bispace_indices_2,
@@ -241,7 +238,7 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
     sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d);
     sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d);
 
-    bl_1.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    bl_1.run(bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 20; ++i)
     {
@@ -331,8 +328,7 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
 	block_loop<1,1> bl_2(output_bispace_indices_2,
 						 input_bispace_indices_2,
 						 output_ignore_2,
-						 input_ignore_2,
-						 bpk);
+						 input_ignore_2);
 
     bl_2.nest(output_bispace_indices_1,
 			  input_bispace_indices_1,
@@ -346,7 +342,7 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
     sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d_output);
     sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d_input);
 
-    bl_2.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    bl_2.run(bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 20; ++i)
     {
@@ -501,8 +497,7 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
 	block_loop<1,1> bl_1(output_bispace_indices_1,
 						 input_bispace_indices_1,
 						 output_ignore_1,
-						 input_ignore_1,
-						 bpk);
+						 input_ignore_1);
 
     bl_1.nest(output_bispace_indices_2,
 			  input_bispace_indices_2,
@@ -522,7 +517,7 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
     sequence<1,sparse_bispace_generic_i*> output_bispaces(&three_d_output);
     sequence<1,sparse_bispace_generic_i*> input_bispaces(&three_d_input);
 
-    bl_1.run(output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    bl_1.run(bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 60; ++i)
     {
