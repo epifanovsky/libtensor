@@ -359,6 +359,7 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
 {
     static const char *test_name = "block_loop_test::test_run_block_permute_kernel_3d_201()";
 
+    //3x4x5
     //Permutation is kij -> ijk 
 	//Indices in comments are block indices
     double test_input_arr[60] = { // k = 0, i = 0; j = 0

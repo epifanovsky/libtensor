@@ -19,7 +19,9 @@ class sparse_bispace_generic_i {
 public:
     virtual sparse_bispace<1> operator[](size_t idx) const = 0; 
     virtual size_t get_order() const = 0;
-    virtual size_t get_tile_offset(const std::vector<size_t>& tile_indices) const = 0;
+    virtual size_t get_block_offset(const std::vector<size_t>& block_indices) const = 0;
+    virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
+    virtual sparse_bispace_generic_i* clone() const = 0;
 };
 
 template<size_t N>
@@ -31,12 +33,12 @@ private:
     //Special case for creating a 2d space from 2 1d spaces
     sparse_bispace(const sparse_bispace<1>& spb_1,const sparse_bispace<1>& spb_2);
     std::vector< sparse_bispace<1> > m_subspaces;
-public:
 
+public:
     /** \brief Constructs a multi-dimensional space from a set of 1d subspaces 
      * INTERNAL USE ONLY - USE THE OPERATORS '|' and '>' is preferred 
      **/
-    sparse_bispace(const std::vector< sparse_bispace<1> > &one_subspaces,const std::vector< sparse_bispace<1> > &two_subspaces);
+    sparse_bispace(const std::vector< sparse_bispace<1> >& one_subspaces,const std::vector< sparse_bispace<1> >& two_subspaces);
 
     //TODO Delete this!!! Doesn't seem to be used anywhere
     /** \brief Returns the number of non-zero elements in this sparse bispace
@@ -62,9 +64,17 @@ public:
      **/
     size_t get_order() const;
 
-    /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
+    /** \brief Returns offset of a given tile in this bispace assuming block-major layout. The tile is specified by a vector of block indices
      **/
-    size_t get_tile_offset(const std::vector<size_t>& tile_indices) const;
+    size_t get_block_offset(const std::vector<size_t>& block_indices) const;
+
+    /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
+     **/
+    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
+
+    /** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
+     **/
+    sparse_bispace_generic_i* clone() const;
 
     //TODO '>' operator for sparsity
     
@@ -150,15 +160,15 @@ size_t sparse_bispace<N>::get_order() const
 /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
  **/
 template<size_t N>
-size_t sparse_bispace<N>::get_tile_offset(const std::vector<size_t>& tile_indices) const
+size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indices) const
 {
     size_t offset = 0;
     size_t outer_size = 1;
-    for(size_t i = 0; i < tile_indices.size(); ++i)
+    for(size_t i = 0; i < block_indices.size(); ++i)
     {
         //TODO could save on lookup costs by having size_hint passed in that gives all the block sizes already
-        size_t block_size = m_subspaces[i].get_block_size(tile_indices[i]);
-        size_t block_abs_index = m_subspaces[i].get_block_abs_index(tile_indices[i]);
+        size_t block_size = m_subspaces[i].get_block_size(block_indices[i]);
+        size_t block_abs_index = m_subspaces[i].get_block_abs_index(block_indices[i]);
 
         size_t inner_size = 1;
         for(size_t inner_size_idx = i+1; inner_size_idx < N; ++inner_size_idx)
@@ -170,6 +180,31 @@ size_t sparse_bispace<N>::get_tile_offset(const std::vector<size_t>& tile_indice
         outer_size *= block_size;
     }
     return offset;
+}
+
+template<size_t N>
+size_t sparse_bispace<N>::get_block_offset_canonical(const std::vector<size_t>& block_indices) const
+{
+    size_t offset = 0; 
+    for(size_t i = 0; i < block_indices.size(); ++i)
+    {
+        size_t inner_size = 1;
+        for(size_t inner_size_idx = i+1; inner_size_idx < N; ++inner_size_idx)
+        {
+            //TODO: This needs to call some sparsity-aware function to determine this
+            inner_size *= m_subspaces[inner_size_idx].get_dim();
+        }
+        offset += m_subspaces[i].get_block_abs_index(block_indices[i])*inner_size;
+    }
+    return offset;
+}
+
+/** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
+ **/
+template<size_t N>
+sparse_bispace_generic_i* sparse_bispace<N>::clone() const
+{
+    return (sparse_bispace_generic_i*) new sparse_bispace<N>(*this); 
 }
 
 template<size_t N>
@@ -252,7 +287,15 @@ public:
 
     /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
      **/
-    size_t get_tile_offset(const std::vector<size_t>& tile_indices) const;
+    size_t get_block_offset(const std::vector<size_t>& block_indices) const;
+
+    /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
+     **/
+    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
+
+    /** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
+     **/
+    sparse_bispace_generic_i* clone() const;
 
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
@@ -358,19 +401,31 @@ inline size_t sparse_bispace<1>::get_order() const
 
 /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
  **/
-inline size_t sparse_bispace<1>::get_tile_offset(const std::vector<size_t>& tile_indices) const
+inline size_t sparse_bispace<1>::get_block_offset(const std::vector<size_t>& block_indices) const
 {
-    if(tile_indices.size() != 1)
+    if(block_indices.size() != 1)
     {
-        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_tile_offset(...)",
+        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_block_offset(...)",
                 __FILE__,__LINE__,"vector passed with size != 1"); 
     }
-    if(tile_indices[0] > (m_abs_indices.size() - 1))
+    if(block_indices[0] > (m_abs_indices.size() - 1))
     {
-        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_tile_offset(...)",
+        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_block_offset(...)",
                 __FILE__,__LINE__,"vector passed containing indices > max block idx"); 
     }
-    return m_abs_indices[tile_indices[0]];
+    return m_abs_indices[block_indices[0]];
+}
+
+inline size_t sparse_bispace<1>::get_block_offset_canonical(const std::vector<size_t>& block_indices) const
+{
+    return get_block_offset(block_indices); 
+}
+
+/** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
+ *  **/
+inline sparse_bispace_generic_i* sparse_bispace<1>::clone() const
+{
+        return (sparse_bispace_generic_i*) new sparse_bispace<1>(*this);
 }
 
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const

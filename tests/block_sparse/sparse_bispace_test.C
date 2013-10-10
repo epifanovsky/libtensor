@@ -37,10 +37,15 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
 
         test_get_nnz_dense(); 
 
-        test_get_tile_offset_1d(); 
-        test_get_tile_offset_1d_empty_vec();
-        test_get_tile_offset_1d_oob();
-        test_get_tile_offset_2d(); 
+        test_get_block_offset_1d(); 
+        test_get_block_offset_1d_empty_vec();
+        test_get_block_offset_1d_oob();
+        test_get_block_offset_2d(); 
+
+        test_get_block_offset_canonical_1d(); 
+        test_get_block_offset_canonical_1d_empty_vec();
+        test_get_block_offset_canonical_1d_oob();
+        test_get_block_offset_canonical_2d(); 
 }
 
 /* Return the correct value for the dimension of the sparse_bispace
@@ -546,9 +551,9 @@ void sparse_bispace_test::test_get_nnz_dense() throw(libtest::test_exception)
 }
 
 
-void sparse_bispace_test::test_get_tile_offset_1d() throw(libtest::test_exception)
+void sparse_bispace_test::test_get_block_offset_1d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_test::test_get_tile_offset_1d()";
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_1d()";
     sparse_bispace<1> spb(5);
     std::vector<size_t> split_points;
     split_points.push_back(2);
@@ -556,17 +561,17 @@ void sparse_bispace_test::test_get_tile_offset_1d() throw(libtest::test_exceptio
     spb.split(split_points);
 
     std::vector<size_t> tile_indices(1,1);
-    if(spb.get_tile_offset(tile_indices) != 2)
+    if(spb.get_block_offset(tile_indices) != 2)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_tile_offset(...) returned incorrect value");
+                "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
 
     }
 }
 
-void sparse_bispace_test::test_get_tile_offset_1d_empty_vec() throw(libtest::test_exception)
+void sparse_bispace_test::test_get_block_offset_1d_empty_vec() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_test::test_get_tile_offset_1d_empty_vec()";
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_1d_empty_vec()";
     sparse_bispace<1> spb(5);
     std::vector<size_t> split_points;
     split_points.push_back(2);
@@ -577,7 +582,7 @@ void sparse_bispace_test::test_get_tile_offset_1d_empty_vec() throw(libtest::tes
     bool threw_exception = false;
     try
     {
-        spb.get_tile_offset(tile_indices);
+        spb.get_block_offset(tile_indices);
     }
     catch(out_of_bounds&)
     {
@@ -587,14 +592,14 @@ void sparse_bispace_test::test_get_tile_offset_1d_empty_vec() throw(libtest::tes
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_tile_offset(...) did not throw exception when passed empty vector");
+                "sparse_bispace<N>::get_block_offset(...) did not throw exception when passed empty vector");
 
     }
 }
 
-void sparse_bispace_test::test_get_tile_offset_1d_oob() throw(libtest::test_exception)
+void sparse_bispace_test::test_get_block_offset_1d_oob() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_test::test_get_tile_offset_1d_oob()";
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_1d_oob()";
     sparse_bispace<1> spb(5);
     std::vector<size_t> split_points;
     split_points.push_back(2);
@@ -605,7 +610,7 @@ void sparse_bispace_test::test_get_tile_offset_1d_oob() throw(libtest::test_exce
     bool threw_exception = false;
     try
     {
-        spb.get_tile_offset(tile_indices);
+        spb.get_block_offset(tile_indices);
     }
     catch(out_of_bounds&)
     {
@@ -615,14 +620,14 @@ void sparse_bispace_test::test_get_tile_offset_1d_oob() throw(libtest::test_exce
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_tile_offset(...) did not throw exception when passed invalid tile indices");
+                "sparse_bispace<N>::get_block_offset(...) did not throw exception when passed invalid tile indices");
 
     }
 }
 
-void sparse_bispace_test::test_get_tile_offset_2d() throw(libtest::test_exception)
+void sparse_bispace_test::test_get_block_offset_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_test::test_get_tile_offset_2d()";
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_2d()";
 
     sparse_bispace<1> spb_1(5);
     sparse_bispace<1> spb_2(6);
@@ -644,12 +649,118 @@ void sparse_bispace_test::test_get_tile_offset_2d() throw(libtest::test_exceptio
     tile_indices.push_back(2); //1d size is 2
     tile_indices.push_back(1); //1d size is 3
 
-    if(two_d.get_tile_offset(tile_indices) != 22)
+    if(two_d.get_block_offset(tile_indices) != 22)
     {
-        std::cout << "\nVALUE:\n";
-        std::cout << two_d.get_tile_offset(tile_indices) << "\n";
+        std::cout << two_d.get_block_offset(tile_indices) << "\n";
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_tile_offset(...) returned incorrect value");
+                "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
+
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_canonical_1d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_canonical_1d()";
+    sparse_bispace<1> spb(5);
+    std::vector<size_t> split_points;
+    split_points.push_back(2);
+    split_points.push_back(3);
+    spb.split(split_points);
+
+    std::vector<size_t> tile_indices(1,1);
+    if(spb.get_block_offset_canonical(tile_indices) != 2)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_block_offset_canonical(...) returned incorrect value");
+
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_canonical_1d_empty_vec() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_canonical_1d_empty_vec()";
+    sparse_bispace<1> spb(5);
+    std::vector<size_t> split_points;
+    split_points.push_back(2);
+    split_points.push_back(3);
+    spb.split(split_points);
+
+    std::vector<size_t> tile_indices;
+    bool threw_exception = false;
+    try
+    {
+        spb.get_block_offset_canonical(tile_indices);
+    }
+    catch(out_of_bounds&)
+    {
+        threw_exception = true;
+    }
+
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_block_offset_canonical(...) did not throw exception when passed empty vector");
+
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_canonical_1d_oob() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_canonical_1d_oob()";
+    sparse_bispace<1> spb(5);
+    std::vector<size_t> split_points;
+    split_points.push_back(2);
+    split_points.push_back(3);
+    spb.split(split_points);
+
+    std::vector<size_t> tile_indices(1,3);
+    bool threw_exception = false;
+    try
+    {
+        spb.get_block_offset_canonical(tile_indices);
+    }
+    catch(out_of_bounds&)
+    {
+        threw_exception = true;
+    }
+
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_block_offset_canonical(...) did not throw exception when passed invalid tile indices");
+
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_canonical_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_canonical_2d()";
+
+    sparse_bispace<1> spb_1(5);
+    sparse_bispace<1> spb_2(6);
+
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(1);
+    split_points_1.push_back(3);
+    spb_1.split(split_points_1);
+
+    std::vector<size_t> split_points_2; 
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    sparse_bispace<2> two_d = spb_1 | spb_2; 
+
+    std::vector<size_t> tile_indices;
+    tile_indices.push_back(2); //Starts at 3
+    tile_indices.push_back(1); //Starts at 2
+
+    if(two_d.get_block_offset_canonical(tile_indices) != 20)
+    {
+        std::cout << two_d.get_block_offset_canonical(tile_indices) << "\n";
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_block_offset_canonical(...) returned incorrect value");
 
     }
 }

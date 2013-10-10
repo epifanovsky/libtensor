@@ -26,9 +26,10 @@ public:
 
     /** \brief Return the sparse_bispace defining this tensor 
      **/
-    sparse_bispace<N> get_bispace(); 
+    sparse_bispace<N> get_bispace() const; 
 
-    /** \brief Compares the tensor to a chunk of memory stored by default in row major order
+    /** \brief Compares the tensor to another
+     *         Two sparse_btensors are equal if they have the same number of elements and all of those elements match
      **/
     bool operator==(const sparse_btensor<N,T>& rhs) const;
 
@@ -53,11 +54,30 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
     //Alloc storage
     m_data = new T[size];
 
+    //Create loops
+
     if(mem != NULL)
     {
         if(already_block_major)
         {
             memcpy(m_data,mem,the_bispace.get_nnz()*sizeof(T));
+        }
+        else
+        {
+            //Generate the loops for this tensor in slow->fast index order
+            block_loop<1,0> outer(sequence<1,size_t>(0),sequence<0,size_t>(),sequence<1,bool>(false),sequence<0,bool>());
+            for(size_t i = 1; i < N; ++i)
+            {
+                outer.nest(sequence<1,size_t>(i),sequence<0,size_t>(0),sequence<1,bool>(false),sequence<0,bool>());
+            }
+
+            //TODO: Make all input sequences for bispaces use const, or some other way of eliminating awkward const
+            //from this method being const
+            block_load_kernel<double> blk(m_bispace,mem);
+            outer.run(blk,sequence<1,T*>(m_data),
+                          sequence<0,T*>(),
+                          sequence<1,sparse_bispace_generic_i*>((sparse_bispace<2>*)&m_bispace),
+                          sequence<0,sparse_bispace_generic_i*>());
         }
     }
 }
@@ -69,12 +89,31 @@ sparse_btensor<N,T>::~sparse_btensor()
 }
 
 template<size_t N,typename T>
-sparse_bispace<N> sparse_btensor<N,T>::get_bispace()
+sparse_bispace<N> sparse_btensor<N,T>::get_bispace() const
 {
     return m_bispace;
 }
 
 
+
+template<size_t N,typename T>
+bool sparse_btensor<N,T>::operator==(const sparse_btensor<N,T>& rhs) const
+{
+    if(this->m_bispace.get_nnz() != rhs.m_bispace.get_nnz())
+    {
+        throw bad_parameter(g_ns, k_clazz,"operator==(...)",
+                __FILE__, __LINE__, "tensors have different numbers of nonzero elements");
+    }
+
+    for(size_t i = 0; i < m_bispace.get_nnz(); ++i)
+    {
+        if(m_data[i] != rhs.m_data[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 template<size_t N,typename T>
 std::string sparse_btensor<N,T>::str() const

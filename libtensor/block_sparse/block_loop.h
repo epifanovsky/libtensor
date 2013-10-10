@@ -208,11 +208,11 @@ void block_loop<M,N,T>::_run_internal(block_kernel_i<M,N,T>& kernel,
             //Locate the appropriate blocks
             for(size_t m = 0; m < M; ++m)
             {
-                output_block_ptrs[m] += output_bispaces[m]->get_tile_offset(output_block_indices[m]); 
+                output_block_ptrs[m] += output_bispaces[m]->get_block_offset(output_block_indices[m]); 
             }
             for(size_t n = 0; n < N; ++n)
             {
-                input_block_ptrs[n] += input_bispaces[n]->get_tile_offset(input_block_indices[n]);
+                input_block_ptrs[n] += input_bispaces[n]->get_block_offset(input_block_indices[n]);
             }
 
             kernel(output_block_ptrs,input_block_ptrs,output_block_dims,input_block_dims);

@@ -90,13 +90,20 @@ private:
     void test_get_nnz_dense() throw(libtest::test_exception);
 
     /* 
-     * sparse_bispace<N>::get_tile_offset(...)  tests
+     * sparse_bispace<N>::get_block_offset(...)  tests
      */
-    void test_get_tile_offset_1d() throw(libtest::test_exception);
-    void test_get_tile_offset_1d_empty_vec() throw(libtest::test_exception);
-    void test_get_tile_offset_1d_oob() throw(libtest::test_exception);
-    void test_get_tile_offset_2d() throw(libtest::test_exception);
+    void test_get_block_offset_1d() throw(libtest::test_exception);
+    void test_get_block_offset_1d_empty_vec() throw(libtest::test_exception);
+    void test_get_block_offset_1d_oob() throw(libtest::test_exception);
+    void test_get_block_offset_2d() throw(libtest::test_exception);
 
+    /* 
+     * sparse_bispace<N>::get_block_offset_canonical(...)  tests
+     */
+    void test_get_block_offset_canonical_1d() throw(libtest::test_exception);
+    void test_get_block_offset_canonical_1d_empty_vec() throw(libtest::test_exception);
+    void test_get_block_offset_canonical_1d_oob() throw(libtest::test_exception);
+    void test_get_block_offset_canonical_2d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -18,13 +18,28 @@ private:
     **/
     void test_get_bispace() throw(libtest::test_exception);
 
-    /** \brief Test that equality returns true when appropriate
+    /** \brief Correct string representation of the tensor
+     *         Loaded from block major memory
     **/
-    void test_equality_true() throw(libtest::test_exception);
+    void test_str_2d_block_major() throw(libtest::test_exception);
 
     /** \brief Correct string representation of the tensor
+     *         Loaded from row major memory
     **/
-    void test_str() throw(libtest::test_exception);
+    void test_str_2d_row_major() throw(libtest::test_exception);
+
+    void test_str_3d_row_major() throw(libtest::test_exception);
+
+    /** \brief Test that equality returns true when appropriate
+    **/
+    void test_equality_different_nnz() throw(libtest::test_exception);
+    void test_equality_true() throw(libtest::test_exception);
+    void test_equality_false() throw(libtest::test_exception);
+
+    /** \brief Tensor is permuted correctly, loaded from block major memory
+    **/
+    void test_permute_2d_block_major() throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor
