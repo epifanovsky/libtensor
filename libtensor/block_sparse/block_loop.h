@@ -36,8 +36,8 @@ void run_loop_list(const std::vector< block_loop<M,N,T> >& loop_list,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,T*>& input_ptrs,
-                   const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                   const sequence<N,sparse_bispace_generic_i*>& input_bispaces);
+                   const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                   const sequence<N,sparse_bispace_any_order>& input_bispaces);
                    
 
 namespace impl
@@ -48,8 +48,8 @@ void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,T*>& input_ptrs,
-                   const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                   const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
+                   const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                   const sequence<N,sparse_bispace_any_order>& input_bispaces,
                    sequence<M,std::vector<size_t> >& output_block_dims,
                    sequence<N,std::vector<size_t> >& input_block_dims,
                    sequence<M,std::vector<size_t> >& output_block_indices,
@@ -69,8 +69,8 @@ private:
     sequence<N,bool> m_input_ignore; //!< Which input pointers are incremented by this loop?
 
     //Validates that all of the bispaces touched by this loop are equivalent
-    void validate_bispaces(const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                           const sequence<N,sparse_bispace_generic_i*>& input_bispaces) const;
+    void validate_bispaces(const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                           const sequence<N,sparse_bispace_any_order>& input_bispaces) const;
 public:
 
     //Constructor 
@@ -84,16 +84,16 @@ public:
                                 block_kernel_i<M,N,T>& kernel,
                                 const sequence<M,T*>& output_ptrs,
                                 const sequence<N,T*>& input_ptrs,
-                                const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                                const sequence<N,sparse_bispace_generic_i*>& input_bispaces);
+                                const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                                const sequence<N,sparse_bispace_any_order>& input_bispaces);
 
 
     friend void impl::_run_internal<>(const std::vector< block_loop<M,N,T> > loop_list,
                                       block_kernel_i<M,N,T>& kernel,
                                       const sequence<M,T*>& output_ptrs,
                                       const sequence<N,T*>& input_ptrs,
-                                      const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                                      const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
+                                      const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                                      const sequence<N,sparse_bispace_any_order>& input_bispaces,
                                       sequence<M,std::vector<size_t> >& output_block_dims,
                                       sequence<N,std::vector<size_t> >& input_block_dims,
                                       sequence<M,std::vector<size_t> >& output_block_indices,
@@ -118,16 +118,16 @@ block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
 }
 
 template<size_t M,size_t N,typename T>
-void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                                          const sequence<N,sparse_bispace_generic_i*>& input_bispaces) const
+void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                                          const sequence<N,sparse_bispace_any_order>& input_bispaces) const
 {
     if(M != 0)
     {
         //TODO: A lot of copies here...this could bottleneck
-        sparse_bispace<1> output_first = (*output_bispaces[0])[m_output_bispace_indices[0]];
+        sparse_bispace<1> output_first = output_bispaces[0][m_output_bispace_indices[0]];
         for(size_t i = 1; i < M; ++i)
         {
-            if(! (output_first == (*output_bispaces[i])[m_output_bispace_indices[i]]) )
+            if(! (output_first == output_bispaces[i][m_output_bispace_indices[i]]) )
             {
                 throw bad_parameter(g_ns, k_clazz,"run(...)",
                         __FILE__, __LINE__, "Incompatible bispaces specified");
@@ -138,7 +138,7 @@ void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_generi
         {
             for(size_t i = 0; i < N; ++i)
             {
-                if(! (output_first == (*input_bispaces[i])[m_input_bispace_indices[i]]) )
+                if(! (output_first == input_bispaces[i][m_input_bispace_indices[i]]) )
                 {
                     throw bad_parameter(g_ns, k_clazz,"run(...)",
                             __FILE__, __LINE__, "Incompatible bispaces specified");
@@ -149,10 +149,10 @@ void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_generi
     }
     else if(N != 0)
     {
-        sparse_bispace<1> input_first = (*input_bispaces[0])[m_input_bispace_indices[0]];
+        sparse_bispace<1> input_first = input_bispaces[0][m_input_bispace_indices[0]];
         for(size_t i = 0; i < N; ++i)
         {
-            if(! (input_first == (*input_bispaces[i])[m_input_bispace_indices[i]]) )
+            if(! (input_first == input_bispaces[i][m_input_bispace_indices[i]]) )
             {
                 throw bad_parameter(g_ns, k_clazz,"run(...)",
                         __FILE__, __LINE__, "Incompatible bispaces specified");
@@ -171,8 +171,8 @@ void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,T*>& input_ptrs,
-                   const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                   const sequence<N,sparse_bispace_generic_i*>& input_bispaces,
+                   const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                   const sequence<N,sparse_bispace_any_order>& input_bispaces,
                    sequence<M,std::vector<size_t> >& output_block_dims,
                    sequence<N,std::vector<size_t> >& input_block_dims,
                    sequence<M,std::vector<size_t> >& output_block_indices,
@@ -182,7 +182,7 @@ void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
     //We use the output bispaces, unless there are no outputs
     const block_loop<M,N,T>& cur_loop = loop_list[loop_idx];
     const sparse_bispace<1>& cur_bispace = M != 0 ?  
-            (*output_bispaces[0])[cur_loop.m_output_bispace_indices[0]] : (*input_bispaces[0])[cur_loop.m_input_bispace_indices[0]];
+            output_bispaces[0][cur_loop.m_output_bispace_indices[0]] : input_bispaces[0][cur_loop.m_input_bispace_indices[0]];
     block_list block_idxs = range(0,cur_bispace.get_n_blocks());
 
     for(size_t i = 0; i < block_idxs.size(); ++i)
@@ -216,11 +216,11 @@ void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
             //Locate the appropriate blocks
             for(size_t m = 0; m < M; ++m)
             {
-                output_block_ptrs[m] += output_bispaces[m]->get_block_offset(output_block_indices[m]); 
+                output_block_ptrs[m] += output_bispaces[m].get_block_offset(output_block_indices[m]); 
             }
             for(size_t n = 0; n < N; ++n)
             {
-                input_block_ptrs[n] += input_bispaces[n]->get_block_offset(input_block_indices[n]);
+                input_block_ptrs[n] += input_bispaces[n].get_block_offset(input_block_indices[n]);
             }
 
             kernel(output_block_ptrs,input_block_ptrs,output_block_dims,input_block_dims);
@@ -241,8 +241,8 @@ void run_loop_list(const std::vector< block_loop<M,N,T> >& loop_list,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,T*>& input_ptrs,
-                   const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                   const sequence<N,sparse_bispace_generic_i*>& input_bispaces)
+                   const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                   const sequence<N,sparse_bispace_any_order>& input_bispaces)
 {
     //Validate that the specified bispaces are all compatible for every loop in the list
     for(size_t loop_idx = 0; loop_idx < loop_list.size(); ++loop_idx)
@@ -258,14 +258,14 @@ void run_loop_list(const std::vector< block_loop<M,N,T> >& loop_list,
 
     for(size_t m = 0; m < M; ++m)
     {
-        output_block_dims[m].resize(output_bispaces[m]->get_order());
-        output_block_indices[m].resize(output_bispaces[m]->get_order());
+        output_block_dims[m].resize(output_bispaces[m].get_order());
+        output_block_indices[m].resize(output_bispaces[m].get_order());
 
     }  
     for(size_t n = 0; n < N; ++n)
     { 
-        input_block_dims[n].resize(input_bispaces[n]->get_order());
-        input_block_indices[n].resize(input_bispaces[n]->get_order());
+        input_block_dims[n].resize(input_bispaces[n].get_order());
+        input_block_indices[n].resize(input_bispaces[n].get_order());
     }
 
     impl::_run_internal(loop_list,kernel,output_ptrs,input_ptrs,output_bispaces,input_bispaces,
@@ -278,8 +278,8 @@ void run_loop_list(block_loop<M,N,T>& loop,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,T*>& input_ptrs,
-                   const sequence<M,sparse_bispace_generic_i*>& output_bispaces,
-                   const sequence<N,sparse_bispace_generic_i*>& input_bispaces)
+                   const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                   const sequence<N,sparse_bispace_any_order>& input_bispaces)
 {
     run_loop_list(std::vector< block_loop<M,N,T> >(1,loop),kernel,
                   output_ptrs,input_ptrs,output_bispaces,input_bispaces);

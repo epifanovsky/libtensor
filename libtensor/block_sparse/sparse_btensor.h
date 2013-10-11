@@ -87,8 +87,8 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
             block_load_kernel<T> blk(m_bispace,mem);
             run_loop_list(loop_list,blk,sequence<1,T*>(m_data_ptr),
                           sequence<0,T*>(),
-                          sequence<1,sparse_bispace_generic_i*>((sparse_bispace<2>*)&m_bispace),
-                          sequence<0,sparse_bispace_generic_i*>());
+                          sequence<1,sparse_bispace_any_order>(m_bispace),
+                          sequence<0,sparse_bispace_any_order>());
         }
     }
 }
@@ -156,8 +156,8 @@ std::string sparse_btensor<N,T>::str() const
     run_loop_list(loop_list,bp,
                   sequence<0,T*>(),
                   sequence<1,T*>(m_data_ptr),
-                  sequence<0,sparse_bispace_generic_i*>(NULL),
-                  sequence<1,sparse_bispace_generic_i*>((sparse_bispace<2>*)&m_bispace));
+                  sequence<0,sparse_bispace_any_order>(),
+                  sequence<1,sparse_bispace_any_order>(m_bispace));
     return bp.str();
 }
 

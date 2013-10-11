@@ -59,8 +59,8 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
     const sparse_bispace<N>& spb_1 = this->m_tensor.get_bispace();
     const sparse_bispace<N>& spb_2 = rhs.m_tensor.get_bispace();
 
-    sequence<1, sparse_bispace_generic_i*> output_bispaces((sparse_bispace_generic_i*)&spb_1);
-    sequence<1, sparse_bispace_generic_i*> input_bispaces((sparse_bispace_generic_i*)&spb_2);
+    sequence<1, sparse_bispace_any_order> output_bispaces(spb_1);
+    sequence<1, sparse_bispace_any_order> input_bispaces(spb_2);
     run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 }
 

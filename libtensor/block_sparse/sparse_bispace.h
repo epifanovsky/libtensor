@@ -7,25 +7,8 @@
 
 namespace libtensor {
 
-/* Forward declarations to enable a generic interface to all sparse_bispace degrees
- *
- */
 template<size_t N>
-class sparse_bispace;
-
-//Non-templated sparse_bispace interface
-//Necessary so that functions can be passed variable numbers of sparse_bispaces of different dimensions 
-class sparse_bispace_generic_i {
-public:
-    virtual const sparse_bispace<1>& operator[](size_t idx) const = 0; 
-    virtual size_t get_order() const = 0;
-    virtual size_t get_block_offset(const std::vector<size_t>& block_indices) const = 0;
-    virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
-    virtual sparse_bispace_generic_i* clone() const = 0;
-};
-
-template<size_t N>
-class sparse_bispace : public sparse_bispace_generic_i {
+class sparse_bispace {
 public: 
     static const char *k_clazz; //!< Class name
 private:
@@ -60,10 +43,6 @@ public:
     const sparse_bispace<1>& operator[](size_t  idx) const
         throw(out_of_bounds);
 
-    /** \brief Returns the order of this bispace 
-     **/
-    size_t get_order() const;
-
     /** \brief Returns offset of a given tile in this bispace assuming block-major layout. The tile is specified by a vector of block indices
      **/
     size_t get_block_offset(const std::vector<size_t>& block_indices) const;
@@ -72,12 +51,6 @@ public:
      **/
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
 
-    /** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
-     **/
-    sparse_bispace_generic_i* clone() const;
-
-    //TODO '>' operator for sparsity
-    
     //Necessary to create 2d space from 2 1d spaces
     friend class sparse_bispace<1>;
 
@@ -151,12 +124,6 @@ const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const
     return m_subspaces[idx];
 }
 
-template<size_t N>
-size_t sparse_bispace<N>::get_order() const
-{
-    return N;
-}
-
 /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
  **/
 template<size_t N>
@@ -199,14 +166,6 @@ size_t sparse_bispace<N>::get_block_offset_canonical(const std::vector<size_t>& 
     return offset;
 }
 
-/** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
- **/
-template<size_t N>
-sparse_bispace_generic_i* sparse_bispace<N>::clone() const
-{
-    return (sparse_bispace_generic_i*) new sparse_bispace<N>(*this); 
-}
-
 template<size_t N>
 bool sparse_bispace<N>::operator==(const sparse_bispace<N>& rhs) const
 {
@@ -232,7 +191,7 @@ const char *sparse_bispace<N>::k_clazz = "sparse_bispace<N>";
 /**  One-dimensional sparse block index space
  **/
 template<>
-class sparse_bispace<1> : public sparse_bispace_generic_i {
+class sparse_bispace<1> {
 private:
     size_t m_dim; //!< Number of elements
     std::vector<size_t> m_abs_indices; //!< Block absolute starting indices
@@ -281,10 +240,6 @@ public:
     const sparse_bispace<1>& operator[](size_t  idx) const
         throw(out_of_bounds);
 
-    /** \brief Returns the order of this bispace 
-     **/
-    size_t get_order() const;
-
     /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
      **/
     size_t get_block_offset(const std::vector<size_t>& block_indices) const;
@@ -292,10 +247,6 @@ public:
     /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
      **/
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
-
-    /** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
-     **/
-    sparse_bispace_generic_i* clone() const;
 
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
@@ -394,11 +345,6 @@ inline const sparse_bispace<1>& sparse_bispace<1>::operator[](size_t idx) const
     return *this;
 }
 
-inline size_t sparse_bispace<1>::get_order() const
-{
-    return 1;
-}
-
 /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
  **/
 inline size_t sparse_bispace<1>::get_block_offset(const std::vector<size_t>& block_indices) const
@@ -421,13 +367,6 @@ inline size_t sparse_bispace<1>::get_block_offset_canonical(const std::vector<si
     return get_block_offset(block_indices); 
 }
 
-/** \brief Returns a pointer to a heap allocated copy of this object. Caller responsiblity to destroy
- *  **/
-inline sparse_bispace_generic_i* sparse_bispace<1>::clone() const
-{
-        return (sparse_bispace_generic_i*) new sparse_bispace<1>(*this);
-}
-
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 {
     return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
@@ -437,6 +376,66 @@ inline bool sparse_bispace<1>::operator!=(const sparse_bispace<1>& rhs) const
 {
     return ! (*this == rhs);
 }
+
+//TODO: Make this immutable, etc?? Need to make this class hard to abuse
+//Type erasure class for sparse_bispaces.
+//Used in functions that can take a number of sparse bispaces of different order as arguments
+class sparse_bispace_any_order
+{
+private:
+    class sparse_bispace_generic_i {
+    public:
+        virtual const sparse_bispace<1>& operator[](size_t idx) const = 0; 
+        virtual size_t get_order() const = 0;
+        virtual size_t get_block_offset(const std::vector<size_t>& block_indices) const = 0;
+        virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
+        virtual sparse_bispace_generic_i* clone() const = 0;
+
+        virtual ~sparse_bispace_generic_i() { };
+    };
+
+    template<size_t N>
+    class sparse_bispace_generic_wrapper : public sparse_bispace_generic_i {
+    private:
+        sparse_bispace<N> m_bispace;
+    public:
+        sparse_bispace_generic_wrapper(const sparse_bispace<N>& bispace) : m_bispace(bispace) {};
+
+        const sparse_bispace<1>& operator[](size_t idx) const { return m_bispace[idx]; }
+        size_t get_order() const { return N; }
+        size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset(block_indices); }
+        size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset_canonical(block_indices); }
+        sparse_bispace_generic_i* clone() const { return new sparse_bispace_generic_wrapper(m_bispace); }
+    };
+
+    sparse_bispace_generic_i* m_spb_ptr;
+    
+    //This needs to exist given the current implementation of sequence<>, so we hack and hide it
+    sparse_bispace_any_order() { m_spb_ptr = NULL; };
+public:
+    
+    //Constructor
+    template<size_t N>
+    sparse_bispace_any_order(const sparse_bispace<N>& bispace) { m_spb_ptr = new sparse_bispace_generic_wrapper<N>(bispace); }
+
+    //Copy constructor
+    sparse_bispace_any_order(const sparse_bispace_any_order& rhs) { rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
+
+    //Overloaded assignment operator
+    sparse_bispace_any_order& operator=(const sparse_bispace_any_order& rhs) { rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
+
+    const sparse_bispace<1>& operator[](size_t idx) const { return (*m_spb_ptr)[idx]; }
+    size_t get_order() const { return m_spb_ptr->get_order(); }
+    size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset(block_indices); }
+    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset_canonical(block_indices); }
+
+    //We have to check NULL bcs of stupid default constructor hack
+    virtual ~sparse_bispace_any_order() { if(m_spb_ptr != NULL) { delete m_spb_ptr; } };
+
+    //For default constructor hack
+    template<size_t N,typename T>
+    friend class sequence;
+};
 
 } // namespace libtensor
 

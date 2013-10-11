@@ -107,8 +107,8 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
 
     //Here, one of the bispaces should be transposed but is not... this should cause an exception because the bispaces
     //do not line up in the loops
-    sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d);
-    sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d);
+    sequence<1,sparse_bispace_any_order> output_bispaces(two_d);
+    sequence<1,sparse_bispace_any_order> input_bispaces(two_d);
 
     bool threw_exception = false;
     try
@@ -159,8 +159,8 @@ void block_loop_test::test_run_block_copy_kernel_1d() throw(libtest::test_except
     sequence<1,double*> input_ptrs(test_input_arr); 
 
 
-    sequence<1, sparse_bispace_generic_i*> output_bispaces(&spb);
-    sequence<1, sparse_bispace_generic_i*> input_bispaces(&spb);
+    sequence<1, sparse_bispace_any_order> output_bispaces(spb);
+    sequence<1, sparse_bispace_any_order> input_bispaces(spb);
 
     run_loop_list(bl,bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
@@ -238,8 +238,8 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
 
     sequence<1,double*> output_ptrs(test_output_arr); 
     sequence<1,double*> input_ptrs(test_input_arr); 
-    sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d);
-    sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d);
+    sequence<1,sparse_bispace_any_order> output_bispaces(two_d);
+    sequence<1,sparse_bispace_any_order> input_bispaces(two_d);
 
     run_loop_list(loop_list,bck,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
@@ -341,8 +341,8 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
 
     sequence<1,double*> output_ptrs(test_output_arr); 
     sequence<1,double*> input_ptrs(test_input_arr); 
-    sequence<1,sparse_bispace_generic_i*> output_bispaces(&two_d_output);
-    sequence<1,sparse_bispace_generic_i*> input_bispaces(&two_d_input);
+    sequence<1,sparse_bispace_any_order> output_bispaces(two_d_output);
+    sequence<1,sparse_bispace_any_order> input_bispaces(two_d_input);
 
     run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
@@ -518,8 +518,8 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
 
     sequence<1,double*> output_ptrs(test_output_arr); 
     sequence<1,double*> input_ptrs(test_input_arr); 
-    sequence<1,sparse_bispace_generic_i*> output_bispaces(&three_d_output);
-    sequence<1,sparse_bispace_generic_i*> input_bispaces(&three_d_input);
+    sequence<1,sparse_bispace_any_order> output_bispaces(three_d_output);
+    sequence<1,sparse_bispace_any_order> input_bispaces(three_d_input);
 
     run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
