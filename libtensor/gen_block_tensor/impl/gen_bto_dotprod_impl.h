@@ -47,6 +47,7 @@ public:
         m_symc(symc), m_bidimsc(bidimsc), m_idxc(idxc), m_d(Traits::zero()) { }
 
     virtual ~gen_bto_dotprod_in_orbit_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
     element_type get_d() const { return m_d; }

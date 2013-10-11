@@ -93,6 +93,8 @@ public:
 
     virtual ~addition_schedule_task_1() { }
 
+    virtual unsigned long get_cost() const { return 0; }
+
     virtual void perform() {
 
         std::map<size_t, book_node> booka;
@@ -213,6 +215,8 @@ public:
     }
 
     virtual ~addition_schedule_task_2() { }
+
+    virtual unsigned long get_cost() const { return 0; }
 
     virtual void perform() {
 

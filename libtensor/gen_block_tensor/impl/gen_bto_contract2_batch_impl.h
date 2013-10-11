@@ -36,6 +36,7 @@ public:
     { }
 
     virtual ~gen_bto_contract2_prepare_clst_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -95,6 +96,7 @@ public:
         gen_block_stream_i<N + M, bti_traits> &out);
 
     virtual ~gen_bto_contract2_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
