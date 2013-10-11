@@ -20,7 +20,7 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_equality_true();
     test_equality_false();
 
-    /*test_permute_2d_block_major();*/
+    test_permute_2d_row_major();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -300,53 +300,58 @@ void sparse_btensor_test::test_equality_false() throw(libtest::test_exception)
     }
 }
 
-#if 0
-void sparse_btensor_test::test_permute_2d_block_major() throw(libtest::test_exception)
+void sparse_btensor_test::test_permute_2d_row_major() throw(libtest::test_exception)
 {
-    double mem_row_major[16] = { 1,2,3,4,
-                                 5,6,7,8,
-                                 9,10,11,12,
-                                 13,14,15,16}; 
+    static const char *test_name = "sparse_btensor_test::test_permute_2d_block_major()";
+
+    double mem_row_major[20] = { 1,2,3,4,5,
+                                 6,7,8,9,10,
+                                 11,12,13,14,15,
+                                 16,17,18,19,20}; 
 
     
     //All indices are block indices
     //The benchmark values
-    double correct_mem_block_major[16] = { //j = 0, i = 0, j = 0
-                                           1,5,
-                                           2,6,
+    double correct_mem_block_major[20] = { //j = 0, i = 0
+                                           1,6,
+                                           2,7,
 
                                            //j = 0, i = 1
-                                           9,13, 
-                                           10,14,
+                                           11,16,
+                                           12,17,
 
                                            //j = 1, i = 0
-                                           3,7,
-                                           4,8,
-
+                                           3,8,
+                                           4,9,
+                                           5,10,
 
                                            //j = 1,i = 1
-                                           11,15,
-                                           12,16};
+                                           13,18,
+                                           14,19,
+                                           15,20};
 
 
-    sparse_bispace<1> N(4);
+    sparse_bispace<1> spb_1(4);
+    sparse_bispace<1> spb_2(5);
     std::vector<size_t> split_points;
     split_points.push_back(2);
-    N.split(split_points);
-    sparse_bispace<2> N2 = N|N;
-    sparse_btensor<2> bt(N2,mem_row_major);
+    spb_1.split(split_points);
+    spb_2.split(split_points);
 
-    sparse_btensor<2> bt_trans(N2);
+    sparse_bispace<2> two_d_input = spb_1 | spb_2;
+    sparse_bispace<2> two_d_output = spb_2 | spb_1;
+    sparse_btensor<2> bt(two_d_input,mem_row_major);
+
+    sparse_btensor<2> bt_trans(two_d_output);
     letter i,j;
     bt_trans(i|j) = bt(j|i);
 
-    sparse_btensor<2> correct(N2,mem_block_major);
+    sparse_btensor<2> correct(two_d_output,correct_mem_block_major,true);
     if(bt_trans != correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "labeled_btensor<N>::operator=(...) did not produce correct result");
     }
 }
-#endif
 
 } // namespace libtensor

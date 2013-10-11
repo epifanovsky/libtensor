@@ -6,9 +6,7 @@
 #include "block_loop.h"
 #include "block_kernels.h"
 #include "../iface/letter_expr.h"
-
-//TODO: REMOVE
-#include <iostream>
+#include "labeled_sparse_btensor.h"
 
 namespace libtensor {
 
@@ -17,7 +15,7 @@ namespace libtensor {
 template<size_t N,typename T>
 class labeled_sparse_btensor;
 
-template<size_t N,typename T>
+template<size_t N,typename T = double>
 class sparse_btensor {
 public:
     static const char *k_clazz; //!< Class name
@@ -45,7 +43,7 @@ public:
     /** \brief Returns a labeled_sparse_btensor object for use in expressions
      *
      */
-    labeled_btensor<N,T> operator()(letter_expr<N>& le) const;
+    labeled_sparse_btensor<N,T> operator()(const letter_expr<N>& le);
 
     /** \brief Returns a string representation of the tensor in row-major order 
      **/
@@ -136,10 +134,11 @@ bool sparse_btensor<N,T>::operator!=(const sparse_btensor<N,T>& rhs) const
 
 
 template<size_t N,typename T>
-labeled_btensor<N,T> sparse_btensor<N,T>::operator()(letter_expr<N>& le) const
+labeled_sparse_btensor<N,T> sparse_btensor<N,T>::operator()(const letter_expr<N>& le)
 {
-    return labeled_btensor<N,T>(*this,le);
+    return labeled_sparse_btensor<N,T>(*this,le);
 }
+
 template<size_t N,typename T>
 std::string sparse_btensor<N,T>::str() const
 {

@@ -17,7 +17,7 @@ class sparse_bispace;
 //Necessary so that functions can be passed variable numbers of sparse_bispaces of different dimensions 
 class sparse_bispace_generic_i {
 public:
-    virtual sparse_bispace<1> operator[](size_t idx) const = 0; 
+    virtual const sparse_bispace<1>& operator[](size_t idx) const = 0; 
     virtual size_t get_order() const = 0;
     virtual size_t get_block_offset(const std::vector<size_t>& block_indices) const = 0;
     virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
@@ -57,7 +57,7 @@ public:
     /** \brief Retrieves the appropriate index subspace of this multidimensional space
         \throw out_of_bounds If an inappropriate index is specified 
      **/
-    sparse_bispace<1> operator[](size_t  idx) const
+    const sparse_bispace<1>& operator[](size_t  idx) const
         throw(out_of_bounds);
 
     /** \brief Returns the order of this bispace 
@@ -141,7 +141,7 @@ sparse_bispace<N+1> sparse_bispace<N>::operator|(const sparse_bispace<1>& rhs)
 
 //TODO: Should make these check (N-1) instead of m_subspaces.size()
 template<size_t N>
-sparse_bispace<1> sparse_bispace<N>::operator[](size_t idx) const
+const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const
 {
     if(idx > (m_subspaces.size() - 1))
     {
@@ -278,7 +278,7 @@ public:
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
      **/
-    sparse_bispace<1> operator[](size_t  idx) const
+    const sparse_bispace<1>& operator[](size_t  idx) const
         throw(out_of_bounds);
 
     /** \brief Returns the order of this bispace 
@@ -384,7 +384,7 @@ inline sparse_bispace<2> sparse_bispace<1>::operator|(const sparse_bispace<1>& r
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
      **/
-inline sparse_bispace<1> sparse_bispace<1>::operator[](size_t idx) const
+inline const sparse_bispace<1>& sparse_bispace<1>::operator[](size_t idx) const
 {
     if(idx != 0)
     {

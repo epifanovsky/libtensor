@@ -36,9 +36,9 @@ private:
     void test_equality_true() throw(libtest::test_exception);
     void test_equality_false() throw(libtest::test_exception);
 
-    /** \brief Tensor is permuted correctly, loaded from block major memory
+    /** \brief Tensor is permuted correctly, loaded from row major memory
     **/
-    void test_permute_2d_block_major() throw(libtest::test_exception);
+    void test_permute_2d_row_major() throw(libtest::test_exception);
 
 };
 

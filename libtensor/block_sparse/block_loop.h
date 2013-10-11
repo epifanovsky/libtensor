@@ -105,6 +105,7 @@ public:
 template<size_t M,size_t N,typename T>
 const char *block_loop<M,N,T>::k_clazz = "block_loop<M,N>";
 
+//Constructor
 template<size_t M,size_t N,typename T>
 block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
 							  const sequence<N,size_t>& input_bispace_indices,
