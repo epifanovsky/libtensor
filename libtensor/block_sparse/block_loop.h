@@ -124,7 +124,7 @@ void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_any_or
     if(M != 0)
     {
         //TODO: A lot of copies here...this could bottleneck
-        sparse_bispace<1> output_first = output_bispaces[0][m_output_bispace_indices[0]];
+        const sparse_bispace<1>& output_first = output_bispaces[0][m_output_bispace_indices[0]];
         for(size_t i = 1; i < M; ++i)
         {
             if(! (output_first == output_bispaces[i][m_output_bispace_indices[i]]) )

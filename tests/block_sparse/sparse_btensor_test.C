@@ -21,6 +21,7 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_equality_false();
 
     test_permute_2d_row_major();
+    test_permute_3d_row_major_210();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -302,7 +303,7 @@ void sparse_btensor_test::test_equality_false() throw(libtest::test_exception)
 
 void sparse_btensor_test::test_permute_2d_row_major() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_btensor_test::test_permute_2d_block_major()";
+    static const char *test_name = "sparse_btensor_test::test_permute_2d_row_major()";
 
     double mem_row_major[20] = { 1,2,3,4,5,
                                  6,7,8,9,10,
@@ -348,6 +349,95 @@ void sparse_btensor_test::test_permute_2d_row_major() throw(libtest::test_except
 
     sparse_btensor<2> correct(two_d_output,correct_mem_block_major,true);
     if(bt_trans != correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "labeled_btensor<N>::operator=(...) did not produce correct result");
+    }
+}
+
+//This test loads both the input and the benchmark tensor from row major format, and thus is a good test
+//of that capability as well
+void sparse_btensor_test::test_permute_3d_row_major_210() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_btensor_test::test_permute_3d_row_major_210()";
+
+    //Dimensions 3x4x5
+    //ijk -> kji
+    double mem_row_major[60] = { //i = 0
+                                 1,2,3,4,5,//j = 0
+                                 6,7,8,9,10,//j = 1
+                                 11,12,13,14,15,//j = 2
+                                 16,17,18,19,20,//j = 3
+
+                                 //i = 1
+                                 21,22,23,24,25,//j = 0
+                                 26,27,28,29,30,//j = 1
+                                 31,32,33,34,35,//j = 2
+                                 36,37,38,39,40,//j = 3
+
+                                 //i = 2
+                                 41,42,43,44,45,//j = 0
+                                 46,47,48,49,50,//j = 1
+                                 51,52,53,54,55,//j = 2
+                                 56,57,58,59,60};//j= 3
+
+    double correct_row_major[60] = { //k = 0
+                                     1,21,41,//j = 0
+                                     6,26,46,//j = 1
+                                     11,31,51,//j = 2
+                                     16,36,56,//j = 3
+
+                                     //k = 1
+                                     2,22,42,//j = 0
+                                     7,27,47,//j = 1
+                                     12,32,52,//j = 2
+                                     17,37,57,//j = 3
+
+                                     //k = 2
+                                     3,23,43,//j = 0
+                                     8,28,48,//j = 1
+                                     13,33,53,//j = 2
+                                     18,38,58,//j = 3
+
+                                     //k = 3
+                                     4,24,44,
+                                     9,29,49,
+                                     14,34,54,
+                                     19,39,59,
+                                     
+                                     //k = 4
+                                     5,25,45, //j = 0
+                                     10,30,50,//j = 1
+                                     15,35,55,//j = 2
+                                     20,40,60};//j = 3
+
+    sparse_bispace<1> spb_1(3);
+    sparse_bispace<1> spb_2(4);
+    sparse_bispace<1> spb_3(5);
+
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(1);
+    spb_1.split(split_points_1);
+
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(1);
+    spb_2.split(split_points_2);
+
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(2);
+    spb_3.split(split_points_3);
+
+
+    sparse_bispace<3> three_d_input = spb_1 | spb_2 | spb_3;
+    sparse_bispace<3> three_d_output = spb_3 | spb_2 | spb_1;
+    sparse_btensor<3> bt(three_d_input,mem_row_major);
+
+    sparse_btensor<3> bt_210(three_d_output);
+    letter i,j,k;
+    bt_210(k|j|i) = bt(i|j|k);
+
+    sparse_btensor<3> correct(three_d_output,correct_row_major);
+    if(bt_210 != correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "labeled_btensor<N>::operator=(...) did not produce correct result");

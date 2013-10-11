@@ -39,7 +39,7 @@ private:
     /** \brief Tensor is permuted correctly, loaded from row major memory
     **/
     void test_permute_2d_row_major() throw(libtest::test_exception);
-
+    void test_permute_3d_row_major_210() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
