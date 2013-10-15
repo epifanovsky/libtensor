@@ -148,7 +148,7 @@ public:
 } // namespace libtensor
 
 #include "contract_subexpr_labels.h"
-#include "contract_eval_functor.h"
+#include "contract3_eval_functor.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -183,10 +183,10 @@ public:
 
 private:
     contract3_core<N1, N2, N3, K1, K2a, K2b, T> m_core; //!< Expression core
-    contract_subexpr_labels<N, M, K, T>
-        m_sub_labels; //!< Labels for sub-expressions
-    contract_eval_functor<N, M, K, T>
-        m_func; //!< Sub-expression evaluation functor
+//    contract_subexpr_labels<N, M, K, T>
+//        m_sub_labels; //!< Labels for sub-expressions
+//    contract3_eval_functor<N1, N2, N3, K1, K2a, K2b, T>
+//        m_func; //!< Sub-expression evaluation functor
 
 public:
     /** \brief Initializes the container with given expression and
@@ -367,13 +367,13 @@ const char contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::k_clazz[] =
 
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
     typename T>
-contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::contract2_eval(
+contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::contract3_eval(
     const contract3_core<N1, N2, N3, K1, K2a, K2b, T> &core,
-    const letter_expr<NC> &label) :
+    const letter_expr<ND> &label) :
 
-    m_core(core),
+    m_core(core)/*,
     m_sub_labels(core, label),
-    m_func(m_core, m_sub_labels, label) {
+    m_func(m_core, m_sub_labels, label)*/ {
 
 }
 
@@ -382,7 +382,7 @@ template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
     typename T>
 void contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::prepare() {
 
-    m_func.evaluate();
+//    m_func.evaluate();
 }
 
 
@@ -390,7 +390,7 @@ template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
     typename T>
 void contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::clean() {
 
-    m_func.clean();
+//    m_func.clean();
 }
 
 
@@ -418,7 +418,7 @@ contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::get_oper_arg(size_t i) {
             "Argument index is out of bounds.");
     }
 
-    return m_func.get_arg();
+//    return m_func.get_arg();
 }
 
 
@@ -430,6 +430,62 @@ contract3_core<N1, N2, N3, K1, K2a, K2b, T>::create_container(
 
     return new contract3_eval<N1, N2, N3, K1, K2a, K2b, T>(*this, label);
 }
+
+
+template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T,
+    size_t KK>
+struct contract3_core_dispatch {
+
+    static expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> dispatch(
+        const letter_expr<K1> contr1,
+        expr<N1, T> bta,
+        expr<N2, T> btb,
+        const letter_expr<K2> contr2,
+        expr<N3, T> btc) {
+
+        size_t kk = 0;
+        for(size_t i = 0; i < K2; i++) {
+            if(bta.get_core().contains(contr2.letter_at(i))) kk++;
+        }
+        if(kk == KK) {
+            enum {
+                K2a = KK,
+                K2b = K2 - KK,
+                M1 = N1 - K1 - K2a,
+                M2 = N2 - K1 - K2b,
+                M3 = N3 - K2
+            };
+            return expr<M1 + M2 + M3, T>(
+                contract3_core<M1, M2, M3, K1, K2a, K2b, T>(
+                    contr1, contr2, bta, btb, btc));
+        } else {
+            return contract3_core_dispatch<N1, N2, N3, K1, K2, T, KK - 1>::
+                dispatch(contr1, bta, btb, contr2, btc);
+        }
+    }
+};
+
+
+template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
+struct contract3_core_dispatch<N1, N2, N3, K1, K2, T, 0> {
+
+    static expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> dispatch(
+        const letter_expr<K1> contr1,
+        expr<N1, T> bta,
+        expr<N2, T> btb,
+        const letter_expr<K2> contr2,
+        expr<N3, T> btc) {
+
+        enum {
+            M1 = N1 - K1,
+            M2 = N2 - K1 - K2,
+            M3 = N3 - K2
+        };
+        return expr<M1 + M2 + M3, T>(
+            contract3_core<M1, M2, M3, K1, 0, K2, T>(
+                contr1, contr2, bta, btb, btc));
+    }
+};
 
 
 } // namespace labeled_btensor_expr

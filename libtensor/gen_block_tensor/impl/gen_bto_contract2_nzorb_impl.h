@@ -107,6 +107,7 @@ public:
     { }
 
     virtual ~gen_bto_contract2_nzorb_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -140,6 +141,7 @@ public:
     { }
 
     virtual ~gen_bto_contract2_nzorb_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };

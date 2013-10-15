@@ -19,6 +19,7 @@ template class gen_bto_dirsum<3, 2, btod_traits, btod_dirsum<3, 2> >;
 template class gen_bto_dirsum<3, 3, btod_traits, btod_dirsum<3, 3> >;
 template class gen_bto_dirsum<4, 1, btod_traits, btod_dirsum<4, 1> >;
 template class gen_bto_dirsum<4, 2, btod_traits, btod_dirsum<4, 2> >;
+template class gen_bto_dirsum<4, 4, btod_traits, btod_dirsum<4, 4> >;
 template class gen_bto_dirsum<5, 1, btod_traits, btod_dirsum<5, 1> >;
 
 
@@ -36,6 +37,7 @@ template class btod_dirsum<3, 2>;
 template class btod_dirsum<3, 3>;
 template class btod_dirsum<4, 1>;
 template class btod_dirsum<4, 2>;
+template class btod_dirsum<4, 4>;
 template class btod_dirsum<5, 1>;
 
 

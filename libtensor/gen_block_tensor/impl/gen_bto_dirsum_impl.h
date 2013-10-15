@@ -33,6 +33,7 @@ public:
         gen_block_stream_i<N + M, bti_traits> &out);
 
     virtual ~gen_bto_dirsum_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 };
 

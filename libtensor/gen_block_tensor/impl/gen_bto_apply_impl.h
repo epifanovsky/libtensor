@@ -39,6 +39,7 @@ public:
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_apply_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };

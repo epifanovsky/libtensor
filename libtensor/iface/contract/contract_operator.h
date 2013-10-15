@@ -3,6 +3,7 @@
 
 #include "../ident/ident_core.h"
 #include "contract2_core.h"
+#include "contract3_core.h"
 
 namespace libtensor {
 namespace labeled_btensor_expr {
@@ -168,7 +169,8 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K2> contr2,
     expr_rhs<N3, T> btc) {
 
-
+    return labeled_btensor_expr::contract3_core_dispatch<N1, N2, N3, K1, K2, T, K2>::
+        dispatch(contr1, bta, btb, contr2, btc);
 }
 
 
