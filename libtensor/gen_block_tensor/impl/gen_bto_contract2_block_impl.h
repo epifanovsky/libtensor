@@ -61,6 +61,42 @@ gen_bto_contract2_block<N, M, K, Traits, Timed>::gen_bto_contract2_block(
 
 
 template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
+unsigned long gen_bto_contract2_block<N, M, K, Traits, Timed>::get_cost(
+    const contr_list_type &clst,
+    const block_index_space<NC> &bisc,
+    const index<NC> &idxc) {
+
+    const block_index_space<NA> &bisa = m_bta2.get_bis();
+    const block_index_space<NB> &bisb = m_btb2.get_bis();
+    dimensions<NC> dimsc = bisc.get_block_dims(idxc);
+    const sequence<NA + NB + NC, size_t> &conn = m_contr.get_conn();
+
+    size_t cost = 0;
+
+    for(typename contr_list_type::const_iterator i = clst.begin();
+        i != clst.end(); ++i) {
+
+        index<NA> ia;
+        index<NB> ib;
+
+        abs_index<NA>::get_index(i->get_aindex_a(), m_bidimsa, ia);
+        abs_index<NB>::get_index(i->get_aindex_b(), m_bidimsb, ib);
+
+        dimensions<NA> dimsa = bisa.get_block_dims(ia);
+        dimensions<NB> dimsb = bisb.get_block_dims(ib);
+
+        size_t c = 1;
+        for(size_t j = 0; j < NA; j++) {
+            if(conn[NC + j] >= NA + NC) c *= dimsa[j];
+        }
+        cost += c * dimsc.get_size() / 1000;
+    }
+
+    return (unsigned long)cost;
+}
+
+
+template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     const contr_list_type &clst,
     bool zero,
