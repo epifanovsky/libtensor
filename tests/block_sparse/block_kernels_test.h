@@ -38,6 +38,22 @@ private:
     void test_block_permute_kernel_2d_invalid_perm_duplicate() throw(libtest::test_exception);
     void test_block_permute_kernel_3d_201() throw(libtest::test_exception);
     void test_block_permute_kernel_3d_021() throw(libtest::test_exception);
+
+    /*
+     * block_contract_kernel tests
+     */
+    void test_block_contract2_kernel_2d_not_enough_indices() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_strided_output() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_oob_indices() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_not_matching_indices() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_wrong_dim_order() throw(libtest::test_exception);
+
+    void test_block_contract2_kernel_2d_ip_pj() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_ip_jp() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_pi_pj() throw(libtest::test_exception);
+    void test_block_contract2_kernel_2d_pi_jp() throw(libtest::test_exception);
+
+    void test_block_contract2_kernel_3d_2d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
