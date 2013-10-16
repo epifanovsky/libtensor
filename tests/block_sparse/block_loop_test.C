@@ -20,6 +20,9 @@ void block_loop_test::perform() throw(libtest::test_exception) {
 
     test_run_block_permute_kernel_2d();
     test_run_block_permute_kernel_3d_201();
+
+    test_run_block_contract2_kernel_2d_2d();
+    test_run_block_contract2_kernel_3d_2d();
 }
 
 void block_loop_test::test_range() throw(libtest::test_exception)
@@ -103,7 +106,7 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
 
 
     sequence<1,double*> output_ptrs(test_output_arr); 
-    sequence<1,double*> input_ptrs(test_input_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
 
     //Here, one of the bispaces should be transposed but is not... this should cause an exception because the bispaces
     //do not line up in the loops
@@ -156,7 +159,7 @@ void block_loop_test::test_run_block_copy_kernel_1d() throw(libtest::test_except
     double test_input_arr[8] = {0,1,2,3,5,6,7};
 
     sequence<1,double*> output_ptrs(test_output_arr); 
-    sequence<1,double*> input_ptrs(test_input_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
 
 
     sequence<1, sparse_bispace_any_order> output_bispaces(spb);
@@ -237,7 +240,7 @@ void block_loop_test::test_run_block_copy_kernel_2d() throw(libtest::test_except
                                 };
 
     sequence<1,double*> output_ptrs(test_output_arr); 
-    sequence<1,double*> input_ptrs(test_input_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
     sequence<1,sparse_bispace_any_order> output_bispaces(two_d);
     sequence<1,sparse_bispace_any_order> input_bispaces(two_d);
 
@@ -340,7 +343,7 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
                         input_ignore_1));
 
     sequence<1,double*> output_ptrs(test_output_arr); 
-    sequence<1,double*> input_ptrs(test_input_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
     sequence<1,sparse_bispace_any_order> output_bispaces(two_d_output);
     sequence<1,sparse_bispace_any_order> input_bispaces(two_d_input);
 
@@ -517,7 +520,7 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
 
 
     sequence<1,double*> output_ptrs(test_output_arr); 
-    sequence<1,double*> input_ptrs(test_input_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
     sequence<1,sparse_bispace_any_order> output_bispaces(three_d_output);
     sequence<1,sparse_bispace_any_order> input_bispaces(three_d_input);
 
@@ -532,6 +535,397 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
         }
     }
 
+}
+
+void block_loop_test::test_run_block_contract2_kernel_2d_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_loop_test::test_run_block_contract2_kernel_2d_2d()";
+
+	//Indices in comments are block indices
+    //dimensions: i = 4,k = 5,j = 6
+    //Contraction takes the form of A * B^t
+    double test_input_arr_1[20] = { //i = 0, k = 0
+                                  1,2,
+                                  6,7,
+
+                                 //i = 0, k = 1
+                                 3,4,5,
+                                 8,9,10,
+
+                                 //i = 1, k = 0
+                                 11,12,
+                                 16,17,
+
+                                 //i = 1, k = 1
+                                 13,14,15,
+                                 18,19,20 };
+
+    double test_input_arr_2[30] = { //j = 0, k = 0 
+                                    1,2,
+                                    3,4,
+
+                                    //j = 0, k = 1 
+                                    5,6,7,
+                                    8,9,10,
+
+                                    //j = 1, k = 0
+                                    11,12,
+                                    13,14,
+                                    15,16,
+                                    17,18,
+
+                                    //j = 1, k = 1
+                                    19,20,21,
+                                    22,23,24,
+                                    25,26,27,
+                                    28,29,30};
+
+    double test_output_arr[24] = {0};
+                                    
+    double correct_output_arr[24] = { //i = 0, j = 0
+                                      79,121,
+                                      184,291,
+
+                                      //i = 0, j = 1
+                                      277,319,361,403,
+                                      692,799,906,1013,
+
+
+									  //i = 1, j = 0
+                                      289,461,
+                                      394,631,
+
+									  //i = 1, j = 1
+                                      1107,1279,1451,1623, 
+                                      1522,1759,1996,2233};
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(4);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(2);
+    spb_i.split(split_points_i);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    spb_k.split(split_points_k);
+    
+    //Bispace for j
+    sparse_bispace<1> spb_j(6);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(2);
+    spb_j.split(split_points_j);
+
+    sparse_bispace<2> A_spb = spb_i | spb_k;
+    sparse_bispace<2> B_spb = spb_j | spb_k;
+    sparse_bispace<2> C_spb = spb_i | spb_j;
+
+
+    //For block_contract2_kernel
+    std::vector< sequence<1,size_t> > output_indices_sets;
+    std::vector< sequence<2,size_t> > input_indices_sets;
+    std::vector< sequence<1,bool> > output_ignore_sets;
+    std::vector< sequence<2,bool> > input_ignore_sets;
+
+
+    std::vector< block_loop<1,2> > loop_list; 
+
+    //i loop
+    sequence<1,size_t> i_output_bispace_indices(0);
+    sequence<2,size_t> i_input_bispace_indices(0); //B ignored
+    sequence<1,bool> i_output_ignore(false);
+    sequence<2,bool> i_input_ignore(false);
+    i_input_ignore[1] = true;
+    loop_list.push_back(block_loop<1,2>(i_output_bispace_indices,
+                                        i_input_bispace_indices,
+                                        i_output_ignore,
+                                        i_input_ignore));
+    output_indices_sets.push_back(i_output_bispace_indices);
+    input_indices_sets.push_back(i_input_bispace_indices);
+    output_ignore_sets.push_back(i_output_ignore);
+    input_ignore_sets.push_back(i_input_ignore);
+
+
+    //j loop
+    sequence<1,size_t> j_output_bispace_indices(1);
+    sequence<2,size_t> j_input_bispace_indices(0); //A ignored
+    sequence<1,bool> j_output_ignore(false);
+    sequence<2,bool> j_input_ignore(true);
+    j_input_ignore[1] = false;
+    loop_list.push_back(block_loop<1,2>(j_output_bispace_indices,
+                                        j_input_bispace_indices,
+                                        j_output_ignore,
+                                        j_input_ignore));
+    output_indices_sets.push_back(j_output_bispace_indices);
+    input_indices_sets.push_back(j_input_bispace_indices);
+    output_ignore_sets.push_back(j_output_ignore);
+    input_ignore_sets.push_back(j_input_ignore);
+
+    //k loop
+    sequence<1,size_t> k_output_bispace_indices; //C ignored
+    sequence<2,size_t> k_input_bispace_indices(1);
+    sequence<1,bool> k_output_ignore(true);
+    sequence<2,bool> k_input_ignore(false);
+    loop_list.push_back(block_loop<1,2>(k_output_bispace_indices,
+                                        k_input_bispace_indices,
+                                        k_output_ignore,
+                                        k_input_ignore));
+    output_indices_sets.push_back(k_output_bispace_indices);
+    input_indices_sets.push_back(k_input_bispace_indices);
+    output_ignore_sets.push_back(k_output_ignore);
+    input_ignore_sets.push_back(k_input_ignore);
+
+    block_contract2_kernel<double> bc2k(output_indices_sets,input_indices_sets,output_ignore_sets,input_ignore_sets);
+
+    sequence<1,double*> output_ptrs(test_output_arr); 
+    sequence<2,const double*> input_ptrs(test_input_arr_1); 
+    input_ptrs[1] = test_input_arr_2;
+    sequence<1,sparse_bispace_any_order> output_bispaces(C_spb);
+    sequence<2,sparse_bispace_any_order> input_bispaces;
+    input_bispaces[0] = A_spb;
+    input_bispaces[1] = B_spb;
+
+    run_loop_list(loop_list,bc2k,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    for(int i = 0; i < 24; ++i)
+    {
+        if(test_output_arr[i] != correct_output_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_loop<M,N,T>::run(...) produced incorrect output");
+        }
+    }
+}
+
+void block_loop_test::test_run_block_contract2_kernel_3d_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_loop_test::test_run_block_contract2_kernel_3d_2d()";
+
+	//Indices in comments are block indices
+    //dimensions: i = 3,j = 4, k = 5,l = 6
+    //Contraction takes the form of A*B
+    double test_input_arr_1[60] = {//i = 0 j = 0 k = 0 (1,2,2)
+                                   1,2,
+                                   3,4,
+
+                                   //i = 0 j = 0 k = 1 (1,2,3)
+                                   5,6,7,
+                                   8,9,10,
+
+                                   //i = 0 j = 1 k = 0 (1,2,2)
+                                   11,12,
+                                   13,14,
+
+                                   //i = 0 j = 1 k = 1 (1,2,3)
+                                   15,16,17,
+                                   18,19,20,
+
+                                   //i = 1 j = 0 k = 0 (2,2,2)
+                                   21,22,
+                                   23,24,
+                                   25,26,
+                                   27,28,
+
+                                   //i = 1 j = 0 k = 1 (2,2,3)
+                                   29,30,31,
+                                   32,33,34,
+                                   35,36,37,
+                                   38,39,40,
+
+                                   //i = 1 j = 1 k = 0 (2,2,2)
+                                   41,42,
+                                   43,44,
+                                   45,46,
+                                   47,48,
+
+
+                                   //i = 1 j = 1 k = 1 (2,2,3)
+                                   49,50,51,
+                                   52,53,54,
+                                   55,56,57,
+                                   58,59,60};
+
+
+    double test_input_arr_2[30] = {//k = 0  l = 0
+                                   1,2,3,
+                                   4,5,6,
+
+                                   //k = 0 l = 1
+                                   7,8,9,
+                                   10,11,12,
+
+                                   //k = 1 l = 0
+                                   13,14,15,
+                                   16,17,18,
+                                   19,20,21,
+
+                                   //k = 1 l = 1
+                                   22,23,24,
+                                   25,26,27,
+                                   28,29,30};
+
+    double correct_output_arr[72] = {//i = 0 j = 0 l = 0 
+                                     303,324,345,
+                                     457,491,525,
+
+                                     //i = 0 j = 0 l = 1
+                                     483,504,525, 
+                                     742,776,810,
+
+                                     //i = 0 j = 1 l = 0 
+                                     833,904,975,
+                                     987,1071,1155,
+
+                                     //i = 0 j = 1 l = 1
+                                     1403,1474,1545,
+                                     1662,1746,1830,
+
+                                     //i = 1 j = 0 l = 0
+                                     1555,1688,1821,
+                                     1709,1855,2001,
+                                     1863,2022,2181,
+                                     2017,2189,2361,
+
+                                     //i = 1 j = 0 l = 1
+                                     2623,2756,2889,
+                                     2882,3028,3174,
+                                     3141,3300,3459,
+                                     3400,3572,3744,
+
+                                     //i = 1 j = 1 l = 0
+                                     2615,2848,3081, 
+                                     2769,3015,3261,
+                                     2923,3182,3441,
+                                     3077,3349,3621,
+
+                                     //i = 1 j = 1 l = 1
+                                     4463,4696,4929,
+                                     4722,4968,5214, 
+                                     4981,5240,5499,
+                                     5240,5512,5784};
+
+
+    double test_output_arr[72] = {0};
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(3);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(1);
+    spb_i.split(split_points_i);
+
+    //Bispace for j 
+    sparse_bispace<1> spb_j(4);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(2);
+    spb_j.split(split_points_j);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    spb_k.split(split_points_k);
+
+    //Bispace for l 
+    sparse_bispace<1> spb_l(6);
+    std::vector<size_t> split_points_l;
+    split_points_l.push_back(3);
+    spb_l.split(split_points_l);
+
+    sparse_bispace<3> A_spb = spb_i | spb_j | spb_k;
+    sparse_bispace<2> B_spb = spb_k | spb_l;
+    sparse_bispace<3> C_spb = spb_i | spb_j | spb_l;
+
+
+    //For block_contract2_kernel
+    std::vector< sequence<1,size_t> > output_indices_sets;
+    std::vector< sequence<2,size_t> > input_indices_sets;
+    std::vector< sequence<1,bool> > output_ignore_sets;
+    std::vector< sequence<2,bool> > input_ignore_sets;
+
+
+    std::vector< block_loop<1,2> > loop_list; 
+
+    //i loop
+    sequence<1,size_t> i_output_bispace_indices(0);
+    sequence<2,size_t> i_input_bispace_indices(0); //B ignored
+    sequence<1,bool> i_output_ignore(false);
+    sequence<2,bool> i_input_ignore(false);
+    i_input_ignore[1] = true;
+    loop_list.push_back(block_loop<1,2>(i_output_bispace_indices,
+                                        i_input_bispace_indices,
+                                        i_output_ignore,
+                                        i_input_ignore));
+    output_indices_sets.push_back(i_output_bispace_indices);
+    input_indices_sets.push_back(i_input_bispace_indices);
+    output_ignore_sets.push_back(i_output_ignore);
+    input_ignore_sets.push_back(i_input_ignore);
+
+
+    //j loop
+    sequence<1,size_t> j_output_bispace_indices(1);
+    sequence<2,size_t> j_input_bispace_indices(1); //B ignored
+    sequence<1,bool> j_output_ignore(false);
+    sequence<2,bool> j_input_ignore(false);
+    j_input_ignore[1] = true;
+    loop_list.push_back(block_loop<1,2>(j_output_bispace_indices,
+                                        j_input_bispace_indices,
+                                        j_output_ignore,
+                                        j_input_ignore));
+    output_indices_sets.push_back(j_output_bispace_indices);
+    input_indices_sets.push_back(j_input_bispace_indices);
+    output_ignore_sets.push_back(j_output_ignore);
+    input_ignore_sets.push_back(j_input_ignore);
+
+    //l loop
+    sequence<1,size_t> l_output_bispace_indices(2);
+    sequence<2,size_t> l_input_bispace_indices(1); //A ignored
+    sequence<1,bool> l_output_ignore(false);
+    sequence<2,bool> l_input_ignore(true);
+    l_input_ignore[1] = false;
+    loop_list.push_back(block_loop<1,2>(l_output_bispace_indices,
+                                        l_input_bispace_indices,
+                                        l_output_ignore,
+                                        l_input_ignore));
+    output_indices_sets.push_back(l_output_bispace_indices);
+    input_indices_sets.push_back(l_input_bispace_indices);
+    output_ignore_sets.push_back(l_output_ignore);
+    input_ignore_sets.push_back(l_input_ignore);
+
+    //k loop
+    sequence<1,size_t> k_output_bispace_indices; //C ignored
+    sequence<2,size_t> k_input_bispace_indices(2);
+    k_input_bispace_indices[1] = 0;
+    sequence<1,bool> k_output_ignore(true);
+    sequence<2,bool> k_input_ignore(false);
+    loop_list.push_back(block_loop<1,2>(k_output_bispace_indices,
+                                        k_input_bispace_indices,
+                                        k_output_ignore,
+                                        k_input_ignore));
+    output_indices_sets.push_back(k_output_bispace_indices);
+    input_indices_sets.push_back(k_input_bispace_indices);
+    output_ignore_sets.push_back(k_output_ignore);
+    input_ignore_sets.push_back(k_input_ignore);
+
+    block_contract2_kernel<double> bc2k(output_indices_sets,input_indices_sets,output_ignore_sets,input_ignore_sets);
+
+    sequence<1,double*> output_ptrs(test_output_arr); 
+    sequence<2,const double*> input_ptrs(test_input_arr_1); 
+    input_ptrs[1] = test_input_arr_2;
+    sequence<1,sparse_bispace_any_order> output_bispaces(C_spb);
+    sequence<2,sparse_bispace_any_order> input_bispaces;
+    input_bispaces[0] = A_spb;
+    input_bispaces[1] = B_spb;
+
+    run_loop_list(loop_list,bc2k,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+
+    for(int i = 0; i < 72; ++i)
+    {
+        if(test_output_arr[i] != correct_output_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_loop<M,N,T>::run(...) produced incorrect output");
+        }
+    }
 }
 
 } // namespace libtensor

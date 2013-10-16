@@ -31,7 +31,7 @@ private:
     
     //Recurses over the loops to perform the contraction
     void _contract_internal(const sequence<1, T*>& output_ptrs, 
-                            const sequence<2, T*>& input_ptrs,
+                            const sequence<2, const T*>& input_ptrs,
                             const sequence<1, dim_list>& output_dims,
                             const sequence<2, dim_list>& input_dims,
                             const size_t level = 0) const;
@@ -58,7 +58,7 @@ public:
                            const std::vector< sequence<2,bool> >& input_ignore);
 
     void operator()(const sequence<1, T*>& output_ptrs, 
-                    const sequence<2, T*>& input_ptrs,
+                    const sequence<2, const T*>& input_ptrs,
                     const sequence<1, dim_list>& output_dims,
                     const sequence<2, dim_list>& input_dims);
 };
@@ -122,7 +122,7 @@ void block_contract2_kernel<T>::_validate_indices(const sequence<1, dim_list>& o
 //Recurses over the loops to perform the contraction
 template<typename T>
 void block_contract2_kernel<T>::_contract_internal(const sequence<1, T*>& output_ptrs, 
-                                                   const sequence<2, T*>& input_ptrs,
+                                                   const sequence<2, const T*>& input_ptrs,
                                                    const sequence<1, dim_list>& output_dims,
                                                    const sequence<2, dim_list>& input_dims,
                                                    const size_t level) const
@@ -166,7 +166,7 @@ void block_contract2_kernel<T>::_contract_internal(const sequence<1, T*>& output
         }
 
         sequence<1,T*> new_output_ptrs(output_ptrs);
-        sequence<2,T*> new_input_ptrs(input_ptrs);
+        sequence<2,const T*> new_input_ptrs(input_ptrs);
         for(size_t i = 0; i < output_dims[0][m_output_indices_sets[level][0]]; ++i)
         {
             _contract_internal(new_output_ptrs,new_input_ptrs,output_dims,input_dims,level+1);
@@ -209,7 +209,7 @@ block_contract2_kernel<T>::block_contract2_kernel(const std::vector< sequence<1,
 
 template<typename T>
 void block_contract2_kernel<T>::operator()(const sequence<1, T*>& output_ptrs, 
-                                           const sequence<2, T*>& input_ptrs,
+                                           const sequence<2, const T*>& input_ptrs,
                                            const sequence<1, dim_list>& output_dims,
                                            const sequence<2, dim_list>& input_dims)
 {

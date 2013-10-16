@@ -12,7 +12,7 @@ template<size_t M,size_t N,typename T = double>
 class block_kernel_i {
 public:
     virtual void operator()(const sequence<M, T*>& output_ptrs, 
-                            const sequence<N, T*>& input_ptrs,
+                            const sequence<N, const T*>& input_ptrs,
                             const sequence<M, dim_list>& output_dims,
                             const sequence<N, dim_list>& input_dims) = 0;
 };

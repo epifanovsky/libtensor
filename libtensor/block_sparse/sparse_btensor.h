@@ -30,7 +30,7 @@ public:
 
     /** \brief Return the sparse_bispace defining this tensor 
      **/
-    sparse_bispace<N> get_bispace() const; 
+    const sparse_bispace<N>& get_bispace() const; 
 
     /** \brief Compares the tensor to another
      *         Two sparse_btensors are equal if they have the same number of elements and all of those elements match
@@ -86,7 +86,7 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
             //from this method being const
             block_load_kernel<T> blk(m_bispace,mem);
             run_loop_list(loop_list,blk,sequence<1,T*>(m_data_ptr),
-                          sequence<0,T*>(),
+                          sequence<0,const T*>(),
                           sequence<1,sparse_bispace_any_order>(m_bispace),
                           sequence<0,sparse_bispace_any_order>());
         }
@@ -100,7 +100,7 @@ sparse_btensor<N,T>::~sparse_btensor()
 }
 
 template<size_t N,typename T>
-sparse_bispace<N> sparse_btensor<N,T>::get_bispace() const
+const sparse_bispace<N>& sparse_btensor<N,T>::get_bispace() const
 {
     return m_bispace;
 }
@@ -155,7 +155,7 @@ std::string sparse_btensor<N,T>::str() const
     block_printer<T> bp;
     run_loop_list(loop_list,bp,
                   sequence<0,T*>(),
-                  sequence<1,T*>(m_data_ptr),
+                  sequence<1,const T*>(m_data_ptr),
                   sequence<0,sparse_bispace_any_order>(),
                   sequence<1,sparse_bispace_any_order>(m_bispace));
     return bp.str();

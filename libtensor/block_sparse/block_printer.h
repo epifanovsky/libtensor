@@ -14,7 +14,7 @@ class block_printer : public block_kernel_i<0,1,T> {
 private:
     std::stringstream m_ss;
     //Used to recursively traverse block to print individual elements
-    void _process_dimension(const dim_list& dims,T* data_ptr,size_t offset = 0,size_t dim_idx = 0);
+    void _process_dimension(const dim_list& dims,const T* data_ptr,size_t offset = 0,size_t dim_idx = 0);
 public:
 
     //Get the string representation of the last block processed
@@ -28,18 +28,18 @@ public:
     block_kernel_i<0,1,T>* clone() const { return (block_kernel_i<0,1,T>*) new block_printer(*this); };  
 
     void operator()(const sequence<0, T*>& output_ptrs, 
-                    const sequence<1, T*>& input_ptrs,
+                    const sequence<1, const T*>& input_ptrs,
                     const sequence<0, dim_list>& output_dims,
                     const sequence<1, dim_list>& input_dims);
 };
 
 template<typename T> 
-void block_printer<T>::_process_dimension(const dim_list& dims,T* data_ptr,size_t offset,size_t dim_idx)
+void block_printer<T>::_process_dimension(const dim_list& dims,const T* data_ptr,size_t offset,size_t dim_idx)
 {
     //Base case
     if(dim_idx == (dims.size() - 1))
     {
-        T* inter_data_ptr = data_ptr + offset;  
+        const T* inter_data_ptr = data_ptr + offset;  
         for(int i = 0; i < dims.back(); ++i)
         {
             m_ss << ' ' << *inter_data_ptr;
@@ -71,7 +71,7 @@ void block_printer<T>::_process_dimension(const dim_list& dims,T* data_ptr,size_
 
 template<typename T>
 void block_printer<T>::operator()(const sequence<0, T*>& output_ptrs, 
-                                  const sequence<1, T*>& input_ptrs,
+                                  const sequence<1, const T*>& input_ptrs,
                                   const sequence<0, dim_list>& output_dims,
                                   const sequence<1, dim_list >& input_dims)
 {

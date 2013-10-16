@@ -54,7 +54,7 @@ void block_kernels_test::test_block_printer_2d() throw(libtest::test_exception)
     sequence<0, dim_list > output_dims;  
     sequence<1, dim_list > input_dims(dims);
     sequence<0, double*> output_ptrs;
-    sequence<1, double*> input_ptrs(test_block_arr);
+    sequence<1, const double*> input_ptrs(test_block_arr);
 
     bp(output_ptrs,input_ptrs,output_dims,input_dims);
     std::string correct_str("---\n 1 2\n 3 4\n");
@@ -85,7 +85,7 @@ void block_kernels_test::test_block_printer_3d() throw(libtest::test_exception)
     sequence<0, dim_list> output_dims;
     sequence<1, dim_list> input_dims(dims);
     sequence<0, double*> output_ptrs;
-    sequence<1, double*> input_ptrs(test_block_arr);
+    sequence<1, const double*> input_ptrs(test_block_arr);
 
 
     bp(output_ptrs,input_ptrs,output_dims,input_dims);
@@ -112,7 +112,7 @@ void block_kernels_test::test_block_copy_kernel_2d() throw(libtest::test_excepti
     dims.push_back(2);
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,double*> input_ptrs(test_input_block);
+    sequence<1,const double*> input_ptrs(test_input_block);
     sequence<1,dim_list> output_dims(dims);
     sequence<1,dim_list> input_dims(dims);
 
@@ -149,7 +149,7 @@ void block_kernels_test::test_block_copy_kernel_3d() throw(libtest::test_excepti
     dims.push_back(2);
     
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,double*> input_ptrs(test_input_block);
+    sequence<1,const double*> input_ptrs(test_input_block);
     sequence<1,dim_list> output_dims(dims);
     sequence<1,dim_list> input_dims(dims);
 
@@ -181,7 +181,7 @@ void block_kernels_test::test_block_equality_kernel_2d_true() throw(libtest::tes
     dims.push_back(2);
 
     sequence<0,double*> output_ptrs;
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<0,dim_list> output_dims;
@@ -213,7 +213,7 @@ void block_kernels_test::test_block_equality_kernel_2d_false() throw(libtest::te
     dims.push_back(2);
 
     sequence<0,double*> output_ptrs;
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<0,dim_list> output_dims;
@@ -281,7 +281,7 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
     dims.push_back(2);
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,double*> input_ptrs(test_input_block);
+    sequence<1,const double*> input_ptrs(test_input_block);
     sequence<1,dim_list> output_dims(dims);
     sequence<1,dim_list> input_dims(dims);
 
@@ -342,7 +342,7 @@ void block_kernels_test::test_block_permute_kernel_2d_invalid_perm_oob() throw(l
     dims.push_back(2);
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,double*> input_ptrs(test_input_block);
+    sequence<1,const double*> input_ptrs(test_input_block);
     sequence<1,dim_list> output_dims;
     sequence<1,dim_list> input_dims(dims);
 
@@ -444,7 +444,7 @@ void block_kernels_test::test_block_permute_kernel_3d_201() throw(libtest::test_
     dims.push_back(3);
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,double*> input_ptrs(test_input_block);
+    sequence<1,const double*> input_ptrs(test_input_block);
     sequence<1,dim_list> output_dims(dims);
     sequence<1,dim_list> input_dims(dims);
 
@@ -524,7 +524,7 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
     dims.push_back(3);
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,double*> input_ptrs(test_input_block);
+    sequence<1,const double*> input_ptrs(test_input_block);
     sequence<1,dim_list> output_dims(dims);
     sequence<1,dim_list> input_dims(dims);
 
@@ -687,7 +687,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(l
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -786,7 +786,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_oob_indices() throw(libt
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -888,7 +888,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_matching_indices() t
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -988,7 +988,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_wrong_dim_order() throw(
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -1098,7 +1098,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ip_pj() throw(libtest::t
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -1203,7 +1203,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ip_jp() throw(libtest::t
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -1310,7 +1310,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_pi_pj() throw(libtest::t
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -1415,7 +1415,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_pi_jp() throw(libtest::t
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);
@@ -1551,7 +1551,7 @@ void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test
 
 
     sequence<1,double*> output_ptrs(test_output_block);
-    sequence<2,double*> input_ptrs(test_input_block_1);
+    sequence<2,const double*> input_ptrs(test_input_block_1);
     input_ptrs[1] = test_input_block_2;
 
     sequence<1, dim_list> output_dims(output_dims_1);

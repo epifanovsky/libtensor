@@ -23,7 +23,7 @@ public:
     block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr);
 
     void operator()(const sequence<1, T*>& output_ptrs, 
-                    const sequence<0, T*>& input_ptrs,
+                    const sequence<0, const T*>& input_ptrs,
                     const sequence<1, dim_list>& output_dims,
                     const sequence<0, dim_list>& input_dims);
 };
@@ -75,7 +75,7 @@ void block_load_kernel<T>::_load(T* output_ptr,const T* input_ptr,const dim_list
 //It is assumed that the blocks will be accessed in lexicographic order
 template<typename T>
 void block_load_kernel<T>::operator()(const sequence<1, T*>& output_ptrs, 
-                                      const sequence<0, T*>& input_ptrs,
+                                      const sequence<0, const T*>& input_ptrs,
                                       const sequence<1, dim_list>& output_dims,
                                       const sequence<0, dim_list>& input_dims)
 {

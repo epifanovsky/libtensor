@@ -12,7 +12,7 @@ public:
     static const char *k_clazz; //!< Class name
 public:
     void operator()(const sequence<1, T*>& output_ptrs, 
-                    const sequence<1, T*>& input_ptrs,
+                    const sequence<1, const T*>& input_ptrs,
                     const sequence<1, dim_list>& output_dims,
                     const sequence<1, dim_list >& input_dims);
 
@@ -20,9 +20,6 @@ public:
     block_copy_kernel() { };
     //Copy constructor
     block_copy_kernel(const block_copy_kernel<T>& rhs) { };
-    
-    //Returns a pointer to a copy of this object
-    block_kernel_i<1,1,T>* clone() const { return (block_kernel_i<1,1,T>*) new block_copy_kernel(*this); };
 };
 
 template<typename T>
@@ -30,7 +27,7 @@ const char *block_copy_kernel<T>::k_clazz = "block_copy_kernel<T>";
 
 template<typename T>
 void block_copy_kernel<T>::operator()(const sequence<1, T*>& output_ptrs, 
-                                      const sequence<1, T*>& input_ptrs,
+                                      const sequence<1, const T*>& input_ptrs,
                                       const sequence<1, dim_list>& output_dims,
                                       const sequence<1, dim_list >& input_dims)
 {

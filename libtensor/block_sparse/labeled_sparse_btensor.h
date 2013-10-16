@@ -2,6 +2,10 @@
 #define LABELED_SPARSE_BTENSOR_H
 
 #include "sparse_btensor.h"
+#include "lazy_eval_functor.h"
+
+//TODO: REMOVE
+#include "contract.h"
 
 
 namespace libtensor
@@ -23,10 +27,39 @@ public:
 
     labeled_sparse_btensor(sparse_btensor<N,T>& tensor,const letter_expr<N>& le) : m_tensor(tensor),m_le(le) { };
 
-    //TODO - could template this later to allow assignment across tensor formats
-    labeled_sparse_btensor<N,T>& operator=(const labeled_sparse_btensor<N,T>& rhs);
-};
+    /** \brief Returns the %letter at a given position
+        \throw out_of_bounds If the %index is out of bounds.
+     **/
+    const letter &letter_at(size_t i) const throw(out_of_bounds) {
+        return m_le.letter_at(i);
+    }
 
+    /** \brief Returns whether the associated expression contains a %letter
+     **/
+    bool contains(const letter &let) const {
+        return m_le.contains(let);
+    }
+
+    /** \brief Returns the %index of a %letter in the expression
+        \throw exception If the expression doesn't contain the %letter.
+     **/
+    size_t index_of(const letter &let) const throw(exception) {
+        return m_le.index_of(let);
+    }
+
+    const T* get_data_ptr() const { return m_tensor.get_data_ptr(); }
+
+    /** \brief Return the sparse_bispace defining this tensor 
+     **/
+    const sparse_bispace<N>& get_bispace() const { return m_tensor.get_bispace(); }; 
+
+    //TODO - could template this later to allow assignment across tensor formats
+    //For permutations
+    labeled_sparse_btensor<N,T>& operator=(const labeled_sparse_btensor<N,T>& rhs);
+
+    //For contractions
+    labeled_sparse_btensor<N,T>& operator=(const lazy_eval_functor<N,T>& functor);
+};
 
 template<size_t N,typename T> 
 labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labeled_sparse_btensor<N,T>& rhs)
@@ -54,7 +87,7 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
     //Deliberately case away the const
     sequence<1,T*> output_ptrs((T*)this->m_tensor.get_data_ptr());
     //TODO: should use const on input ptrs always
-    sequence<1,T*> input_ptrs((T*)rhs.m_tensor.get_data_ptr());
+    sequence<1,const T*> input_ptrs(rhs.m_tensor.get_data_ptr());
 
     const sparse_bispace<N>& spb_1 = this->m_tensor.get_bispace();
     const sparse_bispace<N>& spb_2 = rhs.m_tensor.get_bispace();
@@ -62,6 +95,15 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
     sequence<1, sparse_bispace_any_order> output_bispaces(spb_1);
     sequence<1, sparse_bispace_any_order> input_bispaces(spb_2);
     run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    return *this;
+}
+
+//Used for evaluating contractions, to prevent an unnecessary copy at the end
+template<size_t N,typename T>
+labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const lazy_eval_functor<N,T>& functor)
+{
+    functor(*this);
+    return *this; 
 }
 
 } // namespace libtensor
