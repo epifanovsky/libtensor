@@ -60,7 +60,7 @@ public:
 
     /** \brief Destructor
      **/
-    ~any_tensor();
+    virtual ~any_tensor();
 
     /** \brief Returns the tensor object held inside as a concrete tensor type
      **/

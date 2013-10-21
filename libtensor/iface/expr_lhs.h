@@ -18,6 +18,8 @@ template<size_t N, typename T> class labeled_lhs;
 template<size_t N, typename T>
 class expr_lhs {
 public:
+    virtual ~expr_lhs() = 0;
+
     /** \brief Performs the assignment of the right-hand side to this
             left-hand side of the expression
      **/
