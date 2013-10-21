@@ -176,6 +176,25 @@ inline letter_expr<N + 1> operator|(letter_expr<N> expr1, const letter &l2) {
 }
 
 
+/** \brief Create permutation between two letter_expr
+ **/
+template<size_t N>
+permutation<N> match(const letter_expr<N> &e1, const letter_expr<N> &e2) {
+
+    sequence<N, size_t> seq1(0), seq2(0);
+    for (size_t i = 0; i < N; i++) {
+        const letter &l = e1.letter_at(i);
+        if (! e2.contains(l)) {
+            throw_exc("", "match(const letter_expr<N> &, "
+                    "const letter_expr<N> &e2", "Letter not found.");
+        }
+        seq1[i] = i;
+        seq2[i] = e2.index_of(l);
+    }
+
+    return permutation_builder<N>(seq1, seq2).get_perm();
+}
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_LETTER_EXPR_H
