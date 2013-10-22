@@ -22,6 +22,8 @@ set(SRC
     expr/nary_node_base.C
     iface/tensor_list.C
     iface/btensor/impl/eval_btensor_double.C
+    iface/btensor/impl/eval_btensor_double_contract.C
+    iface/btensor/impl/node_inspector.C
 )
 
 set(SRC_LINALG_ACML
