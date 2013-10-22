@@ -23,6 +23,7 @@ set(SRC
     iface/tensor_list.C
     iface/btensor/impl/eval_btensor_double.C
     iface/btensor/impl/eval_btensor_double_contract.C
+    iface/btensor/impl/eval_btensor_double_copy.C
     iface/btensor/impl/node_inspector.C
 )
 

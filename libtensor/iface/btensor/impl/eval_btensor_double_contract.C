@@ -132,7 +132,8 @@ void eval_contract_impl::dispatch_contract_2<NC, NA>::dispatch() {
 
 
 template<size_t NC>
-void contract::evaluate(const tensor_transf<NC, double> &trc,
+void contract::evaluate(
+    const tensor_transf<NC, double> &trc,
     btensor<NC, double> &btc) {
 
     eval_contract_impl(m_tl, m_node).evaluate(trc, btc);
@@ -143,10 +144,10 @@ void contract::evaluate(const tensor_transf<NC, double> &trc,
 namespace {
 template<size_t N>
 struct aux {
-    contract *c;
-    tensor_transf<N, double> *trc;
-    btensor<N, double> *btc;
-    aux() { c->evaluate(*trc, *btc); }
+    contract *e;
+    tensor_transf<N, double> *tr;
+    btensor<N, double> *bt;
+    aux() { e->evaluate(*tr, *bt); }
 };
 } // unnamed namespace
 template class instantiate_template_1<1, contract::Nmax, aux>;

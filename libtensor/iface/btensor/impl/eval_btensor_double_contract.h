@@ -26,7 +26,8 @@ public:
     { }
 
     template<size_t NC>
-    void evaluate(const tensor_transf<NC, double> &trc,
+    void evaluate(
+        const tensor_transf<NC, double> &trc,
         btensor<NC, double> &btc);
 
 };

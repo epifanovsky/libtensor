@@ -1,6 +1,4 @@
 #include <libtensor/core/tensor_transf_double.h>
-#include <libtensor/block_tensor/btod_contract2.h>
-#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_ident.h>
@@ -9,6 +7,7 @@
 #include "metaprog.h"
 #include "node_inspector.h"
 #include "eval_btensor_double_contract.h"
+#include "eval_btensor_double_copy.h"
 
 namespace libtensor {
 namespace iface {
@@ -64,10 +63,7 @@ void eval_node::evaluate(btensor<N, double> &bt) {
     if(nwt.n.get_op().compare("ident") == 0) {
 
         const node_ident &n = nwt.n.template recast_as<node_ident>();
-        btensor_i<N, double> &bta = m_tl.get_tensor<N, double>(n.get_tid()).
-            template get_tensor< btensor_i<N, double> >();
-        btod_copy<N>(bta, nwt.tr.get_perm(),
-            nwt.tr.get_scalar_tr().get_coeff()).perform(bt);
+        eval_btensor_double::copy(m_tl, n).evaluate(nwt.tr, bt);
 
     } else if(nwt.n.get_op().compare("contract") == 0) {
 
