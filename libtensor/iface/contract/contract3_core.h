@@ -223,12 +223,12 @@ public:
     /** \brief Returns tensor arguments (not valid)
         \param i Argument number.
      **/
-    virtual arg<N1 + N2 + N3, T, tensor_tag> get_tensor_arg(size_t i);
+//    virtual arg<N1 + N2 + N3, T, tensor_tag> get_tensor_arg(size_t i);
 
     /** \brief Returns operation arguments
         \param i Argument number (0 is the only valid value).
      **/
-    virtual arg<N1 + N2 + N3, T, oper_tag> get_oper_arg(size_t i);
+//    virtual arg<N1 + N2 + N3, T, oper_tag> get_oper_arg(size_t i);
 
 };
 
@@ -394,32 +394,32 @@ void contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::clean() {
 }
 
 
-template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
-    typename T>
-arg<N1 + N2 + N3, T, tensor_tag>
-contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::get_tensor_arg(size_t i) {
-
-    static const char method[] = "get_tensor_arg(size_t)";
-
-    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-        "Invalid method.");
-}
-
-
-template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
-    typename T>
-arg<N1 + N2 + N3, T, oper_tag>
-contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::get_oper_arg(size_t i) {
-
-    static const char method[] = "get_oper_arg(size_t)";
-
-    if(i != 0) {
-        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Argument index is out of bounds.");
-    }
-
-//    return m_func.get_arg();
-}
+//template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
+//    typename T>
+//arg<N1 + N2 + N3, T, tensor_tag>
+//contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::get_tensor_arg(size_t i) {
+//
+//    static const char method[] = "get_tensor_arg(size_t)";
+//
+//    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+//        "Invalid method.");
+//}
+//
+//
+//template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
+//    typename T>
+//arg<N1 + N2 + N3, T, oper_tag>
+//contract3_eval<N1, N2, N3, K1, K2a, K2b, T>::get_oper_arg(size_t i) {
+//
+//    static const char method[] = "get_oper_arg(size_t)";
+//
+//    if(i != 0) {
+//        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+//            "Argument index is out of bounds.");
+//    }
+//
+////    return m_func.get_arg();
+//}
 
 
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2a, size_t K2b,
@@ -432,60 +432,60 @@ contract3_core<N1, N2, N3, K1, K2a, K2b, T>::create_container(
 }
 
 
-template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T,
-    size_t KK>
-struct contract3_core_dispatch {
+//template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T,
+//    size_t KK>
+//struct contract3_core_dispatch {
+//
+//    static expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> dispatch(
+//        const letter_expr<K1> contr1,
+//        expr<N1, T> bta,
+//        expr<N2, T> btb,
+//        const letter_expr<K2> contr2,
+//        expr<N3, T> btc) {
+//
+//        size_t kk = 0;
+//        for(size_t i = 0; i < K2; i++) {
+//            if(bta.get_core().contains(contr2.letter_at(i))) kk++;
+//        }
+//        if(kk == KK) {
+//            enum {
+//                K2a = KK,
+//                K2b = K2 - KK,
+//                M1 = N1 - K1 - K2a,
+//                M2 = N2 - K1 - K2b,
+//                M3 = N3 - K2
+//            };
+//            return expr<M1 + M2 + M3, T>(
+//                contract3_core<M1, M2, M3, K1, K2a, K2b, T>(
+//                    contr1, contr2, bta, btb, btc));
+//        } else {
+//            return contract3_core_dispatch<N1, N2, N3, K1, K2, T, KK - 1>::
+//                dispatch(contr1, bta, btb, contr2, btc);
+//        }
+//    }
+//};
 
-    static expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> dispatch(
-        const letter_expr<K1> contr1,
-        expr<N1, T> bta,
-        expr<N2, T> btb,
-        const letter_expr<K2> contr2,
-        expr<N3, T> btc) {
 
-        size_t kk = 0;
-        for(size_t i = 0; i < K2; i++) {
-            if(bta.get_core().contains(contr2.letter_at(i))) kk++;
-        }
-        if(kk == KK) {
-            enum {
-                K2a = KK,
-                K2b = K2 - KK,
-                M1 = N1 - K1 - K2a,
-                M2 = N2 - K1 - K2b,
-                M3 = N3 - K2
-            };
-            return expr<M1 + M2 + M3, T>(
-                contract3_core<M1, M2, M3, K1, K2a, K2b, T>(
-                    contr1, contr2, bta, btb, btc));
-        } else {
-            return contract3_core_dispatch<N1, N2, N3, K1, K2, T, KK - 1>::
-                dispatch(contr1, bta, btb, contr2, btc);
-        }
-    }
-};
-
-
-template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
-struct contract3_core_dispatch<N1, N2, N3, K1, K2, T, 0> {
-
-    static expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> dispatch(
-        const letter_expr<K1> contr1,
-        expr<N1, T> bta,
-        expr<N2, T> btb,
-        const letter_expr<K2> contr2,
-        expr<N3, T> btc) {
-
-        enum {
-            M1 = N1 - K1,
-            M2 = N2 - K1 - K2,
-            M3 = N3 - K2
-        };
-        return expr<M1 + M2 + M3, T>(
-            contract3_core<M1, M2, M3, K1, 0, K2, T>(
-                contr1, contr2, bta, btb, btc));
-    }
-};
+//template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
+//struct contract3_core_dispatch<N1, N2, N3, K1, K2, T, 0> {
+//
+//    static expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> dispatch(
+//        const letter_expr<K1> contr1,
+//        expr<N1, T> bta,
+//        expr<N2, T> btb,
+//        const letter_expr<K2> contr2,
+//        expr<N3, T> btc) {
+//
+//        enum {
+//            M1 = N1 - K1,
+//            M2 = N2 - K1 - K2,
+//            M3 = N3 - K2
+//        };
+//        return expr<M1 + M2 + M3, T>(
+//            contract3_core<M1, M2, M3, K1, 0, K2, T>(
+//                contr1, contr2, bta, btb, btc));
+//    }
+//};
 
 
 } // namespace labeled_btensor_expr
