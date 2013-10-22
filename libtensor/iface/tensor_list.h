@@ -17,6 +17,7 @@ private:
     class tensor_holder_base {
     public:
         virtual ~tensor_holder_base() { }
+        virtual tensor_holder_base *clone() const = 0;
         virtual size_t get_n() const = 0;
         virtual const std::type_info &get_t() const = 0;
     };
@@ -28,6 +29,9 @@ private:
     public:
         tensor_holder(any_tensor<N, T> &t) : m_t(t) { }
         virtual ~tensor_holder() { }
+        virtual tensor_holder_base *clone() const {
+            return new tensor_holder<N, T>(*this);
+        }
         virtual size_t get_n() const { return N; }
         virtual const std::type_info &get_t() const { return typeid(T); }
         any_tensor<N, T> &get_tensor() const { return m_t; }
@@ -38,6 +42,20 @@ private:
     std::vector<tensor_holder_base*> m_lst; //!< List of tensors
 
 public:
+    /** \brief Default constructor
+     **/
+    tensor_list();
+
+    /** \brief Copy constructor
+        \param tl Another tensor list.
+     **/
+    tensor_list(const tensor_list &tl);
+
+    /** \brief Data transferring constructor
+        \param tl Another tensor list, which will lose its data.
+     **/
+    tensor_list(tensor_list &tl, int);
+
     /** \brief Destructor
      **/
     ~tensor_list();

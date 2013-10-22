@@ -1,7 +1,28 @@
+#include <algorithm>
 #include "tensor_list.h"
 
 namespace libtensor {
 namespace iface {
+
+
+tensor_list::tensor_list() {
+
+}
+
+
+tensor_list::tensor_list(const tensor_list &tl) {
+
+    m_lst.reserve(tl.m_lst.size());
+    for(size_t i = 0; i < tl.m_lst.size(); i++) {
+        m_lst.push_back(tl.m_lst[i]->clone());
+    }
+}
+
+
+tensor_list::tensor_list(tensor_list &tl, int) {
+
+    std::swap(tl.m_lst, m_lst);
+}
 
 
 tensor_list::~tensor_list() {

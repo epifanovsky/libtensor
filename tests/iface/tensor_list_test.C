@@ -12,6 +12,8 @@ void tensor_list_test::perform() throw(libtest::test_exception) {
     test_1();
     test_2();
     test_3();
+    test_4();
+    test_5();
 }
 
 
@@ -42,20 +44,20 @@ void tensor_list_test::test_1() {
     any_tensor<1, int> tt1(ti);
     any_tensor<2, double> tt2(ti);
 
-    iface::tensor_list lst;
-    unsigned tid1 = lst.get_tensor_id(tt1);
-    unsigned tid2 = lst.get_tensor_id(tt2);
+    iface::tensor_list tl;
+    unsigned tid1 = tl.get_tensor_id(tt1);
+    unsigned tid2 = tl.get_tensor_id(tt2);
 
-    if(lst.get_tensor_order(tid1) != 1) {
+    if(tl.get_tensor_order(tid1) != 1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
     }
-    if(lst.get_tensor_type(tid1) != typeid(int)) {
+    if(tl.get_tensor_type(tid1) != typeid(int)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
     }
-    if(lst.get_tensor_order(tid2) != 2) {
+    if(tl.get_tensor_order(tid2) != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
     }
-    if(lst.get_tensor_type(tid2) != typeid(double)) {
+    if(tl.get_tensor_type(tid2) != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
     }
 
@@ -82,27 +84,27 @@ void tensor_list_test::test_2() {
     any_tensor<1, double> &at1 = bt1;
     any_tensor<2, double> &at2 = bt2;
 
-    iface::tensor_list lst;
-    unsigned tid1 = lst.get_tensor_id(at1);
-    unsigned tid2 = lst.get_tensor_id(at2);
+    iface::tensor_list tl;
+    unsigned tid1 = tl.get_tensor_id(at1);
+    unsigned tid2 = tl.get_tensor_id(at2);
 
-    if(lst.get_tensor_order(tid1) != 1) {
+    if(tl.get_tensor_order(tid1) != 1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
     }
-    if(lst.get_tensor_type(tid1) != typeid(double)) {
+    if(tl.get_tensor_type(tid1) != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
     }
-    if(lst.get_tensor_order(tid2) != 2) {
+    if(tl.get_tensor_order(tid2) != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
     }
-    if(lst.get_tensor_type(tid2) != typeid(double)) {
+    if(tl.get_tensor_type(tid2) != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
     }
 
-    if(lst.get_tensor_id(bt1) != tid1) {
+    if(tl.get_tensor_id(bt1) != tid1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (1).");
     }
-    if(lst.get_tensor_id(bt2) != tid2) {
+    if(tl.get_tensor_id(bt2) != tid2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (2).");
     }
 
@@ -129,29 +131,91 @@ void tensor_list_test::test_3() {
     any_tensor<1, double> &at1 = bt1;
     any_tensor<2, double> &at2 = bt2;
 
-    iface::tensor_list lst;
-    unsigned tid1 = lst.get_tensor_id(bt1);
-    unsigned tid2 = lst.get_tensor_id(bt2);
+    iface::tensor_list tl;
+    unsigned tid1 = tl.get_tensor_id(bt1);
+    unsigned tid2 = tl.get_tensor_id(bt2);
 
-    if(lst.get_tensor_order(tid1) != 1) {
+    if(tl.get_tensor_order(tid1) != 1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
     }
-    if(lst.get_tensor_type(tid1) != typeid(double)) {
+    if(tl.get_tensor_type(tid1) != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
     }
-    if(lst.get_tensor_order(tid2) != 2) {
+    if(tl.get_tensor_order(tid2) != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
     }
-    if(lst.get_tensor_type(tid2) != typeid(double)) {
+    if(tl.get_tensor_type(tid2) != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
     }
 
-    if(lst.get_tensor_id(at1) != tid1) {
+    if(tl.get_tensor_id(at1) != tid1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (1).");
     }
-    if(lst.get_tensor_id(at2) != tid2) {
+    if(tl.get_tensor_id(at2) != tid2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor id (2).");
     }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    } catch(std::exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void tensor_list_test::test_4() {
+
+    static const char testname[] = "tensor_list_test::test_4()";
+
+    try {
+
+    tensor t;
+    tensor_i &ti = t;
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
+
+    iface::tensor_list *tl1 = new iface::tensor_list;
+    unsigned tid1 = tl1->get_tensor_id(tt1);
+    unsigned tid2 = tl1->get_tensor_id(tt2);
+
+    iface::tensor_list *tl2 = new iface::tensor_list(*tl1);
+    delete tl1; tl1 = 0;
+
+    any_tensor<1, int> &tt1a = tl2->get_tensor<1, int>(tid1);
+    any_tensor<2, double> &tt2a = tl2->get_tensor<2, double>(tid2);
+
+    delete tl2; tl2 = 0;
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    } catch(std::exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void tensor_list_test::test_5() {
+
+    static const char testname[] = "tensor_list_test::test_5()";
+
+    try {
+
+    tensor t;
+    tensor_i &ti = t;
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
+
+    iface::tensor_list *tl1 = new iface::tensor_list;
+    unsigned tid1 = tl1->get_tensor_id(tt1);
+    unsigned tid2 = tl1->get_tensor_id(tt2);
+
+    iface::tensor_list *tl2 = new iface::tensor_list(*tl1, 1);
+    delete tl1; tl1 = 0;
+
+    any_tensor<1, int> &tt1a = tl2->get_tensor<1, int>(tid1);
+    any_tensor<2, double> &tt2a = tl2->get_tensor<2, double>(tid2);
+
+    delete tl2; tl2 = 0;
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
