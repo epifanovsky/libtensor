@@ -11,7 +11,7 @@
 //TODO REMOVE:
 #include <iostream>
 
-namespace libtensor { 
+namespace libtensor {
 
 typedef std::vector<size_t> block_list;
 typedef std::pair<size_t,size_t> tile_size_pair;

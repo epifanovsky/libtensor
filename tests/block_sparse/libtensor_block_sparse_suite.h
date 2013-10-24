@@ -2,10 +2,11 @@
 #define LIBTENSOR_LIBTENSOR_SPARSE_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "sparse_block_tree_test.h"
 #include "sparse_bispace_test.h"
-#include "sparse_btensor_test.h"
 #include "block_kernels_test.h"
 #include "block_loop_test.h"
+#include "sparse_btensor_test.h"
 
 using libtest::unit_test_factory;
 
@@ -25,6 +26,7 @@ namespace libtensor {
 **/
 class libtensor_sparse_suite : public libtest::test_suite {
 private:
+    unit_test_factory<sparse_block_tree_test> m_utf_sparse_block_tree;
     unit_test_factory<sparse_bispace_test> m_utf_sparse_bispace;
     unit_test_factory<sparse_btensor_test> m_utf_sparse_btensor;
     unit_test_factory<block_kernels_test> m_utf_block_kernels;

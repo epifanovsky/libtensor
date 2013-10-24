@@ -42,7 +42,7 @@ public:
     sequence(const T &t = T()) {
         for(size_t i = 0; i < N; i++) m_seq[i] = t;
     }
-
+    
     /** \brief Copy constructor
         \param seq Another sequence.
      **/

@@ -3,10 +3,6 @@
 #include <sstream>
 #include "block_loop_test.h" 
 
-//TODO REMOVE
-#include <iostream> 
-
-
 namespace libtensor {
 
 void block_loop_test::perform() throw(libtest::test_exception) {

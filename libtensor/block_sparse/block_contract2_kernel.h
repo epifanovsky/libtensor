@@ -4,11 +4,6 @@
 #include "../linalg/linalg.h"
 #include "block_kernel_i.h"
 
-
-//TODO: REMOVE
-#include <mkl.h>
-#include <iostream>
-
 namespace libtensor {
 template<typename T>
 

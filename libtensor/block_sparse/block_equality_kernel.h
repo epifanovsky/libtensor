@@ -81,7 +81,7 @@ void block_equality_kernel<T>::operator()(const sequence<0, T*>& output_ptrs,
 }
 
 template<typename T>
-bool block_equality_kernel<T>::equal() const
+bool block_equality_kernel<T>::equal() const throw(bad_parameter)
 {
     if(!m_run_once)
     {
