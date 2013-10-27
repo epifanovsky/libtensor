@@ -1,8 +1,9 @@
 #ifndef LIBTENSOR_IFACE_ADD_OPERATOR_H
 #define LIBTENSOR_IFACE_ADD_OPERATOR_H
 
-#include "../expr_core/add_core.h"
-#include "../expr_core/scale_core.h"
+#include <libtensor/core/scalar_transform.h>
+#include <libtensor/expr/node_add.h>
+#include <libtensor/expr/node_transform.h>
 
 namespace libtensor {
 namespace iface {
@@ -14,12 +15,28 @@ namespace iface {
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> operator+(
-    expr_rhs<N, T> lhs,
-    expr_rhs<N, T> rhs) {
+    const expr_rhs<N, T> &lhs,
+    const expr_rhs<N, T> &rhs) {
 
-    expr_core_ptr<N, T> core(new add_core<N, T>(lhs.get_core(),
-            rhs.get_core(), match(lhs.get_label(), rhs.get_label())));
-    return expr_rhs<N, T>(core, lhs.get_label());
+    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
+    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    if (px.is_identity()) {
+        return expr_rhs<N, T>(expr_tree(expr::node_add(le.get_nodes(),
+                re.get_nodes()), tl), lhs.get_label());
+    }
+    else {
+        std::vector<size_t> perm(N);
+        for (size_t i = 0; i < N; i++) perm[i] = px[i];
+
+       return expr_rhs<N, T>(expr_tree(expr::node_add(le.get_nodes(),
+               node_transform<T>(re.get_nodes(), perm, scalar_transf<T>())), tl),
+               lhs.get_label());
+    }
+
 }
 
 
@@ -32,8 +49,18 @@ expr_rhs<N, T> operator-(
     expr_rhs<N, T> lhs,
     expr_rhs<N, T> rhs) {
 
-    expr_core_ptr<N, T> core(new scale_core<N, T>(T(-1), rhs.get_core()));
-    return lhs + expr_rhs<N, T>(core, rhs.get_label());
+    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
+    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    std::vector<size_t> perm(N);
+    for (size_t i = 0; i < N; i++) perm[i] = px[i];
+
+    return expr_rhs<N, T>(expr_tree(expr::node_add(le.get_nodes(),
+            node_transform<T>(re.get_nodes(), perm, scalar_transf<T>(-1))), tl),
+            lhs.get_label());
 }
 
 

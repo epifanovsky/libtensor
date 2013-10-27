@@ -2,7 +2,7 @@
 #include <libtensor/iface/btensor.h>
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_ident.h>
-#include <libtensor/expr/node_transform_double.h>
+#include <libtensor/expr/node_transform.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
 #include "node_inspector.h"

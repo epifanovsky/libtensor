@@ -69,8 +69,8 @@ double dot_product(
  **/
 template<size_t N, typename T>
 double dot_product(
-    expr_rhs<N, T> expr1,
-    expr_rhs<N, T> expr2) {
+    expr_rhs<N, T> lhs,
+    expr_rhs<N, T> rhs) {
 
     std::vector<const letter*> v;
     for(size_t i = 0; i < N; i++) v.push_back(&expr1.letter_at(i));

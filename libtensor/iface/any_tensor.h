@@ -3,11 +3,14 @@
 
 #include <cstddef> // for size_t
 #include <typeinfo>
-#include "expr_rhs.h"
+#include "letter_expr.h"
 
 namespace libtensor {
 namespace iface {
 
+
+template<size_t N, typename T>
+class expr_rhs;
 
 /** \brief Any tensor type
     \tparam N Tensor order.

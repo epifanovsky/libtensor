@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
 #define LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
 
-#include "../expr_core/dirsum_core.h"
+#include <libtensor/expr/node_dirsum.h>
 
 namespace libtensor {
 namespace iface {
@@ -27,9 +27,12 @@ expr_rhs<N + M, T> dirsum(
         label[j] = btb.letter_at(i);
     }
 
-    return expr_rhs<N + M, T>(
-            new dirsum_core<N, M, T>(bta.get_core(), btb.get_core()),
-            letter_expr<N + M>(label));
+    const expr_tree &le = bta.get_expr(), &re = btb.get_expr();
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
+    return expr_rhs<N + M, T>(expr_tree(expr::node_dirsum(le.get_nodes(),
+            re.get_nodes()), tl), letter_expr<N + M>(label));
 }
 
 

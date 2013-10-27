@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_MULT_OPERATOR_H
 #define LIBTENSOR_IFACE_MULT_OPERATOR_H
 
-#include "../expr_core/mult_core.h"
+#include <libtensor/expr/node_mult.h>
 
 namespace libtensor {
 namespace iface {
@@ -13,10 +13,27 @@ namespace iface {
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> mult(
-    expr_rhs<N, T> lhs,
-    expr_rhs<N, T> rhs) {
+    const expr_rhs<N, T> &lhs,
+    const expr_rhs<N, T> &rhs) {
 
-    return expr_rhs<N, T>(new mult_core<N, T>(lhs, rhs, false));
+    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
+    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    if (px.is_identity()) {
+        return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
+                re.get_nodes(), false), tl), lhs.get_label());
+    }
+    else {
+        std::vector<size_t> perm(N);
+        for (size_t i = 0; i < N; i++) perm[i] = px[i];
+
+        return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
+                node_transform<T>(re.get_nodes(), perm, scalar_transf<T>()),
+                false), tl), lhs.get_label());
+    }
+
 }
 
 
@@ -26,10 +43,26 @@ expr_rhs<N, T> mult(
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> div(
-    expr_rhs<N, T> lhs,
-    expr_rhs<N, T> rhs) {
+    const expr_rhs<N, T> &lhs,
+    const expr_rhs<N, T> &rhs) {
 
-    return expr_rhs<N, T>(new mult_core<N, T>(lhs, rhs, true));
+    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
+    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    if (px.is_identity()) {
+        return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
+                re.get_nodes(), true), tl), lhs.get_label());
+    }
+    else {
+        std::vector<size_t> perm(N);
+        for (size_t i = 0; i < N; i++) perm[i] = px[i];
+
+        return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
+                node_transform<T>(re.get_nodes(), perm, scalar_transf<T>()),
+                true), tl), lhs.get_label());
+    }
 }
 
 
@@ -40,15 +73,17 @@ expr_rhs<N, T> div(
 template<size_t N, size_t M, size_t K, typename T>
 expr_rhs<N + M - K, T> ewmult(
     const letter_expr<K> &ewidx,
-    const expr_rhs<N, T> &bta,
-    const expr_rhs<M, T> &btb) {
-
-    typedef ewmult_core<N - K, M - K, K, T> ewmult_core_t;
+    const expr_rhs<N, T> &lhs,
+    const expr_rhs<M, T> &rhs) {
 
     static const char *method = "ewmult(const letter_expr<K> &, "
             "const expr_rhs<N, T> &, const expr_rhs<M, T> &)";
 
-    sequence<2 * K, size_t> ewseq(0);
+    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
+    std::map<size_t, size_t> multmap;
     std::vector<const letter *> label;
     for (size_t i = 0; i < K; i++) {
         const letter &l = ewidx.letter_at(i);
@@ -56,14 +91,11 @@ expr_rhs<N + M - K, T> ewmult(
             throw expr_exception(g_ns, "", method, __FILE__, __LINE__,
                     "Letter not found.");
         }
-
-        ewseq[i] = bta.index_of(l);
-        ewseq[i + K] = btb.index_of(l);
+        multmap[lhs.index_of(l)] = rhs.index_of(l);
     }
 
-    return expr_rhs<N + M - K, T>(
-            new ewmult_core_t(ewseq, bta.get_core(), btb.get_core()),
-            letter_expr<N + M - K>(label));
+    return expr_rhs<N, T>(expr_tree(expr::node_ewmult(le.get_nodes(),
+            re.get_nodes(), multmap), tl), letter_expr<N + M - K>(label));
 }
 
 

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIAG_OPERATOR_H
 #define LIBTENSOR_IFACE_DIAG_OPERATOR_H
 
-#include "diag_core.h"
+#include <libtensor/expr/node_diag.h>
 
 namespace libtensor {
 namespace iface {
@@ -20,12 +20,12 @@ expr_rhs<N - M + 1, T> diag(
     const letter_expr<M> &lab_diag,
     const expr_rhs<N, T> &subexpr) {
 
-    sequence<M, size_t> diag(0);
+    std::vector<size_t> diagdims(M, 0);
     std::vector<const letter *> label;
     for (size_t i = 0, j = 0; i < N; i++) {
         const letter &l = bta.letter_at(i);
         if (l == let_diag || ! lab_diag.contains(l)) label.push_back(&l);
-        else diag[lab_diag.index_of(l)] = i;
+        else diagdims[lab_diag.index_of(l)] = i;
     }
     if (label.size() != N - M + 1) {
         throw expr_exception(g_ns, "", "diag(const letter &, "
@@ -33,9 +33,9 @@ expr_rhs<N - M + 1, T> diag(
                 __FILE__, __LINE__, "Error in letters");
     }
 
-    expr_core_ptr<N - M + 1, T> core(
-            new diag_core<N, M, T>(diag, subexpr.get_core()));
-    return expr_rhs<N - M + 1, T>(core, letter_expr<N - M + 1>(label));
+    const expr_tree &ex = subexpr.get_expr();
+    return expr_rhs<N - M + 1, T>(expr_tree(expr::node_diag(ex.get_nodes(),
+            diagdims), ex.get_tensors()), letter_expr<N - M + 1>(label));
 }
 
 

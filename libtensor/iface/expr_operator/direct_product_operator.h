@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIRECT_PRODUCT_OPERATOR_H
 #define LIBTENSOR_IFACE_DIRECT_PRODUCT_OPERATOR_H
 
-#include "../expr_core/direct_product_core.h"
+#include <libtensor/expr/node_dirprod.h>
 
 namespace libtensor {
 namespace iface {
@@ -19,6 +19,10 @@ expr_rhs<N + M, T> operator*(
     const expr_rhs<N, T> &bta,
     const expr_rhs<M, T> &btb) {
 
+    const expr_tree &le = bta.get_expr(), &re = btb.get_expr();
+    tensor_list tl(le.get_tensors());
+    tl.merge(re.get_tensors());
+
     std::vector<const letter *> label(N + M);
     for (size_t i = 0; i < N; i++) {
         label[i] = bta.letter_at(i);
@@ -27,9 +31,8 @@ expr_rhs<N + M, T> operator*(
         label[j] = btb.letter_at(i);
     }
 
-    return expr_rhs<N + M, T>(
-            new direct_product_core<N, M, T>(bta.get_core(), btb.get_core()),
-            letter_expr<N + M>(label));
+    return expr_rhs<N + M, T>(expr_tree(expr::node_dirprod(le.get_nodes(),
+            re.get_nodes()), tl), letter_expr<N + M>(label));
 }
 
 

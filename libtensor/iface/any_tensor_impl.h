@@ -2,17 +2,19 @@
 #define LIBTENSOR_IFACE_ANY_TENSOR_IMPL_H
 
 #include "any_tensor.h"
-#include "ident/ident_core.h"
+#include "expr_rhs.h"
+#include <libtensor/expr/node_ident.h>
 
 namespace libtensor {
 namespace iface {
-using libtensor::labeled_btensor_expr::ident_core;
 
 
 template<size_t N, typename T>
 expr_rhs<N, T> any_tensor<N, T>::make_rhs(const letter_expr<N> &label) {
 
-    return expr_rhs<N, T>(new ident_core<N, T>(*this, label));
+    tensor_list tl;
+    size_t tid = tl.get_tensor_id(*this);
+    return expr_rhs<N, T>(expr_tree(expr::node_ident(tid), tl), label);
 }
 
 

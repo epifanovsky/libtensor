@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_IFACE_EXPR_H
-#define LIBTENSOR_IFACE_EXPR_H
+#ifndef LIBTENSOR_IFACE_EXPR_TREE_H
+#define LIBTENSOR_IFACE_EXPR_TREE_H
 
 #include <libtensor/expr/node.h>
 #include "tensor_list.h"
@@ -12,8 +12,7 @@ namespace iface {
 
     \ingroup libtensor_iface
  **/
-template<size_t N, typename T>
-class expr {
+class expr_tree {
 private:
     expr::node *m_root; //!< Root node
     tensor_list m_tl; //!< List of tensors
@@ -22,26 +21,41 @@ public:
     /** \brief Constructs an expression using the root node and a database of
             tensors
      **/
-    expr(const expr::node &root, tensor_list &tl) :
+    expr_tree(const expr::node &root, tensor_list &tl) :
         m_root(root.clone()), m_tl(tl, 1)
     { }
 
     /** \brief Copy constructor
      **/
-    expr(const expr &e) :
+    expr_tree(const expr_tree &e) :
         m_root(e.m_root->clone()), m_tl(e.m_tl)
     { }
 
     /** \brief Destructor
      **/
-    ~expr() {
+    ~expr_tree() {
         delete m_root;
     }
 
+    libtensor::expr::node &get_nodes() {
+        return *m_root;
+    }
+
+    const libtensor::expr::node &get_nodes() const {
+        return *m_root;
+    }
+
+    tensor_list &get_tensors() {
+        return m_tl;
+    }
+
+    const tensor_list &get_tensors() const {
+        return m_tl;
+    }
 };
 
 
 } // namespace iface
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_EXPR_H
+#endif // LIBTENSOR_IFACE_EXPR_TREE_H

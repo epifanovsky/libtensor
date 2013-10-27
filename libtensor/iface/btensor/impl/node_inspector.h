@@ -5,7 +5,7 @@
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/expr/node.h>
 #include <libtensor/expr/node_ident.h>
-#include <libtensor/expr/node_transform_double.h>
+#include <libtensor/expr/node_transform.h>
 
 namespace libtensor {
 namespace iface {
@@ -38,7 +38,7 @@ public:
 private:
     template<size_t N>
     tensor_transf<N, double> get_tensor_transf(
-        const node_transform_double &n) const;
+        const node_transform<double> &n) const;
 
 };
 
@@ -52,7 +52,8 @@ node_with_transf<N> node_inspector::gather_transf() const {
         if(nb.get_type() != typeid(double)) {
             throw "Bad type";
         }
-        const node_transform_double &n = nb.recast_as<node_transform_double>();
+        const node_transform<double> &n =
+                nb.recast_as< node_transform<double> >();
 
         node_with_transf<N> nwt =
             node_inspector(n.get_arg()).template gather_transf<N>();
@@ -67,7 +68,7 @@ node_with_transf<N> node_inspector::gather_transf() const {
 
 template<size_t N>
 tensor_transf<N, double> node_inspector::get_tensor_transf(
-    const node_transform_double &n) const {
+    const node_transform<double> &n) const {
 
     const std::vector<size_t> &p = n.get_perm();
     if(p.size() != N) {

@@ -19,12 +19,16 @@ class expr_tensor :
     public any_tensor<N, T>, public expr_lhs<N, T>, public noncopyable {
 
 private:
-    std::auto_ptr< expr_core_i<N, T> > m_expr; //!< Expression
+    expr_tree *m_expr; //!< Expression
 
 public:
     /** \brief Constructs an empty object
      **/
     expr_tensor() { }
+
+    /** \brief Virtual destructor
+     **/
+    virtual ~expr_tensor() { }
 
     /** \brief Attaches a letter label to expr_tensor
      **/

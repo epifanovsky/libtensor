@@ -1,90 +1,13 @@
-#ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
-#define LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
+#ifndef LIBTENSOR_IFACE_EXPR_RHS_H
+#define LIBTENSOR_IFACE_EXPR_RHS_H
 
-#include <libtensor/exception.h>
 #include <libtensor/core/noncopyable.h>
-//#include "expr/arg.h"
+#include "expr_tree.h"
 #include "letter_expr.h"
 
 
 namespace libtensor {
 namespace iface {
-
-
-/** \brief Evaluation container base class
-
-    \ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T>
-class eval_container_i {
-public:
-    /** \brief Virtual destructor
-     **/
-    virtual ~eval_container_i() { }
-
-    /** \brief Prepares the container
-     **/
-    virtual void prepare() = 0;
-
-    /** \brief Cleans up the container
-     **/
-    virtual void clean() = 0;
-
-    /** \brief Returns the number of tensors in expression
-     **/
-    virtual size_t get_ntensor() const = 0;
-
-    /** \brief Returns the number of tensor operations in expression
-     **/
-    virtual size_t get_noper() const = 0;
-
-    /** \brief Returns tensor arguments
-        \param i Argument number.
-     **/
-//    virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i) = 0;
-
-    /** \brief Returns operation arguments
-        \param i Argument number.
-     **/
-//    virtual arg<N, T, oper_tag> get_oper_arg(size_t i) = 0;
-
-};
-
-
-/** \brief Expression core base class
-
-    \ingroup libtensor_btensor_expr
- **/
-template<size_t N, typename T>
-class expr_core_i {
-public:
-    /** \brief Virtual destructor
-     **/
-    virtual ~expr_core_i() { }
-
-//    /** \brief Clones this expression core
-//     **/
-//    virtual expr_core_i<N, T> *clone() const = 0;
-
-    /** \brief Creates an evaluation container using new, caller responsible
-            to call delete
-     **/
-    virtual eval_container_i<N, T> *create_container(
-        const letter_expr<N> &label) const = 0;
-
-    /** \brief Returns whether the label contains a letter
-     **/
-    virtual bool contains(const letter &let) const = 0;
-
-    /** \brief Returns the index of a letter in the label
-     **/
-    virtual size_t index_of(const letter &let) const = 0;
-
-    /** \brief Returns the letter at a given position in the label
-     **/
-    virtual const letter &letter_at(size_t i) const = 0;
-
-};
 
 
 /** \brief Expression meta-wrapper
@@ -105,79 +28,61 @@ public:
 template<size_t N, typename T>
 class expr_rhs : public noncopyable {
 private:
-    struct core_ptr {
-        expr_core_i<N, T> *m_core; //!< Expression core
-        size_t m_ncnt;
-        core_ptr(expr_core_i<N, T> *core) : m_core(core), m_ncnt(1) {
-
-        }
-    };
-    core_ptr *m_expr;
-    expr_core_i<N, T> &m_core;
+    expr_tree m_expr; //!< Expression
+    letter_expr<N> m_label; //!< Letter label
 
 public:
     /** \brief Constructs the expression using a core
      **/
-    expr_rhs(expr_core_i<N, T> *core) :
-        m_expr(new core_ptr(core)), m_core(*m_expr->m_core) {
-
-    }
+    expr_rhs(const expr_tree &expr, const letter_expr<N> &l) :
+        m_expr(expr), m_label(l) { }
 
     /** \brief Copy constructor
      **/
     expr_rhs(const expr_rhs<N, T> &expr) :
-        m_expr(expr.m_expr), m_core(*m_expr->m_core) {
-
-        m_expr->m_ncnt++;
-    }
+        m_expr(expr.m_expr), m_label(expr.m_label) { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~expr_rhs() {
-        if (m_expr != 0) {
-            m_expr->m_ncnt--;
-            if (m_expr->m_ncnt == 0) {
-                delete m_expr->m_core;
-                delete m_expr;
-            }
-            m_expr = 0;
-        }
-    }
+    virtual ~expr_rhs() { }
 
     /** \brief Returns the core of the expression
      **/
-    expr_core_i<N, T> &get_core() {
-        return m_core;
+    expr_tree &get_expr() {
+        return m_expr;
     }
 
     /** \brief Returns the core of the expression (const version)
      **/
-    const expr_core_i<N, T> &get_core() const {
-        return m_core;
+    const expr_tree &get_expr() const {
+        return m_expr;
+    }
+
+    const letter_expr<N> &get_label() const {
+        return m_label;
     }
 
     /** \brief Returns whether the label contains a letter
      **/
     bool contains(const letter &let) const {
-        return m_core.contains(let);
+        return m_label.contains(let);
     }
 
     /** \brief Returns the %index of a %letter in the label
      **/
     size_t index_of(const letter &let) const {
-        return m_core.index_of(let);
+        return m_label.index_of(let);
     }
 
     /** \brief Returns the %letter at a given position in the label
      **/
     const letter &letter_at(size_t i) const {
-        return m_core.letter_at(i);
+        return m_label.letter_at(i);
     }
-
 };
 
 
 } // namespace iface
 } // namespace libtensor
 
-#endif // LIBTENSOR_LABELED_BTENSOR_EXPR_EXPR_H
+#endif // LIBTENSOR_IFACE_EXPR_RHS_H
