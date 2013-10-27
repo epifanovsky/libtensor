@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_TENSOR_LIST_H
 #define LIBTENSOR_IFACE_TENSOR_LIST_H
 
-#include <vector>
+#include <map>
 #include "any_tensor.h"
 
 namespace libtensor {
@@ -20,6 +20,7 @@ private:
         virtual tensor_holder_base *clone() const = 0;
         virtual size_t get_n() const = 0;
         virtual const std::type_info &get_t() const = 0;
+        virtual size_t get_tuid() const = 0;
     };
 
     template<size_t N, typename T>
@@ -34,12 +35,14 @@ private:
         }
         virtual size_t get_n() const { return N; }
         virtual const std::type_info &get_t() const { return typeid(T); }
+        virtual size_t get_tuid() const { return (size_t) &m_t; }
         any_tensor<N, T> &get_tensor() const { return m_t; }
         bool tensor_equals(any_tensor<N, T> &other) { return &m_t == &other; }
     };
 
+    typedef std::map<size_t, tensor_holder_base *> map_t;
 private:
-    std::vector<tensor_holder_base*> m_lst; //!< List of tensors
+    map_t m_lst; //!< List of tensors
 
 public:
     /** \brief Default constructor
@@ -64,68 +67,67 @@ public:
             the ID of an existing tensor
      **/
     template<size_t N, typename T>
-    unsigned get_tensor_id(any_tensor<N, T> &t);
+    size_t get_tensor_id(any_tensor<N, T> &t);
+
+    /** \brief Merge other tensor list into this one.
+     **/
+    void merge(const tensor_list &tl);
 
     /** \brief Returns the order of a tensor by previously assigned ID
      **/
-    size_t get_tensor_order(unsigned tid) const;
+    size_t get_tensor_order(size_t tid) const;
 
     /** \brief Returns the element type of a tensor by previously assigned ID
      **/
-    const std::type_info &get_tensor_type(unsigned tid) const;
+    const std::type_info &get_tensor_type(size_t tid) const;
 
     /** \brief Returns tensor by previously assigned ID
      **/
     template<size_t N, typename T>
-    any_tensor<N, T> &get_tensor(unsigned tid) const;
+    any_tensor<N, T> &get_tensor(size_t tid) const;
 
 private:
     template<size_t N, typename T>
-    bool check_type(unsigned tid) const;
+    bool check_type(map_t::const_iterator it) const;
 
 };
 
 
 template<size_t N, typename T>
-unsigned tensor_list::get_tensor_id(any_tensor<N, T> &t) {
+size_t tensor_list::get_tensor_id(any_tensor<N, T> &t) {
 
     //  Find the tensor among those on the list
 
-    for(size_t i = 0; i < m_lst.size(); i++) {
-        if(check_type<N, T>(i)) {
-            tensor_holder<N, T> *h =
-                static_cast< tensor_holder<N, T>* >(m_lst[i]);
-            if(h->tensor_equals(t)) return i;
-        }
+    tensor_holder<N, T> h(t);
+    size_t tuid = h.get_tuid();
+    if (m_lst.count(tuid) == 0) {
+
+        m_lst[tuid] = h.clone();
     }
-
-    //  Or add a new record
-
-    unsigned tid = m_lst.size();
-    m_lst.push_back(new tensor_holder<N, T>(t));
-    return tid;
+    return tuid;
 }
 
 
 template<size_t N, typename T>
-any_tensor<N, T> &tensor_list::get_tensor(unsigned tid) const {
+any_tensor<N, T> &tensor_list::get_tensor(size_t tid) const {
 
-    if(tid >= m_lst.size()) {
+    map_t::const_iterator it = m_lst.find(tid);
+    if (it == m_lst.end()) {
         throw "Invalid tensor ID";
     }
 
-    if(!check_type<N, T>(tid)) {
+    if(!check_type<N, T>(it)) {
         throw "Invalid tensor type";
     }
 
-    return static_cast< tensor_holder<N, T>* >(m_lst[tid])->get_tensor();
+    return static_cast< tensor_holder<N, T>* >(it->second)->get_tensor();
 }
 
 
 template<size_t N, typename T>
-bool tensor_list::check_type(unsigned tid) const {
+bool tensor_list::check_type(map_t::const_iterator it) const {
 
-    return (N == m_lst[tid]->get_n() && typeid(T) == m_lst[tid]->get_t());
+    return (N == it->second->get_n() && typeid(T) == it->second->get_t());
 }
 
 

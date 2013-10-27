@@ -12,9 +12,9 @@ tensor_list::tensor_list() {
 
 tensor_list::tensor_list(const tensor_list &tl) {
 
-    m_lst.reserve(tl.m_lst.size());
-    for(size_t i = 0; i < tl.m_lst.size(); i++) {
-        m_lst.push_back(tl.m_lst[i]->clone());
+    for(map_t::const_iterator it = tl.m_lst.begin();
+            it != tl.m_lst.end(); it++) {
+        m_lst.insert(map_t::value_type(it->first, it->second->clone()));
     }
 }
 
@@ -31,23 +31,37 @@ tensor_list::~tensor_list() {
 }
 
 
-size_t tensor_list::get_tensor_order(unsigned tid) const {
+void tensor_list::merge(const tensor_list &tl) {
 
-    if(tid >= m_lst.size()) {
-        throw 0;
+    for (map_t::const_iterator it = tl.m_lst.begin();
+            it != tl.m_lst.end(); it++) {
+
+        if (m_lst.count(it->first) == 0) {
+            m_lst.insert(map_t::value_type(it->first, it->second->clone()));
+        }
     }
-
-    return m_lst[tid]->get_n();
 }
 
 
-const std::type_info &tensor_list::get_tensor_type(unsigned tid) const {
+size_t tensor_list::get_tensor_order(size_t tid) const {
 
-    if(tid >= m_lst.size()) {
+    map_t::const_iterator it = m_lst.find(tid);
+    if(it == m_lst.end()) {
         throw 0;
     }
 
-    return m_lst[tid]->get_t();
+    return it->second->get_n();
+}
+
+
+const std::type_info &tensor_list::get_tensor_type(size_t tid) const {
+
+    map_t::const_iterator it = m_lst.find(tid);
+    if(it == m_lst.end()) {
+        throw 0;
+    }
+
+    return it->second->get_t();
 }
 
 
