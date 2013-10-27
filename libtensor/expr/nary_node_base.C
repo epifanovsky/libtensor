@@ -5,6 +5,17 @@ namespace libtensor {
 namespace expr {
 
 
+nary_node_base::nary_node_base(const std::string &op,
+    const std::vector<const node *> &args) : node(op), m_args(args.size()) {
+
+    std::vector<const node *>::iterator ito = m_args.begin();
+    for (std::vector<const node *>::const_iterator ifro = args.begin();
+            ifro != args.end(); ifro++) {
+
+        *ito = (*ifro)->clone();
+    }
+}
+
 const node &nary_node_base::get_arg(size_t i) const {
 
 #ifdef LIBTENSOR_DEBUG

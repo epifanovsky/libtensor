@@ -1,6 +1,7 @@
-#ifndef LIBTENSOR_EXPR_NODE_TRANSFORM_DOUBLE_H
-#define LIBTENSOR_EXPR_NODE_TRANSFORM_DOUBLE_H
+#ifndef LIBTENSOR_EXPR_NODE_TRANSFORM_H
+#define LIBTENSOR_EXPR_NODE_TRANSFORM_H
 
+#include <libtensor/core/scalar_transf.h>
 #include "node_transform_base.h"
 
 namespace libtensor {
@@ -11,9 +12,10 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_transform_double : public node_transform_base {
+template<typename T>
+class node_transform : public node_transform_base {
 private:
-    double m_coeff; //!< Scaling coefficient
+    scalar_transf<T> m_coeff; //!< Scaling coefficient
 
 public:
     /** \brief Creates a transformation node
@@ -21,19 +23,19 @@ public:
         \param perm Permutation of indices.
         \param c Scaling coefficient.
      **/
-    node_transform_double(const node &node, const std::vector<size_t> &perm,
-        double c) :
+    node_transform(const node &node, const std::vector<size_t> &perm,
+        const scalar_transf<T> &c) :
         node_transform_base(node, perm), m_coeff(c)
     { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~node_transform_double() { }
+    virtual ~node_transform() { }
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_transform_double *clone() const {
-        return new node_transform_double(*this);
+    virtual node_transform<T> *clone() const {
+        return new node_transform<T>(*this);
     }
 
     /** \brief Returns the type of the tensor element
@@ -44,7 +46,7 @@ public:
 
     /** \brief Returns the scaling coefficient
      **/
-    double get_coeff() const {
+    const scalar_transf<T> &get_coeff() const {
         return m_coeff;
     }
 
@@ -54,4 +56,4 @@ public:
 } // namespace expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_EXPR_NODE_TRANSFORM_DOUBLE_H
+#endif // LIBTENSOR_EXPR_NODE_TRANSFORM_H

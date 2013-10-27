@@ -22,7 +22,7 @@ namespace expr {
     For example, the contraction of three tensors
     \f$ \sum_{rs} A_{pr} B_{rs} C_{sq} \f$
     would be represented by the contraction map
-    \code { {1,2},{2,3} } \endcode
+    \code { {1,2},{3,4} } \endcode
 
     \ingroup libtensor_expr
  **/
@@ -57,7 +57,8 @@ public:
         \param args List of arguments
         \param contr Contraction map
      **/
-    node_contract(std::vector<const node *> &args,
+    node_contract(
+        const std::vector<const node *> &args,
         const std::map<size_t, size_t> &contr) :
         nary_node_base("contract", args), m_contr(contr)
     { }

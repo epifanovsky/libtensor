@@ -24,10 +24,11 @@ public:
         \param arg1 First argument
         \param arg2 Second argument
      **/
-    nary_node_base(const std::string &op, const node &arg1,
-        const node &arg2) : node(op), m_args(2) {
+    nary_node_base(const std::string &op,
+        const node &arg1, const node &arg2) : node(op), m_args(2) {
 
-        m_args[0] = &arg1; m_args[1] = &arg2;
+        m_args[0] = arg1.clone();
+        m_args[1] = arg2.clone();
     }
 
     /** \brief Creates a n-ary node
@@ -35,9 +36,7 @@ public:
         \param args List of arguments
      **/
     nary_node_base(const std::string &op,
-        const std::vector<const node *> &args) : node(op), m_args(args)
-    { }
-
+            const std::vector<const node *> &args);
 
     /** \brief Virtual destructor
      **/
@@ -53,7 +52,7 @@ public:
         return m_args.size();
     }
 
-    /** \brief Returns the i-th argument
+    /** \brief Returns the i-th argument (const version)
      **/
     const node &get_arg(size_t i) const;
 };

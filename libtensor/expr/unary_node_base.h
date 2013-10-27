@@ -13,7 +13,7 @@ namespace expr {
  **/
 class unary_node_base : public node {
 private:
-    const node &m_arg;
+    node *m_arg;
 
 public:
     /** \brief Creates an unary node base
@@ -21,7 +21,7 @@ public:
         \param arg Node argument
      **/
     unary_node_base(const std::string &op, const node &arg) :
-        node(op), m_arg(arg)
+        node(op), m_arg(arg.clone())
     { }
 
     /** \brief Virtual destructor
@@ -32,10 +32,16 @@ public:
      **/
     virtual node *clone() const = 0;
 
-    /** \brief Returns node
+    /** \brief Returns internal node
+     **/
+    node &get_arg() {
+        return *m_arg;
+    }
+
+    /** \brief Returns internal node (const version)
      **/
     const node &get_arg() const {
-        return m_arg;
+        return *m_arg;
     }
 
 };

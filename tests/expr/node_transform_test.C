@@ -1,7 +1,8 @@
 #include <algorithm>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/exception.h>
 #include <libtensor/expr/node_ident.h>
-#include <libtensor/expr/node_transform_double.h>
+#include <libtensor/expr/node_transform.h>
 #include "node_transform_test.h"
 
 namespace libtensor {
@@ -28,9 +29,9 @@ void node_transform_test::test_1() {
     double c = 0.1;
 
     node_ident t1(2);
-    node_transform_double tr1(t1, order, c);
+    node_transform<double> tr1(t1, order, scalar_transf<double>(c));
 
-    node_transform_double *tr1copy = tr1.clone();
+    node_transform<double> *tr1copy = tr1.clone();
     if (tr1copy->get_op() != "transform") {
         fail_test(testname, __FILE__, __LINE__, "Node name.");
     }
@@ -40,7 +41,7 @@ void node_transform_test::test_1() {
     if (tr1copy->get_perm().size() != 4) {
         fail_test(testname, __FILE__, __LINE__, "Length of index order.");
     }
-    if (tr1copy->get_coeff() != 0.1) {
+    if (tr1copy->get_coeff().get_coeff() != 0.1) {
         fail_test(testname, __FILE__, __LINE__, "Coefficient.");
     }
     const node &n1 = tr1copy->get_arg();

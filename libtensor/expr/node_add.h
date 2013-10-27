@@ -26,7 +26,7 @@ public:
     /** \brief Creates an addition node
         \param args List of arguments.
      **/
-    node_add(std::vector<const node *> &args) :
+    node_add(const std::vector<const node *> &args) :
         nary_node_base("add", args)
     { }
 
