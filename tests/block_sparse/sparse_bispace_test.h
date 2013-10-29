@@ -104,6 +104,18 @@ private:
     void test_get_block_offset_canonical_1d_empty_vec() throw(libtest::test_exception);
     void test_get_block_offset_canonical_1d_oob() throw(libtest::test_exception);
     void test_get_block_offset_canonical_2d() throw(libtest::test_exception);
+
+    /*  ALL TESTS INVOLVING SPARSITY!!
+     *
+     */
+    void test_get_nnz_2d_sparsity() throw(libtest::test_exception);
+    void test_get_nnz_3d_dense_sparse() throw(libtest::test_exception);
+    void test_get_nnz_3d_sparse_dense() throw(libtest::test_exception);
+    void test_get_nnz_3d_fully_sparse() throw(libtest::test_exception);
+    void test_get_block_offset_2d_sparsity() throw(libtest::test_exception);
+    void test_get_block_offset_3d_dense_sparse() throw(libtest::test_exception);
+    void test_get_block_offset_3d_sparse_dense() throw(libtest::test_exception);
+    void test_get_block_offset_3d_fully_sparse() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -36,10 +36,29 @@ private:
     **/
     void test_iterator_2d_key() throw(libtest::test_exception);
 
-    /** \brief Ensures that iterating over the container produces the correct key/value pairs 
+    /** \brief Ensures that iterating over the container produces the correct keys and values
     **/
-    void test_iterator_2d() throw(libtest::test_exception);
-    //TODO: Need a 3d!!!
+    void test_iterator_2d_incr() throw(libtest::test_exception);
+
+    /** \brief Ensures that all of the container values can be set appropriately 
+    **/
+    void test_iterator_2d_set() throw(libtest::test_exception);
+
+    /** \brief Ensures that iterating over the container produces the correct keys and values for a 3d case
+    **/
+    void test_iterator_3d_incr() throw(libtest::test_exception);
+
+    /** \brief Test that search throws an exception when an invalid key is specified 
+    **/
+    void test_search_2d_invalid_key() throw(libtest::test_exception);
+
+    /** \brief Test that search returns an iterator to the correct value when searching a 2d tree
+    **/
+    void test_search_2d() throw(libtest::test_exception);
+
+    /** \brief Test that search returns an iterator to the correct value when searching a 3d tree
+    **/
+    void test_search_3d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

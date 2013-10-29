@@ -46,6 +46,15 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_block_offset_canonical_1d_empty_vec();
         test_get_block_offset_canonical_1d_oob();
         test_get_block_offset_canonical_2d(); 
+
+        test_get_nnz_2d_sparsity();
+        test_get_nnz_3d_dense_sparse();
+        test_get_nnz_3d_sparse_dense();
+        test_get_nnz_3d_fully_sparse();
+        test_get_block_offset_2d_sparsity();
+        test_get_block_offset_3d_dense_sparse();
+        test_get_block_offset_3d_sparse_dense();
+        test_get_block_offset_3d_fully_sparse();
 }
 
 /* Return the correct value for the dimension of the sparse_bispace
@@ -651,10 +660,8 @@ void sparse_bispace_test::test_get_block_offset_2d() throw(libtest::test_excepti
 
     if(two_d.get_block_offset(tile_indices) != 22)
     {
-        std::cout << two_d.get_block_offset(tile_indices) << "\n";
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
-
     }
 }
 
@@ -762,6 +769,476 @@ void sparse_bispace_test::test_get_block_offset_canonical_2d() throw(libtest::te
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::get_block_offset_canonical(...) returned incorrect value");
 
+    }
+}
+
+//Get the correct number of elements for a 2d tensor with both indices coupled by sparsity
+void sparse_bispace_test::test_get_nnz_2d_sparsity() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_nnz_2d_sparsity()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;//block size 6
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;//block size 12 
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;//block size 8 
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;//block size 8
+
+    sparse_bispace<2> two_d = spb_1 % spb_1 << sig_blocks; 
+
+    if(two_d.get_nnz() != 34)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_nnz(...) returned incorrect value");
+    }
+}
+
+//Get the correct number of elements for a 3d tensor with the second two indices coupled by sparsity 
+void sparse_bispace_test::test_get_nnz_3d_dense_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_nnz_3d_dense_sparse()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    //Total sparse nnz 34 
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;//block size 6
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;//block size 12 
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;//block size 8 
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;//block size 8
+
+    sparse_bispace<3> three_d = spb_2 | spb_1 % spb_1 << sig_blocks; 
+
+    if(three_d.get_nnz() != 306)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_nnz(...) returned incorrect value");
+    }
+}
+
+//Get the correct number of elements for a 3d tensor with the second two indices coupled by sparsity 
+void sparse_bispace_test::test_get_nnz_3d_sparse_dense() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_nnz_3d_sparse_dense()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    //Total sparse nnz 34 
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;//block size 6
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;//block size 12 
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;//block size 8 
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;//block size 8
+
+    sparse_bispace<3> three_d = spb_1 % spb_1 << sig_blocks | spb_2;
+
+    if(three_d.get_nnz() != 306)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_nnz(...) returned incorrect value");
+    }
+}
+
+//Get the correct number of elements for a 3d tensor with all indices coupled by sparsity 
+void sparse_bispace_test::test_get_nnz_3d_fully_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_nnz_3d_fully_sparse()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    //Total sparse nnz 34 
+    std::vector< sequence<3,size_t> > sig_blocks(5);
+
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 0;
+    sig_blocks[0][2] = 2;//block size 16
+    sig_blocks[1][0] = 0; 
+    sig_blocks[1][1] = 0;
+    sig_blocks[1][2] = 3;//block size 8
+    sig_blocks[2][0] = 1;
+    sig_blocks[2][1] = 2;
+    sig_blocks[2][2] = 2;//block size 48
+    sig_blocks[3][0] = 1;
+    sig_blocks[3][1] = 3;
+    sig_blocks[3][2] = 1;//block size 18
+    sig_blocks[4][0] = 2;
+    sig_blocks[4][1] = 0;
+    sig_blocks[4][2] = 1;//block size 24
+    //TOTAL 78
+
+    sparse_bispace<3> three_d = spb_2 % spb_1 % spb_1 << sig_blocks; 
+
+    if(three_d.get_nnz() != 114)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_nnz(...) returned incorrect value");
+    }
+}
+
+//Get the correct offset of each block in a 2d tensor with both indices coupled by sparsity 
+void sparse_bispace_test::test_get_block_offset_2d_sparsity() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_2d_sparsity()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;//block size 6
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;//block size 12 
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;//block size 8 
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;//block size 8
+
+    sparse_bispace<2> two_d = spb_1 % spb_1 << sig_blocks; 
+
+    std::vector<size_t> correct_offsets;
+    correct_offsets.push_back(0);
+    correct_offsets.push_back(6);
+    correct_offsets.push_back(18);
+    correct_offsets.push_back(26);
+
+    for(size_t i = 0; i < sig_blocks.size(); ++i)
+    {
+        std::vector<size_t> block_key(2);
+        block_key[0] = sig_blocks[i][0];
+        block_key[1] = sig_blocks[i][1];
+        if(two_d.get_block_offset(block_key) != correct_offsets[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
+
+        }
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_3d_dense_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_3d_dense_sparse()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    //Total sparse nnz 34 
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;//block size 6
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;//block size 12 
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;//block size 8 
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;//block size 8
+
+    sparse_bispace<3> three_d = spb_2 | spb_1 % spb_1 << sig_blocks; 
+
+    //Three arbitrarily chosen block vectors
+    std::vector< std::vector<size_t> > block_keys(3);
+    block_keys[0].push_back(0);
+    block_keys[0].push_back(1);
+    block_keys[0].push_back(2); //offset = 0*34+2*6
+    block_keys[1].push_back(1);
+    block_keys[1].push_back(0);
+    block_keys[1].push_back(1); //offset = 2*34 + 0 = 68
+    block_keys[2].push_back(2);
+    block_keys[2].push_back(2);
+    block_keys[2].push_back(3); //offset = 5*34 + 4*18 = 242
+
+    std::vector<size_t> correct_offsets;
+    correct_offsets.push_back(12);
+    correct_offsets.push_back(68);
+    correct_offsets.push_back(242);
+
+    for(size_t i = 0; i < block_keys.size(); ++i)
+    {
+        if(three_d.get_block_offset(block_keys[i]) != correct_offsets[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
+
+        }
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_3d_sparse_dense() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_3d_sparse_dense()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    //Total sparse nnz 34 
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;//block size 6
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;//block size 12 
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;//block size 8 
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;//block size 8
+
+    sparse_bispace<3> three_d = spb_1 % spb_1 << sig_blocks | spb_2; 
+
+    //Three arbitrarily chosen block vectors
+    std::vector< std::vector<size_t> > block_keys(3);
+    block_keys[0].push_back(0);
+    block_keys[0].push_back(1);
+    block_keys[0].push_back(1); //offset = 0*9 + 6*2 = 12
+    block_keys[1].push_back(1);
+    block_keys[1].push_back(2);
+    block_keys[1].push_back(0); //offset = 6*9 + 12*0 = 54
+    block_keys[2].push_back(2);
+    block_keys[2].push_back(3);
+    block_keys[2].push_back(2); //offset = 18*9 + 8*5 = 202
+
+    std::vector<size_t> correct_offsets;
+    correct_offsets.push_back(12);
+    correct_offsets.push_back(54);
+    correct_offsets.push_back(202);
+
+    for(size_t i = 0; i < block_keys.size(); ++i)
+    {
+        if(three_d.get_block_offset(block_keys[i]) != correct_offsets[i])
+        {
+            std::cout << "\ni: " << i << "\n";
+            std::cout << "mine: " << three_d.get_block_offset(block_keys[i])  << "\n";
+            std::cout << "correct: " << correct_offsets[i] << "\n";
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
+
+            exit(1);
+        }
+    }
+}
+
+void sparse_bispace_test::test_get_block_offset_3d_fully_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_block_offset_3d_fully_sparse()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    //Total sparse block_offset 34 
+    std::vector< sequence<3,size_t> > sig_blocks(5);
+
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 0;
+    sig_blocks[0][2] = 2;//block size 16
+    sig_blocks[1][0] = 0; 
+    sig_blocks[1][1] = 0;
+    sig_blocks[1][2] = 3;//block size 8
+    sig_blocks[2][0] = 1;
+    sig_blocks[2][1] = 2;
+    sig_blocks[2][2] = 2;//block size 48
+    sig_blocks[3][0] = 1;
+    sig_blocks[3][1] = 3;
+    sig_blocks[3][2] = 1;//block size 18
+    sig_blocks[4][0] = 2;
+    sig_blocks[4][1] = 0;
+    sig_blocks[4][2] = 1;//block size 24
+    //TOTAL 78
+
+    sparse_bispace<3> three_d = spb_2 % spb_1 % spb_1 << sig_blocks; 
+
+    std::vector<size_t> correct_offsets;
+    correct_offsets.push_back(0);
+    correct_offsets.push_back(16);
+    correct_offsets.push_back(24);
+    correct_offsets.push_back(72);
+    correct_offsets.push_back(90);
+    
+    for(size_t i = 0; i < sig_blocks.size(); ++i)
+    {
+        std::vector<size_t> block_key(3);
+        block_key[0] = sig_blocks[i][0];
+        block_key[1] = sig_blocks[i][1];
+        block_key[2] = sig_blocks[i][2];
+        if(three_d.get_block_offset(block_key) != correct_offsets[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
+        }
     }
 }
 

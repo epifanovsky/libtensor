@@ -4,6 +4,11 @@
 #include <vector>
 #include "../defs.h"
 #include "../core/sequence.h"
+#include "sparse_block_tree.h"
+#include "sparsity_expr.h"
+
+//TODO REMOVE
+#include <iostream>
 
 namespace libtensor {
 
@@ -57,6 +62,16 @@ public:
      **/
     sparse_bispace<2> operator|(const sparse_bispace<1>& rhs);
 
+    /** \brief Returns a N+1 d sparse bispace
+     *         Called during resolution of sparsity expressions
+     **/
+    template<size_t M>
+    sparse_bispace<M+1> operator|(const sparse_bispace<M>& rhs);
+
+    /** \brief Returns a sparsity_expr corresponding to a 2d bispace 
+     **/
+    sparsity_expr<1,1> operator%(const sparse_bispace<1>& rhs);
+
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
      **/
@@ -81,65 +96,6 @@ public:
      **/
     bool operator!=(const sparse_bispace<1>& rhs) const;
 };
-
-template<size_t N>
-class sparse_bispace {
-public: 
-    static const char *k_clazz; //!< Class name
-private:
-
-    //Special case for creating a 2d space from 2 1d spaces
-    sparse_bispace(const sparse_bispace<1>& spb_1,const sparse_bispace<1>& spb_2);
-    std::vector< sparse_bispace<1> > m_subspaces;
-
-public:
-    /** \brief Constructs a multi-dimensional space from a set of 1d subspaces 
-     * INTERNAL USE ONLY - USE THE OPERATORS '|' and '>' is preferred 
-     **/
-    sparse_bispace(const std::vector< sparse_bispace<1> >& one_subspaces,const std::vector< sparse_bispace<1> >& two_subspaces);
-
-    //TODO Delete this!!! Doesn't seem to be used anywhere
-    /** \brief Returns the number of non-zero elements in this sparse bispace
-     **/
-    size_t get_nnz() const;
-
-    /** \brief Combines the two operands to produce a new space
-     **/
-    template<size_t M> 
-    sparse_bispace<N+M> operator|(const sparse_bispace<M>& rhs);
-
-    /** \brief Overload to handle 1 dimensional bispaces 
-     **/
-    sparse_bispace<N+1> operator|(const sparse_bispace<1>& rhs);
-
-    /** \brief Retrieves the appropriate index subspace of this multidimensional space
-        \throw out_of_bounds If an inappropriate index is specified 
-     **/
-    const sparse_bispace<1>& operator[](size_t  idx) const
-        throw(out_of_bounds);
-
-    /** \brief Returns offset of a given tile in this bispace assuming block-major layout. The tile is specified by a vector of block indices
-     **/
-    size_t get_block_offset(const std::vector<size_t>& block_indices) const;
-
-    /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
-     **/
-    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
-
-    //Necessary to create 2d space from 2 1d spaces
-    friend class sparse_bispace<1>;
-
-    /** \brief Returns whether this object is equal to another of the same dimension. 
-     *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
-     **/
-    bool operator==(const sparse_bispace<N>& rhs) const;
-
-    /** \brief Returns whether this object is not equal to another of the same dimension. 
-     *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
-     **/
-    bool operator!=(const sparse_bispace<N>& rhs) const;
-};
-
 
 inline sparse_bispace<1>::sparse_bispace(size_t dim) : m_dim(dim)
 { 
@@ -209,10 +165,6 @@ inline size_t sparse_bispace<1>::get_block_abs_index(size_t block_idx) const thr
     return m_abs_indices[block_idx];
 }
 
-inline sparse_bispace<2> sparse_bispace<1>::operator|(const sparse_bispace<1>& rhs)
-{
-    return sparse_bispace<2>(*this,rhs);
-}
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
      **/
@@ -258,27 +210,176 @@ inline bool sparse_bispace<1>::operator!=(const sparse_bispace<1>& rhs) const
     return ! (*this == rhs);
 }
 
+//General N-dimensional case
+template<size_t N>
+class sparse_bispace {
+public: 
+    static const char *k_clazz; //!< Class name
+private:
 
+    std::vector< sparse_bispace<1> > m_subspaces;
 
-template<size_t N> 
-sparse_bispace<N>::sparse_bispace(const std::vector< sparse_bispace<1> > &one_subspaces,const std::vector< sparse_bispace<1> > &two_subspaces)
+    //Contains the indices in m_subspaces at which each group of sparse coupled indices starts
+    std::vector<size_t> m_sparse_indices_sets_offsets;
+
+    //Contains the trees that describe the sparsity of each group of coupled indices  
+    std::vector< sparse_block_tree_any_order > m_sparse_block_trees;
+
+    //Internal-use array containing the dimension of each subspace/sparse composite subspace group. 
+    //Used to calculate number of elements and offsets
+    std::vector<size_t> m_dimensions;
+
+    /** \brief Constructors a composite sparse_bispace from two component spaces
+     *         Used to implement operator|(...) between multi-dimensional spaces
+     **/
+    template<size_t L> 
+    sparse_bispace(const sparse_bispace<N-L>& lhs,const sparse_bispace<L>& rhs);
+
+    /** \brief Constructor used by the following operator pattern:
+     *         <N> = <L> & <N - L> << { <N - L + 1> }
+     **/
+    template<size_t L>
+    sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::vector< sparse_bispace<1> >& rhs_subspaces,const std::vector< sequence<L,size_t> >& sig_blocks);
+
+    //Worker function used in implementing constructors
+    //Special case for when RHS has no sparse members bcs 1d
+    //Offset parameter does nothing, needed for proper overloading
+    void absorb_sparsity(const sparse_bispace<1>& rhs,size_t offset=0); 
+
+    //General case
+    //offset specifies how much to shift the location of the specified sparse indices sets
+    template<size_t L>
+    void absorb_sparsity(const sparse_bispace<L>& rhs,size_t offset=0); 
+public:
+
+    //TODO Delete this!!! Doesn't seem to be used anywhere
+    /** \brief Returns the number of non-zero elements in this sparse bispace
+     **/
+    size_t get_nnz() const;
+
+    /** \brief Combines the two operands to produce a new space
+     **/
+    template<size_t M> 
+    sparse_bispace<N+M> operator|(const sparse_bispace<M>& rhs);
+
+    /** \brief Retrieves the appropriate index subspace of this multidimensional space
+        \throw out_of_bounds If an inappropriate index is specified 
+     **/
+    const sparse_bispace<1>& operator[](size_t  idx) const
+        throw(out_of_bounds);
+
+    /** \brief Returns offset of a given tile in this bispace assuming block-major layout. The tile is specified by a vector of block indices
+     **/
+    size_t get_block_offset(const std::vector<size_t>& block_indices) const;
+
+    /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
+     **/
+    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
+
+    /** \brief Returns whether this object is equal to another of the same dimension. 
+     *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
+     **/
+    bool operator==(const sparse_bispace<N>& rhs) const;
+
+    /** \brief Returns whether this object is not equal to another of the same dimension. 
+     *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
+     **/
+    bool operator!=(const sparse_bispace<N>& rhs) const;
+
+    //Friend all other types of sparse_bispaces to allow for creation of larger ones from smaller ones
+    template<size_t M>
+    friend class sparse_bispace;
+
+    //Friend sparsity expr so it can build bispaces when expression is evaluated
+    template<size_t L,size_t M>
+    friend class sparsity_expr;
+};
+
+//Worker function used in implementing constructors
+//Special case for when RHS has no sparse members bcs 1d
+template<size_t N>
+void sparse_bispace<N>::absorb_sparsity(const sparse_bispace<1>& rhs,size_t offset)
 {
-    m_subspaces.reserve(one_subspaces.size() + two_subspaces.size());
-    for(int i = 0; i < one_subspaces.size(); ++i)
+    //Just get the dimension of the subspace
+    m_dimensions.push_back(rhs.get_dim());
+}
+
+//General case
+template<size_t N> template<size_t L>
+void sparse_bispace<N>::absorb_sparsity(const sparse_bispace<L>& rhs,size_t offset)
+{
+    //Copy sparsity
+    for(size_t i = 0; i < rhs.m_sparse_indices_sets_offsets.size(); ++i)
     {
-        m_subspaces.push_back(one_subspaces[i]);
+        m_sparse_indices_sets_offsets.push_back(rhs.m_sparse_indices_sets_offsets[i]+offset);
+        m_sparse_block_trees.push_back(rhs.m_sparse_block_trees[i]);
     }
-    for(int i = 0; i < two_subspaces.size(); ++i)
+
+    //Copy internal dimensions
+    for(size_t i = 0; i < rhs.m_dimensions.size(); ++i)
     {
-        m_subspaces.push_back(two_subspaces[i]);
+        m_dimensions.push_back(rhs.m_dimensions[i]);
     }
 }
 
-template<size_t N>
-sparse_bispace<N>::sparse_bispace(const sparse_bispace<1>& spb_1,const sparse_bispace<1>& spb_2)
+//Constructor used by the following pattern: 
+//  <N> = <N-L> | <L> pattern
+//
+template<size_t N> template<size_t L> 
+sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L>& lhs,const sparse_bispace<L>& rhs)
 {
-    m_subspaces.push_back(spb_1);
-    m_subspaces.push_back(spb_2);
+    //Copy subspaces
+    m_subspaces.reserve(N);
+    for(size_t i = 0; i < N-L; ++i)
+    {
+        m_subspaces.push_back(lhs[i]);
+    }
+    for(size_t i = 0; i < L; ++i)
+    {
+        m_subspaces.push_back(rhs[i]);
+    }
+
+    absorb_sparsity(lhs);
+    absorb_sparsity(rhs,N-L);
+
+}
+
+//Constructor used by the following operator pattern:
+//  <N> = <L> & <N - L> << { <N - L + 1> }
+template<size_t N> template<size_t L>
+sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::vector< sparse_bispace<1> >& rhs_subspaces,const std::vector< sequence<L,size_t> >& sig_blocks)
+{
+    //Copy subspaces
+    for(size_t i = 0; i < (N-L+1); ++i)
+    {
+        m_subspaces.push_back(lhs[i]);
+    }
+
+    for(size_t i = 0; i < (L-1); ++i)
+    {
+        m_subspaces.push_back(rhs_subspaces[i]);
+    }
+
+    //Initialize the new sparse_block_tree with offset information  
+    sparse_block_tree<L> sbt(sig_blocks);
+    size_t offset = 0; 
+    for(typename sparse_block_tree<L>::iterator it = sbt.begin(); it != sbt.end(); ++it)
+    {
+        *it = offset;
+
+        //Compute the size of this block and increment offset
+        const sequence<L,size_t>& key = it.key();
+        size_t incr = 1;
+        for(size_t i = 0; i < L; ++i)
+        {
+            incr *= m_subspaces[N-L+i].get_block_size(key[i]);
+        }
+        offset += incr;
+    }
+    m_dimensions.push_back(offset);
+
+    m_sparse_block_trees.push_back(sbt);
+    m_sparse_indices_sets_offsets.push_back(N-L);
 }
 
 template<size_t N>
@@ -286,9 +387,9 @@ size_t sparse_bispace<N>::get_nnz() const
 {
     //TODO: Case where all elements are zero, fully sparse tensors????
     size_t nnz = 1;
-    for(int i = 0; i < N; ++i)
+    for(int i = 0; i < m_dimensions.size(); ++i)
     {
-        nnz *= m_subspaces[i].get_dim(); 
+        nnz *= m_dimensions[i];
     }
     return nnz;
 }
@@ -296,15 +397,7 @@ size_t sparse_bispace<N>::get_nnz() const
 template<size_t N> template<size_t M> 
 sparse_bispace<N+M> sparse_bispace<N>::operator|(const sparse_bispace<M>& rhs)
 {
-    return sparse_bispace<N+M>(this->m_subspaces,rhs.m_subspaces);
-}
-
-//Overload  to handle 1 dimensional bispaces
-//Special case because sparse_bispace<1> does not have subspaces
-template<size_t N>
-sparse_bispace<N+1> sparse_bispace<N>::operator|(const sparse_bispace<1>& rhs)
-{
-    return sparse_bispace<N+1>(this->m_subspaces,std::vector< sparse_bispace<1> >(1,rhs));
+    return sparse_bispace<N+M>(*this,rhs);
 }
 
 //TODO: Should make these check (N-1) instead of m_subspaces.size()
@@ -324,23 +417,68 @@ const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const throw(o
 template<size_t N>
 size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indices) const
 {
+    
+    //We process the blocks in chunks corresponding to each set that is coupled by sparsity
     size_t offset = 0;
     size_t outer_size = 1;
-    for(size_t i = 0; i < block_indices.size(); ++i)
+    size_t subspace_idx = 0;
+    size_t cur_group_idx = 0;
+    size_t cur_sparse_indices_set_idx = 0; 
+    size_t abs_index;
+    while(subspace_idx < block_indices.size())
     {
-        //TODO could save on lookup costs by having size_hint passed in that gives all the block sizes already
-        size_t block_size = m_subspaces[i].get_block_size(block_indices[i]);
-        size_t block_abs_index = m_subspaces[i].get_block_abs_index(block_indices[i]);
+        //The outer size will be scaled by a factor corresponding to the size of
+        //a single block dimension in the dense case or multiple in the sparse case
+        size_t outer_size_scale_fac;
 
-        size_t inner_size = 1;
-        for(size_t inner_size_idx = i+1; inner_size_idx < N; ++inner_size_idx)
+        bool treat_as_sparse = false;
+        if(m_sparse_indices_sets_offsets.size() > 0)
         {
-            //TODO: This needs to call some sparsity-aware function to determine this
-            inner_size *= m_subspaces[inner_size_idx].get_dim();
+            if(subspace_idx == m_sparse_indices_sets_offsets[cur_sparse_indices_set_idx])
+            {
+                treat_as_sparse = true;
+            }
         }
-        offset += outer_size * block_abs_index * inner_size;
-        outer_size *= block_size;
+        if(treat_as_sparse)
+        {
+            //Get the current key
+            const sparse_block_tree_any_order& sbt = m_sparse_block_trees[cur_sparse_indices_set_idx];
+            size_t cur_order = sbt.get_order();
+            std::vector<size_t> key(cur_order);
+            for(size_t key_idx = 0; key_idx < cur_order; ++key_idx)
+            {
+                key[key_idx] = block_indices[subspace_idx+key_idx];
+            }
+
+            //Outer size consists of the size of all blocks involved in this sparse group
+            outer_size_scale_fac = 1;
+            for(size_t outer_size_idx = 0; outer_size_idx < cur_order; ++outer_size_idx)
+            {
+                outer_size_scale_fac *= m_subspaces[subspace_idx+outer_size_idx].get_block_size(key[outer_size_idx]);
+            }
+            abs_index = sbt.search(key);
+            ++cur_sparse_indices_set_idx;
+            subspace_idx += cur_order;
+        }
+        else
+        {
+            //Treat as dense (1 element chunk)
+            size_t block_idx = block_indices[subspace_idx];
+            abs_index = m_subspaces[subspace_idx].get_block_abs_index(block_idx);
+            outer_size_scale_fac = m_subspaces[subspace_idx].get_block_size(block_idx);
+            ++subspace_idx;
+        }
+        
+        size_t inner_size = 1;
+        for(size_t inner_size_idx = cur_group_idx+1; inner_size_idx < m_dimensions.size(); ++inner_size_idx)
+        {
+            inner_size *= m_dimensions[inner_size_idx];
+        }
+        offset += outer_size * abs_index * inner_size;
+        outer_size *= outer_size_scale_fac;
+        ++cur_group_idx;
     }
+
     return offset;
 }
 
@@ -383,6 +521,38 @@ bool sparse_bispace<N>::operator!=(const sparse_bispace<N>& rhs) const
 template<size_t N>
 const char *sparse_bispace<N>::k_clazz = "sparse_bispace<N>";
 
+inline sparse_bispace<2> sparse_bispace<1>::operator|(const sparse_bispace<1>& rhs)
+{
+    return sparse_bispace<2>(*this,rhs);
+}
+
+template<size_t M>
+inline sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>& rhs)
+{
+    return sparse_bispace<M+1>(*this,rhs);
+}
+
+inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& rhs)
+{
+    return sparsity_expr<1,1>(*this,rhs);
+}
+
+//Implementation of methods in sparsity_expr requiring sparse_bispace definition
+template<size_t M>
+sparse_bispace<2> sparsity_expr<M,1>::operator<<(const std::vector< sequence<2,size_t> >& sig_blocks)
+{
+    return sparse_bispace<2>(m_parent_bispace,std::vector< sparse_bispace<1> >(1,m_cur_subspace),sig_blocks);
+}
+
+template<size_t M,size_t N>
+sparse_bispace<M+N> sparsity_expr<M,N>::operator<<(const std::vector< sequence<N+1,size_t> >& sig_blocks)
+{
+
+    std::deque< sparse_bispace<1> > subspaces;
+    retrieve_subspaces(subspaces);
+
+    return sparse_bispace<M+N>(m_parent_bispace,std::vector< sparse_bispace<1> >(subspaces.begin(),subspaces.end()),sig_blocks);
+}
 
 //TODO: Make this immutable, etc?? Need to make this class hard to abuse
 //Type erasure class for sparse_bispaces.
