@@ -35,12 +35,13 @@ private:
         }
         virtual size_t get_n() const { return N; }
         virtual const std::type_info &get_t() const { return typeid(T); }
-        virtual size_t get_tuid() const { return (size_t) &m_t; }
+        virtual size_t get_tuid() const { return size_t(&m_t); }
         any_tensor<N, T> &get_tensor() const { return m_t; }
         bool tensor_equals(any_tensor<N, T> &other) { return &m_t == &other; }
     };
 
-    typedef std::map<size_t, tensor_holder_base *> map_t;
+    typedef std::map<size_t, tensor_holder_base*> map_t;
+
 private:
     map_t m_lst; //!< List of tensors
 
@@ -88,7 +89,7 @@ public:
 
 private:
     template<size_t N, typename T>
-    bool check_type(map_t::const_iterator it) const;
+    bool check_type(map_t::const_iterator i) const;
 
 };
 
@@ -100,8 +101,7 @@ size_t tensor_list::get_tensor_id(any_tensor<N, T> &t) {
 
     tensor_holder<N, T> h(t);
     size_t tuid = h.get_tuid();
-    if (m_lst.count(tuid) == 0) {
-
+    if(m_lst.count(tuid) == 0) {
         m_lst[tuid] = h.clone();
     }
     return tuid;
@@ -111,23 +111,23 @@ size_t tensor_list::get_tensor_id(any_tensor<N, T> &t) {
 template<size_t N, typename T>
 any_tensor<N, T> &tensor_list::get_tensor(size_t tid) const {
 
-    map_t::const_iterator it = m_lst.find(tid);
-    if (it == m_lst.end()) {
+    map_t::const_iterator i = m_lst.find(tid);
+    if(i == m_lst.end()) {
         throw "Invalid tensor ID";
     }
 
-    if(!check_type<N, T>(it)) {
+    if(!check_type<N, T>(i)) {
         throw "Invalid tensor type";
     }
 
-    return static_cast< tensor_holder<N, T>* >(it->second)->get_tensor();
+    return static_cast< tensor_holder<N, T>* >(i->second)->get_tensor();
 }
 
 
 template<size_t N, typename T>
-bool tensor_list::check_type(map_t::const_iterator it) const {
+bool tensor_list::check_type(map_t::const_iterator i) const {
 
-    return (N == it->second->get_n() && typeid(T) == it->second->get_t());
+    return (N == i->second->get_n() && typeid(T) == i->second->get_t());
 }
 
 
