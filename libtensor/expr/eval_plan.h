@@ -35,12 +35,15 @@ struct eval_plan_action_code {
  **/
 struct eval_plan_item {
 public:
+    typedef node::tid_t tid_t; //!< Tensor ID type
+
+public:
     eval_plan_action_code::ac code; //!< Action code
-    unsigned tid; //!< Intermediate tensor id
+    tid_t tid; //!< Intermediate tensor id
     const node_assign *node; //!< Assignment
 
 public:
-    eval_plan_item(eval_plan_action_code::ac code_, unsigned tid_) :
+    eval_plan_item(eval_plan_action_code::ac code_, tid_t tid_) :
         code(code_), tid(tid_), node(0)
     { }
 
@@ -65,6 +68,7 @@ private:
     std::vector<eval_plan_item> m_lst; //!< List of nodes
 
 public:
+    typedef eval_plan_item::tid_t tid_t; //!< Tensor ID type
     typedef std::vector<eval_plan_item>::const_iterator iterator; //!< Iterator
 
 public:
@@ -108,14 +112,14 @@ public:
 
     /** \brief Adds an intermediate creation instruction
      **/
-    void create_intermediate(unsigned tid) {
+    void create_intermediate(tid_t tid) {
         m_lst.push_back(eval_plan_item(
             eval_plan_action_code::CREATE_INTERM, tid));
     }
 
     /** \brief Adds an intermediate deletion instruction
      **/
-    void delete_intermediate(unsigned tid) {
+    void delete_intermediate(tid_t tid) {
         m_lst.push_back(eval_plan_item(
             eval_plan_action_code::DELETE_INTERM, tid));
     }

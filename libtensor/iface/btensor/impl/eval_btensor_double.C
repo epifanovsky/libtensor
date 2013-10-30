@@ -76,13 +76,16 @@ void eval_node::evaluate(btensor<N, double> &bt) {
 }
 
 class eval_assign {
+public:
+    typedef eval_btensor<double>::tid_t tid_t;
+
 private:
     tensor_list &m_tl; //!< Tensor list
-    unsigned m_tid; //!< Left-hand-side tensor
+    tid_t m_tid; //!< Left-hand-side tensor
     const node &m_rhs; //!< Right-hand side of the assignment
 
 public:
-    eval_assign(tensor_list &tl, unsigned tid, const node &rhs) :
+    eval_assign(tensor_list &tl, tid_t tid, const node &rhs) :
         m_tl(tl), m_tid(tid), m_rhs(rhs)
     { }
 
@@ -101,7 +104,7 @@ public:
 void eval_btensor<double>::handle_assign(
     const expr::node_assign &node, tensor_list &tl) {
 
-    unsigned tid = node.get_tid();
+    tid_t tid = node.get_tid();
     verify_tensor_type(tid, tl);
     eval_assign e(tl, tid, node.get_rhs());
     dispatch_1<1, Nmax>::dispatch(e, tl.get_tensor_order(tid));
@@ -109,19 +112,19 @@ void eval_btensor<double>::handle_assign(
 
 
 void eval_btensor<double>::handle_create_interm(
-    unsigned tid, tensor_list &tl) {
+    tid_t tid, tensor_list &tl) {
 
 }
 
 
 void eval_btensor<double>::handle_delete_interm(
-    unsigned tid, tensor_list &tl) {
+    tid_t tid, tensor_list &tl) {
 
 }
 
 
 void eval_btensor<double>::verify_tensor_type(
-    unsigned tid, const tensor_list &tl) {
+    tid_t tid, const tensor_list &tl) {
 
     if(tl.get_tensor_type(tid) != typeid(double)) {
         throw "Bad tensor type";

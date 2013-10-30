@@ -19,6 +19,8 @@ public:
         Nmax = 8
     };
 
+    typedef expr::node::tid_t tid_t; //!< Tensor ID type
+
 public:
     /** \brief Processes an evaluation plan
         \param plan Evaluation plan.
@@ -27,10 +29,10 @@ public:
 
 private:
     void handle_assign(const expr::node_assign &node, tensor_list &tl);
-    void handle_create_interm(unsigned tid, tensor_list &tl);
-    void handle_delete_interm(unsigned tid, tensor_list &tl);
+    void handle_create_interm(tid_t tid, tensor_list &tl);
+    void handle_delete_interm(tid_t tid, tensor_list &tl);
 
-    void verify_tensor_type(unsigned tid, const tensor_list &tl);
+    void verify_tensor_type(tid_t tid, const tensor_list &tl);
 
 };
 

@@ -2,11 +2,15 @@
 #define LIBTENSOR_IFACE_BTENSOR_H
 
 #include <libtensor/core/allocator.h>
+#include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/expr/node_transform.h>
 #include "bispace.h"
 #include "btensor_i.h"
 #include "expr_lhs.h"
 #include "labeled_lhs_rhs.h"
+#include "btensor/eval_btensor.h"
+#include "btensor/eval_plan_builder_btensor.h"
 
 namespace libtensor {
 namespace iface {
@@ -55,6 +59,18 @@ template<size_t N, typename T>
 void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     const letter_expr<N> &label) {
 
+    tensor_list tl(rhs.get_expr().get_tensors());
+    size_t this_tid = tl.get_tensor_id(*this);
+
+    permutation<N> px = match(label, rhs.get_label());
+    std::vector<size_t> perm(N);
+    for(size_t i = 0; i < N; i++) perm[i] = px[i];
+
+    expr::node_transform<T> ntr(rhs.get_expr().get_nodes(), perm,
+        scalar_transf<T>());
+    eval_plan_builder_btensor pbld(expr::node_assign(this_tid, ntr), tl);
+    pbld.build_plan();
+    eval_btensor<T>().process_plan(pbld.get_plan(), tl);
 }
 
 

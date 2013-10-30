@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_METAPROG_H
 #define LIBTENSOR_METAPROG_H
 
+#include <cstdlib> // for size_t
+
 namespace libtensor {
 namespace iface {
 namespace eval_btensor_double {

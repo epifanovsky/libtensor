@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_IFACE_EVAL_BTENSOR_H
 #define LIBTENSOR_IFACE_EVAL_BTENSOR_H
 
-#include <cstdlib> // for size_t
-
 namespace libtensor {
 namespace iface {
 
