@@ -13,13 +13,13 @@ namespace expr {
  **/
 class node_assign : public node {
 private:
-    unsigned m_tid; //!< Tensor ID
+    tid_t m_tid; //!< Tensor ID
     const node &m_rhs; //!< Operation to be assigned
 
 public:
     /** \brief Creates an assignment node
      **/
-    node_assign(unsigned tid, const node &rhs) :
+    node_assign(tid_t tid, const node &rhs) :
         node("assign"), m_tid(tid), m_rhs(rhs)
     { }
 
@@ -35,7 +35,7 @@ public:
 
     /** \brief Returns the tensor ID on the left-hand side of the assignment
      **/
-    unsigned get_tid() const {
+    tid_t get_tid() const {
         return m_tid;
     }
 

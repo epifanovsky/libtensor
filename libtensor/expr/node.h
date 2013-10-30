@@ -13,6 +13,9 @@ namespace expr {
     \ingroup libtensor_expr
  **/
 class node {
+public:
+    typedef size_t tid_t; //!< Tensor ID type
+
 private:
     std::string m_op; //!< Operation
 
@@ -37,10 +40,6 @@ public:
     const std::string &get_op() const {
         return m_op;
     }
-
-    /** \brief Applies a map to argument IDs
-     **/
-//    virtual void apply_id_map(const std::map<unsigned, unsigned> &m) = 0;
 
     /** \brief Dynamically recasts this node onto a derived type
         \tparam T Derived node type.

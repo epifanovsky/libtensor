@@ -13,13 +13,13 @@ namespace expr {
  **/
 class node_ident : public node {
 private:
-    unsigned m_tid; //!< Tensor ID
+    tid_t m_tid; //!< Tensor ID
 
 public:
     /** \brief Creates an identity node
         \param tid Tensor ID.
      **/
-    node_ident(unsigned tid) :
+    node_ident(tid_t tid) :
         node("ident"), m_tid(tid)
     { }
 
@@ -33,15 +33,9 @@ public:
         return new node_ident(*this);
     }
 
-    /** \brief Applies a map to argument IDs
-     **/
-//    virtual void apply_id_map(const std::map<unsigned, unsigned> &m) {
-//        m_tid = m[m_tid];
-//    }
-
     /** \brief Returns tensor ID
      **/
-    unsigned get_tid() const {
+    tid_t get_tid() const {
         return m_tid;
     }
 
