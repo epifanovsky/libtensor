@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <utility>
 #include "../core/sequence.h"
+#include "../core/permutation.h"
 
 //TODO REMOVE
 #include <iostream>
@@ -439,6 +440,8 @@ public:
 
     //Get the iterator over the sub keys of a given key
     sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key);
+
+    sparse_block_tree<N> permute(permutation<N>& perm);
 };
 
 //Arguments must be passed in lexicographic order
@@ -504,6 +507,63 @@ typename sparse_block_tree<N>::const_iterator sparse_block_tree<N>::search(const
     impl::sparse_block_tree_node<N>::search(key,positions,0);
     return const_iterator(this,positions);
 }
+
+namespace impl { 
+
+template<size_t M>
+struct seq_val_compare {
+    bool operator()(const std::pair< sequence<M,size_t>,size_t>& p1,const std::pair< sequence<M,size_t>,size_t>& p2)
+    {
+
+        for(size_t i = 0; i < M; ++i)
+        {
+            if(p1.first[i] < p2.first[i])
+            {
+                return true;
+            }
+            else if(p1.first[i] > p2.first[i])
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+};
+
+} // namespace impl
+
+template<size_t N>
+sparse_block_tree<N> sparse_block_tree<N>::permute(permutation<N>& perm)
+{
+    std::vector< std::pair< sequence<N,size_t>, size_t > > kv_pairs;
+    for(iterator it = begin(); it != end(); ++it)
+    {
+        sequence<N,size_t> new_key = it.key(); 
+        perm.apply(new_key);
+        kv_pairs.push_back(std::make_pair(new_key,*it));
+    }
+
+
+    std::sort(kv_pairs.begin(),kv_pairs.end(),impl::seq_val_compare<N>());
+
+    std::vector< sequence<N,size_t> > all_keys;
+    std::vector<size_t> all_vals;
+    for(size_t i = 0; i < kv_pairs.size(); ++i)
+    {
+        all_keys.push_back(kv_pairs[i].first);
+        all_vals.push_back(kv_pairs[i].second);
+    }
+
+    sparse_block_tree<N> sbt(all_keys);
+    size_t m = 0; 
+    for(iterator it = sbt.begin(); it != sbt.end(); ++it)
+    {
+        *it = all_vals[m];
+        ++m;
+    }
+    return sbt;
+}
+
 
 //Must have 0 < Key size < N
 template<size_t N> 

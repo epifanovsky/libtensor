@@ -59,6 +59,15 @@ private:
     /** \brief Test that search returns an iterator to the correct value when searching a 3d tree
     **/
     void test_search_3d() throw(libtest::test_exception);
+
+
+    /** \brief Test that permutation of tree produces correct result 
+    **/
+    void test_permute_2d() throw(libtest::test_exception);
+
+    /** \brief Test that permutation of tree produces correct result 
+    **/
+    void test_permute_3d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
