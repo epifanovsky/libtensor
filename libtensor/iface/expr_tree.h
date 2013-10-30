@@ -19,7 +19,14 @@ private:
 
 public:
     /** \brief Constructs an expression using the root node and a database of
-            tensors
+            tensors (tensor list is copied)
+     **/
+    expr_tree(const expr::node &root, const tensor_list &tl) :
+        m_root(root.clone()), m_tl(tl)
+    { }
+
+    /** \brief Constructs an expression using the root node and a database of
+            tensors (tensor list is transferred)
      **/
     expr_tree(const expr::node &root, tensor_list &tl) :
         m_root(root.clone()), m_tl(tl, 1)
@@ -30,6 +37,13 @@ public:
     expr_tree(const expr_tree &e) :
         m_root(e.m_root->clone()), m_tl(e.m_tl)
     { }
+
+    /** \brief Transfer constructor
+     **/
+    expr_tree(expr_tree &e) :
+        m_root(e.m_root), m_tl(e.m_tl, 1) {
+        e.m_root = 0;
+    }
 
     /** \brief Destructor
      **/

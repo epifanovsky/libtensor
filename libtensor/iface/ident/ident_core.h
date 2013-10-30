@@ -20,7 +20,7 @@ using namespace libtensor::iface;
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class ident_core : public expr_core_i<N, T> {
+class ident_core /*: public expr_core_i<N, T>*/ {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -41,9 +41,9 @@ public:
 
     /** \brief Clones this object using new
      **/
-    virtual expr_core_i<N, T> *clone() const {
-        return new ident_core(*this);
-    }
+//    virtual expr_core_i<N, T> *clone() const {
+//        return new ident_core(*this);
+//    }
 
     /** \brief Returns the enclosed tensor
      **/
@@ -59,8 +59,8 @@ public:
 
     /** \brief Creates evaluation container using new
      **/
-    virtual eval_container_i<N, T> *create_container(
-        const letter_expr<N> &label) const;
+//    virtual eval_container_i<N, T> *create_container(
+//        const letter_expr<N> &label) const;
 
     /** \brief Returns whether the tensor's label contains a letter
      **/
@@ -94,7 +94,7 @@ const char ident_core<N, T>::k_clazz[] = "ident_core<N, T>";
     \ingroup libtensor_btensor_expr
  **/
 template<size_t N, typename T>
-class ident_eval : public eval_container_i<N, T>, public noncopyable {
+class ident_eval /*: public eval_container_i<N, T>, public noncopyable*/ {
 public:
     static const char k_clazz[]; //!< Class name
 
@@ -186,12 +186,12 @@ ident_eval<N, T>::ident_eval(
 //}
 
 
-template<size_t N, typename T>
-eval_container_i<N, T> *ident_core<N, T>::create_container(
-    const letter_expr<N> &label) const {
-
-    return new ident_eval<N, T>(*this, label);
-}
+//template<size_t N, typename T>
+//eval_container_i<N, T> *ident_core<N, T>::create_container(
+//    const letter_expr<N> &label) const {
+//
+//    return new ident_eval<N, T>(*this, label);
+//}
 
 
 } // namespace labeled_btensor_expr

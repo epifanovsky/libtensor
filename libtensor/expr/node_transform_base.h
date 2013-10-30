@@ -18,12 +18,16 @@ private:
     std::vector<size_t> m_perm; //!< Permutation of indices
 
 public:
-    /** \brief Creates a transformation node
+    /** \brief Creates a transformation node with index permutation
         \param node Node argument.
-        \param order Index order
+        \param perm Permutation of indices.
      **/
-    node_transform_base(const node &node, const std::vector<size_t> &perm) :
+    node_transform_base(
+        const node &node,
+        const std::vector<size_t> &perm) :
+
         unary_node_base("transform", node), m_perm(perm) {
+
         check();
     }
 

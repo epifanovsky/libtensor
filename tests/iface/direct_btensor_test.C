@@ -1,4 +1,6 @@
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/iface/iface.h>
 #include "direct_btensor_test.h"

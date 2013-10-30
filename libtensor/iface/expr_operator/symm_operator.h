@@ -7,7 +7,7 @@ namespace libtensor {
 namespace iface {
 
 
-/** \brief Symmetrization of an expression over two sets of indexes
+/** \brief Symmetrization of an expression over two sets of indices
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
@@ -21,7 +21,7 @@ expr_rhs<N, T> symm(
     const expr_rhs<N, T> &subexpr) {
 
     std::vector<size_t> sym(2 * M, 0);
-    for (size_t i = 0, j = 0; i < M; i++) {
+    for(size_t i = 0, j = 0; i < M; i++) {
         const letter &l1 = sym1.letter_at(i);
         const letter &l2 = sym2.letter_at(i);
 
@@ -30,13 +30,15 @@ expr_rhs<N, T> symm(
     }
 
     const expr_tree &ex = subexpr.get_expr();
-    return expr_rhs<N, T>(expr_tree(expr::node_symm<T>(ex.get_nodes(), sym, 2,
-            scalar_transf<T>(), scalar_transf<T>()), ex.get_tensors()),
-            subexpr.get_label());
+
+    expr::node_symm<T> nsym(ex.get_nodes(), sym, 2, scalar_transf<T>(),
+        scalar_transf<T>());
+    return expr_rhs<N, T>(
+        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
 }
 
 
-/** \brief Anti-symmetrization of an expression over two sets of indexes
+/** \brief Anti-symmetrization of an expression over two sets of indices
     \tparam N Tensor order.
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
@@ -50,7 +52,7 @@ expr_rhs<N, T> asymm(
     const expr_rhs<N, T> &subexpr) {
 
     std::vector<size_t> sym(2 * M, 0);
-    for (size_t i = 0, j = 0; i < M; i++) {
+    for(size_t i = 0, j = 0; i < M; i++) {
         const letter &l1 = sym1.letter_at(i);
         const letter &l2 = sym2.letter_at(i);
 
@@ -59,13 +61,15 @@ expr_rhs<N, T> asymm(
     }
 
     const expr_tree &ex = subexpr.get_expr();
-    return expr_rhs<N, T>(expr_tree(expr::node_symm<T>(ex.get_nodes(), sym, 2,
-            scalar_transf<T>(-1), scalar_transf<T>()), ex.get_tensors()),
-            subexpr.get_label());
+
+    expr::node_symm<T> nsym(ex.get_nodes(), sym, 2, scalar_transf<T>(-1),
+        scalar_transf<T>());
+    return expr_rhs<N, T>(
+        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
 }
 
 
-/** \brief Symmetrization of an expression over three indexes
+/** \brief Symmetrization of an expression over three indices
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
@@ -84,13 +88,15 @@ expr_rhs<N, T> symm(
     sym[2] = subexpr.index_of(l3);
 
     const expr_tree &ex = subexpr.get_expr();
-    return expr_rhs<N, T>(expr_tree(expr::node_symm<T>(ex.get_nodes(), sym, 3,
-            scalar_transf<T>(), scalar_transf<T>()), ex.get_tensors()),
-            subexpr.get_label());
+
+    expr::node_symm<T> nsym(ex.get_nodes(), sym, 3, scalar_transf<T>(),
+        scalar_transf<T>());
+    return expr_rhs<N, T>(
+        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
 }
 
 
-/** \brief Anti-symmetrization of an expression over three indexes
+/** \brief Anti-symmetrization of an expression over three indices
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
@@ -109,9 +115,11 @@ expr_rhs<N, T> asymm(
     sym[2] = subexpr.index_of(l3);
 
     const expr_tree &ex = subexpr.get_expr();
-    return expr_rhs<N, T>(expr_tree(expr::node_symm<T>(ex.get_nodes(), sym, 3,
-            scalar_transf<T>(-1), scalar_transf<T>()), ex.get_tensors()),
-            subexpr.get_label());
+
+    expr::node_symm<T> nsym(ex.get_nodes(), sym, 3, scalar_transf<T>(-1),
+        scalar_transf<T>());
+    return expr_rhs<N, T>(
+        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
 }
 
 

@@ -12,9 +12,9 @@ tensor_list::tensor_list() {
 
 tensor_list::tensor_list(const tensor_list &tl) {
 
-    for(map_t::const_iterator it = tl.m_lst.begin();
-            it != tl.m_lst.end(); it++) {
-        m_lst.insert(map_t::value_type(it->first, it->second->clone()));
+    for(map_t::const_iterator it = tl.m_lst.begin(); it != tl.m_lst.end();
+            ++it) {
+        m_lst.insert(std::make_pair(it->first, it->second->clone()));
     }
 }
 
@@ -33,11 +33,10 @@ tensor_list::~tensor_list() {
 
 void tensor_list::merge(const tensor_list &tl) {
 
-    for (map_t::const_iterator it = tl.m_lst.begin();
-            it != tl.m_lst.end(); it++) {
-
-        if (m_lst.count(it->first) == 0) {
-            m_lst.insert(map_t::value_type(it->first, it->second->clone()));
+    for(map_t::const_iterator it = tl.m_lst.begin(); it != tl.m_lst.end();
+            ++it) {
+        if(m_lst.count(it->first) == 0) {
+            m_lst.insert(std::make_pair(it->first, it->second->clone()));
         }
     }
 }

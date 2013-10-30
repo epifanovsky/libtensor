@@ -10,8 +10,8 @@ namespace iface {
 
 /** \brief Contraction of two expressions over multiple indexes
     \tparam K Number of contracted indexes.
-    \tparam N Order of the first %tensor.
-    \tparam M Order of the second %tensor.
+    \tparam N Order of the first tensor.
+    \tparam M Order of the second tensor.
     \tparam T Tensor element type.
 
     \ingroup libtensor_btensor_expr_op
@@ -19,30 +19,35 @@ namespace iface {
 template<size_t K, size_t N, size_t M, typename T>
 expr_rhs<N + M - 2 * K, T> contract(
     const letter_expr<K> contr,
-    const expr_rhs<N, T> &lhs,
-    const expr_rhs<M, T> &rhs) {
+    const expr_rhs<N, T> &a,
+    const expr_rhs<M, T> &b) {
 
-    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
-    tensor_list tl(le.get_tensors());
-    tl.merge(re.get_tensors());
+    const expr_tree &ea = a.get_expr(), &eb = b.get_expr();
+    tensor_list tl(ea.get_tensors());
+    tl.merge(eb.get_tensors());
+
+    // TODO: remap tensors
 
     std::map<size_t, size_t> cseq;
-    std::vector<const letter *> label;
-    for (size_t i = 0; i < N; i++) {
-        const letter &l = lhs.letter_at(i);
-        if (contr.contains(l)) { cseq[i] = N + rhs.index_of(l); }
-        else { label.push_back(&l); }
+    std::vector<const letter*> label;
+    for(size_t i = 0; i < N; i++) {
+        const letter &l = a.letter_at(i);
+        if(contr.contains(l)) cseq[i] = N + b.index_of(l);
+        else label.push_back(&l);
     }
-    for (size_t i = 0; i < M; i++) {
-        const letter &l = rhs.letter_at(i);
-        if (! contr.contains(l)) { label.push_back(&l); }
+    for(size_t i = 0; i < M; i++) {
+        const letter &l = b.letter_at(i);
+        if(!contr.contains(l)) label.push_back(&l);
     }
 
-    return expr_rhs<N + M - 2 * K, T>(
-            expr_tree(expr::node_contract(le.get_nodes(),
-                    re.get_nodes(), cseq), tl),
-            letter_expr<N + M - 2 * K>(label));
+    enum {
+        NC = N + M - 2 * K
+    };
+
+    expr::node_contract ncon(ea.get_nodes(), eb.get_nodes(), cseq);
+    return expr_rhs<NC, T>(expr_tree(ncon, tl), letter_expr<NC>(label));
 }
+
 
 /** \brief Contraction of two expressions over one index
     \tparam N Order of the first tensor.
@@ -54,12 +59,14 @@ expr_rhs<N + M - 2 * K, T> contract(
 template<size_t N, size_t M, typename T>
 expr_rhs<N + M - 2, T> contract(
     const letter &let,
-    const expr_rhs<N, T> &lhs,
-    const expr_rhs<M, T> &rhs) {
+    const expr_rhs<N, T> &a,
+    const expr_rhs<M, T> &b) {
 
-    return contract(letter_expr<1>(let), bta, btb);
+    return contract(letter_expr<1>(let), a, b);
 }
 
+
+#if 0
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
 expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K1> contr1,

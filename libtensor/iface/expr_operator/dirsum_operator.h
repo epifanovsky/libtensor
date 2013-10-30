@@ -16,23 +16,25 @@ namespace iface {
  **/
 template<size_t N, size_t M, typename T>
 expr_rhs<N + M, T> dirsum(
-    const expr_rhs<N, T> &bta,
-    const expr_rhs<M, T> &btb) {
+    const expr_rhs<N, T> &a,
+    const expr_rhs<M, T> &b) {
 
     std::vector<const letter *> label(N + M);
-    for (size_t i = 0; i < N; i++) {
-        label[i] = bta.letter_at(i);
+    for(size_t i = 0; i < N; i++) {
+        label[i] = &a.letter_at(i);
     }
-    for (size_t i = 0, j = N; i < M; i++, j++) {
-        label[j] = btb.letter_at(i);
+    for(size_t i = 0, j = N; i < M; i++, j++) {
+        label[j] = &b.letter_at(i);
     }
 
-    const expr_tree &le = bta.get_expr(), &re = btb.get_expr();
-    tensor_list tl(le.get_tensors());
-    tl.merge(re.get_tensors());
+    const expr_tree &ea = a.get_expr(), &eb = b.get_expr();
+    tensor_list tl(ea.get_tensors());
+    tl.merge(eb.get_tensors());
 
-    return expr_rhs<N + M, T>(expr_tree(expr::node_dirsum(le.get_nodes(),
-            re.get_nodes()), tl), letter_expr<N + M>(label));
+    // TODO: remap tensors
+
+    expr::node_dirsum nds(ea.get_nodes(), eb.get_nodes());
+    return expr_rhs<N + M, T>(expr_tree(nds, tl), letter_expr<N + M>(label));
 }
 
 

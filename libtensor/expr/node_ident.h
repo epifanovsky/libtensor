@@ -33,6 +33,12 @@ public:
         return new node_ident(*this);
     }
 
+    /** \brief Applies a map to argument IDs
+     **/
+//    virtual void apply_id_map(const std::map<unsigned, unsigned> &m) {
+//        m_tid = m[m_tid];
+//    }
+
     /** \brief Returns tensor ID
      **/
     unsigned get_tid() const {

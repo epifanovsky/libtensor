@@ -23,8 +23,11 @@ public:
         \param perm Permutation of indices.
         \param c Scaling coefficient.
      **/
-    node_transform(const node &node, const std::vector<size_t> &perm,
+    node_transform(
+        const node &node,
+        const std::vector<size_t> &perm,
         const scalar_transf<T> &c) :
+
         node_transform_base(node, perm), m_coeff(c)
     { }
 

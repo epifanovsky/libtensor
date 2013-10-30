@@ -1,7 +1,9 @@
-#ifndef LIBTENSOR_IFACE_MULT_OPERATOR_H
-#define LIBTENSOR_IFACE_MULT_OPERATOR_H
+#ifndef LIBTENSOR_IFACE_EWMULT_OPERATOR_H
+#define LIBTENSOR_IFACE_EWMULT_OPERATOR_H
 
+#include <libtensor/expr/node_ewmult.h>
 #include <libtensor/expr/node_mult.h>
+#include <libtensor/expr/node_transform.h>
 
 namespace libtensor {
 namespace iface {
@@ -29,9 +31,10 @@ expr_rhs<N, T> mult(
         std::vector<size_t> perm(N);
         for (size_t i = 0; i < N; i++) perm[i] = px[i];
 
-        return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
-                node_transform<T>(re.get_nodes(), perm, scalar_transf<T>()),
-                false), tl), lhs.get_label());
+        expr::node_transform<T> ntr(re.get_nodes(), perm, scalar_transf<T>());
+        return expr_rhs<N, T>(
+            expr_tree(expr::node_mult(le.get_nodes(), ntr, false), tl),
+            lhs.get_label());
     }
 
 }
@@ -59,9 +62,10 @@ expr_rhs<N, T> div(
         std::vector<size_t> perm(N);
         for (size_t i = 0; i < N; i++) perm[i] = px[i];
 
-        return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
-                node_transform<T>(re.get_nodes(), perm, scalar_transf<T>()),
-                true), tl), lhs.get_label());
+        expr::node_transform<T> ntr(re.get_nodes(), perm, scalar_transf<T>());
+        return expr_rhs<N, T>(
+            expr_tree(expr::node_mult(le.get_nodes(), ntr, true), tl),
+            lhs.get_label());
     }
 }
 
@@ -87,15 +91,19 @@ expr_rhs<N + M - K, T> ewmult(
     std::vector<const letter *> label;
     for (size_t i = 0; i < K; i++) {
         const letter &l = ewidx.letter_at(i);
-        if (! bta.contains(l) || ! btb.contains(l)) {
+        if(!lhs.contains(l) || !rhs.contains(l)) {
             throw expr_exception(g_ns, "", method, __FILE__, __LINE__,
                     "Letter not found.");
         }
         multmap[lhs.index_of(l)] = rhs.index_of(l);
     }
 
-    return expr_rhs<N, T>(expr_tree(expr::node_ewmult(le.get_nodes(),
-            re.get_nodes(), multmap), tl), letter_expr<N + M - K>(label));
+    enum {
+        NC = N + M - K
+    };
+
+    expr::node_ewmult nmul(le.get_nodes(), re.get_nodes(), multmap);
+    return expr_rhs<NC, T>(expr_tree(nmul, tl), letter_expr<NC>(label));
 }
 
 
@@ -114,8 +122,10 @@ expr_rhs<N + M - 1, T> ewmult(
 
 } // namespace iface
 
+using iface::div;
+using iface::ewmult;
 using iface::mult;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_MULT_OPERATOR_H
+#endif // LIBTENSOR_IFACE_EWMULT_OPERATOR_H

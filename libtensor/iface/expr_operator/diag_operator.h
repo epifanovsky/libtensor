@@ -21,21 +21,24 @@ expr_rhs<N - M + 1, T> diag(
     const expr_rhs<N, T> &subexpr) {
 
     std::vector<size_t> diagdims(M, 0);
-    std::vector<const letter *> label;
-    for (size_t i = 0, j = 0; i < N; i++) {
-        const letter &l = bta.letter_at(i);
+    std::vector<const letter*> label;
+    for(size_t i = 0, j = 0; i < N; i++) {
+        const letter &l = subexpr.letter_at(i);
         if (l == let_diag || ! lab_diag.contains(l)) label.push_back(&l);
         else diagdims[lab_diag.index_of(l)] = i;
     }
-    if (label.size() != N - M + 1) {
+    if(label.size() != N - M + 1) {
         throw expr_exception(g_ns, "", "diag(const letter &, "
                 "const letter_expr<M> &, expr_rhs<N, T> &)",
                 __FILE__, __LINE__, "Error in letters");
     }
 
     const expr_tree &ex = subexpr.get_expr();
-    return expr_rhs<N - M + 1, T>(expr_tree(expr::node_diag(ex.get_nodes(),
-            diagdims), ex.get_tensors()), letter_expr<N - M + 1>(label));
+
+    expr::node_diag ndiag(ex.get_nodes(), diagdims);
+    return expr_rhs<N - M + 1, T>(
+        expr_tree(ndiag, ex.get_tensors()),
+        letter_expr<N - M + 1>(label));
 }
 
 

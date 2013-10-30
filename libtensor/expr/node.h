@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_EXPR_NODE_H
 #define LIBTENSOR_EXPR_NODE_H
 
+#include <map>
 #include <string>
 
 namespace libtensor {
@@ -36,6 +37,10 @@ public:
     const std::string &get_op() const {
         return m_op;
     }
+
+    /** \brief Applies a map to argument IDs
+     **/
+//    virtual void apply_id_map(const std::map<unsigned, unsigned> &m) = 0;
 
     /** \brief Dynamically recasts this node onto a derived type
         \tparam T Derived node type.

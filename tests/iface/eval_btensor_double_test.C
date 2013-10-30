@@ -4,7 +4,7 @@
 #include <libtensor/expr/eval_plan.h>
 #include <libtensor/expr/node_ident.h>
 #include <libtensor/expr/node_contract.h>
-#include <libtensor/expr/node_transform_double.h>
+#include <libtensor/expr/node_transform.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/iface/btensor/eval_btensor.h>
 #include "../compare_ref.h"
@@ -116,8 +116,9 @@ void eval_btensor_double_test::test_copy_2() {
     p10[0] = 1; p10[1] = 0;
 
     node_ident nid1(tid_oo), nid2(tid_ov), nid3(tid_vv);
-    node_transform_double ntr1(nid1, p01, -2.0), ntr2(nid2, p01, 1.0),
-        ntr3(nid3, p10, 1.5);
+    node_transform<double> ntr1(nid1, p01, scalar_transf<double>(-2.0)),
+        ntr2(nid2, p01, scalar_transf<double>(1.0)),
+        ntr3(nid3, p10, scalar_transf<double>(1.5));
     plan.insert_assignment(node_assign(rid_oo, ntr1));
     plan.insert_assignment(node_assign(rid_ov, ntr2));
     plan.insert_assignment(node_assign(rid_vv, ntr3));
@@ -165,7 +166,8 @@ void eval_btensor_double_test::test_copy_3() {
     p021[0] = 0; p021[1] = 2; p021[2] = 1;
 
     node_ident nid(tid_ooo);
-    node_transform_double ntr1(nid, p102, 1.0), ntr2(ntr1, p021, 1.0);
+    node_transform<double> ntr1(nid, p102, scalar_transf<double>(1.0)),
+        ntr2(ntr1, p021, scalar_transf<double>(1.0));
     plan.insert_assignment(node_assign(rid_ooo, ntr2));
 
     eval_btensor<double>().process_plan(plan, tl);
