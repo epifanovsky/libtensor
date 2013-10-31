@@ -18,14 +18,14 @@ public:
         \param arg2 Second argument
      **/
     node_dirprod(const node &arg1, const node &arg2) :
-        nary_node_base("dirprod", arg1, arg2)
+        nary_node_base("dirprod", 0, arg1, arg2)
     { }
 
     /** \brief Creates an direct tensor product node of n tensors
         \param args List of arguments
      **/
     node_dirprod(std::vector<const node *> &args) :
-        nary_node_base("dirprod", args)
+        nary_node_base("dirprod", 0, args)
     { }
 
     /** \brief Virtual destructor

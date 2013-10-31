@@ -28,7 +28,7 @@ public:
         \param tid Tensor ID.
      **/
     node_symm_base(const node &arg, const std::vector<size_t> &sym, size_t n) :
-        unary_node_base("symm", arg), m_sym(sym), m_nsym(n)
+        unary_node_base("symm", arg.get_n(), arg), m_sym(sym), m_nsym(n)
     { }
 
     /** \brief Virtual destructor

@@ -19,6 +19,9 @@ struct node_with_transf {
     tensor_transf<N, double> tr;
 
     node_with_transf(const node &n_) : n(n_) { }
+    node_with_transf(const node &n_, const tensor_transf<N, double> &tr_) :
+        n(n_), tr(tr_)
+    { }
 
 };
 

@@ -20,14 +20,14 @@ public:
         \param arg2 Second argument.
      **/
     node_add(const node &arg1, const node &arg2) :
-        nary_node_base("add", arg1, arg2)
+        nary_node_base("add", arg1.get_n(), arg1, arg2)
     { }
 
     /** \brief Creates an addition node
         \param args List of arguments.
      **/
     node_add(const std::vector<const node *> &args) :
-        nary_node_base("add", args)
+        nary_node_base("add", args.empty() ? 0 : args[0]->get_n(), args)
     { }
 
     /** \brief Virtual destructor

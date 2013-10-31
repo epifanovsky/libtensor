@@ -38,7 +38,9 @@ public:
      **/
     node_contract(const node &arg1, const node &arg2,
         const std::map<size_t, size_t> &contr) :
-        nary_node_base("contract", arg1, arg2), m_contr(contr)
+        nary_node_base("contract",
+            arg1.get_n() + arg2.get_n() - 2 * contr.size(), arg1, arg2),
+            m_contr(contr)
     { }
 
     /** \brief Creates a contraction node of three tensors
@@ -49,7 +51,9 @@ public:
      **/
     node_contract(const node &arg1, const node &arg2, const node &arg3,
         const std::map<size_t, size_t> &contr) :
-        nary_node_base("contract", create_args(arg1, arg2, arg3)),
+        nary_node_base("contract",
+            arg1.get_n() + arg2.get_n() + arg3.get_n() - 2 * contr.size(),
+            create_args(arg1, arg2, arg3)),
         m_contr(contr)
     { }
 
@@ -58,9 +62,9 @@ public:
         \param contr Contraction map
      **/
     node_contract(
-        const std::vector<const node *> &args,
+        const std::vector<const node*> &args,
         const std::map<size_t, size_t> &contr) :
-        nary_node_base("contract", args), m_contr(contr)
+        nary_node_base("contract", calc_nc(args, contr), args), m_contr(contr)
     { }
 
     /** \brief Virtual destructor
@@ -78,13 +82,22 @@ public:
     }
 
 private:
-    static std::vector<const node *> create_args(
+    static std::vector<const node*> create_args(
         const node &n1, const node &n2, const node &n3) {
 
         std::vector<const node *> args(3);
         args[0] = &n1; args[1] = &n2; args[2] = &n3;
         return args;
     }
+
+    static size_t calc_nc(const std::vector<const node*> &args,
+        const std::map<size_t, size_t> &contr) {
+
+        size_t na = 0;
+        for(size_t i = 0; i < args.size(); i++) na += args[i]->get_n();
+        return na - 2 * contr.size();
+    }
+
 };
 
 

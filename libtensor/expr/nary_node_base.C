@@ -6,10 +6,10 @@ namespace expr {
 
 
 nary_node_base::nary_node_base(
-    const std::string &op,
+    const std::string &op, size_t n,
     const std::vector<const node*> &args) :
 
-    node(op), m_args(args.size()) {
+    node(op, n), m_args(args.size()) {
 
     for(size_t i = 0; i < args.size(); i++) m_args[i] = args[i]->clone();
 }

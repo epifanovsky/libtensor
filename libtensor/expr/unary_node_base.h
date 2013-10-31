@@ -18,10 +18,11 @@ private:
 public:
     /** \brief Creates an unary node base
         \param op Operation name.
-        \param arg Node argument
+        \param n Order of result.
+        \param arg Node argument.
      **/
-    unary_node_base(const std::string &op, const node &arg) :
-        node(op), m_arg(arg.clone())
+    unary_node_base(const std::string &op, size_t n, const node &arg) :
+        node(op, n), m_arg(arg.clone())
     { }
 
     /** \brief Copy constructor

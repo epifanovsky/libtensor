@@ -110,6 +110,7 @@ void eval_btensor<double>::handle_assign(
     const expr::node_assign &node, tensor_list &tl) {
 
     tid_t tid = node.get_tid();
+    std::cout << "assign " << tid << std::endl;
     verify_tensor_type(tid, tl);
     eval_assign e(tl, tid, node.get_rhs());
     dispatch_1<1, Nmax>::dispatch(e, tl.get_tensor_order(tid));
@@ -119,12 +120,14 @@ void eval_btensor<double>::handle_assign(
 void eval_btensor<double>::handle_create_interm(
     tid_t tid, tensor_list &tl) {
 
+    std::cout << "create_interm " << tid << std::endl;
 }
 
 
 void eval_btensor<double>::handle_delete_interm(
     tid_t tid, tensor_list &tl) {
 
+    std::cout << "delete_interm " << tid << std::endl;
 }
 
 

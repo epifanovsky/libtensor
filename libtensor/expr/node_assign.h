@@ -21,13 +21,14 @@ public:
     /** \brief Creates an assignment node
      **/
     node_assign(tid_t tid, const node &rhs, bool add = false) :
-        node("assign"), m_tid(tid), m_rhs(rhs.clone()), m_add(add)
+        node("assign", rhs.get_n()), m_tid(tid), m_rhs(rhs.clone()),
+        m_add(add)
     { }
 
     /** \brief Copy constructor
      **/
     node_assign(const node_assign &n) :
-        node("assign"), m_tid(n.m_tid), m_rhs(n.m_rhs->clone()), m_add(n.m_add)
+        node(n), m_tid(n.m_tid), m_rhs(n.m_rhs->clone()), m_add(n.m_add)
     { }
 
     /** \brief Virtual destructor

@@ -18,14 +18,14 @@ public:
         \param arg2 Second argument
      **/
     node_dirsum(const node &arg1, const node &arg2) :
-        nary_node_base("dirsum", arg1, arg2)
+        nary_node_base("dirsum", 0, arg1, arg2)
     { }
 
     /** \brief Creates an direct tensor sum node of n tensors
         \param args List of arguments
      **/
     node_dirsum(std::vector<const node *> &args) :
-        nary_node_base("dirsum", args)
+        nary_node_base("dirsum", 0, args)
     { }
 
     /** \brief Virtual destructor

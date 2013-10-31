@@ -62,7 +62,7 @@ void eval_btensor_double_test::test_copy_1() {
 
     eval_plan plan;
 
-    node_ident nid1(tid_oo), nid2(tid_ov), nid3(tid_vv);
+    node_ident nid1(tid_oo, 2), nid2(tid_ov, 2), nid3(tid_vv, 2);
     plan.insert_assignment(node_assign(rid_oo, nid1));
     plan.insert_assignment(node_assign(rid_ov, nid2));
     plan.insert_assignment(node_assign(rid_vv, nid3));
@@ -115,7 +115,7 @@ void eval_btensor_double_test::test_copy_2() {
     p01[0] = 0; p01[1] = 1;
     p10[0] = 1; p10[1] = 0;
 
-    node_ident nid1(tid_oo), nid2(tid_ov), nid3(tid_vv);
+    node_ident nid1(tid_oo, 2), nid2(tid_ov, 2), nid3(tid_vv, 2);
     node_transform<double> ntr1(nid1, p01, scalar_transf<double>(-2.0)),
         ntr2(nid2, p01, scalar_transf<double>(1.0)),
         ntr3(nid3, p10, scalar_transf<double>(1.5));
@@ -165,7 +165,7 @@ void eval_btensor_double_test::test_copy_3() {
     p102[0] = 1; p102[1] = 0; p102[2] = 2;
     p021[0] = 0; p021[1] = 2; p021[2] = 1;
 
-    node_ident nid(tid_ooo);
+    node_ident nid(tid_ooo, 3);
     node_transform<double> ntr1(nid, p102, scalar_transf<double>(1.0)),
         ntr2(ntr1, p021, scalar_transf<double>(1.0));
     plan.insert_assignment(node_assign(rid_ooo, ntr2));
@@ -216,7 +216,7 @@ void eval_btensor_double_test::test_contract_1() {
 
     eval_plan plan;
 
-    node_ident nid1(tid_oo), nid2(tid_ov), nid3(tid_vv);
+    node_ident nid1(tid_oo, 2), nid2(tid_ov, 2), nid3(tid_vv, 2);
     std::map<size_t, size_t> contr1, contr2;
     contr1[0] = 0;
     contr2[1] = 1;

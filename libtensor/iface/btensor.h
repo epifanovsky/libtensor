@@ -68,8 +68,10 @@ void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
 
     expr::node_transform<T> ntr(rhs.get_expr().get_nodes(), perm,
         scalar_transf<T>());
+    std::cout << std::endl << "= build plan = " << tl.get_tensor_order(this_tid) << std::endl;
     eval_plan_builder_btensor pbld(expr::node_assign(this_tid, ntr), tl);
     pbld.build_plan();
+    std::cout << "= process plan =" << std::endl;
     eval_btensor<T>().process_plan(pbld.get_plan(), tl);
 }
 

@@ -21,11 +21,13 @@ private:
 public:
     /** \brief Creates a binary node
         \param op Operation name
+        \param n Order of result
         \param arg1 First argument
         \param arg2 Second argument
      **/
-    nary_node_base(const std::string &op, const node &arg1, const node &arg2) :
-        node(op), m_args(2) {
+    nary_node_base(const std::string &op, size_t n, const node &arg1,
+        const node &arg2) :
+        node(op, n), m_args(2) {
 
         m_args[0] = arg1.clone();
         m_args[1] = arg2.clone();
@@ -33,9 +35,11 @@ public:
 
     /** \brief Creates a n-ary node
         \param op Operation name
+        \param n Order of result
         \param args List of arguments
      **/
-    nary_node_base(const std::string &op, const std::vector<const node*> &args);
+    nary_node_base(const std::string &op, size_t n,
+        const std::vector<const node*> &args);
 
     /** \brief Copy constructor
      **/

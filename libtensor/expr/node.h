@@ -17,14 +17,16 @@ public:
     typedef size_t tid_t; //!< Tensor ID type
 
 private:
-    std::string m_op; //!< Operation
+    std::string m_op; //!< Operation name
+    size_t m_n; //!< Order of result
 
 public:
     /** \brief Creates this node
         \param op Operation name.
+        \param n Order of result.
      **/
-    node(const std::string &op) :
-        m_op(op)
+    node(const std::string &op, size_t n) :
+        m_op(op), m_n(n)
     { }
 
     /** \brief Virtual destructor
@@ -39,6 +41,12 @@ public:
      **/
     const std::string &get_op() const {
         return m_op;
+    }
+
+    /** \brief Returns the order of the result
+     **/
+    size_t get_n() const {
+        return m_n;
     }
 
     /** \brief Dynamically recasts this node onto a derived type

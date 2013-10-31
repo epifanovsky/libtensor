@@ -22,7 +22,7 @@ public:
         \param recip Perform division (left / right).
      **/
     node_mult(const node &left, const node &right, bool recip) :
-        nary_node_base("mult", left, right), m_recip(recip)
+        nary_node_base("mult", 0, left, right), m_recip(recip)
     { }
 
     /** \brief Virtual destructor

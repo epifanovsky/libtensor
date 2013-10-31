@@ -18,9 +18,10 @@ private:
 public:
     /** \brief Creates an identity node
         \param tid Tensor ID.
+        \param n Tensor order.
      **/
-    node_ident(tid_t tid) :
-        node("ident"), m_tid(tid)
+    node_ident(tid_t tid, size_t n) :
+        node("ident", n), m_tid(tid)
     { }
 
     /** \brief Virtual destructor

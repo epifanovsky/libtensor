@@ -33,7 +33,7 @@ public:
      **/
     node_ewmult(const node &left, const node &right,
             const std::map<size_t, size_t> &multmap) :
-        nary_node_base("ewmult", left, right), m_mmap(multmap)
+        nary_node_base("ewmult", 0, left, right), m_mmap(multmap)
     { }
 
     /** \brief Virtual destructor
