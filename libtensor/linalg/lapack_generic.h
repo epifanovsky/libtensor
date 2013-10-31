@@ -17,6 +17,8 @@ extern "C" {
     int dsyev_(char*, char*, int*, double*, int*, double*, double*, int*, int*);
     int dgeev_(char*, char*, int*, double*, int*, double*, double*, double*,
         int*, double*, int*, double*, int*, int*);
+    int dggev_(char*, char*, int*, double*, int*, double* , int *, double*, double*, double*,
+        double *, int*, double*, int*, double*, int*, int*);
     int zgeev_(char*, char*, int*, std::complex<double>*, int*,
         std::complex<double>*, std::complex<double>*, int*,
         std::complex<double>*, int*, std::complex<double>*, int*, double*,
@@ -134,6 +136,25 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
     return gen_info;
 }
 
+
+/** \brief LAPACK function dggev (generic)
+ *
+ *     \ingroup libtensor_linalg
+ *      **/
+inline int lapack_dggev(char jobvl, char jobvr, size_t n, double *a,
+    size_t lda, double * b, size_t ldb, double *alphar, double *alphai, double * beta, double *vl, size_t ldvl, double *vr,
+    size_t ldvr, double *work, size_t lwork) {
+
+    int gen_n = n;
+    int gen_lda = lda;
+    int gen_ldb = ldb;
+    int gen_ldvl = ldvl;
+    int gen_ldvr = ldvr;
+    int gen_lwork = lwork;
+    int gen_info = 0;
+    dggev_(&jobvl, &jobvr, &gen_n, a, &gen_lda, b, &gen_ldb, alphar, alphai, beta, vl, &gen_ldvl, vr, &gen_ldvr, work, &gen_lwork, &gen_info);
+    return gen_info;
+}
 
 /** \brief LAPACK function zgeev (generic)
 
