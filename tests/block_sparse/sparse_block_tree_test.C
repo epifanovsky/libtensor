@@ -1,5 +1,5 @@
 #include <libtensor/block_sparse/sparse_block_tree.h>
-#include <libtensor/core/permutation.h>
+#include <libtensor/block_sparse/runtime_permutation.h>
 #include "sparse_block_tree_test.h"
 
 namespace libtensor { 
@@ -604,7 +604,7 @@ void sparse_block_tree_test::test_permute_2d() throw(libtest::test_exception)
     }
 
     //Permute the tree
-    permutation<2> perm;
+    runtime_permutation perm(2);
     perm.permute(0,1);
     sparse_block_tree<2> permuted_sbt = sbt.permute(perm);
 
@@ -730,7 +730,7 @@ void sparse_block_tree_test::test_permute_3d() throw(libtest::test_exception)
     }
 
     //permute first and last index
-    permutation<3> perm;
+    runtime_permutation perm(3);
     perm.permute(0,2);
 
     sparse_block_tree<3> permuted_sbt = sbt.permute(perm);

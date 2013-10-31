@@ -6,11 +6,17 @@
 #include <utility>
 #include "../core/sequence.h"
 #include "../core/permutation.h"
+#include "runtime_permutation.h"
+
 
 //TODO REMOVE
 #include <iostream>
 
 namespace libtensor {
+
+//Forward declaration for set_offsets
+template<size_t N>
+class sparse_bispace;
 
 namespace impl {
 
@@ -444,7 +450,13 @@ public:
     sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key);
 
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
-    sparse_block_tree<N> permute(permutation<N>& perm);
+    sparse_block_tree<N> permute(const runtime_permutation& perm) const;
+
+    //Used to initialize the values of the tree to represent the offsets of the blocks in a bispace
+    //Implemented in sparse_bispace.h to avoid incomplete type errors
+    ///Returns the sum of the sizes of all blocks in the tree;
+    //Must use vectors etc instead of compile time types like sequence because may not know length at compile time
+    size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const sequence<N,size_t>& positions); 
 
     bool operator==(const sparse_block_tree<N>& rhs) const;
     bool operator!=(const sparse_block_tree<N>& rhs) const;
@@ -539,10 +551,10 @@ struct seq_val_compare {
 } // namespace impl
 
 template<size_t N>
-sparse_block_tree<N> sparse_block_tree<N>::permute()
+sparse_block_tree<N> sparse_block_tree<N>::permute(const runtime_permutation& perm) const
 {
     std::vector< std::pair< sequence<N,size_t>, size_t > > kv_pairs;
-    for(iterator it = begin(); it != end(); ++it)
+    for(const_iterator it = begin(); it != end(); ++it)
     {
         sequence<N,size_t> new_key = it.key(); 
         perm.apply(new_key);
@@ -569,6 +581,7 @@ sparse_block_tree<N> sparse_block_tree<N>::permute()
     }
     return sbt;
 }
+
 template<size_t N>
 bool sparse_block_tree<N>::operator==(const sparse_block_tree<N>& rhs) const
 {
@@ -622,6 +635,7 @@ typename sparse_block_tree<N>::sub_key_iterator sparse_block_tree<N>::get_sub_ke
     return impl::sparse_block_tree_node<N>::get_sub_key_iterator(sub_key,0); 
 };
 
+//TODO: Un-inline and remove from header LINK
 //Type erasure class used to hide order for when a container must contain sparse_block_trees of varying orders 
 class sparse_block_tree_any_order {
 private:
@@ -633,6 +647,8 @@ private:
         //Returns the value at the specified key 
         virtual size_t search(const std::vector<size_t>& key) const = 0;
         virtual bool equal(const abstract_base* rhs) const = 0; 
+        virtual sparse_block_tree_any_order permute(const runtime_permutation& perm) const = 0;
+        virtual size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions)  = 0; 
     };
 
     template<size_t N>
@@ -642,6 +658,8 @@ private:
     public:
         size_t search(const std::vector<size_t>& key) const { return *(m_tree.search(key)); }
         bool equal(const abstract_base* rhs) const { return m_tree == static_cast<const wrapper<N>* >(rhs)->m_tree; }
+        sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
+        size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions); 
         wrapper(const sparse_block_tree<N>& tree) : m_tree(tree) {}
         abstract_base* clone() const { return new wrapper<N>(m_tree); }
     };
@@ -667,6 +685,9 @@ public:
     //Returns the value at the specified key 
     size_t search(const std::vector<size_t>& key) const { return m_tree_ptr->search(key); };
 
+    sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
+    size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions);
+
     bool operator==(const sparse_block_tree_any_order& rhs) const { if(m_order != rhs.m_order) { return false; } return m_tree_ptr->equal(rhs.m_tree_ptr); }
     bool operator!=(const sparse_block_tree_any_order& rhs) const { return !(*this == rhs); }
 
@@ -674,6 +695,46 @@ public:
     size_t get_order() const { return m_order; }
     abstract_base* get_ptr() { return m_tree_ptr; }
 };
+
+//Has to be implemented down here to avoid 'incomplete type error'
+template<size_t N> 
+inline sparse_block_tree_any_order sparse_block_tree_any_order::wrapper<N>::permute(const runtime_permutation& perm) const
+{
+    return m_tree.permute(perm);
+}
+
+
+inline sparse_block_tree_any_order sparse_block_tree_any_order::permute(const runtime_permutation& perm) const
+{ 
+    if(perm.get_order() != m_order)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order<N>","permute(...)",
+            __FILE__,__LINE__,"permutation does not match tree order"); 
+    }
+
+    return m_tree_ptr->permute(perm);
+}
+
+inline size_t sparse_block_tree_any_order::set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions)
+{
+    if(positions.size() != m_order)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order<N>","set_offsets(...)",
+            __FILE__,__LINE__,"position argument does not have length equal to m_order");
+    }
+    return m_tree_ptr->set_offsets(subspaces,positions);
+}
+
+template<size_t N>
+size_t sparse_block_tree_any_order::wrapper<N>::set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions)
+{
+    sequence<N,size_t> pos_seq;
+    for(size_t i = 0; i < N;  ++i)
+    {
+        pos_seq[i] = positions[i];
+    }
+    return m_tree.set_offsets(subspaces,pos_seq);
+}
 
 } // namespace libtensor
 

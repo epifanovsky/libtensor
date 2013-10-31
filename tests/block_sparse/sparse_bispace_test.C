@@ -48,7 +48,8 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_block_offset_canonical_2d(); 
 
         test_permute_2d_10();
-        /*test_permute_3d_dense_sparse_021();*/
+        test_permute_3d_dense_sparse_021();
+        test_permute_3d_fully_sparse_210();
 
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
@@ -853,7 +854,7 @@ void sparse_bispace_test::test_permute_3d_dense_sparse_021() throw(libtest::test
     
     //Construct the benchmark permuted space
     permutation<3> perm;
-    perm.permute(0,1);
+    perm.permute(1,2);
     std::vector< sequence<2,size_t> > permuted_sig_blocks(4);
     permuted_sig_blocks[0][0] = 1; 
     permuted_sig_blocks[0][1] = 0;
@@ -866,6 +867,85 @@ void sparse_bispace_test::test_permute_3d_dense_sparse_021() throw(libtest::test
 
     sparse_bispace<3> correct_three_d = spb_2 | spb_1 % spb_1 << permuted_sig_blocks; 
 
+    if(three_d.permute(perm) != correct_three_d)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::permute(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_test::test_permute_3d_fully_sparse_210() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_permute_3d_fully_sparse_210()";
+
+    sparse_bispace<1> spb_1(11);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     * 3: 2
+     */
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    /* Splitting pattern results in the following block sizes:
+     * 0: 2
+     * 1: 3
+     * 2: 4
+     */
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+
+    std::vector< sequence<3,size_t> > sig_blocks(5);
+
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 0;
+    sig_blocks[0][2] = 2;
+    sig_blocks[1][0] = 0; 
+    sig_blocks[1][1] = 0;
+    sig_blocks[1][2] = 3;
+    sig_blocks[2][0] = 1;
+    sig_blocks[2][1] = 2;
+    sig_blocks[2][2] = 2;
+    sig_blocks[3][0] = 1;
+    sig_blocks[3][1] = 3;
+    sig_blocks[3][2] = 1;
+    sig_blocks[4][0] = 2;
+    sig_blocks[4][1] = 0;
+    sig_blocks[4][2] = 1;
+
+    sparse_bispace<3> three_d = spb_2 % spb_1 % spb_1 << sig_blocks; 
+
+    //Make the benchmark
+    std::vector< sequence<3,size_t> > permuted_sig_blocks(5);
+    permuted_sig_blocks[0][0] = 1;
+    permuted_sig_blocks[0][1] = 0;
+    permuted_sig_blocks[0][2] = 2;
+    permuted_sig_blocks[1][0] = 1;
+    permuted_sig_blocks[1][1] = 3;
+    permuted_sig_blocks[1][2] = 1;
+    permuted_sig_blocks[2][0] = 2; 
+    permuted_sig_blocks[2][1] = 0;
+    permuted_sig_blocks[2][2] = 0;
+    permuted_sig_blocks[3][0] = 2;
+    permuted_sig_blocks[3][1] = 2;
+    permuted_sig_blocks[3][2] = 1;
+    permuted_sig_blocks[4][0] = 3; 
+    permuted_sig_blocks[4][1] = 0;
+    permuted_sig_blocks[4][2] = 0;
+    sparse_bispace<3> correct_three_d = spb_1 % spb_1 % spb_2 << permuted_sig_blocks; 
+
+
+    permutation<3> perm;
+    perm.permute(0,2);
     if(three_d.permute(perm) != correct_three_d)
     {
         fail_test(test_name,__FILE__,__LINE__,

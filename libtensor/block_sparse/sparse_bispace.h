@@ -5,6 +5,7 @@
 #include "../defs.h"
 #include "../core/sequence.h"
 #include "../core/permutation.h"
+#include "runtime_permutation.h"
 #include "sparse_block_tree.h"
 #include "sparsity_expr.h"
 
@@ -367,21 +368,14 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::ve
 
     //Initialize the new sparse_block_tree with offset information  
     sparse_block_tree<L> sbt(sig_blocks);
-    size_t offset = 0; 
-    for(typename sparse_block_tree<L>::iterator it = sbt.begin(); it != sbt.end(); ++it)
+    sequence<L,size_t>  positions;
+    for(size_t i = 0; i < L; ++i)
     {
-        *it = offset;
-
-        //Compute the size of this block and increment offset
-        const sequence<L,size_t>& key = it.key();
-        size_t incr = 1;
-        for(size_t i = 0; i < L; ++i)
-        {
-            incr *= m_subspaces[N-L+i].get_block_size(key[i]);
-        }
-        offset += incr;
+        positions[i] = N-L+i;
     }
-    m_dimensions.push_back(offset);
+
+    size_t dim = sbt.set_offsets(m_subspaces,positions);
+    m_dimensions.push_back(dim);
 
     m_sparse_block_trees.push_back(sbt);
     m_sparse_indices_sets_offsets.push_back(N-L);
@@ -516,34 +510,43 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
     }
 
     //Permute trees
-    //for(size_t i = 0; i < m_sparse_indices_sets_offsets.size(); ++i)
-    //{
-        ////Does the permutation apply to this sparse tree
-        //size_t sparse_set_offset = m_sparse_indices_sets_offsets[i];
-        //size_t order = m_sparse_block_trees[i].get_order();
+    for(size_t i = 0; i < m_sparse_indices_sets_offsets.size(); ++i)
+    {
+        //Does the permutation apply to this sparse tree
+        size_t sparse_set_offset = m_sparse_indices_sets_offsets[i];
+        size_t order = m_sparse_block_trees[i].get_order();
 
-        //size_t lower_bound = sparse_set_offset;
-        //size_t upper_bound = (sparse_set_offset+order-1);
+        size_t lower_bound = sparse_set_offset;
+        size_t upper_bound = (sparse_set_offset+order-1);
 
-        ////Convert the parts of the permutation that apply to this tree into 
-        ////tree-relative indices
-        //std::vector<size_t> rel_perm_indices;
-        //for(size_t order_idx = 0; order_idx < order; ++order_idx)
-        //{
-            //size_t dest_idx = permutation[sparse_set_offset+order_idx];
-            ////Should support this eventually, but for now throw if idx 
-            //if(dest_idx < lower_bound || dest_idx > upper_bound)
-            //{
-                //throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
-                    //__FILE__,__LINE__,"permutation breaks up sparse tuple"); 
-            //}
-            //rel_perm_indices.push_back(dest_idx - sparse_set_offset);
-        //}
+        //Convert the parts of the permutation that apply to this tree into 
+        //tree-relative indices
+        std::vector<size_t> perm_entries;
+        std::vector<size_t> final_positions;
+        for(size_t order_idx = 0; order_idx < order; ++order_idx)
+        {
+            size_t dest_idx = perm[sparse_set_offset+order_idx];
+            //Should support this eventually, but for now throw if idx 
+            if(dest_idx < lower_bound || dest_idx > upper_bound)
+            {
+                throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
+                    __FILE__,__LINE__,"permutation breaks up sparse tuple"); 
+            }
+            size_t rel_idx = dest_idx - sparse_set_offset;
+            perm_entries.push_back(rel_idx);
 
-        ////Construct permutation of the tree
-    //}
+            //We have ALREADY permuted m_subspaces, so we must save the ORIGINAL POSITION, not the DEST
+            final_positions.push_back(sparse_set_offset+order_idx);
+        }
 
-
+        runtime_permutation tree_perm(perm_entries);
+        //Don't permute if identity
+        if(tree_perm != runtime_permutation(order))
+        {
+            copy.m_sparse_block_trees[i] = m_sparse_block_trees[i].permute(tree_perm);
+            copy.m_sparse_block_trees[i].set_offsets(copy.m_subspaces,final_positions);
+        }
+    }
     return copy;
 }
 
@@ -608,7 +611,7 @@ inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& 
     return sparsity_expr<1,1>(*this,rhs);
 }
 
-//Implementation of methods in sparsity_expr requiring sparse_bispace definition
+//Implementation of methods in sparsity_expr and sparse_block_tree requiring sparse_bispace definition
 template<size_t M>
 sparse_bispace<2> sparsity_expr<M,1>::operator<<(const std::vector< sequence<2,size_t> >& sig_blocks)
 {
@@ -624,6 +627,27 @@ sparse_bispace<M+N> sparsity_expr<M,N>::operator<<(const std::vector< sequence<N
 
     return sparse_bispace<M+N>(m_parent_bispace,std::vector< sparse_bispace<1> >(subspaces.begin(),subspaces.end()),sig_blocks);
 }
+
+template<size_t N>
+size_t sparse_block_tree<N>::set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const sequence<N,size_t>& positions)
+{
+    size_t offset = 0; 
+    for(iterator it = begin(); it != end(); ++it)
+    {
+        *it = offset;
+
+        //Compute the size of this block and increment offset
+        const sequence<N,size_t>& key = it.key();
+        size_t incr = 1;
+        for(size_t i = 0; i < N; ++i)
+        {
+            incr *= subspaces[positions[i]].get_block_size(key[i]);
+        }
+        offset += incr;
+    }
+    return offset;
+}
+
 
 //TODO: Make this immutable, etc?? Need to make this class hard to abuse
 //Type erasure class for sparse_bispaces.
