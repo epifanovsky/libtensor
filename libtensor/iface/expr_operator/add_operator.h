@@ -24,8 +24,6 @@ expr_rhs<N, T> operator+(
     tensor_list tl(le.get_tensors());
     tl.merge(re.get_tensors());
 
-    // TODO: remap tensors in rhs
-
     permutation<N> px = match(lhs.get_label(), rhs.get_label());
     if(px.is_identity()) {
 
@@ -59,8 +57,6 @@ expr_rhs<N, T> operator-(
 
     tensor_list tl(le.get_tensors());
     tl.merge(re.get_tensors());
-
-    // TODO: remap tensors in rhs
 
     permutation<N> px = match(lhs.get_label(), rhs.get_label());
     std::vector<size_t> perm(N);

@@ -24,9 +24,17 @@ public:
         node(op), m_arg(arg.clone())
     { }
 
+    /** \brief Copy constructor
+     **/
+    unary_node_base(const unary_node_base &n) :
+        node(n), m_arg(n.m_arg->clone())
+    { }
+
     /** \brief Virtual destructor
      **/
-    virtual ~unary_node_base() { }
+    virtual ~unary_node_base() {
+        delete m_arg;
+    }
 
     /** \brief Creates a copy of the node via new
      **/

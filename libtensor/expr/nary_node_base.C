@@ -5,16 +5,30 @@ namespace libtensor {
 namespace expr {
 
 
-nary_node_base::nary_node_base(const std::string &op,
-    const std::vector<const node *> &args) : node(op), m_args(args.size()) {
+nary_node_base::nary_node_base(
+    const std::string &op,
+    const std::vector<const node*> &args) :
 
-    std::vector<const node *>::iterator ito = m_args.begin();
-    for (std::vector<const node *>::const_iterator ifro = args.begin();
-            ifro != args.end(); ifro++) {
+    node(op), m_args(args.size()) {
 
-        *ito = (*ifro)->clone();
+    for(size_t i = 0; i < args.size(); i++) m_args[i] = args[i]->clone();
+}
+
+
+nary_node_base::nary_node_base(const nary_node_base &n) :
+    node(n), m_args(n.m_args.size()) {
+
+    for(size_t i = 0; i < n.m_args.size(); i++) {
+        m_args[i] = n.m_args[i]->clone();
     }
 }
+
+
+nary_node_base::~nary_node_base() {
+
+    for(size_t i = 0; i < m_args.size(); i++) delete m_args[i];
+}
+
 
 const node &nary_node_base::get_arg(size_t i) const {
 

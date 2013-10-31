@@ -16,7 +16,7 @@ namespace expr {
  **/
 class nary_node_base : public node {
 private:
-    std::vector<const node *> m_args; //!< Arguments
+    std::vector<node*> m_args; //!< Arguments
 
 public:
     /** \brief Creates a binary node
@@ -24,8 +24,8 @@ public:
         \param arg1 First argument
         \param arg2 Second argument
      **/
-    nary_node_base(const std::string &op,
-        const node &arg1, const node &arg2) : node(op), m_args(2) {
+    nary_node_base(const std::string &op, const node &arg1, const node &arg2) :
+        node(op), m_args(2) {
 
         m_args[0] = arg1.clone();
         m_args[1] = arg2.clone();
@@ -35,12 +35,15 @@ public:
         \param op Operation name
         \param args List of arguments
      **/
-    nary_node_base(const std::string &op,
-            const std::vector<const node *> &args);
+    nary_node_base(const std::string &op, const std::vector<const node*> &args);
+
+    /** \brief Copy constructor
+     **/
+    nary_node_base(const nary_node_base &n);
 
     /** \brief Virtual destructor
      **/
-    virtual ~nary_node_base() { }
+    virtual ~nary_node_base();
 
     /** \brief Creates a copy of the node via new
      **/

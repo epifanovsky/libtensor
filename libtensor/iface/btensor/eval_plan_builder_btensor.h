@@ -10,6 +10,9 @@ namespace iface {
 
 class eval_plan_builder_btensor {
 public:
+    static const char k_clazz[]; //!< Class name
+
+public:
     enum {
         Nmax = 8
     };

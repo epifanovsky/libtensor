@@ -39,6 +39,9 @@ void eval_btensor<double>::process_plan(
 namespace {
 
 class eval_node {
+public:
+    static const char k_clazz[]; //!< Class name
+
 private:
     const tensor_list &m_tl; //!< Tensor list
     const node &m_node; //!< Expression node
@@ -52,6 +55,8 @@ public:
     void evaluate(btensor<N, double> &bt);
 
 };
+
+const char eval_node::k_clazz[] = "eval_node";
 
 template<size_t N>
 void eval_node::evaluate(btensor<N, double> &bt) {
@@ -71,7 +76,7 @@ void eval_node::evaluate(btensor<N, double> &bt) {
         eval_btensor_double::contract(m_tl, n).evaluate(nwt.tr, bt);
 
     } else {
-        throw "Unknown node type";
+        throw not_implemented("iface", k_clazz, "evaluate()", __FILE__, __LINE__);
     }
 }
 
@@ -127,7 +132,7 @@ void eval_btensor<double>::verify_tensor_type(
     tid_t tid, const tensor_list &tl) {
 
     if(tl.get_tensor_type(tid) != typeid(double)) {
-        throw "Bad tensor type";
+        throw not_implemented("iface", "eval_btensor", "evaluate()", __FILE__, __LINE__);
     }
 }
 
