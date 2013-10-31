@@ -48,7 +48,7 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_block_offset_canonical_2d(); 
 
         test_permute_2d_10();
-        test_permute_3d_dense_sparse_021();
+        /*test_permute_3d_dense_sparse_021();*/
 
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();

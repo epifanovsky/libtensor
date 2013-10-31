@@ -443,6 +443,7 @@ public:
     //Get the iterator over the sub keys of a given key
     sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key);
 
+    //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree<N> permute(permutation<N>& perm);
 
     bool operator==(const sparse_block_tree<N>& rhs) const;
@@ -538,7 +539,7 @@ struct seq_val_compare {
 } // namespace impl
 
 template<size_t N>
-sparse_block_tree<N> sparse_block_tree<N>::permute(permutation<N>& perm)
+sparse_block_tree<N> sparse_block_tree<N>::permute()
 {
     std::vector< std::pair< sequence<N,size_t>, size_t > > kv_pairs;
     for(iterator it = begin(); it != end(); ++it)
