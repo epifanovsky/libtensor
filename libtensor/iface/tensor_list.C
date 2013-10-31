@@ -42,7 +42,7 @@ void tensor_list::merge(const tensor_list &tl) {
 }
 
 
-size_t tensor_list::get_tensor_order(size_t tid) const {
+size_t tensor_list::get_tensor_order(tid_t tid) const {
 
     map_t::const_iterator i = m_lst.find(tid);
     if(i == m_lst.end()) {
@@ -53,7 +53,7 @@ size_t tensor_list::get_tensor_order(size_t tid) const {
 }
 
 
-const std::type_info &tensor_list::get_tensor_type(size_t tid) const {
+const std::type_info &tensor_list::get_tensor_type(tid_t tid) const {
 
     map_t::const_iterator i = m_lst.find(tid);
     if(i == m_lst.end()) {
