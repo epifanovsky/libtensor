@@ -105,6 +105,13 @@ private:
     void test_get_block_offset_canonical_1d_oob() throw(libtest::test_exception);
     void test_get_block_offset_canonical_2d() throw(libtest::test_exception);
 
+    /*
+     * sparse_bispace<N>::permute(...) tests
+     */
+    void test_permute_2d_10() throw(libtest::test_exception);
+    void test_permute_3d_dense_sparse_021() throw(libtest::test_exception);
+
+
     /*  ALL TESTS INVOLVING SPARSITY!!
      *
      */
@@ -116,6 +123,9 @@ private:
     void test_get_block_offset_3d_dense_sparse() throw(libtest::test_exception);
     void test_get_block_offset_3d_sparse_dense() throw(libtest::test_exception);
     void test_get_block_offset_3d_fully_sparse() throw(libtest::test_exception);
+    void test_equality_false_sparsity_2d() throw(libtest::test_exception);
+    void test_equality_true_sparsity_2d() throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor

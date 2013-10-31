@@ -68,6 +68,14 @@ private:
     /** \brief Test that permutation of tree produces correct result 
     **/
     void test_permute_3d() throw(libtest::test_exception);
+
+    /** \brief Test that two things that aren't equal are shown as such 
+    **/
+    void test_equality_false_2d() throw(libtest::test_exception);
+
+    /** \brief Test that two things that are equal are shown as such 
+    **/
+    void test_equality_true_2d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

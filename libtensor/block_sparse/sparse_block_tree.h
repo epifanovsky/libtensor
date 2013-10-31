@@ -431,7 +431,9 @@ public:
 
     //For iterating over the full contents
     iterator begin() { return iterator(this,std::vector<size_t>(N,0)); };
+    const_iterator begin() const { return const_iterator(this,std::vector<size_t>(N,0)); }
     iterator end() { return iterator(NULL,std::vector<size_t>(N,0)); };
+    const_iterator end() const { return const_iterator(NULL,std::vector<size_t>(N,0)); }
 
     //Searching for a specific key
     //Use a vector because sometimes key lengths must be determined at runtime
@@ -442,6 +444,9 @@ public:
     sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key);
 
     sparse_block_tree<N> permute(permutation<N>& perm);
+
+    bool operator==(const sparse_block_tree<N>& rhs) const;
+    bool operator!=(const sparse_block_tree<N>& rhs) const;
 };
 
 //Arguments must be passed in lexicographic order
@@ -563,6 +568,45 @@ sparse_block_tree<N> sparse_block_tree<N>::permute(permutation<N>& perm)
     }
     return sbt;
 }
+template<size_t N>
+bool sparse_block_tree<N>::operator==(const sparse_block_tree<N>& rhs) const
+{
+    typename sparse_block_tree<N>::const_iterator rhs_it = rhs.begin();
+    for(typename sparse_block_tree<N>::const_iterator lhs_it = begin(); lhs_it != end(); ++lhs_it)
+    {
+        if(rhs_it == rhs.end())
+        {
+            return false;
+        }
+
+        //Compare keys
+        const sequence<N,size_t>& lhs_key = lhs_it.key();
+        const sequence<N,size_t>& rhs_key = rhs_it.key();
+
+        for(size_t i = 0; i < N; ++i)
+        {
+            if(lhs_key[i] != rhs_key[i])
+            {
+                return false;
+            }
+        }
+
+        //Compare values
+        if(*lhs_it != *rhs_it)
+        {
+            return false;
+        }
+        ++rhs_it;
+    }
+    return true;
+}
+
+template<size_t N>
+bool sparse_block_tree<N>::operator!=(const sparse_block_tree<N>& rhs) const
+{
+    return !(*this == rhs);
+}
+
 
 
 //Must have 0 < Key size < N
@@ -587,6 +631,7 @@ private:
         
         //Returns the value at the specified key 
         virtual size_t search(const std::vector<size_t>& key) const = 0;
+        virtual bool equal(const abstract_base* rhs) const = 0; 
     };
 
     template<size_t N>
@@ -594,7 +639,8 @@ private:
     private:
         sparse_block_tree<N> m_tree;
     public:
-        size_t search(const std::vector<size_t>& key) const { return *(m_tree.search(key)); };
+        size_t search(const std::vector<size_t>& key) const { return *(m_tree.search(key)); }
+        bool equal(const abstract_base* rhs) const { return m_tree == static_cast<const wrapper<N>* >(rhs)->m_tree; }
         wrapper(const sparse_block_tree<N>& tree) : m_tree(tree) {}
         abstract_base* clone() const { return new wrapper<N>(m_tree); }
     };
@@ -619,6 +665,9 @@ public:
 
     //Returns the value at the specified key 
     size_t search(const std::vector<size_t>& key) const { return m_tree_ptr->search(key); };
+
+    bool operator==(const sparse_block_tree_any_order& rhs) const { if(m_order != rhs.m_order) { return false; } return m_tree_ptr->equal(rhs.m_tree_ptr); }
+    bool operator!=(const sparse_block_tree_any_order& rhs) const { return !(*this == rhs); }
 
     //Accessors
     size_t get_order() const { return m_order; }

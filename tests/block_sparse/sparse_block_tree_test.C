@@ -23,6 +23,9 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
 
     test_permute_2d();
     test_permute_3d();
+
+    test_equality_false_2d();
+    test_equality_true_2d();
 }
 
 void sparse_block_tree_test::test_unsorted_input() throw(libtest::test_exception)
@@ -837,6 +840,72 @@ void sparse_block_tree_test::test_permute_3d() throw(libtest::test_exception)
         ++correct_it;
     }
 }
+
+void sparse_block_tree_test::test_equality_false_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_equality_false_2d()";
+
+    size_t seq1_arr[2] = {1,2};
+    size_t seq2_arr[2] = {1,5};
+    size_t seq3_arr[2] = {2,3};
+    size_t seq4_arr[2] = {4,1};
+    size_t seq5_arr[2] = {4,4};
+    size_t seq6_arr[2] = {5,1};
+    size_t seq7_arr[2] = {5,2};
+
+    std::vector< sequence<2,size_t> > block_tuples_list(7); 
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[0][i] = seq1_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[1][i] = seq2_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[2][i] = seq3_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[3][i] = seq4_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[4][i] = seq5_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
+
+    sparse_block_tree<2> sbt_1(block_tuples_list);
+    
+    //Change one entry
+    size_t seq7_arr_2[2] = {5,3};
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr_2[i];
+    sparse_block_tree<2> sbt_2(block_tuples_list);
+
+    if(sbt_1 == sbt_2)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_block_tree<N>::operator==(...) returned incorrect value");
+    }
+} 
+
+void sparse_block_tree_test::test_equality_true_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_equality_true_2d()";
+
+    size_t seq1_arr[2] = {1,2};
+    size_t seq2_arr[2] = {1,5};
+    size_t seq3_arr[2] = {2,3};
+    size_t seq4_arr[2] = {4,1};
+    size_t seq5_arr[2] = {4,4};
+    size_t seq6_arr[2] = {5,1};
+    size_t seq7_arr[2] = {5,2};
+
+    std::vector< sequence<2,size_t> > block_tuples_list(7); 
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[0][i] = seq1_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[1][i] = seq2_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[2][i] = seq3_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[3][i] = seq4_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[4][i] = seq5_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
+    for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
+
+    sparse_block_tree<2> sbt_1(block_tuples_list);
+    sparse_block_tree<2> sbt_2(block_tuples_list);
+
+    if(sbt_1 != sbt_2)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_block_tree<N>::operator==(...) returned incorrect value");
+    }
+} 
 
 } // namespace libtensor
 

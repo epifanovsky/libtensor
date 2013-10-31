@@ -4,6 +4,7 @@
 #include <vector>
 #include "../defs.h"
 #include "../core/sequence.h"
+#include "../core/permutation.h"
 #include "sparse_block_tree.h"
 #include "sparsity_expr.h"
 
@@ -276,6 +277,10 @@ public:
      **/
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
 
+    /** \brief Returns an appropriately permuted copy of this bispace 
+     **/
+    sparse_bispace<N> permute(const permutation<N>& perm) const; 
+
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
      **/
@@ -432,7 +437,7 @@ size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indi
         size_t outer_size_scale_fac;
 
         bool treat_as_sparse = false;
-        if(m_sparse_indices_sets_offsets.size() > 0)
+        if(cur_sparse_indices_set_idx < m_sparse_indices_sets_offsets.size())
         {
             if(subspace_idx == m_sparse_indices_sets_offsets[cur_sparse_indices_set_idx])
             {
@@ -499,9 +504,53 @@ size_t sparse_bispace<N>::get_block_offset_canonical(const std::vector<size_t>& 
     return offset;
 }
 
+template<size_t N> 
+sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
+{
+    sparse_bispace<N> copy(*this);
+
+    //Permute subspaces
+    for(size_t i = 0; i < N; ++i)
+    {
+        copy.m_subspaces[perm[i]] = m_subspaces[i];
+    }
+
+    //Permute trees
+    //for(size_t i = 0; i < m_sparse_indices_sets_offsets.size(); ++i)
+    //{
+        ////Does the permutation apply to this sparse tree
+        //size_t sparse_set_offset = m_sparse_indices_sets_offsets[i];
+        //size_t order = m_sparse_block_trees[i].get_order();
+
+        //size_t lower_bound = sparse_set_offset;
+        //size_t upper_bound = (sparse_set_offset+order-1);
+
+        ////Convert the parts of the permutation that apply to this tree into 
+        ////tree-relative indices
+        //std::vector<size_t> rel_perm_indices;
+        //for(size_t order_idx = 0; order_idx < order; ++order_idx)
+        //{
+            //size_t dest_idx = permutation[sparse_set_offset+order_idx];
+            ////Should support this eventually, but for now throw if idx 
+            //if(dest_idx < lower_bound || dest_idx > upper_bound)
+            //{
+                //throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
+                    //__FILE__,__LINE__,"permutation breaks up sparse tuple"); 
+            //}
+            //rel_perm_indices.push_back(dest_idx - sparse_set_offset);
+        //}
+
+        ////Construct permutation of the tree
+    //}
+
+
+    return copy;
+}
+
 template<size_t N>
 bool sparse_bispace<N>::operator==(const sparse_bispace<N>& rhs) const
 {
+    //Check that subspaces are equivalent
     for(int i = 0; i < N; ++i)
     {
         if(m_subspaces[i] != rhs.m_subspaces[i])
@@ -509,6 +558,28 @@ bool sparse_bispace<N>::operator==(const sparse_bispace<N>& rhs) const
             return false;
         }
     }
+
+    //Check that trees are equivalent
+    if(m_sparse_indices_sets_offsets.size() != rhs.m_sparse_indices_sets_offsets.size())
+    {
+        return false;
+    }
+    for(size_t i = 0; i < m_sparse_indices_sets_offsets.size(); ++i)
+    {
+        if(m_sparse_indices_sets_offsets[i] != rhs.m_sparse_indices_sets_offsets[i])
+        {
+            return false;
+        }
+    }
+
+    for(size_t i = 0; i < m_sparse_block_trees.size(); ++i)
+    {
+        if(m_sparse_block_trees[i] != rhs.m_sparse_block_trees[i])
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 
