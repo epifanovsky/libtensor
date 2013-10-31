@@ -20,6 +20,7 @@ set(SRC
     symmetry/product_table_i.C
     expr/node_transform_base.C
     expr/nary_node_base.C
+    expr/print_node.C
     iface/tensor_list.C
     iface/btensor/impl/eval_btensor_double.C
     iface/btensor/impl/eval_btensor_double_contract.C

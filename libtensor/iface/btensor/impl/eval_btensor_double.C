@@ -3,6 +3,7 @@
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_ident.h>
 #include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/print_node.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
 #include "node_inspector.h"
@@ -110,7 +111,8 @@ void eval_btensor<double>::handle_assign(
     const expr::node_assign &node, tensor_list &tl) {
 
     tid_t tid = node.get_tid();
-    std::cout << "assign " << tid << std::endl;
+    std::cout << "handle_assign " << tid << std::endl;
+    print_node(node, std::cout);
     verify_tensor_type(tid, tl);
     eval_assign e(tl, tid, node.get_rhs());
     dispatch_1<1, Nmax>::dispatch(e, tl.get_tensor_order(tid));

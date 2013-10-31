@@ -2,6 +2,7 @@
 #include <string>
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/node_contract.h>
+#include <libtensor/expr/print_node.h>
 #include "metaprog.h"
 #include "node_inspector.h"
 #include "../eval_plan_builder_btensor.h"
@@ -16,35 +17,6 @@ const char eval_plan_builder_btensor::k_clazz[] = "eval_plan_builder_btensor";
 
 
 namespace {
-
-void print_node(const node &n, std::ostream &os, size_t indent = 0) {
-
-    std::string ind(indent, ' ');
-    const node_assign *na = dynamic_cast<const node_assign*>(&n);
-    const node_ident *ni = dynamic_cast<const node_ident*>(&n);
-    const unary_node_base *n1 = dynamic_cast<const unary_node_base*>(&n);
-    const nary_node_base *nn = dynamic_cast<const nary_node_base*>(&n);
-    if(ni) {
-        os << ind << "( ident " << (void*)ni->get_tid() << " )" << std::endl;
-    } else {
-        os << ind << "( " << n.get_op();
-        if(na) {
-            os << " " << (void*)na->get_tid() << std::endl;
-            print_node(na->get_rhs(), os, indent + 2);
-        } else if(n1) {
-            os << std::endl;
-            print_node(n1->get_arg(), os, indent + 2);
-        } else if(nn) {
-            os << std::endl;
-            for(size_t i = 0; i < nn->get_nargs(); i++) {
-                print_node(nn->get_arg(i), os, indent + 2);
-            }
-        } else {
-            os << " ???" << std::endl;
-        }
-        os << ind << ")" << std::endl;
-    }
-}
 
 class node_renderer {
 public:
@@ -126,9 +98,6 @@ private:
             node_inspector ni(n.get_arg(iarg));
             node_with_transf<N> nwt2 = ni.gather_transf<N>();
             if(nwt2.n.get_op().compare("ident") == 0) {
-//                node_assign na(m_tid, n.get_arg(iarg), true);
-//                print_node(na, std::cout);
-//                m_plan.insert_assignment(na);
                 add_assignment(node_with_transf<N>(n.get_arg(iarg), nwt.tr), true);
                 visited[iarg] = true;
             }
@@ -165,9 +134,6 @@ private:
 
         node_contract nc(*a1, *a2, n.get_contraction());
         if(m_interm) m_plan.create_intermediate(m_tid);
-//        node_assign na(m_tid, nc);
-//        print_node(na, std::cout);
-//        m_plan.insert_assignment(na);
         add_assignment(node_with_transf<N>(nc, nwt.tr), false);
         if(!r1.as_is()) m_plan.delete_intermediate(r1.get_tid());
         if(!r2.as_is()) m_plan.delete_intermediate(r2.get_tid());
