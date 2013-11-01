@@ -21,7 +21,8 @@ void print_node(const node &n, std::ostream &os, size_t indent) {
     } else {
         os << ind << "( " << n.get_op();
         if(na) {
-            os << " " << (void*)na->get_tid() << std::endl;
+            os << " " << (void*)na->get_tid() << (na->is_add() ? " (+)" : "")
+                << std::endl;
             print_node(na->get_rhs(), os, indent + 2);
         } else if(n1) {
             os << std::endl;

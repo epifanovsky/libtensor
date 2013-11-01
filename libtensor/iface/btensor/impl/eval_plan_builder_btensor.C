@@ -69,8 +69,8 @@ public:
 
         static const char method[] = "dispatch()";
 
-        std::cout << "dispatch" << std::endl;
-        print_node(m_node, std::cout, 4);
+//        std::cout << "dispatch" << std::endl;
+//        print_node(m_node, std::cout, 4);
 
         if(m_node.get_op().compare("assign") == 0) {
             render_assign<N>();
@@ -87,7 +87,7 @@ public:
                 throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
             }
         }
-        std::cout << "end of dispatch" << std::endl;
+//        std::cout << "end of dispatch" << std::endl;
     }
 
 private:
@@ -122,10 +122,14 @@ private:
             }
         }
 
-        for(size_t iarg = 0; iarg < visited.size(); iarg++) {
-            if(!visited[iarg]) {
-                throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
+        for(size_t iarg = 0; iarg < visited.size(); iarg++) if(!visited[iarg]) {
+            node_renderer r(m_plan, m_tl, n.get_arg(iarg), m_tid);
+            r.render();
+            if(r.as_is()) {
+                add_assignment(node_with_transf<N>(n.get_arg(iarg),
+                    tensor_transf<N, double>()), true);
             }
+            visited[iarg] = true;
         }
     }
 
