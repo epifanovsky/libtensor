@@ -13,18 +13,8 @@
 
 namespace libtensor {
 
-typedef std::vector<size_t> block_list;
 typedef std::pair<size_t,size_t> tile_size_pair;
 
-inline block_list range(size_t min,size_t max)
-{
-    block_list the_range; 
-    for(size_t i = min; i < max; ++i)
-    {
-        the_range.push_back(i);
-    }
-    return the_range;
-}
 
 //Forward declarations for 'friend' statement
 //We need these to avoid linker errors 
@@ -44,7 +34,7 @@ namespace impl
 {
 
 template<size_t M,size_t N,typename T>
-void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
+void _run_internal(const std::vector< block_loop<M,N,T> >& loop_list,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,const T*>& input_ptrs,
@@ -68,20 +58,35 @@ private:
     sequence<M,bool> m_output_ignore; //!< Which output pointers are incremented by this loop?
     sequence<N,bool> m_input_ignore; //!< Which input pointers are incremented by this loop?
 
+    size_t m_sparse_ref_index; //!< Which bispace do I look at to determine what blocks are significant to loop over?
+
     //Validates that all of the bispaces touched by this loop are equivalent
     void validate_bispaces(const sequence<M,sparse_bispace_any_order>& output_bispaces,
                            const sequence<N,sparse_bispace_any_order>& input_bispaces) const;
+
+
+    //Returns the index of the first 1D bispace in a tensor not ignored by this loop
+    //Bispaces are numbered starting with output bispaces, then input bispaces
+    size_t get_non_ignored_bispace_idx() const;
+
     //Returns the first bispace from the supplied bispaces that is touched by this loop and not from a tensor that is
     //ignored
     const sparse_bispace<1>& get_non_ignored_bispace(const sequence<M,sparse_bispace_any_order>& output_bispaces,
                                                      const sequence<N,sparse_bispace_any_order>& input_bispaces) const;
+
+    //Used to determine the list of block indices over which this loop will iterate
+    block_list get_sig_block_list(const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                              const sequence<N,sparse_bispace_any_order>& input_bispaces,
+                              const sequence<M,std::vector<size_t> >& output_block_indices,
+                              const sequence<N,std::vector<size_t> >& input_block_indices) const;
 public:
 
     //Constructor 
     block_loop(const sequence<M,size_t>& output_bispace_indices,
                const sequence<N,size_t>& input_bispace_indices,
                const sequence<M,bool>& output_ignore,
-               const sequence<N,bool>& input_ignore); 
+               const sequence<N,bool>& input_ignore,
+               const size_t sparse_ref_index = M+N); 
 
     //We friend the loop runner functions for convenience
     friend void run_loop_list<>(const std::vector< block_loop<M,N,T> >& loop_list,
@@ -92,7 +97,7 @@ public:
                                 const sequence<N,sparse_bispace_any_order>& input_bispaces);
 
 
-    friend void impl::_run_internal<>(const std::vector< block_loop<M,N,T> > loop_list,
+    friend void impl::_run_internal<>(const std::vector< block_loop<M,N,T> >& loop_list,
                                       block_kernel_i<M,N,T>& kernel,
                                       const sequence<M,T*>& output_ptrs,
                                       const sequence<N,const T*>& input_ptrs,
@@ -114,10 +119,12 @@ template<size_t M,size_t N,typename T>
 block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
 							  const sequence<N,size_t>& input_bispace_indices,
 							  const sequence<M,bool>& output_ignore,
-							  const sequence<N,bool>& input_ignore) : m_output_bispace_indices(output_bispace_indices),
-													  		          m_input_bispace_indices(input_bispace_indices),
-															          m_output_ignore(output_ignore),
-															          m_input_ignore(input_ignore)
+							  const sequence<N,bool>& input_ignore,
+                              const size_t sparse_ref_index) : m_output_bispace_indices(output_bispace_indices),
+													  		   m_input_bispace_indices(input_bispace_indices),
+															   m_output_ignore(output_ignore),
+															   m_input_ignore(input_ignore),
+                                                               m_sparse_ref_index(sparse_ref_index)
 {
     bool all_ignored = true;
     for(size_t m = 0; m < M; ++m)
@@ -144,13 +151,22 @@ block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
         throw bad_parameter(g_ns, k_clazz,"block_loop(...)",
                 __FILE__, __LINE__, "Cannot ignore all tensors: loop will do nothing");
     }
+
+
+    //We need to use the first non-ignored bispace for our reference index by default
+    if(m_sparse_ref_index == M+N)
+    {
+        m_sparse_ref_index = get_non_ignored_bispace_idx();
+    }
+    else if(m_sparse_ref_index > M+N)
+    {
+        throw bad_parameter(g_ns, k_clazz,"block_loop(...)",
+                __FILE__, __LINE__, "invalid m_sparse_ref_index");
+    } 
 }
 
-//Returns the first 1D bispace in a tensor not ignored by this loop
-//Necessary to deal with ignore feature
 template<size_t M,size_t N,typename T>
-const sparse_bispace<1>& block_loop<M,N,T>::get_non_ignored_bispace(const sequence<M,sparse_bispace_any_order>& output_bispaces,
-                                                                    const sequence<N,sparse_bispace_any_order>& input_bispaces) const
+size_t block_loop<M,N,T>::get_non_ignored_bispace_idx() const
 {
     //Find the first output tensor that is not ignored, otherwise choose an input tensor
     //Constructor ensures that they are not all ignored
@@ -167,7 +183,7 @@ const sparse_bispace<1>& block_loop<M,N,T>::get_non_ignored_bispace(const sequen
     }
     if(in_output)
     {
-        return output_bispaces[first_idx][m_output_bispace_indices[first_idx]];
+        return first_idx;
     }
     else
     {
@@ -179,6 +195,23 @@ const sparse_bispace<1>& block_loop<M,N,T>::get_non_ignored_bispace(const sequen
                 break;
             }
         }
+        return first_idx + M;
+    }
+}
+
+//Returns a reference to the first 1D bispace in a tensor not ignored by this loop
+//Necessary to deal with ignore feature
+template<size_t M,size_t N,typename T>
+const sparse_bispace<1>& block_loop<M,N,T>::get_non_ignored_bispace(const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                                                                    const sequence<N,sparse_bispace_any_order>& input_bispaces) const
+{
+    size_t first_idx = get_non_ignored_bispace_idx();
+    if(first_idx < M)
+    {
+        return output_bispaces[first_idx][m_output_bispace_indices[first_idx]];
+    }
+    else
+    {
         return input_bispaces[first_idx][m_input_bispace_indices[first_idx]];
     }
 }
@@ -233,13 +266,36 @@ void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_any_or
     }
 }
 
+template<size_t M,size_t N,typename T>
+block_list block_loop<M,N,T>::get_sig_block_list(const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                                                 const sequence<N,sparse_bispace_any_order>& input_bispaces,
+                                                 const sequence<M,std::vector<size_t> >& output_block_indices,
+                                                 const sequence<N,std::vector<size_t> >& input_block_indices) const
+{
+    //By default (no sparsity), m_sparse_ref_index is set to the first non-ignored output index, if M > 0, or the first
+    //non-ignored input index + M, if only N > 0  
+    if(m_sparse_ref_index < M)
+    {
+        const sparse_bispace_any_order& target_bispace = output_bispaces[m_sparse_ref_index];
+        size_t target_subspace = m_output_bispace_indices[m_sparse_ref_index];
+        return target_bispace.get_sig_block_list(output_block_indices[m_sparse_ref_index],target_subspace);
+    }
+    else
+    {
+        size_t input_idx = m_sparse_ref_index - M;
+        const sparse_bispace_any_order& target_bispace = input_bispaces[input_idx];
+        size_t target_subspace = m_input_bispace_indices[input_idx];
+        return target_bispace.get_sig_block_list(input_block_indices[input_idx],target_subspace);
+    }
+}
+
 namespace impl
 {
 
 //Called recursively to run a kernel            
 //INTERNAL USE ONLY                             
 template<size_t M,size_t N,typename T>
-void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
+void _run_internal(const std::vector< block_loop<M,N,T> >& loop_list,
                    block_kernel_i<M,N,T>& kernel,
                    const sequence<M,T*>& output_ptrs,
                    const sequence<N,const T*>& input_ptrs,
@@ -254,7 +310,7 @@ void _run_internal(const std::vector< block_loop<M,N,T> > loop_list,
     const block_loop<M,N,T>& cur_loop = loop_list[loop_idx];
     const sparse_bispace<1>& cur_bispace = cur_loop.get_non_ignored_bispace(output_bispaces,input_bispaces);
             
-    block_list block_idxs = range(0,cur_bispace.get_n_blocks());
+    block_list block_idxs = cur_loop.get_sig_block_list(output_bispaces,input_bispaces,output_block_indices,input_block_indices);
 
     for(size_t i = 0; i < block_idxs.size(); ++i)
     {

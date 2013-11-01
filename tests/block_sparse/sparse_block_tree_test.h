@@ -19,17 +19,21 @@ private:
 
 
 
-    /** \brief Ensures that get_sub_key_iterator throws exception when key is too big or empty 
+    /** \brief Ensures that get_sub_key_block_list throws exception when key is too big or empty 
     **/
-    void test_get_sub_key_iterator_invalid_key_size() throw(libtest::test_exception);
+    void test_get_sub_key_block_list_invalid_key_size() throw(libtest::test_exception);
 
-    /** \brief Ensures that get_sub_key_iterator throws exception when key does not exist 
+    /** \brief Ensures that get_sub_key_block_list throws exception when key does not exist 
     **/
-    void test_get_sub_key_iterator_nonexistent_key() throw(libtest::test_exception);
+    void test_get_sub_key_block_list_nonexistent_key() throw(libtest::test_exception);
     
-    /** \brief Ensures that get_sub_key_iterator can be incremented to produce all correct values
+    /** \brief Ensures that get_sub_key_block_list contains all correct values for 2d
     **/
-    void test_get_sub_key_iterator_2d() throw(libtest::test_exception);
+    void test_get_sub_key_block_list_2d() throw(libtest::test_exception);
+ 
+    /** \brief Ensures that get_sub_key_block_list contains all correct values for 3d
+    **/
+    void test_get_sub_key_block_list_3d() throw(libtest::test_exception);
 
 
     /** \brief Test that iterator key method returns the correct value for the first method 

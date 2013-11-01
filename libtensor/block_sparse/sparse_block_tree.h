@@ -14,6 +14,8 @@
 
 namespace libtensor {
 
+typedef std::vector<size_t> block_list;
+
 //Forward declaration for set_offsets
 template<size_t N>
 class sparse_bispace;
@@ -39,12 +41,11 @@ protected:
     //Must instead of sequence for key because some key sizes are determined at runtime
     void search(const std::vector<size_t>& key,std::vector<size_t>& positions,const size_t idx) const;
 public:
-    typedef std::vector<size_t>::iterator sub_key_iterator;
     //DO NOT CALL...only for std::vector compatibility
     sparse_block_tree_node() {}; 
 
     //Base case for the recursion
-    sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key,size_t cur_idx);
+    const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key,size_t cur_idx) const;
 
     //Constructor
     template<size_t M>
@@ -74,9 +75,9 @@ inline void sparse_block_tree_node<1>::search(const std::vector<size_t>& key,std
     positions[idx] = cur_pos;
 }
 
-inline sparse_block_tree_node<1>::sub_key_iterator sparse_block_tree_node<1>::get_sub_key_iterator(const std::vector<size_t>& sub_key,size_t cur_idx)
+inline const block_list& sparse_block_tree_node<1>::get_sub_key_block_list(const std::vector<size_t>& sub_key,size_t cur_idx) const
 { 
-    return m_keys.begin(); 
+    return m_keys; 
 }
 
 template<size_t M>
@@ -103,7 +104,6 @@ protected:
     //Called recursively to determine index vector corresponding to a particular key
     void search(const std::vector<size_t>& key,std::vector<size_t>& positionsm,const size_t idx) const;
 public:
-    typedef std::vector<size_t>::iterator sub_key_iterator;
 
     //DO NOT CALL...only for std::vector compatibility
     sparse_block_tree_node() {}; 
@@ -114,7 +114,7 @@ public:
     template<size_t M>
     sparse_block_tree_node(const sequence<M,size_t>& key,size_t cur_idx);
 
-    sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key,size_t cur_idx);
+    const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key,size_t cur_idx) const;
 
     template<size_t M>
     void push_back(const sequence<M,size_t>& key,size_t cur_idx);
@@ -153,20 +153,24 @@ sparse_block_tree_node<N>::sparse_block_tree_node(const sequence<M,size_t>& key,
 }
 
 template<size_t N>
-//typename sparse_block_tree_node<N>::sub_key_iterator sparse_block_tree_node<N>::get_sub_key_iterator(const std::vector<size_t>& sub_key,size_t cur_idx)
-typename sparse_block_tree_node<N>::sub_key_iterator sparse_block_tree_node<N>::get_sub_key_iterator(const std::vector<size_t>& sub_key,size_t cur_idx)
+const block_list&  sparse_block_tree_node<N>::get_sub_key_block_list(const std::vector<size_t>& sub_key,size_t cur_idx) const
 {
     //Find the position of the current key in this node's list of keys
     size_t cur_val = sub_key[cur_idx];
-    sub_key_iterator cur_pos = std::lower_bound(m_keys.begin(),m_keys.end(),cur_val);
+    block_list::const_iterator cur_pos = std::lower_bound(m_keys.begin(),m_keys.end(),cur_val);
     if(cur_pos == m_keys.end() || *cur_pos != cur_val)
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_node<N>","get_sub_key_iterator(...)",
+        throw bad_parameter(g_ns,"sparse_block_tree_node<N>","get_sub_key_block_list(...)",
             __FILE__,__LINE__,"key not found"); 
     }
     else
     {
-        return m_children[distance(m_keys.begin(),cur_pos)].get_sub_key_iterator(sub_key,cur_idx+1);
+        //Done?
+        if(cur_idx == (sub_key.size() - 1))
+        {
+            return m_children[distance(m_keys.begin(),cur_pos)].m_keys;
+        }
+        return m_children[distance(m_keys.begin(),cur_pos)].get_sub_key_block_list(sub_key,cur_idx+1);
     }
 }
 
@@ -328,13 +332,13 @@ public:
     bool operator!=(const sparse_block_tree_iterator<N,is_const>& rhs) const;
 
     //Destructor
-    virtual ~sparse_block_tree_iterator() { if(m_node != NULL) { delete m_child; } }
+    virtual ~sparse_block_tree_iterator() { if(m_child != NULL) { delete m_child; } }
 };
 
 //Constructor
 //Passing 'NULL' is used to create the END iterator
 template<size_t N,bool is_const>
-sparse_block_tree_iterator<N,is_const>::sparse_block_tree_iterator(ptr_type node,const std::vector<size_t>& positions,const size_t idx) : m_node(node)
+sparse_block_tree_iterator<N,is_const>::sparse_block_tree_iterator(ptr_type node,const std::vector<size_t>& positions,const size_t idx) : m_node(node),m_child(NULL)
 {
     m_cur_pos =  positions[idx];
     if(m_node != NULL)
@@ -428,7 +432,6 @@ bool sparse_block_tree_iterator<N,is_const>::operator!=(const sparse_block_tree_
 template<size_t N>
 class sparse_block_tree : public impl::sparse_block_tree_node<N> {
 public:
-    typedef std::vector<size_t>::iterator sub_key_iterator;
     typedef impl::sparse_block_tree_iterator<N,false> iterator;
     typedef impl::sparse_block_tree_iterator<N,true> const_iterator;
 
@@ -446,8 +449,8 @@ public:
     iterator search(const std::vector<size_t>& key);
     const_iterator search(const std::vector<size_t>& key) const;
 
-    //Get the iterator over the sub keys of a given key
-    sub_key_iterator get_sub_key_iterator(const std::vector<size_t>& sub_key);
+    //Return a list of the blocks associated with a given sub-key
+    const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const;
 
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree<N> permute(const runtime_permutation& perm) const;
@@ -625,14 +628,14 @@ bool sparse_block_tree<N>::operator!=(const sparse_block_tree<N>& rhs) const
 
 //Must have 0 < Key size < N
 template<size_t N> 
-typename sparse_block_tree<N>::sub_key_iterator sparse_block_tree<N>::get_sub_key_iterator(const std::vector<size_t>& sub_key) 
+const block_list& sparse_block_tree<N>::get_sub_key_block_list(const std::vector<size_t>& sub_key) const
 {
     if((sub_key.size() == 0) || (sub_key.size() > (N-1)))
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_node<N>","push_back(...)",
-            __FILE__,__LINE__,"key is too long"); 
+        throw bad_parameter(g_ns,"sparse_block_tree_node<N>","get_sub_key_block_list(...)",
+            __FILE__,__LINE__,"invalid key size"); 
     }
-    return impl::sparse_block_tree_node<N>::get_sub_key_iterator(sub_key,0); 
+    return impl::sparse_block_tree_node<N>::get_sub_key_block_list(sub_key,0); 
 };
 
 //TODO: Un-inline and remove from header LINK
@@ -646,6 +649,7 @@ private:
         
         //Returns the value at the specified key 
         virtual size_t search(const std::vector<size_t>& key) const = 0;
+        virtual const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const = 0;
         virtual bool equal(const abstract_base* rhs) const = 0; 
         virtual sparse_block_tree_any_order permute(const runtime_permutation& perm) const = 0;
         virtual size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions)  = 0; 
@@ -657,6 +661,7 @@ private:
         sparse_block_tree<N> m_tree;
     public:
         size_t search(const std::vector<size_t>& key) const { return *(m_tree.search(key)); }
+        const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const { return m_tree.get_sub_key_block_list(sub_key); }
         bool equal(const abstract_base* rhs) const { return m_tree == static_cast<const wrapper<N>* >(rhs)->m_tree; }
         sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
         size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions); 
@@ -677,13 +682,15 @@ public:
     sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs) : m_order(rhs.m_order), m_tree_ptr(rhs.m_tree_ptr->clone()) {}
     
     //Assignment operator
-    sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs) { m_order = rhs.m_order; m_tree_ptr = rhs.m_tree_ptr->clone(); return *this; }
+    sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs) { m_order = rhs.m_order; delete m_tree_ptr; m_tree_ptr = rhs.m_tree_ptr->clone(); return *this; }
     
     //Destructor
     virtual ~sparse_block_tree_any_order() { delete m_tree_ptr; }
 
     //Returns the value at the specified key 
     size_t search(const std::vector<size_t>& key) const { return m_tree_ptr->search(key); };
+
+    const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const { return m_tree_ptr->get_sub_key_block_list(sub_key); } 
 
     sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
     size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions);

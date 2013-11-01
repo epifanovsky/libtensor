@@ -36,10 +36,11 @@ private:
     void test_equality_true() throw(libtest::test_exception);
     void test_equality_false() throw(libtest::test_exception);
 
-    /** \brief Tensor is permuted correctly, loaded from row major memory
+    /** \brief Tensor is permuted correctly
     **/
     void test_permute_2d_row_major() throw(libtest::test_exception);
     void test_permute_3d_row_major_210() throw(libtest::test_exception);
+    void test_permute_3d_block_major_120_sparse() throw(libtest::test_exception);
 
     /** \brief Basic matrix multiply
      **/

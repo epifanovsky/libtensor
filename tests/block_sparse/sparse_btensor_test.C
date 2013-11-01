@@ -23,6 +23,7 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_permute_2d_row_major();
     test_permute_3d_row_major_210();
+    test_permute_3d_block_major_120_sparse();
 
     test_contract2_2d_2d();
     test_contract2_3d_2d();
@@ -442,6 +443,131 @@ void sparse_btensor_test::test_permute_3d_row_major_210() throw(libtest::test_ex
 
     sparse_btensor<3> correct(three_d_output,correct_row_major);
     if(bt_210 != correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "labeled_btensor<N>::operator=(...) did not produce correct result");
+    }
+}
+
+void sparse_btensor_test::test_permute_3d_block_major_120_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_btensor_test::test_permute_3d_block_major_120_sparse()";
+
+    //3x4x5
+    //Permutation is kij -> ijk 
+	//Indices in comments are block indices
+    double test_input_arr[35] = { //k = 0, i = 0; j = 0
+                                  1,2,
+                                  3,4,
+                                  5,6,
+
+                                  //k = 0, i = 0, j = 1                        
+                                  7,8,9,
+                                  10,11,12,
+                                  13,14,15,
+
+                                  //k = 0, i = 1, j = 0
+                                  16,17,
+
+                                  //k = 1, i = 0, j = 0
+                                  21,22,
+                                  23,24,
+                                  25,26,
+                                  27,28,
+                                  29,30,
+                                  31,32,
+
+                                  //k = 1, i = 1, j = 1
+                                  55,56,57,
+                                  58,59,60};
+
+    double correct_output_arr[35] = { //i = 0 j = 0 k = 0
+                                      1,
+                                      2,
+                                      3,
+                                      4,
+                                      5,
+                                      6,
+
+
+                                      //i = 0 j = 0 k = 1
+                                      21,27,
+                                      22,28,
+                                      23,29,
+                                      24,30,
+                                      25,31,
+                                      26,32,
+
+                                      //i = 0 j = 1 k = 0
+                                      7,
+                                      8,
+                                      9,
+                                      10,
+                                      11,
+                                      12,
+                                      13,
+                                      14,
+                                      15,
+
+                                      //i = 1 j = 0 k = 0
+                                      16,
+                                      17,
+
+                                      // i = 1, j = 1 k = 1
+                                      55,58,
+                                      56,59,
+                                      57,60};
+
+    //First bispace (slow index in input) and splitting
+    sparse_bispace<1> spb_1(3);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(1);
+    spb_1.split(split_points_1);
+
+    //Second bispace (mid index in input) and splitting
+    sparse_bispace<1> spb_2(4);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(3);
+    spb_2.split(split_points_2);
+
+    //Third bispace (fast index in input) and splitting
+    sparse_bispace<1> spb_3(5);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(2);
+    spb_3.split(split_points_3);
+
+    //Sparsity data
+    std::vector< sequence<3,size_t> > sig_blocks(5);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 0;
+    sig_blocks[0][2] = 0;
+    sig_blocks[1][0] = 0; 
+    sig_blocks[1][1] = 0;
+    sig_blocks[1][2] = 1;
+    sig_blocks[2][0] = 0; 
+    sig_blocks[2][1] = 1;
+    sig_blocks[2][2] = 0;
+    sig_blocks[3][0] = 1; 
+    sig_blocks[3][1] = 0;
+    sig_blocks[3][2] = 0;
+    sig_blocks[4][0] = 1; 
+    sig_blocks[4][1] = 1;
+    sig_blocks[4][2] = 1;
+
+    sparse_bispace<3> three_d_input = spb_1 % spb_2 % spb_3 << sig_blocks;
+    permutation<3> perm;
+    perm.permute(0,2).permute(0,1);
+    sparse_bispace<3> three_d_output = three_d_input.permute(perm);
+
+
+    sparse_btensor<3> bt(three_d_input,test_input_arr,true);
+
+    sparse_btensor<3> bt_120(three_d_output);
+    letter i,j,k;
+    bt_120(i|j|k) = bt(k|i|j);
+
+    sparse_btensor<3> correct(three_d_output,correct_output_arr,true);
+    if(bt_120 != correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "labeled_btensor<N>::operator=(...) did not produce correct result");

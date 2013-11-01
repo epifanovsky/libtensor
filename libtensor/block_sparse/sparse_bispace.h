@@ -14,9 +14,26 @@
 
 namespace libtensor {
 
+//Useful types
+typedef std::vector<size_t> block_list;
+
 //Forward declarations to dodge 'specialization after instantiation' compiler errors 
 template<size_t N>
 class sparse_bispace; 
+
+//Utility functions
+namespace impl
+{
+    inline block_list range(size_t min,size_t max)
+    {
+        block_list the_range; 
+        for(size_t i = min; i < max; ++i)
+        {
+            the_range.push_back(i);
+        }
+        return the_range;
+    }
+}
 
 /**  One-dimensional sparse block index space
  **/
@@ -87,6 +104,10 @@ public:
     /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
      **/
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
+
+    /**  \brief Returns the list of significant blocks of a given 1d bispace to be looped over based on the sparsity information in this bispace
+     **/
+    block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const;
 
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
@@ -202,6 +223,16 @@ inline size_t sparse_bispace<1>::get_block_offset_canonical(const std::vector<si
     return get_block_offset(block_indices); 
 }
 
+inline block_list sparse_bispace<1>::get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const
+{
+    if(target_subspace_idx != 0)
+    {
+        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_sig_block_list(...)",
+                __FILE__,__LINE__,"target_subspace_idx != 0"); 
+    }
+    return impl::range(0,m_abs_indices.size());
+}
+
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 {
     return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
@@ -254,7 +285,6 @@ private:
     void absorb_sparsity(const sparse_bispace<L>& rhs,size_t offset=0); 
 public:
 
-    //TODO Delete this!!! Doesn't seem to be used anywhere
     /** \brief Returns the number of non-zero elements in this sparse bispace
      **/
     size_t get_nnz() const;
@@ -277,6 +307,10 @@ public:
     /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
      **/
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
+
+    /**  \brief Returns the list of significant blocks of a given 1d bispace to be looped over based on the sparsity information in this bispace
+     **/
+    block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const;
 
     /** \brief Returns an appropriately permuted copy of this bispace 
      **/
@@ -498,6 +532,57 @@ size_t sparse_bispace<N>::get_block_offset_canonical(const std::vector<size_t>& 
     return offset;
 }
 
+template<size_t N>
+block_list sparse_bispace<N>::get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const
+{
+    //Is there sparsity that will affect the block list?
+    bool is_sparsity = false;
+    size_t target_set_idx;
+    size_t set_offset;
+    size_t sub_key_size;
+
+    if(m_sparse_indices_sets_offsets.size() > 0)
+    {
+        for(size_t set_idx = 0; set_idx < m_sparse_indices_sets_offsets.size(); ++set_idx)
+        {
+            //Have we processed all sets that COULD contain the target subspace?
+            set_offset = m_sparse_indices_sets_offsets[set_idx];
+            if(set_offset > target_subspace_idx)
+            {
+                break;
+            } 
+            else
+            {
+                //Does this set contain the target subspace
+                size_t order = m_sparse_block_trees[set_idx].get_order(); 
+                if((set_offset < target_subspace_idx) && (target_subspace_idx < set_offset+order))
+                {
+                    target_set_idx = set_idx;
+                    sub_key_size = target_subspace_idx - set_offset;
+                    is_sparsity = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(is_sparsity)
+    {
+        std::vector<size_t> sub_key(sub_key_size);
+        for(size_t i = 0; i < sub_key_size; ++i)
+        {
+            sub_key[i] = outer_block_indices[set_offset+i];
+        }
+
+        //TODO: HORRIBLE COPY, MUST FIND A WAY AROUND!!
+        return block_list(m_sparse_block_trees[target_set_idx].get_sub_key_block_list(sub_key));
+    }
+    else
+    {
+        return impl::range(0,m_subspaces[target_subspace_idx].get_n_blocks());
+    }
+}
+
 template<size_t N> 
 sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
 {
@@ -506,7 +591,7 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
     //Permute subspaces
     for(size_t i = 0; i < N; ++i)
     {
-        copy.m_subspaces[perm[i]] = m_subspaces[i];
+        copy.m_subspaces[i] = m_subspaces[perm[i]];
     }
 
     //Permute trees
@@ -525,14 +610,16 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
         std::vector<size_t> final_positions;
         for(size_t order_idx = 0; order_idx < order; ++order_idx)
         {
-            size_t dest_idx = perm[sparse_set_offset+order_idx];
+            //Where do 
+            size_t dest_idx = sparse_set_offset+order_idx;
+            size_t src_idx = perm[dest_idx];
             //Should support this eventually, but for now throw if idx 
-            if(dest_idx < lower_bound || dest_idx > upper_bound)
+            if(src_idx < lower_bound || src_idx > upper_bound)
             {
                 throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
                     __FILE__,__LINE__,"permutation breaks up sparse tuple"); 
             }
-            size_t rel_idx = dest_idx - sparse_set_offset;
+            size_t rel_idx = src_idx - sparse_set_offset;
             perm_entries.push_back(rel_idx);
 
             //We have ALREADY permuted m_subspaces, so we must save the ORIGINAL POSITION, not the DEST
@@ -662,6 +749,7 @@ private:
         virtual size_t get_block_offset(const std::vector<size_t>& block_indices) const = 0;
         virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
         virtual sparse_bispace_generic_i* clone() const = 0;
+        virtual block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const = 0; 
 
         virtual ~sparse_bispace_generic_i() { };
     };
@@ -677,6 +765,8 @@ private:
         size_t get_order() const { return N; }
         size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset(block_indices); }
         size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset_canonical(block_indices); }
+        block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const { return m_bispace.get_sig_block_list(outer_block_indices,target_subspace_idx); }
+
         sparse_bispace_generic_i* clone() const { return new sparse_bispace_generic_wrapper(m_bispace); }
     };
 
@@ -700,6 +790,7 @@ public:
     size_t get_order() const { return m_spb_ptr->get_order(); }
     size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset(block_indices); }
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset_canonical(block_indices); }
+    block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const { return m_spb_ptr->get_sig_block_list(outer_block_indices,target_subspace_idx); }
 
     //We have to check NULL bcs of stupid default constructor hack
     virtual ~sparse_bispace_any_order() { if(m_spb_ptr != NULL) { delete m_spb_ptr; } };

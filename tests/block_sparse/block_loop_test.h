@@ -26,6 +26,7 @@ private:
     void test_run_block_permute_kernel_2d() throw(libtest::test_exception);
     void test_run_block_permute_kernel_2d_sparse() throw(libtest::test_exception);
     void test_run_block_permute_kernel_3d_201() throw(libtest::test_exception);
+    void test_run_block_permute_kernel_3d_201_sparse() throw(libtest::test_exception);
 
     /*
      * Contraction

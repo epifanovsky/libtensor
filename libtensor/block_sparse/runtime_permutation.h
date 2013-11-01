@@ -15,7 +15,7 @@ namespace libtensor {
 class runtime_permutation
 {
 private:
-    //Values are the DESTINATION index for the given index
+    //Values are the SOURCE indices from which indices in the RESULT are pulled
     std::vector<size_t> m_idx;
 
 public:
@@ -67,7 +67,7 @@ template<size_t N,typename T>
 void runtime_permutation::apply(sequence<N,T>& seq) const 
 {
     sequence<N, T> buf(seq);
-    for(size_t i = 0; i < N; i++) seq[m_idx[i]] = buf[i];
+    for(size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
 }
 
 inline void runtime_permutation::permute(size_t i,size_t j)

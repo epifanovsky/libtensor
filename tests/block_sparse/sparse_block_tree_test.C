@@ -8,9 +8,10 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
 {
     test_unsorted_input();
 
-    test_get_sub_key_iterator_invalid_key_size();
-    test_get_sub_key_iterator_nonexistent_key();
-    test_get_sub_key_iterator_2d();
+    test_get_sub_key_block_list_invalid_key_size();
+    test_get_sub_key_block_list_nonexistent_key();
+    test_get_sub_key_block_list_2d();
+    test_get_sub_key_block_list_3d();
 
     test_iterator_2d_key();
     test_iterator_2d_incr();
@@ -65,9 +66,9 @@ void sparse_block_tree_test::test_unsorted_input() throw(libtest::test_exception
 
 }
 
-void sparse_block_tree_test::test_get_sub_key_iterator_invalid_key_size() throw(libtest::test_exception)
+void sparse_block_tree_test::test_get_sub_key_block_list_invalid_key_size() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_iterator_invalid_key_size()";
+    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_block_list_invalid_key_size()";
 
     size_t seq1_arr[2] = {1,2};
     size_t seq2_arr[2] = {1,5};
@@ -96,7 +97,7 @@ void sparse_block_tree_test::test_get_sub_key_iterator_invalid_key_size() throw(
         std::vector<size_t> too_big_key;
         too_big_key.push_back(5);
         too_big_key.push_back(2);
-        sparse_block_tree<2>::sub_key_iterator sk_it = sbt.get_sub_key_iterator(too_big_key);
+        sbt.get_sub_key_block_list(too_big_key);
     }
     catch(bad_parameter&)
     {
@@ -113,7 +114,7 @@ void sparse_block_tree_test::test_get_sub_key_iterator_invalid_key_size() throw(
     threw_exception = false;
     try
     {
-        sparse_block_tree<2>::sub_key_iterator sk_it = sbt.get_sub_key_iterator(std::vector<size_t>());
+        sbt.get_sub_key_block_list(std::vector<size_t>());
     }
     catch(bad_parameter&)
     {
@@ -128,9 +129,9 @@ void sparse_block_tree_test::test_get_sub_key_iterator_invalid_key_size() throw(
 
 }
 
-void sparse_block_tree_test::test_get_sub_key_iterator_nonexistent_key() throw(libtest::test_exception)
+void sparse_block_tree_test::test_get_sub_key_block_list_nonexistent_key() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_iterator_nonexistent_key()";
+    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_block_list_nonexistent_key()";
 
     size_t seq1_arr[2] = {1,2};
     size_t seq2_arr[2] = {1,5};
@@ -156,7 +157,7 @@ void sparse_block_tree_test::test_get_sub_key_iterator_nonexistent_key() throw(l
     try
     {
         std::vector<size_t> nonexistent_key(1,6);
-        sparse_block_tree<2>::sub_key_iterator sk_it = sbt.get_sub_key_iterator(nonexistent_key);
+        sbt.get_sub_key_block_list(nonexistent_key);
     }
     catch(bad_parameter&)
     {
@@ -170,9 +171,9 @@ void sparse_block_tree_test::test_get_sub_key_iterator_nonexistent_key() throw(l
     }
 }
 
-void sparse_block_tree_test::test_get_sub_key_iterator_2d() throw(libtest::test_exception)
+void sparse_block_tree_test::test_get_sub_key_block_list_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_iterator()";
+    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_block_list_2d()";
 
     size_t seq1_arr[2] = {1,2};
     size_t seq2_arr[2] = {1,5};
@@ -193,21 +194,118 @@ void sparse_block_tree_test::test_get_sub_key_iterator_2d() throw(libtest::test_
 
     sparse_block_tree<2> sbt(block_tuples_list);
 
-    sparse_block_tree<2>::sub_key_iterator sk_it = sbt.get_sub_key_iterator(std::vector<size_t>(1,4));
+    const block_list& bl = sbt.get_sub_key_block_list(std::vector<size_t>(1,4));
 
 
-    if(*sk_it != 1)
+    if(bl[0] != 1)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "Dereferencing sub_key_iterator first time returned incorrect value");
+                "Dereferencing sub_key_block_list first time returned incorrect value");
     }
-    ++sk_it; 
-    if(*sk_it != 4)
+    if(bl[1] != 4)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "Dereferencing sub_key_iterator second time returned incorrect value");
+                "Dereferencing sub_key_block_list second time returned incorrect value");
     }
 } 
+
+void sparse_block_tree_test::test_get_sub_key_block_list_3d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_get_sub_key_block_list_3d()";
+
+    size_t seq01_arr[3] = {1,2,3};
+    size_t seq02_arr[3] = {1,2,7};
+    size_t seq03_arr[3] = {1,3,1};
+    size_t seq04_arr[3] = {1,5,9};
+    size_t seq05_arr[3] = {2,3,1};
+    size_t seq06_arr[3] = {2,4,2};
+    size_t seq07_arr[3] = {2,4,5};
+    size_t seq08_arr[3] = {2,6,3};
+    size_t seq09_arr[3] = {2,6,4};
+    size_t seq10_arr[3] = {4,1,4};
+    size_t seq11_arr[3] = {4,1,7};
+    size_t seq12_arr[3] = {4,2,2};
+    size_t seq13_arr[3] = {4,3,5};
+    size_t seq14_arr[3] = {4,3,6};
+    size_t seq15_arr[3] = {4,3,7};
+    size_t seq16_arr[3] = {5,1,4};
+    size_t seq17_arr[3] = {5,2,6};
+    size_t seq18_arr[3] = {5,2,7};
+    size_t seq19_arr[3] = {7,4,5};
+    size_t seq20_arr[3] = {7,4,6};
+    size_t seq21_arr[3] = {7,7,7};
+
+    std::vector< sequence<3,size_t> > block_tuples_list(21); 
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[0][i] = seq01_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[1][i] = seq02_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[2][i] = seq03_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[3][i] = seq04_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[4][i] = seq05_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[5][i] = seq06_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[6][i] = seq07_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[7][i] = seq08_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[8][i] = seq09_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[9][i] = seq10_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[10][i] = seq11_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[11][i] = seq12_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[12][i] = seq13_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[13][i] = seq14_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[14][i] = seq15_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[15][i] = seq16_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[16][i] = seq17_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[17][i] = seq18_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[18][i] = seq19_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
+    for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
+
+    sparse_block_tree<3> sbt(block_tuples_list);
+
+    //Test a 1D key
+    const block_list& bl = sbt.get_sub_key_block_list(std::vector<size_t>(1,2));
+    std::vector<size_t> correct_vals_1d;
+    correct_vals_1d.push_back(3);
+    correct_vals_1d.push_back(4);
+    correct_vals_1d.push_back(6);
+
+    if(bl.size() != correct_vals_1d.size())
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "1d key output is wrong size");
+    }
+
+    for(size_t i = 0; i < correct_vals_1d.size(); ++i)
+    {
+        if(bl[i] != correct_vals_1d[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sub_key_block_list returned incorrect value for 1d key");
+        }
+    }
+
+    std::vector<size_t> key_2d;
+    key_2d.push_back(2);
+    key_2d.push_back(6);
+
+    std::vector<size_t> correct_vals_2d;
+    correct_vals_2d.push_back(3);
+    correct_vals_2d.push_back(4);
+    const block_list& bl2 = sbt.get_sub_key_block_list(key_2d);
+
+    if(bl2.size() != correct_vals_2d.size())
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "2d key output is wrong size");
+    }
+    for(size_t i = 0; i < correct_vals_2d.size(); ++i)
+    {
+        if(bl2[i] != correct_vals_2d[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sub_key_block_list returned incorrect value for 2d key");
+        }
+    }
+} 
+
 
 void sparse_block_tree_test::test_iterator_2d_key() throw(libtest::test_exception)
 {

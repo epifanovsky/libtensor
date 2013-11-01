@@ -7,45 +7,19 @@ namespace libtensor {
 
 void block_loop_test::perform() throw(libtest::test_exception) {
 
-    test_range();
-
     test_run_invalid_bispaces();
 
     test_run_block_copy_kernel_1d();
     test_run_block_copy_kernel_2d();
 
     test_run_block_permute_kernel_2d();
+    test_run_block_permute_kernel_2d_sparse();
     test_run_block_permute_kernel_3d_201();
+    test_run_block_permute_kernel_3d_201_sparse();
+
 
     test_run_block_contract2_kernel_2d_2d();
     test_run_block_contract2_kernel_3d_2d();
-}
-
-void block_loop_test::test_range() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_range()";
-    block_list the_range = range(0,5);
-    block_list correct_range;
-    correct_range.push_back(0);
-    correct_range.push_back(1);
-    correct_range.push_back(2);
-    correct_range.push_back(3);
-    correct_range.push_back(4);
-
-    if(the_range.size() != correct_range.size())
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "range(...) returned incorrect value");
-    }
-
-    for(int i = 0; i < 5; ++i)
-    {
-        if(the_range[i] != correct_range[i])
-        {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "range(...) returned incorrect value");
-        }
-    }
 }
 
 //Should throw an exception if the bispaces passed to run() do not match as specified in the construction of the loops
@@ -356,6 +330,112 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
 
 }
 
+//Now we permute a sparse matrix, so the dimension of the arrays is smaller
+void block_loop_test::test_run_block_permute_kernel_2d_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_loop_test::test_run_block_permute_kernel_2d_sparse()";
+
+	//Indices in comments are block indices
+    double test_input_arr[14] = { //i = 0, j = 0
+                                  1,2,
+                                  3,4,
+
+                                 //i = 0, j = 2
+                                 5,6,7,
+                                 8,9,10,
+
+                                 //i = 1, j = 1
+                                 11,12,
+                                 13,14 };
+
+    double correct_output_arr[14] = { //j = 0, i = 0
+                                      1,3,
+                                      2,4,
+
+									  //j = 1, i = 1
+                                      11,13,
+                                      12,14,
+
+									  //j = 2, i = 0
+                                      5,8,
+                                      6,9,
+                                      7,10};
+
+    double test_output_arr[14];
+
+    //First bispace (slow index) and splitting
+    sparse_bispace<1> spb_1(4);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(2);
+    spb_1.split(split_points_1);
+
+    //Second bispace (fast index) and splitting
+    sparse_bispace<1> spb_2(7);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(4);
+    spb_2.split(split_points_2);
+
+    //Sparsity information
+    std::vector< sequence<2,size_t> > sig_blocks(3);
+    sig_blocks[0][0] = 0;
+    sig_blocks[0][1] = 0;
+    sig_blocks[1][0] = 0;
+    sig_blocks[1][1] = 2;
+    sig_blocks[2][0] = 1;
+    sig_blocks[2][1] = 1;
+
+    permutation<2> perm;
+    perm.permute(0,1);
+    sparse_bispace<2> two_d_input = spb_1 % spb_2 << sig_blocks;
+    sparse_bispace<2> two_d_output = two_d_input.permute(perm);
+
+	permute_map pmap;
+	pmap.insert(std::make_pair(0,1));
+	pmap.insert(std::make_pair(1,0));
+
+    block_permute_kernel<double> bpk(pmap);
+
+
+    sequence<1,size_t> output_bispace_indices_2(0);
+    sequence<1,size_t> input_bispace_indices_2(1);
+    sequence<1,bool> output_ignore_2(false);
+    sequence<1,bool> input_ignore_2(false);
+
+    sequence<1,size_t> output_bispace_indices_1(1);
+    sequence<1,size_t> input_bispace_indices_1(0);
+    sequence<1,bool> output_ignore_1(false);
+    sequence<1,bool> input_ignore_1(false);
+
+    std::vector< block_loop<1,1> > loop_list;
+	loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
+						input_bispace_indices_2,
+						output_ignore_2,
+						input_ignore_2));
+
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+                        input_bispace_indices_1,
+                        output_ignore_1,
+                        input_ignore_1,0));
+
+    sequence<1,double*> output_ptrs(test_output_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
+    sequence<1,sparse_bispace_any_order> output_bispaces(two_d_output);
+    sequence<1,sparse_bispace_any_order> input_bispaces(two_d_input);
+
+    run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+
+    for(int i = 0; i < 14; ++i)
+    {
+        if(test_output_arr[i] != correct_output_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_loop<M,N,T>::run(...) produced incorrect output");
+        }
+    }
+
+}
+
 void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test_exception)
 {
     static const char *test_name = "block_loop_test::test_run_block_permute_kernel_3d_201()";
@@ -523,6 +603,178 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
     run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 
     for(int i = 0; i < 60; ++i)
+    {
+        if(test_output_arr[i] != correct_output_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_loop<M,N,T>::run(...) produced incorrect output");
+        }
+    }
+
+}
+
+void block_loop_test::test_run_block_permute_kernel_3d_201_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_loop_test::test_run_block_permute_kernel_3d_201_sparse()";
+
+    //3x4x5
+    //Permutation is kij -> ijk 
+	//Indices in comments are block indices
+    double test_input_arr[35] = { //k = 0, i = 0; j = 0
+                                  1,2,
+                                  3,4,
+                                  5,6,
+
+                                  //k = 0, i = 0, j = 1                        
+                                  7,8,9,
+                                  10,11,12,
+                                  13,14,15,
+
+                                  //k = 0, i = 1, j = 0
+                                  16,17,
+
+                                  //k = 1, i = 0, j = 0
+                                  21,22,
+                                  23,24,
+                                  25,26,
+                                  27,28,
+                                  29,30,
+                                  31,32,
+
+                                  //k = 1, i = 1, j = 1
+                                  55,56,57,
+                                  58,59,60};
+
+    double correct_output_arr[35] = { //i = 0 j = 0 k = 0
+                                      1,
+                                      2,
+                                      3,
+                                      4,
+                                      5,
+                                      6,
+
+
+                                      //i = 0 j = 0 k = 1
+                                      21,27,
+                                      22,28,
+                                      23,29,
+                                      24,30,
+                                      25,31,
+                                      26,32,
+
+                                      //i = 0 j = 1 k = 0
+                                      7,
+                                      8,
+                                      9,
+                                      10,
+                                      11,
+                                      12,
+                                      13,
+                                      14,
+                                      15,
+
+                                      //i = 1 j = 0 k = 0
+                                      16,
+                                      17,
+
+                                      // i = 1, j = 1 k = 1
+                                      55,58,
+                                      56,59,
+                                      57,60};
+
+    double test_output_arr[35];
+
+    //First bispace (slow index in input) and splitting
+    sparse_bispace<1> spb_1(3);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(1);
+    spb_1.split(split_points_1);
+
+    //Second bispace (mid index in input) and splitting
+    sparse_bispace<1> spb_2(4);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(3);
+    spb_2.split(split_points_2);
+
+    //Third bispace (fast index in input) and splitting
+    sparse_bispace<1> spb_3(5);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(2);
+    spb_3.split(split_points_3);
+
+    //Sparsity data
+    std::vector< sequence<3,size_t> > sig_blocks(5);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 0;
+    sig_blocks[0][2] = 0;
+    sig_blocks[1][0] = 0; 
+    sig_blocks[1][1] = 0;
+    sig_blocks[1][2] = 1;
+    sig_blocks[2][0] = 0; 
+    sig_blocks[2][1] = 1;
+    sig_blocks[2][2] = 0;
+    sig_blocks[3][0] = 1; 
+    sig_blocks[3][1] = 0;
+    sig_blocks[3][2] = 0;
+    sig_blocks[4][0] = 1; 
+    sig_blocks[4][1] = 1;
+    sig_blocks[4][2] = 1;
+
+    sparse_bispace<3> three_d_input = spb_1 % spb_2 % spb_3 << sig_blocks;
+    permutation<3> perm;
+    perm.permute(0,2).permute(0,1);
+    sparse_bispace<3> three_d_output = three_d_input.permute(perm);
+
+	permute_map pmap;
+	pmap.insert(std::make_pair(0,2));
+	pmap.insert(std::make_pair(1,0));
+	pmap.insert(std::make_pair(2,1));
+
+    block_permute_kernel<double> bpk(pmap);
+
+    sequence<1,size_t> output_bispace_indices_1(0);
+    sequence<1,size_t> input_bispace_indices_1(1);
+    sequence<1,bool> output_ignore_1(false);
+    sequence<1,bool> input_ignore_1(false);
+
+
+    sequence<1,size_t> output_bispace_indices_2(1);
+    sequence<1,size_t> input_bispace_indices_2(2);
+    sequence<1,bool> output_ignore_2(false);
+    sequence<1,bool> input_ignore_2(false);
+
+    sequence<1,size_t> output_bispace_indices_3(2);
+    sequence<1,size_t> input_bispace_indices_3(0);
+    sequence<1,bool> output_ignore_3(false);
+    sequence<1,bool> input_ignore_3(false);
+
+    std::vector< block_loop<1,1> > loop_list;
+	loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
+						input_bispace_indices_1,
+						output_ignore_1,
+						input_ignore_1));
+
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
+                        input_bispace_indices_2,
+                        output_ignore_2,
+                        input_ignore_2,0));
+
+    loop_list.push_back(block_loop<1,1>(output_bispace_indices_3,
+                        input_bispace_indices_3,
+                        output_ignore_3,
+                        input_ignore_3,0));
+
+
+
+
+    sequence<1,double*> output_ptrs(test_output_arr); 
+    sequence<1,const double*> input_ptrs(test_input_arr); 
+    sequence<1,sparse_bispace_any_order> output_bispaces(three_d_output);
+    sequence<1,sparse_bispace_any_order> input_bispaces(three_d_input);
+
+    run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+
+    for(int i = 0; i < 35; ++i)
     {
         if(test_output_arr[i] != correct_output_arr[i])
         {
