@@ -69,21 +69,40 @@ public:
 
         static const char method[] = "dispatch()";
 
-        node_inspector ni(m_node);
-        node_with_transf<N> nwt = ni.gather_transf<N>();
+        std::cout << "dispatch" << std::endl;
+        print_node(m_node, std::cout, 4);
 
-        if(nwt.n.get_op().compare("add") == 0) {
-            render_add(nwt);
-        } else if(nwt.n.get_op().compare("contract") == 0) {
-            render_contract(nwt);
-        } else if(nwt.n.get_op().compare("ident") == 0) {
-            render_ident(nwt);
+        if(m_node.get_op().compare("assign") == 0) {
+            render_assign<N>();
         } else {
-            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
+            node_inspector ni(m_node);
+            node_with_transf<N> nwt = ni.gather_transf<N>();
+            if(nwt.n.get_op().compare("add") == 0) {
+                render_add(nwt);
+            } else if(nwt.n.get_op().compare("contract") == 0) {
+                render_contract(nwt);
+            } else if(nwt.n.get_op().compare("ident") == 0) {
+                render_ident(nwt);
+            } else {
+                throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
+            }
         }
+        std::cout << "end of dispatch" << std::endl;
     }
 
 private:
+    template<size_t N>
+    void render_assign() {
+
+        const node_assign &n = m_node.template recast_as<node_assign>();
+        node_renderer r(m_plan, m_tl, n.get_rhs(), n.get_tid());
+        r.render();
+        if(r.as_is()) {
+            print_node(n, std::cout);
+            m_plan.insert_assignment(n);
+        }
+    }
+
     template<size_t N>
     void render_add(const node_with_transf<N> &nwt) {
 
@@ -191,8 +210,7 @@ void eval_plan_builder_btensor::build_plan() {
     }
 
     print_node(m_assign, std::cout);
-    node_renderer(m_plan, m_tl, m_assign.get_rhs(), m_assign.get_tid()).
-        render();
+    node_renderer(m_plan, m_tl, m_assign).render();
 }
 
 

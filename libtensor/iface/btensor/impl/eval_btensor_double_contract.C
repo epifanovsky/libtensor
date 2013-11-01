@@ -1,4 +1,5 @@
 #include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_scale.h>
 #include <libtensor/expr/node_ident.h>
 #include "metaprog.h"
 #include "node_inspector.h"
@@ -94,14 +95,25 @@ void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
         m_tl.get_tensor<M + K, double>(nb.get_tid()).
         template get_tensor< btensor_i<M + K, double> >();
 
+    std::cout << "contract2<" << N << ", " << M << ", " << K << "> ";
     contraction2<N, M, K> contr;
     for(typename std::map<size_t, size_t>::const_iterator ic =
             m_node.get_contraction().begin();
             ic != m_node.get_contraction().end(); ++ic) {
-        contr.contract(ic->first, ic->second);
+        std::cout << "(" << ic->first << ", " << ic->second << ") ";
+        size_t ka, kb;
+        if(ic->first < N + K) {
+            ka = ic->first; kb = ic->second - N - K;
+        } else {
+            ka = ic->second; kb = ic->first - N - K;
+        }
+        contr.contract(ka, kb);
     }
+    std::cout << std::endl;
+    contr.permute_c(permutation<N + M>(trc.get_perm(), true));
 
     btod_contract2<N, M, K>(contr, bta, btb).perform(btc);
+    btod_scale<N + M>(btc, trc.get_scalar_tr()).perform();
 }
 
 
