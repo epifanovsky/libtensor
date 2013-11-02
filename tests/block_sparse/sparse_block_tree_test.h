@@ -17,8 +17,6 @@ private:
     **/
     void test_unsorted_input() throw(libtest::test_exception);
 
-
-
     /** \brief Ensures that get_sub_key_block_list throws exception when key is too big or empty 
     **/
     void test_get_sub_key_block_list_invalid_key_size() throw(libtest::test_exception);
@@ -80,6 +78,13 @@ private:
     /** \brief Test that two things that are equal are shown as such 
     **/
     void test_equality_true_2d() throw(libtest::test_exception);
+
+
+    /** \brief Ensure that contracting a 3d tree gives the correct result for all dimensions
+     **/
+    void test_contract_3d_0() throw(libtest::test_exception);
+    void test_contract_3d_1() throw(libtest::test_exception);
+    void test_contract_3d_2() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

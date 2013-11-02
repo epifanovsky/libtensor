@@ -428,6 +428,21 @@ bool sparse_block_tree_iterator<N,is_const>::operator!=(const sparse_block_tree_
 } // namespace impl
 
 
+//Forward declaration for specialization
+template<size_t N>
+class sparse_block_tree;
+
+//Implementing contract() requires that this specialization exist, but it isn't useful for anything
+//so we make it a nonfunctional shell that just throws an exception if you actually try to build one
+template<>
+class sparse_block_tree<1> {
+public:
+    sparse_block_tree(const std::vector< sequence<1,size_t> >& sig_blocks) { 
+        throw bad_parameter(g_ns,"sparse_block_tree_node<1>","sparse_block_tree(...)",
+            __FILE__,__LINE__,"This class has no functionality!!!!"); 
+    }
+};
+
 
 template<size_t N>
 class sparse_block_tree : public impl::sparse_block_tree_node<N> {
@@ -455,11 +470,17 @@ public:
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree<N> permute(const runtime_permutation& perm) const;
 
+    //Removes one of the levels of the tree and aggregates the remaining sub-keys to form a new tree 
+    //Necessary to represent the tree resulting from the contraction of a sparse quantity
+    sparse_block_tree<N-1> contract(size_t contract_idx) const;
+
     //Used to initialize the values of the tree to represent the offsets of the blocks in a bispace
     //Implemented in sparse_bispace.h to avoid incomplete type errors
     ///Returns the sum of the sizes of all blocks in the tree;
     //Must use vectors etc instead of compile time types like sequence because may not know length at compile time
     size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const sequence<N,size_t>& positions); 
+
+
 
     bool operator==(const sparse_block_tree<N>& rhs) const;
     bool operator!=(const sparse_block_tree<N>& rhs) const;
@@ -578,6 +599,68 @@ sparse_block_tree<N> sparse_block_tree<N>::permute(const runtime_permutation& pe
     sparse_block_tree<N> sbt(all_keys);
     size_t m = 0; 
     for(iterator it = sbt.begin(); it != sbt.end(); ++it)
+    {
+        *it = all_vals[m];
+        ++m;
+    }
+    return sbt;
+}
+
+template<size_t N>
+sparse_block_tree<N-1> sparse_block_tree<N>::contract(size_t contract_idx) const
+{
+    std::vector< std::pair< sequence<N-1,size_t>, size_t > > kv_pairs;
+    for(const_iterator it = begin(); it != end(); ++it)
+    {
+        sequence<N,size_t> key = it.key(); 
+        sequence<N-1,size_t> new_key;
+
+        size_t new_key_idx = 0;
+        for(size_t key_idx = 0; key_idx < N; ++key_idx)
+        {
+            if(key_idx == contract_idx)
+            {
+                continue;
+            }
+
+            new_key[new_key_idx] = key[key_idx];
+            ++new_key_idx;
+        }
+        kv_pairs.push_back(std::make_pair(new_key,*it));
+    }
+
+    std::sort(kv_pairs.begin(),kv_pairs.end(),impl::seq_val_compare<N-1>());
+
+
+    std::vector< sequence<N-1,size_t> > all_keys;
+    std::vector<size_t> all_vals;
+
+    for(size_t i = 0; i < kv_pairs.size(); ++i)
+    {
+        //Remove the duplicate keys, if there are any
+        if(i != 0)
+        {
+            bool equal = true;
+            for(size_t j = 0; j < N-1; ++j)
+            {
+                if(kv_pairs[i].first[j] != kv_pairs[i-1].first[j])
+                {
+                    equal = false;
+                    break;
+                }
+            }
+            if(equal)
+            {
+                continue;
+            }
+        }
+        all_keys.push_back(kv_pairs[i].first);
+        all_vals.push_back(kv_pairs[i].second);
+    }
+
+    sparse_block_tree<N-1> sbt(all_keys);
+    size_t m = 0; 
+    for(typename sparse_block_tree<N-1>::iterator it = sbt.begin(); it != sbt.end(); ++it)
     {
         *it = all_vals[m];
         ++m;

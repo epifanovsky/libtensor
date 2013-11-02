@@ -27,7 +27,7 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_contract2_2d_2d();
     test_contract2_2d_2d_sparse_dense(); 
-    test_contract2_3d_2d_sparse_dense();
+    /*test_contract2_3d_2d_sparse_dense();*/
 
     test_contract2_3d_2d();
 }
