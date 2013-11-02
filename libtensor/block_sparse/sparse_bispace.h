@@ -42,6 +42,11 @@ class sparse_bispace<1> {
 private:
     size_t m_dim; //!< Number of elements
     std::vector<size_t> m_abs_indices; //!< Block absolute starting indices
+    
+    //Constructor used to instantiate 1d bispaces via the contraction of an index in a 2d bispace
+    //Explicitly need this constructor because 1d sparse_block_trees do not implement contract() method
+    //Implemented below to avoid incomplete type errors
+    sparse_bispace(const sparse_bispace<2>& parent,size_t contract_idx);
 public: 
 
     /** \brief Creates the sparse block %index space with a given dimension
@@ -119,6 +124,7 @@ public:
      **/
     bool operator!=(const sparse_bispace<1>& rhs) const;
 };
+
 
 inline sparse_bispace<1>::sparse_bispace(size_t dim) : m_dim(dim)
 { 
@@ -274,6 +280,10 @@ private:
     template<size_t L>
     sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::vector< sparse_bispace<1> >& rhs_subspaces,const std::vector< sequence<L,size_t> >& sig_blocks);
 
+    /** Used by contract() to produce lower-rank bispace
+     **/
+    sparse_bispace(const sparse_bispace<N+1>& parent,size_t contract_idx);   
+
     //Worker function used in implementing constructors
     //Special case for when RHS has no sparse members bcs 1d
     //Offset parameter does nothing, needed for proper overloading
@@ -315,6 +325,11 @@ public:
     /** \brief Returns an appropriately permuted copy of this bispace 
      **/
     sparse_bispace<N> permute(const permutation<N>& perm) const; 
+
+    /** \brief Returns the bispace resulting from the removal of a particular subspace and the
+     *         subsequent aggregation of any sparsity involving that space
+     **/
+    sparse_bispace<N-1> contract(size_t contract_idx) const;
 
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
@@ -638,6 +653,76 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
 }
 
 template<size_t N>
+sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contract_idx) 
+{
+
+    //Extract all relevant subspaces
+    for(size_t i = 0; i < N+1; ++i)
+    {
+        if(i == contract_idx)
+        {
+            continue;
+        }
+        m_subspaces.push_back(parent.m_subspaces[i]);
+    }
+
+    //Contract sparse information appropriately, by default just copying unaffected trees
+    for(size_t group_idx = 0; group_idx < parent.m_sparse_block_trees.size(); ++group_idx)
+    {
+        const sparse_block_tree_any_order& cur_tree = parent.m_sparse_block_trees[group_idx];
+        size_t offset =   parent.m_sparse_indices_sets_offsets[group_idx];
+        size_t order = cur_tree.get_order();
+
+        //Does contraction shift the offset of this tree?
+        size_t new_group_offset = offset > contract_idx ? offset-1 : offset;
+        
+        //Are we contracting this tree?
+        if((offset <= contract_idx) && (contract_idx < offset+order))
+        {
+            //Will contraction wipe out this sparsity?
+            if(order == 2)
+            {
+                continue;
+            }
+            else
+            {
+                //Tree-relative idx
+                size_t rel_idx = contract_idx - offset;
+
+                //What are the indices of the bispaces to which this tree now refers?
+                std::vector<size_t> positions(order-1);
+                for(size_t i = 0; i < order-1; ++i)
+                {
+                    positions[i] = offset+i;
+                }
+
+                sparse_block_tree_any_order new_tree = cur_tree.contract(rel_idx);
+                new_tree.set_offsets(m_subspaces,positions);
+
+                m_sparse_block_trees.push_back(new_tree);
+                m_sparse_indices_sets_offsets.push_back(new_group_offset);
+            }
+        }
+        else
+        {
+            m_sparse_indices_sets_offsets.push_back(new_group_offset);
+            m_sparse_block_trees.push_back(cur_tree);
+        }
+    }
+}
+
+template<size_t N>
+sparse_bispace<N-1> sparse_bispace<N>::contract(size_t contract_idx) const
+{
+    if(contract_idx > N-1)
+    {
+        throw bad_parameter(g_ns,"sparse_bispace<N>","contract(...)",
+            __FILE__,__LINE__,"contraction index too large"); 
+    }
+    return sparse_bispace<N-1>(*this,contract_idx);
+}
+
+template<size_t N>
 bool sparse_bispace<N>::operator==(const sparse_bispace<N>& rhs) const
 {
     //Check that subspaces are equivalent
@@ -681,6 +766,18 @@ bool sparse_bispace<N>::operator!=(const sparse_bispace<N>& rhs) const
 
 template<size_t N>
 const char *sparse_bispace<N>::k_clazz = "sparse_bispace<N>";
+
+//These two methods require the definition of sparse_bispace<2>, so they are stuck down here
+inline sparse_bispace<1>::sparse_bispace(const sparse_bispace<2>& parent,size_t contract_idx)
+{
+    const sparse_bispace<1>& target = parent.m_subspaces[contract_idx ? 1 : 0];
+    m_dim = target.get_dim();
+    m_abs_indices.reserve(target.m_abs_indices.size());
+    for(size_t i = 0;  i < target.m_abs_indices.size(); ++i)
+    {
+        m_abs_indices[i] = target.m_abs_indices[i];
+    }
+}
 
 inline sparse_bispace<2> sparse_bispace<1>::operator|(const sparse_bispace<1>& rhs)
 {

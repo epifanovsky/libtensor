@@ -112,6 +112,13 @@ private:
     void test_permute_3d_dense_sparse_021() throw(libtest::test_exception);
     void test_permute_3d_fully_sparse_210() throw(libtest::test_exception);
 
+    /*
+     * sparse_bispace<N>::contract(...) tests
+     */
+    void test_contract_3d_dense() throw(libtest::test_exception);
+    void test_contract_3d_sparse_2() throw(libtest::test_exception);
+    void test_contract_3d_sparse_destroy_all_sparsity() throw(libtest::test_exception);
+
 
     /*  ALL TESTS INVOLVING SPARSITY!!
      *

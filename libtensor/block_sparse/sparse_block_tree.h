@@ -432,15 +432,20 @@ bool sparse_block_tree_iterator<N,is_const>::operator!=(const sparse_block_tree_
 template<size_t N>
 class sparse_block_tree;
 
-//Implementing contract() requires that this specialization exist, but it isn't useful for anything
-//so we make it a nonfunctional shell that just throws an exception if you actually try to build one
+//Implementing contract() requires that this specialization exist
 template<>
-class sparse_block_tree<1> {
+class sparse_block_tree<1> : public impl::sparse_block_tree_node<1> {
 public:
-    sparse_block_tree(const std::vector< sequence<1,size_t> >& sig_blocks) { 
-        throw bad_parameter(g_ns,"sparse_block_tree_node<1>","sparse_block_tree(...)",
-            __FILE__,__LINE__,"This class has no functionality!!!!"); 
-    }
+    typedef impl::sparse_block_tree_iterator<1,false> iterator;
+    typedef impl::sparse_block_tree_iterator<1,true> const_iterator;
+
+    //Empty constructor
+    sparse_block_tree(const std::vector< sequence<1,size_t> >& sig_blocks) {};
+
+    iterator begin() { return iterator(this,std::vector<size_t>(1,0)); };
+    const_iterator begin() const { return const_iterator(this,std::vector<size_t>(1,0)); }
+    iterator end() { return iterator(NULL,std::vector<size_t>(1,0)); };
+    const_iterator end() const { return const_iterator(NULL,std::vector<size_t>(1,0)); }
 };
 
 
@@ -735,22 +740,29 @@ private:
         virtual const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const = 0;
         virtual bool equal(const abstract_base* rhs) const = 0; 
         virtual sparse_block_tree_any_order permute(const runtime_permutation& perm) const = 0;
+        virtual sparse_block_tree_any_order contract(size_t contract_idx) const = 0;
         virtual size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions)  = 0; 
     };
+
 
     template<size_t N>
     class wrapper : public abstract_base {
     private:
         sparse_block_tree<N> m_tree;
     public:
+
         size_t search(const std::vector<size_t>& key) const { return *(m_tree.search(key)); }
         const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const { return m_tree.get_sub_key_block_list(sub_key); }
         bool equal(const abstract_base* rhs) const { return m_tree == static_cast<const wrapper<N>* >(rhs)->m_tree; }
         sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
+        sparse_block_tree_any_order contract(size_t contract_idx) const;
         size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions); 
+
         wrapper(const sparse_block_tree<N>& tree) : m_tree(tree) {}
         abstract_base* clone() const { return new wrapper<N>(m_tree); }
     };
+
+    //Special
 
     //Instance variables
     abstract_base* m_tree_ptr;
@@ -776,7 +788,10 @@ public:
     const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const { return m_tree_ptr->get_sub_key_block_list(sub_key); } 
 
     sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
+
     size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions);
+
+    sparse_block_tree_any_order contract(size_t contract_idx) const { return m_tree_ptr->contract(contract_idx); }
 
     bool operator==(const sparse_block_tree_any_order& rhs) const { if(m_order != rhs.m_order) { return false; } return m_tree_ptr->equal(rhs.m_tree_ptr); }
     bool operator!=(const sparse_block_tree_any_order& rhs) const { return !(*this == rhs); }
@@ -786,6 +801,24 @@ public:
     abstract_base* get_ptr() { return m_tree_ptr; }
 };
 
+//1D trees are largely meaningless, so we give them dummy methods
+template<>
+class sparse_block_tree_any_order::wrapper<1>: public abstract_base {
+private:
+        sparse_block_tree<1> m_tree;
+public:
+    void die() const { throw bad_parameter(g_ns,"sparse_block_tree_any_order::wrapper<1>","die(...)",__FILE__,__LINE__,"this class is just a dummy shell"); }
+    size_t search(const std::vector<size_t>& key) const { die(); return 0; }
+    const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const { die(); return m_tree.get_sub_key_block_list(sub_key,0); }
+    bool equal(const abstract_base* rhs) const { die(); return false; }
+    sparse_block_tree_any_order permute(const runtime_permutation& perm) const { die(); return m_tree; }
+    sparse_block_tree_any_order contract(size_t contract_idx) const { die(); return m_tree; };
+    size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions) { die(); return 0; }; 
+
+    wrapper(const sparse_block_tree<1>& tree) : m_tree(tree) {}
+    abstract_base* clone() const { return new wrapper<1>(m_tree); }
+};
+
 //Has to be implemented down here to avoid 'incomplete type error'
 template<size_t N> 
 inline sparse_block_tree_any_order sparse_block_tree_any_order::wrapper<N>::permute(const runtime_permutation& perm) const
@@ -793,6 +826,12 @@ inline sparse_block_tree_any_order sparse_block_tree_any_order::wrapper<N>::perm
     return m_tree.permute(perm);
 }
 
+//Has to be implemented down here to avoid 'incomplete type error'
+template<size_t N> 
+inline sparse_block_tree_any_order sparse_block_tree_any_order::wrapper<N>::contract(size_t contract_idx) const
+{
+    return m_tree.contract(contract_idx);
+}
 
 inline sparse_block_tree_any_order sparse_block_tree_any_order::permute(const runtime_permutation& perm) const
 { 

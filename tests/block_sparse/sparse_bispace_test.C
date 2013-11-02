@@ -1,5 +1,4 @@
-#include <libtensor/block_sparse/sparse_bispace.h>
-#include <libtensor/core/out_of_bounds.h>
+#include <libtensor/block_sparse/sparse_bispace.h> #include <libtensor/core/out_of_bounds.h>
 #include <vector>
 #include "sparse_bispace_test.h"
 
@@ -50,6 +49,10 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_permute_2d_10();
         test_permute_3d_dense_sparse_021();
         test_permute_3d_fully_sparse_210();
+
+        test_contract_3d_dense();
+        test_contract_3d_sparse_2();
+        test_contract_3d_sparse_destroy_all_sparsity();
 
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
@@ -950,6 +953,184 @@ void sparse_bispace_test::test_permute_3d_fully_sparse_210() throw(libtest::test
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::permute(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_test::test_contract_3d_dense() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_contract_3d_dense()";
+
+    sparse_bispace<1> spb_1(8);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    spb_1.split(split_points_1);
+
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2; 
+    split_points_2.push_back(3);
+    split_points_2.push_back(6);
+    split_points_2.push_back(8);
+    spb_2.split(split_points_2);
+
+    sparse_bispace<1> spb_3(10);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(4);
+    split_points_3.push_back(7);
+    spb_3.split(split_points_3);
+
+    sparse_bispace<3> three_d = spb_1 | spb_2 | spb_3;
+    sparse_bispace<2> two_d = three_d.contract(1); 
+
+
+    sparse_bispace<2> two_d_correct = spb_1 | spb_3; 
+    if(two_d != two_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::contract(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_test::test_contract_3d_sparse_2() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_contract_3d_sparse_2()";
+
+    //Bispaces
+    sparse_bispace<1> spb_1(8);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    spb_1.split(split_points_1);
+
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2; 
+    split_points_2.push_back(3);
+    split_points_2.push_back(6);
+    split_points_2.push_back(8);
+    spb_2.split(split_points_2);
+
+    sparse_bispace<1> spb_3(10);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(4);
+    split_points_3.push_back(7);
+    spb_3.split(split_points_3);
+
+    //Sparsity Info
+    size_t seq00_arr[3] = {0,0,0};
+    size_t seq01_arr[3] = {0,0,2};
+    size_t seq02_arr[3] = {0,1,2};
+    size_t seq03_arr[3] = {0,2,1};
+    size_t seq04_arr[3] = {0,2,2};
+    size_t seq05_arr[3] = {0,3,1};
+    size_t seq06_arr[3] = {1,0,1};
+    size_t seq07_arr[3] = {1,0,2};
+    size_t seq08_arr[3] = {1,1,0};
+    size_t seq09_arr[3] = {1,2,0};
+    size_t seq10_arr[3] = {1,3,1};
+    size_t seq11_arr[3] = {2,1,1};
+    size_t seq12_arr[3] = {2,2,2};
+    size_t seq13_arr[3] = {2,3,0};
+
+    std::vector< sequence<3,size_t> > sig_blocks(14);
+    for(size_t i = 0; i < 3; ++i) sig_blocks[0][i] = seq00_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[1][i] = seq01_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[2][i] = seq02_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[3][i] = seq03_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[4][i] = seq04_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[5][i] = seq05_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[6][i] = seq06_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[7][i] = seq07_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[8][i] = seq08_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[9][i] = seq09_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[10][i] = seq10_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[11][i] = seq11_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[12][i] = seq12_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[13][i] = seq13_arr[i];
+
+    sparse_bispace<3> three_d = spb_1 % spb_2 % spb_3 << sig_blocks;
+    sparse_bispace<2> two_d = three_d.contract(2); 
+
+    //Correct result
+    std::vector< sequence<2,size_t> > contracted_sig_blocks(11);
+    size_t contracted_seq00_arr[2] = {0,0};
+    size_t contracted_seq01_arr[2] = {0,1};
+    size_t contracted_seq02_arr[2] = {0,2};
+    size_t contracted_seq03_arr[2] = {0,3};
+    size_t contracted_seq04_arr[2] = {1,0};
+    size_t contracted_seq05_arr[2] = {1,1};
+    size_t contracted_seq06_arr[2] = {1,2};
+    size_t contracted_seq07_arr[2] = {1,3};
+    size_t contracted_seq08_arr[2] = {2,1};
+    size_t contracted_seq09_arr[2] = {2,2};
+    size_t contracted_seq10_arr[2] = {2,3};
+
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[0][i] = contracted_seq00_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[1][i] = contracted_seq01_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[2][i] = contracted_seq02_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[3][i] = contracted_seq03_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[4][i] = contracted_seq04_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[5][i] = contracted_seq05_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[6][i] = contracted_seq06_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[7][i] = contracted_seq07_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[8][i] = contracted_seq08_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[9][i] = contracted_seq09_arr[i];
+    for(size_t i = 0; i < 2; ++i) contracted_sig_blocks[10][i] = contracted_seq10_arr[i];
+
+    sparse_bispace<2> two_d_correct = spb_1 % spb_2 << contracted_sig_blocks; 
+    if(two_d != two_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::contract(...) returned incorrect value");
+    }
+}
+
+//In this test, we get rid of all the sparsity in a bispace by calling contract()
+void sparse_bispace_test::test_contract_3d_sparse_destroy_all_sparsity() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_contract_3d_sparse_destroy_all_sparsity()";
+
+    //Bispaces
+    sparse_bispace<1> spb_1(8);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    spb_1.split(split_points_1);
+
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2; 
+    split_points_2.push_back(3);
+    split_points_2.push_back(6);
+    split_points_2.push_back(8);
+    spb_2.split(split_points_2);
+
+    sparse_bispace<1> spb_3(10);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(4);
+    split_points_3.push_back(7);
+    spb_3.split(split_points_3);
+
+    //Sparsity
+    std::vector< sequence<2,size_t> > sig_blocks(5); 
+    sig_blocks[0][0] = 0;
+    sig_blocks[0][1] = 1;
+    sig_blocks[1][0] = 0;
+    sig_blocks[1][1] = 3;
+    sig_blocks[2][0] = 1;
+    sig_blocks[2][1] = 0;
+    sig_blocks[3][0] = 1;
+    sig_blocks[3][1] = 2;
+    sig_blocks[4][0] = 2;
+    sig_blocks[4][1] = 1;
+
+    sparse_bispace<3> three_d = spb_1 % spb_2 << sig_blocks | spb_3;
+    sparse_bispace<2> two_d = three_d.contract(1); 
+
+
+    sparse_bispace<2> two_d_correct = spb_1 | spb_3; 
+    if(two_d != two_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::contract(...) returned incorrect value");
     }
 }
 
