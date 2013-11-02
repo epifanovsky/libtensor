@@ -112,6 +112,7 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
 
         input_bispace_indices[0] = m_A.index_of(a);
         input_bispace_indices[1] = m_B.index_of(a);
+
         loop_list.push_back(block_loop<1,2>(output_bispace_indices,
                                             input_bispace_indices,
                                             output_ignore,

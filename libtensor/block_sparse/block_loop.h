@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <utility>
+#include <limits>
 #include "../core/sequence.h"
 #include "sparse_bispace.h"
 #include "block_kernel_i.h"
@@ -58,13 +59,12 @@ private:
     sequence<M,bool> m_output_ignore; //!< Which output pointers are incremented by this loop?
     sequence<N,bool> m_input_ignore; //!< Which input pointers are incremented by this loop?
 
-    size_t m_sparse_ref_index; //!< Which bispace do I look at to determine what blocks are significant to loop over?
-
     //Validates that all of the bispaces touched by this loop are equivalent
     void validate_bispaces(const sequence<M,sparse_bispace_any_order>& output_bispaces,
                            const sequence<N,sparse_bispace_any_order>& input_bispaces) const;
 
 
+    //TODO: Merge back with get_non_ignored_bispace
     //Returns the index of the first 1D bispace in a tensor not ignored by this loop
     //Bispaces are numbered starting with output bispaces, then input bispaces
     size_t get_non_ignored_bispace_idx() const;
@@ -75,18 +75,18 @@ private:
                                                      const sequence<N,sparse_bispace_any_order>& input_bispaces) const;
 
     //Used to determine the list of block indices over which this loop will iterate
-    block_list get_sig_block_list(const sequence<M,sparse_bispace_any_order>& output_bispaces,
-                              const sequence<N,sparse_bispace_any_order>& input_bispaces,
-                              const sequence<M,std::vector<size_t> >& output_block_indices,
-                              const sequence<N,std::vector<size_t> >& input_block_indices) const;
+    block_list get_sig_block_list(const size_t loop_idx,
+                                  const sequence<M,sparse_bispace_any_order>& output_bispaces,
+                                  const sequence<N,sparse_bispace_any_order>& input_bispaces,
+                                  const sequence<M,std::vector<size_t> >& output_block_indices,
+                                  const sequence<N,std::vector<size_t> >& input_block_indices) const;
 public:
 
     //Constructor 
     block_loop(const sequence<M,size_t>& output_bispace_indices,
                const sequence<N,size_t>& input_bispace_indices,
                const sequence<M,bool>& output_ignore,
-               const sequence<N,bool>& input_ignore,
-               const size_t sparse_ref_index = M+N); 
+               const sequence<N,bool>& input_ignore); 
 
     //We friend the loop runner functions for convenience
     friend void run_loop_list<>(const std::vector< block_loop<M,N,T> >& loop_list,
@@ -119,12 +119,10 @@ template<size_t M,size_t N,typename T>
 block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
 							  const sequence<N,size_t>& input_bispace_indices,
 							  const sequence<M,bool>& output_ignore,
-							  const sequence<N,bool>& input_ignore,
-                              const size_t sparse_ref_index) : m_output_bispace_indices(output_bispace_indices),
-													  		   m_input_bispace_indices(input_bispace_indices),
-															   m_output_ignore(output_ignore),
-															   m_input_ignore(input_ignore),
-                                                               m_sparse_ref_index(sparse_ref_index)
+							  const sequence<N,bool>& input_ignore) : m_output_bispace_indices(output_bispace_indices),
+													  		          m_input_bispace_indices(input_bispace_indices),
+        															  m_output_ignore(output_ignore),
+        															  m_input_ignore(input_ignore)
 {
     bool all_ignored = true;
     for(size_t m = 0; m < M; ++m)
@@ -151,18 +149,6 @@ block_loop<M,N,T>::block_loop(const sequence<M,size_t>& output_bispace_indices,
         throw bad_parameter(g_ns, k_clazz,"block_loop(...)",
                 __FILE__, __LINE__, "Cannot ignore all tensors: loop will do nothing");
     }
-
-
-    //We need to use the first non-ignored bispace for our reference index by default
-    if(m_sparse_ref_index == M+N)
-    {
-        m_sparse_ref_index = get_non_ignored_bispace_idx();
-    }
-    else if(m_sparse_ref_index > M+N)
-    {
-        throw bad_parameter(g_ns, k_clazz,"block_loop(...)",
-                __FILE__, __LINE__, "invalid m_sparse_ref_index");
-    } 
 }
 
 template<size_t M,size_t N,typename T>
@@ -266,27 +252,62 @@ void block_loop<M,N,T>::validate_bispaces(const sequence<M,sparse_bispace_any_or
     }
 }
 
+//We always just choose the shortest list
+//Bispace code handles all accounding for sparsity etc
+//TODO: Can probably streamline this by making fewer copies, just returning the LENGTH of each list
 template<size_t M,size_t N,typename T>
-block_list block_loop<M,N,T>::get_sig_block_list(const sequence<M,sparse_bispace_any_order>& output_bispaces,
+block_list block_loop<M,N,T>::get_sig_block_list(const size_t loop_idx,
+                                                 const sequence<M,sparse_bispace_any_order>& output_bispaces,
                                                  const sequence<N,sparse_bispace_any_order>& input_bispaces,
                                                  const sequence<M,std::vector<size_t> >& output_block_indices,
                                                  const sequence<N,std::vector<size_t> >& input_block_indices) const
 {
-    //By default (no sparsity), m_sparse_ref_index is set to the first non-ignored output index, if M > 0, or the first
-    //non-ignored input index + M, if only N > 0  
-    if(m_sparse_ref_index < M)
+
+    size_t min_len = std::numeric_limits<size_t>::max();
+    block_list shortest_list;
+    for(size_t output_idx = 0; output_idx < M; ++output_idx)
     {
-        const sparse_bispace_any_order& target_bispace = output_bispaces[m_sparse_ref_index];
-        size_t target_subspace = m_output_bispace_indices[m_sparse_ref_index];
-        return target_bispace.get_sig_block_list(output_block_indices[m_sparse_ref_index],target_subspace);
+        if(!m_output_ignore[output_idx])
+        {
+            const std::vector<size_t>& outer_block_indices = output_block_indices[output_idx];
+            size_t target_subspace = m_output_bispace_indices[output_idx];
+
+            //Is enough of the key specified to get a meaningful answer?
+            if(target_subspace > loop_idx)
+            {
+                continue;
+            }
+            block_list cur_list = output_bispaces[output_idx].get_sig_block_list(outer_block_indices,target_subspace);
+            if(cur_list.size() < min_len)
+            {
+                min_len = cur_list.size();
+                shortest_list = cur_list;
+            }
+        }
     }
-    else
+
+    for(size_t input_idx = 0; input_idx < N; ++input_idx)
     {
-        size_t input_idx = m_sparse_ref_index - M;
-        const sparse_bispace_any_order& target_bispace = input_bispaces[input_idx];
-        size_t target_subspace = m_input_bispace_indices[input_idx];
-        return target_bispace.get_sig_block_list(input_block_indices[input_idx],target_subspace);
+        if(!m_input_ignore[input_idx])
+        {
+            const std::vector<size_t>& outer_block_indices = input_block_indices[input_idx];
+            size_t target_subspace = m_input_bispace_indices[input_idx];
+
+            //Is enough of the key specified to get a meaningful answer?
+            if(target_subspace > loop_idx)
+            {
+                continue;
+            }
+            block_list cur_list = input_bispaces[input_idx].get_sig_block_list(outer_block_indices,target_subspace);
+            if(cur_list.size() < min_len)
+            {
+                min_len = cur_list.size();
+                shortest_list = cur_list;
+            }
+        }
     }
+
+    return shortest_list;
 }
 
 namespace impl
@@ -310,7 +331,7 @@ void _run_internal(const std::vector< block_loop<M,N,T> >& loop_list,
     const block_loop<M,N,T>& cur_loop = loop_list[loop_idx];
     const sparse_bispace<1>& cur_bispace = cur_loop.get_non_ignored_bispace(output_bispaces,input_bispaces);
             
-    block_list block_idxs = cur_loop.get_sig_block_list(output_bispaces,input_bispaces,output_block_indices,input_block_indices);
+    block_list block_idxs = cur_loop.get_sig_block_list(loop_idx,output_bispaces,input_bispaces,output_block_indices,input_block_indices);
 
     for(size_t i = 0; i < block_idxs.size(); ++i)
     {

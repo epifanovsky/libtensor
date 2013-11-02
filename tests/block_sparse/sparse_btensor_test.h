@@ -42,9 +42,10 @@ private:
     void test_permute_3d_row_major_210() throw(libtest::test_exception);
     void test_permute_3d_block_major_120_sparse() throw(libtest::test_exception);
 
-    /** \brief Basic matrix multiply
+    /** \brief Sparse and dense matrix multiplies 
      **/
     void test_contract2_2d_2d() throw(libtest::test_exception);
+    void test_contract2_2d_2d_sparse_dense() throw(libtest::test_exception);
     
     /** \brief More complex contraction that is isomorphic to a matrix multiply
      **/

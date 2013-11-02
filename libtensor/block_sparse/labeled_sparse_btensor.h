@@ -8,8 +8,7 @@
 #include "contract.h"
 
 
-namespace libtensor
-{
+namespace libtensor {
 
 //Forward declaration for member variable
 template<size_t N,typename T>

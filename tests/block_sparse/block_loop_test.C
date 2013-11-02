@@ -340,13 +340,13 @@ void block_loop_test::test_run_block_permute_kernel_2d_sparse() throw(libtest::t
                                   1,2,
                                   3,4,
 
-                                 //i = 0, j = 2
-                                 5,6,7,
-                                 8,9,10,
+                                  //i = 0, j = 2
+                                  5,6,7,
+                                  8,9,10,
 
-                                 //i = 1, j = 1
-                                 11,12,
-                                 13,14 };
+                                  //i = 1, j = 1
+                                  11,12,
+                                  13,14};
 
     double correct_output_arr[14] = { //j = 0, i = 0
                                       1,3,
@@ -416,7 +416,7 @@ void block_loop_test::test_run_block_permute_kernel_2d_sparse() throw(libtest::t
     loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
                         input_bispace_indices_1,
                         output_ignore_1,
-                        input_ignore_1,0));
+                        input_ignore_1));
 
     sequence<1,double*> output_ptrs(test_output_arr); 
     sequence<1,const double*> input_ptrs(test_input_arr); 
@@ -757,12 +757,12 @@ void block_loop_test::test_run_block_permute_kernel_3d_201_sparse() throw(libtes
     loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
                         input_bispace_indices_2,
                         output_ignore_2,
-                        input_ignore_2,0));
+                        input_ignore_2));
 
     loop_list.push_back(block_loop<1,1>(output_bispace_indices_3,
                         input_bispace_indices_3,
                         output_ignore_3,
-                        input_ignore_3,0));
+                        input_ignore_3));
 
 
 
