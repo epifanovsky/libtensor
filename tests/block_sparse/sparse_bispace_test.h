@@ -117,6 +117,7 @@ private:
      */
     void test_contract_3d_dense() throw(libtest::test_exception);
     void test_contract_3d_sparse_2() throw(libtest::test_exception);
+    void test_contract_3d_sparse_2_nnz() throw(libtest::test_exception);
     void test_contract_3d_sparse_destroy_all_sparsity() throw(libtest::test_exception);
 
 

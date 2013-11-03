@@ -689,30 +689,49 @@ void sparse_btensor_test::test_contract2_2d_2d_sparse_dense() throw(libtest::tes
     sparse_btensor<2> C_correct(spb_i | spb_j,C_correct_arr);
     if(C != C_correct)
     {
-
-        std::cout << "C:\n" << C.str() << "\n";
-        std::cout << "C_correct:\n" << C_correct.str() << "\n";
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
     }
 }
 
-#if 0 
 void sparse_btensor_test::test_contract2_3d_2d_sparse_dense() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_btensor_test::test_contract2_3d_2d_sparse_dense()";
 
     //Both matrices stored slow->fast, so blas must transpose second one
-    //dimensions: i = 3, k = 4, j = 5, l = 6
+    //dimensions: i = 3, j = 4, k = 5, l = 6
 
     //Block major     
-    double A_arr[20] = { //i = 0 //k = 0
-                         1,2,3,
-                         4,5,6,
+    double A_arr[26] = { //i = 0 j = 0 //k = 1
+                         1,
+                         2,
 
-                         //i = 1 //k = 0
-                         7,8,9,
-                         10,11,12};
+                         //i = 0 //j = 1 //k = 0
+                         3,4,
+                         5,6,
+
+                         //i = 0 //j = 1 //k = 2
+                         7,8,
+                         9,10,
+
+                         //i = 1 //j = 0 //k = 1
+                         11,
+                         12,
+                         13,
+                         14,
+
+                         //i = 1 //j = 1 //k = 1
+                         15,
+                         16,
+                         17,
+                         18,
+
+                         //i = 1 //j = 1 //k = 2
+                         19,20,
+                         21,22,
+                         23,24,
+                         25,26};
+
                        
     //Row major
     double B_arr[30] = {1,2,3,4,5,
@@ -723,10 +742,27 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_dense() throw(libtest::tes
                         26,27,28,29,30};
 
     //Row major
-    double C_correct_arr[24] = {14,44,74,104,134,164, 
-                                32,107,182,257,332,407,
-                                50,170,290,410,530,650,
-                                68,233,398,563,728,893};
+    double C_correct_arr[72] = {//i = 0 
+                                //j = 0
+                                3,8,13,18,23,28, 
+                                6,16,26,36,46,56,
+
+                                //j = 1
+                                79,189,299,409,519,629, 
+                                103,253,403,553,703,853,
+
+                                //i = 1
+                                //j = 0
+                                33,88,143,198,253,308, 
+                                36,96,156,216,276,336,
+                                39,104,169,234,299,364, 
+                                42,112,182,252,322,392,
+
+                                //j = 1
+                                221,491,761,1031,1301,1571,
+                                242,537,832,1127,1422,1717,
+                                263,583,903,1223,1543,1863, 
+                                284,629,974,1319,1664,2009};
 
     //Bispace for i 
     sparse_bispace<1> spb_i(3);
@@ -755,21 +791,37 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_dense() throw(libtest::tes
     spb_l.split(split_points_l);
 
 
-    //Keep first block column of A, all of B
-    std::vector< sequence<2,size_t> > sig_blocks_A(2); 
+    //Sparsity data
+    std::vector< sequence<3,size_t> > sig_blocks_A(6); 
     sig_blocks_A[0][0] = 0;
     sig_blocks_A[0][1] = 0;
-    sig_blocks_A[1][0] = 1;
-    sig_blocks_A[1][1] = 0;
+    sig_blocks_A[0][2] = 1;
+    sig_blocks_A[1][0] = 0;
+    sig_blocks_A[1][1] = 1;
+    sig_blocks_A[1][2] = 0;
+    sig_blocks_A[2][0] = 0;
+    sig_blocks_A[2][1] = 1;
+    sig_blocks_A[2][2] = 2;
+    sig_blocks_A[3][0] = 1;
+    sig_blocks_A[3][1] = 0;
+    sig_blocks_A[3][2] = 1;
+    sig_blocks_A[4][0] = 1;
+    sig_blocks_A[4][1] = 1;
+    sig_blocks_A[4][2] = 1;
+    sig_blocks_A[5][0] = 1;
+    sig_blocks_A[5][1] = 1;
+    sig_blocks_A[5][2] = 2;
 
-    sparse_btensor<2> A(spb_i % spb_k << sig_blocks_A,A_arr,true);
-    sparse_btensor<2> B(spb_j | spb_k,B_arr);
-    sparse_btensor<2> C(spb_i | spb_j);
+    sparse_bispace<3> spb_A = spb_i % spb_j % spb_k << sig_blocks_A;
+    sparse_btensor<3> A(spb_A,A_arr,true);
+    sparse_btensor<2> B(spb_l | spb_k,B_arr);
+    sparse_bispace<3> spb_C = spb_A.contract(2) | spb_l;
+    sparse_btensor<3> C(spb_C);
 
-    letter i,j,k;
-    C(i|j) = contract(k,A(i|k),B(j|k));
+    letter i,j,k,l;
+    C(i|j|l) = contract(k,A(i|j|k),B(l|k));
 
-    sparse_btensor<2> C_correct(spb_i | spb_j,C_correct_arr);
+    sparse_btensor<3> C_correct(spb_C,C_correct_arr);
     if(C != C_correct)
     {
 
@@ -779,7 +831,6 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_dense() throw(libtest::tes
                 "contract(...) did not produce correct result");
     }
 }
-#endif
 
 void sparse_btensor_test::test_contract2_3d_2d() throw(libtest::test_exception)
 {

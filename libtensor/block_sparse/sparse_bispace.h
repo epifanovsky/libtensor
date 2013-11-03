@@ -264,9 +264,17 @@ private:
     //Contains the trees that describe the sparsity of each group of coupled indices  
     std::vector< sparse_block_tree_any_order > m_sparse_block_trees;
 
+    //Used to store the number of nonzero elements corresponding to the significant blocks in each tree
+    //Used to construct m_dimensions
+    std::vector<size_t> m_sparse_block_tree_dimensions; 
+
     //Internal-use array containing the dimension of each subspace/sparse composite subspace group. 
     //Used to calculate number of elements and offsets
+    //Should never be edited directly - instead call init_dimensions
     std::vector<size_t> m_dimensions;
+
+    //Helper functions used to set the m_dimensions array used for calculating block offsets and nnz
+    void init_dimensions();
 
     /** \brief Constructors a composite sparse_bispace from two component spaces
      *         Used to implement operator|(...) between multi-dimensional spaces
@@ -350,13 +358,53 @@ public:
     friend class sparsity_expr;
 };
 
+//Determines the dimensions of each sparsity group in the bispace
+//bispaces not belonging to a group simply contribute their dense dimension
+template<size_t N>
+void sparse_bispace<N>::init_dimensions() 
+{
+    //Should only be called once
+    if(m_dimensions.size() > 0)
+    {
+        throw bad_parameter(g_ns,"sparse_bispace<N>","init_dimensions(...)",
+            __FILE__,__LINE__,"init_dimensions should only be called once"); 
+    }
+
+    size_t subspace_idx = 0; 
+    size_t cur_group_idx = 0;
+    while(subspace_idx < N)
+    {
+        //Anything sparse in this bispace?
+        bool treat_as_sparse = false;
+        if(m_sparse_indices_sets_offsets.size() > 0)
+        {
+            //Are we in a sparse group?
+            if(subspace_idx == m_sparse_indices_sets_offsets[cur_group_idx])
+            {
+                treat_as_sparse = true;
+            }
+        }
+
+        if(treat_as_sparse)
+        {
+            //We are in a sparse group, use the total group size
+            m_dimensions.push_back(m_sparse_block_tree_dimensions[cur_group_idx]);
+            subspace_idx += m_sparse_block_trees[cur_group_idx].get_order();
+            ++cur_group_idx;
+        }
+        else
+        {
+            m_dimensions.push_back(m_subspaces[subspace_idx].get_dim());
+            ++subspace_idx;
+        }
+    }
+}
+
 //Worker function used in implementing constructors
 //Special case for when RHS has no sparse members bcs 1d
 template<size_t N>
 void sparse_bispace<N>::absorb_sparsity(const sparse_bispace<1>& rhs,size_t offset)
 {
-    //Just get the dimension of the subspace
-    m_dimensions.push_back(rhs.get_dim());
 }
 
 //General case
@@ -368,12 +416,7 @@ void sparse_bispace<N>::absorb_sparsity(const sparse_bispace<L>& rhs,size_t offs
     {
         m_sparse_indices_sets_offsets.push_back(rhs.m_sparse_indices_sets_offsets[i]+offset);
         m_sparse_block_trees.push_back(rhs.m_sparse_block_trees[i]);
-    }
-
-    //Copy internal dimensions
-    for(size_t i = 0; i < rhs.m_dimensions.size(); ++i)
-    {
-        m_dimensions.push_back(rhs.m_dimensions[i]);
+        m_sparse_block_tree_dimensions.push_back(rhs.m_sparse_block_tree_dimensions[i]);
     }
 }
 
@@ -397,6 +440,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L>& lhs,const sparse_bi
     absorb_sparsity(lhs);
     absorb_sparsity(rhs,N-L);
 
+    init_dimensions();
 }
 
 //Constructor used by the following operator pattern:
@@ -423,12 +467,13 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::ve
         positions[i] = N-L+i;
     }
 
-    size_t dim = sbt.set_offsets(m_subspaces,positions);
-    m_dimensions.push_back(dim);
-
+    m_sparse_block_tree_dimensions.push_back(sbt.set_offsets(m_subspaces,positions));
     m_sparse_block_trees.push_back(sbt);
     m_sparse_indices_sets_offsets.push_back(N-L);
+
+    init_dimensions();
 }
+
 
 template<size_t N>
 size_t sparse_bispace<N>::get_nnz() const
@@ -697,7 +742,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
                 }
 
                 sparse_block_tree_any_order new_tree = cur_tree.contract(rel_idx);
-                new_tree.set_offsets(m_subspaces,positions);
+                m_sparse_block_tree_dimensions.push_back(new_tree.set_offsets(m_subspaces,positions));
 
                 m_sparse_block_trees.push_back(new_tree);
                 m_sparse_indices_sets_offsets.push_back(new_group_offset);
@@ -707,8 +752,11 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
         {
             m_sparse_indices_sets_offsets.push_back(new_group_offset);
             m_sparse_block_trees.push_back(cur_tree);
+            m_sparse_block_tree_dimensions.push_back(parent.m_sparse_block_tree_dimensions[group_idx]);
         }
     }
+
+    init_dimensions();
 }
 
 template<size_t N>

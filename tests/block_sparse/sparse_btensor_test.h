@@ -46,6 +46,7 @@ private:
      **/
     void test_contract2_2d_2d() throw(libtest::test_exception);
     void test_contract2_2d_2d_sparse_dense() throw(libtest::test_exception);
+    void test_contract2_3d_2d_sparse_dense() throw(libtest::test_exception);
     
     /** \brief More complex contraction that is isomorphic to a matrix multiply
      **/
