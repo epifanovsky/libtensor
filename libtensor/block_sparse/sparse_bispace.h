@@ -291,6 +291,11 @@ private:
     /** Used by contract() to produce lower-rank bispace
      **/
     sparse_bispace(const sparse_bispace<N+1>& parent,size_t contract_idx);   
+    
+    /** Used by fuse() to produce higher-rank bispace
+     **/
+    template<size_t L> 
+    sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse_bispace<L>& rhs);
 
     //Worker function used in implementing constructors
     //Special case for when RHS has no sparse members bcs 1d
@@ -339,6 +344,10 @@ public:
      **/
     sparse_bispace<N-1> contract(size_t contract_idx) const;
 
+
+    template<size_t L>
+    sparse_bispace<N+L-1> fuse(const sparse_bispace<L>& rhs) const;
+
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
      **/
@@ -376,7 +385,7 @@ void sparse_bispace<N>::init_dimensions()
     {
         //Anything sparse in this bispace?
         bool treat_as_sparse = false;
-        if(m_sparse_indices_sets_offsets.size() > 0)
+        if(cur_group_idx < m_sparse_indices_sets_offsets.size())
         {
             //Are we in a sparse group?
             if(subspace_idx == m_sparse_indices_sets_offsets[cur_group_idx])
@@ -770,6 +779,62 @@ sparse_bispace<N-1> sparse_bispace<N>::contract(size_t contract_idx) const
     return sparse_bispace<N-1>(*this,contract_idx);
 }
 
+template<size_t N> template<size_t L> 
+sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse_bispace<L>& rhs)
+{
+#if 0
+    //Copy all subspaces
+    for(size_t i = 0; i < N - L + 1; ++i)
+    {
+        m_subspaces.push_back(lhs.m_subspaces[i]);
+    }
+    for(size_t i = 0; i < L; ++i)
+    {
+        m_subspaces.push_back(rhs.m_subspaces[i]);
+    }
+
+    //We actually need to fuse sparse trees if there is overlap at the end of lhs and beginning of rhs
+    bool fuse_sparsity = false;
+    if(lhs.m_sparse_indices_sets_offsets.size() > 0)
+    {
+        size_t last_lhs_group_offset  = lhs.m_sparse_indices_sets_offsets.back();
+        size_t last_lhs_group_order =  lhs.m_sparse_block_trees.back().get_order();
+        size_t lhs_sparsity_end = last_lhs_group_offset + last_lhs_group_order
+        if((lhs_sparsity_end == (N-L+1)) && rhs.m_sparse_indices_sets_offsets[0] == 0)
+        {
+            fuse_sparsity = true;
+        }
+    }
+
+    //Absorb all the sparsity, then patch it up later to account for fusion
+    absorb_sparsity(lhs);
+    absorb_sparsity(rhs,N-L+1);
+    
+    //Patch up the sparsity to account for fusion if appropriate
+    if(fuse_sparsity)
+    {
+        size_t last_lhs_tree_idx = lhs.m_sparse_block_trees.size() - 1;
+        size_t first_rhs_tree_idx = last_lhs_tree_idx + 1;
+        m_sparse_block_trees[last_lhs_tree_idx] = m_sparse_block_trees[last_lhs_tree_idx].fuse(m_sparse_block_trees[first_rhs_tree_idx]);
+
+        //delete the no longer needed rhs tree information
+        m_sparse_indices_sets_offsets.erase(m_sparse_indices_sets_offsets.begin() + first_rhs_tree_idx);
+        m_sparse_block_trees.erase(m_sparse_block_trees.begin() + first_rhs_tree_idx);
+        m_sparse_block_tree_dimensions.erase(m_sparse_block_tree_dimensions.begin() + first_rhs_tree_idx); 
+    }
+
+    init_dimensions();
+#endif
+}
+
+template<size_t N> template<size_t L> 
+sparse_bispace<N+L-1> sparse_bispace<N>::fuse(const sparse_bispace<L>& rhs) const
+{
+    return sparse_bispace<N+L-1>(*this,rhs);
+}
+
+
+
 template<size_t N>
 bool sparse_bispace<N>::operator==(const sparse_bispace<N>& rhs) const
 {
@@ -860,8 +925,8 @@ sparse_bispace<M+N> sparsity_expr<M,N>::operator<<(const std::vector< sequence<N
     return sparse_bispace<M+N>(m_parent_bispace,std::vector< sparse_bispace<1> >(subspaces.begin(),subspaces.end()),sig_blocks);
 }
 
-template<size_t N>
-size_t sparse_block_tree<N>::set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const sequence<N,size_t>& positions)
+//Should put in appropriate implementation file, but here for now bcs annoying linking dependency
+inline size_t sparse_block_tree_any_order::set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions)
 {
     size_t offset = 0; 
     for(iterator it = begin(); it != end(); ++it)
@@ -869,9 +934,9 @@ size_t sparse_block_tree<N>::set_offsets(const std::vector< sparse_bispace<1> >&
         *it = offset;
 
         //Compute the size of this block and increment offset
-        const sequence<N,size_t>& key = it.key();
+        const key_t& key = it.key();
         size_t incr = 1;
-        for(size_t i = 0; i < N; ++i)
+        for(size_t i = 0; i < m_order; ++i)
         {
             incr *= subspaces[positions[i]].get_block_size(key[i]);
         }
@@ -879,7 +944,6 @@ size_t sparse_block_tree<N>::set_offsets(const std::vector< sparse_bispace<1> >&
     }
     return offset;
 }
-
 
 //TODO: Make this immutable, etc?? Need to make this class hard to abuse
 //Type erasure class for sparse_bispaces.

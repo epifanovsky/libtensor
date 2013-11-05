@@ -223,6 +223,11 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_tod_set.C
 )
 
+set(SRC_BLOCK_SPARSE
+    block_sparse/sparse_block_tree_node.C
+    block_sparse/sparse_block_tree_any_order.C
+)
+
 if(WITH_ARMADILLO)
     set(SRC_ARMA
         arma/impl/btod_export_arma.C
@@ -244,7 +249,7 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP} ${SRC_ARMA})
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_BLOCK_SPARSE} ${SRC_INST} ${SRC_MP} ${SRC_ARMA})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)

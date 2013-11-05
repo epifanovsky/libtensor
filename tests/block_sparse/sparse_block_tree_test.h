@@ -85,6 +85,11 @@ private:
     void test_contract_3d_0() throw(libtest::test_exception);
     void test_contract_3d_1() throw(libtest::test_exception);
     void test_contract_3d_2() throw(libtest::test_exception);
+
+    /** \brief Fuses multiple trees into one
+     **/
+    void test_fuse_2d_2d() throw(libtest::test_exception);
+    void test_fuse_3d_2d_1() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

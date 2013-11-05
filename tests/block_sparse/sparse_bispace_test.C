@@ -55,6 +55,8 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_contract_3d_sparse_2_nnz();
         test_contract_3d_sparse_destroy_all_sparsity();
 
+        /*test_fuse_2d_2d();*/
+
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
         test_get_nnz_3d_sparse_dense();
@@ -1200,6 +1202,126 @@ void sparse_bispace_test::test_contract_3d_sparse_destroy_all_sparsity() throw(l
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::contract(...) returned incorrect value");
     }
+}
+
+void sparse_bispace_test::test_fuse_2d_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_fuse_2d_2d()";
+
+    //Sparsity data 1
+    size_t seq0_arr[2] = {1,2};
+    size_t seq1_arr[2] = {1,5};
+    size_t seq2_arr[2] = {2,3};
+    size_t seq3_arr[2] = {4,1};
+    size_t seq4_arr[2] = {4,4};
+    size_t seq5_arr[2] = {5,1};
+    size_t seq6_arr[2] = {5,2};
+
+    std::vector< sequence<2,size_t> > sig_blocks_1(7); 
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[0][i] = seq0_arr[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[1][i] = seq1_arr[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[2][i] = seq2_arr[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[3][i] = seq3_arr[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[4][i] = seq4_arr[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[5][i] = seq5_arr[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_1[6][i] = seq6_arr[i];
+
+    //Need 5 blocks
+    sparse_bispace<1> spb_i(10);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(2);
+    split_points_i.push_back(4);
+    split_points_i.push_back(6);
+    split_points_i.push_back(9);
+    spb_i.split(split_points_i);
+
+    //Need 5 blocks
+    sparse_bispace<1> spb_k(13); 
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(3);
+    split_points_k.push_back(7);
+    split_points_k.push_back(10);
+    split_points_k.push_back(12);
+    spb_k.split(split_points_k);
+
+    sparse_bispace<2> spb_A = spb_i % spb_k << sig_blocks_1;
+
+    //Sparsity data 2
+    size_t seq0_arr_2[2] = {1,2};
+    size_t seq1_arr_2[2] = {1,6};
+    size_t seq2_arr_2[2] = {2,5};
+    size_t seq3_arr_2[2] = {2,9};
+    size_t seq4_arr_2[2] = {3,1};
+    size_t seq5_arr_2[2] = {4,3};
+    size_t seq6_arr_2[2] = {4,6};
+    size_t seq7_arr_2[2] = {5,1};
+    size_t seq8_arr_2[2] = {5,5};
+
+    std::vector< sequence<2,size_t> > sig_blocks_2(9); 
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[0][i] = seq0_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[1][i] = seq1_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[2][i] = seq2_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[3][i] = seq3_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[4][i] = seq4_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[5][i] = seq5_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[6][i] = seq6_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[7][i] = seq7_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_2[8][i] = seq8_arr_2[i];
+
+    //Need 9 blocks
+    sparse_bispace<1> spb_j(25);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(4);
+    split_points_j.push_back(7);
+    split_points_j.push_back(9);
+    split_points_j.push_back(12);
+    split_points_j.push_back(15);
+    split_points_j.push_back(19);
+    split_points_j.push_back(21);
+    split_points_j.push_back(23);
+    spb_j.split(split_points_j);
+
+    sparse_bispace<2> spb_B = spb_k % spb_j << sig_blocks_2;
+
+    sparse_bispace<3> spb_C = spb_A.fuse(spb_B);
+
+    //Correct bispace 
+    size_t correct_seq00_arr[3] = {1,2,5};
+    size_t correct_seq01_arr[3] = {1,2,9};
+    size_t correct_seq02_arr[3] = {1,5,1};
+    size_t correct_seq03_arr[3] = {1,5,5};
+    size_t correct_seq04_arr[3] = {2,3,1};
+    size_t correct_seq05_arr[3] = {4,1,2};
+    size_t correct_seq06_arr[3] = {4,1,6};
+    size_t correct_seq07_arr[3] = {4,4,3};
+    size_t correct_seq08_arr[3] = {4,4,6};
+    size_t correct_seq09_arr[3] = {5,1,2};
+    size_t correct_seq10_arr[3] = {5,1,6};
+    size_t correct_seq11_arr[3] = {5,2,5};
+    size_t correct_seq12_arr[3] = {5,2,9};
+
+    std::vector< sequence<3,size_t> > correct_sig_blocks(13);
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[0][i] = correct_seq00_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[1][i] = correct_seq01_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[2][i] = correct_seq02_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[3][i] = correct_seq03_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[4][i] = correct_seq04_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[5][i] = correct_seq05_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[6][i] = correct_seq06_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[7][i] = correct_seq07_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[8][i] = correct_seq08_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[9][i] = correct_seq09_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[10][i] = correct_seq10_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[11][i] = correct_seq11_arr[i];
+    for(size_t i = 0; i < 3; ++i) correct_sig_blocks[12][i] = correct_seq12_arr[i];
+
+    sparse_bispace<3> spb_C_correct = spb_i % spb_k % spb_j << correct_sig_blocks;
+    if(spb_C != spb_C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::fuse(...) returned incorrect value");
+    }
+        
 }
 
 //Get the correct number of elements for a 2d tensor with both indices coupled by sparsity

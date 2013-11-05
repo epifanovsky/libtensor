@@ -28,6 +28,9 @@ public:
     template<size_t N,typename T> 
     void apply(sequence<N,T>& seq) const;
 
+    template<typename T> 
+    void apply(std::vector<T>& vec) const;
+
     //Send i to j, j to i
     void permute(size_t i,size_t j);
 
@@ -68,6 +71,18 @@ void runtime_permutation::apply(sequence<N,T>& seq) const
 {
     sequence<N, T> buf(seq);
     for(size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
+}
+
+template<typename T> 
+void runtime_permutation::apply(std::vector<T>& vec) const 
+{
+    if(vec.size() != m_idx.size())
+    {
+        throw bad_parameter(g_ns,"runtime_permutation","apply(...)",
+            __FILE__,__LINE__,"invalid vector length!"); 
+    }
+    std::vector<T> buf(vec);
+    for(size_t i = 0; i < vec.size(); i++) vec[i] = buf[m_idx[i]];
 }
 
 inline void runtime_permutation::permute(size_t i,size_t j)
