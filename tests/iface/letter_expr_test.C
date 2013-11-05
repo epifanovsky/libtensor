@@ -4,15 +4,19 @@
 
 namespace libtensor {
 
+
 void letter_expr_test::perform() throw(libtest::test_exception) {
+
     test_contains();
     test_permutation();
 }
 
-void letter_expr_test::test_contains() throw(libtest::test_exception) {
+
+void letter_expr_test::test_contains() {
+
     letter i, j, k, l;
 
-    if (!letter_expr<1>(i).contains(i)) {
+    if(!letter_expr<1>(i).contains(i)) {
         fail_test("letter_expr_test::test_contains()", __FILE__,
             __LINE__, "Failed index location: (i).contains(i)");
     }
@@ -69,7 +73,9 @@ void letter_expr_test::test_contains() throw(libtest::test_exception) {
     }
 }
 
-void letter_expr_test::test_permutation() throw(libtest::test_exception) {
+
+void letter_expr_test::test_permutation() {
+
     letter a, b, c, d;
     permutation<4> p, p1, p2, p3, p4, p5;
 
@@ -107,5 +113,6 @@ void letter_expr_test::test_permutation() throw(libtest::test_exception) {
             __LINE__, "Failed permutation test abcd<-bcda");
     }
 }
+
 
 } // namespace libtensor

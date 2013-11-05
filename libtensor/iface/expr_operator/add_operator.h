@@ -24,7 +24,7 @@ expr_rhs<N, T> operator+(
     tensor_list tl(le.get_tensors());
     tl.merge(re.get_tensors());
 
-    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
     if(px.is_identity()) {
 
         return expr_rhs<N, T>(
@@ -58,7 +58,7 @@ expr_rhs<N, T> operator-(
     tensor_list tl(le.get_tensors());
     tl.merge(re.get_tensors());
 
-    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
     std::vector<size_t> perm(N);
     for(size_t i = 0; i < N; i++) perm[i] = px[i];
 

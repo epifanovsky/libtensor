@@ -62,7 +62,7 @@ void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     tensor_list tl(rhs.get_expr().get_tensors());
     size_t this_tid = tl.get_tensor_id(*this);
 
-    permutation<N> px = match(label, rhs.get_label());
+    permutation<N> px = label.permutation_of(rhs.get_label());
     std::vector<size_t> perm(N);
     for(size_t i = 0; i < N; i++) perm[i] = px[i];
 

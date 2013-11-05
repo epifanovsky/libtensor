@@ -20,10 +20,11 @@ private:
 private:
     const tensor_list &m_tl; //!< Tensor list
     const node_ident &m_node; //!< Identity node
+    bool m_add; //!< True if add
 
 public:
-    eval_copy_impl(const tensor_list &tl, const node_ident &node) :
-        m_tl(tl), m_node(node)
+    eval_copy_impl(const tensor_list &tl, const node_ident &node, bool add) :
+        m_tl(tl), m_node(node), m_add(add)
     { }
 
     template<size_t N>
@@ -45,8 +46,13 @@ void eval_copy_impl::evaluate(
 
     btensor_i<N, double> &bta = m_tl.get_tensor<N, double>(m_node.get_tid()).
         template get_tensor< btensor_i<N, double> >();
-    btod_copy<N>(bta, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
-        perform(bt);
+    if(m_add) {
+        btod_copy<N>(bta, tr.get_perm()).
+            perform(bt, tr.get_scalar_tr().get_coeff());
+    } else {
+        btod_copy<N>(bta, tr.get_perm(), tr.get_scalar_tr().get_coeff()).
+            perform(bt);
+    }
 }
 
 
@@ -58,7 +64,7 @@ void copy::evaluate(
     const tensor_transf<N, double> &tr,
     btensor<N, double> &bt) {
 
-    eval_copy_impl(m_tl, m_node).evaluate(tr, bt);
+    eval_copy_impl(m_tl, m_node, m_add).evaluate(tr, bt);
 }
 
 

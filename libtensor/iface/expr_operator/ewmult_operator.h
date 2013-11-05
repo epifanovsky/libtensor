@@ -22,7 +22,7 @@ expr_rhs<N, T> mult(
     tensor_list tl(le.get_tensors());
     tl.merge(re.get_tensors());
 
-    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
     if (px.is_identity()) {
         return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
                 re.get_nodes(), false), tl), lhs.get_label());
@@ -53,7 +53,7 @@ expr_rhs<N, T> div(
     tensor_list tl(le.get_tensors());
     tl.merge(re.get_tensors());
 
-    permutation<N> px = match(lhs.get_label(), rhs.get_label());
+    permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
     if (px.is_identity()) {
         return expr_rhs<N, T>(expr_tree(expr::node_mult(le.get_nodes(),
                 re.get_nodes(), true), tl), lhs.get_label());

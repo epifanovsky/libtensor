@@ -19,10 +19,11 @@ public:
 private:
     const tensor_list &m_tl; //!< Tensor list
     const expr::node_contract &m_node; //!< Contraction node
+    bool m_add; //!< True if add
 
 public:
-    contract(const tensor_list &tl, const expr::node_contract &node) :
-        m_tl(tl), m_node(node)
+    contract(const tensor_list &tl, const expr::node_contract &node, bool add) :
+        m_tl(tl), m_node(node), m_add(add)
     { }
 
     template<size_t NC>

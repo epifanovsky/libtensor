@@ -19,10 +19,11 @@ public:
 private:
     const tensor_list &m_tl; //!< Tensor list
     const expr::node_ident &m_node; //!< Contraction node
+    bool m_add; //!< True if add
 
 public:
-    copy(const tensor_list &tl, const expr::node_ident &node) :
-        m_tl(tl), m_node(node)
+    copy(const tensor_list &tl, const expr::node_ident &node, bool add) :
+        m_tl(tl), m_node(node), m_add(add)
     { }
 
     template<size_t N>

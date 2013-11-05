@@ -40,10 +40,12 @@ private:
 private:
     const tensor_list &m_tl; //!< Tensor list
     const node_contract &m_node; //!< Contraction node
+    bool m_add; //!< True if add
 
 public:
-    eval_contract_impl(const tensor_list &tl, const node_contract &node) :
-        m_tl(tl), m_node(node)
+    eval_contract_impl(const tensor_list &tl, const node_contract &node,
+        bool add) :
+        m_tl(tl), m_node(node), m_add(add)
     { }
 
     template<size_t NC>
@@ -75,7 +77,7 @@ void eval_contract_impl::evaluate(const tensor_transf<NC, double> &trc,
     }
 
     dispatch_contract_1<NC> d1 = { *this, trc, btc, k, na, nb };
-    dispatch_1<1, NC>::dispatch(d1, na);
+    dispatch_1<1, Nmax>::dispatch(d1, na);
 }
 
 
@@ -95,12 +97,10 @@ void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
         m_tl.get_tensor<M + K, double>(nb.get_tid()).
         template get_tensor< btensor_i<M + K, double> >();
 
-    std::cout << "contract2<" << N << ", " << M << ", " << K << "> ";
     contraction2<N, M, K> contr;
     for(typename std::map<size_t, size_t>::const_iterator ic =
             m_node.get_contraction().begin();
             ic != m_node.get_contraction().end(); ++ic) {
-        std::cout << "(" << ic->first << ", " << ic->second << ") ";
         size_t ka, kb;
         if(ic->first < N + K) {
             ka = ic->first; kb = ic->second - N - K;
@@ -109,11 +109,15 @@ void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
         }
         contr.contract(ka, kb);
     }
-    std::cout << std::endl;
-    contr.permute_c(permutation<N + M>(trc.get_perm(), true));
+    contr.permute_c(trc.get_perm());
 
-    btod_contract2<N, M, K>(contr, bta, btb).perform(btc);
-    btod_scale<N + M>(btc, trc.get_scalar_tr()).perform();
+    if(m_add) {
+        btod_contract2<N, M, K>(contr, bta, btb).
+            perform(btc, trc.get_scalar_tr());
+    } else {
+        btod_contract2<N, M, K>(contr, bta, btb).perform(btc);
+        btod_scale<N + M>(btc, trc.get_scalar_tr()).perform();
+    }
 }
 
 
@@ -148,7 +152,7 @@ void contract::evaluate(
     const tensor_transf<NC, double> &trc,
     btensor<NC, double> &btc) {
 
-    eval_contract_impl(m_tl, m_node).evaluate(trc, btc);
+    eval_contract_impl(m_tl, m_node, m_add).evaluate(trc, btc);
 }
 
 

@@ -19,6 +19,7 @@ using namespace eval_btensor_double;
 void eval_btensor<double>::process_plan(
     const eval_plan &plan, tensor_list &tl) {
 
+    try {
     for(eval_plan::iterator i = plan.begin(); i != plan.end(); ++i) {
 
         const eval_plan_item &item = plan.get_item(i);
@@ -34,6 +35,13 @@ void eval_btensor<double>::process_plan(
             break;
         }
     }
+    } catch(int i) {
+        std::cout << "exception(int): " << i << std::endl;
+        throw;
+    } catch(char *p) {
+        std::cout << "exception: " << p << std::endl;
+        throw;
+    }
 }
 
 
@@ -46,10 +54,11 @@ public:
 private:
     const tensor_list &m_tl; //!< Tensor list
     const node &m_node; //!< Expression node
+    bool m_add; //!< True if evaluate and add
 
 public:
-    eval_node(const tensor_list &tl, const node &n) :
-        m_tl(tl), m_node(n)
+    eval_node(const tensor_list &tl, const node &n, bool add) :
+        m_tl(tl), m_node(n), m_add(add)
     { }
 
     template<size_t N>
@@ -69,12 +78,12 @@ void eval_node::evaluate(btensor<N, double> &bt) {
     if(nwt.n.get_op().compare("ident") == 0) {
 
         const node_ident &n = nwt.n.template recast_as<node_ident>();
-        eval_btensor_double::copy(m_tl, n).evaluate(nwt.tr, bt);
+        eval_btensor_double::copy(m_tl, n, m_add).evaluate(nwt.tr, bt);
 
     } else if(nwt.n.get_op().compare("contract") == 0) {
 
         const node_contract &n = nwt.n.template recast_as<node_contract>();
-        eval_btensor_double::contract(m_tl, n).evaluate(nwt.tr, bt);
+        eval_btensor_double::contract(m_tl, n, m_add).evaluate(nwt.tr, bt);
 
     } else {
         throw not_implemented("iface", k_clazz, "evaluate()", __FILE__, __LINE__);
@@ -89,17 +98,18 @@ private:
     tensor_list &m_tl; //!< Tensor list
     tid_t m_tid; //!< Left-hand-side tensor
     const node &m_rhs; //!< Right-hand side of the assignment
+    bool m_add; //!< True if addition and assignment
 
 public:
-    eval_assign(tensor_list &tl, tid_t tid, const node &rhs) :
-        m_tl(tl), m_tid(tid), m_rhs(rhs)
+    eval_assign(tensor_list &tl, tid_t tid, const node &rhs, bool add) :
+        m_tl(tl), m_tid(tid), m_rhs(rhs), m_add(add)
     { }
 
     template<size_t N>
     void dispatch() {
         btensor<N, double> &bt = btensor<N, double>::from_any_tensor(
             m_tl.get_tensor<N, double>(m_tid));
-        eval_node(m_tl, m_rhs).evaluate(bt);
+        eval_node(m_tl, m_rhs, m_add).evaluate(bt);
     }
 
 };
@@ -114,7 +124,7 @@ void eval_btensor<double>::handle_assign(
     std::cout << "handle_assign " << tid << std::endl;
     print_node(node, std::cout);
     verify_tensor_type(tid, tl);
-    eval_assign e(tl, tid, node.get_rhs());
+    eval_assign e(tl, tid, node.get_rhs(), node.is_add());
     dispatch_1<1, Nmax>::dispatch(e, tl.get_tensor_order(tid));
 }
 

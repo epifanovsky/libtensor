@@ -8,25 +8,23 @@ namespace libtensor {
 namespace iface {
 
 
-/** \brief Contraction of two expressions over multiple indexes
-    \tparam K Number of contracted indexes.
+/** \brief Contraction of two expressions over multiple indices
+    \tparam K Number of contracted indices.
     \tparam N Order of the first tensor.
     \tparam M Order of the second tensor.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_iface
  **/
 template<size_t K, size_t N, size_t M, typename T>
 expr_rhs<N + M - 2 * K, T> contract(
-    const letter_expr<K> contr,
+    const letter_expr<K> &contr,
     const expr_rhs<N, T> &a,
     const expr_rhs<M, T> &b) {
 
     const expr_tree &ea = a.get_expr(), &eb = b.get_expr();
     tensor_list tl(ea.get_tensors());
     tl.merge(eb.get_tensors());
-
-    // TODO: remap tensors
 
     std::map<size_t, size_t> cseq;
     std::vector<const letter*> label;
@@ -54,7 +52,7 @@ expr_rhs<N + M - 2 * K, T> contract(
     \tparam M Order of the second tensor.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_iface
  **/
 template<size_t N, size_t M, typename T>
 expr_rhs<N + M - 2, T> contract(

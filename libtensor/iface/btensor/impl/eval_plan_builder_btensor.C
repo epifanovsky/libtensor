@@ -69,9 +69,6 @@ public:
 
         static const char method[] = "dispatch()";
 
-//        std::cout << "dispatch" << std::endl;
-//        print_node(m_node, std::cout, 4);
-
         if(m_node.get_op().compare("assign") == 0) {
             render_assign<N>();
         } else {
@@ -87,7 +84,6 @@ public:
                 throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
             }
         }
-//        std::cout << "end of dispatch" << std::endl;
     }
 
 private:
