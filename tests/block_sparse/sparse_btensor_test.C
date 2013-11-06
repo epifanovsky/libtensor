@@ -1161,9 +1161,11 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_sparse() throw(libtest::te
     sig_blocks_B[4][1] = 1;
 
     sparse_bispace<3> spb_A = spb_i % spb_j % spb_k << sig_blocks_A;
+    sparse_bispace<2> spb_B = spb_k % spb_l << sig_blocks_B;
+
     sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<2> B(spb_k % spb_l << sig_blocks_B,B_arr,true);
-    sparse_bispace<3> spb_C = spb_A.contract(2) | spb_l;
+    sparse_btensor<2> B(spb_B,B_arr,true);
+    sparse_bispace<3> spb_C = spb_A.fuse(spb_B).contract(2);
     sparse_btensor<3> C(spb_C);
 
     letter i,j,k,l;

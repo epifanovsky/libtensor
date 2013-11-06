@@ -782,13 +782,12 @@ sparse_bispace<N-1> sparse_bispace<N>::contract(size_t contract_idx) const
 template<size_t N> template<size_t L> 
 sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse_bispace<L>& rhs)
 {
-#if 0
-    //Copy all subspaces
+    //Copy all subspaces,skipping the shared one
     for(size_t i = 0; i < N - L + 1; ++i)
     {
         m_subspaces.push_back(lhs.m_subspaces[i]);
     }
-    for(size_t i = 0; i < L; ++i)
+    for(size_t i = 1; i < L; ++i)
     {
         m_subspaces.push_back(rhs.m_subspaces[i]);
     }
@@ -799,7 +798,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
     {
         size_t last_lhs_group_offset  = lhs.m_sparse_indices_sets_offsets.back();
         size_t last_lhs_group_order =  lhs.m_sparse_block_trees.back().get_order();
-        size_t lhs_sparsity_end = last_lhs_group_offset + last_lhs_group_order
+        size_t lhs_sparsity_end = last_lhs_group_offset + last_lhs_group_order;
         if((lhs_sparsity_end == (N-L+1)) && rhs.m_sparse_indices_sets_offsets[0] == 0)
         {
             fuse_sparsity = true;
@@ -808,7 +807,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
 
     //Absorb all the sparsity, then patch it up later to account for fusion
     absorb_sparsity(lhs);
-    absorb_sparsity(rhs,N-L+1);
+    absorb_sparsity(rhs,N-L);
     
     //Patch up the sparsity to account for fusion if appropriate
     if(fuse_sparsity)
@@ -817,6 +816,14 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
         size_t first_rhs_tree_idx = last_lhs_tree_idx + 1;
         m_sparse_block_trees[last_lhs_tree_idx] = m_sparse_block_trees[last_lhs_tree_idx].fuse(m_sparse_block_trees[first_rhs_tree_idx]);
 
+        size_t order = m_sparse_block_trees[last_lhs_tree_idx].get_order();
+        std::vector<size_t> positions(order);
+        for(size_t j = 0; j < positions.size(); ++j)
+        {
+            positions[j] = m_sparse_indices_sets_offsets[last_lhs_tree_idx] + j;
+        }
+        m_sparse_block_trees[last_lhs_tree_idx].set_offsets(m_subspaces,positions);
+
         //delete the no longer needed rhs tree information
         m_sparse_indices_sets_offsets.erase(m_sparse_indices_sets_offsets.begin() + first_rhs_tree_idx);
         m_sparse_block_trees.erase(m_sparse_block_trees.begin() + first_rhs_tree_idx);
@@ -824,12 +831,16 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
     }
 
     init_dimensions();
-#endif
 }
 
 template<size_t N> template<size_t L> 
 sparse_bispace<N+L-1> sparse_bispace<N>::fuse(const sparse_bispace<L>& rhs) const
 {
+    if(m_subspaces[N-1] != rhs[0])
+    {
+        throw bad_parameter(g_ns,"sparse_bispace<N>","fuse(...)",
+            __FILE__,__LINE__,"fuse point doesn't match"); 
+    }
     return sparse_bispace<N+L-1>(*this,rhs);
 }
 

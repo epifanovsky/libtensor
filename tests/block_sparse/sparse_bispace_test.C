@@ -55,7 +55,9 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_contract_3d_sparse_2_nnz();
         test_contract_3d_sparse_destroy_all_sparsity();
 
-        /*test_fuse_2d_2d();*/
+        test_fuse_2d_2d();
+        test_fuse_3d_3d_no_overlap();
+        test_fuse_3d_3d_invalid_no_match();
 
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
@@ -1226,22 +1228,24 @@ void sparse_bispace_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) sig_blocks_1[5][i] = seq5_arr[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_1[6][i] = seq6_arr[i];
 
-    //Need 5 blocks
-    sparse_bispace<1> spb_i(10);
+    //Need 6 blocks
+    sparse_bispace<1> spb_i(12);
     std::vector<size_t> split_points_i;
     split_points_i.push_back(2);
     split_points_i.push_back(4);
     split_points_i.push_back(6);
     split_points_i.push_back(9);
+    split_points_i.push_back(11);
     spb_i.split(split_points_i);
 
-    //Need 5 blocks
-    sparse_bispace<1> spb_k(13); 
+    //Need 6 blocks
+    sparse_bispace<1> spb_k(17); 
     std::vector<size_t> split_points_k;
     split_points_k.push_back(3);
     split_points_k.push_back(7);
     split_points_k.push_back(10);
     split_points_k.push_back(12);
+    split_points_k.push_back(14);
     spb_k.split(split_points_k);
 
     sparse_bispace<2> spb_A = spb_i % spb_k << sig_blocks_1;
@@ -1268,7 +1272,7 @@ void sparse_bispace_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[7][i] = seq7_arr_2[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[8][i] = seq8_arr_2[i];
 
-    //Need 9 blocks
+    //Need 10 blocks
     sparse_bispace<1> spb_j(25);
     std::vector<size_t> split_points_j;
     split_points_j.push_back(4);
@@ -1276,7 +1280,8 @@ void sparse_bispace_test::test_fuse_2d_2d() throw(libtest::test_exception)
     split_points_j.push_back(9);
     split_points_j.push_back(12);
     split_points_j.push_back(15);
-    split_points_j.push_back(19);
+    split_points_j.push_back(17);
+    split_points_j.push_back(18);
     split_points_j.push_back(21);
     split_points_j.push_back(23);
     spb_j.split(split_points_j);
@@ -1316,12 +1321,108 @@ void sparse_bispace_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) correct_sig_blocks[12][i] = correct_seq12_arr[i];
 
     sparse_bispace<3> spb_C_correct = spb_i % spb_k % spb_j << correct_sig_blocks;
+
     if(spb_C != spb_C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::fuse(...) returned incorrect value");
     }
-        
+}
+
+//Tests that fuse gives the right answer when there is no overlap of sparsity
+void sparse_bispace_test::test_fuse_3d_3d_no_overlap() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_fuse_3d_3d_no_overlap()";
+
+    sparse_bispace<1> spb_1(11);
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;
+
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+    sparse_bispace<2> two_d_1 = spb_1 % spb_1 << sig_blocks;
+    sparse_bispace<3> three_d_1 =  two_d_1 | spb_2;
+    sparse_bispace<3> three_d_2 = spb_2 | two_d_1;
+    sparse_bispace<5> five_d_1 = three_d_1.fuse(three_d_2);
+    sparse_bispace<5> five_d_correct = two_d_1 | spb_2 | two_d_1;
+
+    if(five_d_1 != five_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::fuse(...) returned incorrect value");
+    }
+}
+
+//Should throw exception - can't fuse if fuse point doesn't match
+void sparse_bispace_test::test_fuse_3d_3d_invalid_no_match() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_fuse_3d_3d_invalid_no_match()";
+
+    sparse_bispace<1> spb_1(11);
+    std::vector<size_t> split_points_1; 
+    split_points_1.push_back(2);
+    split_points_1.push_back(5);
+    split_points_1.push_back(9);
+    spb_1.split(split_points_1);
+
+    std::vector< sequence<2,size_t> > sig_blocks(4);
+    sig_blocks[0][0] = 0; 
+    sig_blocks[0][1] = 1;
+    sig_blocks[1][0] = 1;
+    sig_blocks[1][1] = 2;
+    sig_blocks[2][0] = 2;
+    sig_blocks[2][1] = 3;
+    sig_blocks[3][0] = 3;
+    sig_blocks[3][1] = 2;
+
+    sparse_bispace<1> spb_2(9);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(2);
+    split_points_2.push_back(5);
+    spb_2.split(split_points_2);
+
+    //So as not to match spb_2
+    sparse_bispace<1> spb_3(9);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(2);
+    spb_3.split(split_points_3);
+
+    sparse_bispace<2> two_d_1 = spb_1 % spb_1 << sig_blocks;
+    sparse_bispace<3> three_d_1 =  two_d_1 | spb_2;
+    sparse_bispace<3> three_d_2 = spb_3 | two_d_1;
+
+    bool threw_exception = false;
+    try
+    {
+        sparse_bispace<5> five_d_1 = three_d_1.fuse(three_d_2);
+    }
+    catch(bad_parameter&)
+    {
+        threw_exception = true;
+    }
+
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::fuse(...) did not throw exception for incompatible bispaces");
+    }
 }
 
 //Get the correct number of elements for a 2d tensor with both indices coupled by sparsity
@@ -1367,14 +1468,13 @@ void sparse_bispace_test::test_get_nnz_3d_dense_sparse() throw(libtest::test_exc
 {
     static const char *test_name = "sparse_bispace_test::test_get_nnz_3d_dense_sparse()";
 
-    sparse_bispace<1> spb_1(11);
-
     /* Splitting pattern results in the following block sizes:
      * 0: 2
      * 1: 3
      * 2: 4
      * 3: 2
      */
+    sparse_bispace<1> spb_1(11);
     std::vector<size_t> split_points_1; 
     split_points_1.push_back(2);
     split_points_1.push_back(5);

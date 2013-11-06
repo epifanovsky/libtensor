@@ -1,7 +1,6 @@
 #include "sparse_block_tree_any_order.h"
 #include "../defs.h"
 #include "../exception.h"
-#include "sparse_bispace.h"
 
 namespace libtensor {
 

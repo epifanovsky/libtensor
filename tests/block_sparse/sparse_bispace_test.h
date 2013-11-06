@@ -124,6 +124,8 @@ private:
      * sparse_bispace<N>::fuse(...) tests
      */
     void test_fuse_2d_2d() throw(libtest::test_exception);
+    void test_fuse_3d_3d_no_overlap() throw(libtest::test_exception);
+    void test_fuse_3d_3d_invalid_no_match() throw(libtest::test_exception);
 
 
     /*  ALL TESTS INVOLVING SPARSITY!!
