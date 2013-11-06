@@ -19,6 +19,10 @@ class sparse_block_tree;
 
 class sparse_block_tree_any_order
 {
+public:
+    //typedefs needed for public and private methods - more public/private methods later
+    typedef impl::sparse_block_tree_iterator<false> iterator;
+    typedef impl::sparse_block_tree_iterator<true> const_iterator;
 private:
     typedef std::vector<size_t> key_t;
     struct kv_pair_compare;
@@ -34,6 +38,7 @@ private:
 
     //Needed for templated wrapper constructor - init is called later instead
     sparse_block_tree_any_order() { m_node = NULL; }
+
 public:
     //Copy constructor
     sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs) { m_node = rhs.m_node->clone(); m_order = rhs.m_order; }
@@ -41,13 +46,10 @@ public:
     //Assignment operator
     sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs) { delete m_node; m_node = rhs.m_node->clone(); m_order = rhs.m_order; }
 
-    typedef impl::sparse_block_tree_iterator<false> iterator;
-    typedef impl::sparse_block_tree_iterator<true> const_iterator;
-
-    iterator begin() { return iterator(m_node,std::vector<size_t>(m_order,0),m_order); };
-    const_iterator begin() const { return const_iterator(m_node,std::vector<size_t>(m_order,0),m_order); }
-    iterator end() { return iterator(NULL,std::vector<size_t>(m_order,0),m_order); };
-    const_iterator end() const { return const_iterator(NULL,std::vector<size_t>(m_order,0),m_order); }
+    iterator begin() { return iterator(m_node,m_order); };
+    const_iterator begin() const { return const_iterator(m_node,m_order); }
+    iterator end() { return iterator(NULL,m_order); };
+    const_iterator end() const { return const_iterator(NULL,m_order); }
 
     //Searching for a specific key
     //Use a vector because sometimes key lengths must be determined at runtime
@@ -65,6 +67,9 @@ public:
 
     //Fuses one sparse tree onto this one at position fuse_pos
     //By default, fuses to the branches of the tree
+    sparse_block_tree_any_order fuse(const sparse_block_tree_any_order& rhs,const std::vector<size_t>& lhs_indices,
+                                                                            const std::vector<size_t>& rhs_indices) const;
+    //Convenience wrapper for the most common (end to end) case
     sparse_block_tree_any_order fuse(const sparse_block_tree_any_order& rhs) const;
 
     //Used to initialize the values of the tree to represent the offsets of the blocks in a bispace

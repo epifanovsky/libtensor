@@ -424,6 +424,8 @@ void run_loop_list(const std::vector< block_loop<M,N,T> >& loop_list,
         input_block_indices[n].resize(input_bispaces[n].get_order());
     }
 
+    //Fuse all sparse trees from different tensors that are coupled by shared indices
+
     impl::_run_internal(loop_list,kernel,output_ptrs,input_ptrs,output_bispaces,input_bispaces,
             output_block_dims,input_block_dims,output_block_indices,input_block_indices);
 }

@@ -1810,9 +1810,6 @@ void sparse_bispace_test::test_get_block_offset_3d_sparse_dense() throw(libtest:
     {
         if(three_d.get_block_offset(block_keys[i]) != correct_offsets[i])
         {
-            std::cout << "\ni: " << i << "\n";
-            std::cout << "mine: " << three_d.get_block_offset(block_keys[i])  << "\n";
-            std::cout << "correct: " << correct_offsets[i] << "\n";
             fail_test(test_name,__FILE__,__LINE__,
                     "sparse_bispace<N>::get_block_offset(...) returned incorrect value");
 

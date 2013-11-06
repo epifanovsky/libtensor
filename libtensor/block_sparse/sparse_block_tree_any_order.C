@@ -58,9 +58,7 @@ size_t sparse_block_tree_any_order::search(const std::vector<size_t>& key) const
         throw bad_parameter(g_ns,"sparse_block_tree_any_order","search(...)",
             __FILE__,__LINE__,"key length does not match depth of tree"); 
     }
-    std::vector<size_t> positions(m_order);
-    m_node->search(key,positions,0);
-    return *(const_iterator(m_node,positions,m_order));
+    return m_node->search(key,0);
 }
 
 struct sparse_block_tree_any_order::kv_pair_compare {
@@ -190,49 +188,89 @@ sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contrac
     return sbt;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs) const
+sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs,const std::vector<size_t>& lhs_indices,const std::vector<size_t>& rhs_indices) const
 {
     size_t out_order = m_order+rhs.m_order-1;
     std::vector<key_t> new_keys;
+
+    //Sanitize input
+    if(lhs_indices.size() != rhs_indices.size())
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order","fuse(...)",
+            __FILE__,__LINE__,"lhs and rhs number of fused indices dont match"); 
+    }
+    else if(lhs_indices.size() == 0)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order","fuse(...)",
+            __FILE__,__LINE__,"must specify at least one index to fuse"); 
+    }
+
+    for(size_t i = 1; i < lhs_indices.size(); ++i)
+    {
+        size_t cur_lhs = lhs_indices[i]; 
+        size_t prev_lhs = lhs_indices[i-1]; 
+        if(cur_lhs < prev_lhs)
+        {
+            throw bad_parameter(g_ns,"sparse_block_tree_any_order","fuse(...)",
+                __FILE__,__LINE__,"lhs not strictly increasing"); 
+        }
+    }
+
+    size_t n_fused_inds = lhs_indices.size();
+
+    //Permute RHS to bring the fused indices to the left-most position...
+    size_t rhs_order = rhs.get_order();
+    std::vector<size_t> permutation_entries(rhs_order);
+    for(size_t i = 0; i < rhs_indices.size(); ++i)
+    {
+        permutation_entries[i] = rhs_indices[i];
+    }
+
+    size_t cur_fused_idx = 0;
+    size_t idx_excluding_fused = 0; 
+    for(size_t i = rhs_indices.size(); i < rhs_order; ++i)
+    {
+        //Skip over patches of fused indices
+        while(idx_excluding_fused == rhs_indices[cur_fused_idx])
+        {
+            ++cur_fused_idx;
+            ++idx_excluding_fused;
+            if(cur_fused_idx == rhs_indices.size())
+            {
+                break;
+            }
+        }
+        permutation_entries[i] = idx_excluding_fused;
+        ++idx_excluding_fused;
+    }
+
+    //Don't permute if unnecessary
+    runtime_permutation perm(permutation_entries);
+    const sparse_block_tree_any_order& rhs_permuted = (perm == runtime_permutation(rhs_order)) ? rhs : rhs.permute(perm);
     for(const_iterator it = begin(); it != end(); ++it)
     {
         key_t base_key = it.key();
 
-        //Our new key consists of everything before the fuse point, then key from rhs that was fused in
-        //We do the first segment now
+        //The first part of our new key is just the old left hand side key - we copy this part now
         key_t new_key(out_order);
-        for(size_t new_key_idx = 0; new_key_idx < m_order-1; ++new_key_idx)
+        for(size_t new_key_idx = 0; new_key_idx < m_order; ++new_key_idx)
         {
             new_key[new_key_idx] = base_key[new_key_idx];
         }
 
-        //Determine what keys in the rhs match to the attachment point on the LHS
-        key_t rhs_key(rhs.m_order);
-        std::vector<size_t>::const_iterator attach_pos_it = std::lower_bound(rhs.m_node->m_keys.begin(),rhs.m_node->m_keys.end(),base_key[m_order-1]);
-        
-        //Nothing to graft onto this branch tip
-        if(attach_pos_it == rhs.m_node->m_keys.end())
+        //Extract the fusing portion of the LHS key that determines what RHS keys to include
+        key_t sub_key(n_fused_inds);
+        for(size_t lhs_idx = 0; lhs_idx < n_fused_inds; ++lhs_idx)
+        {
+            sub_key[lhs_idx] = base_key[lhs_indices[lhs_idx]];
+        }
+
+        const_iterator rhs_it = rhs_permuted.m_node->get_sub_key_begin_iterator(sub_key);
+        if(rhs_it == rhs_permuted.end())
         {
             continue;
         }
-
-        size_t attach_pos = std::distance<std::vector<size_t>::const_iterator>(rhs.m_node->m_keys.begin(),attach_pos_it);
-        std::vector<size_t> positions(rhs.m_order,0); 
-        positions[0] = attach_pos;
-        const_iterator rhs_it(rhs.m_node,positions,rhs.m_order);
-
-        //We end at the next child, or rhs.end() if we are the last child
-        const impl::sparse_block_tree_node* end_ptr;
-        if(attach_pos == (rhs.m_node->m_keys.size() - 1))
-        {
-            end_ptr = NULL;
-        }
-        else
-        {
-            end_ptr = rhs.m_node; 
-            positions[0] = attach_pos+1;
-        }
-        const_iterator rhs_end(end_ptr,positions,rhs.m_order);
+        const_iterator rhs_end = rhs_permuted.m_node->get_sub_key_end_iterator(sub_key);
 
         //Attach each relevant sub key to the attachment point
         for(rhs_it; rhs_it != rhs_end; ++rhs_it)
@@ -240,7 +278,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
             key_t rhs_key = rhs_it.key();
 
             //Now fill in the middle (fused) segment of the new key
-            for(size_t sub_key_idx = 0; sub_key_idx < rhs.m_order; ++sub_key_idx)
+            for(size_t sub_key_idx = 0; sub_key_idx < rhs_permuted.m_order; ++sub_key_idx)
             {
                 new_key[m_order - 1 + sub_key_idx] = rhs_key[sub_key_idx];
             }
@@ -253,6 +291,14 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
     //By virtue of both trees being sorted, the list will be sorted already
     return sparse_block_tree_any_order(new_keys,out_order);
 }
+
+sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs) const
+{
+    std::vector<size_t> lhs_fuse_points(1,m_order - 1);
+    std::vector<size_t> rhs_fuse_points(1,0);
+    return fuse(rhs,lhs_fuse_points,rhs_fuse_points);
+}
+
 
 bool sparse_block_tree_any_order::operator==(const sparse_block_tree_any_order& rhs) const
 {

@@ -33,7 +33,13 @@ public:
     sparse_block_tree<N-1> contract(size_t contract_idx) const { return sparse_block_tree_any_order::contract(contract_idx); }
 
     template<size_t M>
+    sparse_block_tree<N+M-1> fuse(const sparse_block_tree<M>& rhs,const std::vector<size_t>& lhs_indices,
+                                                                  const std::vector<size_t>& rhs_indices) const { return sparse_block_tree_any_order::fuse(rhs,lhs_indices,rhs_indices); }
+
+    //Convenience wrapper for the most common case when we just want to fuse end to end
+    template<size_t M>
     sparse_block_tree<N+M-1> fuse(const sparse_block_tree<M>& rhs) const { return sparse_block_tree_any_order::fuse(rhs); }
+
 
     size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const sequence<N,size_t>& positions);
 

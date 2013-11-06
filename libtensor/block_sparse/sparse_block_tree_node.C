@@ -1,4 +1,5 @@
 #include "sparse_block_tree_node.h"
+#include "sparse_block_tree_iterator.h"
 #include "../defs.h"
 #include "../exception.h"
 #include <algorithm>
@@ -13,7 +14,12 @@ sparse_block_tree_leaf_node::sparse_block_tree_leaf_node(const std::vector<size_
     m_values.push_back(0);
 }
 
-void sparse_block_tree_leaf_node::search(const std::vector<size_t>& key,std::vector<size_t>& positions,const size_t idx) const
+sparse_block_tree_iterator<true> sparse_block_tree_leaf_node::end() const
+{
+    return const_iterator(NULL,1);
+}
+
+size_t sparse_block_tree_leaf_node::search(const std::vector<size_t>& key,const size_t idx) const
 {
     std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(m_keys.begin(),m_keys.end(),key[idx]);
     if(cur_pos_it == m_keys.end() || *cur_pos_it != key[idx])
@@ -22,12 +28,64 @@ void sparse_block_tree_leaf_node::search(const std::vector<size_t>& key,std::vec
             __FILE__,__LINE__,"key not found"); 
     }
     size_t cur_pos = distance(m_keys.begin(),cur_pos_it);
-    positions[idx] = cur_pos;
+    return m_values[cur_pos];
 }
 
 const block_list& sparse_block_tree_leaf_node::get_sub_key_block_list(const std::vector<size_t>& sub_key,size_t cur_idx) const
 { 
     return m_keys; 
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_leaf_node::get_sub_key_begin_iterator_internal(const std::vector<size_t>& sub_key,const sparse_block_tree_node* root,std::vector<size_t>& displacement,const size_t cur_idx) const
+{
+    //If the sub key has already been found in full, we just start from the first key in this node
+    if(cur_idx > (sub_key.size() - 1))
+    {
+        displacement[cur_idx] = 0;
+    }
+    else
+    {
+        std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(m_keys.begin(),m_keys.end(),sub_key[cur_idx]);
+
+        //If not found, return end()
+        if(cur_pos_it == m_keys.end() || *cur_pos_it != sub_key[cur_idx])
+        {
+            return const_iterator(NULL,displacement.size(),displacement);
+        }
+        displacement[cur_idx] = std::distance(m_keys.begin(),cur_pos_it);
+    }
+    return const_iterator(root,displacement.size(),displacement);
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_leaf_node::get_sub_key_begin_iterator(const std::vector<size_t>& sub_key) const
+{
+    std::vector<size_t> displacement(1); 
+    return get_sub_key_begin_iterator_internal(sub_key,this,displacement,0);
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_leaf_node::get_sub_key_end_iterator(const std::vector<size_t>& sub_key) const
+{
+    const_iterator sub_key_iter = get_sub_key_begin_iterator(sub_key);
+    if(sub_key_iter == end())
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_leaf_node","get_sub_key_end_displacement(...)",
+            __FILE__,__LINE__,"key not found"); 
+    } 
+    else
+    {
+        //Go to the next key
+        std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(m_keys.begin(),m_keys.end(),sub_key.back());
+        ++cur_pos_it;
+        //If not found, return end()
+        if(cur_pos_it == m_keys.end())
+        {
+            return const_iterator(NULL,1);
+        }
+        else
+        {
+            return ++sub_key_iter;
+        }
+    }
 }
 
 void sparse_block_tree_leaf_node::push_back(const std::vector<size_t>& key,size_t cur_idx)
@@ -36,7 +94,7 @@ void sparse_block_tree_leaf_node::push_back(const std::vector<size_t>& key,size_
     m_values.push_back(0);
 }
 
-void sparse_block_tree_branch_node::search(const std::vector<size_t>& key,std::vector<size_t>& positions,const size_t idx) const
+size_t sparse_block_tree_branch_node::search(const std::vector<size_t>& key,const size_t idx) const
 {
     std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(m_keys.begin(),m_keys.end(),key[idx]);
     if(cur_pos_it == m_keys.end() || *cur_pos_it != key[idx])
@@ -45,8 +103,12 @@ void sparse_block_tree_branch_node::search(const std::vector<size_t>& key,std::v
             __FILE__,__LINE__,"key not found"); 
     }
     size_t cur_pos = distance(m_keys.begin(),cur_pos_it);
-    positions[idx] = cur_pos;
-    m_children[cur_pos]->search(key,positions,idx+1);
+    return m_children[cur_pos]->search(key,idx+1);
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_branch_node::end() const
+{
+    return const_iterator(NULL,m_order);
 }
 
 
@@ -99,11 +161,86 @@ const block_list& sparse_block_tree_branch_node::get_sub_key_block_list(const st
     else
     {
         //Done?
+        if(sub_key.size() == 0)
+        {
+            return m_keys;
+        }
         if(cur_idx == (sub_key.size() - 1))
         {
             return m_children[distance(m_keys.begin(),cur_pos)]->m_keys;
         }
         return m_children[distance(m_keys.begin(),cur_pos)]->get_sub_key_block_list(sub_key,cur_idx+1);
+    }
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_branch_node::get_sub_key_begin_iterator_internal(const std::vector<size_t>& sub_key,const sparse_block_tree_node* root,std::vector<size_t>& displacement,const size_t cur_idx) const
+{
+    //If the sub key has already been found in full, we just start from the first key in this node
+    size_t cur_pos = 0;
+    if(cur_idx < sub_key.size())
+    {
+        std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(m_keys.begin(),m_keys.end(),sub_key[cur_idx]);
+        if(cur_pos_it == m_keys.end() || *cur_pos_it != sub_key[cur_idx])
+        {
+            return end();
+        }
+        cur_pos  = std::distance(m_keys.begin(),cur_pos_it);
+    }
+    displacement[cur_idx] = cur_pos;
+    return m_children[cur_pos]->get_sub_key_begin_iterator_internal(sub_key,root,displacement,cur_idx+1);
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_branch_node::get_sub_key_begin_iterator(const std::vector<size_t>& sub_key) const
+{
+    std::vector<size_t> displacement(m_order); 
+    return get_sub_key_begin_iterator_internal(sub_key,this,displacement,0);
+}
+
+sparse_block_tree_iterator<true> sparse_block_tree_branch_node::get_sub_key_end_iterator(const std::vector<size_t>& sub_key) const
+{
+    const_iterator sub_key_iter = get_sub_key_begin_iterator(sub_key);
+    if(sub_key_iter == end())
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_branch_node","get_sub_key_end_displacement(...)",
+            __FILE__,__LINE__,"key not found"); 
+    }
+    else
+    {
+        //Get the next possible sub key and return the begin iterator to THAT, or end() 
+        std::vector<size_t> partial_sub_key(sub_key.begin(),sub_key.end());
+        size_t steps_back;
+        for(steps_back = 1; steps_back < sub_key.size()+1; ++steps_back)
+        {
+            size_t prev_value = partial_sub_key.back();
+            partial_sub_key.pop_back();
+            const block_list& other_last_idx_values = get_sub_key_block_list(partial_sub_key,0);
+            //If we are really done, return end()
+            std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(other_last_idx_values.begin(),other_last_idx_values.end(),prev_value);
+            ++cur_pos_it;
+
+            //Found a valid sub key to increment
+            if(cur_pos_it != m_keys.end())
+            {
+                partial_sub_key.push_back(*cur_pos_it);
+                break;
+            }
+            else
+            {
+                //Otherwise,tep back one more, or return end() if we are done
+                //Didn't find any possible dimension to increment
+                if(steps_back == sub_key.size())
+                {
+                    return end();
+                }
+            }
+        }
+
+        //Now that we have advanced a dimension, fill in the rest of the sub key with zeros
+        for(size_t steps_forward = 0; steps_forward < steps_back - 1; ++steps_forward)
+        {
+            partial_sub_key.push_back(0);
+        }
+        return get_sub_key_begin_iterator(partial_sub_key);
     }
 }
 
