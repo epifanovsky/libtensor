@@ -3,6 +3,7 @@
 
 #include <libtensor/expr/eval_plan.h>
 #include <libtensor/iface/tensor_list.h>
+#include "interm.h"
 
 namespace libtensor {
 namespace iface {
@@ -21,25 +22,38 @@ public:
 
 private:
     expr::node_assign m_assign; //!< Assignment node
-    tensor_list &m_tl; //!< Tensor list
+    tensor_list m_tl; //!< Tensor list
     expr::eval_plan m_plan; //!< Evaluation plan
+    interm m_interm; //!< Intermediates store
 
 public:
     eval_plan_builder_btensor(
         const expr::node_assign &node,
-        tensor_list &tl) :
+        const tensor_list &tl) :
 
-        m_assign(node), m_tl(tl)
+        m_assign(node), m_tl(tl), m_interm(m_tl)
     { }
 
     /** \brief Builds the evaluation plan
      **/
     void build_plan();
 
+    /** \brief Returns the tensor list
+     **/
+    const tensor_list &get_tensors() const {
+        return m_tl;
+    }
+
     /** \brief Returns the evaluation plan
      **/
     const expr::eval_plan &get_plan() const {
         return m_plan;
+    }
+
+    /** \brief Returns the intermediates container
+     **/
+    const interm &get_interm() const {
+        return m_interm;
     }
 
 };

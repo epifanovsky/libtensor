@@ -4,13 +4,13 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
+#include <libtensor/expr/node_assign.h>
 #include <libtensor/expr/node_transform.h>
 #include "bispace.h"
 #include "btensor_i.h"
 #include "expr_lhs.h"
 #include "labeled_lhs_rhs.h"
 #include "btensor/eval_btensor.h"
-#include "btensor/eval_plan_builder_btensor.h"
 
 namespace libtensor {
 namespace iface {
@@ -68,11 +68,8 @@ void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
 
     expr::node_transform<T> ntr(rhs.get_expr().get_nodes(), perm,
         scalar_transf<T>());
-    std::cout << std::endl << "= build plan = " << tl.get_tensor_order(this_tid) << std::endl;
-    eval_plan_builder_btensor pbld(expr::node_assign(this_tid, ntr), tl);
-    pbld.build_plan();
-    std::cout << "= process plan =" << std::endl;
-    eval_btensor<T>().process_plan(pbld.get_plan(), tl);
+    expr_tree e(expr::node_assign(this_tid, ntr), tl);
+    eval_btensor<T>().evaluate(e);
 }
 
 

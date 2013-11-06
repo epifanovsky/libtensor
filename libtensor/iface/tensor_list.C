@@ -46,6 +46,9 @@ size_t tensor_list::get_tensor_order(tid_t tid) const {
 
     map_t::const_iterator i = m_lst.find(tid);
     if(i == m_lst.end()) {
+        std::cout << "find " << (void*)tid << std::endl;
+        for(map_t::const_iterator i = m_lst.begin(); i != m_lst.end(); ++i) std::cout << (void*)i->first << " ";
+        std::cout << std::endl;
         throw 0;
     }
 
@@ -57,6 +60,9 @@ const std::type_info &tensor_list::get_tensor_type(tid_t tid) const {
 
     map_t::const_iterator i = m_lst.find(tid);
     if(i == m_lst.end()) {
+        std::cout << "find " << (void*)tid << std::endl;
+        for(map_t::const_iterator i = m_lst.begin(); i != m_lst.end(); ++i) std::cout << (void*)i->first << " ";
+        std::cout << std::endl;
         throw 0;
     }
 

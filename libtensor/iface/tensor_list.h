@@ -42,7 +42,7 @@ private:
         }
         virtual size_t get_n() const { return N; }
         virtual const std::type_info &get_t() const { return typeid(T); }
-        virtual tid_t get_tuid() const { return tid_t(&m_t); }
+        virtual tid_t get_tuid() const { return reinterpret_cast<tid_t>(&m_t); }
         any_tensor<N, T> &get_tensor() const { return m_t; }
         bool tensor_equals(any_tensor<N, T> &other) { return &m_t == &other; }
     };
