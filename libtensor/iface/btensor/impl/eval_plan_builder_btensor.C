@@ -133,8 +133,7 @@ private:
             node_renderer r(m_plan, m_tl, m_interm, n.get_arg(iarg), m_out_tid);
             r.render();
             if(r.as_is()) {
-                add_assignment(node_with_transf<N>(n.get_arg(iarg),
-                    tensor_transf<N, double>()), true);
+                add_assignment(node_with_transf<N>(n.get_arg(iarg), nwt.tr), true);
             }
             visited[iarg] = true;
         }
