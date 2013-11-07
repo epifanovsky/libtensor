@@ -12,44 +12,98 @@ void loop_list_sparsity_data_test::perform() throw(libtest::test_exception) {
     test_get_sig_block_list_fuse_output_input();
 }
 
-//Simplest test: will not require weird weird offsets
+//kij -> ijk
+//Simplest test: just a permutation(120), output tensor is accessed in order, so just need to fuse input and output correctly 
+//No additional sparsity gained
 void loop_list_sparsity_data_test::test_get_sig_block_list_in_order() throw(libtest::test_exception)
 {
     static const char *test_name = "block_loop_test::test_get_sig_block_list_in_order()";
 
     //Create bispaces corresponding to 3d spare permutation
-    sparse_bispace<1> spb_1(3);
+    //Need 8 blocks
+    sparse_bispace<1> spb_1(20);
     std::vector<size_t> split_points_1;
     split_points_1.push_back(1);
+    split_points_1.push_back(4);
+    split_points_1.push_back(6);
+    split_points_1.push_back(9);
+    split_points_1.push_back(13);
+    split_points_1.push_back(14);
+    split_points_1.push_back(16);
     spb_1.split(split_points_1);
 
-    sparse_bispace<1> spb_2(4);
+    //Need 8 blocks
+    sparse_bispace<1> spb_2(24);
     std::vector<size_t> split_points_2;
     split_points_2.push_back(3);
+    split_points_2.push_back(5);
+    split_points_2.push_back(8);
+    split_points_2.push_back(12);
+    split_points_2.push_back(16);
+    split_points_2.push_back(17);
+    split_points_2.push_back(19);
+    split_points_2.push_back(22);
     spb_2.split(split_points_2);
 
-    sparse_bispace<1> spb_3(5);
+    //Need 8 blocks
+    sparse_bispace<1> spb_3(21);
     std::vector<size_t> split_points_3;
     split_points_3.push_back(2);
+    split_points_3.push_back(3);
+    split_points_3.push_back(7);
+    split_points_3.push_back(10);
+    split_points_3.push_back(15);
+    split_points_3.push_back(16);
+    split_points_3.push_back(18);
     spb_3.split(split_points_3);
 
+
     //Sparsity data
-    std::vector< sequence<3,size_t> > sig_blocks(5);
-    sig_blocks[0][0] = 0; 
-    sig_blocks[0][1] = 0;
-    sig_blocks[0][2] = 0;
-    sig_blocks[1][0] = 0; 
-    sig_blocks[1][1] = 0;
-    sig_blocks[1][2] = 1;
-    sig_blocks[2][0] = 0; 
-    sig_blocks[2][1] = 1;
-    sig_blocks[2][2] = 0;
-    sig_blocks[3][0] = 1; 
-    sig_blocks[3][1] = 0;
-    sig_blocks[3][2] = 0;
-    sig_blocks[4][0] = 1; 
-    sig_blocks[4][1] = 1;
-    sig_blocks[4][2] = 1;
+    size_t seq01_arr[3] = {1,2,3};
+    size_t seq02_arr[3] = {1,2,7};
+    size_t seq03_arr[3] = {1,3,1};
+    size_t seq04_arr[3] = {1,5,7};
+    size_t seq05_arr[3] = {2,3,1};
+    size_t seq06_arr[3] = {2,4,2};
+    size_t seq07_arr[3] = {2,4,5};
+    size_t seq08_arr[3] = {2,6,3};
+    size_t seq09_arr[3] = {2,6,4};
+    size_t seq10_arr[3] = {4,1,4};
+    size_t seq11_arr[3] = {4,1,7};
+    size_t seq12_arr[3] = {4,2,2};
+    size_t seq13_arr[3] = {4,3,5};
+    size_t seq14_arr[3] = {4,3,6};
+    size_t seq15_arr[3] = {4,3,7};
+    size_t seq16_arr[3] = {5,1,4};
+    size_t seq17_arr[3] = {5,2,6};
+    size_t seq18_arr[3] = {5,2,7};
+    size_t seq19_arr[3] = {7,4,5};
+    size_t seq20_arr[3] = {7,4,6};
+    size_t seq21_arr[3] = {7,7,7};
+
+    std::vector< sequence<3,size_t> > sig_blocks(21); 
+    for(size_t i = 0; i < 3; ++i) sig_blocks[0][i] = seq01_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[1][i] = seq02_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[2][i] = seq03_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[3][i] = seq04_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[4][i] = seq05_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[5][i] = seq06_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[6][i] = seq07_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[7][i] = seq08_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[8][i] = seq09_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[9][i] = seq10_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[10][i] = seq11_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[11][i] = seq12_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[12][i] = seq13_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[13][i] = seq14_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[14][i] = seq15_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[15][i] = seq16_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[16][i] = seq17_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[17][i] = seq18_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[18][i] = seq19_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[19][i] = seq20_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks[20][i] = seq21_arr[i];
+
     sparse_bispace<3> three_d_input = spb_1 % spb_2 % spb_3 << sig_blocks;
 
     permutation<3> perm;
@@ -93,12 +147,12 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_in_order() throw(libt
     sequence<1,sparse_bispace_any_order> input_bispaces(three_d_input);
 
     std::vector<size_t> cur_block_idxs; 
-    cur_block_idxs.push_back(0);
-    cur_block_idxs.push_back(1);
+    cur_block_idxs.push_back(2);
+    cur_block_idxs.push_back(7);
     loop_list_sparsity_data llsd(loop_list,output_bispaces,input_bispaces);
     const block_list& my_block_list = llsd.get_sig_block_list(cur_block_idxs,2);
 
-    //Correct answer: should be {0}
+    //Correct answer: should be {1,5}
     const sparse_block_tree_any_order& output_tree =  three_d_output.get_sparse_group_tree(0);
     const block_list& correct_block_list = output_tree.get_sub_key_block_list(cur_block_idxs);
 
@@ -112,6 +166,16 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_in_order() throw(libt
     {
         if(my_block_list[j] != correct_block_list[j])
         {
+            std::cout << "MINE!!!!!!!!!!!!!!!!!\n";
+            for(size_t j = 0; j < my_block_list.size(); ++j)
+            {
+                std::cout << my_block_list[j] << "\n";
+            }
+            std::cout << "CORRECT!!!!!!!!!!!!!!!!!\n";
+            for(size_t j = 0; j < correct_block_list.size(); ++j)
+            {
+                std::cout << correct_block_list[j] << "\n";
+            }
             fail_test(test_name,__FILE__,__LINE__,
                     "loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
         }
@@ -280,10 +344,9 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_fuse_output_input() t
     const block_list& my_block_list = llsd.get_sig_block_list(cur_block_idxs,2);
 
     //Correct answer
-    block_list correct_block_list(1,5); 
+    block_list correct_block_list(1,6); 
     if(my_block_list.size() != correct_block_list.size())
     {
-        std::cout << "\nHERE!!!!!!\n";
         for(size_t j = 0; j < my_block_list.size(); ++j)
         {
             std::cout << my_block_list[j] << "\n";

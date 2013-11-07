@@ -231,14 +231,18 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
     size_t idx_excluding_fused = 0; 
     for(size_t i = rhs_indices.size(); i < rhs_order; ++i)
     {
-        //Skip over patches of fused indices
-        while(idx_excluding_fused == rhs_indices[cur_fused_idx])
+        //Still fused indices to skip over?
+        if(cur_fused_idx < rhs_indices.size())
         {
-            ++cur_fused_idx;
-            ++idx_excluding_fused;
-            if(cur_fused_idx == rhs_indices.size())
+            //Skip over patches of fused indices
+            while(idx_excluding_fused == rhs_indices[cur_fused_idx])
             {
-                break;
+                ++cur_fused_idx;
+                ++idx_excluding_fused;
+                if(cur_fused_idx == rhs_indices.size())
+                {
+                    break;
+                }
             }
         }
         permutation_entries[i] = idx_excluding_fused;
@@ -248,6 +252,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
     //Don't permute if unnecessary
     runtime_permutation perm(permutation_entries);
     const sparse_block_tree_any_order& rhs_permuted = (perm == runtime_permutation(rhs_order)) ? rhs : rhs.permute(perm);
+
     for(const_iterator it = begin(); it != end(); ++it)
     {
         key_t base_key = it.key();
@@ -278,8 +283,8 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
         {
             key_t rhs_key = rhs_it.key();
 
-            //Now fill in the middle (fused) segment of the new key
-            for(size_t sub_key_idx = 0; sub_key_idx < rhs_permuted.m_order; ++sub_key_idx)
+            //Now fill in the right side of the key, everything after the fused indices 
+            for(size_t sub_key_idx = n_fused_inds; sub_key_idx < rhs_permuted.m_order; ++sub_key_idx)
             {
                 new_key[m_order -  n_fused_inds + sub_key_idx] = rhs_key[sub_key_idx];
             }
