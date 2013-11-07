@@ -194,7 +194,7 @@ void contract::evaluate(const tensor_transf<NC, double> &trc, tid_t tid) {
 
 
 //  The code here explicitly instantiates contract::evaluate<NC>
-namespace {
+namespace contract_ns {
 template<size_t N>
 struct aux {
     contract *e;
@@ -202,7 +202,7 @@ struct aux {
     aux() { e->evaluate(*tr, 0); }
 };
 } // unnamed namespace
-template class instantiate_template_1<1, contract::Nmax, aux>;
+template class instantiate_template_1<1, contract::Nmax, contract_ns::aux>;
 
 
 } // namespace eval_btensor_double
