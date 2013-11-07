@@ -32,15 +32,17 @@ public:
     template<size_t N, typename T>
     tid_t create_interm() {
 
+        tid_t tid;
         btensor_placeholder<N, T> *p = new btensor_placeholder<N, T>;
         try {
-            tid_t tid = m_tl.get_tensor_id(*p);
+            tid = m_tl.get_tensor_id(*p);
             m_interm.insert(std::make_pair(tid, p));
             std::cout << "create_interm: " << (void*)tid << " " << p << std::endl;
         } catch(...) {
             delete p;
             throw;
         }
+        return tid;
     }
 
     void destroy_interm(tid_t tid) {

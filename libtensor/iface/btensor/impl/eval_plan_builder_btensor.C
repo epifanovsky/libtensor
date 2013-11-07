@@ -182,6 +182,7 @@ private:
     template<size_t N>
     void add_assignment(const node_with_transf<N> &nwt, bool add) {
 
+        std::cout << "add node to plan " << (void*)m_out_tid << std::endl;
         if(nwt.tr.get_perm().is_identity() &&
             nwt.tr.get_scalar_tr().get_coeff() == 1.0) {
 
@@ -224,6 +225,7 @@ void eval_plan_builder_btensor::build_plan() {
         throw 111;
     }
 
+    std::cout << "render expression" << std::endl;
     print_node(m_assign, std::cout);
     node_renderer(m_plan, m_tl, m_interm, m_assign).render();
 }

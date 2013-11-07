@@ -22,7 +22,8 @@ private:
     btensor<N, T> *m_bt; //!< Pointer to the real tensor
 
 public:
-    btensor_placeholder() : m_bt(0) { }
+    btensor_placeholder() : any_tensor<N, T>(*this), m_bt(0) {
+    }
 
     virtual ~btensor_placeholder() {
         destroy_btensor();
@@ -50,17 +51,11 @@ public:
 public:
     /** \brief Converts any_tensor to btensor
      **/
-    static btensor_placeholder<N, T> &from_any_tensor(any_tensor<N, T> &t);
+    static btensor_placeholder<N, T> &from_any_tensor(any_tensor<N, T> &t) {
+        return t.template get_tensor< btensor_placeholder<N, T> >();
+    }
 
 };
-
-
-template<size_t N, typename T>
-btensor_placeholder<N, T> &btensor_placeholder<N, T>::from_any_tensor(
-    any_tensor<N, T> &t) {
-
-    return t.template get_tensor< btensor_placeholder<N, T> >();
-}
 
 
 } // namespace iface

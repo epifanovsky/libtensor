@@ -60,6 +60,8 @@ public:
 
 private:
     template<size_t N>
+    btensor<N, double> &tensor_from_tid(tid_t tid);
+    template<size_t N>
     btensor<N, double> &tensor_from_tid(tid_t tid,
         const block_index_space<N> &bis);
 
@@ -97,12 +99,8 @@ void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
     const node_ident &na = nia.extract_ident();
     const node_ident &nb = nib.extract_ident();
 
-    btensor_i<N + K, double> &bta =
-        m_tl.get_tensor<N + K, double>(na.get_tid()).
-        template get_tensor< btensor_i<N + K, double> >();
-    btensor_i<M + K, double> &btb =
-        m_tl.get_tensor<M + K, double>(nb.get_tid()).
-        template get_tensor< btensor_i<M + K, double> >();
+    btensor_i<N + K, double> &bta = tensor_from_tid<N + K>(na.get_tid());
+    btensor_i<M + K, double> &btb = tensor_from_tid<M + K>(nb.get_tid());
 
     contraction2<N, M, K> contr;
     for(typename std::map<size_t, size_t>::const_iterator ic =
@@ -149,6 +147,22 @@ void eval_contract_impl::dispatch_contract_2<NC, NA>::dispatch() {
         M = NC - N
     };
     eval.template do_evaluate<N, M, K>(trc, tid);
+}
+
+
+template<size_t N>
+btensor<N, double> &eval_contract_impl::tensor_from_tid(tid_t tid) {
+
+    any_tensor<N, double> &anyt = m_tl.get_tensor<N, double>(tid);
+
+    if(m_interm.is_interm(tid)) {
+        btensor_placeholder<N, double> &ph =
+            btensor_placeholder<N, double>::from_any_tensor(anyt);
+        if(ph.is_empty()) throw 73;
+        return ph.get_btensor();
+    } else {
+        return btensor<N, double>::from_any_tensor(anyt);
+    }
 }
 
 
