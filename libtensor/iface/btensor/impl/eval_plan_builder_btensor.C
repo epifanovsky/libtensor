@@ -2,6 +2,7 @@
 #include <string>
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/node_contract.h>
+#include <libtensor/expr/node_symm.h>
 #include <libtensor/expr/print_node.h>
 #include "btensor_placeholder.h"
 #include "metaprog.h"
@@ -101,6 +102,8 @@ private:
             render_contract(n.template recast_as<node_contract>(), tr);
         } else if(n.get_op().compare("ident") == 0) {
             render_ident<N>();
+        } else if(n.get_op().compare("symm") == 0) {
+            render_symm(n.template recast_as< node_symm<double> >(), tr);
         } else {
             throw not_implemented("iface", k_clazz, "render", __FILE__, __LINE__);
         }
@@ -181,6 +184,28 @@ private:
     void render_ident() {
 
         m_out_asis = true;
+    }
+
+    template<size_t N>
+    void render_symm(const node_symm<double> &n,
+        const tensor_transf<N, double> &tr) {
+
+        std::auto_ptr<node> a1;
+
+        node_renderer r1(m_plan, m_tl, m_interm, n.get_arg());
+        r1.render();
+
+        if(r1.as_is()) a1 = std::auto_ptr<node>(n.get_arg().clone());
+        else a1 = std::auto_ptr<node>(new node_ident(r1.get_tid(), n.get_arg().get_n()));
+
+        if(m_out_interm) {
+            m_out_tid = m_interm.create_interm<N, double>();
+            m_plan.create_intermediate(m_out_tid);
+        }
+
+        node_symm<double> ns(*a1, n.get_sym(), n.get_nsym(), n.get_pair_tr(), n.get_cyclic_tr());
+        add_assignment(node_with_transf<N>(ns, tr), true);
+        if(!r1.as_is()) m_plan.delete_intermediate(r1.get_tid());
     }
 
     template<size_t N>

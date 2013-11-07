@@ -8,6 +8,7 @@
 #include "node_inspector.h"
 #include "eval_btensor_double_contract.h"
 #include "eval_btensor_double_copy.h"
+#include "eval_btensor_double_symm.h"
 #include "eval_plan_builder_btensor.h"
 
 namespace libtensor {
@@ -93,6 +94,12 @@ void eval_node::evaluate(tid_t tid) {
 
         const node_contract &n = nwt.n.template recast_as<node_contract>();
         eval_btensor_double::contract(m_tl, m_interm, n, m_add).
+            evaluate(nwt.tr, tid);
+
+    } else if(nwt.n.get_op().compare("symm") == 0) {
+
+        const node_symm<double> &n = nwt.n.template recast_as< node_symm<double> >();
+        eval_btensor_double::symm(m_tl, m_interm, n, m_add).
             evaluate(nwt.tr, tid);
 
     } else {
