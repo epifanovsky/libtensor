@@ -150,11 +150,6 @@ private:
         r1.render();
         r2.render();
 
-        if(r1.as_is() && r2.as_is()) {
-            m_out_asis = true;
-            return;
-        }
-
         if(r1.as_is()) a1 = std::auto_ptr<node>(n.get_arg(0).clone());
         else a1 = std::auto_ptr<node>(new node_ident(r1.get_tid(), n.get_arg(0).get_n()));
 
