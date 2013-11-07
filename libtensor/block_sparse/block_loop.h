@@ -29,7 +29,8 @@ void run_loop_list(const std::vector< block_loop<M,N,T> >& loop_list,
                    const sequence<N,const T*>& input_ptrs,
                    const sequence<M,sparse_bispace_any_order>& output_bispaces,
                    const sequence<N,sparse_bispace_any_order>& input_bispaces);
-                   
+
+class loop_list_sparsity_data;
 
 namespace impl
 {
@@ -108,6 +109,8 @@ public:
                                       sequence<M,std::vector<size_t> >& output_block_indices,
                                       sequence<N,std::vector<size_t> >& input_block_indices,
                                       size_t loop_idx);
+
+    friend class loop_list_sparsity_data;
 };
 
 

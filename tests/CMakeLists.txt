@@ -239,6 +239,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_bispace_test.C
     block_sparse/sparse_btensor_test.C
     block_sparse/block_kernels_test.C
+    block_sparse/loop_list_sparsity_data_test.C
     block_sparse/block_loop_test.C
     block_sparse/sparse_block_tree_test.C
 )

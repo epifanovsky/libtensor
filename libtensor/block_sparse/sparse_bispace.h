@@ -114,6 +114,12 @@ public:
      **/
     block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const;
 
+    /** Stub methods for general compatibility, even though can't have sparse groups in a 1d bispace
+     **/
+    size_t get_n_sparse_groups() const { return 0; }
+    const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
+    const size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
+
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
      **/
@@ -348,6 +354,19 @@ public:
     template<size_t L>
     sparse_bispace<N+L-1> fuse(const sparse_bispace<L>& rhs) const;
 
+    /** \brief Returns the number of sparse index groups (0 for fully dense)
+     **/
+    size_t get_n_sparse_groups() const { return m_sparse_block_trees.size(); }
+
+    /** \brief Access the tree corresponding to sparse index group group_idx
+     *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
+     **/
+    const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const;
+
+    /** \brief Get the subspace index corresponding to the beginning of a given sparsity coupled index group 
+     **/
+    const size_t get_sparse_group_offset(size_t group_idx) const;
+
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
      **/
@@ -357,6 +376,7 @@ public:
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
      **/
     bool operator!=(const sparse_bispace<N>& rhs) const;
+
 
     //Friend all other types of sparse_bispaces to allow for creation of larger ones from smaller ones
     template<size_t M>
@@ -844,6 +864,28 @@ sparse_bispace<N+L-1> sparse_bispace<N>::fuse(const sparse_bispace<L>& rhs) cons
     return sparse_bispace<N+L-1>(*this,rhs);
 }
 
+template<size_t N>
+const sparse_block_tree_any_order& sparse_bispace<N>::get_sparse_group_tree(size_t group_idx) const
+{
+    if(group_idx > (m_sparse_block_trees.size() - 1))
+    {
+        throw bad_parameter(g_ns,"sparse_bispace<N>","get_sparse_group_tree(...)",
+            __FILE__,__LINE__,"group_idx too large"); 
+    }
+    return m_sparse_block_trees[group_idx];
+}
+
+template<size_t N>
+const size_t sparse_bispace<N>::get_sparse_group_offset(size_t group_idx) const
+{
+    if(group_idx > (m_sparse_block_trees.size() - 1))
+    {
+        throw bad_parameter(g_ns,"sparse_bispace<N>","get_sparse_group_tree(...)",
+            __FILE__,__LINE__,"group_idx too large"); 
+    }
+    return m_sparse_indices_sets_offsets[group_idx];
+}
+
 
 
 template<size_t N>
@@ -970,6 +1012,9 @@ private:
         virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
         virtual sparse_bispace_generic_i* clone() const = 0;
         virtual block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const = 0; 
+        virtual size_t get_n_sparse_groups() const  = 0;
+        virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
+        virtual size_t get_sparse_group_offset(size_t group_idx) const = 0; 
 
         virtual ~sparse_bispace_generic_i() { };
     };
@@ -986,6 +1031,9 @@ private:
         size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset(block_indices); }
         size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset_canonical(block_indices); }
         block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const { return m_bispace.get_sig_block_list(outer_block_indices,target_subspace_idx); }
+        size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
+        sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
+        size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
 
         sparse_bispace_generic_i* clone() const { return new sparse_bispace_generic_wrapper(m_bispace); }
     };
@@ -1004,13 +1052,17 @@ public:
     sparse_bispace_any_order(const sparse_bispace_any_order& rhs) { rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
 
     //Overloaded assignment operator
-    sparse_bispace_any_order& operator=(const sparse_bispace_any_order& rhs) { rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
+    sparse_bispace_any_order& operator=(const sparse_bispace_any_order& rhs) { if(m_spb_ptr) { delete m_spb_ptr; } rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
 
     const sparse_bispace<1>& operator[](size_t idx) const { return (*m_spb_ptr)[idx]; }
     size_t get_order() const { return m_spb_ptr->get_order(); }
     size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset(block_indices); }
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset_canonical(block_indices); }
     block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const { return m_spb_ptr->get_sig_block_list(outer_block_indices,target_subspace_idx); }
+    size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }
+    sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
+    size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 
+
 
     //We have to check NULL bcs of stupid default constructor hack
     virtual ~sparse_bispace_any_order() { if(m_spb_ptr != NULL) { delete m_spb_ptr; } };
