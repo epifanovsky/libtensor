@@ -23,12 +23,12 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_permute_2d_row_major();
     test_permute_3d_row_major_210();
-    test_permute_3d_block_major_120_sparse();
+    /*test_permute_3d_block_major_120_sparse();*/
 
     test_contract2_2d_2d();
     test_contract2_2d_2d_sparse_dense(); 
     test_contract2_3d_2d_sparse_dense();
-    /*test_contract2_3d_2d_sparse_sparse();*/
+    test_contract2_3d_2d_sparse_sparse();
     test_contract2_two_indices_3d_2d_dense_dense();
 
     test_contract2_3d_2d();
@@ -1059,7 +1059,7 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_sparse() throw(libtest::te
                          14,15,16,
                          17,18,19};
 
-    //Row major
+    //Block major
     double C_correct_arr[72] = {//i = 0 j = 0 l = 2
                                 9,
                                 18,
@@ -1171,11 +1171,9 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_sparse() throw(libtest::te
     letter i,j,k,l;
     C(i|j|l) = contract(k,A(i|j|k),B(k|l));
 
-    sparse_btensor<3> C_correct(spb_C,C_correct_arr);
+    sparse_btensor<3> C_correct(spb_C,C_correct_arr,true);
     if(C != C_correct)
     {
-        std::cout << "C:\n" << C.str() << "\n";
-        std::cout << "C_correct:\n" << C_correct.str() << "\n";
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
     }
