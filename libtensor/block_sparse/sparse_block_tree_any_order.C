@@ -190,8 +190,6 @@ sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contrac
 
 sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs,const std::vector<size_t>& lhs_indices,const std::vector<size_t>& rhs_indices) const
 {
-    size_t out_order = m_order+rhs.m_order-1;
-    std::vector<key_t> new_keys;
 
     //Sanitize input
     if(lhs_indices.size() != rhs_indices.size())
@@ -205,6 +203,10 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
             __FILE__,__LINE__,"must specify at least one index to fuse"); 
     }
 
+    size_t n_fused_inds = lhs_indices.size();
+    size_t out_order = m_order+rhs.m_order-n_fused_inds;
+    std::vector<key_t> new_keys;
+
     for(size_t i = 1; i < lhs_indices.size(); ++i)
     {
         size_t cur_lhs = lhs_indices[i]; 
@@ -216,7 +218,6 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
         }
     }
 
-    size_t n_fused_inds = lhs_indices.size();
 
     //Permute RHS to bring the fused indices to the left-most position...
     size_t rhs_order = rhs.get_order();
@@ -280,7 +281,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
             //Now fill in the middle (fused) segment of the new key
             for(size_t sub_key_idx = 0; sub_key_idx < rhs_permuted.m_order; ++sub_key_idx)
             {
-                new_key[m_order - 1 + sub_key_idx] = rhs_key[sub_key_idx];
+                new_key[m_order -  n_fused_inds + sub_key_idx] = rhs_key[sub_key_idx];
             }
 
             //Add the key to the list

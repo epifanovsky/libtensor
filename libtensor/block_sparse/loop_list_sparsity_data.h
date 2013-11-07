@@ -118,6 +118,7 @@ void loop_list_sparsity_data::extract_trees(const std::vector< block_loop<M,N,T>
                 //Does another tree already contain this index? If so, we must fuse. Otherwise, register new tree
                 if(m_is_sparse[loop_idx])
                 {
+                    //TODO: What fuse indices to pass?!!!!!!!
                     m_trees[m_inter_tree_indices[loop_idx]] = m_trees[m_inter_tree_indices[loop_idx]].fuse(cur_tree.permute(perm));
                 }
                 else

@@ -35,6 +35,7 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
     test_fuse_2d_2d();
     test_fuse_3d_2d();
     test_fuse_3d_3d_non_contiguous();
+    test_fuse_3d_3d_multi_index();
 }
 
 void sparse_block_tree_test::test_unsorted_input() throw(libtest::test_exception)
@@ -1692,7 +1693,7 @@ void sparse_block_tree_test::test_fuse_3d_3d_non_contiguous() throw(libtest::tes
     sparse_block_tree<3> sbt_2(sig_blocks_2);
 
 
-    sparse_block_tree<5> sbt_fused = sbt_1.fuse(sbt_2,std::vector<size_t>(1,2),std::vector<size_t>(1,1)); 
+    sparse_block_tree<5> sbt_fused = sbt_1.fuse(sbt_2,sequence<1,size_t>(2),sequence<1,size_t>(1)); 
 
     size_t correct_seq00_arr[5] = {1,2,3,1,1};
     size_t correct_seq01_arr[5] = {1,2,3,1,5};
@@ -1776,6 +1777,145 @@ void sparse_block_tree_test::test_fuse_3d_3d_non_contiguous() throw(libtest::tes
             }
             std::cout << "): " << *it << "\n";
         }
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_block_tree<N>L::fuse(...) returned incorrect value");
+    }
+}
+
+//ijk fused to jkl 
+void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_fuse_3d_3d_multi_index";
+    //Sparsity data 1
+    size_t seq00_arr[3] = {1,2,3};
+    size_t seq01_arr[3] = {1,2,7};
+    size_t seq02_arr[3] = {1,3,1};
+    size_t seq03_arr[3] = {1,5,9};
+    size_t seq04_arr[3] = {2,3,1};
+    size_t seq05_arr[3] = {2,4,2};
+    size_t seq06_arr[3] = {2,4,5};
+    size_t seq07_arr[3] = {2,6,3};
+    size_t seq08_arr[3] = {2,6,4};
+    size_t seq09_arr[3] = {4,1,4};
+    size_t seq10_arr[3] = {4,1,7};
+    size_t seq11_arr[3] = {4,2,2};
+    size_t seq12_arr[3] = {4,3,5};
+    size_t seq13_arr[3] = {4,3,6};
+    size_t seq14_arr[3] = {4,3,7};
+    size_t seq15_arr[3] = {5,1,4};
+    size_t seq16_arr[3] = {5,2,6};
+    size_t seq17_arr[3] = {5,2,7};
+    size_t seq18_arr[3] = {7,4,5};
+    size_t seq19_arr[3] = {7,4,6};
+    size_t seq20_arr[3] = {7,7,7};
+
+    std::vector< sequence<3,size_t> > sig_blocks_1(21); 
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[0][i] = seq00_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[1][i] = seq01_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[2][i] = seq02_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[3][i] = seq03_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[4][i] = seq04_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[5][i] = seq05_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[6][i] = seq06_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[7][i] = seq07_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[8][i] = seq08_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[9][i] = seq09_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[10][i] = seq10_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[11][i] = seq11_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[12][i] = seq12_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[13][i] = seq13_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[14][i] = seq14_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[15][i] = seq15_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[16][i] = seq16_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[17][i] = seq17_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[18][i] = seq18_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[19][i] = seq19_arr[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_1[20][i] = seq20_arr[i];
+
+    sparse_block_tree<3> sbt_1(sig_blocks_1);
+
+    //Sparsity data 2
+    size_t seq00_arr_2[3] = {1,3,1};
+    size_t seq01_arr_2[3] = {1,3,5};
+    size_t seq02_arr_2[3] = {1,3,7};
+    size_t seq03_arr_2[3] = {1,6,2};
+    size_t seq04_arr_2[3] = {1,6,3};
+    size_t seq05_arr_2[3] = {1,6,5};
+    size_t seq06_arr_2[3] = {1,7,1};
+    size_t seq07_arr_2[3] = {2,4,4};
+    size_t seq08_arr_2[3] = {2,5,2};
+    size_t seq09_arr_2[3] = {2,5,3};
+    size_t seq10_arr_2[3] = {3,2,9};
+    size_t seq11_arr_2[3] = {3,4,8};
+    size_t seq12_arr_2[3] = {4,1,2};
+    size_t seq13_arr_2[3] = {4,8,1};
+    size_t seq14_arr_2[3] = {4,9,4};
+    size_t seq15_arr_2[3] = {5,7,1};
+    size_t seq16_arr_2[3] = {6,2,4};
+    size_t seq17_arr_2[3] = {6,2,5};
+    size_t seq18_arr_2[3] = {6,3,2};
+    size_t seq19_arr_2[3] = {7,1,8};
+    size_t seq20_arr_2[3] = {7,8,2};
+
+
+
+    std::vector< sequence<3,size_t> > sig_blocks_2(21); 
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[0][i] = seq00_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[1][i] = seq01_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[2][i] = seq02_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[3][i] = seq03_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[4][i] = seq04_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[5][i] = seq05_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[6][i] = seq06_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[7][i] = seq07_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[8][i] = seq08_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[9][i] = seq09_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[10][i] = seq10_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[11][i] = seq11_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[12][i] = seq12_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[13][i] = seq13_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[14][i] = seq14_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[15][i] = seq15_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[16][i] = seq16_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[17][i] = seq17_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[18][i] = seq18_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[19][i] = seq19_arr_2[i];
+    for(size_t i = 0; i < 3; ++i) sig_blocks_2[20][i] = seq20_arr_2[i];
+
+    sparse_block_tree<3> sbt_2(sig_blocks_2);
+
+
+    sequence<2,size_t> lhs_fuse_points;
+    lhs_fuse_points[0] = 1;
+    lhs_fuse_points[1] = 2;
+    sequence<2,size_t> rhs_fuse_points;
+    rhs_fuse_points[0] = 0;
+    rhs_fuse_points[1] = 1;
+    sparse_block_tree<4> sbt_fused = sbt_1.fuse(sbt_2,lhs_fuse_points,rhs_fuse_points); 
+
+    //Correct answer
+    //Coupling sparsity creates a VERY SPARSE structure
+    size_t correct_seq00_arr[4] = {2,6,3,2};
+    size_t correct_seq01_arr[4] = {4,1,7,1};
+
+    std::vector< sequence<4,size_t> > correct_sig_blocks(2); 
+    for(size_t i = 0; i < 4; ++i) correct_sig_blocks[0][i] = correct_seq00_arr[i];
+    for(size_t i = 0; i < 4; ++i) correct_sig_blocks[1][i] = correct_seq01_arr[i];
+    
+    sparse_block_tree<4> sbt_correct(correct_sig_blocks);
+
+    //Set them all to the same dummy values - dont' care about values for this test
+    size_t m = 0; 
+    sparse_block_tree<4>::iterator it = sbt_fused.begin();
+    for(sparse_block_tree<4>::iterator correct_it = sbt_correct.begin(); correct_it != sbt_correct.end(); ++correct_it)
+    {
+        *it = m; 
+        *correct_it = m;
+        ++it;
+        ++m;
+    }
+    if(sbt_fused != sbt_correct)
+    {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_block_tree<N>L::fuse(...) returned incorrect value");
     }

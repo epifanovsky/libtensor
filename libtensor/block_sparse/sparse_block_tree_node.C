@@ -219,7 +219,7 @@ sparse_block_tree_iterator<true> sparse_block_tree_branch_node::get_sub_key_end_
             ++cur_pos_it;
 
             //Found a valid sub key to increment
-            if(cur_pos_it != m_keys.end())
+            if(cur_pos_it != other_last_idx_values.end())
             {
                 partial_sub_key.push_back(*cur_pos_it);
                 break;
@@ -235,11 +235,6 @@ sparse_block_tree_iterator<true> sparse_block_tree_branch_node::get_sub_key_end_
             }
         }
 
-        //Now that we have advanced a dimension, fill in the rest of the sub key with zeros
-        for(size_t steps_forward = 0; steps_forward < steps_back - 1; ++steps_forward)
-        {
-            partial_sub_key.push_back(0);
-        }
         return get_sub_key_begin_iterator(partial_sub_key);
     }
 }
