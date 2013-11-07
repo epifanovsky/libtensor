@@ -131,7 +131,7 @@ template<size_t NC> template<size_t NA>
 void eval_contract_impl::dispatch_contract_1<NC>::dispatch() {
 
     enum {
-        Kmin = meta_if<(NA > NC), NA - NC, 1>::value,
+        Kmin = meta_if<(NA > NC), (NA - NC), (NA == NC ? 1 : 0)>::value,
         Kmax = meta_min<NA, (Nmax + NA - NC)/2>::value
     };
     dispatch_contract_2<NC, NA> d2 = { eval, trc, tid, k, na, nb };

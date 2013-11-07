@@ -74,26 +74,38 @@ public:
     template<size_t N>
     void dispatch() {
 
-        static const char method[] = "dispatch()";
-
         if(m_node.get_op().compare("assign") == 0) {
             render_assign<N>();
         } else {
-            node_inspector ni(m_node);
-            node_with_transf<N> nwt = ni.gather_transf<N>();
-            if(nwt.n.get_op().compare("add") == 0) {
-                render_add(nwt);
-            } else if(nwt.n.get_op().compare("contract") == 0) {
-                render_contract(nwt);
-            } else if(nwt.n.get_op().compare("ident") == 0) {
-                render_ident(nwt);
-            } else {
-                throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
-            }
+            render(tensor_transf<N, double>());
         }
     }
 
 private:
+    template<size_t N>
+    void render(const tensor_transf<N, double> &tr) {
+
+        node_inspector ni(m_node);
+        node_with_transf<N> nwt = ni.gather_transf<N>();
+        tensor_transf<N, double> tr1(nwt.tr);
+        tr1.transform(tr);
+        render(nwt.n, tr1);
+    }
+
+    template<size_t N>
+    void render(const node &n, const tensor_transf<N, double> &tr) {
+
+        if(n.get_op().compare("add") == 0) {
+            render_add(n.template recast_as<node_add>(), tr);
+        } else if(n.get_op().compare("contract") == 0) {
+            render_contract(n.template recast_as<node_contract>(), tr);
+        } else if(n.get_op().compare("ident") == 0) {
+            render_ident<N>();
+        } else {
+            throw not_implemented("iface", k_clazz, "render", __FILE__, __LINE__);
+        }
+    }
+
     template<size_t N>
     void render_assign() {
 
@@ -107,11 +119,9 @@ private:
     }
 
     template<size_t N>
-    void render_add(const node_with_transf<N> &nwt) {
+    void render_add(const node_add &n, const tensor_transf<N, double> &tr) {
 
         static const char method[] = "render_add()";
-
-        const node_add &n = nwt.n.template recast_as<node_add>();
 
         if(m_out_interm) {
             m_out_tid = m_interm.create_interm<N, double>();
@@ -124,25 +134,25 @@ private:
             node_inspector ni(n.get_arg(iarg));
             node_with_transf<N> nwt2 = ni.gather_transf<N>();
             if(nwt2.n.get_op().compare("ident") == 0) {
-                add_assignment(node_with_transf<N>(n.get_arg(iarg), nwt.tr), true);
+                add_assignment(node_with_transf<N>(n.get_arg(iarg), tr), true);
                 visited[iarg] = true;
             }
         }
 
         for(size_t iarg = 0; iarg < visited.size(); iarg++) if(!visited[iarg]) {
             node_renderer r(m_plan, m_tl, m_interm, n.get_arg(iarg), m_out_tid);
-            r.render();
+            r.render(tr);
             if(r.as_is()) {
-                add_assignment(node_with_transf<N>(n.get_arg(iarg), nwt.tr), true);
+                add_assignment(node_with_transf<N>(n.get_arg(iarg), tr), true);
             }
             visited[iarg] = true;
         }
     }
 
     template<size_t N>
-    void render_contract(const node_with_transf<N> &nwt) {
+    void render_contract(const node_contract &n,
+        const tensor_transf<N, double> &tr) {
 
-        const node_contract &n = nwt.n.template recast_as<node_contract>();
         std::auto_ptr<node> a1, a2;
 
         node_renderer r1(m_plan, m_tl, m_interm, n.get_arg(0));
@@ -162,13 +172,13 @@ private:
         }
 
         node_contract nc(*a1, *a2, n.get_contraction());
-        add_assignment(node_with_transf<N>(nc, nwt.tr), false);
+        add_assignment(node_with_transf<N>(nc, tr), true);
         if(!r1.as_is()) m_plan.delete_intermediate(r1.get_tid());
         if(!r2.as_is()) m_plan.delete_intermediate(r2.get_tid());
     }
 
     template<size_t N>
-    void render_ident(const node_with_transf<N> &nwt) {
+    void render_ident() {
 
         m_out_asis = true;
     }
