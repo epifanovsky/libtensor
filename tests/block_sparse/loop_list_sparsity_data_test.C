@@ -9,7 +9,7 @@ namespace libtensor {
 
 void loop_list_sparsity_data_test::perform() throw(libtest::test_exception) { 
     test_get_sig_block_list_in_order();
-    /*test_get_sig_block_list_fuse_output_input();*/
+    test_get_sig_block_list_fuse_output_input();
 }
 
 //Simplest test: will not require weird weird offsets
