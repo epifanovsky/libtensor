@@ -11,10 +11,19 @@ typedef std::vector<size_t> dim_list;
 template<size_t M,size_t N,typename T = double>
 class block_kernel_i {
 public:
+    //Version called when all operands are normal tensors
     virtual void operator()(const sequence<M, T*>& output_ptrs, 
                             const sequence<N, const T*>& input_ptrs,
                             const sequence<M, dim_list>& output_dims,
                             const sequence<N, dim_list>& input_dims) = 0;
+
+    //Version called when at least one operand is a direct tensor
+    virtual void operator()(const sequence<M, T*>& output_ptrs, 
+                            const sequence<N, const T*>& input_ptrs,
+                            const sequence<M, dim_list>& output_dims,
+                            const sequence<N, dim_list>& input_dims,
+                            const sequence<M, dim_list>& output_inds,
+                            const sequence<N, dim_list>& input_inds) = 0;
 };
 
 } // namespace libtensor

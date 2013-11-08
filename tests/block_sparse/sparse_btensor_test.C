@@ -1518,7 +1518,6 @@ void sparse_btensor_test::test_subtraction_2d_2d() throw(libtest::test_exception
     sparse_btensor<2> C(spb_A);
 
     letter i,j; 
-
     C(i|j) = B(i|j) - A(i|j);
     sparse_btensor<2> C_correct(spb_A,C_correct_arr);
 

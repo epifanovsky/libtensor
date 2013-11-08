@@ -1,6 +1,8 @@
 #ifndef LAZY_EVAL_FUNCTOR_
 #define LAZY_EVAL_FUNCTOR_
 
+#include <stdlib.h>
+
 namespace libtensor {
 
 //Forward declaration

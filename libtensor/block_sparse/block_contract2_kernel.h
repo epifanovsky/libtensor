@@ -9,8 +9,8 @@
 #include <iostream>
 
 namespace libtensor {
-template<typename T>
 
+template<typename T>
 class block_contract2_kernel : public block_kernel_i<1,2,T> {
 public:
     static const char *k_clazz; //!< Class name
@@ -61,6 +61,15 @@ public:
                     const sequence<2, const T*>& input_ptrs,
                     const sequence<1, dim_list>& output_dims,
                     const sequence<2, dim_list>& input_dims);
+
+
+    //TODO: STUB IMPROVE
+    void operator()(const sequence<1, T*>& output_ptrs, 
+                            const sequence<2, const T*>& input_ptrs,
+                            const sequence<1, dim_list>& output_dims,
+                            const sequence<2, dim_list>& input_dims,
+                            const sequence<1, dim_list>& output_inds,
+                            const sequence<2, dim_list>& input_inds) { (*this)(output_ptrs,input_ptrs,output_dims,input_dims); }
 };
 
 template<typename T>
