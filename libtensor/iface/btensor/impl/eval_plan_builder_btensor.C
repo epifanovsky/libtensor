@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 #include <string>
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/node_contract.h>
@@ -36,23 +37,24 @@ private:
     tensor_list &m_tl; //!< Tensor list
     interm &m_interm; //!< Intermediates container
     const node &m_node; //!< Node
+    std::set<tid_t> &m_touched;
     tid_t m_out_tid; //!< Result tensor ID
     bool m_out_interm; //!< Whether the result is an intermediate
     bool m_out_asis; //!< Whether the node is to be used as is
 
 public:
     node_renderer(eval_plan &plan, tensor_list &tl, interm &inter,
-        const node &n, tid_t tid) :
+        std::set<tid_t> &touched, const node &n, tid_t tid) :
 
-        m_plan(plan), m_tl(tl), m_interm(inter), m_node(n), m_out_tid(tid),
-        m_out_interm(false), m_out_asis(false)
+        m_plan(plan), m_tl(tl), m_interm(inter), m_touched(touched), m_node(n),
+        m_out_tid(tid), m_out_interm(false), m_out_asis(false)
     { }
 
     node_renderer(eval_plan &plan, tensor_list &tl, interm &inter,
-        const node &n) :
+        std::set<tid_t> &touched, const node &n) :
 
-        m_plan(plan), m_tl(tl), m_interm(inter), m_node(n), m_out_tid(0),
-        m_out_interm(true), m_out_asis(false)
+        m_plan(plan), m_tl(tl), m_interm(inter), m_touched(touched), m_node(n),
+        m_out_tid(0), m_out_interm(true), m_out_asis(false)
     { }
 
     void render() {
@@ -113,7 +115,7 @@ private:
     void render_assign() {
 
         const node_assign &n = m_node.template recast_as<node_assign>();
-        node_renderer r(m_plan, m_tl, m_interm, n.get_rhs(), n.get_tid());
+        node_renderer r(m_plan, m_tl, m_interm, m_touched, n.get_rhs(), n.get_tid());
         r.render();
         if(r.as_is()) {
             print_node(n, std::cout);
@@ -137,16 +139,16 @@ private:
             node_inspector ni(n.get_arg(iarg));
             node_with_transf<N> nwt2 = ni.gather_transf<N>();
             if(nwt2.n.get_op().compare("ident") == 0) {
-                add_assignment(node_with_transf<N>(n.get_arg(iarg), tr), true);
+                add_assignment(node_with_transf<N>(n.get_arg(iarg), tr));
                 visited[iarg] = true;
             }
         }
 
         for(size_t iarg = 0; iarg < visited.size(); iarg++) if(!visited[iarg]) {
-            node_renderer r(m_plan, m_tl, m_interm, n.get_arg(iarg), m_out_tid);
+            node_renderer r(m_plan, m_tl, m_interm, m_touched, n.get_arg(iarg), m_out_tid);
             r.render(tr);
             if(r.as_is()) {
-                add_assignment(node_with_transf<N>(n.get_arg(iarg), tr), true);
+                add_assignment(node_with_transf<N>(n.get_arg(iarg), tr));
             }
             visited[iarg] = true;
         }
@@ -158,8 +160,8 @@ private:
 
         std::auto_ptr<node> a1, a2;
 
-        node_renderer r1(m_plan, m_tl, m_interm, n.get_arg(0));
-        node_renderer r2(m_plan, m_tl, m_interm, n.get_arg(1));
+        node_renderer r1(m_plan, m_tl, m_interm, m_touched, n.get_arg(0));
+        node_renderer r2(m_plan, m_tl, m_interm, m_touched, n.get_arg(1));
         r1.render();
         r2.render();
 
@@ -175,7 +177,7 @@ private:
         }
 
         node_contract nc(*a1, *a2, n.get_contraction());
-        add_assignment(node_with_transf<N>(nc, tr), true);
+        add_assignment(node_with_transf<N>(nc, tr));
         if(!r1.as_is()) m_plan.delete_intermediate(r1.get_tid());
         if(!r2.as_is()) m_plan.delete_intermediate(r2.get_tid());
     }
@@ -192,7 +194,7 @@ private:
 
         std::auto_ptr<node> a1;
 
-        node_renderer r1(m_plan, m_tl, m_interm, n.get_arg());
+        node_renderer r1(m_plan, m_tl, m_interm, m_touched, n.get_arg());
         r1.render();
 
         if(r1.as_is()) a1 = std::auto_ptr<node>(n.get_arg().clone());
@@ -204,14 +206,16 @@ private:
         }
 
         node_symm<double> ns(*a1, n.get_sym(), n.get_nsym(), n.get_pair_tr(), n.get_cyclic_tr());
-        add_assignment(node_with_transf<N>(ns, tr), true);
+        add_assignment(node_with_transf<N>(ns, tr));
         if(!r1.as_is()) m_plan.delete_intermediate(r1.get_tid());
     }
 
     template<size_t N>
-    void add_assignment(const node_with_transf<N> &nwt, bool add) {
+    void add_assignment(const node_with_transf<N> &nwt) {
 
         std::cout << "add node to plan " << (void*)m_out_tid << std::endl;
+        bool add = m_touched.count(m_out_tid) > 0;
+        m_touched.insert(m_out_tid);
         if(nwt.tr.get_perm().is_identity() &&
             nwt.tr.get_scalar_tr().get_coeff() == 1.0) {
 
@@ -256,7 +260,8 @@ void eval_plan_builder_btensor::build_plan() {
 
     std::cout << "render expression" << std::endl;
     print_node(m_assign, std::cout);
-    node_renderer(m_plan, m_tl, m_interm, m_assign).render();
+    std::set<tid_t> touched;
+    node_renderer(m_plan, m_tl, m_interm, touched, m_assign).render();
 }
 
 
