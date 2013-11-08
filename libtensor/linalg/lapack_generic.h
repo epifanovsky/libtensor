@@ -30,8 +30,8 @@ extern "C" {
     int dlarnv_(int*, int*, int*, double*);
 #ifndef USE_QCHEM
     int dpotrf_(char*, int*, double*, int*, int*);
-#endif // USE_QCHEM
     int dpotri_(char*, int*, double*, int*, int*);
+#endif // USE_QCHEM
     int dpstrf_(char*, int*, double*, int*, int*, int*, double*, double*, int*);
     int dpteqr_(char*, int*, double*, double*, double*, int*, double*, int*);
     int dsteqr_(char*, int*, double*, double*, double*, int*, double*, int*);
