@@ -757,8 +757,12 @@ loop_list_sparsity_data::loop_list_sparsity_data(const std::vector< block_loop<M
 
 
 
-    //Finally, even if it is involved in a tree, we never need to consider sparsity for the very first loop index 
-    m_is_sparse[0] = false;
+    //Finally, even if it is involved in a tree, we never need to consider sparsity for the first loop index in any free
+    for(size_t tree_idx = 0; tree_idx < m_trees.size(); ++tree_idx) 
+    {
+        const std::vector<size_t>& rel_inds = m_inds_in_trees[tree_idx];
+        m_is_sparse[rel_inds[0]] = false;
+    }
 
 #ifdef SFM_DEBUG
     std::cout << "################## FINAL DEBUG #################\n";
