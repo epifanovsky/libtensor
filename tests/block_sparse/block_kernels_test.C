@@ -37,6 +37,7 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_2d_pi_pj();
     test_block_contract2_kernel_2d_pi_jp();
     test_block_contract2_kernel_3d_2d();
+    test_block_contract2_kernel_3d_3d_multi_index();
 }
 
 
@@ -1567,6 +1568,144 @@ void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test
         {
             fail_test(test_name,__FILE__,__LINE__,
                     "block_contract2_kernel::operator(...) did not produce correct result");
+        }
+    }
+}
+
+void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index()";
+
+    //Cil = Aijk Bljk
+    //2x5 2x3x4 5x3x4
+    double A_arr[24] = { //i = 0
+                         1,2,3,4,
+                         5,6,7,8,
+                         9,10,11,12,
+
+                         //i = 1
+                         13,14,15,16,
+                         17,18,19,20,
+                         21,22,23,24};
+
+    double B_arr[60] = { //l = 0
+                         1,2,3,4,
+                         5,6,7,8,
+                         9,10,11,12,
+
+                         //l = 1
+                         13,14,15,16,
+                         17,18,19,20,
+                         21,22,23,24,
+
+                         //l = 2
+                         25,26,27,28,
+                         29,30,31,32,
+                         33,34,35,36,
+
+                         //l = 3
+                         37,38,39,40,
+                         41,42,43,44,
+                         45,46,47,48,
+
+                         //l = 4
+                         49,50,51,52,
+                         53,54,55,56,
+                         57,58,59,60};
+
+    double C_arr[10] = {0};
+
+    double C_correct_arr[10] = { //i = 0
+                                 650,1586,2522,3458,4394,
+                                 //i = 1
+                                 1586,4250,6914,9578,12242};
+
+    //i loop
+    sequence<1,size_t> i_output_indices(0);
+    sequence<2,size_t> i_input_indices(0); //B is ignored
+    sequence<1,bool> i_output_ignore(false);
+    sequence<2,bool> i_input_ignore(false);
+    i_input_ignore[1] = true;
+
+    //j loop
+    sequence<1,size_t> j_output_indices;
+    sequence<2,size_t> j_input_indices(1);
+    sequence<1,bool> j_output_ignore(true); 
+    sequence<2,bool> j_input_ignore(false);
+
+    //k loop
+    sequence<1,size_t> k_output_indices;
+    sequence<2,size_t> k_input_indices(2);
+    sequence<1,bool> k_output_ignore(true);
+    sequence<2,bool> k_input_ignore(false);
+
+    //l loop
+    sequence<1,size_t> l_output_indices(1);
+    sequence<2,size_t> l_input_indices(0); //A is ignored
+    sequence<1,bool> l_output_ignore(false);
+    sequence<2,bool> l_input_ignore(false);
+    l_input_ignore[0] = true;
+
+    //Kernel 
+    std::vector< sequence<1,size_t> > output_indices_sets;
+    std::vector< sequence<2,size_t> > input_indices_sets;
+    std::vector< sequence<1,bool> > output_ignore_sets;
+    std::vector< sequence<2,bool> > input_ignore_sets;
+    output_indices_sets.push_back(i_output_indices);
+    output_indices_sets.push_back(l_output_indices);
+    output_indices_sets.push_back(j_output_indices);
+    output_indices_sets.push_back(k_output_indices);
+    input_indices_sets.push_back(i_input_indices);
+    input_indices_sets.push_back(l_input_indices);
+    input_indices_sets.push_back(j_input_indices);
+    input_indices_sets.push_back(k_input_indices);
+
+    output_ignore_sets.push_back(i_output_ignore);
+    output_ignore_sets.push_back(l_output_ignore);
+    output_ignore_sets.push_back(j_output_ignore);
+    output_ignore_sets.push_back(k_output_ignore);
+    input_ignore_sets.push_back(i_input_ignore);
+    input_ignore_sets.push_back(l_input_ignore);
+    input_ignore_sets.push_back(j_input_ignore);
+    input_ignore_sets.push_back(k_input_ignore);
+    block_contract2_kernel<double> bc2k(output_indices_sets,input_indices_sets,output_ignore_sets,input_ignore_sets); 
+
+    //Pointers
+    sequence<1,double*> output_ptrs(C_arr);
+    sequence<2,const double*> input_ptrs(A_arr);
+    input_ptrs[1] = B_arr;
+
+    //Dims
+    dim_list C_dims;
+    C_dims.push_back(2);
+    C_dims.push_back(5);
+
+    dim_list A_dims;
+    A_dims.push_back(2);
+    A_dims.push_back(3);
+    A_dims.push_back(4);
+
+    dim_list B_dims;
+    B_dims.push_back(5);
+    B_dims.push_back(3);
+    B_dims.push_back(4);
+
+
+    sequence<1, dim_list> output_dims(C_dims);
+    sequence<2, dim_list> input_dims;
+    input_dims[0] = A_dims;
+    input_dims[1] = B_dims;
+
+
+    bc2k(output_ptrs,input_ptrs,output_dims,input_dims);
+
+    for(int i = 0; i < 10; ++i)
+    {
+        if(C_arr[i] != C_correct_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_contract2_kernel::operator(...) did not produce correct result");
+            exit(1);
         }
     }
 }

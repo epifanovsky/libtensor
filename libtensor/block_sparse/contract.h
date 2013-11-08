@@ -136,11 +136,12 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
     run_loop_list(loop_list,bc2k,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
 }
 
-//template<size_t K,size_t M,size_t N,typename T>
-//contract_eval_functor<K,M,N,T> contract(letter_expr<K> le,labeled_sparse_btensor<M,T>& A,labeled_sparse_btensor<N,T>& B)
-//{
-    //return contract_eval_functor<1,M,N,T>(le,A,B);
-//}
+template<size_t K,size_t M,size_t N,typename T>
+contract_eval_functor<K,M,N,T> contract(letter_expr<K> le,labeled_sparse_btensor<M,T> A,labeled_sparse_btensor<N,T> B)
+{
+    return contract_eval_functor<K,M,N,T>(le,A,B);
+}
+
 
 
 //Special case for one index contractions

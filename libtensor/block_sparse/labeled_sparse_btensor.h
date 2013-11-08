@@ -4,10 +4,6 @@
 #include "sparse_btensor.h"
 #include "lazy_eval_functor.h"
 
-//TODO: REMOVE
-#include "contract.h"
-
-
 namespace libtensor {
 
 //Forward declaration for member variable

@@ -23,15 +23,14 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_permute_2d_row_major();
     test_permute_3d_row_major_210();
-    /*test_permute_3d_block_major_120_sparse();*/
+    test_permute_3d_block_major_120_sparse();
 
     test_contract2_2d_2d();
+    test_contract2_3d_2d();
     test_contract2_2d_2d_sparse_dense(); 
     test_contract2_3d_2d_sparse_dense();
     test_contract2_3d_2d_sparse_sparse();
-    test_contract2_two_indices_3d_2d_dense_dense();
-
-    test_contract2_3d_2d();
+    /*test_contract2_two_indices_3d_3d_dense_dense();*/
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -1179,9 +1178,121 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_sparse() throw(libtest::te
     }
 }
 
-void sparse_btensor_test::test_contract2_two_indices_3d_2d_dense_dense() throw(libtest::test_exception)
+//Cil = Aijk Bljk
+//3x4x5 * 6x4x5
+void sparse_btensor_test::test_contract2_two_indices_3d_3d_dense_dense() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_btensor_test::test_contract2_two_indices_3d_2d_dense_dense()";
+    static const char *test_name = "sparse_btensor_test::test_contract2_two_indices_3d_3d_dense_dense()";
+
+    //Row major
+    double A_arr[60] = { //i = 0
+                         1,2,3,4,5,
+                         6,7,8,9,10,
+                         11,12,13,14,15,
+                         16,17,18,19,20,
+
+                         //i = 1
+                         21,22,23,24,25,
+                         26,27,28,29,30,
+                         31,32,33,34,35,
+                         36,37,38,39,40,
+
+                         //i = 2
+                         41,42,43,44,45,
+                         46,47,48,49,50,
+                         51,52,53,54,55,
+                         56,57,58,59,60 };
+
+    double B_arr[120] = { //l = 0
+                          1,2,3,4,5,
+                          6,7,8,9,10,
+                          11,12,13,14,15,
+                          16,17,18,19,20,
+
+                          //l = 1
+                          21,22,23,24,25,
+                          26,27,28,29,30,
+                          31,32,33,34,35,
+                          36,37,38,39,40,
+                          
+                          //l = 2
+                          41,42,43,44,45,
+                          46,47,48,49,50,
+                          51,52,53,54,55,
+                          56,57,58,59,60,
+
+                          //l = 3
+                          61,62,63,64,65,
+                          66,67,68,69,70,
+                          71,72,73,74,75,
+                          76,77,78,79,80,
+
+                          //l = 4
+                          81,82,83,84,85,
+                          86,87,88,89,90,
+                          91,92,93,94,95,
+                          96,97,98,99,100,
+
+                          //l = 5
+                          101,102,103,104,105,
+                          106,107,108,109,110,
+                          111,112,113,114,115,
+                          116,117,118,119,120};
+
+    double C_arr[18];
+
+    double C_correct_arr[18] = { //i = 0
+                                 2870,7070,11270,15470,19670,23870,
+                                 //i = 1
+                                 7070,19270,31470,43670,55870,68070,
+                                 //i = 2
+                                 11270,31470,51670,71870,92070,112270};
+                            
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(3);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(1);
+    spb_i.split(split_points_i);
+
+    //Bispace for j 
+    sparse_bispace<1> spb_j(4);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(2);
+    spb_j.split(split_points_j);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    split_points_k.push_back(3);
+    spb_k.split(split_points_k);
+
+    //Bispace for l 
+    sparse_bispace<1> spb_l(6);
+    std::vector<size_t> split_points_l;
+    split_points_l.push_back(2);
+    split_points_l.push_back(5);
+    spb_l.split(split_points_l);
+
+    sparse_bispace<3> spb_A = spb_i | spb_j | spb_k;
+    sparse_bispace<3> spb_B = spb_l | spb_j | spb_k ;
+
+    sparse_btensor<3> A(spb_A,A_arr);
+    sparse_btensor<3> B(spb_B,B_arr);
+    sparse_bispace<2> spb_C = spb_i | spb_l;
+    sparse_btensor<2> C(spb_C);
+
+    letter i,j,k,l;
+    C(i|l) = contract(j|k,A(i|j|k),B(l|j|k));
+
+    sparse_btensor<2> C_correct(spb_C,C_correct_arr);
+    if(C != C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "contract(...) did not produce correct result");
+    }
+
 }
 
 } // namespace libtensor

@@ -1,8 +1,12 @@
 #ifndef BLOCK_CONTRACT2_KERNEL_H
 #define BLOCK_CONTRACT2_KERNEL_H
 
+#include <algorithm>
 #include "../linalg/linalg.h"
 #include "block_kernel_i.h"
+
+//TODO REMOVE
+#include <iostream>
 
 namespace libtensor {
 template<typename T>
@@ -29,6 +33,7 @@ private:
                             const sequence<2, const T*>& input_ptrs,
                             const sequence<1, dim_list>& output_dims,
                             const sequence<2, dim_list>& input_dims,
+                            const size_t n_contracted_inds,
                             const size_t level = 0) const;
 
 
@@ -120,16 +125,16 @@ void block_contract2_kernel<T>::_contract_internal(const sequence<1, T*>& output
                                                    const sequence<2, const T*>& input_ptrs,
                                                    const sequence<1, dim_list>& output_dims,
                                                    const sequence<2, dim_list>& input_dims,
+                                                   const size_t n_contracted_inds,
                                                    const size_t level) const
 {
     //Base case: call matmul kernel
-    if(level == m_n_loops - 3)
+    if(level == m_n_loops - n_contracted_inds - 2)
     {
         (*m_dgemm_fn)(NULL,m_m,m_n,m_k,input_ptrs[0],m_lda,input_ptrs[1],m_ldb,output_ptrs[0],m_ldc,1.0);
     }
     else
     {
-
         //Compute the stride for each tensor
         size_t output_stride = 1;
         if(!m_output_ignore_sets[level][0])
@@ -139,8 +144,6 @@ void block_contract2_kernel<T>::_contract_internal(const sequence<1, T*>& output
                 output_stride *= output_dims[0][i];
             }
         }
-
-        //TODO: Need to account for ignores in here....
 
         size_t input_stride_1 = 1;
         if(!m_input_ignore_sets[level][0])
@@ -164,7 +167,7 @@ void block_contract2_kernel<T>::_contract_internal(const sequence<1, T*>& output
         sequence<2,const T*> new_input_ptrs(input_ptrs);
         for(size_t i = 0; i < output_dims[0][m_output_indices_sets[level][0]]; ++i)
         {
-            _contract_internal(new_output_ptrs,new_input_ptrs,output_dims,input_dims,level+1);
+            _contract_internal(new_output_ptrs,new_input_ptrs,output_dims,input_dims,n_contracted_inds,level+1);
             if(!m_output_ignore_sets[level][0])
             {
                 new_output_ptrs[0] += output_stride; 
@@ -237,74 +240,197 @@ void block_contract2_kernel<T>::operator()(const sequence<1, T*>& output_ptrs,
             break;
         }
     }
-
-    //Determine what dgemm routine to call for the innermost matrix multiply 
-    //TODO: Put some of these array references in variables!!!!
-    //Determine the position of the i loop and j loop in order to determine which kernel to call
-    if(m_input_indices_sets[m_n_loops - 3][0] == (input_dims[0].size() - 2)) //A no transpose
+    
+    //Asssemble list of contracted indices in A, and the last index in C that also appears in A
+    //All indices that are ignored by output tensor are contracted
+    size_t M = input_dims[0].size();
+    size_t A_inds_end_in_C; 
+    std::vector<size_t> A_contracted_inds;
+    size_t last_A_idx_in_C;
+    for(size_t i = 0; i < m_n_loops; ++i)
     {
-        if(m_input_indices_sets[m_n_loops - 2][1] == (input_dims[1].size() - 1)) //B no transpose
+        if(m_output_ignore_sets[i][0])
         {
-            m_dgemm_fn = &linalg::mul2_ij_ip_pj_x;
-            m_m = input_dims[0][input_dims[0].size() - 2];
-            m_n = input_dims[1][input_dims[1].size() - 1];
-            m_k = input_dims[1][input_dims[1].size() - 2];
-            m_lda = m_k;
-            m_ldb = m_n;
-            m_ldc = m_n;
+            A_contracted_inds.push_back(m_input_indices_sets[i][0]);
         }
-        else if(m_input_indices_sets[m_n_loops - 2][1] == (input_dims[1].size() - 2)) //B transpose
+        else if(!m_input_ignore_sets[i][0])
         {
-            m_dgemm_fn = &linalg::mul2_ij_ip_jp_x;
-            m_m = input_dims[0][input_dims[0].size() - 2];
-            m_n = input_dims[1][input_dims[1].size() - 2];
-            m_k = input_dims[1][input_dims[1].size() - 1];
-            m_lda = m_k;
-            m_ldb = m_k;
-            m_ldc = m_n;
-        }
-        else
-        {
-            throw bad_parameter(g_ns, k_clazz,"operator()(...)",
-                    __FILE__, __LINE__, "Non-matrix multiply isomorphic kernel is not supported");
+            //Not ignored in output, so must be in C as well
+            last_A_idx_in_C = m_input_indices_sets[i][0];
         }
     }
-    else if(m_input_indices_sets[m_n_loops - 3][0] == (input_dims[0].size() - 1)) // A transpose
+
+    //Do the same for B
+    //Appropriate index from B must immediately follow A_inds_end_in_C
+    size_t N = input_dims[1].size();
+    std::vector<size_t> B_contracted_inds;
+    size_t first_B_idx_in_C;
+    for(size_t i = 0; i < m_n_loops; ++i)
     {
-        if(m_input_indices_sets[m_n_loops - 2][1] == (input_dims[1].size() - 1)) //B no transpose
+        if(m_output_ignore_sets[i][0])
         {
-            m_dgemm_fn = &linalg::mul2_ij_pi_pj_x;
-            m_m = input_dims[0][input_dims[0].size() - 1];
-            m_n = input_dims[1][input_dims[1].size() - 1];
-            m_k = input_dims[1][input_dims[1].size() - 2];
-            m_lda = m_m;
-            m_ldb = m_n;
-            m_ldc = m_n;
+            B_contracted_inds.push_back(m_input_indices_sets[i][1]);
         }
-        else if(m_input_indices_sets[m_n_loops - 2][1] == (input_dims[1].size() - 2)) //B transpose
+        else if(!m_input_ignore_sets[i][1])
         {
-            m_dgemm_fn = &linalg::mul2_ij_pi_jp_x;
-            m_m = input_dims[0][input_dims[0].size() - 1];
-            m_n = input_dims[1][input_dims[1].size() - 2];
-            m_k = input_dims[1][input_dims[1].size() - 1];
-            m_lda = m_m;
-            m_ldb = m_k;
-            m_ldc = m_n;
+            first_B_idx_in_C = m_input_indices_sets[i][1];
         }
-        else
+    }
+
+    //Number of contracted indices must be the same in A and B
+    if(A_contracted_inds.size() != B_contracted_inds.size())
+    {
+        throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                __FILE__, __LINE__, "number of contracted indices must be the same");
+    }
+    size_t n_contracted_inds = A_contracted_inds.size();
+
+    //Determine if A is transposed. It is transposed if the contracted indices appear in reverse order at the beginning
+    //of A
+    bool A_transposed;
+    bool invalid = false;
+    if(A_contracted_inds[n_contracted_inds- 1] == 0)
+    {
+        //If A is transposed, then ALL contracted indices must be grouped together at the BEGINNING
+        A_transposed = true;
+        for(size_t i = 0; i < n_contracted_inds; ++i)
         {
-            throw bad_parameter(g_ns, k_clazz,"operator()(...)",
-                    __FILE__, __LINE__, "Non-matrix multiply isomorphic kernel is not supported");
+            if(A_contracted_inds[i] != i)
+            {
+                invalid = true;
+                break;
+            }
+        }
+        //Additionally, the FIRST non-contracted index must be the last index from A appearing in C 
+        //in order to use a matmul
+        if(last_A_idx_in_C != n_contracted_inds)
+        {
+            invalid = true;
         }
     }
     else
+    {
+        //If A is not transposed, then ALL contracted indices must be grouped together in order at the END
+        A_transposed = false;
+        for(size_t i = 0; i < n_contracted_inds; ++i)
+        {
+            if(A_contracted_inds[i] != M - n_contracted_inds + i)
+            {
+                invalid = true;
+                break;
+            }
+        }
+        //Addtionally, the LAST non-contracted index must be the last index from A appearing in C
+        if(last_A_idx_in_C != M - n_contracted_inds - 1)
+        {
+            invalid = true;
+        }
+    }
+    if(invalid)
     {
         throw bad_parameter(g_ns, k_clazz,"operator()(...)",
                 __FILE__, __LINE__, "Non-matrix multiply isomorphic kernel is not supported");
     }
 
+    //Determine if B is transposed - rules are opposite those of A
+    bool B_transposed;
+    if(B_contracted_inds[0] == 0)
+    {
+        //If B is not transposed, then ALL contracted indices must be grouped together in order at the BEGINNING
+        B_transposed = false;
+        for(size_t i = 0; i < n_contracted_inds; ++i)
+        {
+            if(B_contracted_inds[i] != i)
+            {
+                invalid = true;
+                break;
+            }
+        }
+        //Additionally, the FIRST non-contracted index must be the first index from B appearing in C
+        if(first_B_idx_in_C != n_contracted_inds)
+        {
+            invalid = true;
+        }
+    }
+    else
+    {
+        //If B is transposed, then ALL contracted indices must be grouped together in order at the END
+        B_transposed = true;
+        for(size_t i = 0; i < n_contracted_inds; ++i)
+        {
+            if(B_contracted_inds[i] != N - n_contracted_inds + i)
+            {
+                invalid = true;
+                break;
+            }
+        }
+        //Additionally, the LAST non-contracted index must be the FIRST index from B appearing in C
+        if(first_B_idx_in_C != N - n_contracted_inds - 1)
+        {
+            invalid = true;
+        }
+    }
+    if(invalid)
+    {
+        throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                __FILE__, __LINE__, "Non-matrix multiply isomorphic kernel is not supported");
+    }
+
+    if(!A_transposed)
+    {
+        m_m = input_dims[0][M - n_contracted_inds - 1];
+        m_k = 1;
+        for(size_t contr = 0; contr < n_contracted_inds; ++contr)
+        {
+            m_k *= input_dims[0][M - n_contracted_inds + contr];
+        }
+
+        if(!B_transposed)
+        {
+            m_dgemm_fn = &linalg::mul2_ij_ip_pj_x;
+            m_n = input_dims[1][n_contracted_inds];
+            m_lda = m_k;
+            m_ldb = m_n;
+            m_ldc = m_n;
+        }
+        else
+        {
+            m_dgemm_fn = &linalg::mul2_ij_ip_jp_x;
+            m_n = input_dims[1][0];
+            m_lda = m_k;
+            m_ldb = m_k;
+            m_ldc = m_n;
+        }
+    }
+    else
+    {
+        m_m = input_dims[0][n_contracted_inds];
+        m_k = 1;
+        for(size_t contr = 0; contr < n_contracted_inds; ++contr)
+        {
+            m_k *= input_dims[0][contr];
+        }
+
+        if(!B_transposed)
+        {
+            m_dgemm_fn = &linalg::mul2_ij_pi_pj_x;
+            m_n = input_dims[1][n_contracted_inds];
+            m_lda = m_m;
+            m_ldb = m_n;
+            m_ldc = m_n;
+        }
+        else
+        {
+            m_dgemm_fn = &linalg::mul2_ij_pi_jp_x;
+            m_n = input_dims[1][n_contracted_inds - 1];
+            m_lda = m_m;
+            m_ldb = m_k;
+            m_ldc = m_n;
+        }
+    }
+
     _validate_indices(output_dims,input_dims);
-    _contract_internal(output_ptrs,input_ptrs,output_dims,input_dims);
+    _contract_internal(output_ptrs,input_ptrs,output_dims,input_dims,n_contracted_inds);
 }
 
 
