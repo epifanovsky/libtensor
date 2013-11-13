@@ -284,3 +284,5 @@ target_link_libraries(${TARGET}
     tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
 
+target_link_libraries(libtensor_block_sparse_tests tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+

@@ -4,6 +4,8 @@
 
 namespace libtensor {
 
+//token
+
 //We don't check vector length because assume that is taken care of by template wrappers
 void sparse_block_tree_any_order::init(const std::vector< key_t > sig_blocks)
 {
