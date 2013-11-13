@@ -99,22 +99,20 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
                                       2,4};
     double test_output_block[4];
 
-    runtime_permutation perm(2);
-    perm.permute(0,1);
-    block_permute_kernel<double> b_perm_k(perm);
-
+    std::vector<double*> ptrs;
+    ptrs.push_back(test_output_block);
+    ptrs.push_back(test_input_block);
 
     dim_list dims;
     dims.push_back(2);
     dims.push_back(2);
+    std::vector<dim_list> dim_lists(2,dims);
 
-    sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,const double*> input_ptrs(test_input_block);
-    sequence<1,dim_list> output_dims(dims);
-    sequence<1,dim_list> input_dims(dims);
+    runtime_permutation perm(2);
+    perm.permute(0,1);
+    block_permute_kernel_new<double> b_perm_k(perm);
+    b_perm_k(ptrs,dim_lists);
 
-
-    b_perm_k(output_ptrs,input_ptrs,output_dims,input_dims);
     for(int i = 0; i < 4; ++i)
     {
         if(test_output_block[i] != correct_output_block[i])
@@ -168,24 +166,26 @@ void block_kernels_test::test_block_permute_kernel_3d_201() throw(libtest::test_
 
     double test_output_block[24];
 
+    std::vector<double*> ptrs;
+    ptrs.push_back(test_output_block);
+    ptrs.push_back(test_input_block);
+
+
     runtime_permutation perm(3);
     perm.permute(0,2);
     perm.permute(0,1);
-
-    block_permute_kernel<double> b_perm_k(perm);
 
     dim_list dims;
     dims.push_back(4);
     dims.push_back(2);
     dims.push_back(3);
+    std::vector<dim_list> dim_lists(2);
+    dim_lists[1] = dims;
+    perm.apply(dims);
+    dim_lists[0] = dims;
 
-    sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,const double*> input_ptrs(test_input_block);
-    sequence<1,dim_list> output_dims(dims);
-    sequence<1,dim_list> input_dims(dims);
-
-
-    b_perm_k(output_ptrs,input_ptrs,output_dims,input_dims);
+    block_permute_kernel_new<double> b_perm_k(perm);
+    b_perm_k(ptrs,dim_lists);
     for(int i = 0; i < 24; ++i)
     {
         if(test_output_block[i] != correct_output_block[i])
@@ -248,22 +248,29 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
 
     double test_output_block[24];
 
+    std::vector<double*> ptrs;
+    ptrs.push_back(test_output_block);
+    ptrs.push_back(test_innput_block);
+
+    dim_list input_dims;
+    input_dims.push_back(4);
+    input_dims.push_back(2);
+    input_dims.push_back(3);
+
+    dim_list output_dims;
+    output_dims.push_back(4);
+    output_dims.push_back(2);
+    output_dims.push_back(3);
+
+    std::vector<dim_list> dim_lists;
+    dim_lists.push_back(output_dims);
+    dim_lists.push_back(input_dims);
+
     runtime_permutation perm(3);
     perm.permute(1,2);
     block_permute_kernel<double> b_perm_k(perm);
+    b_perm_k(ptrs,dim_lists);
 
-    dim_list dims;
-    dims.push_back(4);
-    dims.push_back(2);
-    dims.push_back(3);
-
-    sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,const double*> input_ptrs(test_input_block);
-    sequence<1,dim_list> output_dims(dims);
-    sequence<1,dim_list> input_dims(dims);
-
-
-    b_perm_k(output_ptrs,input_ptrs,output_dims,input_dims);
     for(int i = 0; i < 24; ++i)
     {
         if(test_output_block[i] != correct_output_block[i])
