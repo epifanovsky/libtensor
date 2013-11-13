@@ -15,7 +15,7 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_print_kernel_3d();
 
     test_block_permute_kernel_2d();
-    test_block_permute_kernel_3d_201();
+    test_block_permute_kernel_3d_120();
     test_block_permute_kernel_3d_021();
 
     test_block_contract2_kernel_2d_not_enough_indices();
@@ -124,7 +124,7 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
 }
 
 //A more complicated 3D permutation, with indices permuted in cyclic order
-void block_kernels_test::test_block_permute_kernel_3d_201() throw(libtest::test_exception)
+void block_kernels_test::test_block_permute_kernel_3d_120() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_permute_kernel_3d_201()";
 
@@ -250,7 +250,7 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
 
     std::vector<double*> ptrs;
     ptrs.push_back(test_output_block);
-    ptrs.push_back(test_innput_block);
+    ptrs.push_back(test_input_block);
 
     dim_list input_dims;
     input_dims.push_back(4);
@@ -259,8 +259,8 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
 
     dim_list output_dims;
     output_dims.push_back(4);
-    output_dims.push_back(2);
     output_dims.push_back(3);
+    output_dims.push_back(2);
 
     std::vector<dim_list> dim_lists;
     dim_lists.push_back(output_dims);
@@ -268,7 +268,7 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
 
     runtime_permutation perm(3);
     perm.permute(1,2);
-    block_permute_kernel<double> b_perm_k(perm);
+    block_permute_kernel_new<double> b_perm_k(perm);
     b_perm_k(ptrs,dim_lists);
 
     for(int i = 0; i < 24; ++i)
