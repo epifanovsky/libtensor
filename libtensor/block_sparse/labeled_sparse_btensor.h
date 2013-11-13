@@ -61,24 +61,20 @@ template<size_t N,typename T>
 labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labeled_sparse_btensor<N,T>& rhs)
 {
     //Determine the permutation of indices between the two tensors
-    //Permutation is defined as acting on the RHS tensor to produce the THIS tensor
     //We also populate the loops necessary to execute the transformation
-    permute_map pm;
+	std::vector<size_t> permutation_entries(N);
     std::vector< block_loop<1,1> >  loop_list;
     for(size_t i = 0; i < N; ++i)
     {
         const letter& a = m_le.letter_at(i);
         size_t rhs_idx = rhs.m_le.index_of(a);
-        if(rhs_idx != i)
-        {
-            pm.insert(std::make_pair(rhs_idx,i));
-        }
+		permutation_entries[i] = rhs_idx;
 
         //Populate the loop for this index
         loop_list.push_back(block_loop<1,1>(sequence<1,size_t>(i),sequence<1,size_t>(rhs_idx),sequence<1,bool>(false),sequence<1,bool>(false)));
     }
-
-    block_permute_kernel<T> bpk(pm);
+    runtime_permutation perm(permutation_entries);
+    block_permute_kernel<T> bpk(perm);
 
     //Deliberately case away the const
     sequence<1,T*> output_ptrs((T*)this->m_tensor.get_data_ptr());

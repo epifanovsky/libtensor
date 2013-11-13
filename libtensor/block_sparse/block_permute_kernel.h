@@ -4,10 +4,9 @@
 #include <map>
 #include <numeric>
 #include "block_kernel_i.h"
+#include "runtime_permutation.h"
 
 namespace libtensor { 
-
-typedef std::map<size_t,size_t> permute_map;  
 
 //!!!!! MAPS ARE PASSED IN WITH THE CONVENTION input->output!
 template<typename T>
@@ -15,7 +14,7 @@ class block_permute_kernel : public block_kernel_i<1,1,T> {
 public:
     static const char *k_clazz; //!< Class name
 private:
-    permute_map m_perm;
+    runtime_permutation m_perm;
 
     //Recurse internal permutation handler
     void _permute(T* output_ptrs, 
@@ -24,7 +23,7 @@ private:
                   const dim_list& input_dims,
                   size_t output_offset = 0,size_t input_offset = 0,size_t level = 0);
 public:
-    block_permute_kernel(permute_map& perm);
+    block_permute_kernel(const runtime_permutation& perm) : m_perm(perm) {}
 
     //Returns a pointer to a copy of this object
     block_kernel_i<1,1,T>* clone() const { return (block_kernel_i<1,1,T>*) new block_permute_kernel(*this); };  
@@ -38,32 +37,6 @@ public:
 template<typename T>
 const char *block_permute_kernel<T>::k_clazz = "block_permute_kernel<T>";
 
-//Validates the requested permutation
-template<typename T>
-block_permute_kernel<T>::block_permute_kernel(permute_map& perm)
-{
-    //Pre-process the map for application later
-    for(permute_map::iterator pm_it = perm.begin(); pm_it != perm.end(); ++pm_it)
-    {
-        //Verify that the permutation is complete (that all permuted indices are assigned to positions
-std:
-        if(perm.find(pm_it->second) == perm.end())
-        {
-            throw bad_parameter(g_ns, k_clazz,"block_permute_kernel(...)",
-                    __FILE__, __LINE__, "Incomplete permutation map was passed to constructor");
-        }
-
-        //Now invert the map, as the representation of output->input is more convenient to work in
-        //Cannot map two indices to the same location
-        if(m_perm.find(pm_it->second) != m_perm.end()) 
-        {
-            throw bad_parameter(g_ns, k_clazz,"block_permute_kernel(...)",
-                    __FILE__, __LINE__, "Cannot map two indices to the same location");
-        }
-        m_perm[pm_it->second] = pm_it->first;
-    }
-}
-
 template<typename T>
 void block_permute_kernel<T>::_permute(T* output_ptr, 
                                        const T* input_ptr,
@@ -72,15 +45,7 @@ void block_permute_kernel<T>::_permute(T* output_ptr,
                                        size_t output_offset,size_t input_offset,size_t level)
 {
     //Is this index permuted?
-    size_t input_level; 
-    if(m_perm.find(level) != m_perm.end())
-    {
-        input_level = m_perm[level];
-    }
-    else
-    {
-        input_level = level;
-    }
+    size_t input_level = m_perm[level];
 
     //Determine the increment of the input array
     size_t input_incr = 1;
@@ -119,31 +84,20 @@ void block_permute_kernel<T>::operator()(const sequence<1, T*>& output_ptrs,
                                          const sequence<1, dim_list>& output_dims,
                                          const sequence<1, dim_list>& input_dims)
 {
-
-
-    if(input_dims[0].size() != output_dims[0].size())
+	//Permutation must preserve dimensionality
+    if(input_dims[0].size() != output_dims[0].size() || input_dims[0].size() != m_perm.get_order())
     {
             throw bad_parameter(g_ns, k_clazz,"operator(...)",
                     __FILE__, __LINE__, "output and input blocks do not have the same dimensionality");
     } 
 
-    //Check that our map is valid for the block dimensions that we have been passed
-    for(permute_map::iterator pm_it = m_perm.begin(); pm_it != m_perm.end(); ++pm_it)
-    {
-        if((pm_it->first > (output_dims[0].size() - 1)) || (pm_it->second > (output_dims[0].size() - 1)))
-        {
-            throw bad_parameter(g_ns, k_clazz,"operator(...)",
-                    __FILE__, __LINE__, "Permutation map exceeds bounds of block dimensions");
-        }
-    } 
 
     //We generate the correct output dims based on our permutation
-    //Remember, our map is inverted: now is output -> input
     dim_list real_output_dims(input_dims[0]);
-    for(permute_map::iterator pm_it = m_perm.begin(); pm_it != m_perm.end(); ++pm_it)
+    for(size_t i = 0; i < input_dims[0].size(); ++i)
     {
-        real_output_dims[pm_it->first] = input_dims[0][pm_it->second];
-    } 
+        real_output_dims[i] = input_dims[0][m_perm[i]];
+    }
 
     _permute(output_ptrs[0],input_ptrs[0],real_output_dims,input_dims[0]);
 };

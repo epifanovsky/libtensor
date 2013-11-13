@@ -15,9 +15,6 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_print_kernel_3d();
 
     test_block_permute_kernel_2d();
-    test_block_permute_kernel_2d_invalid_perm_incomplete();
-    test_block_permute_kernel_2d_invalid_perm_oob();
-    test_block_permute_kernel_2d_invalid_perm_duplicate();
     test_block_permute_kernel_3d_201();
     test_block_permute_kernel_3d_021();
 
@@ -102,10 +99,8 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
                                       2,4};
     double test_output_block[4];
 
-    permute_map perm;
-    perm.insert(std::make_pair(1,0)); 
-    perm.insert(std::make_pair(0,1)); 
-
+    runtime_permutation perm(2);
+    perm.permute(0,1);
     block_permute_kernel<double> b_perm_k(perm);
 
 
@@ -127,97 +122,6 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
             fail_test(test_name,__FILE__,__LINE__,
                     "block_permute_kernel::operator(...) did not produce correct result");
         }
-    }
-}
-
-//Should throw an exception if we try to construct a kernel with an incomplete permutation 
-void block_kernels_test::test_block_permute_kernel_2d_invalid_perm_incomplete() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_invalid_perm_incomplete()";
-
-    permute_map perm;
-    perm.insert(std::make_pair(1,0)); 
-
-    bool threw_exception = false;
-    try
-    {
-        block_permute_kernel<double> b_perm_k(perm);
-    }
-    catch(bad_parameter&)
-    {
-        threw_exception = true;
-    }
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_permute_kernel<T>::block_permute_kernel(...) did not throw exception when incomplete permutation map supplied");
-    }
-}
-
-//Should throw an exception if we try to process a block with a permutation that lies out of bounds
-void block_kernels_test::test_block_permute_kernel_2d_invalid_perm_oob() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_invalid_perm_oob()";
-
-    double test_input_block[4] = {1,2,
-                                  3,4};
-    double test_output_block[4];
-
-    permute_map perm;
-    perm.insert(std::make_pair(2,0)); 
-    perm.insert(std::make_pair(0,2)); 
-
-    block_permute_kernel<double> b_perm_k(perm);
-
-
-    dim_list dims;
-    dims.push_back(2);
-    dims.push_back(2);
-
-    sequence<1,double*> output_ptrs(test_output_block);
-    sequence<1,const double*> input_ptrs(test_input_block);
-    sequence<1,dim_list> output_dims;
-    sequence<1,dim_list> input_dims(dims);
-
-    bool threw_exception = false;
-    try
-    {
-        b_perm_k(output_ptrs,input_ptrs,output_dims,input_dims);
-    }
-    catch(bad_parameter&)
-    {
-        threw_exception = true;
-    }
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_permute_kernel::operator()(...) did not throw exception when out of bounds permutation map supplied");
-    }
-}
-
-//Should throw an exception if we pass a permutation that maps two indices to the same location
-void block_kernels_test::test_block_permute_kernel_2d_invalid_perm_duplicate() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_invalid_perm_duplicate()";
-
-    permute_map perm;
-    perm.insert(std::make_pair(2,1)); 
-    perm.insert(std::make_pair(0,1)); 
-    perm.insert(std::make_pair(1,0)); 
-
-    bool threw_exception = false;
-    try
-    {
-        block_permute_kernel<double> b_perm_k(perm);
-    }
-    catch(bad_parameter&)
-    {
-        threw_exception = true;
-    }
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_permute_kernel<T>::block_permute_kernel(...) did not throw exception when permutation map with duplicate indices supplied");
     }
 }
 
@@ -264,10 +168,9 @@ void block_kernels_test::test_block_permute_kernel_3d_201() throw(libtest::test_
 
     double test_output_block[24];
 
-    permute_map perm;
-    perm.insert(std::make_pair(1,0)); 
-    perm.insert(std::make_pair(2,1)); 
-    perm.insert(std::make_pair(0,2)); 
+    runtime_permutation perm(3);
+    perm.permute(0,2);
+    perm.permute(0,1);
 
     block_permute_kernel<double> b_perm_k(perm);
 
@@ -345,10 +248,8 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
 
     double test_output_block[24];
 
-    permute_map perm;
-    perm.insert(std::make_pair(2,1)); 
-    perm.insert(std::make_pair(1,2)); 
-
+    runtime_permutation perm(3);
+    perm.permute(1,2);
     block_permute_kernel<double> b_perm_k(perm);
 
     dim_list dims;

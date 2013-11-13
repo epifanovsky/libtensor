@@ -20,9 +20,6 @@ private:
      * block_permute_kernel tests
      */
     void test_block_permute_kernel_2d() throw(libtest::test_exception);
-    void test_block_permute_kernel_2d_invalid_perm_incomplete() throw(libtest::test_exception);
-    void test_block_permute_kernel_2d_invalid_perm_oob() throw(libtest::test_exception);
-    void test_block_permute_kernel_2d_invalid_perm_duplicate() throw(libtest::test_exception);
     void test_block_permute_kernel_3d_201() throw(libtest::test_exception);
     void test_block_permute_kernel_3d_021() throw(libtest::test_exception);
 

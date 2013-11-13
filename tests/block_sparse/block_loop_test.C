@@ -42,10 +42,8 @@ void block_loop_test::test_run_invalid_bispaces() throw(libtest::test_exception)
 
     sparse_bispace<2> two_d = spb_1 | spb_2;
 
-	permute_map perm;
-	perm.insert(std::make_pair(0,1));
-	perm.insert(std::make_pair(1,0));
-
+    runtime_permutation perm(2);
+    perm.permute(0,1);
     block_permute_kernel<double> bpk(perm);
 
 
@@ -155,10 +153,8 @@ void block_loop_test::test_run_block_permute_kernel_2d() throw(libtest::test_exc
     sparse_bispace<2> two_d_input = spb_1 | spb_2;
     sparse_bispace<2> two_d_output = spb_2 | spb_1;
 
-	permute_map perm;
-	perm.insert(std::make_pair(0,1));
-	perm.insert(std::make_pair(1,0));
-
+    runtime_permutation perm(2);
+    perm.permute(0,1);
     block_permute_kernel<double> bpk(perm);
 
 
@@ -261,11 +257,9 @@ void block_loop_test::test_run_block_permute_kernel_2d_sparse() throw(libtest::t
     sparse_bispace<2> two_d_input = spb_1 % spb_2 << sig_blocks;
     sparse_bispace<2> two_d_output = two_d_input.permute(perm);
 
-	permute_map pmap;
-	pmap.insert(std::make_pair(0,1));
-	pmap.insert(std::make_pair(1,0));
-
-    block_permute_kernel<double> bpk(pmap);
+    runtime_permutation rperm(2);
+    rperm.permute(0,1);
+    block_permute_kernel<double> bpk(rperm);
 
 
     sequence<1,size_t> output_bispace_indices_2(0);
@@ -424,11 +418,9 @@ void block_loop_test::test_run_block_permute_kernel_3d_201() throw(libtest::test
     sparse_bispace<3> three_d_input = spb_1 | spb_2 | spb_3;
     sparse_bispace<3> three_d_output = spb_2 | spb_3 | spb_1;
 
-	permute_map perm;
-	perm.insert(std::make_pair(0,2));
-	perm.insert(std::make_pair(1,0));
-	perm.insert(std::make_pair(2,1));
-
+    runtime_permutation perm(3);
+    perm.permute(0,2);
+    perm.permute(0,1);
     block_permute_kernel<double> bpk(perm);
 
     sequence<1,size_t> output_bispace_indices_1(0);
@@ -596,12 +588,10 @@ void block_loop_test::test_run_block_permute_kernel_3d_201_sparse() throw(libtes
     perm.permute(0,2).permute(0,1);
     sparse_bispace<3> three_d_output = three_d_input.permute(perm);
 
-	permute_map pmap;
-	pmap.insert(std::make_pair(0,2));
-	pmap.insert(std::make_pair(1,0));
-	pmap.insert(std::make_pair(2,1));
-
-    block_permute_kernel<double> bpk(pmap);
+    runtime_permutation rperm(3);
+    rperm.permute(0,2);
+    rperm.permute(0,1);
+    block_permute_kernel<double> bpk(rperm);
 
     sequence<1,size_t> output_bispace_indices_1(0);
     sequence<1,size_t> input_bispace_indices_1(1);
