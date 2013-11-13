@@ -42,7 +42,7 @@ private:
                                             std::vector<size_t>& processed_trees,
                                             std::vector<size_t>& processed_tree_offsets);
 public:
-    const block_list& get_sig_block_list(const block_list& cur_block_idxs,size_t loop_idx) const;
+    block_list get_sig_block_list(const block_list& cur_block_idxs,size_t loop_idx) const;
 
 
     template<size_t M,size_t N,typename T>
@@ -52,7 +52,7 @@ public:
 
 };
 
-inline const block_list& loop_list_sparsity_data::get_sig_block_list(const block_list& cur_block_idxs,size_t loop_idx) const
+inline block_list loop_list_sparsity_data::get_sig_block_list(const block_list& cur_block_idxs,size_t loop_idx) const
 {
     //Is there sparsity to apply to this index?
     if(m_is_sparse[loop_idx])
@@ -73,7 +73,16 @@ inline const block_list& loop_list_sparsity_data::get_sig_block_list(const block
             sub_key.push_back(cur_block_idxs[rel_inds[rel_idx]]);
         }
 
-        return cur_tree.get_sub_key_block_list(sub_key);
+        //If the sub key can't be found, there are no blocks associated with it
+        try
+        {
+            const block_list& bl = cur_tree.get_sub_key_block_list(sub_key);
+            return bl;
+        }
+        catch(bad_parameter&)
+        {
+            return block_list();
+        }
     }
     else
     {

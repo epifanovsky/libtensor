@@ -26,14 +26,6 @@ public:
                     const sequence<0, const T*>& input_ptrs,
                     const sequence<1, dim_list>& output_dims,
                     const sequence<0, dim_list>& input_dims);
-
-    //Version called when at least one operand is a direct tensor
-    virtual void operator()(const sequence<1, T*>& output_ptrs, 
-                            const sequence<0, const T*>& input_ptrs,
-                            const sequence<1, dim_list>& output_dims,
-                            const sequence<0, dim_list>& input_dims,
-                            const sequence<1, dim_list>& output_inds,
-                            const sequence<0, dim_list>& input_inds) { (*this)(output_ptrs,input_ptrs,output_dims,input_dims); }
 };
 
 template<typename T>

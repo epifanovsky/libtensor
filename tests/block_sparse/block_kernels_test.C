@@ -1,4 +1,6 @@
 #include <libtensor/block_sparse/block_kernels.h>
+#include <libtensor/block_sparse/sparse_bispace.h>
+#include <libtensor/iface/letter.h>
 #include <sstream>
 #include "block_kernels_test.h" 
 
@@ -40,6 +42,8 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_3d_3d_multi_index();
 
     test_block_subtract_kernel_2d_2d();
+
+    /*test_direct_block_subtract_kernel_2d_2d();*/
 }
 
 
@@ -1771,5 +1775,84 @@ void block_kernels_test::test_block_subtract_kernel_2d_2d() throw(libtest::test_
         }
     }
 }
+
+#if 0
+void block_kernels_test::test_direct_block_subtract_kernel_2d_2d() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_kernels_test::test_direct_block_subtract_kernel_2d_2d()";
+
+    double A_arr[20] = {1,2,3,4,5,
+                        6,7,8,9,10,
+                        11,12,13,14,15,
+                        16,17,18,19,29};
+
+    //Row major
+    double B_arr[20] = {21,26,31,36,41,
+                        22,27,32,37,42,
+                        23,28,33,38,43,
+                        24,29,34,39,44};
+
+
+    //Row major
+    double C_correct_arr[20] = {20,24,28,32,36,
+                                16,20,24,28,32,
+                                12,16,20,24,28,
+                                8,12,16,20,15};
+
+    //First, generate the kernel for basic subtraction, that will be used to generate our direct intermediate
+    std::vector< sequence<1,size_t> > output_indices_sets(2);
+    output_indices_sets[0] = sequence<1,size_t>(0);
+    output_indices_sets[1] = sequence<1,size_t>(1);
+
+    std::vector< sequence<2,size_t> > input_indices_sets(2);
+    input_indices_sets[0][0] = 0;
+    input_indices_sets[0][1] = 0;
+    input_indices_sets[1][0] = 1;
+    input_indices_sets[1][1] = 1;
+
+    std::vector< sequence<1,bool> > output_ignore_sets(2,sequence<1,bool>(false));
+    std::vector< sequence<2,bool> > input_ignore_sets(2,sequence<2,bool>(false));
+
+    block_subtract2_kernel<double> bs2k(output_indices_sets,input_indices_sets,output_ignore_sets,input_ignore_sets);
+
+    sequence<1,double*> output_ptrs(C_arr); 
+    sequence<2,const double*> input_ptrs(B_arr); 
+    input_ptrs[1] = A_arr;
+    sequence<1,dim_list > output_dims;
+    output_dims[0].push_back(4);
+    output_dims[0].push_back(5);
+    sequence<2,dim_list> input_dims;
+    input_dims[0].push_back(4);
+    input_dims[0].push_back(5);
+    input_dims[1].push_back(4);
+    input_dims[1].push_back(5);
+    bs2k(output_ptrs,input_ptrs,output_dims,input_dims);
+
+    //1 block for simplicity
+    sparse_bispace<1> spb_i(4);
+    sparse_bispace<1> spb_j(5);
+    sparse_bispace<2> spb_A = spb_i | spb_j;
+    sparse_btensor<2> A(spb_A,A_arr);
+    sparse_btensor<2> C(spb_A);
+
+    //We execute C - A, with C being formed direct from B and A. The final result is stored in D
+    letter i,j;
+    direct_block_kernel<1,2> d_kern(bs2k,0,B(i|j) - A(i|j),C(i|j));
+
+    //Correct answer
+    double D_correct_arr[20] = {19,22,25,28,31,
+                                10,13,16,19,22,
+                                1,4,7,10,13,
+                                -8,-5,-2,1,-14};
+
+
+    sparse_btensor<2> D_correct(spb_A,D_correct_arr)
+    if(D != D_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "direct_block_kernel::operator(...) did not produce correct result");
+    }
+}
+#endif
 
 } // namespace libtensor

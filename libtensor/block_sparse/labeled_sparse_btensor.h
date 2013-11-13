@@ -114,6 +114,12 @@ public:
     //Evalutates the subtraction and puts the result in C
     void operator()(labeled_sparse_btensor<N,T>& C) const;
 
+    //For direct tensors
+    virtual void operator()(labeled_sparse_btensor<N,T>& dest,std::vector< block_list >& output_block_lists) const {
+        throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                __FILE__, __LINE__, "not implemented");
+    }
+
     //Constructor
     subtract_eval_functor(const labeled_sparse_btensor<N,T>& A, const labeled_sparse_btensor<N,T>& B) : m_A(A),m_B(B) {}
 };

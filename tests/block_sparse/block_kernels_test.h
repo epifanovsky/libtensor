@@ -60,6 +60,11 @@ private:
      * block_subtract_kernel tests
      */
     void test_block_subtract_kernel_2d_2d() throw(libtest::test_exception);
+
+    /*
+     * direct_kernel tests
+     */
+    void test_direct_block_subtract_kernel_2d_2d() throw(libtest::test_exception);
 };
 
 

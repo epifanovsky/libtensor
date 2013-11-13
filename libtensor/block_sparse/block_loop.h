@@ -613,6 +613,12 @@ void loop_list_sparsity_data::extract_trees(const std::vector< block_loop<M,N,T>
                         std::cout << perm[i] << ",";
                     }
                     std::cout << "\n";
+
+                    std::cout << "loops_accessing_tree:";
+                    for(size_t i = 0; i < loops_accessing_tree.size(); ++i)
+                    {
+                        std::cout << "\t" << loops_accessing_tree[i] << "\n";
+                    }
 #endif
                     m_inds_in_trees.push_back(std::vector<size_t>());
                     for(size_t i = 0; i < cur_order; ++i)

@@ -21,7 +21,7 @@ private:
     **/
     void test_get_sub_key_block_list_invalid_key_size() throw(libtest::test_exception);
 
-    /** \brief Ensures that get_sub_key_block_list throws exception when key does not exist 
+    /** \brief Ensures that get_sub_key_block_list returns an empty list when key does not exist 
     **/
     void test_get_sub_key_block_list_nonexistent_key() throw(libtest::test_exception);
     

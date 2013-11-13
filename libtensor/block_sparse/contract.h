@@ -26,6 +26,13 @@ public:
     //Evalutates the contraction and puts the result in C
     void operator()(labeled_sparse_btensor<M+N-(2*K),T>& C) const;
 
+
+    //For direct tensors
+    virtual void operator()(labeled_sparse_btensor<M+N-(2*K),T>& dest,std::vector< block_list >& output_block_lists) const {
+        throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                __FILE__, __LINE__, "not implemented");
+    }
+
     //Constructor
     contract_eval_functor(const letter_expr<K>& le,const labeled_sparse_btensor<M,T>& A,const labeled_sparse_btensor<N,T>& B) : m_le(le),m_A(A),m_B(B) {} 
 };

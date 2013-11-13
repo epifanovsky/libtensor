@@ -28,6 +28,8 @@ public:
     sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem = NULL,bool already_block_major = false);
     virtual ~sparse_btensor();
 
+    //Copy constructor
+    sparse_btensor(const sparse_btensor<N>& rhs) : m_bispace(rhs.m_bispace) { m_data_ptr = new T[m_bispace.get_nnz()]; memcpy(m_data_ptr,rhs.m_data_ptr,m_bispace.get_nnz()*sizeof(T)); }
     /** \brief Return the sparse_bispace defining this tensor 
      **/
     const sparse_bispace<N>& get_bispace() const; 

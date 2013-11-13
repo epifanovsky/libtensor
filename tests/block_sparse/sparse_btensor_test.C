@@ -34,6 +34,8 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_two_indices_3d_3d_sparse_sparse();
 
     test_subtraction_2d_2d();
+
+    test_performance();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -1526,6 +1528,43 @@ void sparse_btensor_test::test_subtraction_2d_2d() throw(libtest::test_exception
         fail_test(test_name,__FILE__,__LINE__,
                 "operator-(...) did not produce correct result");
     }
+}
+
+void sparse_btensor_test::test_performance()
+{
+    //500 basis function calculation
+    size_t N = 500;
+
+    //Fix everything at a d shell
+    std::vector<size_t> split_points_mu;
+    size_t incr = 5;
+    for(size_t i = 5; i < N; i += incr)
+    {
+        split_points_mu.push_back(i);
+    }
+    size_t n_blocks = split_points_mu.size() + 1;
+
+    //TODO: Using just 1 block for debugging
+    //Need 20 neighbor shells, distribute pseudorandomly about this shell
+    std::vector< sequence<2,size_t> > sig_blocks(1);
+    sig_blocks[0][0] = 0;
+    sig_blocks[0][1] = 0;
+
+    sparse_bispace<1> mu(N);
+    mu.split(split_points_mu);
+    sparse_bispace<3> spb_A = mu % mu << sig_blocks | mu;
+    sparse_bispace<3> spb_B = mu | mu % mu << sig_blocks;
+
+    letter i,j,k,l;
+    sparse_bispace<2> spb_C = mu | mu;
+
+    double* A_arr = new double[spb_A.get_nnz()];
+    double* B_arr = new double[spb_B.get_nnz()];
+
+    sparse_btensor<3> A(spb_A,A_arr,true);
+    sparse_btensor<3> B(spb_B,B_arr,true);
+    sparse_btensor<2> C(spb_C);
+    C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
 }
 
 } // namespace libtensor

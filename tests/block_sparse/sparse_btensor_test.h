@@ -55,6 +55,9 @@ private:
     /** \brief Subtraction
      **/
     void test_subtraction_2d_2d() throw(libtest::test_exception);
+
+    //TODO: REMOVE
+    void test_performance();
 };
 
 } // namespace libtensor
