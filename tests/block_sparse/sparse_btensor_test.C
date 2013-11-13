@@ -35,7 +35,7 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_subtraction_2d_2d();
 
-    test_performance();
+//    test_performance();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -1546,9 +1546,42 @@ void sparse_btensor_test::test_performance()
 
     //TODO: Using just 1 block for debugging
     //Need 20 neighbor shells, distribute pseudorandomly about this shell
-    std::vector< sequence<2,size_t> > sig_blocks(1);
-    sig_blocks[0][0] = 0;
-    sig_blocks[0][1] = 0;
+    size_t n_neighbors = 20;
+    std::vector< sequence<2,size_t> > sig_blocks;
+    for(size_t i = 0; i < n_blocks; ++i)
+    {
+		//Lesser neighbors
+    	for(size_t so_far = n_neighbors/2; so_far >= 0; --so_far)
+    	{
+    		if(so_far > i)
+    		{
+    			break;
+    		}
+    		else
+    		{
+    			sequence<2,size_t> new_key;
+    			new_key[0] = i;
+    			new_key[1] = i - so_far;
+    			sig_blocks.push_back(new_key);
+    		}
+    	}
+
+    	//Greater neighbors
+    	for(size_t so_far = 1; so_far < n_neighbors/2; ++so_far)
+    	{
+    		if(i + so_far > n_blocks - 1)
+    		{
+    			break;
+    		}
+    		else
+    		{
+    			sequence<2,size_t> new_key;
+    			new_key[0] = i;
+    			new_key[1] = i + so_far;
+    			sig_blocks.push_back(new_key);
+    		}
+    	}
+    }
 
     sparse_bispace<1> mu(N);
     mu.split(split_points_mu);
