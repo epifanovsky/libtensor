@@ -30,6 +30,9 @@ public:
 	size_t get_subspace_looped(size_t bispace_idx) const;
 
 	bool is_bispace_ignored(size_t bispace_idx) const;
+
+
+	const std::vector< sparse_bispace_any_order > get_bispaces() const { return m_bispaces; }
 };
 
 

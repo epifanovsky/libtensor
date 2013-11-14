@@ -17,7 +17,7 @@ block_loop_new::block_loop_new(const std::vector< sparse_bispace_any_order >& bi
 	if(bispaces.size() == 0)
 	{
 		throw bad_parameter(g_ns, k_clazz,"block_loop_new(...)",
-				__FILE__, __LINE__, "loop must access at least one bispacejkk");
+				__FILE__, __LINE__, "loop must access at least one bispace");
 	}
 }
 
