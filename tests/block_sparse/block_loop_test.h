@@ -10,9 +10,19 @@ public:
     virtual void perform() throw(libtest::test_exception);
 private: 
 
-    void test_range() throw(libtest::test_exception);
+    void test_set_subspace_looped_invalid_bispace_idx() throw(libtest::test_exception);
+    void test_set_subspace_looped_invalid_subspace_idx() throw(libtest::test_exception);
+    void test_set_subspace_looped_not_matching_subspaces() throw(libtest::test_exception);
 
+    void test_get_subspace_looped_invalid_bispace_idx() throw(libtest::test_exception);
+    void test_get_subspace_looped() throw(libtest::test_exception);
 
+    void test_is_bispace_ignored_invalid_bispace_idx() throw(libtest::test_exception);
+    void test_is_bispace_ignored() throw(libtest::test_exception);
+
+    /*
+     * !!!!!!!!!!!!! OLD TESTS REFACTOR INTO NEW AGGREGATE LOOP LIST CODE
+     */
 	void test_run_invalid_bispaces() throw(libtest::test_exception);
 	/*
 	 * Copying

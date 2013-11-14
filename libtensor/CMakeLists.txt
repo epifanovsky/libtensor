@@ -226,6 +226,7 @@ set(SRC_DIAG_TENSOR
 set(SRC_BLOCK_SPARSE
     block_sparse/sparse_block_tree_node.C
     block_sparse/sparse_block_tree_any_order.C
+    block_sparse/block_loop_new.C
 )
 
 if(WITH_ARMADILLO)

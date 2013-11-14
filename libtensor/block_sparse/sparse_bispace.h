@@ -1016,6 +1016,8 @@ private:
         virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
         virtual size_t get_sparse_group_offset(size_t group_idx) const = 0; 
 
+        virtual bool equals(const sparse_bispace_generic_i* rhs) const = 0;
+
         virtual ~sparse_bispace_generic_i() { };
     };
 
@@ -1034,6 +1036,10 @@ private:
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
         sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
+
+        //Same order is assured upstream
+        bool equals(const sparse_bispace_generic_i* rhs) const { return m_bispace == static_cast< const sparse_bispace_generic_wrapper<N>* >(rhs)->m_bispace; }
+
 
         sparse_bispace_generic_i* clone() const { return new sparse_bispace_generic_wrapper(m_bispace); }
     };
@@ -1066,6 +1072,9 @@ public:
 
     //We have to check NULL bcs of stupid default constructor hack
     virtual ~sparse_bispace_any_order() { if(m_spb_ptr != NULL) { delete m_spb_ptr; } };
+
+    bool operator==(const sparse_bispace_any_order& rhs) const { if(get_order() != rhs.get_order()) { return false; } return m_spb_ptr->equals(rhs.m_spb_ptr); }
+    bool operator!=(const sparse_bispace_any_order& rhs) const { return !(*this == rhs); }
 
     //For default constructor hack
     template<size_t N,typename T>
