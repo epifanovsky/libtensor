@@ -28,11 +28,10 @@ void node_transform_test::test_1() {
 
     double c = 0.1;
 
-    node_ident t1(2);
-    node_transform<double> tr1(t1, order, scalar_transf<double>(c));
+    node_transform<double> tr1(order, scalar_transf<double>(c));
 
     node_transform<double> *tr1copy = tr1.clone();
-    if (tr1copy->get_op() != "transform") {
+    if (tr1copy->get_op() != node_transform_base::k_op_type) {
         fail_test(testname, __FILE__, __LINE__, "Node name.");
     }
     if (tr1copy->get_type() != typeid(double)) {
@@ -43,14 +42,6 @@ void node_transform_test::test_1() {
     }
     if (tr1copy->get_coeff().get_coeff() != 0.1) {
         fail_test(testname, __FILE__, __LINE__, "Coefficient.");
-    }
-    const node &n1 = tr1copy->get_arg();
-    if (n1.get_op() != "ident") {
-        fail_test(testname, __FILE__, __LINE__, "Argument type.");
-    }
-    const node_ident &i1 = n1.recast_as<node_ident>();
-    if (i1.get_tid() != 2) {
-        fail_test(testname, __FILE__, __LINE__, "Tensor ID (left).");
     }
 
     } catch(exception &e) {

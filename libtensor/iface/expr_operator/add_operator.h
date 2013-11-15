@@ -16,31 +16,22 @@ namespace iface {
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> operator+(
-    const expr_rhs<N, T> &lhs,
-    const expr_rhs<N, T> &rhs) {
+    expr_rhs<N, T> &lhs,
+    expr_rhs<N, T> &rhs) {
 
-    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+    std::multimap<size_t, size_t> map;
 
-    tensor_list tl(le.get_tensors());
-    tl.merge(re.get_tensors());
-
-    permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
-    if(px.is_identity()) {
-
-        return expr_rhs<N, T>(
-            expr_tree(expr::node_add(le.get_nodes(), re.get_nodes()), tl),
-            lhs.get_label());
-
-    } else {
-
-        std::vector<size_t> perm(N);
-        for(size_t i = 0; i < N; i++) perm[i] = px[i];
-
-        expr::node_transform<T> ntr(re.get_nodes(), perm, scalar_transf<T>());
-        return expr_rhs<N, T>(
-           expr_tree(expr::node_add(le.get_nodes(), ntr), tl),
-           lhs.get_label());
+    permutation<N> p = lhs.get_label().permutation_of(rhs.get_label());
+    for (size_t i = 0; i < N; i++) {
+        map.insert(std::pair<size_t, size_t>(i, p[i]));
     }
+
+    expr_tree res(expr::node_add(N, map));
+    expr_tree::node_id_t root = res.get_root();
+    res.add(root, lhs.get_expr());
+    res.add(root, rhs.get_expr());
+
+    return expr_rhs<N, T>(res, lhs.get_label());
 }
 
 
@@ -53,19 +44,23 @@ expr_rhs<N, T> operator-(
     const expr_rhs<N, T> &lhs,
     const expr_rhs<N, T> &rhs) {
 
-    const expr_tree &le = lhs.get_expr(), &re = rhs.get_expr();
+    std::multimap<size_t, size_t> map;
+    permutation<N> p = lhs.get_label().permutation_of(rhs.get_label());
+    for (size_t i = 0; i < N; i++) {
+        map.insert(std::pair<size_t, size_t>(i, p[i]));
+    }
 
-    tensor_list tl(le.get_tensors());
-    tl.merge(re.get_tensors());
-
-    permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
     std::vector<size_t> perm(N);
-    for(size_t i = 0; i < N; i++) perm[i] = px[i];
+    for (size_t i = 0; i < N; i++) perm[i] = i;
 
-    expr::node_transform<T> ntr(re.get_nodes(), perm, scalar_transf<T>(-1));
-    return expr_rhs<N, T>(
-        expr_tree(expr::node_add(le.get_nodes(), ntr), tl),
-        lhs.get_label());
+    expr_tree e(expr::node_add(N, map));
+    expr_tree::node_id_t id = e.get_root();
+    e.add(id, lhs.get_expr());
+    e.add(id, expr::node_transform<T>(perm, scalar_transf<T>(-1)));
+    id = e.get_edges_out(id).back();
+    e.add(id, rhs.get_expr());
+
+    return expr_rhs<N, T>(res, lhs.get_label());
 }
 
 

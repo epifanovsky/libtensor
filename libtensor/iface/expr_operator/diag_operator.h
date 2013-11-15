@@ -20,6 +20,10 @@ expr_rhs<N - M + 1, T> diag(
     const letter_expr<M> &lab_diag,
     const expr_rhs<N, T> &subexpr) {
 
+    enum {
+        NC = N - M + 1
+    };
+
     std::vector<size_t> diagdims(M, 0);
     std::vector<const letter*> label;
     for(size_t i = 0, j = 0; i < N; i++) {
@@ -27,18 +31,15 @@ expr_rhs<N - M + 1, T> diag(
         if (l == let_diag || ! lab_diag.contains(l)) label.push_back(&l);
         else diagdims[lab_diag.index_of(l)] = i;
     }
-    if(label.size() != N - M + 1) {
+    if(label.size() != NC) {
         throw expr_exception(g_ns, "", "diag(const letter &, "
                 "const letter_expr<M> &, expr_rhs<N, T> &)",
                 __FILE__, __LINE__, "Error in letters");
     }
 
-    const expr_tree &ex = subexpr.get_expr();
-
-    expr::node_diag ndiag(ex.get_nodes(), diagdims);
-    return expr_rhs<N - M + 1, T>(
-        expr_tree(ndiag, ex.get_tensors()),
-        letter_expr<N - M + 1>(label));
+    expr_tree e(expr::node_diag(NC, diagdims));
+    e.add(e.get_root(), subexpr.get_expr());
+    return expr_rhs<NC, T>(res, letter_expr<NC>(label));
 }
 
 

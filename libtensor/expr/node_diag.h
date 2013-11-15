@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_DIAG_H
 
 #include <vector>
-#include "unary_node_base.h"
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -14,16 +14,19 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_diag : public unary_node_base {
+class node_diag : public node {
+public:
+    static const char k_op_type[]; //!< Operation type
+
 private:
     std::vector<size_t> m_ddims; //!< Dimensions to take the diagonal from
 
 public:
     /** \brief Creates an identity node
-        \param tid Tensor ID.
+        \param n Order of result
      **/
-    node_diag(const node &arg, const std::vector<size_t> &diagdims) :
-        unary_node_base("diag", 0, arg), m_ddims(diagdims)
+    node_diag(size_t n, const std::vector<size_t> &diagdims) :
+        node(node_diag::k_op_type, n), m_ddims(diagdims)
     { }
 
     /** \brief Virtual destructor

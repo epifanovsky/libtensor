@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_CONTRACT_H
 
 #include <map>
-#include "nary_node_base.h"
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -10,14 +10,13 @@ namespace expr {
 
 /** \brief Tensor contraction node of the expression tree
 
-    Represents the contraction of n subexpressions over indexes described
-    by the contraction map. Assuming the tensor indexes are arranged
+    Represents the generalized contraction of n subexpression over indexes
+    described by the map. Assuming the tensor indexes are arranged
     successively starting with the indexes of the first tensor argument
-    the contraction map connects the index pairs of the tensors (key-value
-    pairs) over which contractions should be performed.
-    The result will then possess a similar index order as above but with the
-    contraction index pairs missing. Reordering of result indexes can be
-    achieved by a subsequent transformation node.
+    the map connects the index pairs of the tensors (key-value pairs) which
+    should be contracted. The additional contraction flag marks, if
+    summation over those index pairs should be carried out. Reordering of
+    result indexes can be achieved by a subsequent transformation node.
 
     For example, the contraction of three tensors
     \f$ \sum_{rs} A_{pr} B_{rs} C_{sq} \f$
@@ -26,45 +25,25 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_contract : public nary_node_base {
+class node_contract : public node {
+public:
+    static const char k_op_type[]; //!< Operation type
+
 private:
-    std::map<size_t, size_t> m_contr; //!< Contraction map
+    std::multimap<size_t, size_t> m_map; //!< Map
+    bool m_do_contr; //!< Perform contraction
 
 public:
     /** \brief Creates a contraction node of two tensors
-        \param arg1 First argument
-        \param arg2 Second argument
-        \param contr Contraction map
-     **/
-    node_contract(const node &arg1, const node &arg2,
-        const std::map<size_t, size_t> &contr) :
-        nary_node_base("contract",
-            arg1.get_n() + arg2.get_n() - 2 * contr.size(), arg1, arg2),
-            m_contr(contr)
-    { }
-
-    /** \brief Creates a contraction node of three tensors
-        \param arg1 First argument
-        \param arg2 Second argument
-        \param arg3 Third argument
-        \param contr Contraction map
-     **/
-    node_contract(const node &arg1, const node &arg2, const node &arg3,
-        const std::map<size_t, size_t> &contr) :
-        nary_node_base("contract",
-            arg1.get_n() + arg2.get_n() + arg3.get_n() - 2 * contr.size(),
-            create_args(arg1, arg2, arg3)),
-        m_contr(contr)
-    { }
-
-    /** \brief Creates a contraction node of n tensors
-        \param args List of arguments
-        \param contr Contraction map
+        \param n Order of result
+        \param map Contraction map
+        \param do_contr Perform summation
      **/
     node_contract(
-        const std::vector<const node*> &args,
-        const std::map<size_t, size_t> &contr) :
-        nary_node_base("contract", calc_nc(args, contr), args), m_contr(contr)
+        size_t n,
+        const std::multimap<size_t, size_t> &map,
+        bool do_contr = true) :
+        node(node_contract::k_op_type, n), m_map(map), m_do_contr(do_contr)
     { }
 
     /** \brief Virtual destructor
@@ -77,27 +56,13 @@ public:
         return new node_contract(*this);
     }
 
-    const std::map<size_t, size_t> &get_contraction() const {
-        return m_contr;
+    const std::multimap<size_t, size_t> &get_map() const {
+        return m_map;
     }
 
-private:
-    static std::vector<const node*> create_args(
-        const node &n1, const node &n2, const node &n3) {
-
-        std::vector<const node *> args(3);
-        args[0] = &n1; args[1] = &n2; args[2] = &n3;
-        return args;
+    bool do_contract() const {
+        return m_do_contr;
     }
-
-    static size_t calc_nc(const std::vector<const node*> &args,
-        const std::map<size_t, size_t> &contr) {
-
-        size_t na = 0;
-        for(size_t i = 0; i < args.size(); i++) na += args[i]->get_n();
-        return na - 2 * contr.size();
-    }
-
 };
 
 

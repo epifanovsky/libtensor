@@ -20,9 +20,13 @@ private:
 public:
     /** \brief Creates an symmetrization node
      **/
-    node_symm(const node &arg, const std::vector<size_t> &sym, size_t n,
-            const scalar_transf<T> &trp, const scalar_transf<T> &trc) :
-        node_symm_base(arg, sym, n), m_trp(trp), m_trc(trc)
+    node_symm(
+            size_t n,
+            const std::vector<size_t> &sym,
+            size_t nsym,
+            const scalar_transf<T> &trp,
+            const scalar_transf<T> &trc) :
+        node_symm_base(n, sym, nsym), m_trp(trp), m_trc(trc)
     { }
 
     /** \brief Virtual destructor

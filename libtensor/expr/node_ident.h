@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_EXPR_NODE_IDENT_H
 #define LIBTENSOR_EXPR_NODE_IDENT_H
 
-#include "node.h"
+#include <libtensor/iface/any_tensor.h>
+#include "node_ident_base.h"
 
 namespace libtensor {
 namespace expr {
@@ -11,17 +12,15 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_ident : public node {
+template<size_t N, typename T>
+class node_ident : public node_ident_base {
 private:
-    tid_t m_tid; //!< Tensor ID
+    iface::any_tensor<N, T> &m_t;
 
 public:
     /** \brief Creates an identity node
-        \param tid Tensor ID.
-        \param n Tensor order.
      **/
-    node_ident(tid_t tid, size_t n) :
-        node("ident", n), m_tid(tid)
+    node_ident(iface::any_tensor<N, T> &t) : node_ident_base(N), m_t(t)
     { }
 
     /** \brief Virtual destructor
@@ -34,13 +33,36 @@ public:
         return new node_ident(*this);
     }
 
-    /** \brief Returns tensor ID
-     **/
-    tid_t get_tid() const {
-        return m_tid;
+    virtual const std::type_info &get_t() const {
+        return typeid(T);
     }
 
+    /** \brief Returns the tensor
+     **/
+    iface::any_tensor<N, T> &get_tensor() const {
+        return m_t;
+    }
+
+    /** \brief Checks if both identity nodes contain the same tensor
+     **/
+    virtual bool operator==(const node_ident_base &n) const;
+
+private:
+    bool tensor_equals(any_tensor<N, T> &t) {
+        return m_t == t;
+    }
 };
+
+
+template<size_t N, typename T>
+bool node_ident<N, T>::operator==(const node_ident_base &n) const {
+
+    if (n.get_n() == N || n.get_t() == typeid(T)) {
+        return m_t == static_cast<const node_ident<N, T> &>(n).get_tensor();
+    }
+
+    return false;
+}
 
 
 } // namespace expr

@@ -5,6 +5,7 @@
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/expr/node_assign.h>
+#include <libtensor/expr/node_ident.h>
 #include <libtensor/expr/node_transform.h>
 #include "bispace.h"
 #include "btensor_i.h"
@@ -59,16 +60,19 @@ template<size_t N, typename T>
 void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     const letter_expr<N> &label) {
 
-    tensor_list tl(rhs.get_expr().get_tensors());
-    size_t this_tid = tl.get_tensor_id(*this);
-
     permutation<N> px = label.permutation_of(rhs.get_label());
     std::vector<size_t> perm(N);
     for(size_t i = 0; i < N; i++) perm[i] = px[i];
 
-    expr::node_transform<T> ntr(rhs.get_expr().get_nodes(), perm,
-        scalar_transf<T>());
-    expr_tree e(expr::node_assign(this_tid, ntr), tl);
+    expr_tree e(expr::node_assign(N));
+    expr_tree::node_id_t root = e.get_root();
+    expr_tree::node_id_t lid = e.add(expr::node_ident<N, T>(*this));
+    expr_tree::node_id_t rid =
+            e.add(expr::node_transform<T>(perm, scalar_transf<T>()));
+    e.add(root, lid);
+    e.add(root, rid);
+    e.add(rid, rhs.get_expr());
+
     eval_btensor<T>().evaluate(e);
 }
 

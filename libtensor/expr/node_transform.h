@@ -24,11 +24,10 @@ public:
         \param c Scaling coefficient.
      **/
     node_transform(
-        const node &node,
         const std::vector<size_t> &perm,
         const scalar_transf<T> &c) :
 
-        node_transform_base(node, perm), m_coeff(c)
+        node_transform_base(perm), m_coeff(c)
     { }
 
     /** \brief Virtual destructor

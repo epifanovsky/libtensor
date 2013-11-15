@@ -3,7 +3,8 @@
 
 #include <typeinfo>
 #include <vector>
-#include "unary_node_base.h"
+#include <libtensor/exception.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -13,23 +14,20 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_transform_base : public unary_node_base {
+class node_transform_base : public node {
+public:
+    static const char k_op_type[];
+
 private:
     std::vector<size_t> m_perm; //!< Permutation of indices
 
 public:
     /** \brief Creates a transformation node with index permutation
-        \param node Node argument.
         \param perm Permutation of indices.
      **/
-    node_transform_base(
-        const node &node,
-        const std::vector<size_t> &perm) :
-
-        unary_node_base("transform", node.get_n(), node), m_perm(perm) {
-
-        check();
-    }
+    node_transform_base(const std::vector<size_t> &perm) :
+        node(node_transform_base::k_op_type, perm.size()), m_perm(perm)
+    { }
 
     /** \brief Virtual destructor
      **/
@@ -50,8 +48,25 @@ public:
     }
 
 private:
-    void check();
+    void check() {
+#ifdef LIBTENSOR_DEBUG
+    std::vector<bool> ok(m_perm.size(), false);
+    for(size_t i = 0; i < m_perm.size(); i++) {
+        if (ok[m_perm[i]]) {
+            throw generic_exception(g_ns, "node_transform_base", "check()",
+                    __FILE__, __LINE__, "Index duplicate.");
+        }
 
+        ok[m_perm[i]] = true;
+    }
+
+    for(size_t i = 0; i < m_perm.size(); i++) {
+        if(!ok[m_perm[i]])
+            throw generic_exception(g_ns, "node_transform_base", "check()",
+                    __FILE__, __LINE__, "Index missing.");
+    }
+#endif // LIBTENSOR_DEBUG
+    }
 };
 
 

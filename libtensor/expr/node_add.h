@@ -1,7 +1,8 @@
 #ifndef LIBTENSOR_EXPR_NODE_ADD_H
 #define LIBTENSOR_EXPR_NODE_ADD_H
 
-#include "nary_node_base.h"
+#include <map>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -9,25 +10,23 @@ namespace expr {
 
 /** \brief Tensor addition node of the expression tree
 
-    Node for adding two expression subtrees
+    Node for adding expression subtrees
 
     \ingroup libtensor_expr
  **/
-class node_add : public nary_node_base {
+class node_add : public node {
+public:
+    static const char k_op_type[]; //!< Operation type
+
+private:
+    std::multimap<size_t, size_t> m_map; //!< Map
+
 public:
     /** \brief Creates an addition node
-        \param arg1 First argument.
-        \param arg2 Second argument.
+        \param n Order of result.
      **/
-    node_add(const node &arg1, const node &arg2) :
-        nary_node_base("add", arg1.get_n(), arg1, arg2)
-    { }
-
-    /** \brief Creates an addition node
-        \param args List of arguments.
-     **/
-    node_add(const std::vector<const node *> &args) :
-        nary_node_base("add", args.empty() ? 0 : args[0]->get_n(), args)
+    node_add(size_t n, const std::multimap<size_t, size_t> &map) :
+        node(node_add::k_op_type, n), m_map(map)
     { }
 
     /** \brief Virtual destructor
@@ -38,6 +37,10 @@ public:
      **/
     virtual node_add *clone() const {
         return new node_add(*this);
+    }
+
+    const std::multimap<size_t, size_t> &get_map() const {
+        return m_map;
     }
 };
 

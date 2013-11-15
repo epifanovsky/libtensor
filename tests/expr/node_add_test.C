@@ -2,7 +2,6 @@
 #include <sstream>
 #include <libtensor/exception.h>
 #include <libtensor/expr/node_add.h>
-#include <libtensor/expr/node_ident.h>
 #include "node_add_test.h"
 
 namespace libtensor {
@@ -24,29 +23,23 @@ void node_add_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    node_ident t1(2), t2(3);
-    node_add c1(t1, t2);
+
+    std::multimap<size_t, size_t> map;
+    map.insert(std::pair<size_t, size_t>(0, 3));
+    map.insert(std::pair<size_t, size_t>(1, 2));
+
+    node_add c1(5, map);
 
     node_add *c1copy = c1.clone();
-    if (c1copy->get_nargs() != 2) {
-        fail_test(testname, __FILE__, __LINE__,
-                "Wrong number of arguments.");
+    if (c1copy->get_op().compare(node_add::k_op_type) != 0) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong op type.");
+    }
+    if (c1copy->get_n() != 5) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order.");
     }
 
-    std::vector<unsigned> ids(2); ids[0] = 2; ids[1] = 3;
-    for (size_t i = 0; i < c1copy->get_nargs(); i++) {
-        const node &ni = c1copy->get_arg(i);
-        if (ni.get_op() != "ident") {
-            std::ostringstream oss;
-            oss << "Node type (node " << i << ").";
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-        }
-        const node_ident &id = ni.recast_as<node_ident>();
-        if (id.get_tid() != ids[i]) {
-            std::ostringstream oss;
-            oss << "Tensor ID (node " << i << ").";
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-        }
+    if (c1copy->get_map() != map) {
+        fail_test(testname, __FILE__, __LINE__, "Inconsistent map.");
     }
 
     } catch(exception &e) {
@@ -61,31 +54,19 @@ void node_add_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    node_ident t1(2), t2(3), t3(4);
-    std::vector<const node *> args(3);
-    args[0] = &t1; args[1] = &t2; args[2] = &t3;
-    node_add c1(args);
+    std::multimap<size_t, size_t> map;
+    node_add c1(4, map);
 
     node_add *c1copy = c1.clone();
-    if (c1copy->get_nargs() != 3) {
-        fail_test(testname, __FILE__, __LINE__,
-                "Wrong number of arguments.");
+    if (c1copy->get_op().compare(node_add::k_op_type) != 0) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong op type.");
+    }
+    if (c1copy->get_n() != 4) {
+        fail_test(testname, __FILE__, __LINE__, "Wrong tensor order.");
     }
 
-    std::vector<unsigned> ids(3); ids[0] = 2; ids[1] = 3; ids[2] = 4;
-    for (size_t i = 0; i < c1copy->get_nargs(); i++) {
-        const node &ni = c1copy->get_arg(i);
-        if (ni.get_op() != "ident") {
-            std::ostringstream oss;
-            oss << "Node type (node " << i << ").";
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-        }
-        const node_ident &id = ni.recast_as<node_ident>();
-        if (id.get_tid() != ids[i]) {
-            std::ostringstream oss;
-            oss << "Tensor ID (node " << i << ").";
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
-        }
+    if (c1copy->get_map() != map) {
+        fail_test(testname, __FILE__, __LINE__, "Inconsistent map.");
     }
 
     } catch(exception &e) {

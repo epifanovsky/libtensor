@@ -6,8 +6,6 @@
 
 namespace libtensor {
 
-const char expr::node_div::k_op_type[] = "div";
-
 
 void graph_test::perform() throw(libtest::test_exception) {
 

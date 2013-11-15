@@ -4,14 +4,10 @@
 #include <libtest/test_suite.h>
 #include "eval_plan_test.h"
 #include "graph_test.h"
-//#include "node_add_test.h"
-//#include "node_contract_test.h"
-//#include "node_diag_test.h"
-//#include "node_dirprod_test.h"
-//#include "node_dirsum_test.h"
-//#include "node_ewmult_test.h"
-//#include "node_mult_test.h"
-//#include "node_transform_test.h"
+#include "node_add_test.h"
+#include "node_contract_test.h"
+#include "node_diag_test.h"
+#include "node_transform_test.h"
 
 using libtest::unit_test_factory;
 
@@ -40,16 +36,12 @@ namespace libtensor {
  **/
 class libtensor_expr_suite : public libtest::test_suite {
 private:
-    unit_test_factory<eval_plan_test> m_utf_eval_plan;
+//    unit_test_factory<eval_plan_test> m_utf_eval_plan;
     unit_test_factory<graph_test> m_utf_graph;
-//    unit_test_factory<node_contract_test> m_utf_node_add;
-//    unit_test_factory<node_contract_test> m_utf_node_contract;
-//    unit_test_factory<node_contract_test> m_utf_node_diag;
-//    unit_test_factory<node_contract_test> m_utf_node_dirprod;
-//    unit_test_factory<node_contract_test> m_utf_node_dirsum;
-//    unit_test_factory<node_contract_test> m_utf_node_ewmult;
-//    unit_test_factory<node_contract_test> m_utf_node_mult;
-//    unit_test_factory<node_transform_test> m_utf_node_transform;
+    unit_test_factory<node_add_test> m_utf_node_add;
+    unit_test_factory<node_contract_test> m_utf_node_contract;
+    unit_test_factory<node_diag_test> m_utf_node_diag;
+    unit_test_factory<node_transform_test> m_utf_node_transform;
 
 public:
     //! Creates the suite

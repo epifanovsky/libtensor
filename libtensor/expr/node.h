@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_NODE_H
 #define LIBTENSOR_EXPR_NODE_H
 
-#include <map>
+#include <vector>
 #include <string>
 
 namespace libtensor {
@@ -13,21 +13,15 @@ namespace expr {
     \ingroup libtensor_expr
  **/
 class node {
-public:
-    typedef size_t tid_t; //!< Tensor ID type
-
 private:
     std::string m_op; //!< Operation name
-    size_t m_n; //!< Order of result
+    size_t m_n; //!< Order of tensor represented by node
 
 public:
     /** \brief Creates this node
-        \param op Operation name.
         \param n Order of result.
      **/
-    node(const std::string &op, size_t n) :
-        m_op(op), m_n(n)
-    { }
+    node(const std::string &op, size_t n) : m_op(op), m_n(n) { }
 
     /** \brief Virtual destructor
      **/
@@ -56,7 +50,6 @@ public:
     const T &recast_as() const {
         return dynamic_cast<const T&>(*this);
     }
-
 };
 
 

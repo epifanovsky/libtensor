@@ -1,8 +1,7 @@
 #ifndef LIBTENSOR_IFACE_EXPR_TREE_H
 #define LIBTENSOR_IFACE_EXPR_TREE_H
 
-#include <libtensor/expr/node.h>
-#include "tensor_list.h"
+#include <libtensor/expr/graph.h>
 
 namespace libtensor {
 namespace iface {
@@ -12,59 +11,60 @@ namespace iface {
 
     \ingroup libtensor_iface
  **/
-class expr_tree {
+class expr_tree : public expr::graph {
 private:
-    expr::node *m_root; //!< Root node
-    tensor_list m_tl; //!< List of tensors
+    node_id_t m_root; //!< Root node
 
 public:
-    /** \brief Constructs an expression using the root node and a database of
-            tensors (tensor list is copied)
+    /** \brief Constructs an expression tree consisting of a single node
      **/
-    expr_tree(const expr::node &root, const tensor_list &tl) :
-        m_root(root.clone()), m_tl(tl)
-    { }
-
-    /** \brief Constructs an expression using the root node and a database of
-            tensors (tensor list is transferred)
-     **/
-    expr_tree(const expr::node &root, tensor_list &tl) :
-        m_root(root.clone()), m_tl(tl, 1)
-    { }
-
-    /** \brief Copy constructor
-     **/
-    expr_tree(const expr_tree &e) :
-        m_root(e.m_root->clone()), m_tl(e.m_tl)
-    { }
-
-    /** \brief Transfer constructor
-     **/
-    expr_tree(expr_tree &e) :
-        m_root(e.m_root), m_tl(e.m_tl, 1) {
-        e.m_root = 0;
+    expr_tree(const expr::node &n) : m_root(0) {
+        m_root = expr::graph::add(n);
     }
 
     /** \brief Destructor
      **/
-    ~expr_tree() {
-        delete m_root;
-    }
+    virtual ~expr_tree() { }
 
-    libtensor::expr::node &get_nodes() {
-        return *m_root;
-    }
+    /** \brief Adds new node n as the next child of node id
+     **/
+    void add(node_id_t id, const expr::node &n);
 
-    const libtensor::expr::node &get_nodes() const {
-        return *m_root;
-    }
+    /** \brief Adds expression tree as the next child of node id
+     **/
+    void add(node_id_t id, const expr_tree &subtree);
 
-    tensor_list &get_tensors() {
-        return m_tl;
-    }
+    /** \brief Adds new node n at the position of node id
 
-    const tensor_list &get_tensors() const {
-        return m_tl;
+        Node id becomes the first child node of n
+     **/
+    void insert(node_id_t id, const expr::node &n);
+
+    /** \brief Deletes subtree with head node h
+
+        h is also deleted if it is not the tree root
+     **/
+    void erase_subtree(node_id_t h);
+
+    /** \brief Move subtree with head h1 to node h2 as its next child
+        \return True, if successful
+
+        The operation will only succeed if h2 is not part of h1.
+     **/
+    bool move(node_id_t h1, node_id_t h2);
+
+    /** \brief Replaces subtree with head h1 by subtree with head h2
+        \return True, if successful
+
+        Subtree at h1 is deleted. The operation will only succeed if h1 is not
+        part of h2.
+     **/
+    bool replace(node_id_t h1, node_id_t h2);
+
+    /** \brief Returns head node of tree
+     **/
+    node_id_t get_root() const {
+        return m_root;
     }
 };
 

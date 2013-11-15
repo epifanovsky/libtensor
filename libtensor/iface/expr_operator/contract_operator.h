@@ -22,10 +22,6 @@ expr_rhs<N + M - 2 * K, T> contract(
     const expr_rhs<N, T> &a,
     const expr_rhs<M, T> &b) {
 
-    const expr_tree &ea = a.get_expr(), &eb = b.get_expr();
-    tensor_list tl(ea.get_tensors());
-    tl.merge(eb.get_tensors());
-
     std::map<size_t, size_t> cseq;
     std::vector<const letter*> label;
     for(size_t i = 0; i < N; i++) {
@@ -42,8 +38,12 @@ expr_rhs<N + M - 2 * K, T> contract(
         NC = N + M - 2 * K
     };
 
-    expr::node_contract ncon(ea.get_nodes(), eb.get_nodes(), cseq);
-    return expr_rhs<NC, T>(expr_tree(ncon, tl), letter_expr<NC>(label));
+    expr_tree e(expr::node_contract(NC, cseq, true));
+    expr_tree::node_id_t id = e.get_root();
+    e.add(id, lhs.get_expr());
+    e.add(id, rhs.get_expr());
+
+    return expr_rhs<NC, T>(res, letter_expr<NC>(label));
 }
 
 
@@ -64,7 +64,6 @@ expr_rhs<N + M - 2, T> contract(
 }
 
 
-#if 0
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
 expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K1> contr1,
@@ -73,15 +72,7 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K2> contr2,
     expr_rhs<N3, T> btc) {
 
-    const expr_tree &exa = bta.get_expr();
-    const expr_tree &exb = btb.get_expr();
-    const expr_tree &exc = btc.get_expr();
-
-    tensor_list tl(exa.get_tensors());
-    tl.merge(exb.get_tensors());
-    tl.merge(exc.get_tensors());
-
-    std::map<size_t, size_t> cseq;
+    std::multimap<size_t, size_t> cseq;
     std::vector<const letter *> label;
     for (size_t i = 0; i < N1; i++) {
         const letter &l = bta.letter_at(i);
@@ -109,10 +100,17 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
         label.push_back(&l);
     }
 
-    return expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T>(
-            expr_tree(expr::node_contract(exa.get_nodes(),
-                    exb.get_nodes(), exb.get_nodes(), cseq), tl),
-            letter_expr<N1 + N2 + N3 - 2 * K1 - 2 * K2, T>(label));
+    enum {
+        N = N1 + N2 + N3 - 2 * K1 - 2 * K2
+    };
+
+    expr_tree e(expr::node_contract(N, cseq, true));
+    expr_tree::node_id_t id = e.get_root();
+    e.add(id, bta.get_expr());
+    e.add(id, btb.get_expr());
+    e.add(id, btc.get_expr());
+
+    return expr_rhs<N, T>(e, letter_expr<N>(label));
 }
 
 
@@ -124,14 +122,8 @@ expr_rhs<N1 + N2 + N3 - 4, T> contract(
     const letter &let2,
     expr_rhs<N3, T, A3> btc) {
 
-    return contract(
-        letter_expr<1>(let1),
-        expr_rhs<N1, T>(ident_core<N1, T, A1>(bta)),
-        expr_rhs<N2, T>(ident_core<N2, T, A2>(btb)),
-        letter_expr<1>(let2),
-        expr_rhs<N2, T>(ident_core<N3, T, A3>(btc)));
+    return contract(letter_expr<1>(let1), bta, btb, letter_expr<1>(let2), btc);
 }
-#endif
 
 
 } // namespace iface

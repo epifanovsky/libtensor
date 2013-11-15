@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_SYMM_BASE_H
 
 #include <vector>
-#include "unary_node_base.h"
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -18,17 +18,22 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class node_symm_base : public unary_node_base {
+class node_symm_base : public node {
+public:
+    static const char k_op_type[]; //!< Operation type
+
 private:
     std::vector<size_t> m_sym; //!< Symmetrization sequence
     size_t m_nsym; //!< Order of symmetrization (2: pair sym, 3: triple sym, ..)
 
 public:
     /** \brief Creates an identity node
-        \param tid Tensor ID.
+        \param n Order of result
+        \param sym Symmetrization sequence
+        \param nsym Order of symmetrization
      **/
-    node_symm_base(const node &arg, const std::vector<size_t> &sym, size_t n) :
-        unary_node_base("symm", arg.get_n(), arg), m_sym(sym), m_nsym(n)
+    node_symm_base(size_t n, const std::vector<size_t> &sym, size_t nsym) :
+        node(node_symm_base::k_op_type, n), m_sym(sym), m_nsym(nsym)
     { }
 
     /** \brief Virtual destructor

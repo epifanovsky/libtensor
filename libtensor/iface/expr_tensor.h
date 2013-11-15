@@ -24,7 +24,7 @@ private:
 public:
     /** \brief Constructs an empty object
      **/
-    expr_tensor() { }
+    expr_tensor() : m_expr(0) { }
 
     /** \brief Virtual destructor
      **/

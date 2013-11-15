@@ -12,47 +12,28 @@ namespace expr {
     \ingroup libtensor_expr
  **/
 class node_assign : public node {
+public:
+    static const char k_op_type[]; //!< Operation type
+
 private:
-    tid_t m_tid; //!< Tensor ID
-    node *m_rhs; //!< Operation to be assigned
     bool m_add; //!< Assignment under addition (A += B)
 
 public:
     /** \brief Creates an assignment node
+        \param n Tensor order
+        \param add Add to result
      **/
-    node_assign(tid_t tid, const node &rhs, bool add = false) :
-        node("assign", rhs.get_n()), m_tid(tid), m_rhs(rhs.clone()),
-        m_add(add)
-    { }
-
-    /** \brief Copy constructor
-     **/
-    node_assign(const node_assign &n) :
-        node(n), m_tid(n.m_tid), m_rhs(n.m_rhs->clone()), m_add(n.m_add)
-    { }
+    node_assign(size_t n, bool add = false) :
+        node(node_assign::k_op_type, n), m_add(add) { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~node_assign() {
-        delete m_rhs;
-    }
+    virtual ~node_assign() { }
 
     /** \brief Creates a copy of the node via new
      **/
     virtual node_assign *clone() const {
         return new node_assign(*this);
-    }
-
-    /** \brief Returns the tensor ID on the left-hand side of the assignment
-     **/
-    tid_t get_tid() const {
-        return m_tid;
-    }
-
-    /** \brief Returns the right-hand side of the assignment
-     **/
-    const node &get_rhs() const {
-        return *m_rhs;
     }
 
     /** \brief Returns whether this is an add-to assignment

@@ -19,16 +19,15 @@ set(SRC
     symmetry/product_table_container.C
     symmetry/product_table_i.C
     expr/graph.C
-    expr/node_transform_base.C
-    expr/nary_node_base.C
+    expr/node_statics.C
     expr/print_node.C
-    iface/tensor_list.C
-    iface/btensor/impl/eval_btensor_double.C
-    iface/btensor/impl/eval_btensor_double_contract.C
-    iface/btensor/impl/eval_btensor_double_copy.C
-    iface/btensor/impl/eval_btensor_double_symm.C
-    iface/btensor/impl/eval_plan_builder_btensor.C
-    iface/btensor/impl/node_inspector.C
+#    iface/tensor_list.C
+#    iface/btensor/impl/eval_btensor_double.C
+#    iface/btensor/impl/eval_btensor_double_contract.C
+#    iface/btensor/impl/eval_btensor_double_copy.C
+#    iface/btensor/impl/eval_btensor_double_symm.C
+#    iface/btensor/impl/eval_plan_builder_btensor.C
+#    iface/btensor/impl/node_inspector.C
 )
 
 set(SRC_LINALG_ACML

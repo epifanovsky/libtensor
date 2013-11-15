@@ -29,12 +29,10 @@ expr_rhs<N, T> symm(
         sym[j++] = subexpr.index_of(l2);
     }
 
-    const expr_tree &ex = subexpr.get_expr();
-
-    expr::node_symm<T> nsym(ex.get_nodes(), sym, 2, scalar_transf<T>(),
-        scalar_transf<T>());
-    return expr_rhs<N, T>(
-        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
+    expr_tree e(expr::node_symm<T>(sym, 2,
+            scalar_transf<T>(), scalar_transf<T>()));
+    e.add(e.get_root(), subexpr.get_expr());
+    return expr_rhs<N, T>(e, subexpr.get_label());
 }
 
 
@@ -60,12 +58,10 @@ expr_rhs<N, T> asymm(
         sym[j++] = subexpr.index_of(l2);
     }
 
-    const expr_tree &ex = subexpr.get_expr();
-
-    expr::node_symm<T> nsym(ex.get_nodes(), sym, 2, scalar_transf<T>(-1),
-        scalar_transf<T>());
-    return expr_rhs<N, T>(
-        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
+    expr_tree e(expr::node_symm<T>(sym, 2,
+            scalar_transf<T>(-1), scalar_transf<T>()));
+    e.add(e.get_root(), subexpr.get_expr());
+    return expr_rhs<N, T>(e, subexpr.get_label());
 }
 
 
@@ -87,12 +83,10 @@ expr_rhs<N, T> symm(
     sym[1] = subexpr.index_of(l2);
     sym[2] = subexpr.index_of(l3);
 
-    const expr_tree &ex = subexpr.get_expr();
-
-    expr::node_symm<T> nsym(ex.get_nodes(), sym, 3, scalar_transf<T>(),
-        scalar_transf<T>());
-    return expr_rhs<N, T>(
-        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
+    expr_tree e(expr::node_symm<T>(sym, 3,
+            scalar_transf<T>(), scalar_transf<T>()));
+    e.add(res.get_root(), subexpr.get_expr());
+    return expr_rhs<N, T>(e, subexpr.get_label());
 }
 
 
@@ -114,12 +108,10 @@ expr_rhs<N, T> asymm(
     sym[1] = subexpr.index_of(l2);
     sym[2] = subexpr.index_of(l3);
 
-    const expr_tree &ex = subexpr.get_expr();
-
-    expr::node_symm<T> nsym(ex.get_nodes(), sym, 3, scalar_transf<T>(-1),
-        scalar_transf<T>());
-    return expr_rhs<N, T>(
-        expr_tree(nsym, ex.get_tensors()), subexpr.get_label());
+    expr_tree e(expr::node_symm<T>(sym, 3,
+            scalar_transf<T>(-1), scalar_transf<T>()));
+    e.add(e.get_root(), subexpr.get_expr());
+    return expr_rhs<N, T>(e, subexpr.get_label());
 }
 
 
