@@ -12,10 +12,8 @@ namespace libtensor
 
 const char* sparse_loop_list::k_clazz = "sparse_loop_list";
 
-sparse_loop_list::sparse_loop_list()
+sparse_loop_list::sparse_loop_list(const std::vector< sparse_bispace_any_order >& bispaces) : m_bispaces(bispaces)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 void sparse_loop_list::add_loop(const block_loop_new& loop)
@@ -24,16 +22,15 @@ void sparse_loop_list::add_loop(const block_loop_new& loop)
 	if(m_loops.size() > 0)
 	{
 		//Check that bispaces are compatible with existing loops
-		const std::vector< sparse_bispace_any_order >& ref_bispaces = m_loops[0].get_bispaces();
-		if(ref_bispaces.size() != cur_bispaces.size())
+		if(m_bispaces.size() != cur_bispaces.size())
 		{
 			throw bad_parameter(g_ns, k_clazz,"add_loop(...)",
 					__FILE__, __LINE__, "wrong number of bispaces in loop to be added");
 		}
 
-		for(size_t i = 0; i < ref_bispaces.size(); ++i)
+		for(size_t i = 0; i < m_bispaces.size(); ++i)
 		{
-			if(ref_bispaces[i] != cur_bispaces[i])
+			if(m_bispaces[i] != cur_bispaces[i])
 			{
 				throw bad_parameter(g_ns, k_clazz,"add_loop(...)",
 						__FILE__, __LINE__, "bispaces of loop do not match those already in loop list");
@@ -75,6 +72,25 @@ void sparse_loop_list::add_loop(const block_loop_new& loop)
 				__FILE__, __LINE__, "a loop may not ignore all bispaces");
 	}
 	m_loops.push_back(loop);
+}
+
+std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(
+		size_t bispace_idx) const
+{
+	std::vector<size_t> loops_that_access_bispace;
+	if(bispace_idx >= m_bispaces.size())
+	{
+		throw out_of_bounds(g_ns, k_clazz,"get_loops_that_access_bispace(...)",
+				__FILE__, __LINE__, "bispace index out of bounds");
+	}
+	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+	{
+		if(!m_loops[loop_idx].is_bispace_ignored(bispace_idx))
+		{
+			loops_that_access_bispace.push_back(loop_idx);
+		}
+	}
+	return loops_that_access_bispace;
 }
 
 } /* namespace libtensor */

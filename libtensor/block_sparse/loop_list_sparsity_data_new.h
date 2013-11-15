@@ -1,0 +1,33 @@
+/*
+ * loop_list_sparsity_data_new.h
+ *
+ *  Created on: Nov 14, 2013
+ *      Author: smanzer
+ */
+
+#ifndef LOOP_LIST_SPARSITY_DATA_NEW_H_
+#define LOOP_LIST_SPARSITY_DATA_NEW_H_
+
+#include "sparse_loop_list.h"
+#include <utility>
+
+namespace libtensor
+{
+
+class loop_list_sparsity_data_new
+{
+private:
+	std::vector< block_list > m_subspace_block_lists;
+	std::vector< sparse_block_tree_any_order > m_trees;
+	std::map< size_t, std::pair<size_t,size_t> > m_loops_to_tree_subspaces;
+public:
+	//We choose to friend loop_list and use its loop vector member var instead of having the vector passed directly
+	//because then sparse_loop_list handles validating the loops
+	loop_list_sparsity_data_new(const sparse_loop_list& loop_list);
+
+	block_list get_sig_block_list(const block_list& sub_key,size_t loop_idx) const;
+};
+
+} /* namespace libtensor */
+
+#endif /* LOOP_LIST_SPARSITY_DATA_NEW_H_ */

@@ -1,6 +1,7 @@
 #include "sparse_block_tree_any_order.h"
 #include "../defs.h"
 #include "../exception.h"
+#include "range.h"
 
 namespace libtensor {
 
@@ -209,46 +210,29 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
     size_t out_order = m_order+rhs.m_order-n_fused_inds;
     std::vector<key_t> new_keys;
 
-    for(size_t i = 1; i < lhs_indices.size(); ++i)
-    {
-        size_t cur_lhs = lhs_indices[i]; 
-        size_t prev_lhs = lhs_indices[i-1]; 
-        if(cur_lhs < prev_lhs)
-        {
-            throw bad_parameter(g_ns,"sparse_block_tree_any_order","fuse(...)",
-                __FILE__,__LINE__,"lhs not strictly increasing"); 
-        }
-    }
-
-
     //Permute RHS to bring the fused indices to the left-most position...
     size_t rhs_order = rhs.get_order();
-    std::vector<size_t> permutation_entries(rhs_order);
-    for(size_t i = 0; i < rhs_indices.size(); ++i)
+    std::vector<size_t> permutation_entries;
+    std::vector<size_t> indices_to_erase;
+    for(size_t rhs_fused_idx_incr = 0; rhs_fused_idx_incr < rhs_indices.size(); ++rhs_fused_idx_incr)
     {
-        permutation_entries[i] = rhs_indices[i];
+    	size_t rhs_fused_idx = rhs_indices[rhs_fused_idx_incr];
+    	permutation_entries.push_back(rhs_fused_idx);
+    	indices_to_erase.push_back(rhs_fused_idx);
     }
 
-    size_t cur_fused_idx = 0;
-    size_t idx_excluding_fused = 0; 
-    for(size_t i = rhs_indices.size(); i < rhs_order; ++i)
+    //Erase indices that are fused in reverse order
+    sort(indices_to_erase.begin(),indices_to_erase.end());
+    std::vector<size_t> rhs_unfused_inds(range(0,rhs_order));
+    for(size_t erase_idx_incr = 0; erase_idx_incr < indices_to_erase.size(); ++erase_idx_incr)
     {
-        //Still fused indices to skip over?
-        if(cur_fused_idx < rhs_indices.size())
-        {
-            //Skip over patches of fused indices
-            while(idx_excluding_fused == rhs_indices[cur_fused_idx])
-            {
-                ++cur_fused_idx;
-                ++idx_excluding_fused;
-                if(cur_fused_idx == rhs_indices.size())
-                {
-                    break;
-                }
-            }
-        }
-        permutation_entries[i] = idx_excluding_fused;
-        ++idx_excluding_fused;
+    	rhs_unfused_inds.erase(rhs_unfused_inds.begin() + indices_to_erase[indices_to_erase.size() - erase_idx_incr - 1]);
+    }
+
+    //Add the remaining unfused indices to the permutation
+    for(size_t rhs_unfused_idx = 0; rhs_unfused_idx < rhs_unfused_inds.size(); ++rhs_unfused_idx)
+    {
+    	permutation_entries.push_back(rhs_unfused_inds[rhs_unfused_idx]);
     }
 
     //Don't permute if unnecessary

@@ -228,6 +228,8 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_block_tree_any_order.C
     block_sparse/block_loop_new.C
     block_sparse/sparse_loop_list.C
+    block_sparse/loop_list_sparsity_data_new.C
+    block_sparse/range.C
 )
 
 if(WITH_ARMADILLO)

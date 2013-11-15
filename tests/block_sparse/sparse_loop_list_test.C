@@ -16,6 +16,9 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_add_loop_all_ignored();
     test_add_loop_duplicate_subspaces_looped();
 
+    test_get_loops_that_access_bispace_invalid_bispace();
+    test_get_loops_that_access_bispace_2d_matmul();
+
     test_run_block_permute_kernel_2d();
     test_run_block_permute_kernel_3d_120();
 }
@@ -55,7 +58,7 @@ void sparse_loop_list_test::test_add_loop_invalid_loop_bispaces() throw(libtest:
     block_loop_new bl_2(bispaces_2);
     bl_2.set_subspace_looped(0,2);
     //Should fail due to incompatible bispaces
-    sparse_loop_list sll;
+    sparse_loop_list sll(bispaces_1);
 	sll.add_loop(bl_1);
     bool threw_exception = false;
     try
@@ -100,7 +103,7 @@ void sparse_loop_list_test::test_add_loop_all_ignored() throw(libtest::test_exce
     bispaces_1.push_back(spb_2|spb_3);
 
     //Should fail due to loop not touching any subspaces
-    sparse_loop_list sll;
+    sparse_loop_list sll(bispaces_1);
     bool threw_exception = false;
     try
     {
@@ -153,7 +156,7 @@ void sparse_loop_list_test::test_add_loop_duplicate_subspaces_looped() throw(lib
     bl_4.set_subspace_looped(0,1);
 
     //Should fail due to two loops touching the same subspace of the same bispace
-    sparse_loop_list sll;
+    sparse_loop_list sll(bispaces_1);
 	sll.add_loop(bl_1);
 	sll.add_loop(bl_2);
 	sll.add_loop(bl_3);
@@ -172,6 +175,89 @@ void sparse_loop_list_test::test_add_loop_duplicate_subspaces_looped() throw(lib
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_loop_list::add_loop(...) did not throw exception when adding duplicate loops over the same bispaces");
     }
+}
+
+void sparse_loop_list_test::test_get_loops_that_access_bispace_invalid_bispace() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_list_test::test_get_loops_that_access_bispace_invalid_bispace()";
+
+	//Matrix multiply bispaces
+    sparse_bispace<1> spb_i(4);
+    sparse_bispace<1> spb_j(5);
+    sparse_bispace<1> spb_k(6);
+
+    std::vector< sparse_bispace_any_order > bispaces;
+    bispaces.push_back(spb_i|spb_j);
+    bispaces.push_back(spb_i|spb_k);
+    bispaces.push_back(spb_k|spb_j);
+
+    sparse_loop_list sll(bispaces);
+    bool threw_exception = false;
+    try
+    {
+    	//Fail: no fourth bispace
+		sll.get_loops_that_access_bispace(3);
+    }
+    catch(out_of_bounds&)
+    {
+    	threw_exception = true;
+    }
+    if(! threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_loop_list::get_loops_that_access_bispace(...) did not throw exception when bispace index out of bounds");
+    }
+}
+
+void sparse_loop_list_test::test_get_loops_that_access_bispace_2d_matmul() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_list_test::test_get_loops_that_access_bispace_2d_matmul()";
+
+	//Matrix multiply bispaces
+    sparse_bispace<1> spb_i(4);
+    sparse_bispace<1> spb_j(5);
+    sparse_bispace<1> spb_k(6);
+
+    std::vector< sparse_bispace_any_order > bispaces;
+    bispaces.push_back(spb_i|spb_j);
+    bispaces.push_back(spb_i|spb_k);
+    bispaces.push_back(spb_k|spb_j);
+
+    block_loop_new bl_1(bispaces);
+    bl_1.set_subspace_looped(0,0);
+    bl_1.set_subspace_looped(1,0);
+    block_loop_new bl_2(bispaces);
+    bl_2.set_subspace_looped(0,1);
+    bl_2.set_subspace_looped(2,1);
+    block_loop_new bl_3(bispaces);
+    bl_3.set_subspace_looped(1,1);
+    bl_3.set_subspace_looped(2,0);
+
+    sparse_loop_list sll(bispaces);
+    sll.add_loop(bl_1);
+    sll.add_loop(bl_2);
+    sll.add_loop(bl_3);
+
+	//Fail: no fourth bispace
+	std::vector<size_t> loops = sll.get_loops_that_access_bispace(2);
+
+	//Correct answer: {1,2}
+	std::vector<size_t> loops_correct(1,1);
+	loops_correct.push_back(2);
+	if(loops.size() != loops_correct.size())
+	{
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_loop_list::get_loops_that_access_bispace(...) returned incorrect size vector");
+	}
+
+	for(size_t i = 0; i < loops.size(); ++i)
+	{
+		if(loops[i] != loops_correct[i])
+		{
+			fail_test(test_name,__FILE__,__LINE__,
+					"sparse_loop_list::get_loops_that_access_bispace(...) returned incorrect value");
+		}
+	}
 }
 
 //Permutation 01
@@ -246,7 +332,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(1,0);
 
-    sparse_loop_list sll;
+    sparse_loop_list sll(bispaces);
     sll.add_loop(bl_1);
     sll.add_loop(bl_2);
 
@@ -400,7 +486,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest
     block_loop_new bl_3(bispaces);
     bl_3.set_subspace_looped(0,2);
     bl_3.set_subspace_looped(1,0);
-    sparse_loop_list sll;
+    sparse_loop_list sll(bispaces);
     sll.add_loop(bl_1);
     sll.add_loop(bl_2);
     sll.add_loop(bl_3);

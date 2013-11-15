@@ -21,6 +21,7 @@ class sparse_loop_list
 private:
     static const char* k_clazz; //!< Class name
     std::vector< block_loop_new > m_loops;
+    std::vector< sparse_bispace_any_order > m_bispaces;
 
 	template<typename T>
     void _run_internal(block_kernel_i_new<T>& kernel,
@@ -30,12 +31,18 @@ private:
     				   block_list& loop_indices,
     				   size_t loop_idx=0);
 public:
-	sparse_loop_list();
+	sparse_loop_list(const std::vector< sparse_bispace_any_order >& bispaces);
 
 	void add_loop(const block_loop_new& loop);
 
 	template<typename T>
 	void run(block_kernel_i_new<T>& kernel,std::vector<T*>& ptrs);
+
+	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
+	const std::vector< block_loop_new >& get_loops() const { return m_loops; }
+
+	//Returns the indices of the loops that access any subspace of the specified bispace
+	std::vector<size_t> get_loops_that_access_bispace(size_t bispace_idx) const;
 };
 
 template<typename T>
@@ -77,6 +84,7 @@ void sparse_loop_list::_run_internal(block_kernel_i_new<T>& kernel,
     	{
     		first_bispace_idx = i;
     		first_subspace_idx = cur_loop.get_subspace_looped(first_bispace_idx);
+    		break;
     	}
     }
     const sparse_bispace<1>& cur_subspace = cur_bispaces[first_bispace_idx][first_subspace_idx];

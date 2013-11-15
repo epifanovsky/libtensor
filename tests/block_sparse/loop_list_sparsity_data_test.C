@@ -1,4 +1,5 @@
 #include <libtensor/block_sparse/loop_list_sparsity_data.h>
+#include <libtensor/block_sparse/loop_list_sparsity_data_new.h>
 #include <libtensor/block_sparse/sparse_bispace.h>
 #include <libtensor/block_sparse/block_loop.h>
 #include <libtensor/block_sparse/runtime_permutation.h>
@@ -8,18 +9,91 @@
 namespace libtensor {
 
 void loop_list_sparsity_data_test::perform() throw(libtest::test_exception) { 
-    test_get_sig_block_list_in_order();
-    test_get_sig_block_list_fuse_output_input();
+    test_get_sig_block_list_no_sparsity();
+//    test_get_sig_block_list_sparsity_one_tensor();
+//    test_get_sig_block_list_sparsity_3_tensors();
 }
 
-//kij -> ijk
-//Simplest test: just a permutation(120), output tensor is accessed in order, so just need to fuse input and output correctly 
-//No additional sparsity gained
-void loop_list_sparsity_data_test::test_get_sig_block_list_in_order() throw(libtest::test_exception)
+//kij -> ijk, no sparsity
+void loop_list_sparsity_data_test::test_get_sig_block_list_no_sparsity() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_get_sig_block_list_in_order()";
+    static const char *test_name = "block_loop_test::test_get_sig_block_list_no_sparsity()";
 
-    //Create bispaces corresponding to 3d spare permutation
+    //Create bispaces corresponding to 3d dense permutation
+    sparse_bispace<1> spb_1(8);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(1);
+    split_points_1.push_back(4);
+    split_points_1.push_back(6);
+    spb_1.split(split_points_1);
+
+    sparse_bispace<1> spb_2(15);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(3);
+    split_points_2.push_back(5);
+    split_points_2.push_back(8);
+    split_points_2.push_back(12);
+    spb_2.split(split_points_2);
+
+    sparse_bispace<1> spb_3(12);
+    std::vector<size_t> split_points_3;
+    split_points_3.push_back(2);
+    split_points_3.push_back(3);
+    split_points_3.push_back(7);
+    split_points_3.push_back(10);
+    spb_3.split(split_points_3);
+
+    std::vector< sparse_bispace_any_order > bispaces(1,spb_1|spb_2|spb_3);
+    bispaces.push_back(spb_3|spb_1|spb_2);
+
+    block_loop_new bl_1(bispaces);
+    bl_1.set_subspace_looped(0,0);
+    bl_1.set_subspace_looped(1,1);
+    block_loop_new bl_2(bispaces);
+    bl_2.set_subspace_looped(0,1);
+    bl_2.set_subspace_looped(1,2);
+    block_loop_new bl_3(bispaces);
+    bl_3.set_subspace_looped(0,2);
+    bl_3.set_subspace_looped(1,0);
+
+    sparse_loop_list sll(bispaces);
+    sll.add_loop(bl_1);
+    sll.add_loop(bl_2);
+    sll.add_loop(bl_3);
+
+    //Loop block indices chosen should be irrelevant, should return the full block range of spb_3
+    loop_list_sparsity_data_new llsd(sll);
+    block_list loop_block_inds;
+    loop_block_inds.push_back(2);
+    loop_block_inds.push_back(3);
+    block_list bl = llsd.get_sig_block_list(loop_block_inds,2);
+
+    //Correct answer
+    block_list bl_correct = range(0,5);
+
+    if(bl.size() != bl_correct.size())
+    {
+		std::cout << "\nmy size: " << bl.size() << "\n";
+		std::cout << "\ncorrect size: " << bl_correct.size() << "\n";
+		fail_test(test_name,__FILE__,__LINE__,
+				"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output size");
+    }
+
+    for(size_t i  = 0; i < bl.size(); ++i)
+    {
+    	if(bl[i] != bl_correct[i])
+    	{
+			fail_test(test_name,__FILE__,__LINE__,
+					"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
+    	}
+    }
+}
+
+void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_one_tensor() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_loop_test::test_get_sig_block_list_sparsity_one_tensor()";
+
+    //Create bispaces corresponding to 3d sparse permutation
     //Need 8 blocks
     sparse_bispace<1> spb_1(20);
     std::vector<size_t> split_points_1;
@@ -81,7 +155,7 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_in_order() throw(libt
     size_t seq20_arr[3] = {7,4,6};
     size_t seq21_arr[3] = {7,7,7};
 
-    std::vector< sequence<3,size_t> > sig_blocks(21); 
+    std::vector< sequence<3,size_t> > sig_blocks(21);
     for(size_t i = 0; i < 3; ++i) sig_blocks[0][i] = seq01_arr[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks[1][i] = seq02_arr[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks[2][i] = seq03_arr[i];
@@ -104,87 +178,50 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_in_order() throw(libt
     for(size_t i = 0; i < 3; ++i) sig_blocks[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks[20][i] = seq21_arr[i];
 
-    sparse_bispace<3> three_d_input = spb_1 % spb_2 % spb_3 << sig_blocks;
+    std::vector<sparse_bispace_any_order> bispaces(1,spb_1 % spb_2 % spb_3 << sig_blocks);
 
-    permutation<3> perm;
-    perm.permute(0,2).permute(0,1);
-    sparse_bispace<3> three_d_output = three_d_input.permute(perm);
+    block_loop_new bl_1(bispaces);
+    bl_1.set_subspace_looped(0,0);
+    block_loop_new bl_2(bispaces);
+    bl_2.set_subspace_looped(0,1);
+    block_loop_new bl_3(bispaces);
+    bl_3.set_subspace_looped(0,2);
 
-    //Create loops corresponding to this permutation
-    sequence<1,size_t> output_bispace_indices_1(0);
-    sequence<1,size_t> input_bispace_indices_1(1);
-    sequence<1,bool> output_ignore_1(false);
-    sequence<1,bool> input_ignore_1(false);
+    sparse_loop_list sll(bispaces);
+    sll.add_loop(bl_1);
+    sll.add_loop(bl_2);
+    sll.add_loop(bl_3);
 
+    loop_list_sparsity_data_new llsd(sll);
 
-    sequence<1,size_t> output_bispace_indices_2(1);
-    sequence<1,size_t> input_bispace_indices_2(2);
-    sequence<1,bool> output_ignore_2(false);
-    sequence<1,bool> input_ignore_2(false);
+    std::vector<size_t> loop_block_indices(1,4);
+    loop_block_indices.push_back(3);
+    block_list bl = llsd.get_sig_block_list(loop_block_indices,2);
 
-    sequence<1,size_t> output_bispace_indices_3(2);
-    sequence<1,size_t> input_bispace_indices_3(0);
-    sequence<1,bool> output_ignore_3(false);
-    sequence<1,bool> input_ignore_3(false);
+    //Correct answer: {5,6,7}
+    block_list bl_correct(1,5);
+    bl_correct.push_back(6);
+    bl_correct.push_back(7);
 
-    std::vector< block_loop<1,1> > loop_list;
-	loop_list.push_back(block_loop<1,1>(output_bispace_indices_1,
-						input_bispace_indices_1,
-						output_ignore_1,
-						input_ignore_1));
-
-    loop_list.push_back(block_loop<1,1>(output_bispace_indices_2,
-                        input_bispace_indices_2,
-                        output_ignore_2,
-                        input_ignore_2));
-
-    loop_list.push_back(block_loop<1,1>(output_bispace_indices_3,
-                        input_bispace_indices_3,
-                        output_ignore_3,
-                        input_ignore_3));
-
-    sequence<1,sparse_bispace_any_order> output_bispaces(three_d_output);
-    sequence<1,sparse_bispace_any_order> input_bispaces(three_d_input);
-
-    std::vector<size_t> cur_block_idxs; 
-    cur_block_idxs.push_back(2);
-    cur_block_idxs.push_back(7);
-    loop_list_sparsity_data llsd(loop_list,output_bispaces,input_bispaces);
-    const block_list& my_block_list = llsd.get_sig_block_list(cur_block_idxs,2);
-
-    //Correct answer: should be {1,5}
-    const sparse_block_tree_any_order& output_tree =  three_d_output.get_sparse_group_tree(0);
-    const block_list& correct_block_list = output_tree.get_sub_key_block_list(cur_block_idxs);
-
-    if(my_block_list.size() != correct_block_list.size())
+    if(bl.size() != bl_correct.size())
     {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output size");
-
+		fail_test(test_name,__FILE__,__LINE__,
+				"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output size");
     }
-    for(size_t j = 0; j < correct_block_list.size(); ++j)
+
+    for(size_t i  = 0; i < bl.size(); ++i)
     {
-        if(my_block_list[j] != correct_block_list[j])
-        {
-            std::cout << "MINE!!!!!!!!!!!!!!!!!\n";
-            for(size_t j = 0; j < my_block_list.size(); ++j)
-            {
-                std::cout << my_block_list[j] << "\n";
-            }
-            std::cout << "CORRECT!!!!!!!!!!!!!!!!!\n";
-            for(size_t j = 0; j < correct_block_list.size(); ++j)
-            {
-                std::cout << correct_block_list[j] << "\n";
-            }
-            fail_test(test_name,__FILE__,__LINE__,
-                    "loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
-        }
+    	if(bl[i] != bl_correct[i])
+    	{
+			fail_test(test_name,__FILE__,__LINE__,
+					"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
+    	}
     }
 }
 
-void loop_list_sparsity_data_test::test_get_sig_block_list_fuse_output_input() throw(libtest::test_exception)
+void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_3_tensors() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_get_sig_block_list_fuse_output_input()";
+    static const char *test_name = "block_loop_test::test_get_sig_block_list_sparsity_3_tensors()";
 
     //bispace 1 - need 6 blocks
     sparse_bispace<1> spb_1(15);
@@ -224,7 +261,8 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_fuse_output_input() t
     for(size_t i = 0; i < 2; ++i) sig_blocks_1[5][i] = seq5_arr[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_1[6][i] = seq6_arr[i];
 
-    sparse_bispace<2> spb_C = spb_1 % spb_2 << sig_blocks_1;
+    std::vector< sparse_bispace_any_order > bispaces;
+    bispaces.push_back(spb_1 % spb_2 << sig_blocks_1);
 
     //Need 10 blocks
     sparse_bispace<1> spb_3(27);
@@ -262,7 +300,7 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_fuse_output_input() t
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[7][i] = seq7_arr_2[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[8][i] = seq8_arr_2[i];
 
-    sparse_bispace<2> spb_A = spb_1 % spb_3 << sig_blocks_2;
+    bispaces.push_back(spb_1 % spb_3 << sig_blocks_2);
 
     //Sparsity data 3
     size_t seq00_arr_3[2] = {1,2};
@@ -290,58 +328,35 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_fuse_output_input() t
     for(size_t i = 0; i < 2; ++i) sig_blocks_3[9][i] = seq09_arr_3[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_3[10][i] = seq10_arr_3[i];
 
-    sparse_bispace<2> spb_B = spb_3 % spb_2 << sig_blocks_3;
+    bispaces.push_back(spb_3 % spb_2 << sig_blocks_3);
 
     //Create loops corresponding to this matrix multiply
     //i loop 
-    sequence<1,size_t> output_bispace_indices_1(0);
-    sequence<2,size_t> input_bispace_indices_1(0); //ignored in 
-    sequence<1,bool> output_ignore_1(false);
-    sequence<2,bool> input_ignore_1(false);
-    input_ignore_1[1] = true;
-
+    block_loop_new bl_1(bispaces);
+    bl_1.set_subspace_looped(0,0);
+    bl_1.set_subspace_looped(1,0);
     //j loop
-    sequence<1,size_t> output_bispace_indices_2(1);
-    sequence<2,size_t> input_bispace_indices_2(1);
-    sequence<1,bool> output_ignore_2(false);
-    sequence<2,bool> input_ignore_2(false);
-    input_ignore_2[0] = true;
-
+    block_loop_new bl_2(bispaces);
+    bl_2.set_subspace_looped(0,1);
+    bl_2.set_subspace_looped(2,1);
     //k loop
-    sequence<1,size_t> output_bispace_indices_3;
-    sequence<2,size_t> input_bispace_indices_3(1);
-    input_bispace_indices_3[1] = 0;
-    sequence<1,bool> output_ignore_3(true);
-    sequence<2,bool> input_ignore_3(false);
+    block_loop_new bl_3(bispaces);
+    bl_3.set_subspace_looped(1,1);
+    bl_3.set_subspace_looped(2,0);
 
-    std::vector< block_loop<1,2> > loop_list;
-	loop_list.push_back(block_loop<1,2>(output_bispace_indices_1,
-						input_bispace_indices_1,
-						output_ignore_1,
-						input_ignore_1));
+    sparse_loop_list sll(bispaces);
+    sll.add_loop(bl_1);
+    sll.add_loop(bl_2);
+    sll.add_loop(bl_3);
 
-    loop_list.push_back(block_loop<1,2>(output_bispace_indices_2,
-                        input_bispace_indices_2,
-                        output_ignore_2,
-                        input_ignore_2));
-
-    loop_list.push_back(block_loop<1,2>(output_bispace_indices_3,
-                        input_bispace_indices_3,
-                        output_ignore_3,
-                        input_ignore_3));
-
-    sequence<1,sparse_bispace_any_order> output_bispaces(spb_C);
-    sequence<2,sparse_bispace_any_order> input_bispaces;
-    input_bispaces[0] = spb_A;
-    input_bispaces[1] = spb_B;
-
-    loop_list_sparsity_data llsd(loop_list,output_bispaces,input_bispaces);
+    std::cout << "######################### HERE ####################\n";
+    loop_list_sparsity_data_new llsd(sll);
 
     //i = 4, j= 1
-    std::vector<size_t> cur_block_idxs;
-    cur_block_idxs.push_back(4);
-    cur_block_idxs.push_back(1);
-    const block_list& my_block_list = llsd.get_sig_block_list(cur_block_idxs,2);
+    std::vector<size_t> loop_block_indices;
+    loop_block_indices.push_back(4);
+    loop_block_indices.push_back(1);
+    const block_list& my_block_list = llsd.get_sig_block_list(loop_block_indices,2);
 
     //Correct answer
     block_list correct_block_list(1,6); 

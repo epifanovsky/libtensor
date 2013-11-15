@@ -8,6 +8,7 @@
 #include "runtime_permutation.h"
 #include "sparse_block_tree.h"
 #include "sparsity_expr.h"
+#include "range.h"
 
 //TODO REMOVE
 #include <iostream>
@@ -22,18 +23,6 @@ template<size_t N>
 class sparse_bispace; 
 
 //Utility functions
-namespace impl
-{
-    inline block_list range(size_t min,size_t max)
-    {
-        block_list the_range; 
-        for(size_t i = min; i < max; ++i)
-        {
-            the_range.push_back(i);
-        }
-        return the_range;
-    }
-}
 
 /**  One-dimensional sparse block index space
  **/
@@ -242,7 +231,7 @@ inline block_list sparse_bispace<1>::get_sig_block_list(const std::vector<size_t
         throw out_of_bounds(g_ns,"sparse_bispace<1>","get_sig_block_list(...)",
                 __FILE__,__LINE__,"target_subspace_idx != 0"); 
     }
-    return impl::range(0,m_abs_indices.size());
+    return range(0,m_abs_indices.size());
 }
 
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
@@ -668,7 +657,7 @@ block_list sparse_bispace<N>::get_sig_block_list(const std::vector<size_t>& oute
     }
     else
     {
-        return impl::range(0,m_subspaces[target_subspace_idx].get_n_blocks());
+        return range(0,m_subspaces[target_subspace_idx].get_n_blocks());
     }
 }
 
