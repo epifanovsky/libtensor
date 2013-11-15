@@ -24,7 +24,7 @@ void eval_plan_test::test_1() {
 
     eval_plan plan;
 
-    node_ident n1(5);
+    node_ident n1(2, 5);
     plan.insert_assignment(node_assign(1, n1));
 
     if(std::distance(plan.begin(), plan.end()) != 1) {
