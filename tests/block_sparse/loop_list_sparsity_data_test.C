@@ -10,8 +10,8 @@ namespace libtensor {
 
 void loop_list_sparsity_data_test::perform() throw(libtest::test_exception) { 
     test_get_sig_block_list_no_sparsity();
-//    test_get_sig_block_list_sparsity_one_tensor();
-//    test_get_sig_block_list_sparsity_3_tensors();
+    test_get_sig_block_list_sparsity_one_tensor();
+    test_get_sig_block_list_sparsity_3_tensors();
 }
 
 //kij -> ijk, no sparsity

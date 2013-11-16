@@ -90,17 +90,19 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 				for(size_t lhs_subspace_idx = 0; lhs_subspace_idx < cur_tree.get_order(); ++lhs_subspace_idx)
 				{
 					size_t loop_idx = group_loop_indices[lhs_subspace_idx];
+					std::cout << "loop_idx: " << loop_idx << "\n";
 					std::map<size_t, std::pair<size_t,size_t> >::const_iterator  ltt_it = m_loops_to_tree_subspaces.find(loop_idx);
 					if(ltt_it != m_loops_to_tree_subspaces.end() && ltt_it->second.first == rhs_tree_idx)
 					{
-						lhs_fuse_inds.push_back(lhs_subspace_idx);
+						std::cout << "adding to lhs_fuse_inds: " << group_loop_subspaces[lhs_subspace_idx] << "\n";
+						lhs_fuse_inds.push_back(group_loop_subspaces[lhs_subspace_idx]);
+						std::cout << "adding to rhs_fuse_inds: " << ltt_it->second.second << "\n";
+						std::cout << "------------------\n";
 						rhs_fuse_inds.push_back(ltt_it->second.second);
 					}
 				}
 
 				//Finally, actually fuse the trees
-				sort(lhs_fuse_inds.begin(),lhs_fuse_inds.end());
-				sort(rhs_fuse_inds.begin(),rhs_fuse_inds.end());
 
 				//TODO: DEBUG REMOVE
 				std::cout << "\n-------------------------\n";
@@ -145,7 +147,14 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 			}
 
 			std::cout << "\n----------------------\n";
-			std::cout << "group_subspace_indices BEFORE permutation:\n";
+			std::cout << "group_loop_indices BEFORE permutation:\n";
+			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_indices.size(); ++group_loop_idx)
+			{
+				std::cout << "\t" << group_loop_indices[group_loop_idx] << "\n";
+			}
+
+			std::cout << "\n----------------------\n";
+			std::cout << "group_loop_subspaces BEFORE permutation:\n";
 			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_subspaces.size(); ++group_loop_idx)
 			{
 				std::cout << "\t" << group_loop_subspaces[group_loop_idx] << "\n";
@@ -170,12 +179,23 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 			{
 				std::cout << "\t" << perm_entries[j] << "\n";
 			}
-			//Must permute subspaces twice - first to match new loop order, then to match new tree order
 			runtime_permutation perm(perm_entries);
 			perm.apply(group_loop_indices);
 			perm.apply(group_loop_subspaces);
-			perm.apply(group_loop_subspaces);
-			m_trees.push_back(cur_tree.permute(perm));
+
+			//Now we need to permuted the tree such that its subspaces are in the order that
+			//they are accessed by the loops
+			runtime_permutation tree_perm(group_loop_subspaces);
+			m_trees.push_back(cur_tree.permute(tree_perm));
+
+			//Now that the subspaces of our newly formed tree are loop-ordered, we can sort them as such
+			sort(group_loop_subspaces.begin(),group_loop_subspaces.end());
+			std::cout << "\n----------------------\n";
+			std::cout << "group_loop_indices AFTER permutation:\n";
+			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_indices.size(); ++group_loop_idx)
+			{
+				std::cout << "\t" << group_loop_indices[group_loop_idx] << "\n";
+			}
 
 			std::cout << "\n----------------------\n";
 			std::cout << "group_subspace_indices AFTER permutation:\n";
