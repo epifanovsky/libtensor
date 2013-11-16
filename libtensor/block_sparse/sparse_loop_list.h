@@ -43,6 +43,10 @@ public:
 
 	//Returns the indices of the loops that access any subspace of the specified bispace
 	std::vector<size_t> get_loops_that_access_bispace(size_t bispace_idx) const;
+
+	//Returns the indices of the loops that access any subspace of the specified sparse group
+	//within the specified bispace
+	std::vector<size_t> get_loops_that_access_group(size_t bispace_idx,size_t group_idx) const;
 };
 
 template<typename T>

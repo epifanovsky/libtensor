@@ -12,6 +12,7 @@ void loop_list_sparsity_data_test::perform() throw(libtest::test_exception) {
     test_get_sig_block_list_no_sparsity();
     test_get_sig_block_list_sparsity_one_tensor();
     test_get_sig_block_list_sparsity_3_tensors();
+    test_get_sig_block_list_sparsity_delayed_fuse();
 }
 
 //kij -> ijk, no sparsity
@@ -349,7 +350,6 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_3_tensors() 
     sll.add_loop(bl_2);
     sll.add_loop(bl_3);
 
-    std::cout << "######################### HERE ####################\n";
     loop_list_sparsity_data_new llsd(sll);
 
     //i = 4, j= 1
@@ -377,6 +377,157 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_3_tensors() 
             fail_test(test_name,__FILE__,__LINE__,
                     "loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
         }
+    }
+}
+
+//C_{(il)} = A_{i(jk)} B_{j(kl)}
+void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_delayed_fuse() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_loop_test::test_get_sig_block_list_sparsity_delayed_fuse()";
+
+    //bispace 1 - need 6 blocks
+    sparse_bispace<1> spb_1(15);
+    std::vector<size_t> split_points_1;
+    split_points_1.push_back(2);
+    split_points_1.push_back(4);
+    split_points_1.push_back(7);
+    split_points_1.push_back(9);
+    split_points_1.push_back(13);
+    spb_1.split(split_points_1);
+
+    //bispace 2 - need 6 blocks
+    sparse_bispace<1> spb_2(15);
+    std::vector<size_t> split_points_2;
+    split_points_2.push_back(3);
+    split_points_2.push_back(5);
+    split_points_2.push_back(8);
+    split_points_2.push_back(12);
+    split_points_2.push_back(14);
+    spb_2.split(split_points_2);
+
+    //Sparsity data 1
+    size_t seq0_arr_1[2] = {1,2};
+    size_t seq1_arr_1[2] = {1,5};
+    size_t seq2_arr_1[2] = {2,3};
+    size_t seq3_arr_1[2] = {4,1};
+    size_t seq4_arr_1[2] = {4,4};
+    size_t seq5_arr_1[2] = {5,1};
+    size_t seq6_arr_1[2] = {5,2};
+
+    std::vector< sequence<2,size_t> > sig_blocks_C(7);
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[0][i] = seq0_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[1][i] = seq1_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[2][i] = seq2_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[3][i] = seq3_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[4][i] = seq4_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[5][i] = seq5_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_C[6][i] = seq6_arr_1[i];
+
+    //Sparsity data 2
+    size_t seq0_arr_2[2] = {2,2};
+    size_t seq1_arr_2[2] = {2,3};
+    size_t seq2_arr_2[2] = {2,4};
+    size_t seq3_arr_2[2] = {4,1};
+    size_t seq4_arr_2[2] = {4,2};
+    size_t seq5_arr_2[2] = {5,3};
+
+    std::vector< sequence<2,size_t> > sig_blocks_A(6);
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[0][i] = seq0_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[1][i] = seq1_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[2][i] = seq2_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[3][i] = seq3_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[4][i] = seq4_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[5][i] = seq5_arr_2[i];
+
+    //Sparsity data 3
+    size_t seq0_arr_3[2] = {1,1};
+    size_t seq1_arr_3[2] = {1,4};
+    size_t seq2_arr_3[2] = {1,5};
+    size_t seq3_arr_3[2] = {2,2};
+    size_t seq4_arr_3[2] = {2,3};
+    size_t seq5_arr_3[2] = {4,2};
+
+    std::vector< sequence<2,size_t> > sig_blocks_B(6);
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[0][i] = seq0_arr_3[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[1][i] = seq1_arr_3[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[2][i] = seq2_arr_3[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[3][i] = seq3_arr_3[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[4][i] = seq4_arr_3[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[5][i] = seq5_arr_3[i];
+
+    std::vector< sparse_bispace_any_order > bispaces;
+    bispaces.push_back(spb_1 % spb_2 << sig_blocks_C);
+    bispaces.push_back(spb_1 | spb_1 % spb_2 << sig_blocks_A);
+    bispaces.push_back(spb_1 | spb_2 % spb_2 << sig_blocks_B);
+
+    //loop order iljk
+    block_loop_new bl_1(bispaces);
+    bl_1.set_subspace_looped(0,0);
+    bl_1.set_subspace_looped(1,0);
+    block_loop_new bl_2(bispaces);
+    bl_2.set_subspace_looped(0,1);
+    bl_2.set_subspace_looped(2,2);
+    block_loop_new bl_3(bispaces);
+    bl_3.set_subspace_looped(1,1);
+    bl_3.set_subspace_looped(2,0);
+    block_loop_new bl_4(bispaces);
+    bl_4.set_subspace_looped(1,2);
+    bl_4.set_subspace_looped(2,1);
+
+    sparse_loop_list sll(bispaces);
+    sll.add_loop(bl_1);
+    sll.add_loop(bl_2);
+    sll.add_loop(bl_3);
+    sll.add_loop(bl_4);
+
+    loop_list_sparsity_data_new llsd(sll);
+
+    block_list loop_block_indices_1(1,1);
+    loop_block_indices_1.push_back(2);
+    loop_block_indices_1.push_back(4);
+
+    block_list list_1 = llsd.get_sig_block_list(loop_block_indices_1,3);
+
+    //Correct answer is {2}
+    block_list list_1_correct(1,2);
+
+    if(list_1.size() != list_1_correct.size())
+    {
+		fail_test(test_name,__FILE__,__LINE__,
+				"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output size");
+    }
+
+    for(size_t i  = 0; i < list_1.size(); ++i)
+    {
+    	if(list_1[i] != list_1_correct[i])
+    	{
+			fail_test(test_name,__FILE__,__LINE__,
+					"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
+    	}
+    }
+
+    //Second test
+    block_list loop_block_indices_2(1,4);
+    loop_block_indices_2.push_back(4);
+    loop_block_indices_2.push_back(4);
+    block_list list_2 = llsd.get_sig_block_list(loop_block_indices_2,3);
+
+    //Correct answer is {1}
+    block_list list_2_correct(1,1);
+
+    if(list_2.size() != list_2_correct.size())
+    {
+		fail_test(test_name,__FILE__,__LINE__,
+				"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output size");
+    }
+
+    for(size_t i  = 0; i < list_2.size(); ++i)
+    {
+    	if(list_2[i] != list_2_correct[i])
+    	{
+			fail_test(test_name,__FILE__,__LINE__,
+					"loop_list_sparsity_data::get_sig_block_list(...) produced incorrect output");
+    	}
     }
 }
 

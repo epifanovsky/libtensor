@@ -93,4 +93,33 @@ std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(
 	return loops_that_access_bispace;
 }
 
+std::vector<size_t> sparse_loop_list::get_loops_that_access_group(
+		size_t bispace_idx, size_t group_idx) const
+{
+	std::vector<size_t> loops_that_access_bispace = get_loops_that_access_bispace(bispace_idx);
+	const sparse_bispace_any_order& cur_bispace = m_bispaces[bispace_idx];
+	if(group_idx >= cur_bispace.get_n_sparse_groups())
+	{
+		throw out_of_bounds(g_ns, k_clazz,"get_loops_that_access_group(...)",
+				__FILE__, __LINE__, "group index out of bounds");
+	}
+
+	//Filter loops that only access this group
+	std::vector<size_t> loops_that_access_group;
+	for(size_t bispace_loop_idx = 0; bispace_loop_idx < loops_that_access_bispace.size(); ++bispace_loop_idx)
+	{
+		size_t loop_idx = loops_that_access_bispace[bispace_loop_idx];
+		size_t cur_subspace_idx = m_loops[loop_idx].get_subspace_looped(bispace_idx);
+		size_t group_offset = cur_bispace.get_sparse_group_offset(group_idx);
+		size_t group_order = cur_bispace.get_sparse_group_tree(group_idx).get_order();
+		if((group_offset <= cur_subspace_idx) && (cur_subspace_idx < group_offset+group_order))
+		{
+			loops_that_access_group.push_back(loop_idx);
+		}
+	}
+	return loops_that_access_group;
+}
+
 } /* namespace libtensor */
+
+

@@ -18,6 +18,11 @@ private:
     //Must fuse input and output sparsity to get correct answer
     //Requires permuting sparsity of second input tensor
     void test_get_sig_block_list_sparsity_3_tensors() throw(libtest::test_exception);
+
+
+    //Fuse 3 tensors all at once - first two tensors do not couple by themselves
+    //but third tensor can couple them
+    void test_get_sig_block_list_sparsity_delayed_fuse() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

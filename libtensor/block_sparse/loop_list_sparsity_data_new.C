@@ -6,7 +6,6 @@
  */
 #include "loop_list_sparsity_data_new.h"
 #include <algorithm>
-#include <iostream>
 
 namespace libtensor
 {
@@ -90,33 +89,15 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 				for(size_t lhs_subspace_idx = 0; lhs_subspace_idx < cur_tree.get_order(); ++lhs_subspace_idx)
 				{
 					size_t loop_idx = group_loop_indices[lhs_subspace_idx];
-					std::cout << "loop_idx: " << loop_idx << "\n";
 					std::map<size_t, std::pair<size_t,size_t> >::const_iterator  ltt_it = m_loops_to_tree_subspaces.find(loop_idx);
 					if(ltt_it != m_loops_to_tree_subspaces.end() && ltt_it->second.first == rhs_tree_idx)
 					{
-						std::cout << "adding to lhs_fuse_inds: " << group_loop_subspaces[lhs_subspace_idx] << "\n";
 						lhs_fuse_inds.push_back(group_loop_subspaces[lhs_subspace_idx]);
-						std::cout << "adding to rhs_fuse_inds: " << ltt_it->second.second << "\n";
-						std::cout << "------------------\n";
 						rhs_fuse_inds.push_back(ltt_it->second.second);
 					}
 				}
 
 				//Finally, actually fuse the trees
-
-				//TODO: DEBUG REMOVE
-				std::cout << "\n-------------------------\n";
-				std::cout << "lhs_fuse_inds:\n";
-				for(size_t j = 0; j < lhs_fuse_inds.size(); ++j)
-				{
-					std::cout << "\t" << lhs_fuse_inds[j] << "\n";
-				}
-				std::cout << "\n-------------------------\n";
-				std::cout << "rhs_fuse_inds:\n";
-				for(size_t j = 0; j < rhs_fuse_inds.size(); ++j)
-				{
-					std::cout << "\t" << rhs_fuse_inds[j] << "\n";
-				}
 				cur_tree = cur_tree.fuse(rhs_tree,lhs_fuse_inds,rhs_fuse_inds);
 
 				//All loop indices that touch the RHS tree and are not fused become part of the current tree
@@ -146,20 +127,6 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 				m_trees.erase(m_trees.begin() + tree_idx);
 			}
 
-			std::cout << "\n----------------------\n";
-			std::cout << "group_loop_indices BEFORE permutation:\n";
-			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_indices.size(); ++group_loop_idx)
-			{
-				std::cout << "\t" << group_loop_indices[group_loop_idx] << "\n";
-			}
-
-			std::cout << "\n----------------------\n";
-			std::cout << "group_loop_subspaces BEFORE permutation:\n";
-			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_subspaces.size(); ++group_loop_idx)
-			{
-				std::cout << "\t" << group_loop_subspaces[group_loop_idx] << "\n";
-			}
-
 			//Permute the tree and associated index arrays to match loop ordering
 			std::vector< std::pair<size_t,size_t> > perm_kv;
 			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_indices.size(); ++group_loop_idx)
@@ -173,12 +140,6 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 			{
 				perm_entries[perm_idx] = perm_kv[perm_idx].second;
 			}
-			std::cout << "\n----------------------\n";
-			std::cout << "permutation_entries:\n";
-			for(size_t j = 0; j < perm_entries.size(); ++j)
-			{
-				std::cout << "\t" << perm_entries[j] << "\n";
-			}
 			runtime_permutation perm(perm_entries);
 			perm.apply(group_loop_indices);
 			perm.apply(group_loop_subspaces);
@@ -190,19 +151,6 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 
 			//Now that the subspaces of our newly formed tree are loop-ordered, we can sort them as such
 			sort(group_loop_subspaces.begin(),group_loop_subspaces.end());
-			std::cout << "\n----------------------\n";
-			std::cout << "group_loop_indices AFTER permutation:\n";
-			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_indices.size(); ++group_loop_idx)
-			{
-				std::cout << "\t" << group_loop_indices[group_loop_idx] << "\n";
-			}
-
-			std::cout << "\n----------------------\n";
-			std::cout << "group_subspace_indices AFTER permutation:\n";
-			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_subspaces.size(); ++group_loop_idx)
-			{
-				std::cout << "\t" << group_loop_subspaces[group_loop_idx] << "\n";
-			}
 
 			//Record that each loop touches the appropriate subspace of this tree
 			for(size_t group_loop_idx = 0; group_loop_idx < group_loop_indices.size(); ++group_loop_idx)
@@ -214,12 +162,12 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 			}
 
 			//TODO: DEBUG REMOVE
-			std::cout << "\n-----------------------------\n";
-			std::cout << "m_loops_to_tree_subspaces:\n";
-			for(std::map<size_t, std::pair<size_t,size_t> >::iterator it = m_loops_to_tree_subspaces.begin(); it != m_loops_to_tree_subspaces.end(); ++it)
-			{
-				std::cout << it->first << ": " << "(" << it->second.first << "," << it->second.second << ")\n";
-			}
+//			std::cout << "\n-----------------------------\n";
+//			std::cout << "m_loops_to_tree_subspaces:\n";
+//			for(std::map<size_t, std::pair<size_t,size_t> >::iterator it = m_loops_to_tree_subspaces.begin(); it != m_loops_to_tree_subspaces.end(); ++it)
+//			{
+//				std::cout << it->first << ": " << "(" << it->second.first << "," << it->second.second << ")\n";
+//			}
 		}
 	}
 }
