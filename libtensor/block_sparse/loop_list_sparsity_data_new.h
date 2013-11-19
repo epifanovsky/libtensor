@@ -8,11 +8,17 @@
 #ifndef LOOP_LIST_SPARSITY_DATA_NEW_H_
 #define LOOP_LIST_SPARSITY_DATA_NEW_H_
 
-#include "sparse_loop_list.h"
 #include <utility>
+#include <vector>
+#include <map>
+#include "sparse_defs.h"
+#include "sparse_bispace.h"
 
 namespace libtensor
 {
+
+//Forward declaration for classes referencing each other
+class sparse_loop_list;
 
 class loop_list_sparsity_data_new
 {
@@ -25,7 +31,7 @@ public:
 	//because then sparse_loop_list handles validating the loops
 	loop_list_sparsity_data_new(const sparse_loop_list& loop_list);
 
-	block_list get_sig_block_list(const block_list& sub_key,size_t loop_idx) const;
+	block_list get_sig_block_list(const block_list& loop_indices,size_t loop_idx) const;
 };
 
 } /* namespace libtensor */

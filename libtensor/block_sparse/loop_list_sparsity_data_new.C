@@ -5,6 +5,7 @@
  *      Author: smanzer
  */
 #include "loop_list_sparsity_data_new.h"
+#include "sparse_loop_list.h"
 #include <algorithm>
 
 namespace libtensor
@@ -160,30 +161,44 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 				size_t loop_idx = group_loop_indices[group_loop_idx];
 				m_loops_to_tree_subspaces[loop_idx] = std::pair<size_t,size_t>(tree_idx,tree_subspace_idx);
 			}
-
-			//TODO: DEBUG REMOVE
-//			std::cout << "\n-----------------------------\n";
-//			std::cout << "m_loops_to_tree_subspaces:\n";
-//			for(std::map<size_t, std::pair<size_t,size_t> >::iterator it = m_loops_to_tree_subspaces.begin(); it != m_loops_to_tree_subspaces.end(); ++it)
-//			{
-//				std::cout << it->first << ": " << "(" << it->second.first << "," << it->second.second << ")\n";
-//			}
 		}
 	}
 }
 
 block_list loop_list_sparsity_data_new::get_sig_block_list(
-	const block_list& sub_key,size_t loop_idx) const
+	const block_list& loop_indices,size_t loop_idx) const
 {
+
 	std::map<size_t, std::pair<size_t,size_t> >::const_iterator  ltt_it = m_loops_to_tree_subspaces.find(loop_idx);
-	if(ltt_it == m_loops_to_tree_subspaces.end())
+
+	//The first index in a sparse tree must be treated as dense
+	if(ltt_it == m_loops_to_tree_subspaces.end() || ltt_it->second.second == 0)
 	{
 		return m_subspace_block_lists[loop_idx];
 	}
 	else
 	{
 		size_t tree_idx = ltt_it->second.first;
-		return m_trees[tree_idx].get_sub_key_block_list(sub_key);
+		const sparse_block_tree_any_order& cur_tree = m_trees[tree_idx];
+
+		//Extract the loop indices that are relevant to this tree
+		//How many indices deep are we into this tree?
+		size_t cur_subspace_idx = m_loops_to_tree_subspaces.at(loop_idx).second;
+
+		std::vector<size_t> sub_key(cur_subspace_idx);
+		std::map<size_t, std::pair<size_t,size_t> >::const_iterator  ltt_it = m_loops_to_tree_subspaces.begin();
+		for(ltt_it; ltt_it != m_loops_to_tree_subspaces.end(); ++ltt_it)
+		{
+			if(ltt_it->second.first == tree_idx)
+			{
+				//We need to skip the index corresponding to this loop and any higher subspaces
+				if(ltt_it->second.second < cur_subspace_idx)
+				{
+					sub_key[ltt_it->second.second] = loop_indices[ltt_it->first];
+				}
+			}
+		}
+		return cur_tree.get_sub_key_block_list(sub_key);
 	}
 }
 

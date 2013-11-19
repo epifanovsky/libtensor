@@ -1,9 +1,6 @@
-#include <libtensor/block_sparse/loop_list_sparsity_data.h>
-#include <libtensor/block_sparse/loop_list_sparsity_data_new.h>
-#include <libtensor/block_sparse/sparse_bispace.h>
-#include <libtensor/block_sparse/block_loop.h>
+#include <libtensor/block_sparse/sparse_loop_list.h>
+#include <libtensor/block_sparse/block_loop_new.h>
 #include <libtensor/block_sparse/runtime_permutation.h>
-#include <libtensor/core/permutation.h>
 #include "loop_list_sparsity_data_test.h"
 
 namespace libtensor {

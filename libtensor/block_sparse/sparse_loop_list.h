@@ -11,7 +11,8 @@
 #include <vector>
 #include "block_loop_new.h"
 #include "sparse_bispace.h"
-#include "block_kernels.h"
+#include "block_kernel_i_new.h"
+#include "loop_list_sparsity_data_new.h"
 
 namespace libtensor
 {
@@ -26,6 +27,7 @@ private:
 	template<typename T>
     void _run_internal(block_kernel_i_new<T>& kernel,
     				   std::vector<T*>& ptrs,
+    				   loop_list_sparsity_data_new& llsd,
     				   std::vector<dim_list>& bispace_dim_lists,
     				   std::vector<block_list>& bispace_block_lists,
     				   block_list& loop_indices,
@@ -67,18 +69,23 @@ void sparse_loop_list::run(block_kernel_i_new<T>& kernel,std::vector<T*>& ptrs)
 		bispace_dim_lists[bispace_idx].resize(cur_bispaces[bispace_idx].get_order());
 		bispace_block_lists[bispace_idx].resize(cur_bispaces[bispace_idx].get_order());
 	}
+
+	//Aggregate the sparsity information from all of the loops
+	loop_list_sparsity_data_new llsd(*this);
 	block_list loop_indices(m_loops.size());
-	_run_internal(kernel,ptrs,bispace_dim_lists,bispace_block_lists,loop_indices,0);
+	_run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,0);
 }
 
 template<typename T>
 void sparse_loop_list::_run_internal(block_kernel_i_new<T>& kernel,
 				   std::vector<T*>& ptrs,
+				   loop_list_sparsity_data_new& llsd,
 				   std::vector<dim_list>& bispace_dim_lists,
 				   std::vector<block_list>& bispace_block_lists,
 				   block_list& loop_indices,
 				   size_t loop_idx)
 {
+	//Get the subspace that we are looping over
     const block_loop_new& cur_loop = m_loops[loop_idx];
     const std::vector<sparse_bispace_any_order>& cur_bispaces = cur_loop.get_bispaces();
     size_t first_bispace_idx, first_subspace_idx;
@@ -93,12 +100,8 @@ void sparse_loop_list::_run_internal(block_kernel_i_new<T>& kernel,
     }
     const sparse_bispace<1>& cur_subspace = cur_bispaces[first_bispace_idx][first_subspace_idx];
 
-    //TODO: Sparsity happens here - set up as such using llsd
-    block_list block_indices(cur_subspace.get_n_blocks());
-    for(size_t i = 0; i < block_indices.size(); ++i)
-    {
-    	block_indices[i] = i;
-    }
+    //Get the list of blocks in that subspace that are significant
+    block_list block_indices = llsd.get_sig_block_list(loop_indices,loop_idx);
 
     for(size_t cur_block_idx = 0; cur_block_idx < block_indices.size(); ++cur_block_idx)
     {
@@ -130,7 +133,7 @@ void sparse_loop_list::_run_internal(block_kernel_i_new<T>& kernel,
         }
         else
         {
-            _run_internal(kernel,ptrs,bispace_dim_lists,bispace_block_lists,loop_indices,loop_idx+1);
+            _run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,loop_idx+1);
         }
     }
 }

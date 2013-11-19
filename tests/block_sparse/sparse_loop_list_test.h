@@ -26,7 +26,9 @@ private:
     void test_get_loops_that_access_bispace_2d_matmul() throw(libtest::test_exception);
 
     void test_run_block_permute_kernel_2d() throw(libtest::test_exception);
+    void test_run_block_permute_kernel_2d_sparse() throw(libtest::test_exception);
     void test_run_block_permute_kernel_3d_120() throw(libtest::test_exception);
+    void test_run_block_permute_kernel_3d_120_sparse() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
