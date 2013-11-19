@@ -3,6 +3,7 @@
 
 #include "labeled_sparse_btensor.h" 
 #include "lazy_eval_functor.h"
+#include "block_contract2_kernel.h"
 
 //TODO: REMOVE
 #include <iostream>

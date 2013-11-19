@@ -6,7 +6,7 @@
  */
 
 #include <libtensor/block_sparse/sparse_loop_list.h>
-#include <libtensor/block_sparse/block_kernels.h>
+#include <libtensor/block_sparse/block_permute_kernel_new.h>
 #include "sparse_loop_list_test.h"
 
 namespace libtensor

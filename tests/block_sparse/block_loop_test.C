@@ -1,7 +1,7 @@
-//TODO: remove block_loop.h
+//TODO: remove block_loop.h,block_contract2_kernel.h
 #include <libtensor/block_sparse/block_loop.h>
+#include <libtensor/block_sparse/block_contract2_kernel.h>
 #include <libtensor/block_sparse/block_loop_new.h>
-#include <libtensor/block_sparse/block_kernels.h>
 #include <sstream>
 #include "block_loop_test.h" 
 

@@ -10,6 +10,7 @@
 
 #include "block_kernel_i_new.h"
 #include "sparse_loop_list.h"
+#include "../linalg/linalg.h"
 
 //TODO REMOVE
 #include <iostream>

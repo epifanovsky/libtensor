@@ -4,7 +4,9 @@
 #include <sstream>
 #include "sparse_bispace.h"
 #include "block_loop.h"
-#include "block_kernels.h"
+#include "block_permute_kernel.h"
+#include "block_load_kernel.h"
+#include "block_printer.h"
 #include "../iface/letter_expr.h"
 #include "labeled_sparse_btensor.h"
 

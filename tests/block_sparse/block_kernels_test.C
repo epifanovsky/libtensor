@@ -1,5 +1,7 @@
-#include <libtensor/block_sparse/block_kernels.h>
 #include <libtensor/block_sparse/sparse_loop_list.h>
+#include <libtensor/block_sparse/block_contract2_kernel_new.h>
+#include <libtensor/block_sparse/block_permute_kernel_new.h>
+#include <libtensor/block_sparse/block_print_kernel.h>
 #include <libtensor/iface/letter.h>
 #include <sstream>
 #include "block_kernels_test.h" 
