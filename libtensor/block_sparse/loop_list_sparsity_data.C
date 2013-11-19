@@ -1,24 +1,24 @@
 /*
- * loop_list_sparsity_data_new.cpp
+ * loop_list_sparsity_data.cpp
  *
  *  Created on: Nov 14, 2013
  *      Author: smanzer
  */
-#include "loop_list_sparsity_data_new.h"
+#include "loop_list_sparsity_data.h"
 #include "sparse_loop_list.h"
 #include <algorithm>
 
 namespace libtensor
 {
 
-loop_list_sparsity_data_new::loop_list_sparsity_data_new(
+loop_list_sparsity_data::loop_list_sparsity_data(
 		const sparse_loop_list& loop_list)
 {
 	//First, we determine the full list of blocks of each subspace that is looped over by any loop
-	const std::vector< block_loop_new >& loops = loop_list.get_loops();
+	const std::vector< block_loop >& loops = loop_list.get_loops();
 	for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
 	{
-		const block_loop_new& cur_loop = loops[loop_idx];
+		const block_loop& cur_loop = loops[loop_idx];
 		const std::vector< sparse_bispace_any_order >& cur_bispaces = cur_loop.get_bispaces();
 		for(size_t bispace_idx = 0; bispace_idx < cur_bispaces.size(); ++bispace_idx)
 		{
@@ -165,7 +165,7 @@ loop_list_sparsity_data_new::loop_list_sparsity_data_new(
 	}
 }
 
-block_list loop_list_sparsity_data_new::get_sig_block_list(
+block_list loop_list_sparsity_data::get_sig_block_list(
 	const block_list& loop_indices,size_t loop_idx) const
 {
 

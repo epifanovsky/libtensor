@@ -9,10 +9,10 @@
 #define SPARSE_LOOP_LIST_H_
 
 #include <vector>
-#include "block_loop_new.h"
+#include "block_loop.h"
 #include "sparse_bispace.h"
-#include "block_kernel_i_new.h"
-#include "loop_list_sparsity_data_new.h"
+#include "block_kernel_i.h"
+#include "loop_list_sparsity_data.h"
 
 namespace libtensor
 {
@@ -21,13 +21,13 @@ class sparse_loop_list
 {
 private:
     static const char* k_clazz; //!< Class name
-    std::vector< block_loop_new > m_loops;
+    std::vector< block_loop > m_loops;
     std::vector< sparse_bispace_any_order > m_bispaces;
 
 	template<typename T>
-    void _run_internal(block_kernel_i_new<T>& kernel,
+    void _run_internal(block_kernel_i<T>& kernel,
     				   std::vector<T*>& ptrs,
-    				   loop_list_sparsity_data_new& llsd,
+    				   loop_list_sparsity_data& llsd,
     				   std::vector<dim_list>& bispace_dim_lists,
     				   std::vector<block_list>& bispace_block_lists,
     				   block_list& loop_indices,
@@ -35,13 +35,13 @@ private:
 public:
 	sparse_loop_list(const std::vector< sparse_bispace_any_order >& bispaces);
 
-	void add_loop(const block_loop_new& loop);
+	void add_loop(const block_loop& loop);
 
 	template<typename T>
-	void run(block_kernel_i_new<T>& kernel,std::vector<T*>& ptrs);
+	void run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs);
 
 	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
-	const std::vector< block_loop_new >& get_loops() const { return m_loops; }
+	const std::vector< block_loop >& get_loops() const { return m_loops; }
 
 	//Returns the indices of the loops that access any subspace of the specified bispace
 	std::vector<size_t> get_loops_that_access_bispace(size_t bispace_idx) const;
@@ -52,7 +52,7 @@ public:
 };
 
 template<typename T>
-void sparse_loop_list::run(block_kernel_i_new<T>& kernel,std::vector<T*>& ptrs)
+void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs)
 {
 	if(m_loops.size() == 0)
 	{
@@ -71,22 +71,22 @@ void sparse_loop_list::run(block_kernel_i_new<T>& kernel,std::vector<T*>& ptrs)
 	}
 
 	//Aggregate the sparsity information from all of the loops
-	loop_list_sparsity_data_new llsd(*this);
+	loop_list_sparsity_data llsd(*this);
 	block_list loop_indices(m_loops.size());
 	_run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,0);
 }
 
 template<typename T>
-void sparse_loop_list::_run_internal(block_kernel_i_new<T>& kernel,
+void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
 				   std::vector<T*>& ptrs,
-				   loop_list_sparsity_data_new& llsd,
+				   loop_list_sparsity_data& llsd,
 				   std::vector<dim_list>& bispace_dim_lists,
 				   std::vector<block_list>& bispace_block_lists,
 				   block_list& loop_indices,
 				   size_t loop_idx)
 {
 	//Get the subspace that we are looping over
-    const block_loop_new& cur_loop = m_loops[loop_idx];
+    const block_loop& cur_loop = m_loops[loop_idx];
     const std::vector<sparse_bispace_any_order>& cur_bispaces = cur_loop.get_bispaces();
     size_t first_bispace_idx, first_subspace_idx;
     for(size_t i = 0; i < cur_bispaces.size(); ++i)

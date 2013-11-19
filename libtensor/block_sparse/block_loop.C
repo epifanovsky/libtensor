@@ -5,14 +5,14 @@
  *      Author: smanzer
  */
 
-#include "block_loop_new.h"
+#include "block_loop.h"
 
 namespace libtensor
 {
 
-const char* block_loop_new::k_clazz = "block_loop";
+const char* block_loop::k_clazz = "block_loop";
 
-block_loop_new::block_loop_new(const std::vector< sparse_bispace_any_order >& bispaces) : m_bispaces(bispaces)
+block_loop::block_loop(const std::vector< sparse_bispace_any_order >& bispaces) : m_bispaces(bispaces)
 {
 	if(bispaces.size() == 0)
 	{
@@ -21,7 +21,7 @@ block_loop_new::block_loop_new(const std::vector< sparse_bispace_any_order >& bi
 	}
 }
 
-void block_loop_new::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
+void block_loop::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
 {
 	//Is bispace_idx/subspace_idx valid?
 	if(bispace_idx >= m_bispaces.size())
@@ -52,7 +52,7 @@ void block_loop_new::set_subspace_looped(size_t bispace_idx, size_t subspace_idx
 	m_subspace_map[bispace_idx] = subspace_idx;
 }
 
-size_t block_loop_new::get_subspace_looped(size_t bispace_idx) const
+size_t block_loop::get_subspace_looped(size_t bispace_idx) const
 {
 	if(bispace_idx >= m_bispaces.size())
 	{
@@ -68,7 +68,7 @@ size_t block_loop_new::get_subspace_looped(size_t bispace_idx) const
 	return m_subspace_map.at(bispace_idx);
 }
 
-bool block_loop_new::is_bispace_ignored(size_t bispace_idx) const
+bool block_loop::is_bispace_ignored(size_t bispace_idx) const
 {
 	if(bispace_idx >= m_bispaces.size())
 	{

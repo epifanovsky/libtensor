@@ -5,18 +5,18 @@
  *      Author: smanzer
  */
 
-#ifndef BLOCK_PERMUTE_KERNEL_NEW_H_
-#define BLOCK_PERMUTE_KERNEL_NEW_H_
+#ifndef BLOCK_PERMUTE_KERNEL_H_
+#define BLOCK_PERMUTE_KERNEL_H_
 
 #include <numeric>
 #include "runtime_permutation.h"
-#include "block_kernel_i_new.h"
+#include "block_kernel_i.h"
 
 namespace libtensor
 {
 
 template<typename T>
-class block_permute_kernel_new: public libtensor::block_kernel_i_new<T>
+class block_permute_kernel: public libtensor::block_kernel_i<T>
 {
 private:
     runtime_permutation m_perm;
@@ -29,17 +29,17 @@ private:
     		const dim_list& input_dims,
     		size_t output_offset = 0,size_t input_offset = 0,size_t level = 0);
 public:
-	block_permute_kernel_new(const runtime_permutation& perm) : m_perm(perm) {}
+	block_permute_kernel(const runtime_permutation& perm) : m_perm(perm) {}
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
 template<typename T>
-const char* block_permute_kernel_new<T>::k_clazz = "block_permute_kernel<T>";
+const char* block_permute_kernel<T>::k_clazz = "block_permute_kernel<T>";
 
 } /* namespace libtensor */
 
 template<typename T>
-void libtensor::block_permute_kernel_new<T>::_permute(T* output_ptr,
+void libtensor::block_permute_kernel<T>::_permute(T* output_ptr,
 		const T* input_ptr, const dim_list& output_dims,
 		const dim_list& input_dims, size_t output_offset, size_t input_offset,
 		size_t level)
@@ -76,7 +76,7 @@ void libtensor::block_permute_kernel_new<T>::_permute(T* output_ptr,
 }
 
 template<typename T>
-void libtensor::block_permute_kernel_new<T>::operator()(
+void libtensor::block_permute_kernel<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
 	//One input one output?
@@ -113,4 +113,4 @@ void libtensor::block_permute_kernel_new<T>::operator()(
     _permute(ptrs[0],ptrs[1],dim_lists[0],dim_lists[1]);
 }
 
-#endif /* BLOCK_PERMUTE_KERNEL_NEW_H_ */
+#endif /* BLOCK_PERMUTE_KERNEL_H_ */

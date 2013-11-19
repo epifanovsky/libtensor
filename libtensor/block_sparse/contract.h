@@ -3,7 +3,7 @@
 
 #include "labeled_sparse_btensor.h" 
 #include "lazy_eval_functor.h"
-#include "block_contract2_kernel_new.h"
+#include "block_contract2_kernel.h"
 
 //TODO: REMOVE
 #include <iostream>
@@ -68,7 +68,7 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
                     __FILE__, __LINE__, "both tensors cannot contain an uncontracted index");
         }
 
-    	block_loop_new bl(bispaces);
+    	block_loop bl(bispaces);
     	bl.set_subspace_looped(0,i);
         if(m_A.contains(a))
         {
@@ -96,12 +96,12 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
                     __FILE__, __LINE__, "a contracted index must appear in all RHS tensors");
         }
 
-        block_loop_new bl(bispaces);
+        block_loop bl(bispaces);
         bl.set_subspace_looped(1,m_A.index_of(a));
         bl.set_subspace_looped(2,m_B.index_of(a));
         sll.add_loop(bl);
     }
-    block_contract2_kernel_new<T> bc2k(sll);
+    block_contract2_kernel<T> bc2k(sll);
 
     std::vector<T*> ptrs(1,(T*)C.get_data_ptr());
     ptrs.push_back((T*)m_A.get_data_ptr());

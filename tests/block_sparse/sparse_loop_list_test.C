@@ -6,8 +6,8 @@
  */
 
 #include <libtensor/block_sparse/sparse_loop_list.h>
-#include <libtensor/block_sparse/block_permute_kernel_new.h>
-#include <libtensor/block_sparse/block_contract2_kernel_new.h>
+#include <libtensor/block_sparse/block_permute_kernel.h>
+#include <libtensor/block_sparse/block_contract2_kernel.h>
 #include "sparse_loop_list_test.h"
 
 namespace libtensor
@@ -60,9 +60,9 @@ void sparse_loop_list_test::test_add_loop_invalid_loop_bispaces() throw(libtest:
     bispaces_2.push_back(spb_1|spb_3|spb_3);
     bispaces_2.push_back(spb_2|spb_3);
 
-    block_loop_new bl_1(bispaces_1);
+    block_loop bl_1(bispaces_1);
     bl_1.set_subspace_looped(0,1);
-    block_loop_new bl_2(bispaces_2);
+    block_loop bl_2(bispaces_2);
     bl_2.set_subspace_looped(0,2);
     //Should fail due to incompatible bispaces
     sparse_loop_list sll(bispaces_1);
@@ -70,7 +70,7 @@ void sparse_loop_list_test::test_add_loop_invalid_loop_bispaces() throw(libtest:
     bool threw_exception = false;
     try
     {
-    	sll.add_loop(block_loop_new(bispaces_2));
+    	sll.add_loop(block_loop(bispaces_2));
     }
     catch(bad_parameter&)
     {
@@ -114,7 +114,7 @@ void sparse_loop_list_test::test_add_loop_all_ignored() throw(libtest::test_exce
     bool threw_exception = false;
     try
     {
-    	sll.add_loop(block_loop_new(bispaces_1));
+    	sll.add_loop(block_loop(bispaces_1));
     }
     catch(bad_parameter&)
     {
@@ -153,13 +153,13 @@ void sparse_loop_list_test::test_add_loop_duplicate_subspaces_looped() throw(lib
     bispaces_1.push_back(spb_1|spb_2|spb_3);
     bispaces_1.push_back(spb_2|spb_3);
 
-    block_loop_new bl_1(bispaces_1);
+    block_loop bl_1(bispaces_1);
     bl_1.set_subspace_looped(0,1);
-    block_loop_new bl_2(bispaces_1);
+    block_loop bl_2(bispaces_1);
     bl_2.set_subspace_looped(0,2);
-    block_loop_new bl_3(bispaces_1);
+    block_loop bl_3(bispaces_1);
     bl_3.set_subspace_looped(1,1);
-    block_loop_new bl_4(bispaces_1);
+    block_loop bl_4(bispaces_1);
     bl_4.set_subspace_looped(0,1);
 
     //Should fail due to two loops touching the same subspace of the same bispace
@@ -230,13 +230,13 @@ void sparse_loop_list_test::test_get_loops_that_access_bispace_2d_matmul() throw
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,0);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(2,1);
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(1,1);
     bl_3.set_subspace_looped(2,0);
 
@@ -328,14 +328,14 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
 
     runtime_permutation perm(2);
     perm.permute(0,1);
-    block_permute_kernel_new<double> bpk(perm);
+    block_permute_kernel<double> bpk(perm);
 
 
     //We stride the input, not the output
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,1);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(1,0);
 
@@ -424,13 +424,13 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
 
     runtime_permutation rperm(2);
     rperm.permute(0,1);
-    block_permute_kernel_new<double> bpk(rperm);
+    block_permute_kernel<double> bpk(rperm);
 
 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,1);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(1,0);
 
@@ -574,15 +574,15 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest
     runtime_permutation perm(3);
     perm.permute(0,2);
     perm.permute(0,1);
-    block_permute_kernel_new<double> bpk(perm);
+    block_permute_kernel<double> bpk(perm);
 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,1);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(1,2);
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(0,2);
     bl_3.set_subspace_looped(1,0);
     sparse_loop_list sll(bispaces);
@@ -723,15 +723,15 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(
     runtime_permutation rperm(3);
     rperm.permute(0,2);
     rperm.permute(0,1);
-    block_permute_kernel_new<double> bpk(rperm);
+    block_permute_kernel<double> bpk(rperm);
 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,1);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(1,2);
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(0,2);
     bl_3.set_subspace_looped(1,0);
 
@@ -840,17 +840,17 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
     bispaces.push_back(spb_j | spb_k);
 
     //i loop
-    block_loop_new bl_i(bispaces);
+    block_loop bl_i(bispaces);
     bl_i.set_subspace_looped(0,0);
     bl_i.set_subspace_looped(1,0);
 
     //j loop
-    block_loop_new bl_j(bispaces);
+    block_loop bl_j(bispaces);
     bl_j.set_subspace_looped(0,1);
     bl_j.set_subspace_looped(2,0);
 
     //k loop
-    block_loop_new bl_k(bispaces);
+    block_loop bl_k(bispaces);
     bl_k.set_subspace_looped(1,1);
     bl_k.set_subspace_looped(2,1);
 
@@ -859,7 +859,7 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
     sll.add_loop(bl_j);
     sll.add_loop(bl_k);
 
-    block_contract2_kernel_new<double> bc2k(sll);
+    block_contract2_kernel<double> bc2k(sll);
 
     sll.run(bc2k,ptrs);
 
@@ -1017,22 +1017,22 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
     bispaces.push_back(spb_k|spb_l);
 
     //i loop
-    block_loop_new bl_i(bispaces);
+    block_loop bl_i(bispaces);
     bl_i.set_subspace_looped(0,0);
     bl_i.set_subspace_looped(1,0);
 
     //j loop
-    block_loop_new bl_j(bispaces);
+    block_loop bl_j(bispaces);
     bl_j.set_subspace_looped(0,1);
     bl_j.set_subspace_looped(1,1);
 
     //l loop
-    block_loop_new bl_l(bispaces);
+    block_loop bl_l(bispaces);
     bl_l.set_subspace_looped(0,2);
     bl_l.set_subspace_looped(2,1);
 
     //k loop
-    block_loop_new bl_k(bispaces);
+    block_loop bl_k(bispaces);
     bl_k.set_subspace_looped(1,2);
     bl_k.set_subspace_looped(2,0);
 
@@ -1042,7 +1042,7 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
     sll.add_loop(bl_l);
     sll.add_loop(bl_k);
 
-    block_contract2_kernel_new<double> bc2k(sll);
+    block_contract2_kernel<double> bc2k(sll);
 
     sll.run(bc2k,ptrs);
 

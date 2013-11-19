@@ -20,7 +20,7 @@ namespace libtensor
 //Forward declaration for classes referencing each other
 class sparse_loop_list;
 
-class loop_list_sparsity_data_new
+class loop_list_sparsity_data
 {
 private:
 	std::vector< block_list > m_subspace_block_lists;
@@ -29,7 +29,7 @@ private:
 public:
 	//We choose to friend loop_list and use its loop vector member var instead of having the vector passed directly
 	//because then sparse_loop_list handles validating the loops
-	loop_list_sparsity_data_new(const sparse_loop_list& loop_list);
+	loop_list_sparsity_data(const sparse_loop_list& loop_list);
 
 	block_list get_sig_block_list(const block_list& loop_indices,size_t loop_idx) const;
 };

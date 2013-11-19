@@ -5,17 +5,17 @@
  *      Author: smanzer
  */
 
-#ifndef BLOCK_LOAD_KERNEL_NEW_H_
-#define BLOCK_LOAD_KERNEL_NEW_H_
+#ifndef BLOCK_LOAD_KERNEL_H_
+#define BLOCK_LOAD_KERNEL_H_
 
-#include "block_kernel_i_new.h"
+#include "block_kernel_i.h"
 #include "sparse_bispace.h"
 
 namespace libtensor
 {
 
 template<typename T>
-class block_load_kernel_new : public block_kernel_i_new<T>
+class block_load_kernel : public block_kernel_i<T>
 {
 private:
     static const char* k_clazz; //!< Class name
@@ -24,15 +24,15 @@ private:
     std::vector<size_t> cur_block_indices;
     void _load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level=0);
 public:
-    block_load_kernel_new(const sparse_bispace_any_order& bispace,T* data_ptr);
+    block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr);
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
 template<typename T>
-const char* block_load_kernel_new<T>::k_clazz = "block_load_kernel<T>";
+const char* block_load_kernel<T>::k_clazz = "block_load_kernel<T>";
 
 template<typename T>
-block_load_kernel_new<T>::block_load_kernel_new(const sparse_bispace_any_order& bispace,T* data_ptr) : m_data_ptr(data_ptr), m_bispace(bispace)
+block_load_kernel<T>::block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr) : m_data_ptr(data_ptr), m_bispace(bispace)
 {
 	//Sparsity is unsupported for row major loading
     if(m_bispace.get_n_sparse_groups() > 0)
@@ -47,7 +47,7 @@ block_load_kernel_new<T>::block_load_kernel_new(const sparse_bispace_any_order& 
 }
 
 template<typename T>
-void block_load_kernel_new<T>::_load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level)
+void block_load_kernel<T>::_load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level)
 {
     //Base case
     if(level == (output_dims.size() - 1))
@@ -80,7 +80,7 @@ void block_load_kernel_new<T>::_load(T* output_ptr,const T* input_ptr,const dim_
 
 //It is assumed that the blocks will be accessed in lexicographic order
 template<typename T>
-void block_load_kernel_new<T>::operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists)
+void block_load_kernel<T>::operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists)
 {
 
 	if(ptrs.size() != 1 || ptrs.size() != dim_lists.size())
@@ -117,4 +117,4 @@ void block_load_kernel_new<T>::operator()(const std::vector<T*>& ptrs, const std
 
 } /* namespace libtensor */
 
-#endif /* BLOCK_LOAD_KERNEL_NEW_H_ */
+#endif /* BLOCK_LOAD_KERNEL_H_ */

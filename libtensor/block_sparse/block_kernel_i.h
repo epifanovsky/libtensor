@@ -15,11 +15,11 @@
 namespace libtensor {
 
 template<typename T>
-class block_kernel_i_new
+class block_kernel_i
 {
 public:
 	virtual void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists) = 0;
-	virtual ~block_kernel_i_new() {}
+	virtual ~block_kernel_i() {}
 };
 } // namespace libtensor
 

@@ -5,7 +5,7 @@
 #include "sparse_bispace.h"
 #include "../iface/letter_expr.h"
 #include "sparse_loop_list.h"
-#include "block_load_kernel_new.h"
+#include "block_load_kernel.h"
 #include "block_print_kernel.h"
 #include "labeled_sparse_btensor.h"
 
@@ -84,12 +84,12 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
         	sparse_loop_list sll(bispaces);
             for(size_t i = 0; i < N; ++i)
             {
-            	block_loop_new loop(bispaces);
+            	block_loop loop(bispaces);
             	loop.set_subspace_looped(0,i);
             	sll.add_loop(loop);
             }
 
-            block_load_kernel_new<T> blk(m_bispace,mem);
+            block_load_kernel<T> blk(m_bispace,mem);
             std::vector<T*> ptrs(1,m_data_ptr);
             sll.run(blk,ptrs);
         }
@@ -151,7 +151,7 @@ std::string sparse_btensor<N,T>::str() const
 	sparse_loop_list sll(bispaces);
 	for(size_t i = 0; i < N; ++i)
 	{
-		block_loop_new loop(bispaces);
+		block_loop loop(bispaces);
 		loop.set_subspace_looped(0,i);
 		sll.add_loop(loop);
 	}

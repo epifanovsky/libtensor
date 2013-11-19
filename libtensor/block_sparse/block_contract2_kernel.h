@@ -5,10 +5,10 @@
  *      Author: smanzer
  */
 
-#ifndef BLOCK_CONTRACT2_KERNEL_NEW_H_
-#define BLOCK_CONTRACT2_KERNEL_NEW_H_
+#ifndef BLOCK_CONTRACT2_KERNEL_H_
+#define BLOCK_CONTRACT2_KERNEL_H_
 
-#include "block_kernel_i_new.h"
+#include "block_kernel_i.h"
 #include "sparse_loop_list.h"
 #include "../linalg/linalg.h"
 
@@ -19,7 +19,7 @@ namespace libtensor
 {
 
 template<typename T>
-class block_contract2_kernel_new: public libtensor::block_kernel_i_new<T>
+class block_contract2_kernel: public libtensor::block_kernel_i<T>
 {
 private:
     static const char* k_clazz; //!< Class name
@@ -30,23 +30,23 @@ private:
     						size_t m,size_t n,size_t k,
     						size_t lda,size_t ldb,size_t ldc,
     						size_t loop_idx = 0) const;
-    const std::vector< block_loop_new >& m_loops;
+    const std::vector< block_loop >& m_loops;
     size_t m_n_contracted_inds;
     bool m_A_trans;
     bool m_B_trans;
     void (*m_dgemm_fn)(void*,size_t,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T); //DGEMM function to call to process deepest level
 public:
-    block_contract2_kernel_new(const sparse_loop_list& loop_list);
+    block_contract2_kernel(const sparse_loop_list& loop_list);
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
 template<typename T>
-const char* block_contract2_kernel_new<T>::k_clazz = "block_contract2_kernel<T>";
+const char* block_contract2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
 
 } /* namespace libtensor */
 
 template<typename T>
-inline void libtensor::block_contract2_kernel_new<T>::_contract_internal(
+inline void libtensor::block_contract2_kernel<T>::_contract_internal(
 		std::vector<T*> ptrs, const std::vector<dim_list>& dim_lists, size_t m,
 		size_t n, size_t k, size_t lda, size_t ldb, size_t ldc,
 		size_t loop_idx) const
@@ -58,7 +58,7 @@ inline void libtensor::block_contract2_kernel_new<T>::_contract_internal(
     }
     else
     {
-    	const block_loop_new& cur_loop = m_loops[loop_idx];
+    	const block_loop& cur_loop = m_loops[loop_idx];
 
         //Compute the stride for each block
     	std::vector<size_t> strides(3,1);
@@ -93,7 +93,7 @@ inline void libtensor::block_contract2_kernel_new<T>::_contract_internal(
 }
 
 template<typename T>
-libtensor::block_contract2_kernel_new<T>::block_contract2_kernel_new(
+libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 		const sparse_loop_list& sll) : m_loops(sll.get_loops()),m_A_trans(false),m_B_trans(false)
 {
 	//Simplest contraction is matrix multiply and requires 3 loops
@@ -127,7 +127,7 @@ libtensor::block_contract2_kernel_new<T>::block_contract2_kernel_new(
 	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
 	{
 		//Contracted? It should be if it doesn't appear in the output tensor
-		const block_loop_new& cur_loop = m_loops[loop_idx];
+		const block_loop& cur_loop = m_loops[loop_idx];
 		if(cur_loop.is_bispace_ignored(0))
 		{
 			//If contracted idx doesn't appear in both input tensors, it shouldn't be contracted
@@ -171,7 +171,7 @@ libtensor::block_contract2_kernel_new<T>::block_contract2_kernel_new(
 	for(size_t loop_idx_rev = 0; loop_idx_rev < m_loops.size(); ++loop_idx_rev)
 	{
 		size_t loop_idx = m_loops.size() - loop_idx_rev - 1;
-		const block_loop_new& cur_loop = m_loops[loop_idx];
+		const block_loop& cur_loop = m_loops[loop_idx];
 		if(!cur_loop.is_bispace_ignored(0))
 		{
 			if(cur_loop.get_subspace_looped(0) != bispaces[0].get_order() - 1)
@@ -295,7 +295,7 @@ libtensor::block_contract2_kernel_new<T>::block_contract2_kernel_new(
 }
 
 template<typename T>
-void libtensor::block_contract2_kernel_new<T>::operator ()(
+void libtensor::block_contract2_kernel<T>::operator ()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
 	if(dim_lists.size() != 3 || ptrs.size() != 3)
@@ -316,7 +316,7 @@ void libtensor::block_contract2_kernel_new<T>::operator ()(
 	//Check that all dimensions match up appropriately
 	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
 	{
-		const block_loop_new& cur_loop = m_loops[loop_idx];
+		const block_loop& cur_loop = m_loops[loop_idx];
 		size_t non_ignored_bispace_idx;
 		for(size_t bispace_idx = 0; bispace_idx < dim_lists.size(); ++bispace_idx)
 		{
@@ -377,4 +377,4 @@ void libtensor::block_contract2_kernel_new<T>::operator ()(
 	_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
 }
 
-#endif /* BLOCK_CONTRACT2_KERNEL_NEW_H_ */
+#endif /* BLOCK_CONTRACT2_KERNEL_H_ */

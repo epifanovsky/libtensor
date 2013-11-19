@@ -16,7 +16,7 @@ sparse_loop_list::sparse_loop_list(const std::vector< sparse_bispace_any_order >
 {
 }
 
-void sparse_loop_list::add_loop(const block_loop_new& loop)
+void sparse_loop_list::add_loop(const block_loop& loop)
 {
 	const std::vector< sparse_bispace_any_order >& cur_bispaces = loop.get_bispaces();
 	if(m_loops.size() > 0)
@@ -40,7 +40,7 @@ void sparse_loop_list::add_loop(const block_loop_new& loop)
 		//Check that no two loops access the same subspace
 		for(size_t cur_loop_idx = 0; cur_loop_idx < m_loops.size(); ++cur_loop_idx)
 		{
-			const block_loop_new& cur_loop = m_loops[cur_loop_idx];
+			const block_loop& cur_loop = m_loops[cur_loop_idx];
 			for(size_t bis_idx = 0; bis_idx < cur_bispaces.size(); ++bis_idx)
 			{
 				if(!cur_loop.is_bispace_ignored(bis_idx) && !loop.is_bispace_ignored(bis_idx))

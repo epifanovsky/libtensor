@@ -1,4 +1,4 @@
-#include <libtensor/block_sparse/block_loop_new.h>
+#include <libtensor/block_sparse/block_loop.h>
 #include "block_loop_test.h" 
 
 namespace libtensor {
@@ -33,7 +33,7 @@ void block_loop_test::test_set_subspace_looped_invalid_bispace_idx()
     spb_2.split(split_points_2);
 
     std::vector< sparse_bispace_any_order > bispaces(2,spb_1|spb_2);
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
 
     //Fails because there is no third bispace
     bool threw_exception = false;
@@ -71,7 +71,7 @@ void block_loop_test::test_set_subspace_looped_invalid_subspace_idx()
 
     std::vector< sparse_bispace_any_order > bispaces(2,spb_1|spb_2);
 
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
 
     //Fails because 2nd subspace has no 3rd subspace
     bool threw_exception = false;
@@ -109,7 +109,7 @@ void block_loop_test::test_set_subspace_looped_not_matching_subspaces()
 
     std::vector< sparse_bispace_any_order > bispaces(2,spb_1|spb_2);
 
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
 
     //Dimension 4
     bl.set_subspace_looped(0,0);
@@ -160,7 +160,7 @@ void block_loop_test::test_get_subspace_looped_invalid_bispace_idx()
     bispaces.push_back(spb_2);
 
     //This loop ignores the second bispace
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
     bl.set_subspace_looped(0,1);
     bl.set_subspace_looped(2,0);
 
@@ -227,7 +227,7 @@ void block_loop_test::test_get_subspace_looped()
     bispaces.push_back(spb_2);
 
     //This loop ignores the second bispace
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
     bl.set_subspace_looped(0,1);
     bl.set_subspace_looped(2,0);
 
@@ -266,7 +266,7 @@ void block_loop_test::test_is_bispace_ignored_invalid_bispace_idx()
     bispaces.push_back(spb_2);
 
     //This loop ignores the second bispace
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
     bl.set_subspace_looped(0,1);
     bl.set_subspace_looped(2,0);
 
@@ -316,7 +316,7 @@ void block_loop_test::test_is_bispace_ignored()
     bispaces.push_back(spb_2);
 
     //This loop ignores the second bispace
-    block_loop_new bl(bispaces);
+    block_loop bl(bispaces);
     bl.set_subspace_looped(0,1);
     bl.set_subspace_looped(2,0);
 

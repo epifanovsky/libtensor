@@ -3,7 +3,7 @@
 
 #include "sparse_btensor.h"
 #include "lazy_eval_functor.h"
-#include "block_permute_kernel_new.h"
+#include "block_permute_kernel.h"
 
 namespace libtensor {
 
@@ -74,13 +74,13 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
 		permutation_entries[i] = rhs_idx;
 
         //Populate the loop for this index
-		block_loop_new bl(bispaces);
+		block_loop bl(bispaces);
 		bl.set_subspace_looped(0,i);
 		bl.set_subspace_looped(1,rhs_idx);
 		sll.add_loop(bl);
     }
     runtime_permutation perm(permutation_entries);
-    block_permute_kernel_new<T> bpk(perm);
+    block_permute_kernel<T> bpk(perm);
 
     //Deliberately case away the const
     std::vector<T*> ptrs(1,(T*)this->m_tensor.get_data_ptr());

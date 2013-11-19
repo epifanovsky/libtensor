@@ -8,14 +8,14 @@
 #ifndef BLOCK_PRINT_KERNEL_H_
 #define BLOCK_PRINT_KERNEL_H_
 
-#include "block_kernel_i_new.h"
+#include "block_kernel_i.h"
 #include <sstream>
 
 namespace libtensor
 {
 
 template<typename T>
-class block_print_kernel: public libtensor::block_kernel_i_new<T>
+class block_print_kernel: public libtensor::block_kernel_i<T>
 {
 private:
     std::stringstream m_ss;

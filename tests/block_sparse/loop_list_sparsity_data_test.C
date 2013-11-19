@@ -1,5 +1,5 @@
 #include <libtensor/block_sparse/sparse_loop_list.h>
-#include <libtensor/block_sparse/block_loop_new.h>
+#include <libtensor/block_sparse/block_loop.h>
 #include <libtensor/block_sparse/runtime_permutation.h>
 #include "loop_list_sparsity_data_test.h"
 
@@ -44,13 +44,13 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_no_sparsity() throw(l
     std::vector< sparse_bispace_any_order > bispaces(1,spb_1|spb_2|spb_3);
     bispaces.push_back(spb_3|spb_1|spb_2);
 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,1);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(1,2);
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(0,2);
     bl_3.set_subspace_looped(1,0);
 
@@ -60,7 +60,7 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_no_sparsity() throw(l
     sll.add_loop(bl_3);
 
     //Loop block indices chosen should be irrelevant, should return the full block range of spb_3
-    loop_list_sparsity_data_new llsd(sll);
+    loop_list_sparsity_data llsd(sll);
     block_list loop_block_inds;
     loop_block_inds.push_back(2);
     loop_block_inds.push_back(3);
@@ -178,11 +178,11 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_one_tensor()
 
     std::vector<sparse_bispace_any_order> bispaces(1,spb_1 % spb_2 % spb_3 << sig_blocks);
 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(0,2);
 
     sparse_loop_list sll(bispaces);
@@ -190,7 +190,7 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_one_tensor()
     sll.add_loop(bl_2);
     sll.add_loop(bl_3);
 
-    loop_list_sparsity_data_new llsd(sll);
+    loop_list_sparsity_data llsd(sll);
 
     std::vector<size_t> loop_block_indices(1,4);
     loop_block_indices.push_back(3);
@@ -330,15 +330,15 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_3_tensors() 
 
     //Create loops corresponding to this matrix multiply
     //i loop 
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,0);
     //j loop
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(2,1);
     //k loop
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(1,1);
     bl_3.set_subspace_looped(2,0);
 
@@ -347,7 +347,7 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_3_tensors() 
     sll.add_loop(bl_2);
     sll.add_loop(bl_3);
 
-    loop_list_sparsity_data_new llsd(sll);
+    loop_list_sparsity_data llsd(sll);
 
     //i = 4, j= 1
     std::vector<size_t> loop_block_indices;
@@ -458,16 +458,16 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_delayed_fuse
     bispaces.push_back(spb_1 | spb_2 % spb_2 << sig_blocks_B);
 
     //loop order iljk
-    block_loop_new bl_1(bispaces);
+    block_loop bl_1(bispaces);
     bl_1.set_subspace_looped(0,0);
     bl_1.set_subspace_looped(1,0);
-    block_loop_new bl_2(bispaces);
+    block_loop bl_2(bispaces);
     bl_2.set_subspace_looped(0,1);
     bl_2.set_subspace_looped(2,2);
-    block_loop_new bl_3(bispaces);
+    block_loop bl_3(bispaces);
     bl_3.set_subspace_looped(1,1);
     bl_3.set_subspace_looped(2,0);
-    block_loop_new bl_4(bispaces);
+    block_loop bl_4(bispaces);
     bl_4.set_subspace_looped(1,2);
     bl_4.set_subspace_looped(2,1);
 
@@ -477,7 +477,7 @@ void loop_list_sparsity_data_test::test_get_sig_block_list_sparsity_delayed_fuse
     sll.add_loop(bl_3);
     sll.add_loop(bl_4);
 
-    loop_list_sparsity_data_new llsd(sll);
+    loop_list_sparsity_data llsd(sll);
 
     block_list loop_block_indices_1(1,1);
     loop_block_indices_1.push_back(2);
