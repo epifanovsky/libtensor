@@ -3,11 +3,10 @@
 
 #include <sstream>
 #include "sparse_bispace.h"
-#include "block_loop.h"
-#include "block_permute_kernel.h"
-#include "block_load_kernel.h"
-#include "block_printer.h"
 #include "../iface/letter_expr.h"
+#include "sparse_loop_list.h"
+#include "block_load_kernel_new.h"
+#include "block_print_kernel.h"
 #include "labeled_sparse_btensor.h"
 
 namespace libtensor {
@@ -80,19 +79,19 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
         }
         else
         {
-            std::vector< block_loop<1,0> > loop_list;
+
+        	std::vector<sparse_bispace_any_order> bispaces(1,m_bispace);
+        	sparse_loop_list sll(bispaces);
             for(size_t i = 0; i < N; ++i)
             {
-                loop_list.push_back(block_loop<1,0>(sequence<1,size_t>(i),sequence<0,size_t>(),sequence<1,bool>(false),sequence<0,bool>()));
+            	block_loop_new loop(bispaces);
+            	loop.set_subspace_looped(0,i);
+            	sll.add_loop(loop);
             }
 
-            //TODO: Make all input sequences for bispaces use const, or some other way of eliminating awkward const
-            //from this method being const
-            block_load_kernel<T> blk(m_bispace,mem);
-            run_loop_list(loop_list,blk,sequence<1,T*>(m_data_ptr),
-                          sequence<0,const T*>(),
-                          sequence<1,sparse_bispace_any_order>(m_bispace),
-                          sequence<0,sparse_bispace_any_order>());
+            block_load_kernel_new<T> blk(m_bispace,mem);
+            std::vector<T*> ptrs(1,m_data_ptr);
+            sll.run(blk,ptrs);
         }
     }
 }
@@ -148,21 +147,19 @@ std::string sparse_btensor<N,T>::str() const
 {
 
     //Generate the loops for this tensor in slow->fast index order
-    std::vector< block_loop<0,1> > loop_list;
-    for(size_t i = 0; i < N; ++i)
-    {
-        loop_list.push_back(block_loop<0,1>(sequence<0,size_t>(),sequence<1,size_t>(i),sequence<0,bool>(),sequence<1,bool>(false)));
-    }
+	std::vector<sparse_bispace_any_order> bispaces(1,m_bispace);
+	sparse_loop_list sll(bispaces);
+	for(size_t i = 0; i < N; ++i)
+	{
+		block_loop_new loop(bispaces);
+		loop.set_subspace_looped(0,i);
+		sll.add_loop(loop);
+	}
 
-    //TODO: Make all input sequences for bispaces use const, or some toher way of eliminating awkward const
-    //from this method being const
-    block_printer<T> bp;
-    run_loop_list(loop_list,bp,
-                  sequence<0,T*>(),
-                  sequence<1,const T*>(m_data_ptr),
-                  sequence<0,sparse_bispace_any_order>(),
-                  sequence<1,sparse_bispace_any_order>(m_bispace));
-    return bp.str();
+	block_print_kernel<T> bpk;
+	std::vector<T*> ptrs(1,m_data_ptr);
+	sll.run(bpk,ptrs);
+    return bpk.str();
 }
 
 } // namespace libtensor

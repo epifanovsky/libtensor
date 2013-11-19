@@ -3,6 +3,7 @@
 
 #include "sparse_btensor.h"
 #include "lazy_eval_functor.h"
+#include "block_permute_kernel_new.h"
 
 namespace libtensor {
 
@@ -63,7 +64,9 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
     //Determine the permutation of indices between the two tensors
     //We also populate the loops necessary to execute the transformation
 	std::vector<size_t> permutation_entries(N);
-    std::vector< block_loop<1,1> >  loop_list;
+    std::vector< sparse_bispace_any_order > bispaces(1,this->m_tensor.get_bispace());
+    bispaces.push_back(rhs.m_tensor.get_bispace());
+    sparse_loop_list sll(bispaces);
     for(size_t i = 0; i < N; ++i)
     {
         const letter& a = m_le.letter_at(i);
@@ -71,22 +74,18 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
 		permutation_entries[i] = rhs_idx;
 
         //Populate the loop for this index
-        loop_list.push_back(block_loop<1,1>(sequence<1,size_t>(i),sequence<1,size_t>(rhs_idx),sequence<1,bool>(false),sequence<1,bool>(false)));
+		block_loop_new bl(bispaces);
+		bl.set_subspace_looped(0,i);
+		bl.set_subspace_looped(1,rhs_idx);
+		sll.add_loop(bl);
     }
     runtime_permutation perm(permutation_entries);
-    block_permute_kernel<T> bpk(perm);
+    block_permute_kernel_new<T> bpk(perm);
 
     //Deliberately case away the const
-    sequence<1,T*> output_ptrs((T*)this->m_tensor.get_data_ptr());
-    //TODO: should use const on input ptrs always
-    sequence<1,const T*> input_ptrs(rhs.m_tensor.get_data_ptr());
-
-    const sparse_bispace<N>& spb_1 = this->m_tensor.get_bispace();
-    const sparse_bispace<N>& spb_2 = rhs.m_tensor.get_bispace();
-
-    sequence<1, sparse_bispace_any_order> output_bispaces(spb_1);
-    sequence<1, sparse_bispace_any_order> input_bispaces(spb_2);
-    run_loop_list(loop_list,bpk,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    std::vector<T*> ptrs(1,(T*)this->m_tensor.get_data_ptr());
+    ptrs.push_back((T*)rhs.m_tensor.get_data_ptr());
+    sll.run(bpk,ptrs);
     return *this;
 }
 

@@ -988,7 +988,7 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_dense() throw(libtest::tes
     sparse_bispace<3> spb_A = spb_i % spb_j % spb_k << sig_blocks_A;
     sparse_btensor<3> A(spb_A,A_arr,true);
     sparse_btensor<2> B(spb_l | spb_k,B_arr);
-    sparse_bispace<3> spb_C = spb_A.contract(2) | spb_l;
+    sparse_bispace<3> spb_C = spb_i | spb_j | spb_l;
     sparse_btensor<3> C(spb_C);
 
     letter i,j,k,l;

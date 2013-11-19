@@ -1,39 +1,45 @@
-#ifndef BLOCK_LOAD_KERNEL_H
-#define BLOCK_LOAD_KERNEL_H
+/*
+ * block_load_kernel_new.h
+ *
+ *  Created on: Nov 19, 2013
+ *      Author: smanzer
+ */
 
-#include <vector>
+#ifndef BLOCK_LOAD_KERNEL_NEW_H_
+#define BLOCK_LOAD_KERNEL_NEW_H_
+
+#include "block_kernel_i_new.h"
 #include "sparse_bispace.h"
 
-//TODO REMOVE
+namespace libtensor
+{
 
-#include <iostream>
-
-namespace libtensor {
-
-template<typename T> 
-class block_load_kernel : public block_kernel_i<1,0,T> {
-public:
-    static const char *k_clazz; //!< Class name
+template<typename T>
+class block_load_kernel_new : public block_kernel_i_new<T>
+{
 private:
+    static const char* k_clazz; //!< Class name
     const T* m_data_ptr;
     const sparse_bispace_any_order m_bispace;
     std::vector<size_t> cur_block_indices;
     void _load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level=0);
 public:
-    block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr);
-
-    void operator()(const sequence<1, T*>& output_ptrs, 
-                    const sequence<0, const T*>& input_ptrs,
-                    const sequence<1, dim_list>& output_dims,
-                    const sequence<0, dim_list>& input_dims);
+    block_load_kernel_new(const sparse_bispace_any_order& bispace,T* data_ptr);
+	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
 template<typename T>
-const char *block_load_kernel<T>::k_clazz = "block_load_kernel<T>";
+const char* block_load_kernel_new<T>::k_clazz = "block_load_kernel<T>";
 
 template<typename T>
-block_load_kernel<T>::block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr) : m_data_ptr(data_ptr), m_bispace(bispace)
+block_load_kernel_new<T>::block_load_kernel_new(const sparse_bispace_any_order& bispace,T* data_ptr) : m_data_ptr(data_ptr), m_bispace(bispace)
 {
+	//Sparsity is unsupported for row major loading
+    if(m_bispace.get_n_sparse_groups() > 0)
+    {
+        throw bad_parameter(g_ns, k_clazz,"block_load_kernel(...)",
+                __FILE__, __LINE__, "row-major loading not supported for sparse tensors");
+    }
     for(size_t i = 0; i < m_bispace.get_order(); ++i)
     {
         cur_block_indices.push_back(0);
@@ -41,7 +47,7 @@ block_load_kernel<T>::block_load_kernel(const sparse_bispace_any_order& bispace,
 }
 
 template<typename T>
-void block_load_kernel<T>::_load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level)
+void block_load_kernel_new<T>::_load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level)
 {
     //Base case
     if(level == (output_dims.size() - 1))
@@ -74,14 +80,16 @@ void block_load_kernel<T>::_load(T* output_ptr,const T* input_ptr,const dim_list
 
 //It is assumed that the blocks will be accessed in lexicographic order
 template<typename T>
-void block_load_kernel<T>::operator()(const sequence<1, T*>& output_ptrs, 
-                                      const sequence<0, const T*>& input_ptrs,
-                                      const sequence<1, dim_list>& output_dims,
-                                      const sequence<0, dim_list>& input_dims)
+void block_load_kernel_new<T>::operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists)
 {
 
+	if(ptrs.size() != 1 || ptrs.size() != dim_lists.size())
+	{
+        throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                __FILE__, __LINE__, "must pass exactly one pointer and dim_list");
+	}
     size_t block_offset = m_bispace.get_block_offset_canonical(cur_block_indices);
-    _load(output_ptrs[0],m_data_ptr+block_offset,output_dims[0]);
+    _load(ptrs[0],m_data_ptr+block_offset,dim_lists[0]);
 
     //Move to the next block
     size_t cur_idx = m_bispace.get_order() - 1;
@@ -107,6 +115,6 @@ void block_load_kernel<T>::operator()(const sequence<1, T*>& output_ptrs,
     }
 }
 
-} // namespace libtensor
+} /* namespace libtensor */
 
-#endif /* BLOCK_LOAD_KERNEL_H */
+#endif /* BLOCK_LOAD_KERNEL_NEW_H_ */

@@ -3,7 +3,7 @@
 
 #include "labeled_sparse_btensor.h" 
 #include "lazy_eval_functor.h"
-#include "block_contract2_kernel.h"
+#include "block_contract2_kernel_new.h"
 
 //TODO: REMOVE
 #include <iostream>
@@ -27,13 +27,6 @@ public:
     //Evalutates the contraction and puts the result in C
     void operator()(labeled_sparse_btensor<M+N-(2*K),T>& C) const;
 
-
-    //For direct tensors
-    virtual void operator()(labeled_sparse_btensor<M+N-(2*K),T>& dest,std::vector< block_list >& output_block_lists) const {
-        throw bad_parameter(g_ns, k_clazz,"operator()(...)",
-                __FILE__, __LINE__, "not implemented");
-    }
-
     //Constructor
     contract_eval_functor(const letter_expr<K>& le,const labeled_sparse_btensor<M,T>& A,const labeled_sparse_btensor<N,T>& B) : m_le(le),m_A(A),m_B(B) {} 
 };
@@ -50,11 +43,10 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
 
     //Build the loops for the contraction
     //First do the uncontracted indices
-    std::vector< block_loop<1,2> > loop_list;
-    std::vector< sequence<1,size_t> > output_indices_sets;
-    std::vector< sequence<2,size_t> > input_indices_sets;
-    std::vector< sequence<1,bool> > output_ignore_sets;
-    std::vector< sequence<2,bool> > input_ignore_sets;
+    std::vector< sparse_bispace_any_order > bispaces(1,C.get_bispace());
+    bispaces.push_back(m_A.get_bispace());
+    bispaces.push_back(m_B.get_bispace());
+    sparse_loop_list sll(bispaces);
     for(size_t i = 0; i < M+N-(2*K); ++i)
     {
         sequence<1,size_t> output_bispace_indices(i);
@@ -76,31 +68,22 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
                     __FILE__, __LINE__, "both tensors cannot contain an uncontracted index");
         }
 
-        size_t rhs_idx;
+    	block_loop_new bl(bispaces);
+    	bl.set_subspace_looped(0,i);
         if(m_A.contains(a))
         {
-            input_bispace_indices[0] = m_A.index_of(a);  
-            input_ignore[1] = true;
+        	bl.set_subspace_looped(1,m_A.index_of(a));
         }
         else if(m_B.contains(a))
         {
-            input_bispace_indices[1] = m_B.index_of(a);
-            input_ignore[0] = true;
+        	bl.set_subspace_looped(2,m_B.index_of(a));
         }
         else
         {
             throw bad_parameter(g_ns, k_clazz,"operator()(...)",
                     __FILE__, __LINE__, "an index appearing in the result must be present in one input tensor");
         }
-
-        loop_list.push_back(block_loop<1,2>(output_bispace_indices,
-                                            input_bispace_indices,
-                                            output_ignore,
-                                            input_ignore));
-        output_indices_sets.push_back(output_bispace_indices);
-        input_indices_sets.push_back(input_bispace_indices);
-        output_ignore_sets.push_back(output_ignore);
-        input_ignore_sets.push_back(input_ignore);
+        sll.add_loop(bl);
     }
 
     //Now the contracted indices
@@ -113,35 +96,17 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
                     __FILE__, __LINE__, "a contracted index must appear in all RHS tensors");
         }
 
-        sequence<1,size_t> output_bispace_indices;
-        sequence<2,size_t> input_bispace_indices;
-        sequence<1,bool> output_ignore(true);
-        sequence<2,bool> input_ignore(false);
-
-        input_bispace_indices[0] = m_A.index_of(a);
-        input_bispace_indices[1] = m_B.index_of(a);
-
-        loop_list.push_back(block_loop<1,2>(output_bispace_indices,
-                                            input_bispace_indices,
-                                            output_ignore,
-                                            input_ignore));
-
-        output_indices_sets.push_back(output_bispace_indices);
-        input_indices_sets.push_back(input_bispace_indices);
-        output_ignore_sets.push_back(output_ignore);
-        input_ignore_sets.push_back(input_ignore);
+        block_loop_new bl(bispaces);
+        bl.set_subspace_looped(1,m_A.index_of(a));
+        bl.set_subspace_looped(2,m_B.index_of(a));
+        sll.add_loop(bl);
     }
-    block_contract2_kernel<T> bc2k(output_indices_sets,input_indices_sets,output_ignore_sets,input_ignore_sets); 
+    block_contract2_kernel_new<T> bc2k(sll);
 
-    sequence<1,T*> output_ptrs((T*)C.get_data_ptr()); 
-    sequence<2,const T*> input_ptrs(m_A.get_data_ptr()); 
-    input_ptrs[1] = m_B.get_data_ptr();
-    sequence<1,sparse_bispace_any_order> output_bispaces(C.get_bispace());
-    sequence<2,sparse_bispace_any_order> input_bispaces;
-    input_bispaces[0] = m_A.get_bispace();
-    input_bispaces[1] = m_B.get_bispace();
-
-    run_loop_list(loop_list,bc2k,output_ptrs,input_ptrs,output_bispaces,input_bispaces);
+    std::vector<T*> ptrs(1,(T*)C.get_data_ptr());
+    ptrs.push_back((T*)m_A.get_data_ptr());
+    ptrs.push_back((T*)m_B.get_data_ptr());
+    sll.run(bc2k,ptrs);
 }
 
 template<size_t K,size_t M,size_t N,typename T>
