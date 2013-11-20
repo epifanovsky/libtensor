@@ -53,8 +53,11 @@ private:
 
     void test_block_contract2_kernel_3d_2d() throw(libtest::test_exception);
     void test_block_contract2_kernel_3d_3d_multi_index() throw(libtest::test_exception);
-};
 
+    void test_block_subtract2_kernel_not_enough_dims_and_ptrs() throw(libtest::test_exception);
+    void test_block_subtract2_kernel_invalid_dims() throw(libtest::test_exception);
+    void test_block_subtract2_kernel_2d() throw(libtest::test_exception);
+};
 
 } // namespace libtensor
 
