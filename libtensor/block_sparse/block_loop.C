@@ -10,6 +10,9 @@
 namespace libtensor
 {
 
+size_t flops = 0;
+bool count_flops = false;
+
 const char* block_loop::k_clazz = "block_loop";
 
 block_loop::block_loop(const std::vector< sparse_bispace_any_order >& bispaces) : m_bispaces(bispaces)

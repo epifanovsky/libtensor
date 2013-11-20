@@ -18,6 +18,9 @@
 namespace libtensor
 {
 
+extern size_t flops;
+extern bool count_flops;
+
 template<typename T>
 class block_contract2_kernel: public libtensor::block_kernel_i<T>
 {
@@ -55,6 +58,10 @@ inline void libtensor::block_contract2_kernel<T>::_contract_internal(
     if(loop_idx == m_loops.size() - m_n_contracted_inds - 2)
     {
         (*m_dgemm_fn)(NULL,m,n,k,ptrs[1],lda,ptrs[2],ldb,ptrs[0],ldc,1.0);
+        if(count_flops)
+        {
+        	flops += 2*m*n*k;
+        }
     }
     else
     {
