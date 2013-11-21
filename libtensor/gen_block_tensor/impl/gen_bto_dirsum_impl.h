@@ -225,6 +225,8 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
     ca.req_nonzero_blocks(nzblka);
     cb.req_nonzero_blocks(nzblkb);
 
+    std::set<size_t> visited;
+
     //  A block in C = A + B is nonzero if either A or B are nonzero
     //  Hence there are three possibilities:
     //  A(NZ) + B(NZ); A(NZ) + B(Z); A(Z) + B(NZ)
@@ -254,9 +256,11 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                     idxc[NA + i] = idxb.get_index().at(i);
                 }
                 idxc.permute(m_trc.get_perm());
+                abs_index<NC> aidxc(idxc, m_bidimsc);
+                if(visited.count(aidxc.get_abs_index())) continue;
 
-                short_orbit<NC, element_type> oc(get_symmetry(), idxc);
-                if(!oc.get_cindex().equals(idxc)) continue;
+                orbit<NC, element_type> oc(get_symmetry(), idxc, false);
+                tensor_transf<NC, element_type> trc1(oc.get_transf(idxc), true);
 
                 orbit<NB, element_type> ob(symb, idxb.get_index());
                 const tensor_transf<NB, element_type> &trb =
@@ -277,6 +281,7 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                 permutation_builder<NC> pbc(seqc2, seqc1);
                 tensor_transf<NC, element_type> trc(pbc.get_perm());
                 trc.transform(m_trc);
+                trc.transform(trc1);
 
                 schrec rec;
                 rec.absidxa = oa.get_acindex();
@@ -288,6 +293,11 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                 rec.trc.transform(trc);
                 m_op_sch.insert(std::make_pair(oc.get_acindex(), rec));
                 m_sch.insert(oc.get_acindex());
+
+                for(typename orbit<NC, element_type>::iterator jc = oc.begin();
+                        jc != oc.end(); ++jc) {
+                    visited.insert(oc.get_abs_index(jc));
+                }
             }
 
         } while(idxb.inc());
@@ -318,9 +328,11 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                 }
                 for(size_t i = 0; i < NB; i++) idxc[NA + i] = idxb2[i];
                 idxc.permute(m_trc.get_perm());
+                abs_index<NC> aidxc(idxc, m_bidimsc);
+                if(visited.count(aidxc.get_abs_index())) continue;
 
-                short_orbit<NC, element_type> oc(get_symmetry(), idxc);
-                if(!oc.get_cindex().equals(idxc)) continue;
+                orbit<NC, element_type> oc(get_symmetry(), idxc, false);
+                tensor_transf<NC, element_type> trc1(oc.get_transf(idxc), true);
 
                 orbit<NA, element_type> oa(syma, idxa.get_index());
                 const tensor_transf<NA, element_type> &tra =
@@ -341,6 +353,7 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                 permutation_builder<NC> pbc(seqc2, seqc1);
                 tensor_transf<NC, element_type> trc(pbc.get_perm());
                 trc.transform(m_trc);
+                trc.transform(trc1);
 
                 schrec rec;
                 rec.absidxa = oa.get_acindex();
@@ -352,6 +365,11 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                 rec.trc.transform(trc);
                 m_op_sch.insert(std::make_pair(oc.get_acindex(), rec));
                 m_sch.insert(oc.get_acindex());
+
+                for(typename orbit<NC, element_type>::iterator jc = oc.begin();
+                        jc != oc.end(); ++jc) {
+                    visited.insert(oc.get_abs_index(jc));
+                }
             }
 
         } while(idxa.inc());
