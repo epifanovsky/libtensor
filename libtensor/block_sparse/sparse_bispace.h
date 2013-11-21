@@ -1047,7 +1047,7 @@ public:
     sparse_bispace_any_order(const sparse_bispace_any_order& rhs) { rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
 
     //Overloaded assignment operator
-    sparse_bispace_any_order& operator=(const sparse_bispace_any_order& rhs) { if(m_spb_ptr) { delete m_spb_ptr; } rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; }
+    sparse_bispace_any_order& operator=(const sparse_bispace_any_order& rhs) { if(m_spb_ptr) { delete m_spb_ptr; } rhs.m_spb_ptr ? m_spb_ptr = rhs.m_spb_ptr->clone() : m_spb_ptr = 0; return *this; }
 
     const sparse_bispace<1>& operator[](size_t idx) const { return (*m_spb_ptr)[idx]; }
     size_t get_order() const { return m_spb_ptr->get_order(); }
