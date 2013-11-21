@@ -53,6 +53,13 @@ private:
     // c_{iklj} = a_{ij} + a_{kl} (with more than 1 block and symmetry elements)
     void test_iklj_ij_kl_1(bool rnd, double d = 0.0)
         throw(libtest::test_exception);
+
+    // b_{ijkl} = a_{ij} + a_{kl}
+    // c_{ikmjln} = b_{ijkl} + a_{mn}
+    // (with more than 1 block and symmetry elements)
+    void test_ikmjln_ij_kl_mn(bool rnd, double d = 0.0)
+        throw(libtest::test_exception);
+
 };
 
 } // namespace libtensor

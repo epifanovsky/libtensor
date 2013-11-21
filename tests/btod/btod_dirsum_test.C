@@ -89,6 +89,11 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
     test_iklj_ij_kl_1(false);
     test_iklj_ij_kl_1(false, -1.25);
 
+    test_ikmjln_ij_kl_mn(true);
+    test_ikmjln_ij_kl_mn(true, 1.25);
+    test_ikmjln_ij_kl_mn(false);
+    test_ikmjln_ij_kl_mn(false, -1.25);
+
     } catch(...) {
         allocator<double>::shutdown();
         throw;
@@ -1154,6 +1159,126 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
     //  Compare against the reference
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+void btod_dirsum_test::test_ikmjln_ij_kl_mn(bool rnd, double d)
+    throw(libtest::test_exception) {
+
+    // b_{ijkl} = a_{ij} + a_{kl}
+    // c_{ikmjln} = b_{ijkl} + a_{mn}
+    // with splits and symmetry
+
+    std::stringstream tnss;
+    tnss << "btod_dirsum_test::test_ikmjln_ij_kl_mn(" << rnd << ", " << d
+        << ")";
+    std::string tns = tnss.str();
+
+    typedef std_allocator<double> allocator;
+
+    try {
+
+    size_t ni = 10, nj = 12;
+
+    index<2> ia1, ia2;
+    ia2[0] = ni - 1; ia2[1] = nj - 1;
+    index<4> ib1, ib2;
+    ib2[0] = ni - 1; ib2[1] = nj - 1; ib2[2] = ni - 1; ib2[3] = nj - 1;
+    index<6> ic1, ic2;
+    ic2[0] = ni - 1; ic2[1] = ni - 1; ic2[2] = ni - 1;
+    ic2[3] = nj - 1; ic2[4] = nj - 1; ic2[5] = nj - 1;
+    dimensions<2> dima(index_range<2>(ia1, ia2));
+    dimensions<4> dimb(index_range<4>(ib1, ib2));
+    dimensions<6> dimc(index_range<6>(ic1, ic2));
+    block_index_space<2> bisa(dima);
+    block_index_space<4> bisb(dimb);
+    block_index_space<6> bisc(dimc);
+
+    mask<2> m01, m10, m11;
+    mask<4> m0101, m1010;
+    mask<6> m000111, m111000;
+
+    m10[0] = true; m01[1] = true; m11[0] = true; m11[1] = true;
+    m1010[0] = true; m0101[1] = true; m1010[2] = true; m0101[3] = true;
+    m111000[0] = true; m111000[1] = true; m111000[2] = true;
+    m000111[3] = true; m000111[4] = true; m000111[5] = true;
+
+    bisa.split(m10, 3); bisa.split(m10, 5); bisa.split(m10, 8);
+    bisa.split(m01, 4); bisa.split(m01, 6); bisa.split(m01, 10);
+    bisb.split(m1010, 3); bisb.split(m1010, 5); bisb.split(m1010, 8);
+    bisb.split(m0101, 4); bisb.split(m0101, 6); bisb.split(m0101, 10);
+    bisc.split(m111000, 3); bisc.split(m111000, 5); bisc.split(m111000, 8);
+    bisc.split(m000111, 4); bisc.split(m000111, 6); bisc.split(m000111, 10);
+
+    block_tensor<2, double, allocator> bta(bisa);
+    block_tensor<4, double, allocator> btb(bisb);
+    block_tensor<6, double, allocator> btc(bisc);
+
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<6, double, allocator> tc(dimc), tc_ref(dimc);
+
+    // Set symmetry
+    {
+        se_part<2, double> sp(bisa, m11, 2);
+        index<2> i00, i01, i10, i11;
+        i10[0] = 1; i01[1] = 1;
+        i11[0] = 1; i11[1] = 1;
+        sp.add_map(i00, i11);
+        sp.add_map(i01, i10);
+
+        block_tensor_ctrl<2, double> cbta(bta);
+        cbta.req_symmetry().insert(sp);
+    }
+    //  Fill in random input
+
+    btod_random<2>().perform(bta);
+
+    // set zero blocks
+    {
+        index<2> idxa;
+        idxa[1] = 1;
+        block_tensor_ctrl<2, double> bctrla(bta);
+        bctrla.req_zero_block(idxa);
+    }
+
+    if(rnd) btod_random<6>().perform(btc);
+    tod_btconv<2>(bta).perform(ta);
+    if(d != 0.0) tod_btconv<6>(btc).perform(tc_ref);
+
+    //  Generate reference data
+
+    permutation<4> permb;
+    permutation<6> permc; // ijklmn->ikmjln
+    permc.permute(1, 2).permute(2, 3).permute(2, 4);
+    if(d == 0.0) {
+        tod_dirsum<2, 2>(ta, 1.0, ta, 1.0, permb).perform(true, tb);
+        tod_dirsum<4, 2>(tb, 1.0, ta, 1.0, permc).perform(true, tc_ref);
+    } else {
+        scalar_transf<double> s1(1.0), sd(d);
+        tensor_transf<4, double> trb(permb, s1);
+        tensor_transf<6, double> trc(permc, sd);
+        tod_dirsum<2, 2>(ta, s1, ta, s1, trb).perform(true, tb);
+        tod_dirsum<4, 2>(tb, s1, ta, s1, trc).perform(false, tc_ref);
+    }
+
+    //  Invoke the direct sum routine
+
+    if(d == 0.0) {
+        btod_dirsum<2, 2>(bta, 1.0, bta, 1.0, permb).perform(btb);
+        btod_dirsum<4, 2>(btb, 1.0, bta, 1.0, permc).perform(btc);
+    } else {
+        btod_dirsum<2, 2>(bta, 1.0, bta, 1.0, permb).perform(btb);
+        btod_dirsum<4, 2>(btb, 1.0, bta, 1.0, permc).perform(btc, d);
+    }
+    tod_btconv<6>(btc).perform(tc);
+
+    //  Compare against the reference
+
+    compare_ref<6>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());

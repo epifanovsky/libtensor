@@ -179,6 +179,7 @@ void gen_bto_dirsum<N, M, Traits, Timed>::compute_block_untimed(
         for(size_t i = 0; i < NC - 1; i++) cycc.permute(i, i + 1);
         permutation<NC> permc2;
         for(size_t i = 0; i < NA; i++) permc2.permute(cycc);
+        permc2.invert();
 
         tensor_transf_type trc1(permc2);
         trc1.transform(rec.ka);
@@ -315,7 +316,7 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
                 for(size_t i = 0; i < NA; i++) {
                     idxc[i] = idxa.get_index().at(i);
                 }
-                for(size_t i = 0; i < NB; i++) idxc[NA + i] = idxb[i];
+                for(size_t i = 0; i < NB; i++) idxc[NA + i] = idxb2[i];
                 idxc.permute(m_trc.get_perm());
 
                 short_orbit<NC, element_type> oc(get_symmetry(), idxc);
