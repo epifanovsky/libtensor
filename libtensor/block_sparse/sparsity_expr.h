@@ -51,13 +51,6 @@ public:
     friend class sparsity_expr;
 };
 
-//Internal method for recursively constructing a list of all subspaces
-template<size_t M>
-void sparsity_expr<M,1>::retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const
-{
-    subspaces.push_front(m_cur_subspace);
-}
-
 template<size_t M>
 sparsity_expr<M,2> sparsity_expr<M,1>::operator%(const sparse_bispace<1>& rhs)
 {
@@ -96,13 +89,6 @@ public:
     template<size_t P,size_t Q>
     friend class sparsity_expr;
 };
-
-template<size_t M,size_t N>
-void sparsity_expr<M,N>::retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const
-{
-    subspaces.push_front(m_cur_subspace);
-    m_sub_expr.retrieve_subspaces(subspaces);
-}
 
 template<size_t M,size_t N>
 sparsity_expr<M,N+1> sparsity_expr<M,N>::operator%(const sparse_bispace<1>& rhs)

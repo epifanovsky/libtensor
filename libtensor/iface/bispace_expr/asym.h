@@ -50,8 +50,8 @@ public:
     void record_pos(const expr<M, D> &supexpr, size_t pos_here,
         size_t (&perm)[M]) const {
 
-        m_expr1.record_pos<M, D>(supexpr, pos_here, perm);
-        m_expr2.record_pos<M, D>(supexpr, pos_here + N1, perm);
+        m_expr1.template record_pos<M, D>(supexpr, pos_here, perm);
+        m_expr2.template record_pos<M, D>(supexpr, pos_here + N1, perm);
     }
 
     const bispace<1> &at(size_t i) const {

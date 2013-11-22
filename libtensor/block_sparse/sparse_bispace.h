@@ -951,6 +951,21 @@ inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& 
 }
 
 //Implementation of methods in sparsity_expr and sparse_block_tree requiring sparse_bispace definition
+    
+//Internal method for recursively constructing a list of all subspaces
+template<size_t M>
+void sparsity_expr<M,1>::retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const
+{
+    subspaces.push_front(m_cur_subspace);
+}
+    
+template<size_t M,size_t N>
+void sparsity_expr<M,N>::retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const
+{
+    subspaces.push_front(m_cur_subspace);
+    m_sub_expr.retrieve_subspaces(subspaces);
+}
+    
 template<size_t M>
 sparse_bispace<2> sparsity_expr<M,1>::operator<<(const std::vector< sequence<2,size_t> >& sig_blocks)
 {
