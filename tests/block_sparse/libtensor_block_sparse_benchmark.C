@@ -38,7 +38,7 @@ double read_timer()
 int main()
 {
 	//This test simulates an electronic structure calculation with NB2 sparsity
-	//Data comes from a 1x3 graphene (anthracene) chain
+	//Data comes from a 1x2 graphene (naphthalene) chain
 
 	//Split the basis function space into atomic shells
 	std::vector<size_t> split_points;
@@ -51,7 +51,7 @@ int main()
 		split_points.push_back(val);
 	}
 
-	sparse_bispace<1> m(924);
+	sparse_bispace<1> m(246);
 	m.split(split_points);
 
 	//Load the NB2 sparsity information

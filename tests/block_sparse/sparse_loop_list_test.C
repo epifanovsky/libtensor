@@ -1151,10 +1151,11 @@ void sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices() thr
     }
 }
 
+#if 0
 //Should throw exception if we fix the blocks of two coupled bispaces to incompatible values
 void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_run_fixed_blocks_bpk_2d()";
+    static const char *test_name = "sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices()";
 
     //Just need dummy pointers for this test
     double test_input_arr[20] = { //i = 0, j = 0
@@ -1233,6 +1234,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(l
         }
     }
 }
+#endif
 
 //Form a single block of the output tensor by fixing the desired blocks for a subset of the loops
 //We will form the block j = 1, i = 0

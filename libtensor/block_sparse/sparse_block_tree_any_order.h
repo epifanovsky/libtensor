@@ -44,7 +44,7 @@ public:
     sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs) { m_node = rhs.m_node->clone(); m_order = rhs.m_order; }
 
     //Assignment operator
-    sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs) { delete m_node; m_node = rhs.m_node->clone(); m_order = rhs.m_order; }
+    sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs) { delete m_node; m_node = rhs.m_node->clone(); m_order = rhs.m_order; return *this;}
 
     iterator begin() { return iterator(m_node,m_order); };
     const_iterator begin() const { return const_iterator(m_node,m_order); }

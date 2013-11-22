@@ -146,6 +146,7 @@ sparse_block_tree_branch_node& sparse_block_tree_branch_node::operator=(const sp
         m_keys[i] = rhs.m_keys[i];
         m_children[i] = rhs.m_children[i]->clone();
     }
+    return *this;
 }
 
 const block_list& sparse_block_tree_branch_node::get_sub_key_block_list(const std::vector<size_t>& sub_key,size_t cur_idx) const
