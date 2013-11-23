@@ -115,8 +115,27 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
         abs_index<N>::get_index(aidxb, bidimsb, idxb);
         std::pair<symap_iterator, symap_iterator> irange =
             symap.equal_range(aidxb);
-        for(symap_iterator i = irange.first; i != irange.second; ++i) {
-            m_out.put(idxb, blk, i->second);
+        
+        std::multimap<size_t, tensor_transf_type> symap2;
+        symap2.insert(irange.first, irange.second);
+        while(!symap2.empty()) {
+            symap_iterator i = symap2.begin();
+            permutation<N> perm(i->second.get_perm());
+            scalar_transf_sum<element_type> sum;
+            while(i != symap2.end()) {
+                if(perm.equals(i->second.get_perm())) {
+                    sum.add(i->second.get_scalar_tr());
+                    symap_iterator j = i;
+                    ++i;
+                    symap2.erase(j);
+                } else {
+                    ++i;
+                }
+            }
+            if(!sum.is_zero()) {
+                tensor_transf<N, double> tr(perm, sum.get_transf());
+                m_out.put(idxb, blk, tr);
+            }
         }
 
         orbit<N, element_type> ob(m_symb, idxb, false);
