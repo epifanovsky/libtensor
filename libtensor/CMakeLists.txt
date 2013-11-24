@@ -179,6 +179,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_mult1.C
     block_tensor/impl/btod_random.C
+    block_tensor/impl/btod_scale.C
     block_tensor/impl/btod_set_diag.C
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
