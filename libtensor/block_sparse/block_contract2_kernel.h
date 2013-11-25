@@ -305,6 +305,7 @@ template<typename T>
 void libtensor::block_contract2_kernel<T>::operator ()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
+#ifdef LIBTENSOR_DEBUG
 	if(dim_lists.size() != 3 || ptrs.size() != 3)
 	{
 		throw bad_parameter(g_ns, k_clazz,"operator()(...)",
@@ -347,6 +348,7 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 			}
 		}
 	}
+#endif
 
 	size_t m,n,k = 1,lda,ldb,ldc;
 	if(m_A_trans)
@@ -380,7 +382,6 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 		ldb = n;
 	}
 	ldc = n;
-
 	_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
 }
 

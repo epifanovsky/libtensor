@@ -260,7 +260,6 @@ set(TARGETS
     libtensor_linalg_tests
     libtensor_symmetry_tests
     libtensor_block_sparse_tests
-    libtensor_block_sparse_benchmark
 )
 
 add_executable(libtensor_core_tests ${SRC_CORE})
@@ -272,7 +271,6 @@ add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
-add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -292,5 +290,12 @@ target_link_libraries(${TARGET}
 endforeach(TARGET)
 
 target_link_libraries(libtensor_block_sparse_tests tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+# Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
+set(TARGETS 
+    ${TARGETS}
+    libtensor_block_sparse_benchmark
+)
+add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 target_link_libraries(libtensor_block_sparse_benchmark tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
 
