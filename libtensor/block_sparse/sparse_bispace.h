@@ -265,11 +265,19 @@ private:
 
     //Internal-use array containing the dimension of each subspace/sparse composite subspace group. 
     //Used to calculate number of elements and offsets
-    //Should never be edited directly - instead call init_dimensions
+    //Should never be edited directly - instead call init()
     std::vector<size_t> m_dimensions;
 
+    //Internal use array for improving performance by pre-computing the inner size of each index
+    std::vector<size_t> m_inner_sizes;
+    
+    //Used by get_block_offset to lookup offsets in sparse trees
+    //Initialized only once by init() for performance
+    std::vector< std::vector<size_t> > m_sparse_key_vecs;
+    
     //Helper functions used to set the m_dimensions array used for calculating block offsets and nnz
-    void init_dimensions();
+    //Also initializes other sparsity data
+    void init();
 
     /** \brief Constructors a composite sparse_bispace from two component spaces
      *         Used to implement operator|(...) between multi-dimensional spaces
@@ -320,7 +328,7 @@ public:
 
     /** \brief Returns offset of a given tile in this bispace assuming block-major layout. The tile is specified by a vector of block indices
      **/
-    size_t get_block_offset(const std::vector<size_t>& block_indices) const;
+    size_t get_block_offset(const std::vector<size_t>& block_indices);
 
     /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
      **/
@@ -379,13 +387,13 @@ public:
 //Determines the dimensions of each sparsity group in the bispace
 //bispaces not belonging to a group simply contribute their dense dimension
 template<size_t N>
-void sparse_bispace<N>::init_dimensions() 
+void sparse_bispace<N>::init()
 {
     //Should only be called once
     if(m_dimensions.size() > 0)
     {
-        throw bad_parameter(g_ns,"sparse_bispace<N>","init_dimensions(...)",
-            __FILE__,__LINE__,"init_dimensions should only be called once"); 
+        throw bad_parameter(g_ns,"sparse_bispace<N>","init(...)",
+            __FILE__,__LINE__,"init should only be called once");
     }
 
     size_t subspace_idx = 0; 
@@ -415,6 +423,26 @@ void sparse_bispace<N>::init_dimensions()
             m_dimensions.push_back(m_subspaces[subspace_idx].get_dim());
             ++subspace_idx;
         }
+    }
+    
+    //Initialize the sparse key vectors for each tree only once to save performance
+    for(size_t group_idx = 0; group_idx < m_sparse_block_trees.size(); ++group_idx)
+    {
+        const sparse_block_tree_any_order& sbt = m_sparse_block_trees[group_idx];
+        size_t cur_order = sbt.get_order();
+        m_sparse_key_vecs.push_back(std::vector<size_t>(cur_order));
+    }
+    
+    //Precompute inner sizes
+    m_inner_sizes.resize(m_dimensions.size());
+    for(size_t inner_size_idx = 0; inner_size_idx < m_dimensions.size(); ++inner_size_idx)
+    {
+        size_t inner_size = 1;
+        for(size_t factor_idx = inner_size_idx+1; factor_idx < m_dimensions.size(); ++factor_idx)
+        {
+            inner_size *= m_dimensions[factor_idx];
+        }
+        m_inner_sizes[inner_size_idx] = inner_size;
     }
 }
 
@@ -458,7 +486,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L>& lhs,const sparse_bi
     absorb_sparsity(lhs);
     absorb_sparsity(rhs,N-L);
 
-    init_dimensions();
+    init();
 }
 
 //Constructor used by the following operator pattern:
@@ -489,7 +517,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::ve
     m_sparse_block_trees.push_back(sbt);
     m_sparse_indices_sets_offsets.push_back(N-L);
 
-    init_dimensions();
+    init();
 }
 
 
@@ -526,9 +554,8 @@ const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const throw(o
 /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
  **/
 template<size_t N>
-size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indices) const
+size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indices)
 {
-    
     //We process the blocks in chunks corresponding to each set that is coupled by sparsity
     size_t offset = 0;
     size_t outer_size = 1;
@@ -555,19 +582,19 @@ size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indi
             //Get the current key
             const sparse_block_tree_any_order& sbt = m_sparse_block_trees[cur_sparse_indices_set_idx];
             size_t cur_order = sbt.get_order();
-            std::vector<size_t> key(cur_order);
+            std::vector<size_t>& cur_key = m_sparse_key_vecs[cur_sparse_indices_set_idx];
             for(size_t key_idx = 0; key_idx < cur_order; ++key_idx)
             {
-                key[key_idx] = block_indices[subspace_idx+key_idx];
+                cur_key[key_idx] = block_indices[subspace_idx+key_idx];
             }
 
             //Outer size consists of the size of all blocks involved in this sparse group
             outer_size_scale_fac = 1;
             for(size_t outer_size_idx = 0; outer_size_idx < cur_order; ++outer_size_idx)
             {
-                outer_size_scale_fac *= m_subspaces[subspace_idx+outer_size_idx].get_block_size(key[outer_size_idx]);
+                outer_size_scale_fac *= m_subspaces[subspace_idx+outer_size_idx].get_block_size(cur_key[outer_size_idx]);
             }
-            abs_index = sbt.search(key);
+            abs_index = sbt.search(cur_key);
             ++cur_sparse_indices_set_idx;
             subspace_idx += cur_order;
         }
@@ -580,12 +607,7 @@ size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indi
             ++subspace_idx;
         }
         
-        size_t inner_size = 1;
-        for(size_t inner_size_idx = cur_group_idx+1; inner_size_idx < m_dimensions.size(); ++inner_size_idx)
-        {
-            inner_size *= m_dimensions[inner_size_idx];
-        }
-        offset += outer_size * abs_index * inner_size;
+        offset += outer_size * abs_index * m_inner_sizes[cur_group_idx];
         outer_size *= outer_size_scale_fac;
         ++cur_group_idx;
     }
@@ -774,7 +796,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
         }
     }
 
-    init_dimensions();
+    init();
 }
 
 template<size_t N>
@@ -839,7 +861,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
         m_sparse_block_tree_dimensions.erase(m_sparse_block_tree_dimensions.begin() + first_rhs_tree_idx); 
     }
 
-    init_dimensions();
+    init();
 }
 
 template<size_t N> template<size_t L> 
@@ -1012,7 +1034,7 @@ private:
     public:
         virtual const sparse_bispace<1>& operator[](size_t idx) const = 0; 
         virtual size_t get_order() const = 0;
-        virtual size_t get_block_offset(const std::vector<size_t>& block_indices) const = 0;
+        virtual size_t get_block_offset(const std::vector<size_t>& block_indices) = 0;
         virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
         virtual sparse_bispace_generic_i* clone() const = 0;
         virtual block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const = 0; 
@@ -1034,7 +1056,7 @@ private:
 
         const sparse_bispace<1>& operator[](size_t idx) const { return m_bispace[idx]; }
         size_t get_order() const { return N; }
-        size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset(block_indices); }
+        size_t get_block_offset(const std::vector<size_t>& block_indices) { return m_bispace.get_block_offset(block_indices); }
         size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset_canonical(block_indices); }
         block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const { return m_bispace.get_sig_block_list(outer_block_indices,target_subspace_idx); }
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
@@ -1066,7 +1088,7 @@ public:
 
     const sparse_bispace<1>& operator[](size_t idx) const { return (*m_spb_ptr)[idx]; }
     size_t get_order() const { return m_spb_ptr->get_order(); }
-    size_t get_block_offset(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset(block_indices); }
+    size_t get_block_offset(const std::vector<size_t>& block_indices) { return m_spb_ptr->get_block_offset(block_indices); }
     size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset_canonical(block_indices); }
     block_list get_sig_block_list(const std::vector<size_t>& outer_block_indices,size_t target_subspace_idx) const { return m_spb_ptr->get_sig_block_list(outer_block_indices,target_subspace_idx); }
     size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }

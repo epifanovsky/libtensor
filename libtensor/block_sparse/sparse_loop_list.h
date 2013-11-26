@@ -139,9 +139,8 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
 {
 	//Get the subspace that we are looping over
     const block_loop& cur_loop = m_loops[loop_idx];
-    const std::vector<sparse_bispace_any_order>& cur_bispaces = cur_loop.get_bispaces();
     size_t first_bispace_idx, first_subspace_idx;
-    for(size_t i = 0; i < cur_bispaces.size(); ++i)
+    for(size_t i = 0; i < m_bispaces.size(); ++i)
     {
     	if(!cur_loop.is_bispace_ignored(i))
     	{
@@ -150,7 +149,7 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
     		break;
     	}
     }
-    const sparse_bispace<1>& cur_subspace = cur_bispaces[first_bispace_idx][first_subspace_idx];
+    const sparse_bispace<1>& cur_subspace = m_bispaces[first_bispace_idx][first_subspace_idx];
 
     block_list block_indices;
     //Could the range of this loop be restricted by fixing the blocks of a particular bispace?
@@ -172,7 +171,7 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
 
         loop_indices[loop_idx] = cur_block;
 
-        for(size_t bispace_idx = 0; bispace_idx < cur_bispaces.size(); ++bispace_idx)
+        for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
         {
             if(!cur_loop.is_bispace_ignored(bispace_idx))
             {
@@ -187,12 +186,12 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
         {
             //Locate the appropriate blocks
         	std::vector<T*> bispace_block_ptrs(ptrs);
-        	for(size_t bispace_idx = 0; bispace_idx < cur_bispaces.size(); ++bispace_idx)
+        	for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
         	{
         		//If blocks for a bispace are fixed, we assume that the pointer points directly to the desired block
         		if(fbm.find(bispace_idx) == fbm.end())
         		{
-					bispace_block_ptrs[bispace_idx] += cur_bispaces[bispace_idx].get_block_offset(bispace_block_lists[bispace_idx]);
+					bispace_block_ptrs[bispace_idx] += m_bispaces[bispace_idx].get_block_offset(bispace_block_lists[bispace_idx]);
         		}
         	}
             kernel(bispace_block_ptrs,bispace_dim_lists);
