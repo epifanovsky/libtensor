@@ -31,6 +31,7 @@ set(SRC
 #    iface/btensor/impl/eval_plan_builder_btensor.C
     iface/btensor/impl/eval_tree_builder_btensor.C
 #    iface/btensor/impl/node_inspector.C
+    iface/btensor/impl/node_interm.C
 )
 
 set(SRC_LINALG_ACML

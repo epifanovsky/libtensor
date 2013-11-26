@@ -24,13 +24,28 @@ public:
 template<size_t N, typename T>
 class node_interm : public node_interm_base {
 private:
-    btensor_placeholder<N, T> *m_bt; //!< Intermediate
-    size_t m_cnt; //!< Counter
+    struct counter {
+        btensor_placeholder<N, T> bt; //!< Intermediate
+        size_t cnt; //!< Counter
+
+        counter() : cnt(1) { }
+    };
+    counter *m_cnt;
 
 public:
-    node_interm();
+    node_interm() : node_interm_base(N) {
+        m_cnt = new counter();
+    }
 
-    virtual ~node_interm() { }
+    node_interm(const node_interm<N, T> &other) : node_interm_base(N) {
+        m_cnt = other.m_cnt;
+        m_cnt->cnt++;
+    }
+
+    virtual ~node_interm() {
+        m_cnt->cnt--;
+        if (m_cnt->cnt == 0) delete m_cnt;
+    }
 
     virtual node_interm *clone() const {
         return new node_interm(*this);
@@ -40,9 +55,12 @@ public:
         return typeid(T);
     }
 
-    btensor_placeholder<N, T> &get_placeholder() {
-        return m_bt;
+    iface::any_tensor<N, T> &get_tensor() const {
+        return m_cnt->bt;
     }
+
+private:
+    node_interm<N, T> &operator==(const node_interm<N, T> &);
 };
 
 
