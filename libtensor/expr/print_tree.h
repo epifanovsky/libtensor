@@ -27,6 +27,7 @@ void print_tree(const expr_tree &tr, expr_tree::node_id_t h,
 
     \ingroup libtensor_expr
  **/
+inline
 void print_tree(const expr_tree &tr, std::ostream &os, size_t indent = 0) {
     print_tree(tr, tr.get_root(), os, indent);
 }

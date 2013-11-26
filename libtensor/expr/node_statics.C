@@ -2,6 +2,7 @@
 #include "node_assign.h"
 #include "node_contract.h"
 #include "node_diag.h"
+#include "node_dirsum.h"
 #include "node_div.h"
 #include "node_ident_base.h"
 #include "node_symm_base.h"

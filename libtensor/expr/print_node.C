@@ -19,24 +19,20 @@ void print_node(const node &n, std::ostream &os, size_t indent) {
                 << ni->get_t().name() << " )" << std::endl;
     } else {
         os << ind << "(" << n.get_op();
-        if(na) {
-            os << " " << (na->is_add() ? " (+)" : "");
-        } else {
-            if(n.get_op().compare("transform") == 0) {
-                const node_transform_base *ntr0 =
+        if(n.get_op().compare("transform") == 0) {
+            const node_transform_base *ntr0 =
                     dynamic_cast<const node_transform_base*>(&n);
-                if(ntr0) {
-                    const std::vector<size_t> &p = ntr0->get_perm();
-                    os << "  [";
-                    for(size_t i = 0; i + 1 < p.size(); i++) os << p[i] << ",";
-                    if(p.size() > 0) os << p[p.size() - 1];
-                    else os << "*";
-                    os << "]";
-                    const node_transform<double> *ntrd =
+            if(ntr0) {
+                const std::vector<size_t> &p = ntr0->get_perm();
+                os << "  [";
+                for(size_t i = 0; i + 1 < p.size(); i++) os << p[i] << ",";
+                if(p.size() > 0) os << p[p.size() - 1];
+                else os << "*";
+                os << "]";
+                const node_transform<double> *ntrd =
                         dynamic_cast< const node_transform<double>* >(ntr0);
-                    if(ntrd) {
-                        os << " " << ntrd->get_coeff().get_coeff();
-                    }
+                if(ntrd) {
+                    os << " " << ntrd->get_coeff().get_coeff();
                 }
             }
         }
