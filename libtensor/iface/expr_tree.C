@@ -24,7 +24,7 @@ void expr_tree::add(node_id_t id, const expr_tree &subtree) {
 
         node_id_t cid = map[subtree.get_id(i)];
 
-        const edge_list_t &out = subtree.get_edges_out(it);
+        const edge_list_t &out = subtree.get_edges_out(i);
         for (size_t j = 0; j < out.size(); j++) {
             expr::graph::add(cid, map[out[j]]);
         }

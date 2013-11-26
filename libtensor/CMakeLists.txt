@@ -21,6 +21,7 @@ set(SRC
     expr/graph.C
     expr/node_statics.C
     expr/print_node.C
+    iface/expr_tree.C
 #    iface/tensor_list.C
 #    iface/btensor/impl/eval_btensor_double.C
 #    iface/btensor/impl/eval_btensor_double_contract.C

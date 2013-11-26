@@ -10,6 +10,7 @@
 #include "bispace.h"
 #include "btensor_i.h"
 #include "expr_lhs.h"
+#include "expr_tree.h"
 #include "labeled_lhs_rhs.h"
 #include "btensor/eval_btensor.h"
 
@@ -64,14 +65,14 @@ void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     std::vector<size_t> perm(N);
     for(size_t i = 0; i < N; i++) perm[i] = px[i];
 
-    expr_tree e(expr::node_assign(N));
+    expr::node_assign n1(N);
+    expr_tree e(n1);
     expr_tree::node_id_t root = e.get_root();
-    expr_tree::node_id_t lid = e.add(expr::node_ident<N, T>(*this));
-    expr_tree::node_id_t rid =
-            e.add(expr::node_transform<T>(perm, scalar_transf<T>()));
-    e.add(root, lid);
-    e.add(root, rid);
-    e.add(rid, rhs.get_expr());
+    expr::node_ident<N, T> n2(*this);
+    e.add(root, n2);
+    expr::node_transform<T> n3(perm, scalar_transf<T>());
+    e.add(root, n3);
+    e.add(e.get_edges_out(root).back(), rhs.get_expr());
 
     eval_btensor<T>().evaluate(e);
 }

@@ -58,7 +58,9 @@ template<size_t N, typename T>
 bool node_ident<N, T>::operator==(const node_ident_base &n) const {
 
     if (n.get_n() == N || n.get_t() == typeid(T)) {
-        return m_t == static_cast<const node_ident<N, T> &>(n).get_tensor();
+        iface::any_tensor<N, T> &t2 =
+                static_cast<const node_ident<N, T> &>(n).get_tensor();
+        return &m_t == &t2;
     }
 
     return false;
