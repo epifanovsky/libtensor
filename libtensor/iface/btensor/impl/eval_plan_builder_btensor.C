@@ -34,7 +34,6 @@ public:
 
 private:
     eval_plan &m_plan; //!< Evaluation plan
-    tensor_list &m_tl; //!< Tensor list
     interm &m_interm; //!< Intermediates container
     const node &m_node; //!< Node
     std::set<tid_t> &m_touched;

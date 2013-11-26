@@ -7,6 +7,7 @@ libtensor_expr_suite::libtensor_expr_suite() :
     libtest::test_suite("libtensor_expr") {
 
 //    add_test("eval_plan", m_utf_eval_plan);
+    add_test("expr_tree", m_utf_expr_tree);
     add_test("graph", m_utf_graph);
     add_test("node_add", m_utf_node_add);
     add_test("node_contract", m_utf_node_contract);

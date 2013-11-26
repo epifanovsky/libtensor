@@ -37,7 +37,7 @@ expr_rhs<N - M + 1, T> diag(
                 __FILE__, __LINE__, "Error in letters");
     }
 
-    expr_tree e(expr::node_diag(NC, diagdims));
+    expr::expr_tree e(expr::node_diag(NC, diagdims));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<NC, T>(e, letter_expr<NC>(label));
 }

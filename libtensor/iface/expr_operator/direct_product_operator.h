@@ -28,8 +28,8 @@ expr_rhs<N + M, T> operator*(
         label[j] = &b.letter_at(i);
     }
 
-    expr_tree e(expr::node_contract(N + M, cseq, true));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_contract(N + M, cseq, true));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, a.get_expr());
     e.add(id, b.get_expr());
 

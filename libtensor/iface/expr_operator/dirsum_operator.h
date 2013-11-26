@@ -31,8 +31,8 @@ expr_rhs<N + M, T> dirsum(
 
     // TODO: remap tensors
 
-    expr_tree e(expr::node_add(N, map));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_add(N, map));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, a.get_expr());
     e.add(id, b.get_expr());
     return expr_rhs<N + M, T>(e, letter_expr<N + M>(label));

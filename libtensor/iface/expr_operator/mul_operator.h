@@ -18,7 +18,7 @@ expr_rhs<N, T> operator*(const T &lhs, const expr_rhs<N, T> &rhs) {
     std::vector<size_t> perm(N);
     for(size_t i = 0; i < N; i++) perm[i] = i;
 
-    expr_tree e(expr::node_transform<T>(perm, scalar_transf<T>(lhs)));
+    expr::expr_tree e(expr::node_transform<T>(perm, scalar_transf<T>(lhs)));
     e.add(e.get_root(), rhs.get_expr());
     return expr_rhs<N, T>(e, rhs.get_label());
 }

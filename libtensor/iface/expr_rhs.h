@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_EXPR_RHS_H
 
 #include <libtensor/core/noncopyable.h>
-#include "expr_tree.h"
+#include <libtensor/expr/expr_tree.h>
 #include "letter_expr.h"
 
 
@@ -28,13 +28,13 @@ namespace iface {
 template<size_t N, typename T>
 class expr_rhs : public noncopyable {
 private:
-    expr_tree m_expr; //!< Expression
+    expr::expr_tree m_expr; //!< Expression
     letter_expr<N> m_label; //!< Letter label
 
 public:
     /** \brief Constructs the expression using a core
      **/
-    expr_rhs(const expr_tree &expr, const letter_expr<N> &l) :
+    expr_rhs(const expr::expr_tree &expr, const letter_expr<N> &l) :
         m_expr(expr), m_label(l) { }
 
     /** \brief Copy constructor
@@ -48,13 +48,13 @@ public:
 
     /** \brief Returns the core of the expression
      **/
-    expr_tree &get_expr() {
+    expr::expr_tree &get_expr() {
         return m_expr;
     }
 
     /** \brief Returns the core of the expression (const version)
      **/
-    const expr_tree &get_expr() const {
+    const expr::expr_tree &get_expr() const {
         return m_expr;
     }
 

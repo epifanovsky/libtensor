@@ -18,10 +18,10 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
+    expr/expr_tree.C
     expr/graph.C
     expr/node_statics.C
     expr/print_node.C
-    iface/expr_tree.C
     iface/tensor_list.C
 #    iface/btensor/impl/eval_btensor_double.C
 #    iface/btensor/impl/eval_btensor_double_contract.C

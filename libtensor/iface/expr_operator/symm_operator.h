@@ -29,7 +29,7 @@ expr_rhs<N, T> symm(
         sym[j++] = subexpr.index_of(l2);
     }
 
-    expr_tree e(expr::node_symm<T>(N, sym, 2,
+    expr::expr_tree e(expr::node_symm<T>(N, sym, 2,
             scalar_transf<T>(), scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
@@ -58,7 +58,7 @@ expr_rhs<N, T> asymm(
         sym[j++] = subexpr.index_of(l2);
     }
 
-    expr_tree e(expr::node_symm<T>(N, sym, 2,
+    expr::expr_tree e(expr::node_symm<T>(N, sym, 2,
             scalar_transf<T>(-1), scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
@@ -83,7 +83,7 @@ expr_rhs<N, T> symm(
     sym[1] = subexpr.index_of(l2);
     sym[2] = subexpr.index_of(l3);
 
-    expr_tree e(expr::node_symm<T>(N, sym, 3,
+    expr::expr_tree e(expr::node_symm<T>(N, sym, 3,
             scalar_transf<T>(), scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
@@ -108,7 +108,7 @@ expr_rhs<N, T> asymm(
     sym[1] = subexpr.index_of(l2);
     sym[2] = subexpr.index_of(l3);
 
-    expr_tree e(expr::node_symm<T>(N, sym, 3,
+    expr::expr_tree e(expr::node_symm<T>(N, sym, 3,
             scalar_transf<T>(-1), scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());

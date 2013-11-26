@@ -12,7 +12,8 @@ namespace iface {
 template<size_t N, typename T>
 expr_rhs<N, T> any_tensor<N, T>::make_rhs(const letter_expr<N> &label) {
 
-    return expr_rhs<N, T>(expr_tree(expr::node_ident<N, T>(*this)), label);
+    expr::expr_tree e(expr::node_ident<N, T>(*this));
+    return expr_rhs<N, T>(e, label);
 }
 
 

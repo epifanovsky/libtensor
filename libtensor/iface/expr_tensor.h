@@ -19,7 +19,7 @@ class expr_tensor :
     public any_tensor<N, T>, public expr_lhs<N, T>, public noncopyable {
 
 private:
-    expr_tree *m_expr; //!< Expression
+    expr::expr_tree *m_expr; //!< Expression
 
 public:
     /** \brief Constructs an empty object

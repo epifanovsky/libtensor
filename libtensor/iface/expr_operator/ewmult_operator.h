@@ -25,8 +25,8 @@ expr_rhs<N, T> mult(
         map.insert(std::pair<size_t, size_t>(i, p[i]));
     }
 
-    expr_tree e(expr::node_contract(N, map, false));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_contract(N, map, false));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
     e.add(id, rhs.get_expr());
 
@@ -44,8 +44,8 @@ expr_rhs<N, T> div(
     const expr_rhs<N, T> &rhs) {
 
     expr::node_div n1(N);
-    expr_tree e(n1);
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(n1);
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
 
     permutation<N> px = lhs.get_label().permutation_of(rhs.get_label());
@@ -91,8 +91,8 @@ expr_rhs<N + M - K, T> ewmult(
         NC = N + M - K
     };
 
-    expr_tree e(expr::node_contract(NC, map, false));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_contract(NC, map, false));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
     e.add(id, rhs.get_expr());
 

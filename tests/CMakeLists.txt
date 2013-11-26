@@ -213,6 +213,7 @@ set(SRC_EXPR
     expr/libtensor_expr_tests.C
     expr/libtensor_expr_suite.C
 #    expr/eval_plan_test.C
+    expr/expr_tree_test.C
     expr/graph_test.C
     expr/node_add_test.C
     expr/node_contract_test.C

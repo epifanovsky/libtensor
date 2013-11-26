@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "eval_plan_test.h"
+#include "expr_tree_test.h"
 #include "graph_test.h"
 #include "node_add_test.h"
 #include "node_contract_test.h"
@@ -23,6 +24,7 @@ namespace libtensor {
 
     This suite runs the following tests:
      - libtensor::eval_plan_test
+     - libtensor::expr_tree_test
      - libtensor::graph_test
      - libtensor::node_add_test
      - libtensor::node_contract_test
@@ -39,6 +41,7 @@ namespace libtensor {
 class libtensor_expr_suite : public libtest::test_suite {
 private:
 //    unit_test_factory<eval_plan_test> m_utf_eval_plan;
+    unit_test_factory<expr_tree_test> m_utf_expr_tree;
     unit_test_factory<graph_test> m_utf_graph;
     unit_test_factory<node_add_test> m_utf_node_add;
     unit_test_factory<node_contract_test> m_utf_node_contract;

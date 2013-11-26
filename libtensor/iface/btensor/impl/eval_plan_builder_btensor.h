@@ -18,20 +18,16 @@ public:
         Nmax = 8
     };
 
-    typedef expr::node::tid_t tid_t; //!< Tensor ID type
-
 private:
+    expr_tree m_tree; //!< Expression tree
     expr::node_assign m_assign; //!< Assignment node
-    tensor_list m_tl; //!< Tensor list
     expr::eval_plan m_plan; //!< Evaluation plan
     interm m_interm; //!< Intermediates store
 
 public:
-    eval_plan_builder_btensor(
-        const expr::node_assign &node,
-        const tensor_list &tl) :
+    eval_plan_builder_btensor(const expr_tree &tr) :
 
-        m_assign(node), m_tl(tl), m_interm(m_tl)
+        m_assign(node), m_interm(m_tl)
     { }
 
     /** \brief Builds the evaluation plan

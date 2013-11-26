@@ -49,7 +49,7 @@ private:
 template<size_t N>
 node_with_transf<N> node_inspector::gather_transf() const {
 
-    if(m_node.get_op().compare("transform") == 0) {
+    if(m_node.get_op().compare(expr::node_transform_base::k_op_type) == 0) {
 
         const node_transform_base &nb = m_node.recast_as<node_transform_base>();
         if(nb.get_type() != typeid(double)) {

@@ -26,8 +26,8 @@ expr_rhs<N, T> operator+(
         map.insert(std::pair<size_t, size_t>(i, p[i]));
     }
 
-    expr_tree e(expr::node_add(N, map));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_add(N, map));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
     e.add(id, rhs.get_expr());
 
@@ -53,8 +53,8 @@ expr_rhs<N, T> operator-(
     std::vector<size_t> perm(N);
     for (size_t i = 0; i < N; i++) perm[i] = i;
 
-    expr_tree e(expr::node_add(N, map));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_add(N, map));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
     e.add(id, expr::node_transform<T>(perm, scalar_transf<T>(-1)));
     id = e.get_edges_out(id).back();

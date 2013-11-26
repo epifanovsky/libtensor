@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_EVAL_BTENSOR_DOUBLE_H
 #define LIBTENSOR_IFACE_EVAL_BTENSOR_DOUBLE_H
 
-#include <libtensor/iface/expr_tree.h>
+#include <libtensor/expr/expr_tree.h>
 
 namespace libtensor {
 namespace iface {
@@ -21,7 +21,7 @@ public:
 public:
     /** \brief Evaluates an expression tree
      **/
-    void evaluate(expr_tree &tree);
+    void evaluate(expr::expr_tree &tree);
 
 };
 

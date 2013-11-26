@@ -39,8 +39,8 @@ expr_rhs<N + M - 2 * K, T> contract(
         NC = N + M - 2 * K
     };
 
-    expr_tree e(expr::node_contract(NC, cseq, true));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_contract(NC, cseq, true));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, a.get_expr());
     e.add(id, b.get_expr());
 
@@ -110,8 +110,8 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
         N = N1 + N2 + N3 - 2 * K1 - 2 * K2
     };
 
-    expr_tree e(expr::node_contract(N, cseq, true));
-    expr_tree::node_id_t id = e.get_root();
+    expr::expr_tree e(expr::node_contract(N, cseq, true));
+    expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, bta.get_expr());
     e.add(id, btb.get_expr());
     e.add(id, btc.get_expr());

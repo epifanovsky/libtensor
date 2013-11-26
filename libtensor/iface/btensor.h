@@ -5,12 +5,12 @@
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/expr/node_assign.h>
+#include <libtensor/expr/expr_tree.h>
 #include <libtensor/expr/node_ident.h>
 #include <libtensor/expr/node_transform.h>
 #include "bispace.h"
 #include "btensor_i.h"
 #include "expr_lhs.h"
-#include "expr_tree.h"
 #include "labeled_lhs_rhs.h"
 #include "btensor/eval_btensor.h"
 
@@ -66,8 +66,8 @@ void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     for(size_t i = 0; i < N; i++) perm[i] = px[i];
 
     expr::node_assign n1(N);
-    expr_tree e(n1);
-    expr_tree::node_id_t root = e.get_root();
+    expr::expr_tree e(n1);
+    expr::expr_tree::node_id_t root = e.get_root();
     expr::node_ident<N, T> n2(*this);
     e.add(root, n2);
     expr::node_transform<T> n3(perm, scalar_transf<T>());

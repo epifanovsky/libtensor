@@ -197,8 +197,8 @@ void eval_btensor<double>::evaluate(expr_tree &tree) {
 
     std::cout << std::endl;
     std::cout << "= build plan = " << std::endl;
-    const expr::node_assign &na = dynamic_cast<const expr::node_assign&>(tree.get_nodes());
-    eval_plan_builder_btensor pbld(na, tree.get_tensors());
+    //const expr::node_assign &na = dynamic_cast<const expr::node_assign&>(tree.get_nodes());
+    eval_plan_builder_btensor pbld(tree);
     pbld.build_plan();
     std::cout << "= process plan =" << std::endl;
     eval_btensor_double_impl(pbld.get_plan(), pbld.get_tensors(), pbld.get_interm()).evaluate();
