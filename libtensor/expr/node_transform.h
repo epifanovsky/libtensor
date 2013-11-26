@@ -40,12 +40,6 @@ public:
         return new node_transform<T>(*this);
     }
 
-    /** \brief Returns the type of the tensor element
-     **/
-    virtual const std::type_info &get_type() const {
-        return typeid(double);
-    }
-
     /** \brief Returns the scaling coefficient
      **/
     const scalar_transf<T> &get_coeff() const {

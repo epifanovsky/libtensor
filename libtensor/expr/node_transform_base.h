@@ -37,10 +37,6 @@ public:
      **/
     virtual node *clone() const = 0;
 
-    /** \brief Returns the type of the tensor element
-     **/
-    virtual const std::type_info &get_type() const = 0;
-
     /** \brief Returns the permutation of tensor indices
      **/
     const std::vector<size_t> &get_perm() const {
