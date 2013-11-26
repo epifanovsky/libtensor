@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_IFACE_EWMULT_OPERATOR_H
 #define LIBTENSOR_IFACE_EWMULT_OPERATOR_H
 
-#include <libtensor/expr/node_ewmult.h>
-#include <libtensor/expr/node_mult.h>
+#include <libtensor/expr/node_contract.h>
+#include <libtensor/expr/node_div.h>
 #include <libtensor/expr/node_transform.h>
 
 namespace libtensor {
@@ -43,7 +43,8 @@ expr_rhs<N, T> div(
     const expr_rhs<N, T> &lhs,
     const expr_rhs<N, T> &rhs) {
 
-    expr_tree e(expr::node_div(N));
+    expr::node_div n1(N);
+    expr_tree e(n1);
     expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
 
@@ -95,7 +96,7 @@ expr_rhs<N + M - K, T> ewmult(
     e.add(id, lhs.get_expr());
     e.add(id, rhs.get_expr());
 
-    return expr_rhs<N, T>(e, lhs.get_label());
+    return expr_rhs<NC, T>(e, letter_expr<NC>(label));
 
 }
 

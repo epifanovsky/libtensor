@@ -16,8 +16,8 @@ namespace iface {
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> operator+(
-    expr_rhs<N, T> &lhs,
-    expr_rhs<N, T> &rhs) {
+    const expr_rhs<N, T> &lhs,
+    const expr_rhs<N, T> &rhs) {
 
     std::multimap<size_t, size_t> map;
 
@@ -26,12 +26,12 @@ expr_rhs<N, T> operator+(
         map.insert(std::pair<size_t, size_t>(i, p[i]));
     }
 
-    expr_tree res(expr::node_add(N, map));
-    expr_tree::node_id_t root = res.get_root();
-    res.add(root, lhs.get_expr());
-    res.add(root, rhs.get_expr());
+    expr_tree e(expr::node_add(N, map));
+    expr_tree::node_id_t id = e.get_root();
+    e.add(id, lhs.get_expr());
+    e.add(id, rhs.get_expr());
 
-    return expr_rhs<N, T>(res, lhs.get_label());
+    return expr_rhs<N, T>(e, lhs.get_label());
 }
 
 
@@ -60,7 +60,7 @@ expr_rhs<N, T> operator-(
     id = e.get_edges_out(id).back();
     e.add(id, rhs.get_expr());
 
-    return expr_rhs<N, T>(res, lhs.get_label());
+    return expr_rhs<N, T>(e, lhs.get_label());
 }
 
 

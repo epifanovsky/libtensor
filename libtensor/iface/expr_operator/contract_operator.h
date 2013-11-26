@@ -22,11 +22,12 @@ expr_rhs<N + M - 2 * K, T> contract(
     const expr_rhs<N, T> &a,
     const expr_rhs<M, T> &b) {
 
-    std::map<size_t, size_t> cseq;
+    std::multimap<size_t, size_t> cseq;
     std::vector<const letter*> label;
     for(size_t i = 0; i < N; i++) {
         const letter &l = a.letter_at(i);
-        if(contr.contains(l)) cseq[i] = N + b.index_of(l);
+        if(contr.contains(l))
+            cseq.insert(std::pair<size_t, size_t>(i, N + b.index_of(l)));
         else label.push_back(&l);
     }
     for(size_t i = 0; i < M; i++) {
@@ -40,10 +41,10 @@ expr_rhs<N + M - 2 * K, T> contract(
 
     expr_tree e(expr::node_contract(NC, cseq, true));
     expr_tree::node_id_t id = e.get_root();
-    e.add(id, lhs.get_expr());
-    e.add(id, rhs.get_expr());
+    e.add(id, a.get_expr());
+    e.add(id, b.get_expr());
 
-    return expr_rhs<NC, T>(res, letter_expr<NC>(label));
+    return expr_rhs<NC, T>(e, letter_expr<NC>(label));
 }
 
 
@@ -72,15 +73,19 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const letter_expr<K2> contr2,
     expr_rhs<N3, T> btc) {
 
+    typedef std::multimap<size_t, size_t>::value_type value_type;
+
     std::multimap<size_t, size_t> cseq;
     std::vector<const letter *> label;
     for (size_t i = 0; i < N1; i++) {
         const letter &l = bta.letter_at(i);
         if (contr1.contains(l)) {
-            cseq[i] = N1 + btb.index_of(l); continue;
+            cseq.insert(value_type(i, N1 + btb.index_of(l)));
+            continue;
         }
         if (contr2.contains(l)) {
-            cseq[i] = N1 + N2 + btc.index_of(l); continue;
+            cseq.insert(value_type(i, N1 + N2 + btc.index_of(l)));
+            continue;
         }
         label.push_back(&l);
     }
@@ -89,7 +94,8 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
         if (contr1.contains(l)) continue;
 
         if (contr2.contains(l)) {
-            cseq[N1 + i] = N1 + N2 + btc.index_of(l); continue;
+            cseq.insert(value_type(N1 + i, N1 + N2 + btc.index_of(l)));
+            continue;
         }
         label.push_back(&l);
     }
@@ -114,13 +120,13 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
 }
 
 
-template<size_t N1, size_t N2, size_t N3, typename T, bool A1, bool A2, bool A3>
+template<size_t N1, size_t N2, size_t N3, typename T>
 expr_rhs<N1 + N2 + N3 - 4, T> contract(
     const letter &let1,
-    expr_rhs<N1, T, A1> bta,
-    expr_rhs<N2, T, A2> btb,
+    expr_rhs<N1, T> bta,
+    expr_rhs<N2, T> btb,
     const letter &let2,
-    expr_rhs<N3, T, A3> btc) {
+    expr_rhs<N3, T> btc) {
 
     return contract(letter_expr<1>(let1), bta, btb, letter_expr<1>(let2), btc);
 }
