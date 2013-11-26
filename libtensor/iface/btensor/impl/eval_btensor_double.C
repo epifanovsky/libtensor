@@ -8,7 +8,7 @@
 #include "node_interm.h"
 #include "eval_btensor_double_contract.h"
 #include "eval_btensor_double_copy.h"
-//#include "eval_btensor_double_symm.h"
+#include "eval_btensor_double_symm.h"
 #include "eval_tree_builder_btensor.h"
 
 namespace libtensor {
@@ -76,6 +76,7 @@ private:
             tensor_transf<N, double> &tr);
 };
 
+
 const char eval_node::k_clazz[] = "eval_node";
 
 template<size_t N>
@@ -93,10 +94,10 @@ void eval_node::evaluate(const node &lhs) {
 
         eval_btensor_double::contract(m_tree, rhs, m_add).evaluate(tr, lhs);
 
-//    } else if(nwt.n.get_op().compare("symm") == 0) {
-//
-//        eval_btensor_double::symm(m_tree, id, m_add).evaluate(tr, lhs);
-//
+    } else if(n.get_op().compare("symm") == 0) {
+
+        eval_btensor_double::symm(m_tree, rhs, m_add).evaluate(tr, lhs);
+
     } else {
         throw not_implemented("iface", k_clazz, "evaluate()", __FILE__, __LINE__);
     }

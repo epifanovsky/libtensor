@@ -4,7 +4,7 @@
 #include <libtensor/expr/node_ident.h>
 #include <libtensor/expr/node_symm.h>
 #include "metaprog.h"
-#include "node_inspector.h"
+#include "node_interm.h"
 #include "eval_btensor_double_symm.h"
 
 namespace libtensor {
@@ -21,44 +21,44 @@ private:
         Nmax = symm::Nmax
     };
 
-    typedef tensor_list::tid_t tid_t; //!< Tensor ID type
-
 private:
-    const tensor_list &m_tl; //!< Tensor list
-    const interm &m_interm; //!< Intermediates
-    const node_symm<double> &m_node; //!< Identity node
+    const expr_tree &m_tree; //!< Expression tree
+    expr_tree::node_id_t m_id; //!< ID of copy node
     bool m_add; //!< True if add
 
 public:
-    eval_symm_impl(const tensor_list &tl, const interm &inter, const node_symm<double> &node, bool add) :
-        m_tl(tl), m_interm(inter), m_node(node), m_add(add)
+    eval_symm_impl(const expr_tree &tr, expr_tree::node_id_t id, bool add) :
+        m_tree(tr), m_id(id), m_add(add)
     { }
 
     template<size_t N>
-    void evaluate(const tensor_transf<N, double> &tr, tid_t tid);
+    void evaluate(const tensor_transf<N, double> &trc, const node &t);
 
-    void evaluate(const tensor_transf<1, double> &tr, tid_t tid);
+    void evaluate(const tensor_transf<1, double> &tr, const node &t);
 
 private:
     template<size_t N>
-    btensor<N, double> &tensor_from_tid(tid_t tid);
+    btensor_i<N, double> &tensor_from_node(const node &n);
     template<size_t N>
-    btensor<N, double> &tensor_from_tid(tid_t tid,
+    btensor<N, double> &tensor_from_node(const node &n,
         const block_index_space<N> &bis);
+    template<size_t N>
+    expr_tree::node_id_t gather_info(expr_tree::node_id_t id,
+        tensor_transf<N, double> &tr);
 
 };
 
 
 template<size_t N>
-void eval_symm_impl::evaluate(const tensor_transf<N, double> &tr, tid_t tid) {
+void eval_symm_impl::evaluate(const tensor_transf<N, double> &tr,
+    const node &t) {
 
-    if(m_node.get_nsym() == 2) {
+    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
+    if (e.size() != 1) throw "More than one child node";
 
-        node_inspector ni(m_node.get_arg());
-        node_with_transf<N> nwt = ni.gather_transf<N>();
-        if(nwt.n.get_op().compare("ident") != 0) {
-            throw "not identity node in symm";
-        }
+    const node &n = m_tree.get_vertex(m_id);
+    const node_symm<double> &nn = n.recast_as< node_symm<double> >();
+    if(nn.get_nsym() == 2) {
 
         // Need to convert
         // T2 S T1 A -> S' T' A, where S = I + Ts and S' = I + Ts'
@@ -70,40 +70,38 @@ void eval_symm_impl::evaluate(const tensor_transf<N, double> &tr, tid_t tid) {
         //
         // => Ts' = T2 Ts T2(inv); T' = T2 T1
 
-        const node_ident &n1 = ni.extract_ident();
-        btensor_i<N, double> &bta = tensor_from_tid<N>(n1.get_tid());
+        tensor_transf<N, double> tr1;
+        expr_tree::node_id_t id1 = gather_info(e[0], tr1);
+        const node &n1 = m_tree.get_vertex(id1);
+        btensor_i<N, double> &bta = tensor_from_node<N>(n1);
 
-        if(N != m_tl.get_tensor_order(n1.get_tid())) {
-            throw "Invalid order";
-        }
-        if(m_node.get_sym().size() % 2 != 0) {
+        if(nn.get_sym().size() % 2 != 0) {
             throw "Wrong size of symmetrization sequence";
         }
-        size_t nsymidx = m_node.get_sym().size() / 2;
+        size_t nsymidx = nn.get_sym().size() / 2;
         permutation<N> symperm;
         for(size_t i = 0; i < nsymidx; i++) {
-            symperm.permute(m_node.get_sym()[i], m_node.get_sym()[nsymidx + i]);
+            symperm.permute(nn.get_sym()[i], nn.get_sym()[nsymidx + i]);
         }
 
         tensor_transf<N, double> tr2(tr), tr2inv(tr2, true);
-        tensor_transf<N, double> tr1(nwt.tr);
         tensor_transf<N, double> tpr(tr1);
         tpr.transform(tr2);
-        tensor_transf<N, double> trs(symperm, m_node.get_pair_tr());
+        tensor_transf<N, double> trs(symperm, nn.get_pair_tr());
         tensor_transf<N, double> tspr(tr2inv);
         tspr.transform(trs);
         tspr.transform(tr2);
 
         btod_copy<N> op(bta, tpr.get_perm(), tpr.get_scalar_tr().get_coeff());
         btod_symmetrize2<N> symop(op, tspr.get_perm(), tspr.get_scalar_tr().get_coeff() == 1.0);
-        btensor<N, double> &bt = tensor_from_tid<N>(tid, symop.get_bis());
+        btensor<N, double> &bt = tensor_from_node(t, symop.get_bis());
         if(m_add) {
             symop.perform(bt, 1.0);
         } else {
             symop.perform(bt);
         }
 
-    } else if(m_node.get_nsym() == 3) {
+    } else if(nn.get_nsym() == 3) {
         throw "Third-order symmetrizations not implemented";
     } else {
         throw "High-order symmetrizations not implemented";
@@ -111,42 +109,89 @@ void eval_symm_impl::evaluate(const tensor_transf<N, double> &tr, tid_t tid) {
 }
 
 
-void eval_symm_impl::evaluate(const tensor_transf<1, double> &tr, tid_t tid) {
+void eval_symm_impl::evaluate(const tensor_transf<1, double> &tr, const node &t) {
 
     throw "Should not be here";
 }
 
 
 template<size_t N>
-btensor<N, double> &eval_symm_impl::tensor_from_tid(tid_t tid) {
+btensor_i<N, double> &eval_symm_impl::tensor_from_node(const node &n) {
 
-    any_tensor<N, double> &anyt = m_tl.get_tensor<N, double>(tid);
+    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
+        const node_ident<N, double> &ni =
+                n.recast_as< node_ident<N, double> >();
 
-    if(m_interm.is_interm(tid)) {
+        return ni.get_tensor().template get_tensor< btensor_i<N, double> >();
+    }
+    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
+
+        const node_interm<N, double> &ni =
+                n.recast_as< node_interm<N, double> >();
         btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(anyt);
+            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
+
         if(ph.is_empty()) throw 73;
         return ph.get_btensor();
-    } else {
-        return btensor<N, double>::from_any_tensor(anyt);
+    }
+    else {
+        throw 74;
     }
 }
 
 
 template<size_t N>
-btensor<N, double> &eval_symm_impl::tensor_from_tid(tid_t tid,
+btensor<N, double> &eval_symm_impl::tensor_from_node(const node &n,
     const block_index_space<N> &bis) {
 
-    any_tensor<N, double> &anyt = m_tl.get_tensor<N, double>(tid);
+    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
+        const node_ident<N, double> &ni =
+                n.recast_as< node_ident<N, double> >();
 
-    if(m_interm.is_interm(tid)) {
+        return btensor<N, double>::from_any_tensor(ni.get_tensor());
+    }
+    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
+
+        const node_interm<N, double> &ni =
+                n.recast_as< node_interm<N, double> >();
         btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(anyt);
+            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
+
         if(ph.is_empty()) ph.create_btensor(bis);
         return ph.get_btensor();
-    } else {
-        return btensor<N, double>::from_any_tensor(anyt);
     }
+    else {
+        throw 74;
+    }
+}
+
+
+template<size_t N>
+expr_tree::node_id_t eval_symm_impl::gather_info(
+    expr_tree::node_id_t id, tensor_transf<N, double> &tr) {
+
+    const node &n = m_tree.get_vertex(id);
+    if (n.get_op().compare(node_transform_base::k_op_type) != 0) {
+        return id;
+    }
+
+    const node_transform<double> &ntr =
+            n.recast_as< node_transform<double> >();
+
+    const std::vector<size_t> &p = ntr.get_perm();
+    if(p.size() != N) {
+        throw "Bad transform node";
+    }
+    sequence<N, size_t> s0(0), s1(0);
+    for(size_t i = 0; i < N; i++) {
+        s0[i] = i;
+        s1[i] = p[i];
+    }
+    permutation_builder<N> pb(s1, s0);
+    tr.permute(pb.get_perm());
+    tr.transform(ntr.get_coeff());
+
+    return m_tree.get_edges_out(id).front();
 }
 
 
@@ -154,9 +199,9 @@ btensor<N, double> &eval_symm_impl::tensor_from_tid(tid_t tid,
 
 
 template<size_t N>
-void symm::evaluate(const tensor_transf<N, double> &tr, tid_t tid) {
+void symm::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
-    eval_symm_impl(m_tl, m_interm, m_node, m_add).evaluate(tr, tid);
+    eval_symm_impl(m_tree, m_id, m_add).evaluate(tr, t);
 }
 
 
@@ -166,7 +211,8 @@ template<size_t N>
 struct aux {
     symm *e;
     tensor_transf<N, double> *tr;
-    aux() { e->evaluate(*tr, 0); }
+    node *n;
+    aux() { e->evaluate(*tr, *n); }
 };
 } // unnamed namespace
 template class instantiate_template_1<1, symm::Nmax, symm_ns::aux>;
