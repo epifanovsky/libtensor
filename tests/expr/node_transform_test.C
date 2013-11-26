@@ -34,9 +34,6 @@ void node_transform_test::test_1() {
     if (tr1copy->get_op() != node_transform_base::k_op_type) {
         fail_test(testname, __FILE__, __LINE__, "Node name.");
     }
-    if (tr1copy->get_type() != typeid(double)) {
-        fail_test(testname, __FILE__, __LINE__, "Node transform type.");
-    }
     if (tr1copy->get_perm().size() != 4) {
         fail_test(testname, __FILE__, __LINE__, "Length of index order.");
     }

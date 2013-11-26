@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <sstream>
+#include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
