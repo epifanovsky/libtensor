@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
 #define LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
 
-#include <libtensor/expr/node_add.h>
+#include <libtensor/expr/node_dirsum.h>
 
 namespace libtensor {
 namespace iface {
@@ -19,8 +19,6 @@ expr_rhs<N + M, T> dirsum(
     const expr_rhs<N, T> &a,
     const expr_rhs<M, T> &b) {
 
-    std::multimap<size_t, size_t> map;
-
     std::vector<const letter *> label(N + M);
     for(size_t i = 0; i < N; i++) {
         label[i] = &a.letter_at(i);
@@ -31,7 +29,7 @@ expr_rhs<N + M, T> dirsum(
 
     // TODO: remap tensors
 
-    expr::expr_tree e(expr::node_add(N, map));
+    expr::expr_tree e(expr::node_dirsum(N + M));
     expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, a.get_expr());
     e.add(id, b.get_expr());

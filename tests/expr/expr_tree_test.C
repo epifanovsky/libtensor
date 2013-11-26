@@ -1,3 +1,4 @@
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/node_assign.h>
 #include <libtensor/expr/node_contract.h>
@@ -52,18 +53,18 @@ void expr_tree_test::test_1() throw(libtest::test_exception) {
     tensor_i &ti = t;
     any_tensor<2, double> tt1(ti), tt2(ti), tt3(ti);
 
-    std::multimap<size_t, size_t> map;
-    map.insert(std::pair<size_t, size_t>(0, 1));
-    map.insert(std::pair<size_t, size_t>(1, 0));
-
     expr_tree e(node_assign(2));
     expr_tree::node_id_t id = e.get_root();
     e.add(id, node_ident<2, double>(tt1));
-    e.add(id, node_add(2, map));
+    e.add(id, node_add(2));
 
     id = e.get_edges_out(id).back();
     e.add(id, node_ident<2, double>(tt2));
-    e.add(id, node_ident<2, double>(tt3));
+    std::vector<size_t> p(2);
+    p[0] = 1; p[1] = 0;
+    expr_tree::node_id_t id2 = e.add(id,
+            node_transform<double>(p, scalar_transf<double>()));
+    e.add(id2, node_ident<2, double>(tt3));
 
     id = e.get_root();
     const node &n1 = e.get_vertex(id);
@@ -110,9 +111,6 @@ void expr_tree_test::test_1() throw(libtest::test_exception) {
     if (n2b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Dim (n2b).");
     }
-    if (n2b.recast_as<node_add>().get_map().size() != 2) {
-        fail_test(testname, __FILE__, __LINE__, "Addition map (n2b).");
-    }
     const expr_tree::edge_list_t &l2b_in  = e.get_edges_in(id);
     if (l2b_in.size() != 1) {
         fail_test(testname, __FILE__, __LINE__, "# parent nodes (n2b).");
@@ -143,20 +141,40 @@ void expr_tree_test::test_1() throw(libtest::test_exception) {
     id = l2b_out[1];
 
     const node &n3b = e.get_vertex(id);
-    if (n3b.get_op().compare(node_ident_base::k_op_type) != 0) {
+    if (n3b.get_op().compare(node_transform_base::k_op_type) != 0) {
         fail_test(testname, __FILE__, __LINE__, "Op type (n3b).");
     }
     if (n3b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Dim (n3b).");
     }
+    // ? Check permutation here ?
     const expr_tree::edge_list_t &l3b_in  = e.get_edges_in(id);
     if (l3b_in.size() != 1) {
         fail_test(testname, __FILE__, __LINE__, "# parent nodes (n3b).");
     }
     const expr_tree::edge_list_t &l3b_out = e.get_edges_out(id);
-    if (l3b_out.size() != 0) {
+    if (l3b_out.size() != 1) {
         fail_test(testname, __FILE__, __LINE__, "# child nodes (n3b).");
     }
+
+    id = l3b_out[0];
+
+    const node &n4 = e.get_vertex(id);
+    if (n4.get_op().compare(node_ident_base::k_op_type) != 0) {
+        fail_test(testname, __FILE__, __LINE__, "Op type (n4).");
+    }
+    if (n4.get_n() != 2) {
+        fail_test(testname, __FILE__, __LINE__, "Dim (n4).");
+    }
+    const expr_tree::edge_list_t &l4_in  = e.get_edges_in(id);
+    if (l4_in.size() != 1) {
+        fail_test(testname, __FILE__, __LINE__, "# parent nodes (n4).");
+    }
+    const expr_tree::edge_list_t &l4_out = e.get_edges_out(id);
+    if (l4_out.size() != 0) {
+        fail_test(testname, __FILE__, __LINE__, "# child nodes (n4).");
+    }
+
 }
 
 
@@ -172,11 +190,7 @@ void expr_tree_test::test_2() throw(libtest::test_exception) {
     tensor_i &ti = t;
     any_tensor<2, double> tt1(ti), tt2(ti), tt3(ti);
 
-    std::multimap<size_t, size_t> map;
-    map.insert(std::pair<size_t, size_t>(0, 1));
-    map.insert(std::pair<size_t, size_t>(1, 0));
-
-    expr_tree sub(node_add(2, map));
+    expr_tree sub(node_add(2));
     expr_tree::node_id_t id = sub.get_root();
     sub.add(id, node_ident<2, double>(tt2));
     sub.add(id, node_ident<2, double>(tt3));
@@ -230,9 +244,6 @@ void expr_tree_test::test_2() throw(libtest::test_exception) {
     }
     if (n2b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Dim (n2b).");
-    }
-    if (n2b.recast_as<node_add>().get_map().size() != 2) {
-        fail_test(testname, __FILE__, __LINE__, "Addition map (n2b).");
     }
     const expr_tree::edge_list_t &l2b_in  = e.get_edges_in(id);
     if (l2b_in.size() != 1) {

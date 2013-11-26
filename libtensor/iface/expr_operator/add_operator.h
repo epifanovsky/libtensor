@@ -19,16 +19,18 @@ expr_rhs<N, T> operator+(
     const expr_rhs<N, T> &lhs,
     const expr_rhs<N, T> &rhs) {
 
-    std::multimap<size_t, size_t> map;
-
-    permutation<N> p = lhs.get_label().permutation_of(rhs.get_label());
-    for (size_t i = 0; i < N; i++) {
-        map.insert(std::pair<size_t, size_t>(i, p[i]));
-    }
-
-    expr::expr_tree e(expr::node_add(N, map));
+    expr::node_add add(N);
+    expr::expr_tree e(add);
     expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
+
+    permutation<N> p = lhs.get_label().permutation_of(rhs.get_label());
+    if (! p.is_identity()) {
+        std::vector<size_t> perm(N);
+        for (size_t i = 0; i < N; i++) perm[i] = p[i];
+
+        id = e.add(id, expr::node_transform<T>(perm, scalar_transf<T>()));
+    }
     e.add(id, rhs.get_expr());
 
     return expr_rhs<N, T>(e, lhs.get_label());
@@ -44,20 +46,16 @@ expr_rhs<N, T> operator-(
     const expr_rhs<N, T> &lhs,
     const expr_rhs<N, T> &rhs) {
 
-    std::multimap<size_t, size_t> map;
-    permutation<N> p = lhs.get_label().permutation_of(rhs.get_label());
-    for (size_t i = 0; i < N; i++) {
-        map.insert(std::pair<size_t, size_t>(i, p[i]));
-    }
-
-    std::vector<size_t> perm(N);
-    for (size_t i = 0; i < N; i++) perm[i] = i;
-
-    expr::expr_tree e(expr::node_add(N, map));
+    expr::node_add add(N);
+    expr::expr_tree e(add);
     expr::expr_tree::node_id_t id = e.get_root();
     e.add(id, lhs.get_expr());
-    e.add(id, expr::node_transform<T>(perm, scalar_transf<T>(-1)));
-    id = e.get_edges_out(id).back();
+
+    permutation<N> p = lhs.get_label().permutation_of(rhs.get_label());
+    std::vector<size_t> perm(N);
+    for (size_t i = 0; i < N; i++) perm[i] = p[i];
+
+    id = e.add(id, expr::node_transform<T>(perm, scalar_transf<T>(-1)));
     e.add(id, rhs.get_expr());
 
     return expr_rhs<N, T>(e, lhs.get_label());

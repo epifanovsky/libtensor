@@ -18,15 +18,11 @@ class node_add : public node {
 public:
     static const char k_op_type[]; //!< Operation type
 
-private:
-    std::multimap<size_t, size_t> m_map; //!< Map
-
 public:
     /** \brief Creates an addition node
         \param n Order of result.
      **/
-    node_add(size_t n, const std::multimap<size_t, size_t> &map) :
-        node(node_add::k_op_type, n), m_map(map)
+    node_add(size_t n) : node(node_add::k_op_type, n)
     { }
 
     /** \brief Virtual destructor
@@ -37,10 +33,6 @@ public:
      **/
     virtual node_add *clone() const {
         return new node_add(*this);
-    }
-
-    const std::multimap<size_t, size_t> &get_map() const {
-        return m_map;
     }
 };
 
