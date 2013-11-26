@@ -57,6 +57,7 @@ void block_loop::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
 
 size_t block_loop::get_subspace_looped(size_t bispace_idx) const
 {
+#ifdef LIBTENSOR_DEBUG
 	if(bispace_idx >= m_bispaces.size())
 	{
 		throw out_of_bounds(g_ns, k_clazz,"get_subspace_looped(...)",
@@ -67,17 +68,20 @@ size_t block_loop::get_subspace_looped(size_t bispace_idx) const
 		throw bad_parameter(g_ns, k_clazz,"get_subspace_looped(...)",
 				__FILE__, __LINE__, "bispace_idx is not looped over");
 	}
+#endif
 
 	return m_subspace_map.at(bispace_idx);
 }
 
 bool block_loop::is_bispace_ignored(size_t bispace_idx) const
 {
+#ifdef LIBTENSOR_DEBUG
 	if(bispace_idx >= m_bispaces.size())
 	{
 		throw out_of_bounds(g_ns, k_clazz,"is_bispace_ignored(...)",
 				__FILE__, __LINE__, "bispace_idx is out of bounds");
 	}
+#endif
 
 	return m_subspace_map.find(bispace_idx) == m_subspace_map.end();
 }

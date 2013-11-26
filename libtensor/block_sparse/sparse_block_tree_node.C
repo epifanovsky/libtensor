@@ -97,11 +97,13 @@ void sparse_block_tree_leaf_node::push_back(const std::vector<size_t>& key,size_
 size_t sparse_block_tree_branch_node::search(const std::vector<size_t>& key,const size_t idx) const
 {
     std::vector<size_t>::const_iterator cur_pos_it = std::lower_bound(m_keys.begin(),m_keys.end(),key[idx]);
+#ifdef LIBTENSOR_DEBUG
     if(cur_pos_it == m_keys.end() || *cur_pos_it != key[idx])
     {
         throw bad_parameter(g_ns,"sparse_block_tree_node<N>","search(...)",
             __FILE__,__LINE__,"key not found"); 
     }
+#endif
     size_t cur_pos = distance(m_keys.begin(),cur_pos_it);
     return m_children[cur_pos]->search(key,idx+1);
 }
