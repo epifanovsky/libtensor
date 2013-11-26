@@ -1,8 +1,9 @@
 #include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_scale.h>
+#include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_ident.h>
 #include "metaprog.h"
-#include "node_inspector.h"
+#include "node_interm.h"
 #include "eval_btensor_double_contract.h"
 
 namespace libtensor {
@@ -19,14 +20,12 @@ public:
         Nmax = contract::Nmax
     };
 
-    typedef tensor_list::tid_t tid_t; //!< Tensor ID type
-
 private:
     template<size_t NC>
     struct dispatch_contract_1 {
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
-        tid_t tid;
+        const node &t;
         size_t k, na, nb;
         template<size_t NA> void dispatch();
     };
@@ -35,34 +34,32 @@ private:
     struct dispatch_contract_2 {
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
-        tid_t tid;
+        const node &t;
         size_t k, na, nb;
         template<size_t K> void dispatch();
     };
 
 private:
-    const tensor_list &m_tl; //!< Tensor list
-    const interm &m_interm; //!< Intermediates
-    const node_contract &m_node; //!< Contraction node
+    const expr_tree &m_tree; //!< Expression tree
+    expr_tree::node_id_t m_id; //!< ID of contraction node
     bool m_add; //!< True if add
 
 public:
-    eval_contract_impl(const tensor_list &tl, const interm &inter,
-        const node_contract &node, bool add) :
-        m_tl(tl), m_interm(inter), m_node(node), m_add(add)
+    eval_contract_impl(const expr_tree &tr, expr_tree::node_id_t id, bool add) :
+        m_tree(tr), m_id(id), m_add(add)
     { }
 
     template<size_t NC>
-    void evaluate(const tensor_transf<NC, double> &trc, tid_t tid);
+    void evaluate(const tensor_transf<NC, double> &trc, const node &t);
 
     template<size_t N, size_t M, size_t K>
-    void do_evaluate(const tensor_transf<N + M, double> &trc, tid_t tid);
+    void do_evaluate(const tensor_transf<N + M, double> &trc, const node &t);
 
 private:
     template<size_t N>
-    btensor<N, double> &tensor_from_tid(tid_t tid);
+    btensor_i<N, double> &tensor_from_node(const node &n);
     template<size_t N>
-    btensor<N, double> &tensor_from_tid(tid_t tid,
+    btensor<N, double> &tensor_from_node(const node &n,
         const block_index_space<N> &bis);
 
 };
@@ -70,42 +67,45 @@ private:
 
 template<size_t NC>
 void eval_contract_impl::evaluate(const tensor_transf<NC, double> &trc,
-    tid_t tid) {
+    const node &t) {
 
-    const node_ident &arga =
-        node_inspector(m_node.get_arg(0)).extract_ident();
-    const node_ident &argb =
-        node_inspector(m_node.get_arg(1)).extract_ident();
+    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
+    const node &n = m_tree.get_vertex(m_id);
+    const node_contract &nc = n.recast_as<node_contract>();
 
-    size_t k = m_node.get_contraction().size();
-    size_t na = m_tl.get_tensor_order(arga.get_tid());
-    size_t nb = m_tl.get_tensor_order(argb.get_tid());
+    const node &arga = m_tree.get_vertex(e[0]);
+    const node &argb = m_tree.get_vertex(e[1]);
+
+    size_t k = nc.get_map().size();
+    size_t na = arga.get_n();
+    size_t nb = argb.get_n();
 
     if(k > na || k > nb) {
         throw "Invalid contraction order";
     }
 
-    dispatch_contract_1<NC> d1 = { *this, trc, tid, k, na, nb };
+    dispatch_contract_1<NC> d1 = { *this, trc, t, k, na, nb };
     dispatch_1<1, Nmax>::dispatch(d1, na);
 }
 
 
 template<size_t N, size_t M, size_t K>
 void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
-    tid_t tid) {
+    const node &t) {
 
-    node_inspector nia(m_node.get_arg(0));
-    node_inspector nib(m_node.get_arg(1));
-    const node_ident &na = nia.extract_ident();
-    const node_ident &nb = nib.extract_ident();
+    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
+    const node &n = m_tree.get_vertex(m_id);
+    const node_contract &nc = n.recast_as<node_contract>();
 
-    btensor_i<N + K, double> &bta = tensor_from_tid<N + K>(na.get_tid());
-    btensor_i<M + K, double> &btb = tensor_from_tid<M + K>(nb.get_tid());
+    btensor_i<N + K, double> &bta =
+            tensor_from_node<N + K>(m_tree.get_vertex(e[0]));
+    btensor_i<M + K, double> &btb =
+            tensor_from_node<M + K>(m_tree.get_vertex(e[1]));
 
     contraction2<N, M, K> contr;
-    for(typename std::map<size_t, size_t>::const_iterator ic =
-            m_node.get_contraction().begin();
-            ic != m_node.get_contraction().end(); ++ic) {
+    for(typename std::multimap<size_t, size_t>::const_iterator ic =
+            nc.get_map().begin(); ic != nc.get_map().end(); ++ic) {
+
         size_t ka, kb;
         if(ic->first < N + K) {
             ka = ic->first; kb = ic->second - N - K;
@@ -117,7 +117,7 @@ void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
     contr.permute_c(trc.get_perm());
 
     btod_contract2<N, M, K> op(contr, bta, btb);
-    btensor<N + M, double> &btc = tensor_from_tid<N + M>(tid, op.get_bis());
+    btensor<N + M, double> &btc = tensor_from_node<N + M>(t, op.get_bis());
     if(m_add) {
         op.perform(btc, trc.get_scalar_tr());
     } else {
@@ -134,7 +134,7 @@ void eval_contract_impl::dispatch_contract_1<NC>::dispatch() {
         Kmin = meta_if<(NA > NC), (NA - NC), (NA == NC ? 1 : 0)>::value,
         Kmax = meta_min<NA, (Nmax + NA - NC)/2>::value
     };
-    dispatch_contract_2<NC, NA> d2 = { eval, trc, tid, k, na, nb };
+    dispatch_contract_2<NC, NA> d2 = { eval, trc, t, k, na, nb };
     dispatch_1<Kmin, Kmax>::dispatch(d2, k);
 }
 
@@ -146,39 +146,57 @@ void eval_contract_impl::dispatch_contract_2<NC, NA>::dispatch() {
         N = NA - K,
         M = NC - N
     };
-    eval.template do_evaluate<N, M, K>(trc, tid);
+    eval.template do_evaluate<N, M, K>(trc, t);
 }
 
 
 template<size_t N>
-btensor<N, double> &eval_contract_impl::tensor_from_tid(tid_t tid) {
+btensor_i<N, double> &eval_contract_impl::tensor_from_node(const node &n) {
 
-    any_tensor<N, double> &anyt = m_tl.get_tensor<N, double>(tid);
+    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
+        const node_ident<N, double> &ni =
+                n.recast_as< node_ident<N, double> >();
 
-    if(m_interm.is_interm(tid)) {
+        return ni.get_tensor().template get_tensor< btensor_i<N, double> >();
+    }
+    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
+
+        const node_interm<N, double> &ni =
+                n.recast_as< node_interm<N, double> >();
         btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(anyt);
+            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
+
         if(ph.is_empty()) throw 73;
         return ph.get_btensor();
-    } else {
-        return btensor<N, double>::from_any_tensor(anyt);
+    }
+    else {
+        throw 74;
     }
 }
 
 
 template<size_t N>
-btensor<N, double> &eval_contract_impl::tensor_from_tid(tid_t tid,
+btensor<N, double> &eval_contract_impl::tensor_from_node(const node &n,
     const block_index_space<N> &bis) {
 
-    any_tensor<N, double> &anyt = m_tl.get_tensor<N, double>(tid);
+    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
+        const node_ident<N, double> &ni =
+                n.recast_as< node_ident<N, double> >();
 
-    if(m_interm.is_interm(tid)) {
+        return btensor<N, double>::from_any_tensor(ni.get_tensor());
+    }
+    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
+
+        const node_interm<N, double> &ni =
+                n.recast_as< node_interm<N, double> >();
         btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(anyt);
+            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
+
         if(ph.is_empty()) ph.create_btensor(bis);
         return ph.get_btensor();
-    } else {
-        return btensor<N, double>::from_any_tensor(anyt);
+    }
+    else {
+        throw 74;
     }
 }
 
@@ -187,9 +205,9 @@ btensor<N, double> &eval_contract_impl::tensor_from_tid(tid_t tid,
 
 
 template<size_t NC>
-void contract::evaluate(const tensor_transf<NC, double> &trc, tid_t tid) {
+void contract::evaluate(const tensor_transf<NC, double> &trc, const node &t) {
 
-    eval_contract_impl(m_tl, m_interm, m_node, m_add).evaluate(trc, tid);
+    eval_contract_impl(m_tree, m_id, m_add).evaluate(trc, t);
 }
 
 
@@ -199,7 +217,8 @@ template<size_t N>
 struct aux {
     contract *e;
     tensor_transf<N, double> *tr;
-    aux() { e->evaluate(*tr, 0); }
+    node *n;
+    aux() { e->evaluate(*tr, *n); }
 };
 } // unnamed namespace
 template class instantiate_template_1<1, contract::Nmax, contract_ns::aux>;

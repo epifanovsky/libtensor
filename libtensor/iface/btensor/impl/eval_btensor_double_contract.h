@@ -17,21 +17,20 @@ public:
         Nmax = eval_btensor<double>::Nmax
     };
 
-    typedef tensor_list::tid_t tid_t; //!< Tensor ID type
+    typedef expr::expr_tree::node_id_t node_id_t; //!< Node ID type
 
 private:
-    const tensor_list &m_tl; //!< Tensor list
-    const interm &m_interm; //!< Intermediates
-    const expr::node_contract &m_node; //!< Contraction node
+    const expr::expr_tree &m_tree; //!< Expression tree
+    node_id_t m_id; //!< ID of contraction node
     bool m_add; //!< True if add
 
 public:
-    contract(const tensor_list &tl, const interm &inter, const expr::node_contract &node, bool add) :
-        m_tl(tl), m_interm(inter), m_node(node), m_add(add)
+    contract(const expr::expr_tree &tr, node_id_t &id, bool add) :
+        m_tree(tr), m_id(id), m_add(add)
     { }
 
     template<size_t NC>
-    void evaluate(const tensor_transf<NC, double> &trc, tid_t tid);
+    void evaluate(const tensor_transf<NC, double> &trc, const expr::node &t);
 
 };
 

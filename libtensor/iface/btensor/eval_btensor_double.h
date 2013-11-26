@@ -21,7 +21,7 @@ public:
 public:
     /** \brief Evaluates an expression tree
      **/
-    void evaluate(expr::expr_tree &tree);
+    void evaluate(const expr::expr_tree &tree);
 
 };
 
