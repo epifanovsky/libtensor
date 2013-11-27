@@ -381,6 +381,41 @@ void eval_tree_builder_btensor::build() {
 
     std::cout << "render expression" << std::endl;
     print_tree(m_tree, std::cout);
+
+    std::set<expr_tree::node_id_t> to_erase;
+    for (expr_tree::iterator i = m_tree.begin(); i != m_tree.end(); i++) {
+
+        const node &ni = m_tree.get_vertex(i);
+        if (ni.get_op().compare(node_ident_base::k_op_type) != 0) continue;
+
+        const node_ident_base &nii = ni.recast_as<node_ident_base>();
+
+        expr_tree::iterator j = i; j++;
+        for (; j != m_tree.end(); j++) {
+
+            const node &nj = m_tree.get_vertex(j);
+            if (nj.get_op().compare(node_ident_base::k_op_type) != 0) continue;
+
+            const node_ident_base &nij = nj.recast_as<node_ident_base>();
+
+            if (nii == nij) {
+                expr_tree::node_id_t idi = m_tree.get_id(i);
+                expr_tree::node_id_t idj = m_tree.get_id(j);
+                expr_tree::edge_list_t ej(m_tree.get_edges_in(j));
+                for (size_t k = 0; k < ej.size(); k++) {
+                    m_tree.erase(ej[k], idj);
+                    m_tree.add(ej[k], idi);
+                }
+                to_erase.insert(idj);
+            }
+        }
+    }
+    for (std::set<expr_tree::node_id_t>::iterator i = to_erase.begin();
+            i != to_erase.end(); i++) {
+
+        m_tree.erase(*i);
+    }
+
     node_renderer(m_tree, m_order, head).render();
 
     std::cout << "rendered expression" << std::endl;

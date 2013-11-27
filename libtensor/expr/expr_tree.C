@@ -60,9 +60,9 @@ void expr_tree::erase_subtree(node_id_t h) {
     for (size_t i = 0; i < out.size(); i++) {
         erase_subtree(out[i]);
     }
-    if (h != m_root)
+    if (h != m_root) {
         graph::erase(h);
-
+    }
 }
 
 
