@@ -133,9 +133,7 @@ void btod_import_raw<N, Alloc>::perform(block_tensor_i<N, double> &bt) {
         }
 
         if(zero) {
-            dense_tensor_wr_i<N, double> &blk = ctrl.req_block(bi.get_index());
             ctrl.req_zero_block(bi.get_index());
-            ctrl.ret_block(bi.get_index());
         }
     } while(bi.inc());
 

@@ -34,8 +34,10 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_set_diag", m_utf_btod_set_diag);
     add_test("btod_set_elem", m_utf_btod_set_elem);
     add_test("btod_sum", m_utf_btod_sum);
+    add_test("btod_symcontract3", m_utf_btod_symcontract3);
     add_test("btod_symmetrize2", m_utf_btod_symmetrize2);
     add_test("btod_symmetrize3", m_utf_btod_symmetrize3);
+    add_test("btod_symmetrize4", m_utf_btod_symmetrize4);
     add_test("btod_trace", m_utf_btod_trace);
 //    add_test("btod_tridiagonalize", m_utf_btod_tridiagonalize);
     add_test("btod_vmpriority", m_utf_btod_vmpriority);
@@ -44,6 +46,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("gen_bto_contract2_clst_builder",
         m_utf_gen_bto_contract2_clst_builder);
     add_test("gen_bto_dirsum_sym", m_utf_gen_bto_dirsum_sym);
+    add_test("gen_bto_symcontract2_sym", m_utf_gen_bto_symcontract2_sym);
     add_test("gen_bto_unfold_symmetry", m_utf_gen_bto_unfold_symmetry);
 }
 

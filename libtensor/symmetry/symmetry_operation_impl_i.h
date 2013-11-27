@@ -11,6 +11,10 @@ namespace libtensor {
  **/
 class symmetry_operation_impl_i {
 public:
+	/** \brief Virtual destructor
+	 **/
+	virtual ~symmetry_operation_impl_i() { };
+
     /** \brief Returns the %symmetry element class id
      **/
     virtual const char *get_id() const = 0;

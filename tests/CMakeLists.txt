@@ -44,6 +44,7 @@ set(SRC_TOD
     tod/to_contract2_perms_test.C
     tod/tod_contract2_test.C
     tod/tod_copy_test.C
+    tod/tod_copy_wnd_test.C
     tod/tod_diag_test.C
     tod/tod_dirsum_test.C
     tod/tod_dotprod_test.C
@@ -94,8 +95,24 @@ set(SRC_DIAG_TENSOR
     diag_tensor/diag_to_add_space_test.C
     diag_tensor/diag_to_contract2_space_test.C
     diag_tensor/diag_tod_adjust_space_test.C
+    diag_tensor/diag_tod_contract2_test.C
+    diag_tensor/diag_tod_contract2_part_test.C
+    diag_tensor/diag_tod_copy_test.C
+    diag_tensor/diag_tod_dotprod_test.C
+    diag_tensor/diag_tod_mult1_test.C
+    diag_tensor/diag_tod_random_test.C
     diag_tensor/diag_tod_set_test.C
     diag_tensor/tod_conv_diag_tensor_test.C
+)
+
+set(SRC_DIAG_BLOCK_TENSOR
+    diag_block_tensor/libtensor_diag_block_tensor_tests.C
+    diag_block_tensor/libtensor_diag_block_tensor_suite.C
+    diag_block_tensor/diag_block_tensor_test.C
+    diag_block_tensor/diag_btod_contract2_test.C
+    diag_block_tensor/diag_btod_copy_test.C
+    diag_block_tensor/diag_btod_random_test.C
+    diag_block_tensor/tod_conv_diag_block_tensor_test.C
 )
 
 set(SRC_SYMMETRY
@@ -179,8 +196,10 @@ set(SRC_BTOD
     btod/btod_set_elem_test.C
     btod/btod_set_test.C
     btod/btod_sum_test.C
+    btod/btod_symcontract3_test.C
     btod/btod_symmetrize2_test.C
     btod/btod_symmetrize3_test.C
+    btod/btod_symmetrize4_test.C
     btod/btod_trace_test.C
     btod/btod_tridiagonalize_test.C
     btod/btod_vmpriority_test.C
@@ -188,6 +207,7 @@ set(SRC_BTOD
     btod/gen_bto_aux_copy_test.C
     btod/gen_bto_contract2_clst_builder_test.C
     btod/gen_bto_dirsum_sym_test.C
+    btod/gen_bto_symcontract2_sym_test.C
     btod/gen_bto_unfold_symmetry_test.C
 )
 
@@ -257,6 +277,7 @@ set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
     libtensor_diag_tensor_tests
+    libtensor_diag_block_tensor_tests
     libtensor_btod_tests
     libtensor_iface_tests
     libtensor_linalg_tests
@@ -270,6 +291,7 @@ add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
+add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 

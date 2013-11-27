@@ -61,8 +61,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_ij_ip_pj<LA>::match(
     zz.m_sic = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 2, 1> *kern = 0;
-
     return new kern_dmul2_ij_ip_pj(zz);
 }
 

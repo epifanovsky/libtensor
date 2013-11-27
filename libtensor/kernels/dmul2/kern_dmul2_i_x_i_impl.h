@@ -58,7 +58,7 @@ kernel_base<LA, 2, 1> *kern_dmul2_i_x_i<LA>::match(const kern_dmul2<LA> &z,
 
     kernel_base<LA, 2, 1> *kern = 0;
 
-    if(kern = kern_dmul2_i_p_pi<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dmul2_i_p_pi<LA>::match(zz, in, out))) return kern;
 
     return new kern_dmul2_i_x_i(zz);
 }

@@ -13,6 +13,7 @@ libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
     add_test("to_contract2_perms", m_utf_to_contract2_perms);
     add_test("tod_contract2", m_utf_tod_contract2);
     add_test("tod_copy", m_utf_tod_copy);
+    add_test("tod_copy_wnd", m_utf_tod_copy_wnd);
     add_test("tod_diag", m_utf_tod_diag);
     add_test("tod_dirsum", m_utf_tod_dirsum);
     add_test("tod_dotprod", m_utf_tod_dotprod);

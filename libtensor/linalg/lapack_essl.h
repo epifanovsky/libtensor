@@ -76,6 +76,19 @@ inline int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a,
     return info;
 }
 
+/** \brief LAPACK function dggev (ESSL)
+ *
+ *     \ingroup libtensor_linalg
+ *      **/
+inline int lapack_dggev(char jobvl, char jobvr, size_t n, double *a,
+    size_t lda, double * b, size_t ldb, double *alphar, double *alphai, double * beta, double *vl, size_t ldvl, double *vr,
+    size_t ldvr, double *work, size_t lwork) {
+
+    int info = 0;
+    //dggev(jobvl, jobvr, n, a, lda, b, ldb, alphar, alphai, beta, vl, ldvl, vr, ldvr, &info);
+    return info;
+}
+
 
 /** \brief LAPACK function zgeev (ESSL)
 
@@ -128,6 +141,18 @@ inline int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
 
     int info = 0;
     dpotrf(&uplo, n, a, lda, info);
+    return info;
+}
+
+
+/** \brief LAPACK function dpotri (ESSL)
+
+    \ingroup libtensor_linalg
+ **/
+inline int lapack_dpotri(char uplo, size_t n, double *a, size_t lda) {
+
+    int info = 0;
+    dpotri(&uplo, n, a, lda, info);
     return info;
 }
 

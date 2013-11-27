@@ -6,21 +6,19 @@
 #include <libtensor/exception.h>
 #include <libtensor/core/block_index_subspace_builder.h>
 #include <libtensor/core/abs_index.h>
-#include "../combine_part.h"
+#include "combine_part.h"
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl<so_merge<N, M, T>, se_part<NM, T> >::k_clazz =
+symmetry_operation_impl<so_merge<N, M, T>, se_part<N - M, T> >::k_clazz =
         "symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >";
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
+symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
-
-    static const char *method = "do_perform(symmetry_operation_params_t&)";
 
     params.grp2.clear();
     if (params.grp1.is_empty()) return;
@@ -133,8 +131,8 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::do_perform(
 }
 
 
-template<size_t N, size_t M, size_t NM, typename T>
-bool symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::
+template<size_t N, size_t M, typename T>
+bool symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::
 is_forbidden(const el1_t &el, const index<N> &idx,
         const dimensions<N> &subdims) {
 
@@ -155,8 +153,8 @@ is_forbidden(const el1_t &el, const index<N> &idx,
 }
 
 
-template<size_t N, size_t M, size_t NM, typename T>
-bool symmetry_operation_impl< so_merge<N, M, T>, se_part<NM, T> >::
+template<size_t N, size_t M, typename T>
+bool symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::
 map_exists(const el1_t &el, const index<N> &ia,
         const index<N> &ib, const dimensions<N> &subdims) {
 

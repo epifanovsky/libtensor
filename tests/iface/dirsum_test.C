@@ -72,7 +72,7 @@ void dirsum_test::test_tt_2() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(20);
     bispace<2> sp_ij(sp_i&sp_i), sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<2> t1(sp_ij);
     btensor<2> t2(sp_ab);
@@ -105,7 +105,7 @@ void dirsum_test::test_tt_3() throw(libtest::test_exception) {
     bispace<1> sp_i(10), sp_a(20);
     bispace<1> sp_j(sp_i), sp_b(sp_a);
     bispace<2> sp_ij(sp_i&sp_j), sp_ab(sp_a&sp_b);
-    bispace<4> sp_iajb(sp_i|sp_a|sp_j|sp_b, sp_i&sp_j|sp_a&sp_b);
+    bispace<4> sp_iajb(sp_i|sp_a|sp_j|sp_b, (sp_i&sp_j)|(sp_a&sp_b));
 
     btensor<2> t1(sp_ij);
     btensor<2> t2(sp_ab);
@@ -139,7 +139,7 @@ void dirsum_test::test_tt_4() throw(libtest::test_exception) {
 
     bispace<1> sp_i(10), sp_a(20);
     bispace<2> sp_ij(sp_i&sp_i), sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<2> t1(sp_ij);
     btensor<2> t2(sp_ab);
@@ -172,7 +172,7 @@ void dirsum_test::test_tt_5() throw(libtest::test_exception) {
     bispace<1> sp_i(10), sp_a(20);
     bispace<1> sp_j(sp_i), sp_b(sp_a);
     bispace<2> sp_ij(sp_i&sp_j), sp_ab(sp_a&sp_b);
-    bispace<4> sp_iajb(sp_i|sp_a|sp_j|sp_b, sp_i&sp_j|sp_a&sp_b);
+    bispace<4> sp_iajb(sp_i|sp_a|sp_j|sp_b, (sp_i&sp_j)|(sp_a&sp_b));
 
     btensor<2> t1(sp_ij);
     btensor<2> t2(sp_ab);

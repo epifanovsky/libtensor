@@ -39,6 +39,7 @@ public:
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_full_copy_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -68,6 +69,7 @@ public:
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_part_copy_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -221,7 +223,6 @@ void gen_bto_copy<N, Traits, Timed>::compute_block(
     try {
 
         gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta);
-        dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
 
         tensor_transf<N, element_type> trainv(m_tra, true);
 
@@ -291,8 +292,8 @@ gen_bto_full_copy_task<N, Traits>::gen_bto_full_copy_task(
     size_t aia,
     gen_block_stream_i<N, bti_traits> &out) :
 
-    m_bta(bta), m_tra(tra), m_bidimsa(bidimsa), m_bidimsb(bidimsb),
-    m_symb(symb), m_aia(aia), m_out(out) {
+    m_bta(bta), m_tra(tra), m_symb(symb),
+    m_bidimsa(bidimsa), m_bidimsb(bidimsb), m_aia(aia), m_out(out) {
 
 }
 

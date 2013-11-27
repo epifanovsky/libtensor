@@ -36,6 +36,7 @@ public:
         bool orbits);
 
     virtual ~gen_bto_unfold_symmetry_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -219,7 +220,7 @@ gen_bto_unfold_symmetry_task_iterator(
     const symmetry<N, element_type> &symcopy) :
 
     m_bt(bt), m_bidims(m_bt.get_bis().get_block_index_dims()), m_ctrl(m_bt),
-    m_symcopy(symcopy), m_nzorb(blst), m_orbits(false) {
+    m_symcopy(symcopy), m_orbits(false), m_nzorb(blst) {
 
     m_i = m_nzorb.begin();
 }

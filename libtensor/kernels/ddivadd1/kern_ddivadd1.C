@@ -15,8 +15,6 @@ void kern_ddivadd1::run(void*, const loop_registers<1, 1> &r) {
 kernel_base<linalg, 1, 1> *kern_ddivadd1::match(double d, list_t &in,
     list_t &out) {
 
-    kernel_base<linalg, 1, 1> *kern = 0;
-
     kern_ddivadd1 zz;
     zz.m_d = d;
 

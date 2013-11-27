@@ -8,8 +8,6 @@ namespace libtensor {
 
 void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
 
-    static const char *testname = "so_dirprod_se_label_test::perform()";
-
     std::string table_id("S6");
     setup_pg_table(table_id);
 
@@ -23,6 +21,7 @@ void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
         test_nn_1(table_id);
         test_nn_2(table_id);
         test_nn_3(table_id);
+        test_nn_4();
 
     } catch (libtest::test_exception &e) {
         clear_pg_table(table_id);
@@ -506,7 +505,97 @@ void so_dirprod_se_label_test::test_nn_3(
     }
 
     check_allowed(tns.c_str(), "elemc", elemc, rx);
-
 }
+
+
+/** \test Direct product of two groups in 2-space.
+ **/
+void so_dirprod_se_label_test::test_nn_4() throw(libtest::test_exception) {
+
+    const char testname[] = "so_dirprod_se_label_test::test_nn_4()";
+
+    typedef so_dirprod<2, 2, double> so_t;
+    typedef symmetry_operation_impl< so_t, se_label<4, double> > so_impl_t;
+
+    std::string pg("c2v");
+    setup_pg_table(pg);
+    
+    try {
+
+    index<2> i1a, i2a; 
+    i2a[0] = 15; i2a[1] = 13;
+    block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
+    index<4> i1c, i2c; 
+    i2c[0] = i2c[1] = 13; i2c[2] = i2c[3] = 15; 
+    block_index_space<4> bisc(dimensions<4>(index_range<4>(i1c, i2c)));
+
+    mask<2> ma; 
+    ma[0] = true; 
+    bisa.split(ma,  4); bisa.split(ma, 7); bisa.split(ma, 8);
+    bisa.split(ma, 12); bisa.split(ma, 15); 
+    mask<4> mc;
+    mc[2] = mc[3] = true;
+    bisc.split(mc,  4); bisc.split(mc,  7); bisc.split(mc, 8);
+    bisc.split(mc, 12); bisc.split(mc, 15); 
+
+    dimensions<2> bidimsa = bisa.get_block_index_dims();
+
+    se_label<2, double> elema(bidimsa, pg), elemb(bidimsa, pg);
+    {
+        block_labeling<2> &bla = elema.get_labeling();
+        block_labeling<2> &blb = elemb.get_labeling();
+    	bla.assign(ma, 0, 0); bla.assign(ma, 1, 2); bla.assign(ma, 2, 3);
+    	bla.assign(ma, 3, 0); bla.assign(ma, 4, 2); bla.assign(ma, 5, 3);
+    	blb.assign(ma, 0, 0); blb.assign(ma, 1, 2); blb.assign(ma, 2, 3);
+    	blb.assign(ma, 3, 0); blb.assign(ma, 4, 2); blb.assign(ma, 5, 3);
+
+        evaluation_rule<2> rb;
+        sequence<2, size_t> seq(0); seq[0] = 1;
+        for (size_t i = 0; i < 4; i++) {
+            product_rule<2> &pr = rb.new_product();
+            pr.add(seq, i);
+        }
+    	elema.set_rule(product_table_i::k_invalid);
+        elemb.set_rule(rb);
+    }
+
+    symmetry_element_set<2, double> seta(se_label<2, double>::k_sym_type);
+    symmetry_element_set<2, double> setb(se_label<2, double>::k_sym_type);
+    symmetry_element_set<4, double> setc(se_label<4, double>::k_sym_type);
+
+    seta.insert(elema);
+    setb.insert(elemb);
+
+    permutation<4> px;
+    px.permute(0, 1).permute(1, 3).permute(2, 3);
+    symmetry_operation_params<so_t> params(seta, setb, px, bisc, setc);
+
+    so_impl_t().perform(params);
+
+    if(setc.is_empty()) {
+        fail_test(testname, __FILE__, __LINE__, "Expected a non-empty set.");
+    }
+
+    symmetry_element_set_adapter< 4, double, se_label<4, double> > adc(setc);
+    symmetry_element_set_adapter< 4, double, se_label<4, double> >::iterator it 
+        = adc.begin();
+    const se_label<4, double> &elemc = adc.get_elem(it);
+    it++;
+    if (it != adc.end()) {
+        fail_test(testname, __FILE__, __LINE__, "More than 1 element in set.");
+    }
+
+    std::vector<bool> rx(bisc.get_block_index_dims().get_size(), true);
+    check_allowed(testname, "elemc", elemc, rx);
+    
+    }
+    catch (std::exception &e) {
+        clear_pg_table(pg);
+        throw;
+    }
+    
+    clear_pg_table(pg);
+}
+
 
 } // namespace libtensor

@@ -49,6 +49,15 @@ int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a,
     size_t lda, double *wr, double *wi, double *vl, size_t ldvl, double *vr,
     size_t ldvr, double *work, size_t lwork);
 
+/** \brief LAPACK function dggev (ACML)
+ *
+ *     \ingroup libtensor_linalg
+ *      **/
+
+int lapack_dggev(char jobvl, char jobvr, size_t n, double *a,
+    size_t lda, double * b, size_t ldb, double *alphar, double *alphai, double * beta, double *vl, size_t ldvl, double *vr,
+    size_t ldvr, double *work, size_t lwork);
+
 
 /** \brief LAPACK function zgeev (ACML)
 
@@ -83,6 +92,13 @@ int lapack_dgelsd(size_t m, size_t n, size_t nrhs, double *B, size_t lda,
     \ingroup libtensor_linalg
  **/
 int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda);
+
+
+/** \brief LAPACK function dpotri (ACML)
+
+    \ingroup libtensor_linalg
+ **/
+int lapack_dpotri(char uplo, size_t n, double *a, size_t lda);
 
 
 /** \brief LAPACK function dlarnv (ACML)

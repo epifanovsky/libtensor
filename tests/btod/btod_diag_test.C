@@ -965,7 +965,6 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 
     typedef std_allocator<double> allocator_t;
 
-    bool need_erase = true;
     const char *pgtid = "point_group_cs";
 
     try {

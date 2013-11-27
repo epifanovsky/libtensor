@@ -29,7 +29,7 @@ kernel_base<LA, 1, 1> *kern_dcopy<LA>::match(double d, list_t &in,
     kern_dcopy zz;
     zz.m_d = d;
 
-    if(kern = kern_dcopy_i_i_x<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dcopy_i_i_x<LA>::match(zz, in, out))) return kern;
 
     return new kern_dcopy(zz);
 }

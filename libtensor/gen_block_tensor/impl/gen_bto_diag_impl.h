@@ -41,6 +41,7 @@ public:
         gen_block_stream_i<N - M + 1, bti_traits> &out);
 
     virtual ~gen_bto_diag_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -224,9 +225,6 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
 template<size_t N, size_t M, typename Traits, typename Timed>
 block_index_space<N - M + 1> gen_bto_diag<N, M, Traits, Timed>::mk_bis(
     const block_index_space<N> &bis, const mask<N> &msk) {
-
-    static const char *method =
-        "mk_bis(const block_index_space<N>&, const mask<N>&)";
 
     //  Create the mask for the subspace builder
     //

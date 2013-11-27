@@ -4,12 +4,16 @@
 
 namespace libtensor {
 
+
 template class so_symmetrize<1, double>;
 template class so_symmetrize<2, double>;
 template class so_symmetrize<3, double>;
 template class so_symmetrize<4, double>;
 template class so_symmetrize<5, double>;
 template class so_symmetrize<6, double>;
+template class so_symmetrize<7, double>;
+template class so_symmetrize<8, double>;
+
 
 } // namespace libtensor
 

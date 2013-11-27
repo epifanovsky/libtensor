@@ -14,10 +14,10 @@ namespace libtensor {
 
     \ingroup libtensor_symmetry
  **/
-template<size_t N, size_t M, size_t NM, typename T>
-class symmetry_operation_impl< so_dirprod<N, M, T>, se_label<NM, T> > :
+template<size_t N, size_t M, typename T>
+class symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> > :
     public symmetry_operation_impl_base< so_dirprod<N, M, T>,
-        se_label<NM, T> > {
+        se_label<N + M, T> > {
 public:
     static const char *k_clazz; //!< Class name
 

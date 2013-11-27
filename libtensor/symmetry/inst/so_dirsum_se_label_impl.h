@@ -1,21 +1,19 @@
 #ifndef LIBTENSOR_SO_DIRSUM_SE_LABEL_IMPL_H
 #define LIBTENSOR_SO_DIRSUM_SE_LABEL_IMPL_H
 
-#include "../combine_label.h"
+#include "combine_label.h"
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::k_clazz =
+symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::k_clazz =
         "symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >";
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_dirsum<N, M, T>, se_label<NM, T> >::do_perform(
+symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
     symmetry_operation_params_t &params) const {
-
-    static const char *method = "do_perform(symmetry_operation_params_t&)";
 
     // Adapter type for the input groups
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter1_t;

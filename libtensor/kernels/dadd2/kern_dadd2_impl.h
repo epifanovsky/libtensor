@@ -33,8 +33,8 @@ kernel_base<LA, 2, 1> *kern_dadd2<LA>::match(double ka, double kb, double d,
     zz.m_kb = kb;
     zz.m_d = d;
 
-    if(kern = kern_dadd2_i_i_x_x<LA>::match(zz, in, out)) return kern;
-    if(kern = kern_dadd2_i_x_i_x<LA>::match(zz, in, out)) return kern;
+    if((kern = kern_dadd2_i_i_x_x<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dadd2_i_x_i_x<LA>::match(zz, in, out))) return kern;
 
     return new kern_dadd2(zz);
 }

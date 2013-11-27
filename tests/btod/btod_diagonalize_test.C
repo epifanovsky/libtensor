@@ -49,7 +49,6 @@ void btod_diagonalize_test::test_1() throw(libtest::test_exception) {
         index<1> i2a, i2b;
         i2b[0] = 2;
 
-        typedef std_allocator<double> allocator_t;
         dimensions<2> dims1(index_range<2>(i1a, i1b));
         dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -124,7 +123,6 @@ void btod_diagonalize_test::test_2() throw(libtest::test_exception) {
         index<1> i2a, i2b;
         i2b[0] = 3;
 
-        typedef std_allocator<double> allocator_t;
         dimensions<2> dims1(index_range<2>(i1a, i1b));
         dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -205,7 +203,6 @@ void btod_diagonalize_test::test_3() throw(libtest::test_exception) {
         index<1> i2a, i2b;
         i2b[0] = 2;
 
-        typedef std_allocator<double> allocator_t;
         dimensions<2> dims1(index_range<2>(i1a, i1b));
         dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -282,7 +279,6 @@ void btod_diagonalize_test::test_4() throw(libtest::test_exception) {
         index<1> i2a, i2b;
         i2b[0] = 3;
 
-        typedef std_allocator<double> allocator_t;
         dimensions<2> dims1(index_range<2>(i1a, i1b));
         dimensions<1> dims2(index_range<1>(i2a, i2b));
 
@@ -362,7 +358,6 @@ void btod_diagonalize_test::test_5() throw(libtest::test_exception) {
         index<1> i2a, i2b;
         i2b[0] = 4;
 
-        typedef std_allocator<double> allocator_t;
         dimensions<2> dims1(index_range<2>(i1a, i1b));
         dimensions<1> dims2(index_range<1>(i2a, i2b));
 

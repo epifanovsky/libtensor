@@ -38,10 +38,11 @@ public:
             const orbit_list<NA, element_type> &ola,
             const index<NA> &idxa,
             const dimensions<NA> &bidimsa) :
-        m_bta(bta), m_ola(ola), m_bidimsa(bidimsa), m_idxa(idxa),
-        m_perm(perm), m_tr(Traits::zero()) { }
+        m_bta(bta), m_perm(perm), m_ola(ola), m_bidimsa(bidimsa), m_idxa(idxa),
+        m_tr(Traits::zero()) { }
 
     virtual ~gen_bto_trace_in_orbit_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
     element_type get_trace() const { return m_tr; }

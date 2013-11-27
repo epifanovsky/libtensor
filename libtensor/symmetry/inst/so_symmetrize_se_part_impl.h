@@ -5,7 +5,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/permutation_generator.h>
 #include "../bad_symmetry.h"
-#include "../combine_part.h"
+#include "combine_part.h"
 
 namespace libtensor {
 
@@ -17,9 +17,6 @@ se_part<N, T> >::k_clazz =
 template<size_t N, typename T>
 void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
-
-    static const char *method =
-            "do_perform(const symmetry_operation_params_t&)";
 
     params.grp2.clear();
     if (params.grp1.is_empty()) return;
@@ -44,17 +41,16 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     mask<N> msk;
     for (register size_t i = ngrp; i < N; i++) msk[i] = true;
 
-#ifdef LIBTENSOR_DEBUG
-    for (register size_t i = 1; i < ngrp; i++) {
+    //  If the elements are partitioned differently,
+    //  the result is no symmetry 
+    bool no_symmetry = false;
+    for(register size_t i = 1; i < ngrp; i++) {
         size_t in = i * nidx;
-        for (register size_t j = 0; j < nidx; j++) {
-            if (pdims[map[in + j]] != pdims[map[j]]) {
-                throw bad_symmetry(g_ns, k_clazz, method,
-                        __FILE__, __LINE__, "Incompatible dimensions.");
-            }
+        for(register size_t j = 0; j < nidx; j++) {
+            if(pdims[map[in + j]] != pdims[map[j]]) no_symmetry = true;
         }
     }
-#endif // LIBTENSOR_DEBUG
+    if(no_symmetry) return;
 
     se_part<N, T> sp1(cp.get_bis(), pdims);
     cp.perform(sp1);

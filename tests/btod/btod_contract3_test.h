@@ -17,9 +17,11 @@ public:
 private:
     void test_contr_1();
     void test_contr_2();
-    void test_contr_3();
+    void test_contr_3a();
+    void test_contr_3b();
     void test_contr_4();
     void test_contr_5();
+    void test_contr_6();
 
     void test_batch_1();
     void test_batch_2();

@@ -1,17 +1,11 @@
 #ifndef LIBTENSOR_BTOD_SYMMETRIZE2_IMPL_H
 #define LIBTENSOR_BTOD_SYMMETRIZE2_IMPL_H
 
-#include <list>
-#include <libtensor/core/allocator.h>
-#include <libtensor/core/orbit.h>
-#include <libtensor/core/short_orbit.h>
-#include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/core/tensor_transf.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/symmetry/so_permute.h>
-#include <libtensor/symmetry/so_symmetrize.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
-#include <libtensor/gen_block_tensor/gen_bto_aux_symmetrize.h>
 #include "../btod_symmetrize2.h"
 
 namespace libtensor {
@@ -37,8 +31,9 @@ void btod_symmetrize2<N>::perform(
     ctrl.req_zero_all_blocks();
     so_copy<N, double>(get_symmetry()).perform(ctrl.req_symmetry());
 
+    std::vector<size_t> nzblk;
     addition_schedule<N, btod_traits> asch(get_symmetry(), get_symmetry());
-    asch.build(get_schedule(), ctrl);
+    asch.build(get_schedule(), nzblk);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, bt,
         scalar_transf<double>());
@@ -55,9 +50,11 @@ void btod_symmetrize2<N>::perform(
 
     gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
 
+    std::vector<size_t> nzblk;
+    ctrl.req_nonzero_blocks(nzblk);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
         ctrl.req_const_symmetry());
-    asch.build(get_schedule(), ctrl);
+    asch.build(get_schedule(), nzblk);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, bt, d);
     out.open();

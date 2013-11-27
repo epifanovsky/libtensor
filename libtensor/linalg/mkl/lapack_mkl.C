@@ -84,6 +84,20 @@ int lapack_dgeev(char jobvl, char jobvr, size_t n, double *a, size_t lda,
     return mkl_info;
 }
 
+int lapack_dggev(char jobvl, char jobvr, size_t n, double *a,
+    size_t lda, double * b, size_t ldb, double *alphar, double *alphai, double * beta, double *vl, size_t ldvl, double *vr,
+    size_t ldvr, double *work, size_t lwork) {
+
+    int mkl_n = n;
+    int mkl_lda = lda;
+    int mkl_ldb = ldb;
+    int mkl_ldvl = ldvl;
+    int mkl_ldvr = ldvr;
+    int mkl_lwork = lwork;
+    int mkl_info = 0;
+    dggev(&jobvl, &jobvr, &mkl_n, a, &mkl_lda, b, &mkl_ldb, alphar, alphai, beta, vl, &mkl_ldvl, vr, &mkl_ldvr, work, &mkl_lwork, &mkl_info);
+    return mkl_info;
+}
 
 int lapack_zgeev(char jobvl, char jobvr, size_t n,
     std::complex <double> *a, size_t lda, std::complex <double> *w,
@@ -144,6 +158,16 @@ int lapack_dpotrf(char uplo, size_t n, double *a, size_t lda) {
     int mkl_lda = lda;
     int mkl_info = 0;
     dpotrf(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
+    return mkl_info;
+}
+
+
+int lapack_dpotri(char uplo, size_t n, double *a, size_t lda) {
+
+    int mkl_n = n;
+    int mkl_lda = lda;
+    int mkl_info = 0;
+    dpotri(&uplo, &mkl_n, a, &mkl_lda, &mkl_info);
     return mkl_info;
 }
 

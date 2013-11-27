@@ -1,5 +1,8 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/iface/iface.h>
@@ -36,6 +39,8 @@ void contract_test::perform() throw(libtest::test_exception) {
         test_et_3();
         test_ee_1();
         test_ee_2();
+        test_ee_3();
+        test_contract3_ttt_1();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -46,35 +51,36 @@ void contract_test::perform() throw(libtest::test_exception) {
 }
 
 
-namespace contract_test_ns {
+namespace {
 
 using labeled_btensor_expr::expr;
-using labeled_btensor_expr::core_contract;
+using labeled_btensor_expr::contract2_core;
 using labeled_btensor_expr::contract_subexpr_labels;
 
-template<size_t N, size_t M, size_t NM, size_t K, typename T, typename E1, typename E2>
+template<size_t N, size_t M, size_t NM, size_t K, typename T>
 void test_subexpr_labels_tpl(
-    expr<NM, T, core_contract<N, M, K, T, E1, E2> > e,
+    expr<NM, T> e,
     letter_expr<NM> label_c) {
 
-    contract_subexpr_labels<N, M, K, T, E1, E2> subexpr_labels(e, label_c);
+    const contract2_core<N, M, K, T> &core =
+        dynamic_cast<const contract2_core<N, M, K, T>&>(e.get_core());
+    contract_subexpr_labels<N, M, K, T> subexpr_labels(core, label_c);
 }
 
-} // namespace contract_test_ns
-namespace ns = contract_test_ns;
+} // unnamed namespace
 
 
-void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
+void contract_test::test_subexpr_labels_1() {
 
-    const char *testname = "contract_test::test_subexpr_labels_1()";
+    const char testname[] = "contract_test::test_subexpr_labels_1()";
 
     try {
 
     bispace<1> spi(4), spa(5);
-    bispace<4> spijab(spi&spi|spa&spa);
+    bispace<4> spijab((spi&spi)|(spa&spa));
     btensor<4> ta(spijab), tb(spijab);
     letter i, j, k, l, a, b;
-    ns::test_subexpr_labels_tpl(
+    test_subexpr_labels_tpl<2, 2, 4, 2, double>(
         contract(a|b, ta(i|j|a|b), tb(k|l|a|b)),
         i|j|k|l);
 
@@ -84,9 +90,9 @@ void contract_test::test_subexpr_labels_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_contr_bld_1() throw(libtest::test_exception) {
+void contract_test::test_contr_bld_1() {
 
-    const char *testname = "contract_test::test_contr_bld_1()";
+    const char testname[] = "contract_test::test_contr_bld_1()";
 
     try {
 
@@ -124,9 +130,9 @@ void contract_test::test_contr_bld_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_contr_bld_2() throw(libtest::test_exception) {
+void contract_test::test_contr_bld_2() {
 
-    const char *testname = "contract_test::test_contr_bld_2()";
+    const char testname[] = "contract_test::test_contr_bld_2()";
 
     try {
 
@@ -164,9 +170,9 @@ void contract_test::test_contr_bld_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_1() throw(libtest::test_exception) {
+void contract_test::test_tt_1() {
 
-    const char *testname = "contract_test::test_tt_1()";
+    const char testname[] = "contract_test::test_tt_1()";
 
     try {
 
@@ -200,9 +206,9 @@ void contract_test::test_tt_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_2() throw(libtest::test_exception) {
+void contract_test::test_tt_2() {
 
-    const char *testname = "contract_test::test_tt_2()";
+    const char testname[] = "contract_test::test_tt_2()";
 
     try {
 
@@ -237,9 +243,9 @@ void contract_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_3() throw(libtest::test_exception) {
+void contract_test::test_tt_3() {
 
-    const char *testname = "contract_test::test_tt_3()";
+    const char testname[] = "contract_test::test_tt_3()";
 
     try {
 
@@ -274,9 +280,9 @@ void contract_test::test_tt_3() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_4() throw(libtest::test_exception) {
+void contract_test::test_tt_4() {
 
-    const char *testname = "contract_test::test_tt_4()";
+    const char testname[] = "contract_test::test_tt_4()";
 
     try {
 
@@ -312,9 +318,9 @@ void contract_test::test_tt_4() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_5() throw(libtest::test_exception) {
+void contract_test::test_tt_5() {
 
-    const char *testname = "contract_test::test_tt_5()";
+    const char testname[] = "contract_test::test_tt_5()";
 
     try {
 
@@ -355,9 +361,9 @@ void contract_test::test_tt_5() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_6() throw(libtest::test_exception) {
+void contract_test::test_tt_6() {
 
-    const char *testname = "contract_test::test_tt_6()";
+    const char testname[] = "contract_test::test_tt_6()";
 
     try {
 
@@ -390,14 +396,14 @@ void contract_test::test_tt_6() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_7() throw(libtest::test_exception) {
+void contract_test::test_tt_7() {
 
-    const char *testname = "contract_test::test_tt_7()";
+    const char testname[] = "contract_test::test_tt_7()";
 
     try {
 
     bispace<1> sp_i(13), sp_a(7);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a), sp_iabc(sp_i|sp_a&sp_a&sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a)), sp_iabc(sp_i|(sp_a&sp_a&sp_a));
 
     btensor<4> t1(sp_iabc);
     btensor<4> t2(sp_ijab);
@@ -428,9 +434,9 @@ void contract_test::test_tt_7() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_8() throw(libtest::test_exception) {
+void contract_test::test_tt_8() {
 
-    const char *testname = "contract_test::test_tt_8()";
+    const char testname[] = "contract_test::test_tt_8()";
 
     try {
 
@@ -438,7 +444,7 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
     sp_i.split(5);
     sp_a.split(2);
     bispace<2> sp_ab(sp_a&sp_a);
-    bispace<4> sp_ijka(sp_i&sp_i&sp_i|sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
 
     btensor<4> t1(sp_ijka), t2(sp_ijka);
     btensor<2> t3(sp_ab), t3_ref(sp_ab);
@@ -475,17 +481,17 @@ void contract_test::test_tt_8() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_tt_9() throw(libtest::test_exception) {
+void contract_test::test_tt_9() {
 
-    const char *testname = "contract_test::test_tt_9()";
+    const char testname[] = "contract_test::test_tt_9()";
 
     try {
 
     bispace<1> sp_i(10), sp_a(20), sp_k(11);
     sp_i.split(3).split(5);
     sp_a.split(6).split(13);
-    bispace<4> sp_ijka(sp_i&sp_i|sp_k|sp_a), sp_kija(sp_k|sp_i&sp_i|sp_a);
-    bispace<4> sp_ijab(sp_i&sp_i|sp_a&sp_a);
+    bispace<4> sp_ijka((sp_i&sp_i)|sp_k|sp_a), sp_kija(sp_k|(sp_i&sp_i)|sp_a);
+    bispace<4> sp_ijab((sp_i&sp_i)|(sp_a&sp_a));
 
     btensor<4> t1(sp_kija), t2(sp_ijab), t3(sp_ijka),
         t3_ref(sp_ijka);
@@ -500,7 +506,7 @@ void contract_test::test_tt_9() throw(libtest::test_exception) {
     contr.contract(3, 3);
     btod_contract2<2, 2, 2>(contr, t1, t2).perform(t3_ref);
 
-    letter i, j, k, l, a, b, c;
+    letter i, j, k, l, a, c;
     t3(i|j|k|a) = contract(l|c, t1(k|l|j|c), t2(i|l|a|c));
 
     {
@@ -520,9 +526,9 @@ void contract_test::test_tt_9() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_1() throw(libtest::test_exception) {
+void contract_test::test_te_1() {
 
-    const char *testname = "contract_test::test_te_1()";
+    const char testname[] = "contract_test::test_te_1()";
 
     try {
 
@@ -564,9 +570,9 @@ void contract_test::test_te_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_2() throw(libtest::test_exception) {
+void contract_test::test_te_2() {
 
-    const char *testname = "contract_test::test_te_2()";
+    const char testname[] = "contract_test::test_te_2()";
 
     try {
 
@@ -608,9 +614,9 @@ void contract_test::test_te_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_3() throw(libtest::test_exception) {
+void contract_test::test_te_3() {
 
-    const char *testname = "contract_test::test_te_3()";
+    const char testname[] = "contract_test::test_te_3()";
 
     try {
 
@@ -653,9 +659,9 @@ void contract_test::test_te_3() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_te_4() throw(libtest::test_exception) {
+void contract_test::test_te_4() {
 
-    const char *testname = "contract_test::test_te_4()";
+    const char testname[] = "contract_test::test_te_4()";
 
     try {
 
@@ -698,9 +704,9 @@ void contract_test::test_te_4() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_et_1() throw(libtest::test_exception) {
+void contract_test::test_et_1() {
 
-    const char *testname = "contract_test::test_et_1()";
+    const char testname[] = "contract_test::test_et_1()";
 
     try {
 
@@ -742,9 +748,9 @@ void contract_test::test_et_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_et_2() throw(libtest::test_exception) {
+void contract_test::test_et_2() {
 
-    const char *testname = "contract_test::test_et_2()";
+    const char testname[] = "contract_test::test_et_2()";
 
     try {
 
@@ -786,9 +792,9 @@ void contract_test::test_et_2() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_et_3() throw(libtest::test_exception) {
+void contract_test::test_et_3() {
 
-    const char *testname = "contract_test::test_et_3()";
+    const char testname[] = "contract_test::test_et_3()";
 
     try {
 
@@ -831,9 +837,9 @@ void contract_test::test_et_3() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_ee_1() throw(libtest::test_exception) {
+void contract_test::test_ee_1() {
 
-    const char *testname = "contract_test::test_ee_1()";
+    const char testname[] = "contract_test::test_ee_1()";
 
     try {
 
@@ -883,9 +889,9 @@ void contract_test::test_ee_1() throw(libtest::test_exception) {
 }
 
 
-void contract_test::test_ee_2() throw(libtest::test_exception) {
+void contract_test::test_ee_2() {
 
-    const char *testname = "contract_test::test_ee_2()";
+    const char testname[] = "contract_test::test_ee_2()";
 
     try {
 
@@ -934,6 +940,147 @@ void contract_test::test_ee_2() throw(libtest::test_exception) {
         i, t1a(a|c|d|i) + t1b(a|i|c|d), t2a(i|b) + t2b(b|i));
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void contract_test::test_ee_3() {
+
+    const char testname[] = "contract_test::test_ee_3()";
+    const char pgname[] = "c2v";
+
+    try {
+
+    product_table_i::label_t a1 = 0, a2 = 1, b1 = 2, b2 = 3;
+    std::vector<std::string> irreps(4);
+    irreps[a1] = "A1"; irreps[a2] = "A2"; irreps[b1] = "B1"; irreps[b2] = "B2";
+    point_group_table pg(pgname, irreps, irreps[a1]);
+    pg.add_product(a1, a1, a1);
+    pg.add_product(a1, a2, a2);
+    pg.add_product(a1, b1, b1);
+    pg.add_product(a1, b2, b2);
+    pg.add_product(a2, a2, a1);
+    pg.add_product(a2, b1, b2);
+    pg.add_product(a2, b2, b1);
+    pg.add_product(b1, b1, a1);
+    pg.add_product(b1, b2, a2);
+    pg.add_product(b2, b2, a1);
+
+    product_table_container::get_instance().add(pg);
+
+    } catch (exception &e) {
+        product_table_container::get_instance().erase(pgname);
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    try {
+
+    bispace<1> sp_x(16), sp_b(13);
+    sp_x.split(4).split(7).split(8).split(12).split(15);
+    bispace<2> sp_xx(sp_x&sp_x);
+    bispace<2> sp_xb(sp_x|sp_b);
+    bispace<2> sp_bb(sp_b&sp_b);
+
+    btensor<2> t2a(sp_xx), t2b(sp_xb), t2c(sp_xb), t2(sp_bb), t2_ref(sp_bb);
+    {
+    const block_index_space<2> &bisa = t2a.get_bis(), &bisb = t2b.get_bis();
+    dimensions<2> dimsa(bisa.get_block_index_dims()), dimsb(bisb.get_block_index_dims());
+
+    block_tensor_wr_ctrl<2, double> ca(t2a), cb(t2b);
+	symmetry<2, double> &sa = ca.req_symmetry(), &sb = cb.req_symmetry();
+
+	scalar_transf<double> tr;
+	se_perm<2, double> se(permutation<2>().permute(0, 1), tr);
+	sa.insert(se);
+
+	mask<2> ma, mb;
+	ma[0] = ma[1] = mb[0] = true;
+	index<2> i00, i01, i10, i11;
+	i10[0] = i11[0] = i01[1] = i11[1] = 1;
+	se_part<2, double> pa(bisa, ma, 2), pb(bisb, mb, 2);
+	pa.add_map(i00, i11, tr);
+	pa.mark_forbidden(i01);
+	pa.mark_forbidden(i10);
+	pb.add_map(i00, i10, tr);
+	sa.insert(pa);
+	sb.insert(pb);
+
+	se_label<2, double> la(dimsa, pgname), lb(dimsb, pgname);
+	block_labeling<2> &bla = la.get_labeling(), &blb = lb.get_labeling();
+	bla.assign(ma, 0, 0); bla.assign(ma, 1, 2); bla.assign(ma, 2, 3);
+	bla.assign(ma, 3, 0); bla.assign(ma, 4, 2); bla.assign(ma, 5, 3);
+	blb.assign(mb, 0, 0); blb.assign(mb, 1, 2); blb.assign(mb, 2, 3);
+	blb.assign(mb, 3, 0); blb.assign(mb, 4, 2); blb.assign(mb, 5, 3);
+	la.set_rule(0);
+	lb.set_rule(product_table_i::k_invalid);
+	sa.insert(la);
+	sb.insert(lb);
+
+    }
+
+    btod_random<2>().perform(t2a);
+    btod_random<2>().perform(t2b);
+    t2a.set_immutable();
+    t2b.set_immutable();
+
+    contraction2<1, 1, 1> c1, c2;
+    c1.contract(1, 0);
+    c2.contract(0, 0);
+
+    btod_contract2<1, 1, 1> op1(c1, t2a, t2b);
+    op1.perform(t2c);
+    btod_contract2<1, 1, 1> op2(c2, t2b, t2c);
+    op2.perform(t2_ref);
+    btod_symmetrize2<2>(op2, 0, 1, true).perform(t2_ref);
+
+    letter mu, nu, p, q;
+    t2(mu|nu) = symm(mu, nu,
+    		contract(p, t2b(p|mu), contract(q, t2a(p|q), t2b(q|nu))));
+
+    compare_ref<2>::compare(testname, t2, t2_ref, 1e-14);
+
+    } catch(std::exception &e) {
+        product_table_container::get_instance().erase(pgname);
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    product_table_container::get_instance().erase(pgname);
+}
+
+
+void contract_test::test_contract3_ttt_1() {
+
+    const char testname[] = "contract_test::test_contract3_ttt_1()";
+
+    try {
+
+    bispace<1> o(10), v(20);
+    bispace<2> oo(o&o), ov(o|v);
+
+    btensor<2> t1(ov), t2(ov), t3(ov), t4(ov), t4_ref(ov);
+    btensor<2> tt(oo);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t2);
+    btod_random<2>().perform(t3);
+    t1.set_immutable();
+    t2.set_immutable();
+    t3.set_immutable();
+
+    contraction2<1, 1, 1> contr1;
+    contr1.contract(1, 1);
+    btod_contract2<1, 1, 1>(contr1, t1, t2).perform(tt);
+    contraction2<1, 1, 1> contr2;
+    contr2.contract(1, 0);
+    btod_contract2<1, 1, 1>(contr2, tt, t3).perform(t4_ref);
+
+    letter a, b, i, j;
+//    t4(i|a) = contract(b, t1(i|b), t2(j|b), j, t3(j|a));
+
+    compare_ref<2>::compare(testname, t4, t4_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

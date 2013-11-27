@@ -59,8 +59,6 @@ kernel_base<LA, 2, 1> *kern_dmul2_ij_jp_pi<LA>::match(
     zz.m_sic = z.m_sic;
     in.splice(out.begin(), out, ij);
 
-    kernel_base<LA, 2, 1> *kern = 0;
-
     return new kern_dmul2_ij_jp_pi(zz);
 }
 

@@ -1,5 +1,5 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include "../er_optimize.h"
+#include "er_optimize.h"
 #include "er_optimize_impl.h"
 
 namespace libtensor {

@@ -6,17 +6,14 @@
 namespace libtensor {
 
 
-template<size_t N, size_t M, size_t NM, typename T>
-const char *symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
+template<size_t N, size_t M, typename T>
+const char *symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
 k_clazz = "symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >";
 
 
-template<size_t N, size_t M, size_t NM, typename T>
-void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
+template<size_t N, size_t M, typename T>
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
 do_perform(symmetry_operation_params_t &params) const {
-
-    static const char *method =
-            "do_perform(symmetry_operation_params_t&)";
 
     //  Adapter type for the input group
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> > adapter1_t;
@@ -61,8 +58,8 @@ do_perform(symmetry_operation_params_t &params) const {
 }
 
 
-template<size_t N, size_t M, size_t NM, typename T>
-void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
+template<size_t N, size_t M, typename T>
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
 combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
         const symmetry_element_set<M, T> &set2,
         permutation_group<N + M, T> &grp) {
@@ -107,7 +104,7 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
 
             size_t idxa = it->first * nel;
             for (size_t j = 0; j < nel; j++) {
-                size_t idxb = idxa + j, k = 1, ix = idxb;
+                size_t idxb = idxa + j, ix = idxb;
                 while (idxb != 0) {
                     if (done.count(ix % nel)) break;
                     ix /= nel;
@@ -196,8 +193,8 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
 }
 
 
-template<size_t N, size_t M, size_t NM, typename T>
-void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<NM, T> >::
+template<size_t N, size_t M, typename T>
+void symmetry_operation_impl< so_dirsum<N, M, T>, se_perm<N + M, T> >::
 combine(const symmetry_element_set<N, T> &set1,
         const permutation<M> &p2, const scalar_transf<T> &tr2,
         permutation_group<N + M, T> &grp) {
@@ -244,7 +241,7 @@ combine(const symmetry_element_set<N, T> &set1,
 
             size_t idxa = it->first * nel;
             for (size_t j = 0; j < nel; j++) {
-                size_t idxb = idxa + j, k = 1, ix = idxb;
+                size_t idxb = idxa + j, ix = idxb;
                 while (idxb != 0) {
                     if (done.count(ix % nel)) break;
                     ix /= nel;

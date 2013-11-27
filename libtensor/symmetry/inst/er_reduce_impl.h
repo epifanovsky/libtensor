@@ -15,10 +15,11 @@ const char *er_reduce<N, M>::k_clazz = "er_reduce<N, M>";
 
 template<size_t N, size_t M>
 er_reduce<N, M>::er_reduce(
-        const evaluation_rule<N> &rule, const sequence<N, size_t> &rmap,
-        const sequence<M, label_group_t> &rdims, const std::string &id) :
-        m_rule(rule), m_rmap(rmap), m_rdims(rdims), m_nrsteps(0),
-        m_pt(product_table_container::get_instance().req_const_table(id)) {
+	const evaluation_rule<N> &rule, const sequence<N, size_t> &rmap,
+	const sequence<M, label_group_t> &rdims, const std::string &id) :
+	m_rule(rule),
+	m_pt(product_table_container::get_instance().req_const_table(id)),
+	m_rmap(rmap), m_rdims(rdims), m_nrsteps(0) {
 
     for (; m_nrsteps < M && ! m_rdims[m_nrsteps].empty(); m_nrsteps++) ;
 
@@ -52,8 +53,17 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &to) const {
     const eval_sequence_list<N> &slist = m_rule.get_sequences();
 
     // Collect the rsteps present in each sequence
-    std::vector<size_t> rsteps_in_seq;
-    build_rsteps_in_seq(slist, rsteps_in_seq);
+    std::vector<size_t> rsteps_in_seq(slist.size() * m_nrsteps, 0);
+    for (size_t i = 0, pos = 0; i < slist.size(); i++, pos += m_nrsteps) {
+
+        const sequence<N, size_t> &seq = slist[i];
+        for (size_t j = 0; j < N; j++) {
+            if (seq[j] == 0 || m_rmap[j] < N - M) continue;
+
+            rsteps_in_seq[pos + m_rmap[j] - (N - M)] += seq[j];
+        }
+    }
+
 
     // Loop over products
     for (typename evaluation_rule<N>::iterator it = m_rule.begin();
@@ -70,25 +80,6 @@ void er_reduce<N, M>::perform(evaluation_rule<N - M> &to) const {
     } // End for it
 
     er_reduce<N, M>::stop_timer();
-}
-
-
-template<size_t N, size_t M>
-void er_reduce<N, M>::build_rsteps_in_seq(const eval_sequence_list<N> &slist,
-        std::vector<size_t> &rsteps_in_seq) const {
-
-    rsteps_in_seq.clear();
-    rsteps_in_seq.resize(slist.size() * m_nrsteps);
-
-    for (size_t i = 0, pos = 0; i < slist.size(); i++, pos += m_nrsteps) {
-
-        const sequence<N, size_t> &seq = slist[i];
-        for (size_t j = 0; j < N; j++) {
-            if (seq[j] == 0 || m_rmap[j] < N - M) continue;
-
-            rsteps_in_seq[pos + m_rmap[j] - (N - M)] += seq[j];
-        }
-    }
 }
 
 

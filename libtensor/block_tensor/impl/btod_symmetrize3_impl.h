@@ -1,9 +1,11 @@
 #ifndef LIBTENSOR_BTOD_SYMMETRIZE3_IMPL_H
 #define LIBTENSOR_BTOD_SYMMETRIZE3_IMPL_H
 
+#include <libtensor/core/tensor_transf.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include "../btod_symmetrize3.h"
 
 namespace libtensor {
@@ -23,15 +25,7 @@ void btod_symmetrize3<N>::perform(gen_block_stream_i<N, bti_traits> &out) {
 template<size_t N>
 void btod_symmetrize3<N>::perform(gen_block_tensor_i<N, bti_traits> &bt) {
 
-    gen_block_tensor_ctrl<N, bti_traits> ctrl(bt);
-    ctrl.req_zero_all_blocks();
-    so_copy<N, double>(get_symmetry()).perform(ctrl.req_symmetry());
-
-    addition_schedule<N, btod_traits> asch(get_symmetry(), get_symmetry());
-    asch.build(get_schedule(), ctrl);
-
-    gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, bt,
-        scalar_transf<double>());
+    gen_bto_aux_copy<N, btod_traits> out(get_symmetry(), bt);
     out.open();
     perform(out);
     out.close();
@@ -44,9 +38,11 @@ void btod_symmetrize3<N>::perform(gen_block_tensor_i<N, bti_traits> &bt,
 
     gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
 
+    std::vector<size_t> nzblk;
+    ctrl.req_nonzero_blocks(nzblk);
     addition_schedule<N, btod_traits> asch(get_symmetry(),
         ctrl.req_const_symmetry());
-    asch.build(get_schedule(), ctrl);
+    asch.build(get_schedule(), nzblk);
 
     gen_bto_aux_add<N, btod_traits> out(get_symmetry(), asch, bt, d);
     out.open();

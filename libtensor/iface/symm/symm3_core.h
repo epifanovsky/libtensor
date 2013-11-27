@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM3_CORE_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_SYMM3_CORE_H
 
-#include "../../defs.h"
-#include "../../exception.h"
+#include <libtensor/exception.h>
+#include <libtensor/block_tensor/btod_symmetrize3.h>
 #include "../expr_exception.h"
 #include "../letter.h"
 #include "../letter_expr.h"
@@ -12,62 +12,65 @@ namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-class symm3_eval;
-
-
 /** \brief Expression core for the symmetrization over three indexes
     \tparam N Tensor order.
     \tparam Sym Symmetrization/antisymmetrization.
-    \tparam SubCore Sub-expression core type.
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, bool Sym, typename T, typename SubCore>
-class symm3_core {
+template<size_t N, bool Sym, typename T>
+class symm3_core : public expr_core_i<N, T> {
 public:
-    static const char *k_clazz; //!< Class name
-
-public:
-     //!    Evaluating container type
-    typedef symm3_eval<N, Sym, T, SubCore> eval_container_t;
-
-    //!    Sub-expression type
-    typedef expr<N, T, SubCore> sub_expression_t;
+    static const char k_clazz[]; //!< Class name
 
 private:
     const letter &m_l1; //!< First %index
     const letter &m_l2; //!< Second %index
     const letter &m_l3; //!< Third %index
-    sub_expression_t m_expr; //!< Sub-expression
+    expr<N, T> m_subexpr; //!< Sub-expression
 
 public:
     /** \brief Creates the expression core
         \param l1 First symmetrized %index.
         \param l2 Second symmetrized %index.
         \param l3 Third symmetrized %index.
-        \param expr Sub-expression.
+        \param subexpr Sub-expression.
      **/
-    symm3_core(const letter &l1, const letter &l2, const letter &l3,
-        const sub_expression_t &expr);
+    symm3_core(
+        const letter &l1,
+        const letter &l2,
+        const letter &l3,
+        const expr<N, T> &subexpr);
 
-    /** \brief Copy constructor
+    /** \brief Virtual destructor
      **/
-    symm3_core(const symm3_core<N, Sym, T, SubCore> &core);
+    virtual ~symm3_core() { }
 
-    /** \brief Returns the first symmetrized %index
+    /** \brief Clones this object using new
+     **/
+    virtual expr_core_i<N, T> *clone() const {
+        return new symm3_core<N, Sym, T>(*this);
+    }
+
+    /** \brief Creates an evaluation container using new, caller responsible
+            to call delete
+     **/
+    virtual eval_container_i<N, T> *create_container(
+        const letter_expr<N> &label) const;
+
+    /** \brief Returns the first symmetrized index
      **/
     const letter &get_l1() const {
         return m_l1;
     }
 
-    /** \brief Returns the second symmetrized %index
+    /** \brief Returns the second symmetrized index
      **/
     const letter &get_l2() const {
         return m_l2;
     }
 
-    /** \brief Returns the third symmetrized %index
+    /** \brief Returns the third symmetrized index
      **/
     const letter &get_l3() const {
         return m_l3;
@@ -75,51 +78,123 @@ public:
 
     /** \brief Returns the sub-expression
      **/
-    expr<N, T, SubCore> &get_sub_expr() {
-        return m_expr;
+    expr<N, T> &get_sub_expr() {
+        return m_subexpr;
     }
 
     /** \brief Returns the sub-expression, const version
      **/
-    const expr<N, T, SubCore> &get_sub_expr() const {
-        return m_expr;
+    const expr<N, T> &get_sub_expr() const {
+        return m_subexpr;
     }
 
-    /** \brief Returns whether the result's label contains a %letter
+    /** \brief Returns whether the result's label contains a letter
         \param let Letter.
      **/
-    bool contains(const letter &let) const;
+    virtual bool contains(const letter &let) const {
+        return m_subexpr.get_core().contains(let);
+    }
 
-    /** \brief Returns the %index of a %letter in the result's label
+    /** \brief Returns the index of a letter in the result's label
         \param let Letter.
         \throw expr_exception If the label does not contain the
             requested letter.
      **/
-    size_t index_of(const letter &let) const throw(expr_exception);
+    virtual size_t index_of(const letter &let) const {
+        return m_subexpr.get_core().index_of(let);
+    }
 
-    /** \brief Returns the %letter at a given position in
-            the result's label
+    /** \brief Returns the letter at a given position in the result's label
         \param i Letter index.
         \throw out_of_bounds If the index is out of bounds.
      **/
-    const letter &letter_at(size_t i) const throw(out_of_bounds);
+    virtual const letter &letter_at(size_t i) const {
+        return m_subexpr.get_core().letter_at(i);
+    }
 
 };
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-const char *symm3_core<N, Sym, T, SubCore>::k_clazz =
-    "symm3_core<N, Sym, T, SubCore>";
+/** \brief Evaluating container for the symmetrization three indexes
+    \tparam N Tensor order.
+    \tparam Sym Symmetrization/antisymmetrization.
+
+    \ingroup libtensor_btensor_expr
+ **/
+template<size_t N, bool Sym, typename T>
+class symm3_eval : public eval_container_i<N, T> {
+public:
+    static const char k_clazz[]; //!< Class name
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-symm3_core<N, Sym, T, SubCore>::symm3_core(const letter &l1,
-    const letter &l2, const letter &l3, const sub_expression_t &expr) :
+private:
+    symm3_core<N, Sym, T> m_core; //!< Sub-expression
+    std::auto_ptr< eval_container_i<N, T> > m_sub_eval_cont; //!< Evaluation of the sub-expression
+    evalfunctor<N, T> m_functor;
+    letter_expr<N> m_label;
 
-    m_l1(l1), m_l2(l2), m_l3(l3), m_expr(expr) {
+    btod_symmetrize3<N> *m_op; //!< Symmetrization operation
+    arg<N, T, oper_tag> *m_arg; //!< Argument
 
-    static const char *method = "symm3_core(const letter&, "
-        "const letter&, const letter&, const Expr&)";
+public:
+    /** \brief Initializes the container with given expression and
+            result recipient
+     **/
+    symm3_eval(
+        const symm3_core<N, Sym, T> &e,
+        const letter_expr<N> &label);
+
+    /** \brief Virtual destructor
+     **/
+    virtual ~symm3_eval();
+
+    /** \brief Evaluates sub-expressions into temporary tensors
+     **/
+    virtual void prepare();
+
+    /** \brief Cleans up temporary tensors
+     **/
+    virtual void clean();
+
+    /** \brief Returns the number of tensors in expression
+     **/
+    virtual size_t get_ntensor() const {
+        return 0;
+    }
+
+    /** \brief Returns the number of tensor operations in expression
+     **/
+    virtual size_t get_noper() const {
+        return 1;
+    }
+
+    /** \brief Returns tensor arguments (not valid)
+        \param i Argument number.
+     **/
+   virtual arg<N, T, tensor_tag> get_tensor_arg(size_t i);
+
+   /** \brief Returns operation arguments
+       \param i Argument number (0 is the only valid value).
+    **/
+    virtual arg<N, T, oper_tag> get_oper_arg(size_t i);
+};
+
+
+template<size_t N, bool Sym, typename T>
+const char symm3_core<N, Sym, T>::k_clazz[] = "symm3_core<N, Sym, T>";
+
+
+template<size_t N, bool Sym, typename T>
+symm3_core<N, Sym, T>::symm3_core(
+    const letter &l1,
+    const letter &l2,
+    const letter &l3,
+    const expr<N, T> &subexpr) :
+
+    m_l1(l1), m_l2(l2), m_l3(l3), m_subexpr(subexpr) {
+
+    static const char method[] = "symm3_core(const letter&, "
+        "const letter&, const letter&, const expr<N, T>&)";
 
     if(m_l1 == m_l2 || m_l1 == m_l3 || m_l2 == m_l3) {
         throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -128,35 +203,85 @@ symm3_core<N, Sym, T, SubCore>::symm3_core(const letter &l1,
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-symm3_core<N, Sym, T, SubCore>::symm3_core(
-    const symm3_core<N, Sym, T, SubCore> &core) :
+template<size_t N, bool Sym, typename T>
+eval_container_i<N, T> *symm3_core<N, Sym, T>::create_container(
+    const letter_expr<N> &label) const {
 
-    m_l1(core.m_l1), m_l2(core.m_l2), m_l3(core.m_l3), m_expr(core.m_expr) {
+    return new symm3_eval<N, Sym, T>(*this, label);
+}
+
+
+template<size_t N, bool Sym, typename T>
+const char symm3_eval<N, Sym, T>::k_clazz[] = "symm3_eval<N, Sym, T>";
+
+
+template<size_t N, bool Sym, typename T>
+symm3_eval<N, Sym, T>::symm3_eval(
+    const symm3_core<N, Sym, T> &core,
+    const letter_expr<N> &label) :
+
+    m_core(core),
+    m_sub_eval_cont(m_core.get_sub_expr().get_core().create_container(label)),
+    m_functor(m_core.get_sub_expr(), *m_sub_eval_cont),
+    m_label(label),
+    m_op(0), m_arg(0) {
 
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-bool symm3_core<N, Sym, T, SubCore>::contains(const letter &let) const {
+template<size_t N, bool Sym, typename T>
+symm3_eval<N, Sym, T>::~symm3_eval() {
 
-    return m_expr.contains(let);
+    delete m_arg; m_arg = 0;
+    delete m_op; m_op = 0;
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-size_t symm3_core<N, Sym, T, SubCore>::index_of(const letter &let) const
-    throw(expr_exception) {
+template<size_t N, bool Sym, typename T>
+void symm3_eval<N, Sym, T>::prepare() {
 
-    return m_expr.index_of(let);
+    m_sub_eval_cont->prepare();
+
+    size_t i1 = m_label.index_of(m_core.get_l1());
+    size_t i2 = m_label.index_of(m_core.get_l2());
+    size_t i3 = m_label.index_of(m_core.get_l3());
+
+    if (m_arg != 0) delete m_arg;
+    if (m_op != 0) delete m_op;
+
+    m_op = new btod_symmetrize3<N>(m_functor.get_bto(), i1, i2, i3, Sym);
+    m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
 
-template<size_t N, bool Sym, typename T, typename SubCore>
-const letter &symm3_core<N, Sym, T, SubCore>::letter_at(size_t i) const
-    throw(out_of_bounds) {
+template<size_t N, bool Sym, typename T>
+void symm3_eval<N, Sym, T>::clean() {
 
-    return m_expr.letter_at(i);
+    delete m_arg; m_arg = 0;
+    delete m_op; m_op = 0;
+    m_sub_eval_cont->clean();
+}
+
+
+template<size_t N, bool Sym, typename T>
+arg<N, T, tensor_tag> symm3_eval<N, Sym, T>::get_tensor_arg(size_t i) {
+
+    static const char *method = "get_tensor_arg(size_t)";
+
+    throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+        "Invalid method.");
+}
+
+
+template<size_t N, bool Sym, typename T>
+arg<N, T, oper_tag> symm3_eval<N, Sym, T>::get_oper_arg(size_t i) {
+
+    static const char *method = "get_arg(size_t)";
+    if(i != 0) {
+        throw out_of_bounds(g_ns, k_clazz, method, __FILE__, __LINE__,
+            "Argument index is out of bounds.");
+    }
+    return *m_arg;
 }
 
 

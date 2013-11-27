@@ -1,56 +1,29 @@
 #ifndef LIBTENSOR_LABELED_BTENSOR_EXPR_EVALFUNCTOR_H
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_EVALFUNCTOR_H
 
-#include "../../defs.h"
-#include "../../exception.h"
-#include <libtensor/gen_block_tensor/direct_gen_bto.h>
-#include <libtensor/block_tensor/btod_traits.h>
-#include "expr.h"
-
 namespace libtensor {
 namespace labeled_btensor_expr {
 
 
-template<size_t N, typename T>
-class evalfunctor_i {
-public:
-    virtual ~evalfunctor_i() { }
-    virtual direct_gen_bto<N, btod_traits::bti_traits> &get_bto() = 0;
-};
-
-
-/** \brief Evaluates an expression that contains both tensors and
-        operations
+/** \brief Evaluates an expression that contains both tensors and operations
+        (interface)
     \tparam N Tensor order.
     \tparam T Tensor element type.
-    \tparam Core Expression core type.
-    \tparam NTensor Number of tensors in the expression.
-    \tparam NOper Number of operations in the expression.
 
     \ingroup labeled_btensor_expr
  **/
-template<size_t N, typename T, typename Core, size_t NTensor, size_t NOper>
-class evalfunctor : public evalfunctor_i<N, T> {
-public:
-    //!    Expression type
-    typedef expr<N, T, Core> expression_t;
+template<size_t N, typename T>
+class evalfunctor_i;
 
-    //!    Output labeled block %tensor type
-    typedef labeled_btensor<N, T, true> result_t;
 
-    //!    Evaluating container type
-    typedef typename expression_t::eval_container_t eval_container_t;
+/** \brief Evaluates an expression that contains both tensors and operations
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
 
-private:
-    expression_t &m_expr;
-    eval_container_t &m_eval_container;
-
-public:
-    evalfunctor(expression_t &expr, eval_container_t &cont);
-    virtual ~evalfunctor() { }
-    virtual direct_gen_bto<N, btod_traits::bti_traits> &get_bto();
-    virtual direct_gen_bto<N, btod_traits::bti_traits> &get_clean_bto();
-};
+    \ingroup labeled_btensor_expr
+ **/
+template<size_t N, typename T>
+class evalfunctor;
 
 
 } // namespace labeled_btensor_expr

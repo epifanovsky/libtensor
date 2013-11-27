@@ -53,8 +53,6 @@ kernel_base<LA, 2, 1> *kern_dadd2_i_x_i_x<LA>::match(const kern_dadd2<LA> &z,
     zz.m_sic = ii->stepb(0);
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 2, 1> *kern = 0;
-
     return new kern_dadd2_i_x_i_x(zz);
 }
 

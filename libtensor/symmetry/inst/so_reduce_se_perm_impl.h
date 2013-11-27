@@ -8,14 +8,14 @@
 
 namespace libtensor {
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 const char *
-symmetry_operation_impl< so_reduce<N, M, T>, se_perm<NM, T> >::k_clazz =
+symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::k_clazz =
         "symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >";
 
-template<size_t N, size_t M, size_t NM, typename T>
+template<size_t N, size_t M, typename T>
 void
-symmetry_operation_impl< so_reduce<N, M, T>, se_perm<NM, T> >::do_perform(
+symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     static const char *method =
@@ -44,8 +44,6 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<NM, T> >::do_perform(
     const index<k_order1> &bib = params.rblrange.get_end();
     const index<k_order1> &ia = params.riblrange.get_begin();
     const index<k_order1> &ib = params.riblrange.get_end();
-    bool single_blk = (bia == params.rblrange.get_end());
-    bool single_idx = (single_blk && ia == params.riblrange.get_end());
 
     for (typename adapter_t::iterator it = g2.begin(); it != g2.end(); it++) {
 

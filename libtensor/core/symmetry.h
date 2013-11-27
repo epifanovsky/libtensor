@@ -14,6 +14,11 @@ namespace libtensor {
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
+	The class represents the %symmetry of a (block) %tensor by storing
+	a list of %symmetry elements.
+
+	TODO Move to folder symmetry.
+
     \ingroup libtensor_core
  **/
 template<size_t N, typename T>

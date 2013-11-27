@@ -1,7 +1,9 @@
 #ifndef LIBTENSOR_GEN_BTO_CONTRACT2_BATCHING_POLICY_H
 #define LIBTENSOR_GEN_BTO_CONTRACT2_BATCHING_POLICY_H
 
+#include <algorithm>
 #include <libtensor/core/contraction2.h>
+#include <libtensor/core/batching_policy_base.h>
 
 namespace libtensor {
 
@@ -45,16 +47,25 @@ public:
 template<size_t N, size_t M, size_t K>
 gen_bto_contract2_batching_policy<N, M, K>::
 gen_bto_contract2_batching_policy(const contraction2<N, M, K> &contr,
-        size_t nblka, size_t nblkb, size_t nblkc) {
+    size_t nblka, size_t nblkb, size_t nblkc) {
 
-    size_t batch_size = 1024;
+    size_t batch_size = batching_policy_base::get_batch_size();
+    //size_t nblktot = nblka + nblkb + nblkc;
+    size_t bsza, bszb, bszc;
     size_t nbata, nbatb, nbatc;
 
-    nbata = (nblka + batch_size - 1) / batch_size;
+    //bsza = std::max(batch_size * nblka / nblktot, size_t(1));
+    //bszb = std::max(batch_size * nblkb / nblktot, size_t(1));
+    //bszc = std::max(batch_size * nblkc / nblktot, size_t(1));
+    bsza = std::max(std::min(batch_size / 3, nblka), size_t(1));
+    bszb = std::max(std::min(batch_size / 3, nblkb), size_t(1));
+    bszc = std::max(std::min(batch_size / 3, nblkc), size_t(1));
+
+    nbata = (nblka + bsza - 1) / bsza;
     m_bsz[0] = (nbata > 0 ? (nblka + nbata - 1) / nbata : 1);
-    nbatb = (nblkb + batch_size - 1) / batch_size;
+    nbatb = (nblkb + bszb - 1) / bszb;
     m_bsz[1] = (nbatb > 0 ? (nblkb + nbatb - 1) / nbatb : 1);
-    nbatc = (nblkc + batch_size - 1) / batch_size;
+    nbatc = (nblkc + bszc - 1) / bszc;
     m_bsz[2] = (nbatc > 0 ? (nblkc + nbatc - 1) / nbatc : 1);
 }
 

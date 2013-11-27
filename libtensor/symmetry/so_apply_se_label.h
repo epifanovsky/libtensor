@@ -28,6 +28,9 @@ public:
     typedef se_label<N, T> element_t;
     typedef symmetry_operation_params<operation_t> symmetry_operation_params_t;
 
+public:
+    virtual ~symmetry_operation_impl() { }
+
 protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
 };

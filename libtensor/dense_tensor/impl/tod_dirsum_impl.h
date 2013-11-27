@@ -4,7 +4,6 @@
 #include <memory>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/core/contraction2.h>
-#include <libtensor/core/contraction2_list_builder.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd2.h>
 #include <libtensor/kernels/loop_list_runner.h>
@@ -52,7 +51,7 @@ tod_dirsum<N, M>::tod_dirsum(
         dense_tensor_rd_i<k_orderb, double> &tb, double kb,
         const permutation<k_orderc> &permc) :
 
-    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_permc(permc), m_c(1.0),
+    m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_c(1.0), m_permc(permc),
     m_dimsc(mk_dimsc(ta, tb)) {
 
     m_dimsc.permute(permc);

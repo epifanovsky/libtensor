@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_LETTER_EXPR_H
 #define LIBTENSOR_LETTER_EXPR_H
 
-#include "../defs.h"
-#include "../exception.h"
-#include "../core/permutation_builder.h"
+#include <vector>
+#include <libtensor/exception.h>
+#include <libtensor/core/permutation_builder.h>
 
 /** \defgroup libtensor_letter_expr Letter index expressions
     \ingroup libtensor_iface
@@ -41,6 +41,8 @@ private:
 public:
     letter_expr(const letter_expr<N - 1> &expr, const letter &let) :
         m_expr(expr), m_let(let) { }
+    letter_expr(const std::vector<const letter*> &v) :
+        m_expr(v), m_let(*v[N - 1]) { }
     letter_expr(const letter_expr<N> &expr) :
         m_expr(expr.m_expr), m_let(expr.m_let) { }
 
@@ -86,6 +88,9 @@ public:
         m_expr.unfold(seq);
         seq[N - 1] = &m_let;
     }
+
+private:
+    letter_expr<N> &operator=(const letter_expr<N> &);
 };
 
 template<>
@@ -95,6 +100,7 @@ private:
 
 public:
     letter_expr(const letter &let) : m_let(let) { }
+    letter_expr(const std::vector<const letter*> &v) : m_let(*v[0]) { }
     letter_expr(const letter_expr<1> &expr) : m_let(expr.m_let) { }
 
     /** \brief Returns whether the expression contains a %letter
@@ -134,7 +140,13 @@ public:
     void unfold(const letter *(&seq)[M]) const {
         seq[0] = &m_let;
     }
+
+private:
+    letter_expr<1> &operator=(const letter_expr<1> &);
 };
+
+
+template<> class letter_expr<0>;
 
 
 /** \brief Bitwise OR (|) operator for two letters

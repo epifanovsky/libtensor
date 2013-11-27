@@ -30,8 +30,10 @@
 #include "btod_set_diag_test.h"
 #include "btod_set_elem_test.h"
 #include "btod_sum_test.h"
+#include "btod_symcontract3_test.h"
 #include "btod_symmetrize2_test.h"
 #include "btod_symmetrize3_test.h"
+#include "btod_symmetrize4_test.h"
 #include "btod_trace_test.h"
 #include "btod_tridiagonalize_test.h"
 #include "btod_vmpriority_test.h"
@@ -39,6 +41,7 @@
 #include "gen_bto_aux_copy_test.h"
 #include "gen_bto_contract2_clst_builder_test.h"
 #include "gen_bto_dirsum_sym_test.h"
+#include "gen_bto_symcontract2_sym_test.h"
 #include "gen_bto_unfold_symmetry_test.h"
 
 using libtest::unit_test_factory;
@@ -46,12 +49,12 @@ using libtest::unit_test_factory;
 namespace libtensor {
 
 /** \defgroup libtensor_tests_btod Tests of block tensor operations
-    \brief Unit tests of block %tensor operations.
+    \brief Unit tests of block tensor operations.
     \ingroup libtensor_tests
  **/
 
 
-/** \brief Test suite for the block %tensor operations in libtensor
+/** \brief Test suite for the block tensor operations in libtensor
     \ingroup libtensor_tests
 
     This suite runs the following tests:
@@ -83,8 +86,10 @@ namespace libtensor {
     \li libtensor::btod_set_diag_test
     \li libtensor::btod_set_elem_test
     \li libtensor::btod_sum_test
+    \li libtensor::btod_symcontract3_test
     \li libtensor::btod_symmetrize2_test
     \li libtensor::btod_symmetrize3_test
+    \li libtensor::btod_symmetrize4_test
     \li libtensor::btod_trace_test
     \li libtensor::btod_tridiagonalize_test
     \li libtensor::btod_vmpriority_test
@@ -92,6 +97,7 @@ namespace libtensor {
     \li libtensor::gen_bto_aux_copy_test
     \li libtensor::gen_bto_contract2_clst_builder_test
     \li libtensor::gen_bto_dirsum_sym_test
+    \li libtensor::gen_bto_symcontract2_sym_test
     \li libtensor::gen_bto_unfold_symmetry_test
 
  **/
@@ -125,8 +131,10 @@ private:
     unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
     unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
     unit_test_factory<btod_sum_test> m_utf_btod_sum;
+    unit_test_factory<btod_symcontract3_test> m_utf_btod_symcontract3;
     unit_test_factory<btod_symmetrize2_test> m_utf_btod_symmetrize2;
     unit_test_factory<btod_symmetrize3_test> m_utf_btod_symmetrize3;
+    unit_test_factory<btod_symmetrize4_test> m_utf_btod_symmetrize4;
     unit_test_factory<btod_trace_test> m_utf_btod_trace;
     unit_test_factory<btod_tridiagonalize_test> m_utf_btod_tridiagonalize;
     unit_test_factory<btod_vmpriority_test> m_utf_btod_vmpriority;
@@ -135,6 +143,8 @@ private:
     unit_test_factory<gen_bto_contract2_clst_builder_test>
         m_utf_gen_bto_contract2_clst_builder;
     unit_test_factory<gen_bto_dirsum_sym_test> m_utf_gen_bto_dirsum_sym;
+    unit_test_factory<gen_bto_symcontract2_sym_test>
+        m_utf_gen_bto_symcontract2_sym;
     unit_test_factory<gen_bto_unfold_symmetry_test>
         m_utf_gen_bto_unfold_symmetry;
 

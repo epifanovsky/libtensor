@@ -27,6 +27,8 @@ public:
 
     virtual ~direct_gen_block_tensor_task() { }
 
+    virtual unsigned long get_cost() const { return 0; }
+
     void perform() {
         m_op.compute_block(m_idx, m_blk);
     }

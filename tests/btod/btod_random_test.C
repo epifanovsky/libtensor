@@ -19,7 +19,6 @@ void btod_random_test::perform() throw(libtest::test_exception)
 
     typedef std_allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
-    typedef dense_tensor_ctrl<4, double> tensor_ctrl_t;
     typedef block_tensor<4, double, allocator_t> block_tensor_t;
     typedef block_tensor_ctrl<4, double> block_tensor_ctrl_t;
 
@@ -34,7 +33,6 @@ void btod_random_test::perform() throw(libtest::test_exception)
     bis.split(msk,2);
     msk[0]=false; msk[1]=true; msk[2]=false; msk[3]=true;
     bis.split(msk,2);
-    dimensions<4> bidims = bis.get_block_index_dims();
 
     block_tensor_t bta(bis);
     block_tensor_ctrl_t btactrl(bta);
