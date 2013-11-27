@@ -95,7 +95,7 @@ public:
     void record_pos(const expr<M, D> &supexpr, size_t pos_here,
         size_t (&perm)[M]) const {
 
-        m_core.record_pos<M, D>(supexpr, pos_here, perm);
+        m_core.record_pos(supexpr, pos_here, perm);
     }
 
     void mark_sym(size_t i, mask<N> &msk) const {
