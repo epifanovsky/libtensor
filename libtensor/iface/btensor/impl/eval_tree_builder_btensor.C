@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/node_assign.h>
 #include <libtensor/expr/node_ident.h>
@@ -404,7 +405,7 @@ void eval_tree_builder_btensor::build() {
                 expr_tree::edge_list_t ej(m_tree.get_edges_in(j));
                 for (size_t k = 0; k < ej.size(); k++) {
                     m_tree.erase(ej[k], idj);
-                    m_tree.add(ej[k], idi);
+                    m_tree.graph::add(ej[k], idi);
                 }
                 to_erase.insert(idj);
             }
