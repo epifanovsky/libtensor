@@ -6,6 +6,9 @@ get_filename_component(LIBTEST_DIR ${LIBTENSOR_DIR}/../libtest ABSOLUTE)
 get_filename_component(LIBUTIL_DIR ${LIBTENSOR_DIR}/../libutil ABSOLUTE)
 get_filename_component(LIBVMM_DIR ${LIBTENSOR_DIR}/../libvmm ABSOLUTE)
 
+include(${LIBTENSOR_DIR}/cmake/CheckFortranSourceCompiles.cmake)
+include(${LIBTENSOR_DIR}/cmake/CheckFortranSourceRuns.cmake)
+
 if(IS_DIRECTORY ${LIBVMM_DIR})
     set(HAVE_LIBVMM TRUE)
 else(IS_DIRECTORY ${LIBVMM_DIR})
