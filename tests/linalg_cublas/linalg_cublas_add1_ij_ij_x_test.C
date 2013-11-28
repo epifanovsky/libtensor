@@ -31,7 +31,7 @@ void linalg_cublas_add1_ij_ij_x_test::test_add1_ij_ij_x(size_t ni, size_t nj,
     std::string tnss = ss.str();
 
     typedef libvmm::cuda_allocator<double> cuda_allocator_type;
-    typedef typename cuda_allocator_type::pointer_type cuda_pointer;
+    typedef cuda_allocator_type::pointer_type cuda_pointer;
 
     double d = 0.0;
 

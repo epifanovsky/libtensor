@@ -33,7 +33,7 @@ void linalg_cublas_mul2_ij_ip_pj_x_test::test_mul2_ij_ip_pj_x(size_t ni,
     std::string tnss = ss.str();
 
     typedef libvmm::cuda_allocator<double> cuda_allocator_type;
-    typedef typename cuda_allocator_type::pointer_type cuda_pointer;
+    typedef cuda_allocator_type::pointer_type cuda_pointer;
 
 
     try {
