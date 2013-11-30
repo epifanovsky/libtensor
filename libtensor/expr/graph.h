@@ -145,6 +145,14 @@ public:
     }
 
     //@}
+
+    /** \brief Checks if there is a connection from id1 to id2
+        \param id1 Start node
+        \param id2 End node
+        \return True, if connection (not necessarily direct) exists
+     **/
+    bool is_connected(node_id_t id1, node_id_t id2) const;
+
 protected:
     void check(iterator i) const {
 #ifdef LIBTENSOR_DEBUG

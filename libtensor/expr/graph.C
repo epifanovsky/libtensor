@@ -102,5 +102,32 @@ void graph::replace(node_id_t id, const node &n) {
 }
 
 
+bool graph::is_connected(node_id_t id1, node_id_t id2) const {
+
+    iterator i1 = m_lst.find(id1), i2 = m_lst.find(id2);
+    check(i1);
+    check(i2);
+    if (i1 == i2) return true;
+
+    std::set<iterator> la, lb;
+    la.insert(i2);
+    while (! la.empty()) {
+        std::set<iterator>::iterator ii = la.begin();
+        const edge_list_t &e = (*ii)->second.edges_in;
+        for (size_t i = 0; i < e.size(); i++) {
+            iterator ic = m_lst.find(e[i]);
+
+            if (ic == i1) return true;
+            if (lb.count(ic) == 0) la.insert(ic);
+        }
+
+        lb.insert(*ii);
+        la.erase(ii);
+    }
+
+    return true;
+}
+
+
 } // namespace expr
 } // namespace libtensor
