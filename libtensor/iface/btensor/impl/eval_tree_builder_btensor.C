@@ -188,7 +188,10 @@ void node_renderer::render_add()  {
         node_renderer r(m_tree, m_order, id1);
         r.render();
         if (r.is_ident()) continue;
-        if (! r.is_addition()) node_assignment(m_tree, id1).add();
+        if (! r.is_addition()) {
+            node_assignment(m_tree, id1).add();
+            m_order.push_back(id1);
+        }
         else replace_addition(id1);
     }
 
@@ -236,10 +239,10 @@ void node_renderer::render_gen() {
         node_renderer r(m_tree, m_order, id);
         r.render();
         if (r.is_ident()) continue;
-        if (r.is_addition()) replace_addition(e[i]);
+        if (r.is_addition()) replace_addition(id);
         else {
-            node_assignment(m_tree, e[i]).add();
-            m_order.push_back(e[i]);
+            node_assignment(m_tree, id).add();
+            m_order.push_back(id);
         }
     }
 }
