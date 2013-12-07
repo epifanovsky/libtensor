@@ -97,7 +97,7 @@ void node_ident_test::test_2() {
     if(i2b.get_t() != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
     }
-    if(i3b.get_n() != 3) {
+    if(i3b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (3).");
     }
     if(i3b.get_t() != typeid(double)) {
