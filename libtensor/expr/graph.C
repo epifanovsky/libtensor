@@ -1,3 +1,4 @@
+#include <set>
 #include "graph.h"
 
 namespace libtensor {
@@ -102,30 +103,48 @@ void graph::replace(node_id_t id, const node &n) {
 }
 
 
+void graph::replace(node_id_t id1, node_id_t id2, node_id_t id3) {
+
+    map_t::iterator i1 = m_lst.find(id1);
+    map_t::iterator i2 = m_lst.find(id2);
+    map_t::iterator i3 = m_lst.find(id3);
+    check(i1);
+    check(i2);
+    check(i3);
+
+    edge_list_t &out = i1->second.edges_out;
+    for (edge_list_t::iterator j = out.begin(); j != out.end(); j++) {
+        if (*j == id2) { *j = id3; break; }
+    }
+
+    edge_list_t &in  = i2->second.edges_in;
+    for (edge_list_t::iterator j = in.begin(); j != in.end(); j++) {
+        if (*j == id1) { in.erase(j); break; }
+    }
+
+    i3->second.edges_in.push_back(id1);
+}
+
+
 bool graph::is_connected(node_id_t id1, node_id_t id2) const {
 
     iterator i1 = m_lst.find(id1), i2 = m_lst.find(id2);
     check(i1);
     check(i2);
+    return is_connected(i1, i2);
+}
+
+bool graph::is_connected(iterator i1, iterator i2) const {
+
     if (i1 == i2) return true;
 
-    std::set<iterator> la, lb;
-    la.insert(i2);
-    while (! la.empty()) {
-        std::set<iterator>::iterator ii = la.begin();
-        const edge_list_t &e = (*ii)->second.edges_in;
-        for (size_t i = 0; i < e.size(); i++) {
-            iterator ic = m_lst.find(e[i]);
+    const edge_list_t &e = i2->second.edges_in;
+    for (size_t i = 0; i < e.size(); i++) {
+        iterator ic = m_lst.find(e[i]);
 
-            if (ic == i1) return true;
-            if (lb.count(ic) == 0) la.insert(ic);
-        }
-
-        lb.insert(*ii);
-        la.erase(ii);
+        if (is_connected(i1, ic)) return true;
     }
-
-    return true;
+    return false;
 }
 
 

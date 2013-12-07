@@ -73,6 +73,12 @@ public:
      **/
     void replace(node_id_t id, const node &n);
 
+    /** \brief Replaces edge id1->id2 by id1->id3
+        \param id1
+        \param id2
+     **/
+    void replace(node_id_t id1, node_id_t id2a, node_id_t id2b);
+
     //@}
 
     //! \name Access functions
@@ -162,6 +168,8 @@ protected:
         }
 #endif // LIBTENSOR_DEBUG
     }
+
+    bool is_connected(iterator i1, iterator i2) const;
 };
 
 

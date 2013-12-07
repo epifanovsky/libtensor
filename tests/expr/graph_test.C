@@ -262,40 +262,40 @@ void graph_test::test_2() {
     g.add(ids[2], ids[3]);
     g.add(ids[3], ids[1]);
 
-    if (! is_connected(ids[0], ids[1])) {
+    if (! g.is_connected(ids[0], ids[1])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (1->2).");
     }
-    if (! is_connected(ids[0], ids[2])) {
+    if (! g.is_connected(ids[0], ids[2])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (1->3).");
     }
-    if (! is_connected(ids[0], ids[3])) {
+    if (! g.is_connected(ids[0], ids[3])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (1->4).");
     }
-    if (is_connected(ids[1], ids[0])) {
+    if (g.is_connected(ids[1], ids[0])) {
         fail_test(testname, __FILE__, __LINE__, "Connection (2->1).");
     }
-    if (! is_connected(ids[1], ids[2])) {
+    if (! g.is_connected(ids[1], ids[2])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (2->3).");
     }
-    if (! is_connected(ids[1], ids[3])) {
+    if (! g.is_connected(ids[1], ids[3])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (2->4).");
     }
-    if (is_connected(ids[2], ids[0])) {
+    if (g.is_connected(ids[2], ids[0])) {
         fail_test(testname, __FILE__, __LINE__, "Connection (3->1).");
     }
-    if (! is_connected(ids[2], ids[1])) {
+    if (! g.is_connected(ids[2], ids[1])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (3->2).");
     }
-    if (! is_connected(ids[2], ids[3])) {
+    if (! g.is_connected(ids[2], ids[3])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (3->4).");
     }
-    if (is_connected(ids[3], ids[0])) {
+    if (g.is_connected(ids[3], ids[0])) {
         fail_test(testname, __FILE__, __LINE__, "Connection (4->1).");
     }
-    if (! is_connected(ids[3], ids[1])) {
+    if (! g.is_connected(ids[3], ids[1])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (4->2).");
     }
-    if (! is_connected(ids[3], ids[2])) {
+    if (! g.is_connected(ids[3], ids[2])) {
         fail_test(testname, __FILE__, __LINE__, "No connection (4->3).");
     }
 

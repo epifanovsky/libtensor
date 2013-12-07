@@ -73,6 +73,7 @@ public:
     node_id_t get_root() const {
         return m_root;
     }
+
 };
 
 
