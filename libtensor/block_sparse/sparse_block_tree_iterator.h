@@ -1,8 +1,7 @@
 #ifndef SPARSE_BLOCK_TREE_ITERATOR_H
 #define SPARSE_BLOCK_TREE_ITERATOR_H
 
-//TODO REMOVE
-#include <iostream>
+#include "sparse_block_tree_node.h"
 
 namespace libtensor {
 
