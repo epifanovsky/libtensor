@@ -22,7 +22,26 @@ public:
 
     //Wraps base class method
     sparse_block_tree_new<N> permute(const runtime_permutation& perm) const { return sparse_block_tree_any_order_new::permute(perm); }
+
+    template<size_t M,size_t K>
+    sparse_block_tree_new<N+M-K> fuse(const sparse_block_tree_new<M>& rhs,const sequence<K,size_t>& lhs_indices,const sequence<K,size_t>& rhs_indices) const;
+
+    //Convenience wrapper for the most common case when we just want to fuse end to end
+    template<size_t M>
+    sparse_block_tree_new<N+M-1> fuse(const sparse_block_tree_new<M>& rhs) const { return sparse_block_tree_any_order_new::fuse(rhs); }
+
+    //Friend for contract(), fuse()
+    template<size_t M>
+    friend class sparse_block_tree_new;
 };
+
+template<size_t N> template<size_t M,size_t K>
+sparse_block_tree_new<N+M-K> sparse_block_tree_new<N>::fuse(const sparse_block_tree_new<M>& rhs,const sequence<K,size_t>& lhs_indices,const sequence<K,size_t>& rhs_indices) const
+{
+    std::vector<size_t> lhs_vec(&lhs_indices[0],&lhs_indices[0]+K);
+    std::vector<size_t> rhs_vec(&rhs_indices[0],&rhs_indices[0]+K);
+    return sparse_block_tree_any_order_new::fuse(rhs,lhs_vec,rhs_vec);
+}
 
 } // namespace impl
 

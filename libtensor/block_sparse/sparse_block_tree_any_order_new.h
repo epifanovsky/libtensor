@@ -25,8 +25,19 @@ public:
 
     ~sparse_block_tree_any_order_new() { for(size_t i = 0; i < m_children.size(); ++i) { delete m_children[i]; }};
 
+    //Returns the child/granchild/etc corresponding to the specified sub-key
+    const sparse_block_tree_any_order_new& get_sub_tree(const std::vector<key_t>& sub_key) const;
+
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree_any_order_new permute(const runtime_permutation& perm) const;
+
+    //Fuses one sparse tree onto this one at position fuse_pos
+    //By default, fuses to the branches of the tree
+    sparse_block_tree_any_order_new fuse(const sparse_block_tree_any_order_new& rhs,const std::vector<size_t>& lhs_indices,
+                                                                                    const std::vector<size_t>& rhs_indices) const;
+
+    //Convenience wrapper for the most common (end to end) case
+    sparse_block_tree_any_order_new fuse(const sparse_block_tree_any_order_new& rhs) const;
 
     iterator begin();
     const_iterator begin() const;
@@ -67,6 +78,8 @@ private:
     //Used by permute/fuse to create new instances
     //Does not do the same input validation as primary constructor 
     sparse_block_tree_any_order_new(const std::vector< std::vector<key_t> >& sig_blocks,size_t order);
+
+    static const char *k_clazz; //!< Class name
 };
 
 template<typename container>
@@ -79,14 +92,24 @@ sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const container
 template<typename container>
 void sparse_block_tree_any_order_new::push_back(const container& key,size_t key_order)
 {
-    m_keys.push_back(key[key_order - m_order]);
-    if(m_order > 1)
+    //Add this key to this node if we don't already have it
+    //Guaranteed sorted by constructor so only need to compare to the last key
+    key_t key_entry = key[key_order - m_order];
+    if((m_keys.size() == 0) || (m_keys.back() != key_entry))
     {
-        m_children.push_back(new sparse_block_tree_any_order_new(key,key_order,m_order - 1));
+        m_keys.push_back(key_entry);
+        if(m_order > 1)
+        {
+            m_children.push_back(new sparse_block_tree_any_order_new(key,key_order,m_order - 1));
+        }
+        else
+        {
+            m_values.push_back(value_t());
+        }
     }
     else
     {
-        m_values.push_back(value_t());
+        m_children.back()->push_back(key,key_order);
     }
 }
 

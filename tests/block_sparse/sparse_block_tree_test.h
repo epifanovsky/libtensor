@@ -38,21 +38,21 @@ private:
     void test_search_3d() throw(libtest::test_exception);
 
 
-    /** \brief Ensures that get_sub_key_block_list throws exception when key is too big or empty 
+    /** \brief Ensures that exception thrown when key is too big or empty 
     **/
-    void test_get_sub_key_block_list_invalid_key_size() throw(libtest::test_exception);
+    void test_get_sub_tree_invalid_key_size() throw(libtest::test_exception);
 
-    /** \brief Ensures that get_sub_key_block_list returns an empty list when key does not exist 
+    /** \brief Ensures that method returns an empty list when key does not exist 
     **/
-    void test_get_sub_key_block_list_nonexistent_key() throw(libtest::test_exception);
+    void test_get_sub_tree_nonexistent_key() throw(libtest::test_exception);
     
-    /** \brief Ensures that get_sub_key_block_list contains all correct values for 2d
+    /** \brief Ensures that return value contains all correct keys for 2d
     **/
-    void test_get_sub_key_block_list_2d() throw(libtest::test_exception);
+    void test_get_sub_tree_2d() throw(libtest::test_exception);
  
-    /** \brief Ensures that get_sub_key_block_list contains all correct values for 3d
+    /** \brief Ensures that return value contains all correct keys for 3d
     **/
-    void test_get_sub_key_block_list_3d() throw(libtest::test_exception);
+    void test_get_sub_tree_3d() throw(libtest::test_exception);
 
     /** \brief Test that permutation of tree produces correct result 
     **/
