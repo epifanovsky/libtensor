@@ -20,6 +20,11 @@ public:
     typedef sparse_block_tree_iterator_new<false> iterator;
     typedef sparse_block_tree_iterator_new<true> const_iterator;
 
+    //Copy constructor
+    sparse_block_tree_any_order_new(const sparse_block_tree_any_order_new& rhs);
+
+    ~sparse_block_tree_any_order_new() { for(size_t i = 0; i < m_children.size(); ++i) { delete m_children[i]; }};
+
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree_any_order_new permute(const runtime_permutation& perm) const;
 

@@ -8,6 +8,33 @@ namespace libtensor {
 
 namespace impl {
 
+sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const sparse_block_tree_any_order_new& rhs)
+{
+    m_order = rhs.m_order;
+    m_keys.resize(rhs.m_keys.size());
+    m_children.resize(rhs.m_children.size());
+    m_values.resize(rhs.m_values.size());
+    for(size_t i = 0; i < m_keys.size(); ++i)
+    {
+        m_keys[i] = rhs.m_keys[i];
+    }
+
+    if(m_order > 1)
+    {
+        for(size_t i = 0; i < m_children.size(); ++i)
+        {
+            m_children[i] = new sparse_block_tree_any_order_new(*rhs.m_children[i]);
+        }
+    } 
+    else
+    {
+        for(size_t i = 0; i < m_values.size(); ++i)
+        {
+            m_values[i] = rhs.m_values[i];
+        }
+    }
+}
+
 sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const std::vector< std::vector<key_t> >& sig_blocks,size_t order)
 {
     m_order = order;
