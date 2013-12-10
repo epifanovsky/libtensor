@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../core/sequence.h"
+#include "runtime_permutation.h" 
 
 namespace libtensor { 
 
@@ -13,9 +14,34 @@ class sparse_block_tree_iterator_new;
 
 class sparse_block_tree_any_order_new
 {
-private:
+public:
     typedef size_t key_t;
     typedef std::vector<size_t> value_t;
+    typedef sparse_block_tree_iterator_new<false> iterator;
+    typedef sparse_block_tree_iterator_new<true> const_iterator;
+
+    //Can't use permutation<N> class because permutation degree may need to be determined at runtime
+    sparse_block_tree_any_order_new permute(const runtime_permutation& perm) const;
+
+    iterator begin();
+    const_iterator begin() const;
+    iterator end();
+    const_iterator end() const;
+
+    bool operator==(const sparse_block_tree_any_order_new& rhs) const;
+    bool operator!=(const sparse_block_tree_any_order_new& rhs) const;
+
+    template<bool is_const>
+    friend class sparse_block_tree_iterator_new;
+protected:
+
+    //We don't want these to be directly instantiable - force people to use the templated interface instead
+    //This is called by the order-templated subclass
+    template<size_t N>
+    sparse_block_tree_any_order_new(const std::vector< sequence<N,key_t> >& sig_blocks);
+private:
+    //Utility struct used to implement permute
+    struct kv_pair_compare;
 
     size_t m_order;
     std::vector<key_t> m_keys;
@@ -25,44 +51,33 @@ private:
     std::vector<value_t> m_values;
 
     //Used by primary constructor to add new entries 
-    template<size_t N>
-    void push_back(const sequence<N,key_t>& key);
+    //Templated on container type for use with both vectors and sequences
+    template<typename container>
+    void push_back(const container& key,size_t key_order);
 
     //Used by push_back to create new branch nodes below the root
-    template<size_t N>
-    sparse_block_tree_any_order_new(const sequence<N,key_t>& key,size_t order);
+    template<typename container>
+    sparse_block_tree_any_order_new(const container& key,size_t key_order,size_t order);
 
-protected:
-    //We don't want these to be directly instantiable - force people to use the templated interface instead
-    //This is called by the order-templated subclass
-    template<size_t N>
-    sparse_block_tree_any_order_new(const std::vector< sequence<N,key_t> >& sig_blocks);
-public:
-    typedef sparse_block_tree_iterator_new<false> iterator;
-    bool operator==(const sparse_block_tree_any_order_new& rhs) const;
-    bool operator!=(const sparse_block_tree_any_order_new& rhs) const;
-
-    iterator begin();
-    iterator end();
-
-    template<bool is_const>
-    friend class sparse_block_tree_iterator_new;
+    //Used by permute/fuse to create new instances
+    //Does not do the same input validation as primary constructor 
+    sparse_block_tree_any_order_new(const std::vector< std::vector<key_t> >& sig_blocks,size_t order);
 };
 
-template<size_t N>
-sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const sequence<N,size_t>& key,size_t order)
+template<typename container>
+sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const container& key,size_t key_order,size_t node_order)
 {
-    m_order = order;
-    push_back(key);
+    m_order = node_order;
+    push_back(key,key_order);
 }
 
-template<size_t N>
-void sparse_block_tree_any_order_new::push_back(const sequence<N,size_t>& key)
+template<typename container>
+void sparse_block_tree_any_order_new::push_back(const container& key,size_t key_order)
 {
-    m_keys.push_back(key[N - m_order]);
+    m_keys.push_back(key[key_order - m_order]);
     if(m_order > 1)
     {
-        m_children.push_back(new sparse_block_tree_any_order_new(key,m_order - 1));
+        m_children.push_back(new sparse_block_tree_any_order_new(key,key_order,m_order - 1));
     }
     else
     {
@@ -82,7 +97,7 @@ sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const std::vect
 
     if(sig_blocks.size() != 0)
     {
-        push_back(sig_blocks[0]);
+        push_back(sig_blocks[0],m_order);
     }
     
     //Ensure that block list is sorted in lexicographic order
@@ -111,7 +126,7 @@ sparse_block_tree_any_order_new::sparse_block_tree_any_order_new(const std::vect
             throw bad_parameter(g_ns,"sparse_block_tree<N>","sparse_block_tree(...)",
                 __FILE__,__LINE__,"duplicate keys are not allowed"); 
         }
-        push_back(cur);
+        push_back(cur,m_order);
     }
 }
 

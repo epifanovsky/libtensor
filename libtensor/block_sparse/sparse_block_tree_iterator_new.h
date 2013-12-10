@@ -17,12 +17,14 @@ template<>
 class iterator_const_traits_new<false> {
 public:
     typedef sparse_block_tree_any_order_new* ptr_t;
+    typedef std::vector<size_t>& ref_t;
 };
 
 template<>
 class iterator_const_traits_new<true> {
 public:
     typedef const sparse_block_tree_any_order_new* ptr_t;
+    typedef const std::vector<size_t>& ref_t;
 };
 
 template<bool is_const>
@@ -30,13 +32,13 @@ class sparse_block_tree_iterator_new : iterator_const_traits_new<is_const>
 {
 private:
     typedef size_t key_t;
-    typedef std::vector<size_t> value_t;
-
     typedef typename iterator_const_traits_new<is_const>::ptr_t ptr_t;
+    typedef typename iterator_const_traits_new<is_const>::ref_t ref_t;
+
     std::vector<ptr_t> m_node_stack;
     std::vector<size_t> m_pos_stack;
 public:
-    value_t& operator*();
+    ref_t operator*();
     std::vector<key_t> key();
 
     //Value of null is used to indicate end()
@@ -67,7 +69,7 @@ sparse_block_tree_iterator_new<is_const>::sparse_block_tree_iterator_new(ptr_t r
 }
 
 template<bool is_const>
-std::vector<size_t>& sparse_block_tree_iterator_new<is_const>::operator*()
+typename sparse_block_tree_iterator_new<is_const>::ref_t sparse_block_tree_iterator_new<is_const>::operator*()
 {
     return m_node_stack.back()->m_values[m_pos_stack.back()];
 }
@@ -90,7 +92,7 @@ sparse_block_tree_iterator_new<is_const>& sparse_block_tree_iterator_new<is_cons
     size_t rev_idx = 1;
     size_t order = m_node_stack.size();
     size_t cur_node_idx = order - rev_idx;
-    while(cur_node_idx <= order)
+    while(rev_idx <= order)
     {
         size_t cur_pos = ++m_pos_stack[cur_node_idx];
         ptr_t cur_node = m_node_stack[cur_node_idx];
@@ -116,6 +118,7 @@ sparse_block_tree_iterator_new<is_const>& sparse_block_tree_iterator_new<is_cons
                     }
                 } 
             }
+            break;
         }
         cur_node_idx = order - rev_idx;
     }

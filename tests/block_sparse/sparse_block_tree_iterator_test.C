@@ -129,6 +129,11 @@ void sparse_block_tree_iterator_test::test_incr_3d() throw(libtest::test_excepti
         }
         ++m;
     }
+    if(m != 21) 
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "iterator did not access all elements!");
+    }
 } 
     
 } // namespace libtensor
