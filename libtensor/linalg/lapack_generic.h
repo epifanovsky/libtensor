@@ -14,9 +14,6 @@ extern "C" {
     int zgesvd_(char*, char*, int*, int*, std::complex<double>*, int*,
         double*, std::complex<double>*, int*, std::complex<double>*, int*,
         std::complex<double>*, int*, double*, int*);
-#ifndef USE_QCHEM
-    int dsyev_(char*, char*, int*, double*, int*, double*, double*, int*, int*);
-#endif // USE_QCHEM
     int dgeev_(char*, char*, int*, double*, int*, double*, double*, double*,
         int*, double*, int*, double*, int*, int*);
     int dggev_(char*, char*, int*, double*, int*, double* , int *, double*, double*, double*,
