@@ -42,7 +42,7 @@ private:
     **/
     void test_get_sub_tree_invalid_key_size() throw(libtest::test_exception);
 
-    /** \brief Ensures that method returns an empty list when key does not exist 
+    /** \brief Ensures that method returns an empty tree when key does not exist 
     **/
     void test_get_sub_tree_nonexistent_key() throw(libtest::test_exception);
     
