@@ -78,12 +78,11 @@ void gen_bto_dotprod<N, Traits, Timed>::calculate(
             const tensor_transf<N, element_type> &tra = iarg->tr1;
             const tensor_transf<N, element_type> &trb = iarg->tr2;
 
-            gen_block_tensor_rd_ctrl<N, bti_traits> cb(btb);
-            const symmetry<N, element_type> &symb = cb.req_const_symmetry();
+            gen_bto_copy<N, Traits, Timed> cp(btb, trb);
 
-            gen_bto_aux_dotprod<N, Traits> out(bta, tra, symb);
+            gen_bto_aux_dotprod<N, Traits> out(bta, tra, cp.get_symmetry());
             out.open();
-            gen_bto_copy<N, Traits, Timed>(btb, trb).perform(out);
+            cp.perform(out);
             out.close();
             v[i] = out.get_d();
         }
