@@ -38,7 +38,7 @@ public:
 
     //Removes one of the levels of the tree and aggregates the remaining sub-keys to form a new tree 
     //Necessary to represent the tree resulting from the contraction of a sparse quantity
-    sparse_block_tree_any_order contract(size_t contract_idx) const;
+    sparse_block_tree_any_order_new contract(size_t contract_idx) const;
 
     //Fuses one sparse tree onto this one at position fuse_pos
     //By default, fuses to the branches of the tree

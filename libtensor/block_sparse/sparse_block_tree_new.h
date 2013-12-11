@@ -23,7 +23,7 @@ public:
     //Wraps base class method
     sparse_block_tree_new<N> permute(const runtime_permutation& perm) const { return sparse_block_tree_any_order_new::permute(perm); }
 
-    sparse_block_tree<N-1> contract(size_t contract_idx) const { return sparse_block_tree_any_order::contract(contract_idx); }
+    sparse_block_tree_new<N-1> contract(size_t contract_idx) const { return sparse_block_tree_any_order_new::contract(contract_idx); }
 
     template<size_t M,size_t K>
     sparse_block_tree_new<N+M-K> fuse(const sparse_block_tree_new<M>& rhs,const sequence<K,size_t>& lhs_indices,const sequence<K,size_t>& rhs_indices) const;
