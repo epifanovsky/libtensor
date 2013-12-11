@@ -23,7 +23,6 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
     test_search_2d_invalid_key();
     test_search_3d();
 
-
     test_contract_3d_0();
     test_contract_3d_1();
     test_contract_3d_2();
@@ -743,8 +742,8 @@ void sparse_block_tree_test::test_contract_3d_0() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    sparse_block_tree<3> sbt(block_tuples_list);
-    sparse_block_tree<2> sbt_contracted = sbt.contract(0);
+    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
+    impl::sparse_block_tree_new<2> sbt_contracted = sbt.contract(0);
 
     //Build the correct tree
     size_t correct_seq01_arr[2] = {1,4};
@@ -784,17 +783,17 @@ void sparse_block_tree_test::test_contract_3d_0() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[15][i] = correct_seq16_arr[i];
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[16][i] = correct_seq17_arr[i];
 
-    sparse_block_tree<2> correct_sbt(correct_block_tuples_list);
+    impl::sparse_block_tree_new<2> correct_sbt(correct_block_tuples_list);
 
     //Set both trees to have the same arbitrary values - don't care about these
-    size_t m = 0;  
+    std::vector<size_t> val(1,0);
     sparse_block_tree<2>::iterator correct_sbt_it = correct_sbt.begin();
-    for(sparse_block_tree<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
+    for(impl::sparse_block_tree_new<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
     {
-        *sbt_it = m;
-        *correct_sbt_it = m;
+        *sbt_it = val;
+        *correct_sbt_it = val;
         ++correct_sbt_it;
-        ++m;
+        ++val.back();
     }
 
     if(sbt_contracted != correct_sbt)

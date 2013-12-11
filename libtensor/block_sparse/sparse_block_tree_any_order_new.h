@@ -16,6 +16,7 @@ class sparse_block_tree_any_order_new
 {
 public:
     typedef size_t key_t;
+    typedef std::vector<key_t> key_vec;
     typedef std::vector<size_t> value_t;
     typedef sparse_block_tree_iterator_new<false> iterator;
     typedef sparse_block_tree_iterator_new<true> const_iterator;
@@ -34,6 +35,10 @@ public:
 
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree_any_order_new permute(const runtime_permutation& perm) const;
+
+    //Removes one of the levels of the tree and aggregates the remaining sub-keys to form a new tree 
+    //Necessary to represent the tree resulting from the contraction of a sparse quantity
+    sparse_block_tree_any_order contract(size_t contract_idx) const;
 
     //Fuses one sparse tree onto this one at position fuse_pos
     //By default, fuses to the branches of the tree

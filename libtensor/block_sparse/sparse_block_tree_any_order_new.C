@@ -157,6 +157,68 @@ sparse_block_tree_any_order_new sparse_block_tree_any_order_new::permute(const r
     return sbt;
 }
 
+sparse_block_tree_any_order_new sparse_block_tree_any_order_new::contract(size_t contract_idx) const
+{
+    std::vector< std::pair< key_vec, value_t > > kv_pairs;
+    size_t out_order = m_order - 1;
+    for(const_iterator it = begin(); it != end(); ++it)
+    {
+        key_vec key = it.key(); 
+        key_vec new_key(out_order);
+
+        size_t new_key_idx = 0;
+        for(size_t key_idx = 0; key_idx < m_order; ++key_idx)
+        {
+            if(key_idx == contract_idx)
+            {
+                continue;
+            }
+
+            new_key[new_key_idx] = key[key_idx];
+            ++new_key_idx;
+        }
+        kv_pairs.push_back(std::make_pair(new_key,*it));
+    }
+
+    std::sort(kv_pairs.begin(),kv_pairs.end(),kv_pair_compare());
+
+
+    std::vector<key_vec> all_keys;
+    std::vector<value_t> all_vals;
+
+    for(size_t i = 0; i < kv_pairs.size(); ++i)
+    {
+        //Remove the duplicate keys, if there are any
+        if(i != 0)
+        {
+            bool equal = true;
+            for(size_t j = 0; j < out_order; ++j)
+            {
+                if(kv_pairs[i].first[j] != kv_pairs[i-1].first[j])
+                {
+                    equal = false;
+                    break;
+                }
+            }
+            if(equal)
+            {
+                continue;
+            }
+        }
+        all_keys.push_back(kv_pairs[i].first);
+        all_vals.push_back(kv_pairs[i].second);
+    }
+
+    sparse_block_tree_any_order_new sbt(all_keys,out_order);
+    size_t m = 0; 
+    for(iterator it = sbt.begin(); it != sbt.end(); ++it)
+    {
+        *it = all_vals[m];
+        ++m;
+    }
+    return sbt;
+}
+
 sparse_block_tree_any_order_new sparse_block_tree_any_order_new::fuse(const sparse_block_tree_any_order_new& rhs,const std::vector<size_t>& lhs_indices,const std::vector<size_t>& rhs_indices) const
 {
 
