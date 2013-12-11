@@ -100,22 +100,6 @@ inline int lapack_zgesvd(char jobu, char jobvt, size_t m, size_t n,
 }
 
 
-/** \brief LAPACK function dsyev (generic)
-
-    \ingroup libtensor_linalg
- **/
-inline int lapack_dsyev(char jobz, char uplo, size_t n, double *a, size_t lda,
-    double *w, double *work, size_t lwork) {
-
-    int gen_n = n;
-    int gen_lda = lda;
-    int gen_lwork = lwork;
-    int gen_info = 0;
-    dsyev_(&jobz, &uplo, &gen_n, a, &gen_lda, w, work, &gen_lwork, &gen_info);
-    return gen_info;
-}
-
-
 /** \brief LAPACK function dgeev (generic)
 
     \ingroup libtensor_linalg
