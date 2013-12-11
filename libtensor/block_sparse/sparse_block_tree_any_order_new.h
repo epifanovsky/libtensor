@@ -23,7 +23,11 @@ public:
     //Copy constructor
     sparse_block_tree_any_order_new(const sparse_block_tree_any_order_new& rhs);
 
-    ~sparse_block_tree_any_order_new() { for(size_t i = 0; i < m_children.size(); ++i) { delete m_children[i]; }};
+    //Assignment operator
+    sparse_block_tree_any_order_new& operator=(const sparse_block_tree_any_order_new& rhs);
+
+    //Destructor
+    virtual ~sparse_block_tree_any_order_new();
 
     //Returns the child/granchild/etc corresponding to the specified sub-key
     const sparse_block_tree_any_order_new& get_sub_tree(const std::vector<key_t>& sub_key) const;
