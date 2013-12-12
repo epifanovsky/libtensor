@@ -1,7 +1,10 @@
 #ifndef SPARSE_BLOCK_TREE_ITERATOR_H
 #define SPARSE_BLOCK_TREE_ITERATOR_H
 
-#include "sparse_block_tree_node.h"
+#include "sparse_block_tree_any_order.h"
+
+//TODO REMOVE
+#include <iostream>
 
 namespace libtensor {
 
@@ -16,224 +19,158 @@ class iterator_const_traits;
 template<>
 class iterator_const_traits<false> {
 public:
-    typedef sparse_block_tree_node* ptr_type;
-    typedef sparse_block_tree_branch_node* branch_ptr_t;
-    typedef sparse_block_tree_leaf_node* leaf_ptr_t;
-    typedef size_t& ref_type; 
+    typedef sparse_block_tree_any_order* ptr_t;
+    typedef std::vector<size_t>& ref_t;
 };
 
 template<>
 class iterator_const_traits<true> {
 public:
-    typedef const sparse_block_tree_node* ptr_type;
-    typedef const sparse_block_tree_branch_node* branch_ptr_t;
-    typedef const sparse_block_tree_leaf_node* leaf_ptr_t;
-    typedef const size_t& ref_type; 
+    typedef const sparse_block_tree_any_order* ptr_t;
+    typedef const std::vector<size_t>& ref_t;
 };
 
-
-//end() is created by passing NULL ptr
 template<bool is_const>
-class sparse_block_tree_iterator : public iterator_const_traits<is_const> {
+class sparse_block_tree_iterator : iterator_const_traits<is_const>
+{
 private:
-    typedef typename iterator_const_traits<is_const>::ptr_type ptr_type;
-    typedef typename iterator_const_traits<is_const>::ref_type ref_type;
-    typedef typename iterator_const_traits<is_const>::branch_ptr_t branch_ptr_t;
-    typedef typename iterator_const_traits<is_const>::leaf_ptr_t leaf_ptr_t;
+    typedef size_t key_t;
+    typedef typename iterator_const_traits<is_const>::ptr_t ptr_t;
+    typedef typename iterator_const_traits<is_const>::ref_t ref_t;
 
-    ptr_type m_node;
-    size_t m_order;
-
-    //TODO const qualify some of this stuff??
-    size_t m_cur_pos;
-    sparse_block_tree_iterator<is_const>* m_child;
-
-    //Must be templated to be callable by higher-order instances 
-    void _create_key(std::vector<size_t>& key);
+    std::vector<ptr_t> m_node_stack;
+    std::vector<size_t> m_pos_stack;
 public:
+    ref_t operator*();
+    std::vector<key_t> key();
 
-    //Constructor - create an iterator over all of the children of a given node, optionally starting at a given displacement within
-    //each child nod
-    sparse_block_tree_iterator(ptr_type node,size_t order,const std::vector<size_t>& displacement = std::vector<size_t>(),const size_t idx = 0);
+    //Value of null is used to indicate end()
+    sparse_block_tree_iterator(ptr_t root_node,const std::vector<size_t>& displacement = std::vector<size_t>());
 
-    //Copy constructor - vital for intialization in for loops
-    sparse_block_tree_iterator(const sparse_block_tree_iterator& rhs);
-
-    //Assignment operator
-    sparse_block_tree_iterator& operator=(const sparse_block_tree_iterator& rhs);
-
-    std::vector<size_t> key();
-
-    //Prefix increment
     sparse_block_tree_iterator<is_const>& operator++();
-    
-    ref_type operator*();
-
 
     bool operator==(const sparse_block_tree_iterator<is_const>& rhs) const;
     bool operator!=(const sparse_block_tree_iterator<is_const>& rhs) const;
-
-    //Destructor
-    virtual ~sparse_block_tree_iterator() { if(m_child != NULL) { delete m_child; } }
 };
 
-//Constructor
-//Passing 'NULL' is used to create the END iterator
 template<bool is_const>
-sparse_block_tree_iterator<is_const>::sparse_block_tree_iterator(typename sparse_block_tree_iterator<is_const>::ptr_type node,size_t order,const std::vector<size_t>& displacement,const size_t idx)
+sparse_block_tree_iterator<is_const>::sparse_block_tree_iterator(ptr_t root_node,const std::vector<size_t>& displacement)
 {
-    m_node = node; 
-    m_child = NULL; 
-    m_order = order;
-
-    if(m_node != NULL)
+    if(root_node != NULL)
     {
-        if(displacement.size() > 0)
+        std::vector<size_t> displacement_internal(displacement);
+        if(displacement_internal.size() == 0)
         {
-            m_cur_pos = displacement[idx]; 
-        }
-        else
-        {
-            m_cur_pos = 0;
+            for(size_t i = 0; i < root_node->m_order; ++i)
+            {
+                displacement_internal.push_back(0);
+            }
         }
 
-        if(m_order == 2)
+        m_node_stack.push_back(root_node);
+        m_pos_stack.push_back(displacement_internal[0]);
+        
+        ptr_t cur_node = root_node;
+        size_t m = 0;
+        while(cur_node->m_order > 1)
         {
-            leaf_ptr_t leaf_ptr = static_cast<leaf_ptr_t>(static_cast<branch_ptr_t>(m_node)->m_children[m_cur_pos]);
-            m_child = new sparse_block_tree_iterator<is_const>(leaf_ptr,m_order - 1,displacement,idx+1);
-        }
-        else if(m_order > 2)
-        {
-            branch_ptr_t branch_ptr = static_cast<branch_ptr_t>(static_cast<branch_ptr_t>(m_node)->m_children[m_cur_pos]);
-            m_child = new sparse_block_tree_iterator<is_const>(branch_ptr,m_order-1,displacement,idx+1);
+            cur_node = cur_node->m_children[displacement_internal[m]];
+            ++m;
+            m_node_stack.push_back(cur_node);
+            m_pos_stack.push_back(displacement_internal[m]);
         }
     }
 }
 
-//Copy constructor - vital for intialization in for loops
 template<bool is_const>
-sparse_block_tree_iterator<is_const>::sparse_block_tree_iterator(const sparse_block_tree_iterator<is_const>& rhs) : m_node(rhs.m_node),m_cur_pos(rhs.m_cur_pos),m_order(rhs.m_order),m_child(NULL)
+typename sparse_block_tree_iterator<is_const>::ref_t sparse_block_tree_iterator<is_const>::operator*()
 {
-    if(m_node != NULL && m_order > 1)
-    {
-        m_child = new sparse_block_tree_iterator<is_const>(*rhs.m_child);
-    }
-}
-
-//Assignment operator
-template<bool is_const>
-sparse_block_tree_iterator<is_const>& sparse_block_tree_iterator<is_const>::operator=(const sparse_block_tree_iterator& rhs)
-{
-    m_node = rhs.m_node;
-    m_cur_pos = rhs.m_cur_pos;
-    m_order = rhs.m_order;
-
-    if(m_node != NULL)
-    {
-        m_child = new sparse_block_tree_iterator<is_const>(*rhs.m_child);
-    }
-    return *this;
-}
-
-template<bool is_const>
-void sparse_block_tree_iterator<is_const>::_create_key(std::vector<size_t>& key)
-{
-    key[key.size()-m_order] = m_node->m_keys[m_cur_pos]; 
-    if(m_order > 1)
-    {
-        m_child->_create_key(key);
-    }
+    return m_node_stack.back()->m_values[m_pos_stack.back()];
 }
 
 template<bool is_const>
 std::vector<size_t> sparse_block_tree_iterator<is_const>::key()
 {
-
-    std::vector<size_t> key(m_order);
-    _create_key(key);
-    return key;
+    std::vector<key_t> the_key(m_node_stack.size());
+    for(size_t i = 0; i < m_node_stack.size(); ++i)
+    {
+        the_key[i] = m_node_stack[i]->m_keys[m_pos_stack[i]];
+    }
+    return the_key; 
 }
 
 template<bool is_const>
 sparse_block_tree_iterator<is_const>& sparse_block_tree_iterator<is_const>::operator++()
 {
-    if(m_node != NULL)
+    //We try to increment starting from the deepest node 
+    size_t rev_idx = 1;
+    size_t order = m_node_stack.size();
+    size_t cur_node_idx = order - rev_idx;
+    while(rev_idx <= order)
     {
-        //Branch?
-        if(m_order > 1)
+        size_t cur_pos = ++m_pos_stack[cur_node_idx];
+        ptr_t cur_node = m_node_stack[cur_node_idx];
+
+        //Exhausted this node? Move up a level
+        if(cur_pos == cur_node->m_keys.size())
         {
-            //Try to progress the inner node
-            ++(*m_child);
-            //If that moved us to the end of the child node, advance this  node
-            if(m_child->m_node == NULL)
-            {
-                //Progress along this level, or finish if done
-                ++m_cur_pos;
-                if(m_cur_pos == m_node->m_keys.size())
-                {
-                    m_node = NULL;
-                }
-                else
-                {
-                    delete m_child;
-                    if(m_order ==  2)
-                    {
-                        leaf_ptr_t leaf_ptr = static_cast<leaf_ptr_t>(static_cast<branch_ptr_t>(m_node)->m_children[m_cur_pos]);
-                        m_child = new sparse_block_tree_iterator<is_const>(leaf_ptr,m_order-1,std::vector<size_t>(m_order-1,0));
-                    }
-                    else
-                    {
-                        branch_ptr_t branch_ptr = static_cast<branch_ptr_t>(static_cast<branch_ptr_t>(m_node)->m_children[m_cur_pos]);
-                        m_child = new sparse_block_tree_iterator<is_const>(branch_ptr,m_order-1,std::vector<size_t>(m_order-1,0));
-                    }
-                }
-            }
+            ++rev_idx;
         }
         else
         {
-            //Leaf
-            ++m_cur_pos;
-            if(m_cur_pos ==  m_node->m_keys.size())
+            //If we incremented a branch node, need to set lower levels appropriately
+            if(cur_node->m_order > 1)
             {
-                m_node = NULL;
+                ptr_t lower_node = cur_node->m_children[cur_pos];
+                for(size_t i = cur_node_idx+1; i < order; ++i)
+                {
+                    m_node_stack[i] = lower_node;
+                    m_pos_stack[i] = 0;
+                    if(i < order - 1)
+                    {
+                        lower_node = lower_node->m_children[0];
+                    }
+                } 
             }
-
+            break;
         }
+        cur_node_idx = order - rev_idx;
+    }
+
+    //Did we hit the end? If so, make us '==' end()
+    if(rev_idx > order)
+    {
+        m_node_stack.clear();
     }
     return (*this);
 }
 
 template<bool is_const>
-typename sparse_block_tree_iterator<is_const>::ref_type sparse_block_tree_iterator<is_const>::operator*()
-{
-    if(m_order == 1)
-    {
-        return static_cast<leaf_ptr_t>(m_node)->m_values[m_cur_pos];
-    }
-    else
-    {
-        return *(*m_child);
-    }
-}
-
-template<bool is_const>
 bool sparse_block_tree_iterator<is_const>::operator==(const sparse_block_tree_iterator<is_const>& rhs) const
 {
-    if(m_node == NULL)
+    if(m_node_stack.size() != rhs.m_node_stack.size())
     {
-        return (m_node == rhs.m_node);
+        return false;
     }
-    else
+
+    //end() == end()
+    if(m_node_stack.size() == 0)
     {
-        if(m_order > 1)
+        return true;
+    }
+
+    for(size_t i = 0; i < m_node_stack.size(); ++i)
+    {
+        if(m_node_stack[i] != rhs.m_node_stack[i])
         {
-            return (m_node == rhs.m_node) && (m_cur_pos == rhs.m_cur_pos) && (*m_child == *rhs.m_child);
+            return false;
         }
-        else
+        else if(m_pos_stack[i] != rhs.m_pos_stack[i])
         {
-            return (m_node == rhs.m_node) && (m_cur_pos == rhs.m_cur_pos);
+            return false;
         }
     }
+    return true;
 }
 
 template<bool is_const>
@@ -245,7 +182,5 @@ bool sparse_block_tree_iterator<is_const>::operator!=(const sparse_block_tree_it
 } // namespace impl
 
 } // namespace libtensor
-
-
 
 #endif /* SPARSE_BLOCK_TREE_ITERATOR_H */

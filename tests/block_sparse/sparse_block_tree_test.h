@@ -30,9 +30,10 @@ private:
 
 
 
-    /** \brief Test that search throws an exception when an invalid key is specified 
+    /** \brief Test that search returns end() when an invalid key is specified 
     **/
     void test_search_2d_invalid_key() throw(libtest::test_exception);
+
     /** \brief Test that search returns an iterator to the correct value when searching a 3d tree
     **/
     void test_search_3d() throw(libtest::test_exception);

@@ -1,62 +1,39 @@
 #ifndef SPARSE_BLOCK_TREE_ANY_ORDER_H
 #define SPARSE_BLOCK_TREE_ANY_ORDER_H
 
-#include "sparse_block_tree_node.h"
-#include "sparse_block_tree_iterator.h"
-#include "runtime_permutation.h"
+#include <vector>
+#include "../core/sequence.h"
+#include "runtime_permutation.h" 
 
 namespace libtensor { 
 
-typedef std::vector<size_t> block_list;
+class loop_list_sparsity_data;
 
-//Forward declaration for set_offsets
-template<size_t N>
-class sparse_bispace;
+namespace impl {
 
-//Forward declaration for friendship
-template<size_t N>
-class sparse_block_tree;
+template<bool is_const>
+class sparse_block_tree_iterator;
 
 class sparse_block_tree_any_order
 {
 public:
-    //typedefs needed for public and private methods - more public/private methods later
-    typedef impl::sparse_block_tree_iterator<false> iterator;
-    typedef impl::sparse_block_tree_iterator<true> const_iterator;
-private:
-    typedef std::vector<size_t> key_t;
-    struct kv_pair_compare;
-    impl::sparse_block_tree_node* m_node;
-    size_t m_order;
+    typedef size_t key_t;
+    typedef std::vector<key_t> key_vec;
+    typedef std::vector<size_t> value_t;
+    typedef sparse_block_tree_iterator<false> iterator;
+    typedef sparse_block_tree_iterator<true> const_iterator;
 
-    //Used by this class and derived class constructors 
-    void init(const std::vector< key_t > sig_blocks);
-
-    //Constructor
-    //Used by internal methods to return appropriate instances
-    sparse_block_tree_any_order(const std::vector< key_t > sig_blocks,size_t order); 
-
-    //Needed for templated wrapper constructor - init is called later instead
-    sparse_block_tree_any_order() { m_node = NULL; }
-
-public:
     //Copy constructor
-    sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs) { m_node = rhs.m_node->clone(); m_order = rhs.m_order; }
+    sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs);
 
     //Assignment operator
-    sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs) { delete m_node; m_node = rhs.m_node->clone(); m_order = rhs.m_order; return *this;}
+    sparse_block_tree_any_order& operator=(const sparse_block_tree_any_order& rhs);
 
-    iterator begin() { return iterator(m_node,m_order); };
-    const_iterator begin() const { return const_iterator(m_node,m_order); }
-    iterator end() { return iterator(NULL,m_order); };
-    const_iterator end() const { return const_iterator(NULL,m_order); }
+    //Destructor
+    virtual ~sparse_block_tree_any_order();
 
-    //Searching for a specific key
-    //Use a vector because sometimes key lengths must be determined at runtime
-    size_t search(const std::vector<size_t>& key) const;
-
-    //Return a list of the blocks associated with a given sub-key
-    const block_list& get_sub_key_block_list(const std::vector<size_t>& sub_key) const;
+    //Returns the child/granchild/etc corresponding to the specified sub-key
+    const sparse_block_tree_any_order& get_sub_tree(const std::vector<key_t>& sub_key) const;
 
     //Can't use permutation<N> class because permutation degree may need to be determined at runtime
     sparse_block_tree_any_order permute(const runtime_permutation& perm) const;
@@ -68,29 +45,141 @@ public:
     //Fuses one sparse tree onto this one at position fuse_pos
     //By default, fuses to the branches of the tree
     sparse_block_tree_any_order fuse(const sparse_block_tree_any_order& rhs,const std::vector<size_t>& lhs_indices,
-                                                                            const std::vector<size_t>& rhs_indices) const;
+                                                                                    const std::vector<size_t>& rhs_indices) const;
+
     //Convenience wrapper for the most common (end to end) case
     sparse_block_tree_any_order fuse(const sparse_block_tree_any_order& rhs) const;
 
-    //Used to initialize the values of the tree to represent the offsets of the blocks in a bispace
-    //Implemented in sparse_bispace.h to avoid incomplete type errors
-    ///Returns the sum of the sizes of all blocks in the tree;
-    //Must use vectors etc instead of compile time types like sequence because may not know length at compile time
-    size_t set_offsets(const std::vector< sparse_bispace<1> >& subspaces,const std::vector<size_t>& positions); 
+    //Searching for a specific key
+    //Use a vector because sometimes key lengths must be determined at runtime
+    const_iterator search(const std::vector<size_t>& key) const;
 
+    iterator begin();
+    const_iterator begin() const;
+    iterator end();
+    const_iterator end() const;
 
-    size_t get_order() const { return m_order; } 
+    size_t get_order() const { return m_order; }
+
     bool operator==(const sparse_block_tree_any_order& rhs) const;
     bool operator!=(const sparse_block_tree_any_order& rhs) const;
 
-    virtual ~sparse_block_tree_any_order() { delete m_node; }
+    template<bool is_const>
+    friend class sparse_block_tree_iterator;
 
-    //Friend templated wrapper
+    friend class libtensor::loop_list_sparsity_data;
+
+protected:
+
+    //We don't want these to be directly instantiable - force people to use the templated interface instead
+    //This is called by the order-templated subclass
     template<size_t N>
-    friend class sparse_block_tree;
+    sparse_block_tree_any_order(const std::vector< sequence<N,key_t> >& sig_blocks);
+private:
+    //Utility struct used to implement permute
+    struct kv_pair_compare;
+
+    size_t m_order;
+    std::vector<key_t> m_keys;
+    //For branch nodes only
+    std::vector< sparse_block_tree_any_order* > m_children;
+    //For leaf nodes only
+    std::vector<value_t> m_values;
+
+    //Used by primary constructor to add new entries 
+    //Templated on container type for use with both vectors and sequences
+    template<typename container>
+    void push_back(const container& key,size_t key_order);
+
+    //Used by push_back to create new branch nodes below the root
+    template<typename container>
+    sparse_block_tree_any_order(const container& key,size_t key_order,size_t order);
+
+    //Used by permute/fuse to create new instances
+    //Does not do the same input validation as primary constructor 
+    sparse_block_tree_any_order(const std::vector< std::vector<key_t> >& sig_blocks,size_t order);
+
+    static const char *k_clazz; //!< Class name
 };
 
-} // namespace libtensor
+template<typename container>
+sparse_block_tree_any_order::sparse_block_tree_any_order(const container& key,size_t key_order,size_t node_order)
+{
+    m_order = node_order;
+    push_back(key,key_order);
+}
 
+template<typename container>
+void sparse_block_tree_any_order::push_back(const container& key,size_t key_order)
+{
+    //Add this key to this node if we don't already have it
+    //Guaranteed sorted by constructor so only need to compare to the last key
+    key_t key_entry = key[key_order - m_order];
+    if((m_keys.size() == 0) || (m_keys.back() != key_entry))
+    {
+        m_keys.push_back(key_entry);
+        if(m_order > 1)
+        {
+            m_children.push_back(new sparse_block_tree_any_order(key,key_order,m_order - 1));
+        }
+        else
+        {
+            m_values.push_back(value_t());
+        }
+    }
+    else
+    {
+        m_children.back()->push_back(key,key_order);
+    }
+}
+
+template<size_t N>
+sparse_block_tree_any_order::sparse_block_tree_any_order(const std::vector< sequence<N,size_t> >& sig_blocks)
+{
+    if(N == 0)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_node","sparse_block_tree_node(...)",
+                            __FILE__,__LINE__,"cannot pass 0 dimensional sequence as argument");
+    }
+    m_order = N;
+
+    if(sig_blocks.size() != 0)
+    {
+        push_back(sig_blocks[0],m_order);
+    }
+    
+    //Ensure that block list is sorted in lexicographic order
+    for(size_t i = 1; i < sig_blocks.size(); ++i)
+    {
+        const sequence<N,key_t>& cur = sig_blocks[i];
+        const sequence<N,key_t>& prev = sig_blocks[i-1];
+
+        bool equal = true;
+        for(size_t j = 0; j < m_order; ++j)
+        {
+            if(cur[j] < prev[j])
+            {
+                throw bad_parameter(g_ns,"sparse_block_tree_node","sparse_block_tree_node(...)",
+                    __FILE__,__LINE__,"list is not strictly increasing"); 
+            }
+            else if(cur[j] > prev[j])
+            {
+                equal = false;
+                break;
+            }
+        }
+
+        if(equal)
+        {
+            throw bad_parameter(g_ns,"sparse_block_tree<N>","sparse_block_tree(...)",
+                __FILE__,__LINE__,"duplicate keys are not allowed"); 
+        }
+        push_back(cur,m_order);
+    }
+}
+
+} // namespace impl
+
+} // namespace libtensor
 
 #endif /* SPARSE_BLOCK_TREE_ANY_ORDER_H */

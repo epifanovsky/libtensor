@@ -1,4 +1,4 @@
-#include <libtensor/block_sparse/sparse_block_tree_new.h>
+#include <libtensor/block_sparse/sparse_block_tree.h>
 #include "sparse_block_tree_iterator_test.h"
 
 namespace libtensor {
@@ -20,8 +20,8 @@ void sparse_block_tree_iterator_test::test_begin_3d() throw(libtest::test_except
     std::vector< sequence<3,size_t> > block_tuples_list(1);
     for(size_t i = 0; i < 3; ++i) block_tuples_list[0][i] = seq01_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
-    impl::sparse_block_tree_new<3>::iterator it = sbt.begin();
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<3>::iterator it = sbt.begin();
 
     //Check key
     for(size_t i = 0; i < 3; ++i)
@@ -53,9 +53,9 @@ void sparse_block_tree_iterator_test::test_end_3d() throw(libtest::test_exceptio
     
     std::vector< sequence<3,size_t> > block_tuples_list;
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
-    impl::sparse_block_tree_new<3>::iterator beg = sbt.begin();
-    impl::sparse_block_tree_new<3>::iterator end = sbt.end();
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<3>::iterator beg = sbt.begin();
+    impl::sparse_block_tree<3>::iterator end = sbt.end();
 
     if(beg != end)
     {
@@ -113,10 +113,10 @@ void sparse_block_tree_iterator_test::test_incr_3d() throw(libtest::test_excepti
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
 
     size_t m = 0;  
-    for(impl::sparse_block_tree_new<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
+    for(impl::sparse_block_tree<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
     {
         std::vector<size_t> key = sbt_it.key();
         for(size_t i = 0; i < 2; ++i)

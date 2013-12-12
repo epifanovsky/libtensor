@@ -1,5 +1,4 @@
 #include <libtensor/block_sparse/sparse_block_tree.h>
-#include <libtensor/block_sparse/sparse_block_tree_new.h>
 #include <libtensor/block_sparse/runtime_permutation.h>
 #include "sparse_block_tree_test.h"
 
@@ -45,7 +44,7 @@ void sparse_block_tree_test::test_zero_order() throw(libtest::test_exception)
     bool threw_exception = false;
     try
     {
-        impl::sparse_block_tree_new<0> sbt(block_tuples_list);
+        impl::sparse_block_tree<0> sbt(block_tuples_list);
     }
     catch(bad_parameter&)
     {
@@ -80,12 +79,12 @@ void sparse_block_tree_test::test_equality_false_2d() throw(libtest::test_except
     for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
     
-    impl::sparse_block_tree_new<2> sbt_1(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_1(block_tuples_list);
     
     //Change one entry
     size_t seq7_arr_2[2] = {5,3};
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr_2[i];
-    impl::sparse_block_tree_new<2> sbt_2(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_2(block_tuples_list);
     
     if(sbt_1 == sbt_2)
     {
@@ -115,8 +114,8 @@ void sparse_block_tree_test::test_equality_true_2d() throw(libtest::test_excepti
     for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
     
-    impl::sparse_block_tree_new<2> sbt_1(block_tuples_list);
-    impl::sparse_block_tree_new<2> sbt_2(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_1(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_2(block_tuples_list);
     
     if(sbt_1 != sbt_2)
     {
@@ -145,7 +144,7 @@ void sparse_block_tree_test::test_unsorted_input() throw(libtest::test_exception
     bool threw_exception = false;
     try
     {
-        impl::sparse_block_tree_new<2> sbt(block_tuples_list);
+        impl::sparse_block_tree<2> sbt(block_tuples_list);
     }
     catch(bad_parameter&)
     {
@@ -181,35 +180,17 @@ void sparse_block_tree_test::test_search_2d_invalid_key() throw(libtest::test_ex
     for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
 
-    sparse_block_tree<2> sbt(block_tuples_list);
+    const impl::sparse_block_tree<2> sbt(block_tuples_list);
 
-    sequence<7,size_t> val_seq;
-    for(size_t i = 0; i < 7; ++i) val_seq[i] = i;
-    size_t m = 0;  
+    std::vector<size_t> key(2);
+    key[0] = 1; 
+    key[1] = 3; // (1,3) is not in tree
+    impl::sparse_block_tree<2>::const_iterator it = sbt.search(key);
 
-    //Set all of the values in the tree
-    for(sparse_block_tree<2>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
-    {
-        *sbt_it = val_seq[m]; 
-        ++m;
-    }
-
-    bool threw_exception = false;
-    try
-    {
-        std::vector<size_t> key(2);
-        key[0] = 1; 
-        key[1] = 3; // (1,3) is not in tree
-        sbt.search(key);
-    }
-    catch(bad_parameter&)
-    {
-        threw_exception = true;
-    }
-    if(!threw_exception)
+    if(it != sbt.end())
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_block_tree<2>::search(...) did not throw exception for invalid key");
+                "sparse_block_tree<2>::search(...) did not return end() for invalid key");
     }
 } 
 
@@ -262,16 +243,16 @@ void sparse_block_tree_test::test_search_3d() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    sparse_block_tree<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
 
     sequence<21,size_t> val_seq;
     for(size_t i = 0; i < 21; ++i) val_seq[i] = i;
 
     //Set all of the values in the tree
     size_t m = 0;  
-    for(sparse_block_tree<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
+    for(impl::sparse_block_tree<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
     {
-        *sbt_it = val_seq[m]; 
+        *sbt_it = std::vector<size_t>(1,val_seq[m]); 
         ++m;
     }
 
@@ -279,7 +260,7 @@ void sparse_block_tree_test::test_search_3d() throw(libtest::test_exception)
     key[0] = 4; 
     key[1] = 1;
     key[2] = 4;
-    if(sbt.search(key) != 9)
+    if((*sbt.search(key))[0] != 9)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_block_tree<3>::search(...) did not return correct value");
@@ -336,11 +317,11 @@ void sparse_block_tree_test::test_permute_3d() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
 
     //Set all of the values in the tree
     size_t m = 0;
-    for(impl::sparse_block_tree_new<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
+    for(impl::sparse_block_tree<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
     {
         *sbt_it = std::vector<size_t>(1,m); 
         ++m;
@@ -350,7 +331,7 @@ void sparse_block_tree_test::test_permute_3d() throw(libtest::test_exception)
     runtime_permutation perm(3);
     perm.permute(0,2);
 
-    impl::sparse_block_tree_new<3> permuted_sbt = sbt.permute(perm);
+    impl::sparse_block_tree<3> permuted_sbt = sbt.permute(perm);
 
     //Build the benchmark tree
     size_t correct_seq01_arr[3] = {1,3,1};// orig pos: 2
@@ -399,7 +380,7 @@ void sparse_block_tree_test::test_permute_3d() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) correct_block_tuples_list[20][i] = correct_seq21_arr[i];
 
     
-    impl::sparse_block_tree_new<3> correct_sbt(correct_block_tuples_list);
+    impl::sparse_block_tree<3> correct_sbt(correct_block_tuples_list);
 
     //Set all of the values in the tree
     std::vector< std::vector<size_t> > correct_vals;
@@ -426,15 +407,15 @@ void sparse_block_tree_test::test_permute_3d() throw(libtest::test_exception)
     correct_vals.push_back(std::vector<size_t>(1,3));
 
     size_t n = 0;
-    for(impl::sparse_block_tree_new<3>::iterator sbt_it = correct_sbt.begin(); sbt_it != correct_sbt.end(); ++sbt_it)
+    for(impl::sparse_block_tree<3>::iterator sbt_it = correct_sbt.begin(); sbt_it != correct_sbt.end(); ++sbt_it)
     {
         *sbt_it = correct_vals[n];
         ++n;
     }
 
     //Ensure that the trees match
-    impl::sparse_block_tree_new<3>::iterator my_it = permuted_sbt.begin();  
-    impl::sparse_block_tree_new<3>::iterator correct_it = correct_sbt.begin();  
+    impl::sparse_block_tree<3>::iterator my_it = permuted_sbt.begin();  
+    impl::sparse_block_tree<3>::iterator correct_it = correct_sbt.begin();  
     for(size_t i = 0; i < 21; ++i)
     {
         const std::vector<size_t> my_it_key = my_it.key();
@@ -478,7 +459,7 @@ void sparse_block_tree_test::test_get_sub_tree_invalid_key_size() throw(libtest:
     for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
 
-    impl::sparse_block_tree_new<2> sbt(block_tuples_list);
+    impl::sparse_block_tree<2> sbt(block_tuples_list);
 
 
     //First test key that is too long
@@ -540,9 +521,9 @@ void sparse_block_tree_test::test_get_sub_tree_nonexistent_key() throw(libtest::
     for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
 
-    impl::sparse_block_tree_new<2> sbt(block_tuples_list);
+    impl::sparse_block_tree<2> sbt(block_tuples_list);
     std::vector<size_t> nonexistent_key(1,6);
-    const impl::sparse_block_tree_any_order_new& sub_tree = sbt.get_sub_tree(nonexistent_key);
+    const impl::sparse_block_tree_any_order& sub_tree = sbt.get_sub_tree(nonexistent_key);
 
     if(sub_tree.begin() != sub_tree.end())
     {
@@ -572,13 +553,13 @@ void sparse_block_tree_test::test_get_sub_tree_2d() throw(libtest::test_exceptio
     for(size_t i = 0; i < 2; ++i) block_tuples_list[5][i] = seq6_arr[i];
     for(size_t i = 0; i < 2; ++i) block_tuples_list[6][i] = seq7_arr[i];
 
-    impl::sparse_block_tree_new<2> sbt(block_tuples_list);
+    impl::sparse_block_tree<2> sbt(block_tuples_list);
 
-    const impl::sparse_block_tree_any_order_new& st = sbt.get_sub_tree(std::vector<size_t>(1,4));
+    const impl::sparse_block_tree_any_order& st = sbt.get_sub_tree(std::vector<size_t>(1,4));
     std::vector< std::vector<size_t> > correct_keys(1,std::vector<size_t>(1,1)); 
     correct_keys.push_back(std::vector<size_t>(1,4));
     size_t m = 0;
-    for(impl::sparse_block_tree_any_order_new::const_iterator it = st.begin(); it != st.end(); ++it)
+    for(impl::sparse_block_tree_any_order::const_iterator it = st.begin(); it != st.end(); ++it)
     {
         if(it.key().size() != 1)
         {
@@ -648,10 +629,10 @@ void sparse_block_tree_test::test_get_sub_tree_3d() throw(libtest::test_exceptio
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
 
     //Test a 1D key
-    const impl::sparse_block_tree_any_order_new& sub_tree_1 = sbt.get_sub_tree(std::vector<size_t>(1,2));
+    const impl::sparse_block_tree_any_order& sub_tree_1 = sbt.get_sub_tree(std::vector<size_t>(1,2));
 
     //Correct result for 1d key
     size_t correct_seq0_arr_1[2] = {3,1};
@@ -667,7 +648,7 @@ void sparse_block_tree_test::test_get_sub_tree_3d() throw(libtest::test_exceptio
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list_1[3][i] = correct_seq3_arr_1[i];
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list_1[4][i] = correct_seq4_arr_1[i];
 
-    impl::sparse_block_tree_new<2> correct_sub_tree_1(correct_block_tuples_list_1);
+    impl::sparse_block_tree<2> correct_sub_tree_1(correct_block_tuples_list_1);
 
     if(sub_tree_1 != correct_sub_tree_1)
     {
@@ -678,13 +659,13 @@ void sparse_block_tree_test::test_get_sub_tree_3d() throw(libtest::test_exceptio
     //Test a 2d key
     std::vector<size_t> key_2d(1,2);
     key_2d.push_back(6);
-    const impl::sparse_block_tree_any_order_new& sub_tree_2 = sbt.get_sub_tree(key_2d);
+    const impl::sparse_block_tree_any_order& sub_tree_2 = sbt.get_sub_tree(key_2d);
 
     //Correct result for 2d key
     std::vector< sequence<1,size_t> > correct_block_tuples_list_2(2);
     correct_block_tuples_list_2[0][0] = 3;
     correct_block_tuples_list_2[1][0] = 4;
-    impl::sparse_block_tree_new<1> correct_sub_tree_2(correct_block_tuples_list_2);
+    impl::sparse_block_tree<1> correct_sub_tree_2(correct_block_tuples_list_2);
 
     if(sub_tree_2 != correct_sub_tree_2)
     {
@@ -742,8 +723,8 @@ void sparse_block_tree_test::test_contract_3d_0() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
-    impl::sparse_block_tree_new<2> sbt_contracted = sbt.contract(0);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_contracted = sbt.contract(0);
 
     //Build the correct tree
     size_t correct_seq01_arr[2] = {1,4};
@@ -783,12 +764,12 @@ void sparse_block_tree_test::test_contract_3d_0() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[15][i] = correct_seq16_arr[i];
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[16][i] = correct_seq17_arr[i];
 
-    impl::sparse_block_tree_new<2> correct_sbt(correct_block_tuples_list);
+    impl::sparse_block_tree<2> correct_sbt(correct_block_tuples_list);
 
     //Set both trees to have the same arbitrary values - don't care about these
     std::vector<size_t> val(1,0);
-    impl::sparse_block_tree_new<2>::iterator correct_sbt_it = correct_sbt.begin();
-    for(impl::sparse_block_tree_new<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
+    impl::sparse_block_tree<2>::iterator correct_sbt_it = correct_sbt.begin();
+    for(impl::sparse_block_tree<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
     {
         *sbt_it = val;
         *correct_sbt_it = val;
@@ -852,8 +833,8 @@ void sparse_block_tree_test::test_contract_3d_1() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
-    impl::sparse_block_tree_new<2> sbt_contracted = sbt.contract(1);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_contracted = sbt.contract(1);
 
     //Build the correct tree
     size_t correct_seq01_arr[2] = {1,1};
@@ -899,11 +880,11 @@ void sparse_block_tree_test::test_contract_3d_1() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[18][i] = correct_seq19_arr[i];
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[19][i] = correct_seq20_arr[i];
 
-    impl::sparse_block_tree_new<2> correct_sbt(correct_block_tuples_list);
+    impl::sparse_block_tree<2> correct_sbt(correct_block_tuples_list);
     //Set both trees to have the same arbitrary values - don't care about these
     std::vector<size_t> val(1,0);
-    impl::sparse_block_tree_new<2>::iterator correct_sbt_it = correct_sbt.begin();
-    for(impl::sparse_block_tree_new<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
+    impl::sparse_block_tree<2>::iterator correct_sbt_it = correct_sbt.begin();
+    for(impl::sparse_block_tree<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
     {
         *sbt_it = val;
         *correct_sbt_it = val;
@@ -967,8 +948,8 @@ void sparse_block_tree_test::test_contract_3d_2() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) block_tuples_list[19][i] = seq20_arr[i];
     for(size_t i = 0; i < 3; ++i) block_tuples_list[20][i] = seq21_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt(block_tuples_list);
-    impl::sparse_block_tree_new<2> sbt_contracted = sbt.contract(2);
+    impl::sparse_block_tree<3> sbt(block_tuples_list);
+    impl::sparse_block_tree<2> sbt_contracted = sbt.contract(2);
 
     //Build the correct tree
     size_t correct_seq01_arr[2] = {1,2};
@@ -1000,11 +981,11 @@ void sparse_block_tree_test::test_contract_3d_2() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[11][i] = correct_seq12_arr[i];
     for(size_t i = 0; i < 2; ++i) correct_block_tuples_list[12][i] = correct_seq13_arr[i];
 
-    impl::sparse_block_tree_new<2> correct_sbt(correct_block_tuples_list);
+    impl::sparse_block_tree<2> correct_sbt(correct_block_tuples_list);
     //Set both trees to have the same arbitrary values - don't care about these
     std::vector<size_t> val(1,0);
-    impl::sparse_block_tree_new<2>::iterator correct_sbt_it = correct_sbt.begin();
-    for(impl::sparse_block_tree_new<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
+    impl::sparse_block_tree<2>::iterator correct_sbt_it = correct_sbt.begin();
+    for(impl::sparse_block_tree<2>::iterator sbt_it = sbt_contracted.begin(); sbt_it != sbt_contracted.end(); ++sbt_it)
     {
         *sbt_it = val;
         *correct_sbt_it = val;
@@ -1041,9 +1022,9 @@ void sparse_block_tree_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) sig_blocks_1[5][i] = seq5_arr[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_1[6][i] = seq6_arr[i];
 
-    impl::sparse_block_tree_new<2> sbt_1(sig_blocks_1);
+    impl::sparse_block_tree<2> sbt_1(sig_blocks_1);
     std::vector<size_t> val(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
     {
         *it = val;
         ++val.back();
@@ -1071,15 +1052,15 @@ void sparse_block_tree_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[7][i] = seq7_arr_2[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[8][i] = seq8_arr_2[i];
 
-    impl::sparse_block_tree_new<2> sbt_2(sig_blocks_2);
+    impl::sparse_block_tree<2> sbt_2(sig_blocks_2);
     val = std::vector<size_t>(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
     {
         *it = val;
         ++val.back();
     }
 
-    impl::sparse_block_tree_new<3> sbt_fused = sbt_1.fuse(sbt_2); 
+    impl::sparse_block_tree<3> sbt_fused = sbt_1.fuse(sbt_2); 
 
     //Correct tree
     size_t correct_seq00_arr[3] = {1,2,5}; //value 0,2
@@ -1111,7 +1092,7 @@ void sparse_block_tree_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) correct_sig_blocks[11][i] = correct_seq11_arr[i];
     for(size_t i = 0; i < 3; ++i) correct_sig_blocks[12][i] = correct_seq12_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt_correct(correct_sig_blocks);
+    impl::sparse_block_tree<3> sbt_correct(correct_sig_blocks);
 
     size_t correct_val_seq00_arr[2] = {0,2};
     size_t correct_val_seq01_arr[2] = {0,3};
@@ -1143,7 +1124,7 @@ void sparse_block_tree_test::test_fuse_2d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) correct_vals[12][i] = correct_val_seq12_arr[i];
 
     size_t m = 0; 
-    for(impl::sparse_block_tree_new<3>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
+    for(impl::sparse_block_tree<3>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
     {
         *it = correct_vals[m];
         ++m;
@@ -1206,9 +1187,9 @@ void sparse_block_tree_test::test_fuse_3d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 3; ++i) sig_blocks_1[19][i] = seq19_arr[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks_1[20][i] = seq20_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt_1(sig_blocks_1);
+    impl::sparse_block_tree<3> sbt_1(sig_blocks_1);
     std::vector<size_t> val(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
     {
         *it = val;
         ++val.back();
@@ -1244,15 +1225,15 @@ void sparse_block_tree_test::test_fuse_3d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[11][i] = seq11_arr_2[i];
     for(size_t i = 0; i < 2; ++i) sig_blocks_2[12][i] = seq12_arr_2[i];
 
-    impl::sparse_block_tree_new<2> sbt_2(sig_blocks_2);
+    impl::sparse_block_tree<2> sbt_2(sig_blocks_2);
     val = std::vector<size_t>(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
     {
         *it = val;
         ++val.back();
     }
 
-    impl::sparse_block_tree_new<4> sbt_fused = sbt_1.fuse(sbt_2); 
+    impl::sparse_block_tree<4> sbt_fused = sbt_1.fuse(sbt_2); 
 
     //Correct tree
     size_t correct_seq00_arr[4] = {1,2,3,1}; //value 0,4
@@ -1334,7 +1315,7 @@ void sparse_block_tree_test::test_fuse_3d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 4; ++i) correct_sig_blocks[36][i] = correct_seq36_arr[i];
     for(size_t i = 0; i < 4; ++i) correct_sig_blocks[37][i] = correct_seq37_arr[i];
 
-    impl::sparse_block_tree_new<4> sbt_correct(correct_sig_blocks);
+    impl::sparse_block_tree<4> sbt_correct(correct_sig_blocks);
 
     size_t correct_val_seq00_arr[2] = {0,4};
     size_t correct_val_seq01_arr[2] = {1,11};
@@ -1416,7 +1397,7 @@ void sparse_block_tree_test::test_fuse_3d_2d() throw(libtest::test_exception)
     for(size_t i = 0; i < 2; ++i) correct_vals[37][i] = correct_val_seq37_arr[i];
 
     size_t m = 0; 
-    for(impl::sparse_block_tree_new<4>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
+    for(impl::sparse_block_tree<4>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
     {
         *it = correct_vals[m];
         ++m;
@@ -1455,9 +1436,9 @@ void sparse_block_tree_test::test_fuse_3d_3d_non_contiguous() throw(libtest::tes
     for(size_t i = 0; i < 3; ++i) sig_blocks_1[7][i] = seq07_arr[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks_1[8][i] = seq08_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt_1(sig_blocks_1);
+    impl::sparse_block_tree<3> sbt_1(sig_blocks_1);
     std::vector<size_t> val(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
     {
         *it = val;
         ++val.back();
@@ -1509,15 +1490,15 @@ void sparse_block_tree_test::test_fuse_3d_3d_non_contiguous() throw(libtest::tes
     for(size_t i = 0; i < 3; ++i) sig_blocks_2[19][i] = seq19_arr_2[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks_2[20][i] = seq20_arr_2[i];
 
-    impl::sparse_block_tree_new<3> sbt_2(sig_blocks_2);
+    impl::sparse_block_tree<3> sbt_2(sig_blocks_2);
     val = std::vector<size_t>(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
     {
         *it = val;
         ++val.back();
     }
 
-    impl::sparse_block_tree_new<5> sbt_fused = sbt_1.fuse(sbt_2,sequence<1,size_t>(2),sequence<1,size_t>(1)); 
+    impl::sparse_block_tree<5> sbt_fused = sbt_1.fuse(sbt_2,sequence<1,size_t>(2),sequence<1,size_t>(1)); 
 
     //Correct result
     size_t correct_seq00_arr[5] = {1,2,3,1,1}; //value 0,0
@@ -1567,7 +1548,7 @@ void sparse_block_tree_test::test_fuse_3d_3d_non_contiguous() throw(libtest::tes
     for(size_t i = 0; i < 5; ++i) correct_sig_blocks[20][i] = correct_seq20_arr[i];
     for(size_t i = 0; i < 5; ++i) correct_sig_blocks[21][i] = correct_seq21_arr[i];
 
-    impl::sparse_block_tree_new<5> sbt_correct(correct_sig_blocks);
+    impl::sparse_block_tree<5> sbt_correct(correct_sig_blocks);
     
     size_t correct_val_seq00_arr[2] = {0,0};
     size_t correct_val_seq01_arr[2] = {0,1};
@@ -1617,7 +1598,7 @@ void sparse_block_tree_test::test_fuse_3d_3d_non_contiguous() throw(libtest::tes
     for(size_t i = 0; i < 2; ++i) correct_vals[21][i] = correct_val_seq21_arr[i];
 
     size_t m = 0; 
-    for(impl::sparse_block_tree_new<4>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
+    for(impl::sparse_block_tree<4>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
     {
         *it = correct_vals[m];
         ++m;
@@ -1680,9 +1661,9 @@ void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_e
     for(size_t i = 0; i < 3; ++i) sig_blocks_1[19][i] = seq19_arr[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks_1[20][i] = seq20_arr[i];
 
-    impl::sparse_block_tree_new<3> sbt_1(sig_blocks_1);
+    impl::sparse_block_tree<3> sbt_1(sig_blocks_1);
     std::vector<size_t> val(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_1.begin(); it != sbt_1.end(); ++it)
     {
         *it = val;
         ++val.back();
@@ -1734,9 +1715,9 @@ void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_e
     for(size_t i = 0; i < 3; ++i) sig_blocks_2[19][i] = seq19_arr_2[i];
     for(size_t i = 0; i < 3; ++i) sig_blocks_2[20][i] = seq20_arr_2[i];
 
-    impl::sparse_block_tree_new<3> sbt_2(sig_blocks_2);
+    impl::sparse_block_tree<3> sbt_2(sig_blocks_2);
     val = std::vector<size_t>(1,0);
-    for(impl::sparse_block_tree_new<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
+    for(impl::sparse_block_tree<2>::iterator it = sbt_2.begin(); it != sbt_2.end(); ++it)
     {
         *it = val;
         ++val.back();
@@ -1748,7 +1729,7 @@ void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_e
     sequence<2,size_t> rhs_fuse_points;
     rhs_fuse_points[0] = 0;
     rhs_fuse_points[1] = 1;
-    impl::sparse_block_tree_new<4> sbt_fused = sbt_1.fuse(sbt_2,lhs_fuse_points,rhs_fuse_points); 
+    impl::sparse_block_tree<4> sbt_fused = sbt_1.fuse(sbt_2,lhs_fuse_points,rhs_fuse_points); 
 
     //Correct answer
     //Coupling sparsity creates a VERY SPARSE structure
@@ -1759,7 +1740,7 @@ void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_e
     for(size_t i = 0; i < 4; ++i) correct_sig_blocks[0][i] = correct_seq00_arr[i];
     for(size_t i = 0; i < 4; ++i) correct_sig_blocks[1][i] = correct_seq01_arr[i];
     
-    impl::sparse_block_tree_new<4> sbt_correct(correct_sig_blocks);
+    impl::sparse_block_tree<4> sbt_correct(correct_sig_blocks);
 
     size_t correct_val_seq00_arr[2] = {7,18};
     size_t correct_val_seq01_arr[2] = {10,6};
@@ -1769,7 +1750,7 @@ void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_e
     for(size_t i = 0; i < 2; ++i) correct_vals[1][i] = correct_val_seq01_arr[i];
 
     size_t m = 0; 
-    for(impl::sparse_block_tree_new<4>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
+    for(impl::sparse_block_tree<4>::iterator it = sbt_correct.begin(); it != sbt_correct.end(); ++it)
     {
         *it = correct_vals[m];
         ++m;
