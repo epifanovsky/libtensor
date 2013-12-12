@@ -13,7 +13,7 @@ namespace libtensor {
  **/
 class linalg_generic_level2 : public linalg_timings<linalg_generic_level2> {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     typedef linalg_timings<linalg_generic_level2> timings_base;
@@ -161,6 +161,22 @@ public:
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
+
+    /** \brief \f$ c = \sum_{pq} a_{pq} b_{pq} \f$
+        \param ctx Context of computational device (unused for CPUs).
+        \param np Number of elements p.
+        \param nq Number of elements q.
+        \param a Pointer to a.
+        \param spa Step of p in a (spa >= nq).
+        \param b Pointer to b.
+        \param sqb Step of p in b (spb >= nq).
+        \return c.
+     **/
+    static double mul2_x_pq_pq(
+        void *ctx,
+        size_t np, size_t nq,
+        const double *a, size_t spa,
+        const double *b, size_t spb);
 
     /** \brief \f$ c = \sum_{pq} a_{pq} b_{qp} \f$
         \param ctx Context of computational device (unused for CPUs).

@@ -7,6 +7,7 @@
 #include "linalg_mul2_x_p_p_test.h"
 #include "linalg_mul2_i_i_i_x_test.h"
 #include "linalg_mul2_i_i_x_test.h"
+#include "linalg_mul2_x_pq_pq_test.h"
 #include "linalg_mul2_x_pq_qp_test.h"
 #include "linalg_mul2_i_ip_p_x_test.h"
 #include "linalg_mul2_i_pi_p_x_test.h"
@@ -35,6 +36,7 @@ namespace libtensor {
      - libtensor::linalg_mul2_x_p_p_test
      - libtensor::linalg_mul2_i_i_i_x_test
      - libtensor::linalg_mul2_i_i_x_test
+     - libtensor::linalg_mul2_x_pq_pq_test
      - libtensor::linalg_mul2_x_pq_qp_test
      - libtensor::linalg_mul2_i_ip_p_x_test
      - libtensor::linalg_mul2_i_pi_p_x_test
@@ -54,6 +56,7 @@ private:
     unit_test_factory<linalg_mul2_x_p_p_test> m_utf_linalg_mul2_x_p_p;
     unit_test_factory<linalg_mul2_i_i_i_x_test> m_utf_linalg_mul2_i_i_i_x;
     unit_test_factory<linalg_mul2_i_i_x_test> m_utf_linalg_mul2_i_i_x;
+    unit_test_factory<linalg_mul2_x_pq_pq_test> m_utf_linalg_mul2_x_pq_pq;
     unit_test_factory<linalg_mul2_x_pq_qp_test> m_utf_linalg_mul2_x_pq_qp;
     unit_test_factory<linalg_mul2_i_ip_p_x_test> m_utf_linalg_mul2_i_ip_p_x;
     unit_test_factory<linalg_mul2_i_pi_p_x_test> m_utf_linalg_mul2_i_pi_p_x;

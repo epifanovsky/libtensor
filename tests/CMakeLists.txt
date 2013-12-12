@@ -198,6 +198,7 @@ set(SRC_LINALG
     linalg/linalg_mul2_x_p_p_test.C
     linalg/linalg_mul2_i_i_i_x_test.C
     linalg/linalg_mul2_i_i_x_test.C
+    linalg/linalg_mul2_x_pq_pq_test.C
     linalg/linalg_mul2_x_pq_qp_test.C
     linalg/linalg_mul2_i_ip_p_x_test.C
     linalg/linalg_mul2_i_pi_p_x_test.C

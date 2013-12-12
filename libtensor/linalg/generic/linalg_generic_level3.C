@@ -4,7 +4,7 @@
 namespace libtensor {
 
 
-const char *linalg_generic_level3::k_clazz = "generic";
+const char linalg_generic_level3::k_clazz[] = "generic";
 
 
 void linalg_generic_level3::mul2_i_ipq_qp_x(

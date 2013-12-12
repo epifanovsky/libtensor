@@ -13,7 +13,7 @@ namespace libtensor {
  **/
 class linalg_generic_level1 : public linalg_timings<linalg_generic_level1> {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     typedef linalg_timings<linalg_generic_level1> timings_base;

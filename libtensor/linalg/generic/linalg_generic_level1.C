@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-const char *linalg_generic_level1::k_clazz = "generic";
+const char linalg_generic_level1::k_clazz[] = "generic";
 
 
 void linalg_generic_level1::add_i_i_x_x(
