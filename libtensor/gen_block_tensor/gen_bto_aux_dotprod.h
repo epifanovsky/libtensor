@@ -39,7 +39,6 @@ public:
 private:
     gen_block_tensor_rd_i<N, bti_traits> &m_bta; //!< First argument (A)
     const tensor_transf_type &m_tra; //!< Transformation of A
-    symmetry<N, element_type> m_symat; //!< Transformed symmetry of A
     block_index_space<N> m_bisb; //!< Block index space of second argument (B)
     symmetry<N, element_type> m_symb; //!< Symmetry of B
     symmetry<N, element_type> m_symc; //!< Symmetry of A*B

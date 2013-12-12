@@ -25,8 +25,8 @@ gen_bto_aux_dotprod<N, Traits>::gen_bto_aux_dotprod(
     const tensor_transf_type &tra,
     const symmetry<N, element_type> &symb) :
 
-    m_bta(bta), m_tra(tra), m_symat(symb.get_bis()), m_bisb(symb.get_bis()),
-    m_symb(symb.get_bis()), m_symc(symb.get_bis()), m_d(Traits::zero()) {
+    m_bta(bta), m_tra(tra), m_bisb(symb.get_bis()), m_symb(symb.get_bis()),
+    m_symc(symb.get_bis()), m_d(Traits::zero()) {
 
     so_copy<N, element_type>(symb).perform(m_symb);
 
@@ -63,8 +63,6 @@ gen_bto_aux_dotprod<N, Traits>::gen_bto_aux_dotprod(
         seq[ii] = seq[ii + N] = ii;
     }
     so_merge<N + N, N, element_type>(symx, msk, seq).perform(m_symc);
-
-    so_permute<N, element_type>(syma, tra.get_perm()).perform(m_symat);
 }
 
 
