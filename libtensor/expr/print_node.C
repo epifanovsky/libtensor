@@ -15,8 +15,8 @@ void print_node(const node &n, std::ostream &os, size_t indent) {
     const node_assign *na = dynamic_cast<const node_assign*>(&n);
     const node_ident_base *ni = dynamic_cast<const node_ident_base*>(&n);
     if(ni) {
-        os << ind << "(ident <" << ni->get_n() << ","
-                << ni->get_t().name() << " )" << std::endl;
+        os << ind << "(ident <" << ni->get_n() << ", "
+                << ni->get_t().name() << ">)" << std::endl;
     } else {
         os << ind << "(" << n.get_op();
         if(n.get_op().compare("transform") == 0) {
