@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-const char *linalg_mkl_level2::k_clazz = "mkl";
+const char linalg_mkl_level2::k_clazz[] = "mkl";
 
 
 void linalg_mkl_level2::add1_ij_ij_x(
@@ -182,6 +182,31 @@ void linalg_mkl_level2::mul2_ij_i_j_x(
     timings_base::start_timer("dger");
     cblas_dger(CblasRowMajor, ni, nj, d, a, sia, b, sjb, c, sic);
     timings_base::stop_timer("dger");
+}
+
+
+double linalg_mkl_level2::mul2_x_pq_pq(
+    void*,
+    size_t np, size_t nq,
+    const double *a, size_t spa,
+    const double *b, size_t spb) {
+
+    timings_base::start_timer("ddot");
+    double c = 0.0;
+    if(nq > 1) {
+        for(size_t p = 0; p < np; p++) {
+            c += cblas_ddot(nq, a + p * spa, 1, b + p * spb, 1);
+        }
+    } else {
+        for(size_t p = 0; p < np; p++) {
+            const double *a1 = a + p * spa, *b1 = b + p * spb;
+            for(size_t q = 0; q < nq; q++) {
+                c += a1[q] * b1[q];
+            }
+        }
+    }
+    timings_base::stop_timer("ddot");
+    return c;
 }
 
 
