@@ -42,7 +42,7 @@ public:
         m_n = n.get_n();
     }
 
-    void add() {
+    node add() {
         dispatch_1<1, Nmax>::dispatch(*this, m_n);
     }
 
@@ -190,7 +190,7 @@ void node_renderer::render_add()  {
         if (r.is_ident()) continue;
         if (! r.is_addition()) {
             node_assignment(m_tree, id1).add();
-            m_order.push_back(id1);
+            m_order.push_back(eout[i]);
         }
         else replace_addition(id1);
     }
@@ -203,7 +203,7 @@ void node_renderer::render_assign()  {
 
     static const char method[] = "render_assign()";
 
-    const expr_tree::edge_list_t &out = m_tree.get_edges_out(m_cur);
+    expr_tree::edge_list_t out(m_tree.get_edges_out(m_cur));
     if (out.size() < 2) {
         throw bad_parameter("iface", k_clazz, method,
                 __FILE__, __LINE__, "Invalid assignment.");
@@ -242,7 +242,7 @@ void node_renderer::render_gen() {
         if (r.is_addition()) replace_addition(id);
         else {
             node_assignment(m_tree, id).add();
-            m_order.push_back(id);
+            m_order.push_back(e[i]);
         }
     }
 }

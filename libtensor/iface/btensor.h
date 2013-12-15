@@ -61,18 +61,21 @@ template<size_t N, typename T>
 void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     const letter_expr<N> &label) {
 
-    permutation<N> px = label.permutation_of(rhs.get_label());
-    std::vector<size_t> perm(N);
-    for(size_t i = 0; i < N; i++) perm[i] = px[i];
-
     expr::node_assign n1(N);
     expr::expr_tree e(n1);
-    expr::expr_tree::node_id_t root = e.get_root();
+    expr::expr_tree::node_id_t id = e.get_root();
     expr::node_ident<N, T> n2(*this);
-    e.add(root, n2);
-    expr::node_transform<T> n3(perm, scalar_transf<T>());
-    e.add(root, n3);
-    e.add(e.get_edges_out(root).back(), rhs.get_expr());
+    e.add(id, n2);
+
+    permutation<N> px = label.permutation_of(rhs.get_label());
+    if (! px.is_identity()) {
+        std::vector<size_t> perm(N);
+        for(size_t i = 0; i < N; i++) perm[i] = px[i];
+
+        expr::node_transform<T> n3(perm, scalar_transf<T>());
+        id = e.add(id, n3);
+    }
+    e.add(id, rhs.get_expr());
 
     eval_btensor<T>().evaluate(e);
 }

@@ -9,16 +9,15 @@ namespace libtensor {
 namespace expr {
 
 
-void print_node(const node &n, std::ostream &os, size_t indent) {
+void print_node(const node &n, std::ostream &os) {
 
-    std::string ind(indent, ' ');
     const node_assign *na = dynamic_cast<const node_assign*>(&n);
     const node_ident_base *ni = dynamic_cast<const node_ident_base*>(&n);
     if(ni) {
-        os << ind << "(ident <" << ni->get_n() << ", "
-                << ni->get_t().name() << ">)" << std::endl;
+        os << "(ident <" << ni->get_n() << ","
+                << ni->get_t().name() << ">)";
     } else {
-        os << ind << "(" << n.get_op();
+        os << "(" << n.get_op();
         if(n.get_op().compare("transform") == 0) {
             const node_transform_base *ntr0 =
                     dynamic_cast<const node_transform_base*>(&n);
@@ -36,7 +35,7 @@ void print_node(const node &n, std::ostream &os, size_t indent) {
                 }
             }
         }
-        os << ")" << std::endl;
+        os << ")";
     }
 }
 

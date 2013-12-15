@@ -9,7 +9,9 @@ void print_tree(const expr_tree &tr, expr_tree::node_id_t h,
         std::ostream &os, size_t indent) {
 
     const node &n = tr.get_vertex(h);
-    print_node(n, os, indent);
+    os << std::string(indent, ' ') << h << ": ";
+    print_node(n, os);
+    os << std::endl;
 
     const expr_tree::edge_list_t &e = tr.get_edges_out(h);
     for (size_t i = 0; i < e.size(); i++) {
