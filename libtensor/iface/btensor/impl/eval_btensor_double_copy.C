@@ -53,7 +53,7 @@ void eval_copy_impl::evaluate(
     btensor_i<N, double> &bta = tensor_from_node<N>(m_tree.get_vertex(m_id));
     btod_copy<N> op(bta, tr.get_perm(), tr.get_scalar_tr().get_coeff());
     btensor<N, double> &bt =
-            tensor_from_node<N>(m_tree.get_vertex(m_id), op.get_bis());
+            tensor_from_node<N>(t, op.get_bis());
     if(m_add) {
         op.perform(bt, 1.0);
     } else {

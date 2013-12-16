@@ -86,7 +86,8 @@ void eval_node::evaluate(const node &lhs) {
     expr_tree::node_id_t rhs = gather_info<N>(m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    if(n.get_op().compare(node_ident_base::k_op_type) == 0) {
+    if(n.get_op().compare(node_ident_base::k_op_type) == 0 ||
+            n.get_op().compare(node_interm_base::k_op_type) == 0) {
 
         eval_btensor_double::copy(m_tree, rhs, m_add).evaluate(tr, lhs);
 
@@ -94,7 +95,7 @@ void eval_node::evaluate(const node &lhs) {
 
         eval_btensor_double::contract(m_tree, rhs, m_add).evaluate(tr, lhs);
 
-    } else if(n.get_op().compare("symm") == 0) {
+    } else if(n.get_op().compare(node_symm_base::k_op_type) == 0) {
 
         eval_btensor_double::symm(m_tree, rhs, m_add).evaluate(tr, lhs);
 
