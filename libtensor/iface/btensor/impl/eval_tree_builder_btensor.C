@@ -42,7 +42,7 @@ public:
         m_n = n.get_n();
     }
 
-    node add() {
+    void add() {
         dispatch_1<1, Nmax>::dispatch(*this, m_n);
     }
 
