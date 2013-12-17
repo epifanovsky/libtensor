@@ -407,8 +407,7 @@ void eval_tree_builder_btensor::build() {
                 expr_tree::node_id_t idj = m_tree.get_id(j);
                 expr_tree::edge_list_t ej(m_tree.get_edges_in(j));
                 for (size_t k = 0; k < ej.size(); k++) {
-                    m_tree.erase(ej[k], idj);
-                    m_tree.graph::add(ej[k], idi);
+                    m_tree.graph::replace(ej[k], idj, idi);
                 }
                 to_erase.insert(idj);
             }
