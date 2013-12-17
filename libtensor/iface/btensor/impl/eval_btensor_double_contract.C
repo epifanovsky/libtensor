@@ -1,4 +1,5 @@
 #include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_ewmult2.h>
 #include <libtensor/block_tensor/btod_scale.h>
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_ident.h>
@@ -39,6 +40,24 @@ private:
         template<size_t K> void dispatch();
     };
 
+    template<size_t NC>
+    struct dispatch_ewmult_1 {
+        eval_contract_impl &eval;
+        const tensor_transf<NC, double> &trc;
+        const node &t;
+        size_t k, na, nb;
+        template<size_t NA> void dispatch();
+    };
+
+    template<size_t NC, size_t NA>
+    struct dispatch_ewmult_2 {
+        eval_contract_impl &eval;
+        const tensor_transf<NC, double> &trc;
+        const node &t;
+        size_t k, na, nb;
+        template<size_t K> void dispatch();
+    };
+
 private:
     const expr_tree &m_tree; //!< Expression tree
     expr_tree::node_id_t m_id; //!< ID of contraction node
@@ -53,7 +72,12 @@ public:
     void evaluate(const tensor_transf<NC, double> &trc, const node &t);
 
     template<size_t N, size_t M, size_t K>
-    void do_evaluate(const tensor_transf<N + M, double> &trc, const node &t);
+    void do_evaluate_contract(const tensor_transf<N + M, double> &trc,
+        const node &t);
+
+    template<size_t N, size_t M, size_t K>
+    void do_evaluate_ewmult(const tensor_transf<N + M + K, double> &trc,
+        const node &t);
 
 private:
     template<size_t N>
@@ -76,22 +100,39 @@ void eval_contract_impl::evaluate(const tensor_transf<NC, double> &trc,
     const node &arga = m_tree.get_vertex(e[0]);
     const node &argb = m_tree.get_vertex(e[1]);
 
-    size_t k = nc.get_map().size();
-    size_t na = arga.get_n();
-    size_t nb = argb.get_n();
+    if(nc.do_contract()) {
 
-    if(k > na || k > nb) {
-        throw "Invalid contraction order";
+        size_t k = nc.get_map().size();
+        size_t na = arga.get_n();
+        size_t nb = argb.get_n();
+
+        if(k > na || k > nb) {
+            throw "Invalid contraction order";
+        }
+
+        dispatch_contract_1<NC> d1 = { *this, trc, t, k, na, nb };
+        dispatch_1<1, Nmax>::dispatch(d1, na);
+
+    } else {
+
+        size_t k = nc.get_map().size();
+        size_t na = arga.get_n();
+        size_t nb = argb.get_n();
+
+        if(k > na || k > nb) {
+            throw "Invalid contraction order";
+        }
+
+        dispatch_ewmult_1<NC> d1 = { *this, trc, t, k, na, nb };
+        dispatch_1<1, NC>::dispatch(d1, na);
+
     }
-
-    dispatch_contract_1<NC> d1 = { *this, trc, t, k, na, nb };
-    dispatch_1<1, Nmax>::dispatch(d1, na);
 }
 
 
 template<size_t N, size_t M, size_t K>
-void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
-    const node &t) {
+void eval_contract_impl::do_evaluate_contract(
+    const tensor_transf<N + M, double> &trc, const node &t) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
@@ -127,6 +168,75 @@ void eval_contract_impl::do_evaluate(const tensor_transf<N + M, double> &trc,
 }
 
 
+template<size_t N, size_t M, size_t K>
+void eval_contract_impl::do_evaluate_ewmult(
+    const tensor_transf<N + M + K, double> &trc, const node &t) {
+
+    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
+    const node &n = m_tree.get_vertex(m_id);
+    const node_contract &nc = n.recast_as<node_contract>();
+
+    if(nc.get_map().size() != K) {
+        throw 232;
+    }
+
+    btensor_i<N + K, double> &bta =
+            tensor_from_node<N + K>(m_tree.get_vertex(e[0]));
+    btensor_i<M + K, double> &btb =
+            tensor_from_node<M + K>(m_tree.get_vertex(e[1]));
+
+    sequence<N + K, size_t> seqa1, seqa2;
+    sequence<M + K, size_t> seqb1, seqb2;
+    sequence<N + M + K, size_t> seqc1, seqc2;
+    mask<N + K> ma;
+    mask<M + K> mb;
+    for(size_t i = 0; i < N + K; i++) seqa1[i] = i;
+    for(size_t i = 0; i < M + K; i++) seqb1[i] = i;
+
+    size_t j = 0;
+    for(typename std::multimap<size_t, size_t>::const_iterator ic =
+            nc.get_map().begin(); ic != nc.get_map().end(); ++ic, j++) {
+        seqa2[N + j] = ic->first;
+        ma[ic->first] = true;
+        seqb2[M + j] = ic->second;
+        mb[ic->second] = true;
+        seqc2[N + M + j] = ic->first;
+    }
+    for(size_t i = 0, j = 0; i < N + K; i++) if(!ma[i]) {
+        seqa2[j] = i;
+        seqc2[j] = i;
+        j++;
+    }
+    for(size_t i = 0, j = 0; i < M + K; i++) if(!mb[i]) {
+        seqb2[j] = i;
+        seqc2[N + j] = N + K + i;
+        j++;
+    }
+    for(size_t i = 0; i < N + K; i++) seqc1[i] = i;
+    for(size_t i = 0, j = 0; i < M + K; i++) if(!mb[i]) {
+        seqc1[N + K + j] = N + K + i;
+        j++;
+    }
+
+    permutation_builder<N + K> pba(seqa2, seqa1);
+    permutation_builder<M + K> pbb(seqb2, seqb1);
+    permutation_builder<N + M + K> pbc(seqc1, seqc2);
+
+    tensor_transf<N + M + K, double> trc1(pbc.get_perm());
+    trc1.transform(trc);
+
+    btod_ewmult2<N, M, K> op(bta, pba.get_perm(), btb, pbb.get_perm(),
+        trc1.get_perm(), trc1.get_scalar_tr().get_coeff());
+    btensor<N + M + K, double> &btc =
+        tensor_from_node<N + M + K>(t, op.get_bis());
+    if(m_add) {
+        op.perform(btc, 1.0);
+    } else {
+        op.perform(btc);
+    }
+}
+
+
 template<size_t NC> template<size_t NA>
 void eval_contract_impl::dispatch_contract_1<NC>::dispatch() {
 
@@ -146,7 +256,30 @@ void eval_contract_impl::dispatch_contract_2<NC, NA>::dispatch() {
         N = NA - K,
         M = NC - N
     };
-    eval.template do_evaluate<N, M, K>(trc, t);
+    eval.template do_evaluate_contract<N, M, K>(trc, t);
+}
+
+
+template<size_t NC> template<size_t NA>
+void eval_contract_impl::dispatch_ewmult_1<NC>::dispatch() {
+
+    enum {
+        Kmin = 1,
+        Kmax = meta_min<NA, NC>::value
+    };
+    dispatch_ewmult_2<NC, NA> d2 = { eval, trc, t, k, na, nb };
+    dispatch_1<Kmin, Kmax>::dispatch(d2, k);
+}
+
+
+template<size_t NC, size_t NA> template<size_t K>
+void eval_contract_impl::dispatch_ewmult_2<NC, NA>::dispatch() {
+
+    enum {
+        N = NA - K,
+        M = NC - N - K
+    };
+    eval.template do_evaluate_ewmult<N, M, K>(trc, t);
 }
 
 

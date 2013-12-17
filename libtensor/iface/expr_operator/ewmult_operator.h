@@ -72,12 +72,12 @@ expr_rhs<N + M - K, T> ewmult(
     const expr_rhs<N, T> &lhs,
     const expr_rhs<M, T> &rhs) {
 
-    static const char *method = "ewmult(const letter_expr<K> &, "
+    static const char method[] = "ewmult(const letter_expr<K> &, "
             "const expr_rhs<N, T> &, const expr_rhs<M, T> &)";
 
     std::multimap<size_t, size_t> map;
     std::vector<const letter *> label;
-    for (size_t i = 0; i < K; i++) {
+    for(size_t i = 0; i < K; i++) {
         const letter &l = ewidx.letter_at(i);
         if(!lhs.contains(l) || !rhs.contains(l)) {
             throw expr_exception(g_ns, "", method, __FILE__, __LINE__,
@@ -90,6 +90,12 @@ expr_rhs<N + M - K, T> ewmult(
     enum {
         NC = N + M - K
     };
+
+    for(size_t i = 0; i < N; i++) label.push_back(&lhs.letter_at(i));
+    for(size_t i = 0; i < M; i++) {
+        const letter &l = rhs.letter_at(i);
+        if(!ewidx.contains(l)) label.push_back(&l);
+    }
 
     expr::expr_tree e(expr::node_contract(NC, map, false));
     expr::expr_tree::node_id_t id = e.get_root();
@@ -113,6 +119,7 @@ expr_rhs<N + M - 1, T> ewmult(
 
     return ewmult(letter_expr<1>(l), bta, btb);
 }
+
 
 } // namespace iface
 
