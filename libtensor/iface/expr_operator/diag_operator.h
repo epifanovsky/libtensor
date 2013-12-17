@@ -26,10 +26,18 @@ expr_rhs<N - M + 1, T> diag(
 
     std::vector<size_t> diagdims(M, 0);
     std::vector<const letter*> label;
+    bool diag_added = false;
     for(size_t i = 0, j = 0; i < N; i++) {
         const letter &l = subexpr.letter_at(i);
-        if (l == let_diag || ! lab_diag.contains(l)) label.push_back(&l);
-        else diagdims[lab_diag.index_of(l)] = i;
+        if(!lab_diag.contains(l)) {
+            label.push_back(&l);
+        } else {
+            if(!diag_added) {
+                label.push_back(&let_diag);
+                diag_added = true;
+            }
+            diagdims[lab_diag.index_of(l)] = i;
+        }
     }
     if(label.size() != NC) {
         throw expr_exception(g_ns, "", "diag(const letter &, "
