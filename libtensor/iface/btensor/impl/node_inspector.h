@@ -36,7 +36,8 @@ public:
     template<size_t N>
     node_with_transf<N> gather_transf() const;
 
-    const node_ident &extract_ident() const;
+    template<size_t N>
+    const node_ident<N, double> &extract_ident() const;
 
 private:
     template<size_t N>
@@ -52,9 +53,9 @@ node_with_transf<N> node_inspector::gather_transf() const {
     if(m_node.get_op().compare(expr::node_transform_base::k_op_type) == 0) {
 
         const node_transform_base &nb = m_node.recast_as<node_transform_base>();
-        if(nb.get_type() != typeid(double)) {
-            throw "Bad type";
-        }
+//        if(nb.get_type() != typeid(double)) {
+//            throw "Bad type";
+//        }
         const node_transform<double> &n =
                 nb.recast_as< node_transform<double> >();
 
@@ -66,6 +67,24 @@ node_with_transf<N> node_inspector::gather_transf() const {
     }
 
     return node_with_transf<N>(m_node);
+}
+
+
+template<size_t N>
+const node_ident<N, double> &node_inspector::extract_ident() const {
+
+    if(m_node.get_op().compare(node_ident_base::k_op_type) == 0) {
+
+        return m_node.recast_as< node_ident<N, double> >();
+
+    } else if(m_node.get_op().compare(node_transform_base::k_op_type) == 0) {
+
+        const node_transform_base &nb = m_node.recast_as<node_transform_base>();
+        return node_inspector(nb.get_arg()).extract_ident();
+
+    }
+
+    throw "No identity node";
 }
 
 

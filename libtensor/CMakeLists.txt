@@ -29,10 +29,10 @@ set(SRC
     iface/btensor/impl/eval_btensor_double_contract.C
     iface/btensor/impl/eval_btensor_double_copy.C
     iface/btensor/impl/eval_btensor_double_diag.C
+    iface/btensor/impl/eval_btensor_double_dirsum.C
     iface/btensor/impl/eval_btensor_double_symm.C
 #    iface/btensor/impl/eval_plan_builder_btensor.C
     iface/btensor/impl/eval_tree_builder_btensor.C
-#    iface/btensor/impl/node_inspector.C
     iface/btensor/impl/node_interm.C
 )
 
