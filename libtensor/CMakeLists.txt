@@ -20,6 +20,7 @@ set(SRC
     symmetry/product_table_i.C
     expr/expr_tree.C
     expr/graph.C
+    expr/node_product.C
     expr/node_statics.C
     expr/print_node.C
     expr/print_tree.C

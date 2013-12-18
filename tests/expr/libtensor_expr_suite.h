@@ -9,6 +9,7 @@
 #include "node_contract_test.h"
 #include "node_diag_test.h"
 #include "node_ident_test.h"
+#include "node_product_test.h"
 #include "node_transform_test.h"
 
 using libtest::unit_test_factory;
@@ -34,6 +35,7 @@ namespace libtensor {
      - libtensor::node_ewmult_test
      - libtensor::node_ident_test
      - libtensor::node_mult_test
+     - libtensor::node_product_test
      - libtensor::node_transform_test
 
     \ingroup libtensor_tests_expr
@@ -47,6 +49,7 @@ private:
     unit_test_factory<node_contract_test> m_utf_node_contract;
     unit_test_factory<node_diag_test> m_utf_node_diag;
     unit_test_factory<node_ident_test> m_utf_node_ident;
+    unit_test_factory<node_product_test> m_utf_node_product;
     unit_test_factory<node_transform_test> m_utf_node_transform;
 
 public:

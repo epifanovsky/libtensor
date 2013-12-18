@@ -219,6 +219,7 @@ set(SRC_EXPR
     expr/node_contract_test.C
     expr/node_diag_test.C
     expr/node_ident_test.C
+    expr/node_product_test.C
     expr/node_transform_test.C
 )
 
