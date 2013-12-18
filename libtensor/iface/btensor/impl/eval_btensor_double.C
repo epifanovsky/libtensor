@@ -2,12 +2,14 @@
 #include <libtensor/iface/btensor.h>
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_diag.h>
 #include <libtensor/expr/node_transform.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
 #include "node_interm.h"
 #include "eval_btensor_double_contract.h"
 #include "eval_btensor_double_copy.h"
+#include "eval_btensor_double_diag.h"
 #include "eval_btensor_double_symm.h"
 #include "eval_tree_builder_btensor.h"
 
@@ -94,6 +96,10 @@ void eval_node::evaluate(const node &lhs) {
     } else if(n.get_op().compare(node_contract::k_op_type) == 0) {
 
         eval_btensor_double::contract(m_tree, rhs, m_add).evaluate(tr, lhs);
+
+    } else if(n.get_op().compare(node_diag::k_op_type) == 0) {
+
+        eval_btensor_double::diag(m_tree, rhs, m_add).evaluate(tr, lhs);
 
     } else if(n.get_op().compare(node_symm_base::k_op_type) == 0) {
 

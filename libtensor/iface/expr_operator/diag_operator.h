@@ -7,7 +7,7 @@ namespace libtensor {
 namespace iface {
 
 
-/** \brief Extraction of a general tensor diagonal (expression)
+/** \brief Extraction of a general tensor diagonal
     \tparam N Tensor order.
     \tparam M Diagonal order.
     \tparam T Tensor element type.
@@ -34,7 +34,7 @@ expr_rhs<N - M + 1, T> diag(
         }
     }
 
-    expr::node_diag ndiag(NC, idx);
+    expr::node_diag ndiag(NC, idx, 0);
     ndiag.build_output_indices(oidx);
 
     std::vector<const letter*> label(N - M + 1, 0);
@@ -42,7 +42,7 @@ expr_rhs<N - M + 1, T> diag(
         if(oidx[i] == 0) {
             label[i] = &let_diag;
         } else {
-            label[i] = &subexpr.letter_at(oidx[i]);
+            label[i] = &subexpr.letter_at(oidx[i] - 1);
         }
     }
 
