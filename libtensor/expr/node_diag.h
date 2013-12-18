@@ -2,31 +2,32 @@
 #define LIBTENSOR_EXPR_NODE_DIAG_H
 
 #include <vector>
-#include "node.h"
+#include "node_product.h"
 
 namespace libtensor {
 namespace expr {
 
 
-/** \brief Tensor diagonal node of the expression tree
+/** \brief Expression node: extraction of a general diagonal
 
-    The tensor diagonal is taken over the indexes specified by diagdims.
+    This expression node represent the extraction of a general diagonal from
+    a tensor or subexpression, which a single argument to this operation.
+
+    See node_product for a full description of the data structure.
 
     \ingroup libtensor_expr
  **/
-class node_diag : public node {
+class node_diag : public node_product {
 public:
     static const char k_op_type[]; //!< Operation type
 
-private:
-    std::vector<size_t> m_ddims; //!< Dimensions to take the diagonal from
-
 public:
     /** \brief Creates an identity node
-        \param n Order of result
+        \param n Order of result.
+        \param idx Tensor indices.
      **/
-    node_diag(size_t n, const std::vector<size_t> &diagdims) :
-        node(node_diag::k_op_type, n), m_ddims(diagdims)
+    node_diag(size_t n, const std::vector<size_t> &idx) :
+        node_product(node_diag::k_op_type, n, idx)
     { }
 
     /** \brief Virtual destructor
@@ -39,11 +40,6 @@ public:
         return new node_diag(*this);
     }
 
-    /** \brief Returns the dimensions the diagonal is taken off
-     **/
-    const std::vector<size_t> &get_diag_dims() const {
-        return m_ddims;
-    }
 };
 
 

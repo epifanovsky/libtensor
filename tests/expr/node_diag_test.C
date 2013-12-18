@@ -1,4 +1,4 @@
-#include <algorithm>
+#include <memory>
 #include <libtensor/exception.h>
 #include <libtensor/expr/node_diag.h>
 #include <libtensor/expr/node_ident.h>
@@ -22,15 +22,14 @@ void node_diag_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    std::vector<size_t> diag_dims(2);
-    for (size_t i = 0; i < 2; i++) diag_dims[i] = i + 1;
+    std::vector<size_t> idx(2);
+    idx[0] = 0; idx[1] = 0;
 
-    node_diag d1(1, diag_dims);
+    node_diag d1(1, idx);
 
-    node_diag *d1copy = d1.clone();
-    if (d1copy->get_diag_dims() != diag_dims) {
-        fail_test(testname, __FILE__, __LINE__,
-                "Inconsistent diagonal dimensions.");
+    std::auto_ptr<node_diag> d1copy(d1.clone());
+    if(d1copy->get_idx() != idx) {
+        fail_test(testname, __FILE__, __LINE__, "Inconsistent tensor indices.");
     }
 
     } catch(exception &e) {
