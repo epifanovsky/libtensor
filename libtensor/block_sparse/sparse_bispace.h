@@ -933,26 +933,6 @@ sparse_bispace<M+N> sparsity_expr<M,N>::operator<<(const std::vector< sequence<N
     return sparse_bispace<M+N>(m_parent_bispace,std::vector< sparse_bispace<1> >(subspaces.begin(),subspaces.end()),sig_blocks);
 }
 
-template<size_t N>
-size_t sparse_bispace<N>::set_offsets(impl::sparse_block_tree_any_order& tree,const std::vector<size_t>& positions)
-{
-    size_t offset = 0; 
-    for(impl::sparse_block_tree_any_order::iterator it = tree.begin(); it != tree.end(); ++it)
-    {
-        //TODO: Put a real size in here
-        *it = std::vector< std::pair<size_t,size_t> >(1,std::make_pair(offset,0));
-        //Compute the size of this block and increment offset
-        const std::vector<size_t>& key = it.key();
-        size_t incr = 1;
-        for(size_t i = 0; i < tree.get_order(); ++i)
-        {
-            incr *= m_subspaces[positions[i]].get_block_size(key[i]);
-        }
-        offset += incr;
-    }
-    return offset;
-}
-
 //TODO: Make this immutable, etc?? Need to make this class hard to abuse
 //Type erasure class for sparse_bispaces.
 //Used in functions that can take a number of sparse bispaces of different order as arguments
