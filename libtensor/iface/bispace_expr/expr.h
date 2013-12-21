@@ -86,7 +86,7 @@ public:
         const expr<N, D> &other, permutation<N> &perm) const {
         size_t seq1[N], seq2[N];
         for(size_t i = 0; i < N; i++) seq1[i] = i;
-        record_pos<N, D>(other, 0, seq2);
+        record_pos(other, 0, seq2);
         permutation_builder<N> pb(seq2, seq1);
         perm.permute(pb.get_perm());
     }
@@ -95,7 +95,7 @@ public:
     void record_pos(const expr<M, D> &supexpr, size_t pos_here,
         size_t (&perm)[M]) const {
 
-        m_core.record_pos<M, D>(supexpr, pos_here, perm);
+        m_core.record_pos(supexpr, pos_here, perm);
     }
 
     void mark_sym(size_t i, mask<N> &msk) const {
