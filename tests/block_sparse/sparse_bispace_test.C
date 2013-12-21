@@ -3,11 +3,8 @@
 #include <vector>
 #include "sparse_bispace_test.h"
 
-//TODO: REMOVE
-#include <iostream>
-
 namespace libtensor {
-   
+
 void sparse_bispace_test::perform() throw(libtest::test_exception) {
 
         test_get_dim();

@@ -1,6 +1,7 @@
 #include "sparse_block_tree.h"
 #include "sparse_block_tree_iterator.h"
 #include "range.h"
+#include "sparse_bispace.h"
 
 //TODO REMOVE
 #include <iostream>
@@ -10,7 +11,31 @@ namespace libtensor {
 namespace impl {
 
 //Used to return empty trees by sub_tree
-static const sparse_block_tree_any_order empty = sparse_block_tree<1>(std::vector< sequence<1,size_t> >());
+static const sparse_block_tree_any_order empty = sparse_block_tree<1>(std::vector< sequence<1,size_t> >(),std::vector< sparse_bispace<1> >(1,sparse_bispace<1>(1)));
+
+void sparse_block_tree_any_order::set_offsets_sizes_nnz(const std::vector< sparse_bispace<1> >& subspaces)
+{
+    if(subspaces.size() != m_order)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order","sparse_block_tree_any_order(...)",
+                            __FILE__,__LINE__,"Not enough subspaces specified!");
+    }
+
+    size_t offset = 0;
+    for(iterator it = begin(); it != end(); ++it)
+    {
+        std::vector<key_t> key = it.key();
+        size_t size = 1;
+        for(size_t i = 0; i < m_order; ++i)
+        {
+            size *= subspaces[i].get_block_size(key[i]);
+        }
+        *it = value_t(1,std::make_pair(offset,size));
+        offset += size;
+    }
+    
+    m_nnz = offset;
+}
 
 sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse_block_tree_any_order& rhs)
 {
@@ -160,65 +185,41 @@ sparse_block_tree_any_order sparse_block_tree_any_order::permute(const runtime_p
     return sbt;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contract_idx) const
+sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contract_idx,const std::vector< sparse_bispace<1> >& subspaces) const
 {
-    std::vector< std::pair< key_vec, value_t > > kv_pairs;
-    size_t out_order = m_order - 1;
+    if(subspaces.size() != m_order - 1)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order","contract(...)",
+            __FILE__,__LINE__,"not enough subspaces specified"); 
+    }
+
+    std::vector< key_vec > contracted_keys;
     for(const_iterator it = begin(); it != end(); ++it)
     {
-        key_vec key = it.key(); 
-        key_vec new_key(out_order);
-
-        size_t new_key_idx = 0;
-        for(size_t key_idx = 0; key_idx < m_order; ++key_idx)
-        {
-            if(key_idx == contract_idx)
-            {
-                continue;
-            }
-
-            new_key[new_key_idx] = key[key_idx];
-            ++new_key_idx;
-        }
-        kv_pairs.push_back(std::make_pair(new_key,*it));
+        key_vec new_key(it.key());
+        new_key.erase(new_key.begin()+contract_idx);
+        contracted_keys.push_back(new_key);
     }
+    std::sort(contracted_keys.begin(),contracted_keys.end());
 
-    std::sort(kv_pairs.begin(),kv_pairs.end(),kv_pair_compare());
 
-
-    std::vector<key_vec> all_keys;
-    std::vector<value_t> all_vals;
-
-    for(size_t i = 0; i < kv_pairs.size(); ++i)
+    //Filter the unique keys only
+    std::vector<key_vec> unique_keys;
+    for(size_t i = 0; i < contracted_keys.size(); ++i)
     {
-        //Remove the duplicate keys, if there are any
-        if(i != 0)
+        if(i > 0)
         {
-            bool equal = true;
-            for(size_t j = 0; j < out_order; ++j)
-            {
-                if(kv_pairs[i].first[j] != kv_pairs[i-1].first[j])
-                {
-                    equal = false;
-                    break;
-                }
-            }
-            if(equal)
+            if(contracted_keys[i] == contracted_keys[i-1])
             {
                 continue;
             }
         }
-        all_keys.push_back(kv_pairs[i].first);
-        all_vals.push_back(kv_pairs[i].second);
+        unique_keys.push_back(contracted_keys[i]);
     }
 
-    sparse_block_tree_any_order sbt(all_keys,out_order);
-    size_t m = 0; 
-    for(iterator it = sbt.begin(); it != sbt.end(); ++it)
-    {
-        *it = all_vals[m];
-        ++m;
-    }
+
+    sparse_block_tree_any_order sbt(unique_keys,m_order - 1);
+    sbt.set_offsets_sizes_nnz(subspaces);
     return sbt;
 }
 

@@ -226,6 +226,7 @@ set(SRC_DIAG_TENSOR
 set(SRC_BLOCK_SPARSE
     block_sparse/sparse_block_tree_any_order.C
     block_sparse/block_loop.C
+    block_sparse/sparse_loop_iterator.C
     block_sparse/sparse_loop_list.C
     block_sparse/loop_list_sparsity_data.C
     block_sparse/range.C

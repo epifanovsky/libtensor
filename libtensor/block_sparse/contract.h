@@ -49,11 +49,6 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
     sparse_loop_list sll(bispaces);
     for(size_t i = 0; i < M+N-(2*K); ++i)
     {
-        sequence<1,size_t> output_bispace_indices(i);
-        sequence<2,size_t> input_bispace_indices;
-        sequence<1,bool> output_ignore(false);
-        sequence<2,bool> input_ignore(false);
-
         const letter& a = C.letter_at(i);
 
         //Ensure that this index should actually be appearing on the LHS

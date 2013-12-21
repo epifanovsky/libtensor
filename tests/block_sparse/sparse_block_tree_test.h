@@ -21,6 +21,11 @@ private:
     **/
     void test_unsorted_input() throw(libtest::test_exception);
 
+    /** \brief Test that get_nnz returns the correct number of nonzero elements
+     *         in the tensor corresponding to this tree 
+    **/
+    void test_get_nnz_2d() throw(libtest::test_exception);
+
     /** \brief Test that two things that aren't equal are shown as such 
     **/
     void test_equality_false_2d() throw(libtest::test_exception);
@@ -69,7 +74,6 @@ private:
 
     /** \brief Fuses multiple trees into one
      **/
-    void test_fuse_2d_2d() throw(libtest::test_exception);
     void test_fuse_3d_2d() throw(libtest::test_exception);
     void test_fuse_3d_3d_non_contiguous() throw(libtest::test_exception);
     void test_fuse_3d_3d_multi_index() throw(libtest::test_exception);

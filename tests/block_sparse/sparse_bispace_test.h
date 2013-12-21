@@ -127,7 +127,6 @@ private:
     void test_fuse_3d_3d_no_overlap() throw(libtest::test_exception);
     void test_fuse_3d_3d_invalid_no_match() throw(libtest::test_exception);
 
-
     /*  ALL TESTS INVOLVING SPARSITY!!
      *
      */
@@ -141,6 +140,7 @@ private:
     void test_get_block_offset_3d_fully_sparse() throw(libtest::test_exception);
     void test_equality_false_sparsity_2d() throw(libtest::test_exception);
     void test_equality_true_sparsity_2d() throw(libtest::test_exception);
+
 
 };
 

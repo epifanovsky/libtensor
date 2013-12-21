@@ -18,12 +18,12 @@ public:
     typedef sparse_block_tree_any_order::iterator iterator;
 
     //Constructor - just exposes the base class constructor
-    sparse_block_tree(const std::vector< sequence<N,size_t> >& sig_blocks) : sparse_block_tree_any_order(sig_blocks) {};
+    sparse_block_tree(const std::vector< sequence<N,size_t> >& sig_blocks,const std::vector< sparse_bispace<1> >& subspaces) : sparse_block_tree_any_order(sig_blocks,subspaces) {};
 
     //Wraps base class method
     sparse_block_tree<N> permute(const runtime_permutation& perm) const { return sparse_block_tree_any_order::permute(perm); }
 
-    sparse_block_tree<N-1> contract(size_t contract_idx) const { return sparse_block_tree_any_order::contract(contract_idx); }
+    sparse_block_tree<N-1> contract(size_t contract_idx,const std::vector< sparse_bispace<1> >& subspaces) const { return sparse_block_tree_any_order::contract(contract_idx,subspaces); }
 
     template<size_t M,size_t K>
     sparse_block_tree<N+M-K> fuse(const sparse_block_tree<M>& rhs,const sequence<K,size_t>& lhs_indices,const sequence<K,size_t>& rhs_indices) const;
@@ -31,6 +31,10 @@ public:
     //Convenience wrapper for the most common case when we just want to fuse end to end
     template<size_t M>
     sparse_block_tree<N+M-1> fuse(const sparse_block_tree<M>& rhs) const { return sparse_block_tree_any_order::fuse(rhs); }
+
+    void set_offsets_sizes_nnz(const std::vector< sparse_bispace<1> >& subspaces) { sparse_block_tree_any_order::set_offsets_sizes_nnz(subspaces); }
+
+    size_t get_nnz() const { return sparse_block_tree_any_order::get_nnz(); }
 
 
     //Friend for contract(), fuse()

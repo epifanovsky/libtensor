@@ -41,7 +41,7 @@ public:
     /** \brief Creates the sparse block %index space with a given dimension
         \param dim Number of elements in this space.
      **/
-    sparse_bispace(size_t dim);
+    explicit sparse_bispace(size_t dim);
     
     /** \brief Returns the dimension of the block index space 
      **/
@@ -492,15 +492,14 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::ve
     }
 
     //Initialize the new sparse_block_tree with offset information  
-    impl::sparse_block_tree<L> sbt(sig_blocks);
+    impl::sparse_block_tree<L> sbt(sig_blocks,m_subspaces);
     std::vector<size_t>  positions(L);
     for(size_t i = 0; i < L; ++i)
     {
         positions[i] = N-L+i;
     }
 
-    size_t dim = set_offsets(sbt,positions);
-    m_sparse_block_tree_dimensions.push_back(dim);
+    m_sparse_block_tree_dimensions.push_back(sbt.get_nnz());
     m_sparse_block_trees.push_back(sbt);
     m_sparse_indices_sets_offsets.push_back(N-L);
 
@@ -581,7 +580,7 @@ size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indi
             {
                 outer_size_scale_fac *= m_subspaces[subspace_idx+outer_size_idx].get_block_size(cur_key[outer_size_idx]);
             }
-            abs_index = (*sbt.search(cur_key))[0];
+            abs_index = (*sbt.search(cur_key))[0].first;
             ++cur_sparse_indices_set_idx;
             subspace_idx += cur_order;
         }
@@ -643,7 +642,7 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
         //Convert the parts of the permutation that apply to this tree into 
         //tree-relative indices
         std::vector<size_t> perm_entries;
-        std::vector<size_t> final_positions;
+        std::vector< sparse_bispace<1> > tree_subspaces;
         for(size_t order_idx = 0; order_idx < order; ++order_idx)
         {
             //Where do 
@@ -659,7 +658,7 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
             perm_entries.push_back(rel_idx);
 
             //We have ALREADY permuted m_subspaces, so we must save the ORIGINAL POSITION, not the DEST
-            final_positions.push_back(sparse_set_offset+order_idx);
+            tree_subspaces.push_back(m_subspaces[src_idx]);
         }
 
         runtime_permutation tree_perm(perm_entries);
@@ -667,7 +666,7 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
         if(tree_perm != runtime_permutation(order))
         {
             copy.m_sparse_block_trees[i] = m_sparse_block_trees[i].permute(tree_perm);
-            copy.set_offsets(copy.m_sparse_block_trees[i],final_positions);
+            copy.m_sparse_block_trees[i].set_offsets_sizes_nnz(tree_subspaces);
         }
     }
     return copy;
@@ -707,21 +706,20 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
             }
             else
             {
-                //Tree-relative idx
-                size_t rel_idx = contract_idx - offset;
 
-                //What are the indices of the bispaces to which this tree now refers?
-                std::vector<size_t> positions(order-1);
-                for(size_t i = 0; i < order-1; ++i)
+                //What are the subspaces relevant to this tree?
+                std::vector< sparse_bispace<1> > tree_subspaces;
+                std::vector<size_t> positions;
+                for(size_t subspace_idx = new_group_offset; subspace_idx < new_group_offset+order-1; ++subspace_idx)
                 {
-                    positions[i] = offset+i;
+                    tree_subspaces.push_back(m_subspaces[subspace_idx]);
+                    positions.push_back(subspace_idx);
                 }
 
-                //Set the values of the tree to the offsets of each block within the relevant subspace group
-                impl::sparse_block_tree_any_order new_tree = cur_tree.contract(rel_idx);
-                size_t offset = set_offsets(new_tree,positions); 
-
-                m_sparse_block_tree_dimensions.push_back(offset);
+                //Tree-relative idx
+                size_t rel_idx = contract_idx - offset;
+                impl::sparse_block_tree_any_order new_tree = cur_tree.contract(rel_idx,tree_subspaces);
+                m_sparse_block_tree_dimensions.push_back(new_tree.get_nnz());
                 m_sparse_block_trees.push_back(new_tree);
                 m_sparse_indices_sets_offsets.push_back(new_group_offset);
             }
@@ -784,14 +782,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
         size_t last_lhs_tree_idx = lhs.m_sparse_block_trees.size() - 1;
         size_t first_rhs_tree_idx = last_lhs_tree_idx + 1;
         m_sparse_block_trees[last_lhs_tree_idx] = m_sparse_block_trees[last_lhs_tree_idx].fuse(m_sparse_block_trees[first_rhs_tree_idx]);
-
-        size_t order = m_sparse_block_trees[last_lhs_tree_idx].get_order();
-        std::vector<size_t> positions(order);
-        for(size_t j = 0; j < positions.size(); ++j)
-        {
-            positions[j] = m_sparse_indices_sets_offsets[last_lhs_tree_idx] + j;
-        }
-        set_offsets(m_sparse_block_trees[last_lhs_tree_idx],positions);
+        m_sparse_block_trees[last_lhs_tree_idx].set_offsets_sizes_nnz(m_subspaces);
 
         //delete the no longer needed rhs tree information
         m_sparse_indices_sets_offsets.erase(m_sparse_indices_sets_offsets.begin() + first_rhs_tree_idx);
@@ -948,7 +939,8 @@ size_t sparse_bispace<N>::set_offsets(impl::sparse_block_tree_any_order& tree,co
     size_t offset = 0; 
     for(impl::sparse_block_tree_any_order::iterator it = tree.begin(); it != tree.end(); ++it)
     {
-        *it = std::vector<size_t>(1,offset);
+        //TODO: Put a real size in here
+        *it = std::vector< std::pair<size_t,size_t> >(1,std::make_pair(offset,0));
         //Compute the size of this block and increment offset
         const std::vector<size_t>& key = it.key();
         size_t incr = 1;
