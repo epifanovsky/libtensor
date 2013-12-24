@@ -2,10 +2,10 @@
 #define LIBTENSOR_GEN_BTO_CONTRACT3_IMPL_H
 
 #include <iterator>
+#include <libtensor/core/contraction2_align.h>
 #include <libtensor/core/short_orbit.h>
 #include <libtensor/symmetry/so_permute.h>
 #include "gen_bto_copy_impl.h"
-#include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_clst_builder.h"
 #include "gen_bto_contract2_nzorb.h"
@@ -93,7 +93,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         //  Compute optimal permutations of A and B to perform 1st contraction
 
-        gen_bto_contract2_align<N1, N2 + K2, K1> align1(m_contr1);
+        contraction2_align<N1, N2 + K2, K1> align1(m_contr1);
 
         const permutation<NA> &perma = align1.get_perma();
         const permutation<NB> &permb = align1.get_permb();
@@ -129,7 +129,7 @@ void gen_bto_contract3<N1, N2, N3, K1, K2, Traits, Timed>::perform(
 
         // Compute optimal permutations of AB and C to perform 2nd contraction
 
-        gen_bto_contract2_align<N1 + N2, N3, K2> align2(m_contr2);
+        contraction2_align<N1 + N2, N3, K2> align2(m_contr2);
 
         const permutation<NAB> &permab2 = align2.get_perma();
         const permutation<NC> &permc = align2.get_permb();
