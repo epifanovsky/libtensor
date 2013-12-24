@@ -301,9 +301,9 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
         aik = ibla->at(0);
         abs_index<K>::get_index(aik, dimsk, ik);
 
-        for(size_t i = 0; i < N; i++) ia[mapai[i]] = ii[i];
-        for(size_t i = 0; i < M; i++) ib[mapbj[i]] = ij[i];
-        for(size_t i = 0; i < K; i++) ia[mapak[i]] = ib[mapbk[i]] = ik[i];
+        for(size_t i = 0; i != N; i++) ia[mapai[i]] = ii[i];
+        for(size_t i = 0; i != M; i++) ib[mapbj[i]] = ij[i];
+        for(size_t i = 0; i != K; i++) ia[mapak[i]] = ib[mapbk[i]] = ik[i];
 
         size_t aia = abs_index<NA>::get_abs_index(ia, bidimsa);
         size_t aib = abs_index<NB>::get_abs_index(ib, bidimsb);
