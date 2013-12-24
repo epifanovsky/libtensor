@@ -144,6 +144,107 @@ public:
 };
 
 
+/** \brief Absolute value of an %index (specialization for zero-order)
+
+    \ingroup libtensor_core
+ **/
+template<>
+class abs_index<0> {
+public:
+    static const char *k_clazz; //!< Class name
+
+private:
+    dimensions<0> m_dims;
+    index<0> m_idx;
+
+public:
+    //!    \name Construction and destruction
+    //@{
+
+    /** \copydoc abs_index<N>::abs_index(const dimensions<N> &)
+     **/
+    abs_index(const dimensions<0> &dims) : m_dims(dims) { }
+
+    /** \copydoc abs_index<N>::abs_index(const index<N> &, const dimensions<N> &)
+     **/
+    abs_index(const index<0> &idx, const dimensions<0> &dims) : m_dims(dims) { }
+
+    /** \copydoc abs_index<N>::abs_index(size_t, const dimensions<N> &)
+     **/
+    abs_index(size_t aidx, const dimensions<0> &dims) : m_dims(dims) { }
+
+    /** \copydoc abs_index<N>::abs_index(const abs_index<N> &)
+     **/
+    abs_index(const abs_index<0> &other) : m_dims(other.m_dims) { }
+
+    //@}
+
+
+    //!    \name Manipulations
+    //@{
+
+    /** \copydoc abs_index<N>::get_dims() const
+     **/
+    const dimensions<0> &get_dims() const {
+        return m_dims;
+    }
+
+    /** \copydoc abs_index<N>::get_index() const
+     **/
+    const index<0> &get_index() const {
+        return m_idx;
+    }
+
+    /** \copydoc abs_index<N>::get_abs_index() const
+     **/
+    size_t get_abs_index() const {
+        return 0;
+    }
+
+    /** \copydoc abs_index<N>::inc()
+     **/
+    bool inc() {
+    	return false;
+    }
+
+    /** \copydoc abs_index<N>::is_last() const
+     **/
+    bool is_last() const {
+        return true;
+    }
+
+    /** \copydoc abs_index<N>::operator++()
+     **/
+    abs_index<0> &operator++() {
+        return *this;
+    }
+
+    //@}
+
+
+    //! \name Absolute index evaluation (static methods)
+    //@{
+
+    /** \copydoc abs_index<N>::get_abs_index(const index<N> &, const dimensions<N> &)
+     **/
+    static size_t get_abs_index(const index<0> &idx, const dimensions<0> &dims) {
+    	return 0;
+    }
+
+    /** \copydoc abs_index<N>::get_index(size_t, const dimensions<N> &, index<N> &)
+     **/
+    static void get_index(size_t aidx, const dimensions<0> &dims,
+        index<0> &idx) {
+    }
+
+    /** \copydoc abs_index<N>::get_index(size_t, const magic_dimensions<N> &, index<N> &)
+     **/
+    static void get_index(size_t aidx, const magic_dimensions<0> &mdims,
+        index<0> &idx) {
+    }
+    //@}
+};
+
 } // namespace libtensor
 
 #endif // LIBTENSOR_ABS_INDEX_H
