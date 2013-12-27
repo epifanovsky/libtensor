@@ -12,6 +12,7 @@
 
 namespace libtensor {
 
+typedef std::vector<size_t> idx_list;
 typedef std::vector<size_t> block_list;
 typedef std::vector<size_t> dim_list;
 typedef std::vector<size_t> offset_list;
