@@ -78,7 +78,7 @@ public:
         return block_tuples_list;
     }
 
-    impl::sparse_block_tree<3> tree;
+    sparse_block_tree<3> tree;
     //Stored separately as a benchmark in incr test
     std::vector< sequence<3,size_t> > block_tuples_list;
     iterator_test_f() : tree(init_keys(),init_subspaces()), block_tuples_list(init_keys())  {}
@@ -98,8 +98,8 @@ void sparse_block_tree_iterator_test::test_begin_3d() throw(libtest::test_except
     static const char *test_name = "sparse_block_tree_iterator_test::test_begin_3d()";
     
     iterator_test_f tf = iterator_test_f();
-    impl::sparse_block_tree<3>& sbt = tf.tree;
-    impl::sparse_block_tree<3>::iterator it = sbt.begin();
+    sparse_block_tree<3>& sbt = tf.tree;
+    sparse_block_tree<3>::iterator it = sbt.begin();
 
     //Check key
     for(size_t i = 0; i < 3; ++i)
@@ -112,7 +112,7 @@ void sparse_block_tree_iterator_test::test_begin_3d() throw(libtest::test_except
     }
 
     //Check value
-    impl::sparse_block_tree<3>::value_t correct_val(1,std::pair<size_t,size_t>(0,8));
+    sparse_block_tree<3>::value_t correct_val(1,std::pair<size_t,size_t>(0,8));
     if((*it) != correct_val)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -131,9 +131,9 @@ void sparse_block_tree_iterator_test::test_end_3d() throw(libtest::test_exceptio
     //Deliberately empty list
     std::vector< sequence<3,size_t> > block_tuples_list;
 
-    impl::sparse_block_tree<3> sbt(block_tuples_list,subspaces);
-    impl::sparse_block_tree<3>::iterator beg = sbt.begin();
-    impl::sparse_block_tree<3>::iterator end = sbt.end();
+    sparse_block_tree<3> sbt(block_tuples_list,subspaces);
+    sparse_block_tree<3>::iterator beg = sbt.begin();
+    sparse_block_tree<3>::iterator end = sbt.end();
 
     if(beg != end)
     {
@@ -147,10 +147,10 @@ void sparse_block_tree_iterator_test::test_incr_3d() throw(libtest::test_excepti
     static const char *test_name = "sparse_block_tree_iterator_test::test_incr_3d()";
 
     iterator_test_f tf = iterator_test_f();
-    impl::sparse_block_tree<3>& sbt = tf.tree;
+    sparse_block_tree<3>& sbt = tf.tree;
 
     size_t m = 0;  
-    for(impl::sparse_block_tree<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
+    for(sparse_block_tree<3>::iterator sbt_it = sbt.begin(); sbt_it != sbt.end(); ++sbt_it)
     {
         std::vector<size_t> key = sbt_it.key();
         for(size_t i = 0; i < 2; ++i)

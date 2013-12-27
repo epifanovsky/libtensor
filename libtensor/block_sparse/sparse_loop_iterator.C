@@ -4,8 +4,6 @@ using namespace std;
 
 namespace libtensor {
 
-namespace impl {
-
 sparse_loop_iterator::sparse_loop_iterator(const sparse_bispace<1>& subspace,const vector< size_t_pair >& bispaces_and_index_groups) : m_subspaces(1,subspace),
                                                                                                                                        m_bispaces_and_index_groups(bispaces_and_index_groups),
                                                                                                                                        m_sp_it_begin(NULL),m_sp_it_end(NULL),m_cur_block(0)
@@ -80,7 +78,5 @@ sparse_loop_iterator::~sparse_loop_iterator()
         delete m_sp_it_end;
     }
 }
-
-} // namespace impl
 
 } // namespace libtensor

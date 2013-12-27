@@ -6,8 +6,6 @@
 
 namespace libtensor {
 
-namespace impl {
-    
 template<size_t N>
 class sparse_block_tree : public sparse_block_tree_any_order
 {
@@ -49,8 +47,6 @@ sparse_block_tree<N+M-K> sparse_block_tree<N>::fuse(const sparse_block_tree<M>& 
     std::vector<size_t> rhs_vec(&rhs_indices[0],&rhs_indices[0]+K);
     return sparse_block_tree_any_order::fuse(rhs,lhs_vec,rhs_vec);
 }
-
-} // namespace impl
 
 } // namespace libtensor
 

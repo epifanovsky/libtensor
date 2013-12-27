@@ -52,8 +52,8 @@ public:
                      spb_A(init_bispaces()[0]|init_bispaces()[2]),
                      spb_B(init_bispaces()[2]|init_bispaces()[1])
     {
-        dense_bispaces_and_index_groups.push_back(impl::size_t_pair(0,0));
-        dense_bispaces_and_index_groups.push_back(impl::size_t_pair(1,0));
+        dense_bispaces_and_index_groups.push_back(size_t_pair(0,0));
+        dense_bispaces_and_index_groups.push_back(size_t_pair(1,0));
     }
 };
 
@@ -84,14 +84,14 @@ private:
         return subspaces;
     }
 public:
-    vector< impl::size_t_pair > sparse_bispaces_and_index_groups;
-    impl::sparse_block_tree<2>  sbt_A;
+    vector< size_t_pair > sparse_bispaces_and_index_groups;
+    sparse_block_tree<2>  sbt_A;
 
     sparse_test_f() : sbt_A(init_block_tuples_list(),init_subspaces())
     {
         //The 'A' entry is now sparse,replace with the 'B' entry for 'k'
-        dense_bispaces_and_index_groups.back() = impl::size_t_pair(2,0);
-        sparse_bispaces_and_index_groups.push_back(impl::size_t_pair(1,0));
+        dense_bispaces_and_index_groups.back() = size_t_pair(2,0);
+        sparse_bispaces_and_index_groups.push_back(size_t_pair(1,0));
 
     }
 };
@@ -116,7 +116,7 @@ void sparse_loop_iterator_test::test_set_offsets_and_dims_dense() throw(libtest:
     vector< offset_list > offset_lists(3,offset_list(2,1337));
     vector< dim_list > dim_lists(3,dim_list(2,1337));
 
-    impl::sparse_loop_iterator sli(tf.spb_A[0],tf.dense_bispaces_and_index_groups);
+    sparse_loop_iterator sli(tf.spb_A[0],tf.dense_bispaces_and_index_groups);
     sli.set_offsets_and_dims(offset_lists,dim_lists);
 
     //Benchmark values
@@ -163,7 +163,7 @@ void sparse_loop_iterator_test::test_increment_dense() throw(libtest::test_excep
     }
 
     size_t i = 0;
-    for(impl::sparse_loop_iterator sli(tf.spb_A[0],tf.dense_bispaces_and_index_groups); !sli.done(); ++sli)
+    for(sparse_loop_iterator sli(tf.spb_A[0],tf.dense_bispaces_and_index_groups); !sli.done(); ++sli)
     {
         const vector< offset_list >& correct_offset_lists =  correct_offset_lists_sets[i];
         const vector< dim_list >& correct_dim_lists =  correct_dim_lists_sets[i];
@@ -203,7 +203,7 @@ void sparse_loop_iterator_test::test_set_offsets_and_dims_sparse() throw(libtest
     vector< dim_list > dim_lists(3,dim_list(2,1337));
     dim_lists[1].pop_back();
 
-    impl::sparse_loop_iterator sli(tf.sbt_A,tree_subspaces,tf.dense_bispaces_and_index_groups,tf.sparse_bispaces_and_index_groups);
+    sparse_loop_iterator sli(tf.sbt_A,tree_subspaces,tf.dense_bispaces_and_index_groups,tf.sparse_bispaces_and_index_groups);
     sli.set_offsets_and_dims(offset_lists,dim_lists);
 
     //Benchmark values

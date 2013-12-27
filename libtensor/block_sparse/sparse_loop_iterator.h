@@ -6,8 +6,6 @@
 
 namespace libtensor {
 
-namespace impl {
-
 //TODO: Put this in sparse_defs.h
 typedef std::pair<size_t,size_t > size_t_pair;
 
@@ -40,8 +38,6 @@ private:
     //Dense iterator
     size_t m_cur_block;
 };
-
-} // namespace impl
 
 } // namespace libtensor
 

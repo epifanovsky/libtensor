@@ -8,7 +8,7 @@ namespace libtensor {
 class sparsity_fuser 
 {
 private:
-    std::vector< impl::sparse_block_tree_any_order > m_trees;
+    std::vector< sparse_block_tree_any_order > m_trees;
     std::vector< idx_list > m_trees_to_loops;
 public:
     sparsity_fuser(std::vector< block_loop >& loops,

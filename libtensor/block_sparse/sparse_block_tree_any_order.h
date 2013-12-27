@@ -12,8 +12,6 @@ class loop_list_sparsity_data;
 template<size_t N>
 class sparse_bispace;
 
-namespace impl {
-
 template<bool is_const>
 class sparse_block_tree_iterator;
 
@@ -188,8 +186,6 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const std::vector< sequ
 
     set_offsets_sizes_nnz(subspaces);
 }
-
-} // namespace impl
 
 } // namespace libtensor
 

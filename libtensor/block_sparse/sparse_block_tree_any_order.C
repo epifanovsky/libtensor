@@ -8,8 +8,6 @@
 
 namespace libtensor {
 
-namespace impl {
-
 //Used to return empty trees by sub_tree
 static const sparse_block_tree_any_order empty = sparse_block_tree<1>(std::vector< sequence<1,size_t> >(),std::vector< sparse_bispace<1> >(1,sparse_bispace<1>(1)));
 
@@ -486,7 +484,5 @@ bool sparse_block_tree_any_order::operator!=(const sparse_block_tree_any_order& 
 }
 
 const char* sparse_block_tree_any_order::k_clazz = "sparse_block_tree_any_order";
-
-} // namespace impl
 
 } // namespace libtensor

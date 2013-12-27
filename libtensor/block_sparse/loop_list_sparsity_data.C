@@ -42,7 +42,7 @@ loop_list_sparsity_data::loop_list_sparsity_data(
 
 		for(size_t group_idx = 0; group_idx < cur_bispace.get_n_sparse_groups(); ++group_idx)
 		{
-			impl::sparse_block_tree_any_order cur_tree = cur_bispace.get_sparse_group_tree(group_idx);
+			sparse_block_tree_any_order cur_tree = cur_bispace.get_sparse_group_tree(group_idx);
 			size_t group_offset = cur_bispace.get_sparse_group_offset(group_idx);
 			size_t lhs_ini_order = cur_tree.get_order();
 
@@ -82,7 +82,7 @@ loop_list_sparsity_data::loop_list_sparsity_data(
 			{
 				size_t lhs_order = cur_tree.get_order();
 				size_t rhs_tree_idx = trees_to_fuse[tree_to_fuse_idx];
-				const impl::sparse_block_tree_any_order& rhs_tree = m_trees[rhs_tree_idx];
+				const sparse_block_tree_any_order& rhs_tree = m_trees[rhs_tree_idx];
 
 				//Determine common indices between lhs and rhs trees
 				std::vector<size_t> lhs_fuse_inds;
@@ -179,7 +179,7 @@ block_list loop_list_sparsity_data::get_sig_block_list(
 	else
 	{
 		size_t tree_idx = ltt_it->second.first;
-		const impl::sparse_block_tree_any_order& cur_tree = m_trees[tree_idx];
+		const sparse_block_tree_any_order& cur_tree = m_trees[tree_idx];
 
 		//Extract the loop indices that are relevant to this tree
 		//How many indices deep are we into this tree?
@@ -198,7 +198,7 @@ block_list loop_list_sparsity_data::get_sig_block_list(
 				}
 			}
 		}
-        const impl::sparse_block_tree_any_order& sub_tree = cur_tree.get_sub_tree(sub_key);
+        const sparse_block_tree_any_order& sub_tree = cur_tree.get_sub_tree(sub_key);
 		return sub_tree.m_keys;
 	}
 }

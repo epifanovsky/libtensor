@@ -13,7 +13,7 @@ sparsity_fuser::sparsity_fuser(std::vector< block_loop >& loops,
         for(size_t tree_idx = 0; tree_idx < bispace.get_n_sparse_groups(); ++tree_idx)
         {
             m_trees_to_loops.push_back(idx_list());
-            const impl::sparse_block_tree_any_order& tree = bispace.get_sparse_group_tree(tree_idx);
+            const sparse_block_tree_any_order& tree = bispace.get_sparse_group_tree(tree_idx);
             m_trees.push_back(tree);
             size_t min = bispace.get_sparse_group_offset(tree_idx);
             size_t max = min + tree.get_order();

@@ -8,8 +8,6 @@
 
 namespace libtensor {
 
-namespace impl {
-
 /* Used to allow for shared code between const and non-const iterators
  * A convenient workaround for the fact that member variables cannot be overwritten
  */
@@ -178,8 +176,6 @@ bool sparse_block_tree_iterator<is_const>::operator!=(const sparse_block_tree_it
 {
     return !(*this == rhs);
 }
-
-} // namespace impl
 
 } // namespace libtensor
 
