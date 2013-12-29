@@ -18,7 +18,9 @@ class sparsity_fuser_test : public libtest::unit_test
 public:
     virtual void perform() throw(libtest::test_exception);
 private:
-    void test_get_loops_accessing_tree() throw(libtest::test_exception);
+    void test_get_loops_for_tree() throw(libtest::test_exception);
+    void test_get_trees_for_loop() throw(libtest::test_exception);
+    void test_fuse() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
