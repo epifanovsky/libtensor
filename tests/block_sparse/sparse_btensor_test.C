@@ -32,8 +32,6 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_3d_2d_sparse_sparse();
     test_contract2_two_indices_3d_3d_dense_dense();
     test_contract2_two_indices_3d_3d_sparse_sparse();
-
-//    test_performance();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -1478,76 +1476,6 @@ void sparse_btensor_test::test_contract2_two_indices_3d_3d_sparse_sparse() throw
                 "contract(...) did not produce correct result");
     }
 
-}
-
-void sparse_btensor_test::test_performance()
-{
-    //500 basis function calculation
-    size_t N = 500;
-
-    //Fix everything at a d shell
-    std::vector<size_t> split_points_mu;
-    size_t incr = 5;
-    for(size_t i = 5; i < N; i += incr)
-    {
-        split_points_mu.push_back(i);
-    }
-    size_t n_blocks = split_points_mu.size() + 1;
-
-    //TODO: Using just 1 block for debugging
-    //Need 20 neighbor shells, distribute pseudorandomly about this shell
-    size_t n_neighbors = 20;
-    std::vector< sequence<2,size_t> > sig_blocks;
-    for(size_t i = 0; i < n_blocks; ++i)
-    {
-		//Lesser neighbors
-    	for(size_t so_far = n_neighbors/2; so_far >= 0; --so_far)
-    	{
-    		if(so_far > i)
-    		{
-    			break;
-    		}
-    		else
-    		{
-    			sequence<2,size_t> new_key;
-    			new_key[0] = i;
-    			new_key[1] = i - so_far;
-    			sig_blocks.push_back(new_key);
-    		}
-    	}
-
-    	//Greater neighbors
-    	for(size_t so_far = 1; so_far < n_neighbors/2; ++so_far)
-    	{
-    		if(i + so_far > n_blocks - 1)
-    		{
-    			break;
-    		}
-    		else
-    		{
-    			sequence<2,size_t> new_key;
-    			new_key[0] = i;
-    			new_key[1] = i + so_far;
-    			sig_blocks.push_back(new_key);
-    		}
-    	}
-    }
-
-    sparse_bispace<1> mu(N);
-    mu.split(split_points_mu);
-    sparse_bispace<3> spb_A = mu % mu << sig_blocks | mu;
-    sparse_bispace<3> spb_B = mu | mu % mu << sig_blocks;
-
-    letter i,j,k,l;
-    sparse_bispace<2> spb_C = mu | mu;
-
-    double* A_arr = new double[spb_A.get_nnz()];
-    double* B_arr = new double[spb_B.get_nnz()];
-
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<3> B(spb_B,B_arr,true);
-    sparse_btensor<2> C(spb_C);
-    C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
 }
 
 } // namespace libtensor
