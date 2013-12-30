@@ -17,6 +17,7 @@ typedef std::vector<size_t> block_list;
 typedef std::vector<size_t> dim_list;
 typedef std::vector<size_t> offset_list;
 typedef std::pair<size_t,size_t> off_dim_pair;
+typedef std::vector< std::pair<size_t,size_t> > off_dim_pair_list;
 typedef std::pair<size_t,size_t> idx_pair;
 
 } // namespace libtensor

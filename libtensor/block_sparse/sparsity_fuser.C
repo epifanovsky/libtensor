@@ -54,6 +54,17 @@ idx_list sparsity_fuser::get_trees_for_loop(size_t loop_idx) const
     return m_trees_for_loops[loop_idx];
 }
 
+vector<off_dim_pair_list> sparsity_fuser::get_offsets_and_sizes(size_t tree_idx) const
+{
+    vector<off_dim_pair_list> offsets_and_sizes;
+    const sparse_block_tree_any_order& tree = m_trees[tree_idx];
+    for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+    {
+        offsets_and_sizes.push_back(*it);
+    }
+    return offsets_and_sizes;
+}
+
 void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list& loop_indices)
 {
     //Find the subspaces lhs and rhs trees  for each loop
@@ -78,6 +89,7 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
     }
 
     //Reassign all loops pointing to the rhs_tree to point to the lhs_tree and the appropriate subspace
+    //Also, now that we have one less tree, decrement all tree indices greater than the rhs_tree_idx
     for(size_t loop_idx = 0; loop_idx < m_trees_for_loops.size(); ++loop_idx)
     {
         idx_list& trees = m_trees_for_loops[loop_idx];
@@ -88,12 +100,35 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
             //If so, delete the reference and add one for the lhs tree in the appropriate position 
             trees.erase(rhs_tree_idx_it);
             idx_list::const_iterator lhs_tree_idx_it = lower_bound(trees.begin(),trees.end(),lhs_tree_idx);
-            if((lhs_tree_idx_it == trees.end()) || (*lhs_tree_idx_it++ != lhs_tree_idx))
+            if((lhs_tree_idx_it == trees.end()) || (*lhs_tree_idx_it != lhs_tree_idx))
             {
                 trees.insert(lhs_tree_idx_it,lhs_tree_idx);
             }
         }
+
+        //Decrement indices larger than rhs_tree_idx
+        for(size_t rel_tree_idx = 0; rel_tree_idx < trees.size(); ++rel_tree_idx)
+        {
+            if(trees[rel_tree_idx] > rhs_tree_idx)
+            {
+                --trees[rel_tree_idx];
+            }
+        }
     }
+
+    //The lhs tree is now associated with all loops that pointed to the RHS tree
+    //TODO: inplace_merge, unique rewrite!!!
+    idx_list& lhs_tree_loops = m_loops_for_trees[lhs_tree_idx];
+    idx_list& rhs_tree_loops = m_loops_for_trees[rhs_tree_idx];
+    for(size_t loop_rel_idx = 0; loop_rel_idx < m_loops_for_trees.size(); ++loop_rel_idx)
+    {
+        size_t rhs_loop = rhs_tree_loops[loop_rel_idx];
+        idx_list::const_iterator lhs_loop_it = lower_bound(lhs_tree_loops.begin(),lhs_tree_loops.end(),rhs_loop);
+        if(lhs_loop_it == lhs_tree_loops.end()) lhs_tree_loops.insert(lhs_loop_it,rhs_loop);
+    }
+
+    //Remove metadata associated with the rhs tree
+    m_loops_for_trees.erase(m_loops_for_trees.begin()+rhs_tree_idx);
 }
 
 } // namespace libtensor
