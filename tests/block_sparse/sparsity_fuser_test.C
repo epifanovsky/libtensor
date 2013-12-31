@@ -61,8 +61,8 @@ public:
         //Sparsity for A
         size_t key_0_arr_A[3] = {2,1,4}; //offset 0
         size_t key_1_arr_A[3] = {2,1,5}; //offset 8
-        size_t key_2_arr_A[3] = {4,5,3}; //offset 16
-        size_t key_3_arr_A[3] = {5,2,5}; //offset 24
+        size_t key_2_arr_A[3] = {2,5,5}; //offset 16
+        size_t key_3_arr_A[3] = {5,4,3}; //offset 24
 
         std::vector< sequence<3,size_t> > sig_blocks_A(4);
         for(size_t i = 0; i < 3; ++i) sig_blocks_A[0][i] = key_0_arr_A[i];
@@ -70,9 +70,21 @@ public:
         for(size_t i = 0; i < 3; ++i) sig_blocks_A[2][i] = key_2_arr_A[i];
         for(size_t i = 0; i < 3; ++i) sig_blocks_A[3][i] = key_3_arr_A[i];
 
+        //Sparsity for B
+        size_t key_0_arr_B[2] = {2,1}; //offset 0
+        size_t key_1_arr_B[2] = {3,2}; //offset 4
+        size_t key_2_arr_B[2] = {4,5}; //offset 8
+        size_t key_3_arr_B[2] = {5,4}; //offset 12
+
+        std::vector< sequence<2,size_t> > sig_blocks_B(4);
+        for(size_t i = 0; i < 2; ++i) sig_blocks_B[0][i] = key_0_arr_B[i];
+        for(size_t i = 0; i < 2; ++i) sig_blocks_B[1][i] = key_1_arr_B[i];
+        for(size_t i = 0; i < 2; ++i) sig_blocks_B[2][i] = key_2_arr_B[i];
+        for(size_t i = 0; i < 2; ++i) sig_blocks_B[3][i] = key_3_arr_B[i];
+
         sparse_bispace<3> spb_C = spb_i % spb_j % spb_k << sig_blocks_C;
         sparse_bispace<3> spb_A = spb_j % spb_i % spb_l << sig_blocks_A;
-        sparse_bispace<2> spb_B = spb_l % spb_k << std::vector< sequence<2,size_t> >();
+        sparse_bispace<2> spb_B = spb_l % spb_k << sig_blocks_B;
 
         bispaces.push_back(spb_C);
         bispaces.push_back(spb_A);
@@ -213,8 +225,9 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
 
     sparsity_fuser sf(tf.loops,tf.bispaces);
 
-    size_t fused_loops_arr[2] = {0,1};
-    idx_list fused_loops(fused_loops_arr,fused_loops_arr+2);
+    /*** FUSE FIRST TWO TREES ***/
+    size_t fused_loops_arr_0[2] = {0,1};
+    idx_list fused_loops(fused_loops_arr_0,fused_loops_arr_0+2);
     sf.fuse(0,1,fused_loops);
 
     //CHECK LOOP->TREE MAPPING
@@ -226,7 +239,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     if(trees_i != correct_trees_i)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for i loop after fusion");
+                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for i loop after fusion 0");
     }
 
     //i and j both refer to same single tree now 
@@ -234,7 +247,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     if(trees_j != correct_trees_i)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for j loop after fusion");
+                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for j loop after fusion 0");
     }
 
     //Now that we only have two trees the B tree index should have declined by 1
@@ -244,7 +257,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     if(trees_k != correct_trees_k)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for k loop after fusion");
+                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for k loop after fusion 0");
     }
 
     //l loop now also associated with the zero tree, making it the same as the k loop
@@ -252,7 +265,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     if(trees_l != correct_trees_k)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for l loop after fusion");
+                "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for l loop after fusion 0");
     }
 
     //CHECK LOOP->TREE MAPPING
@@ -262,7 +275,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     if(loops_0 != correct_loops_0)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 0 after fusion");
+                "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 0 after fusion 0");
     }
 
     idx_list loops_1 = sf.get_loops_for_tree(1);
@@ -271,10 +284,65 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     if(loops_1 != correct_loops_1)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 1 after fusion");
+                "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 1 after fusion 0");
     }
 
     //Check the tree entries
+    vector<off_dim_pair_list> offsets_and_sizes_0 = sf.get_offsets_and_sizes(0);
+    vector<off_dim_pair_list> correct_oas_0;
+    off_dim_pair correct_0_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(0,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_0_arr_0,correct_0_arr_0+2));
+    off_dim_pair correct_1_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(8,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_1_arr_0,correct_1_arr_0+2));
+    off_dim_pair correct_2_arr_0[2] = {off_dim_pair(8,8),off_dim_pair(0,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_2_arr_0,correct_2_arr_0+2));
+    off_dim_pair correct_3_arr_0[2] = {off_dim_pair(8,8),off_dim_pair(8,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_3_arr_0,correct_3_arr_0+2));
+    off_dim_pair correct_4_arr_0[2] = {off_dim_pair(24,8),off_dim_pair(24,8) }; correct_oas_0.push_back(off_dim_pair_list(correct_4_arr_0,correct_4_arr_0+2));
+    off_dim_pair correct_5_arr_0[2] = {off_dim_pair(32,8),off_dim_pair(16,8) }; correct_oas_0.push_back(off_dim_pair_list(correct_5_arr_0,correct_5_arr_0+2));
+    off_dim_pair correct_6_arr_0[2] = {off_dim_pair(40,8),off_dim_pair(16,8) }; correct_oas_0.push_back(off_dim_pair_list(correct_6_arr_0,correct_6_arr_0+2));
+
+    if(offsets_and_sizes_0 != correct_oas_0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_fuser::get_offsets_and_sizes(...) returned incorrect value for tree 0 after fusion 0");
+    }
+
+    /*** FUSE REMAINING TREE ***/
+    size_t fused_loops_arr_1[2] = {2,3};
+    idx_list fused_loops_1(fused_loops_arr_1,fused_loops_arr_1+2);
+    sf.fuse(0,1,fused_loops_1);
+
+    //CHECK LOOP->TREE MAPPING
+    //All loops should now point to the single remaining tree 
+    for(size_t loop_idx = 0; loop_idx < 4; ++loop_idx) 
+    {
+        idx_list trees = sf.get_trees_for_loop(loop_idx);
+        if((trees.size() != 1) || (trees[0] != 0))
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for a loop after fusion 1");
+        }
+
+    }
+
+    //CHECK LOOP->TREE MAPPING
+    //Should get same result as above
+    loops_0 = sf.get_loops_for_tree(0);
+    if(loops_0 != correct_loops_0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 0 after fusion 1");
+    }
+
+    //Check the tree entries
+    vector<off_dim_pair_list> offsets_and_sizes_1 = sf.get_offsets_and_sizes(0);
+    vector<off_dim_pair_list> correct_oas_1;
+    off_dim_pair correct_0_arr_1[3] = {off_dim_pair(8,8),off_dim_pair(8,8),off_dim_pair(12,4)};    correct_oas_1.push_back(off_dim_pair_list(correct_0_arr_1,correct_0_arr_1+3));
+    off_dim_pair correct_1_arr_1[3] = {off_dim_pair(24,8),off_dim_pair(24,8),off_dim_pair(4,4)};   correct_oas_1.push_back(off_dim_pair_list(correct_1_arr_1,correct_1_arr_1+3));
+    off_dim_pair correct_2_arr_1[3] = {off_dim_pair(40,8),off_dim_pair(16,8),off_dim_pair(12,4)};  correct_oas_1.push_back(off_dim_pair_list(correct_2_arr_1,correct_2_arr_1+3));
+
+    if(offsets_and_sizes_1 != correct_oas_1)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_fuser::get_offsets_and_sizes(...) returned incorrect value for tree 0 after fusion 1");
+    }
 }
 
 } // namespace libtensor

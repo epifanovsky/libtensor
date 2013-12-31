@@ -16,11 +16,12 @@ sparsity_fuser::sparsity_fuser(vector< block_loop >& loops,
         for(size_t tree_idx = 0; tree_idx < bispace.get_n_sparse_groups(); ++tree_idx)
         {
             m_loops_for_trees.push_back(idx_list());
-            const sparse_block_tree_any_order& tree = bispace.get_sparse_group_tree(tree_idx);
-            m_trees.push_back(tree);
+            sparse_block_tree_any_order tree = bispace.get_sparse_group_tree(tree_idx);
             size_t min = bispace.get_sparse_group_offset(tree_idx);
             size_t max = min + tree.get_order();
 
+            idx_list perm_entries(tree.get_order());
+            size_t loops_accessing_tree_idx = 0;
             for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
             {
                 const block_loop& loop = loops[loop_idx];
@@ -30,18 +31,19 @@ sparsity_fuser::sparsity_fuser(vector< block_loop >& loops,
                     size_t subspace_looped = loop.get_subspace_looped(bispace_idx);
                     if((min <= subspace_looped) && (subspace_looped < max))
                     {
-                        /*m_trees_for_loops[loop_idx].push_back(all_trees_idx,);*/
-                        /*size_t tree_subspace_looped = subspace_looped - min;*/
                         m_loops_for_trees.back().push_back(loop_idx);
                         m_subspaces_for_loops[loop_idx].push_back(subspace_looped - min);
-                        m_trees_for_loops[loop_idx].push_back(m_trees.size() - 1);
+                        m_trees_for_loops[loop_idx].push_back(m_trees.size());
+                        perm_entries[loops_accessing_tree_idx] = subspace_looped - min;
+                        ++loops_accessing_tree_idx;
                     }
                 }
             }
+
+            //Save the tree permuted into loop order
+            m_trees.push_back(tree.permute(runtime_permutation(perm_entries)));
         }
     }
-
-    //Sort the trees to that the first one is accessed by the earliest loop that accesses any tree
 }
 
 idx_list sparsity_fuser::get_loops_for_tree(size_t tree_idx) const
@@ -68,25 +70,24 @@ vector<off_dim_pair_list> sparsity_fuser::get_offsets_and_sizes(size_t tree_idx)
 void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list& loop_indices)
 {
     //Find the subspaces lhs and rhs trees  for each loop
-    /*idx_list lhs_subspaces;*/
-    /*idx_list rhs_subspaces;*/
+    idx_list lhs_subspaces;
+    idx_list rhs_subspaces;
+    idx_list& lhs_tree_loops = m_loops_for_trees[lhs_tree_idx];
+    idx_list& rhs_tree_loops = m_loops_for_trees[rhs_tree_idx];
     for(size_t i = 0; i < loop_indices.size(); ++i)
     {
         size_t loop_idx = loop_indices[i];
-        /*const idx_list& subspaces = m_subspaces_for_loop[loop_idx];*/
-        /*idx_list::iterator lhs_subspace_pos = lower_bound(subspaces.begin(),subspaces.end(),lhs_tree_idx);*/
-        /*idx_list::iterator rhs_subspace_pos = lower_bound(subspaces.begin(),subspaces.end(),rhs_tree_idx);*/
+        //The tree subspace corresponding to each loop corresponds to its position in the m_loops_for_trees entry
+        idx_list::const_iterator lhs_it = find(lhs_tree_loops.begin(),lhs_tree_loops.end(),loop_idx);
+        idx_list::const_iterator rhs_it = find(rhs_tree_loops.begin(),rhs_tree_loops.end(),loop_idx);
 
-        /*lhs_subspaces.push_back(m_subspaces_for_loops*/
-
-        //Merge the loops records corresponding to the lhs and rhs trees 
-        /*idx_list& lhs_loops = m_loops_for_trees[lhs_tree_idx];*/
-        /*const idx_list& rhs_loops = m_loops_for_trees[rhs_tree_idx];*/
-        /*idx_list merged_loops(lhs_loops.size() + rhs_loops.size());*/
-        /*idx_list::iterator it = set_union(lhs_loops.begin(),lhs_loops.end(),rhs_loops.begin(),rhs_loops.end(),merged_loops.begin());*/
-        /*merged_loops.resize(it - merged_loops.begin());*/
-        /*lhs_loops = merged_loops;*/
+        lhs_subspaces.push_back(lhs_it - lhs_tree_loops.begin());
+        rhs_subspaces.push_back(rhs_it - rhs_tree_loops.begin());
     }
+
+    //Fuse the trees, delete the rhs tree 
+    m_trees[lhs_tree_idx] = m_trees[lhs_tree_idx].fuse(m_trees[rhs_tree_idx],lhs_subspaces,rhs_subspaces);
+    m_trees.erase(m_trees.begin()+rhs_tree_idx);
 
     //Reassign all loops pointing to the rhs_tree to point to the lhs_tree and the appropriate subspace
     //Also, now that we have one less tree, decrement all tree indices greater than the rhs_tree_idx
@@ -117,14 +118,13 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
     }
 
     //The lhs tree is now associated with all loops that pointed to the RHS tree
-    //TODO: inplace_merge, unique rewrite!!!
-    idx_list& lhs_tree_loops = m_loops_for_trees[lhs_tree_idx];
-    idx_list& rhs_tree_loops = m_loops_for_trees[rhs_tree_idx];
-    for(size_t loop_rel_idx = 0; loop_rel_idx < m_loops_for_trees.size(); ++loop_rel_idx)
+    for(size_t loop_rel_idx = 0; loop_rel_idx < rhs_tree_loops.size(); ++loop_rel_idx)
     {
         size_t rhs_loop = rhs_tree_loops[loop_rel_idx];
-        idx_list::const_iterator lhs_loop_it = lower_bound(lhs_tree_loops.begin(),lhs_tree_loops.end(),rhs_loop);
-        if(lhs_loop_it == lhs_tree_loops.end()) lhs_tree_loops.insert(lhs_loop_it,rhs_loop);
+        if(find(loop_indices.begin(),loop_indices.end(),rhs_loop) == loop_indices.end())
+        {
+            lhs_tree_loops.push_back(rhs_loop);
+        }
     }
 
     //Remove metadata associated with the rhs tree
