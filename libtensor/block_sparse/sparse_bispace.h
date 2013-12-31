@@ -102,8 +102,12 @@ public:
     /** Stub methods for general compatibility, even though can't have sparse groups in a 1d bispace
      **/
     size_t get_n_sparse_groups() const { return 0; }
+
     const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
     const size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
+
+    size_t get_n_index_groups() const { return 1; }
+    size_t get_index_group_size() const { return m_dim; }
 
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
@@ -350,6 +354,9 @@ public:
      **/
     const size_t get_sparse_group_offset(size_t group_idx) const;
 
+    size_t get_n_index_groups() const { return m_dimensions.size(); }
+    size_t get_index_group_dim(size_t grp_idx) const { return m_dimensions[grp_idx]; }
+
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order  
      **/
@@ -359,6 +366,7 @@ public:
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
      **/
     bool operator!=(const sparse_bispace<N>& rhs) const;
+
 
 
     //Friend all other types of sparse_bispaces to allow for creation of larger ones from smaller ones
@@ -949,6 +957,8 @@ private:
         virtual size_t get_n_sparse_groups() const  = 0;
         virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
         virtual size_t get_sparse_group_offset(size_t group_idx) const = 0; 
+        virtual size_t get_n_index_groups() const = 0;
+        virtual size_t get_index_group_dim(size_t grp_idx) const = 0;
 
         virtual bool equals(const sparse_bispace_generic_i* rhs) const = 0;
 
@@ -969,6 +979,8 @@ private:
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
         sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
+        size_t get_n_index_groups() const { return m_bispace.get_n_index_groups(); }
+        size_t get_index_group_dim(size_t grp_idx) const { return m_bispace.get_n_index_groups(grp_idx); }
 
         //Same order is assured upstream
         bool equals(const sparse_bispace_generic_i* rhs) const { return m_bispace == static_cast< const sparse_bispace_generic_wrapper<N>* >(rhs)->m_bispace; }
@@ -1000,6 +1012,8 @@ public:
     size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }
     sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
     size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 
+    size_t get_n_index_groups() const { return m_spb_ptr->get_n_index_groups(); }
+    size_t get_index_group_dim(size_t grp_idx) const { return m_spb_ptr->get_index_group_dim(grp_idx); }
 
 
     //We have to check NULL bcs of stupid default constructor hack

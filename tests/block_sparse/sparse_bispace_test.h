@@ -127,6 +127,12 @@ private:
     void test_fuse_3d_3d_no_overlap() throw(libtest::test_exception);
     void test_fuse_3d_3d_invalid_no_match() throw(libtest::test_exception);
 
+    /*
+     * index_group tests
+     */
+    void test_get_n_index_groups() throw(libtest::test_exception);
+    void test_get_index_group_dim() throw(libtest::test_exception);
+
     /*  ALL TESTS INVOLVING SPARSITY!!
      *
      */
