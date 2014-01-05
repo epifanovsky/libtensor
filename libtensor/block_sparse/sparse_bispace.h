@@ -107,7 +107,7 @@ public:
     const size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
 
     size_t get_n_index_groups() const { return 1; }
-    size_t get_index_group_size() const { return m_dim; }
+    size_t get_index_group_dim(size_t grp_idx) const { return m_dim; }
 
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
@@ -980,7 +980,7 @@ private:
         sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
         size_t get_n_index_groups() const { return m_bispace.get_n_index_groups(); }
-        size_t get_index_group_dim(size_t grp_idx) const { return m_bispace.get_n_index_groups(grp_idx); }
+        size_t get_index_group_dim(size_t grp_idx) const { return m_bispace.get_index_group_dim(grp_idx); }
 
         //Same order is assured upstream
         bool equals(const sparse_bispace_generic_i* rhs) const { return m_bispace == static_cast< const sparse_bispace_generic_wrapper<N>* >(rhs)->m_bispace; }

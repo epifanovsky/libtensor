@@ -32,9 +32,11 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_contract2_kernel_2d_2d();
     test_run_block_contract2_kernel_3d_2d();
 
+#if 0
     test_run_fixed_blocks_invalid_bispace_idx();
     test_run_fixed_blocks_not_enough_block_indices();
     test_run_fixed_blocks_bpk_2d();
+#endif
 }
 
 void sparse_loop_list_test::test_add_loop_invalid_loop_bispaces() throw(libtest::test_exception)
@@ -1063,6 +1065,7 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
     }
 }
 
+#if 0
 //Passing a bispace idx > # of bispaces in the loop list in fixed_blocks_map should throw exception
 void sparse_loop_list_test::test_run_fixed_blocks_invalid_bispace_idx() throw(libtest::test_exception)
 {
@@ -1319,5 +1322,6 @@ void sparse_loop_list_test::test_run_fixed_blocks_bpk_2d() throw(libtest::test_e
         }
     }
 }
+#endif
 
 } /* namespace libtensor */

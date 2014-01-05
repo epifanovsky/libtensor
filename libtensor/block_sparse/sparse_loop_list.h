@@ -37,8 +37,6 @@ private:
     				   std::vector<dim_list>& bispace_dim_lists,
     				   std::vector<block_list>& bispace_block_lists,
     				   block_list& loop_indices,
-    				   const fixed_block_map& fbm,
-    				   const loop_fixed_block_map& lfbm,
     				   size_t loop_idx=0);
 public:
 	sparse_loop_list(const std::vector< sparse_bispace_any_order >& bispaces);
@@ -46,7 +44,7 @@ public:
 	void add_loop(const block_loop& loop);
 
 	template<typename T>
-	void run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const fixed_block_map& fixed_blocks = fixed_block_map());
+	void run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs);
 
 	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
 	const std::vector< block_loop >& get_loops() const { return m_loops; }
@@ -60,7 +58,7 @@ public:
 };
 
 template<typename T>
-void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const fixed_block_map& fixed_blocks)
+void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs)
 {
 	if(m_loops.size() == 0)
 	{
@@ -84,6 +82,7 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const
 
 	//Fix appropriate loop indices and block indices/dimensions based on fixed_blocks data
 	block_list loop_indices(m_loops.size());
+#if 0
 	loop_fixed_block_map lfbm;
 	for(fixed_block_map::const_iterator it = fixed_blocks.begin(); it != fixed_blocks.end(); ++it)
 	{
@@ -123,7 +122,8 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const
 			lfbm.insert(std::make_pair(fixed_loop_idx,block_idx));
 		}
 	}
-	_run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,fixed_blocks,lfbm,0);
+#endif
+	_run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,0);
 }
 
 template<typename T>
@@ -133,8 +133,6 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
 				   std::vector<dim_list>& bispace_dim_lists,
 				   std::vector<block_list>& bispace_block_lists,
 				   block_list& loop_indices,
-				   const fixed_block_map& fbm,
-				   const loop_fixed_block_map& lfbm,
 				   size_t loop_idx)
 {
 	//Get the subspace that we are looping over
@@ -153,16 +151,16 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
 
     block_list block_indices;
     //Could the range of this loop be restricted by fixing the blocks of a particular bispace?
-    loop_fixed_block_map::const_iterator lfbm_it = lfbm.find(loop_idx);
-    if(lfbm_it != lfbm.end())
-    {
-    	block_indices.push_back(lfbm_it->second);
-    }
-    else
-    {
+    //loop_fixed_block_map::const_iterator lfbm_it = lfbm.find(loop_idx);
+    //if(lfbm_it != lfbm.end())
+    //{
+        //block_indices.push_back(lfbm_it->second);
+    //}
+    //else
+    //{
 		//Get the list of blocks in that subspace that are significant
     	block_indices = llsd.get_sig_block_list(loop_indices,loop_idx);
-    }
+    //}
 
     for(size_t cur_block_idx = 0; cur_block_idx < block_indices.size(); ++cur_block_idx)
     {
@@ -189,16 +187,16 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
         	for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
         	{
         		//If blocks for a bispace are fixed, we assume that the pointer points directly to the desired block
-        		if(fbm.find(bispace_idx) == fbm.end())
-        		{
+                //if(fbm.find(bispace_idx) == fbm.end())
+                //{
 					bispace_block_ptrs[bispace_idx] += m_bispaces[bispace_idx].get_block_offset(bispace_block_lists[bispace_idx]);
-        		}
+                //}
         	}
             kernel(bispace_block_ptrs,bispace_dim_lists);
         }
         else
         {
-            _run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,fbm,lfbm,loop_idx+1);
+            _run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,loop_idx+1);
         }
     }
 }
