@@ -108,8 +108,11 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
             trb.transform(tra1).transform(*j);
             // There is a bug with icc 13 and -O3, need to break it down
             //symap.insert(std::make_pair(aidxb, trb));
-            std::pair<size_t, tensor_transf_type> p(aidxb, trb);
-            symap.insert(p);
+            std::pair<size_t, tensor_transf_type> p;
+            p.first = aidxb;
+            typename std::multimap<size_t, tensor_transf_type>::iterator jjj =
+                symap.insert(p);
+            jjj->second.transform(trb);
         }
     }
 
