@@ -6,6 +6,7 @@
 #include "metaprog.h"
 #include "node_interm.h"
 #include "eval_btensor_double_contract.h"
+#include "tensor_from_node.h"
 
 namespace libtensor {
 namespace iface {
@@ -79,13 +80,6 @@ public:
     void do_evaluate_ewmult(const tensor_transf<N + M + K, double> &trc,
         const node &t);
 
-private:
-    template<size_t N>
-    btensor_i<N, double> &tensor_from_node(const node &n);
-    template<size_t N>
-    btensor<N, double> &tensor_from_node(const node &n,
-        const block_index_space<N> &bis);
-
 };
 
 
@@ -134,18 +128,15 @@ template<size_t N, size_t M, size_t K>
 void eval_contract_impl::do_evaluate_contract(
     const tensor_transf<N + M, double> &trc, const node &t) {
 
+    const node_contract &n = m_tree.get_vertex(m_id).recast_as<node_contract>();
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node &n = m_tree.get_vertex(m_id);
-    const node_contract &nc = n.recast_as<node_contract>();
 
-    btensor_i<N + K, double> &bta =
-            tensor_from_node<N + K>(m_tree.get_vertex(e[0]));
-    btensor_i<M + K, double> &btb =
-            tensor_from_node<M + K>(m_tree.get_vertex(e[1]));
+    btensor_from_node<N + K, double> bta(m_tree, e[0]);
+    btensor_from_node<M + K, double> btb(m_tree, e[1]);
 
     contraction2<N, M, K> contr;
     for(typename std::multimap<size_t, size_t>::const_iterator ic =
-            nc.get_map().begin(); ic != nc.get_map().end(); ++ic) {
+            n.get_map().begin(); ic != n.get_map().end(); ++ic) {
 
         size_t ka, kb;
         if(ic->first < N + K) {
@@ -155,15 +146,21 @@ void eval_contract_impl::do_evaluate_contract(
         }
         contr.contract(ka, kb);
     }
+    contr.permute_a(bta.get_transf().get_perm());
+    contr.permute_b(btb.get_transf().get_perm());
     contr.permute_c(trc.get_perm());
 
-    btod_contract2<N, M, K> op(contr, bta, btb);
+    scalar_transf<double> strc(trc.get_scalar_tr());
+    strc.transform(bta.get_transf().get_scalar_tr()).
+        transform(btb.get_transf().get_scalar_tr());
+
+    btod_contract2<N, M, K> op(contr, bta.get_btensor(), btb.get_btensor());
     btensor<N + M, double> &btc = tensor_from_node<N + M>(t, op.get_bis());
     if(m_add) {
-        op.perform(btc, trc.get_scalar_tr());
+        op.perform(btc, strc);
     } else {
         op.perform(btc);
-        btod_scale<N + M>(btc, trc.get_scalar_tr()).perform();
+        btod_scale<N + M>(btc, strc).perform();
     }
 }
 
@@ -180,10 +177,8 @@ void eval_contract_impl::do_evaluate_ewmult(
         throw 232;
     }
 
-    btensor_i<N + K, double> &bta =
-            tensor_from_node<N + K>(m_tree.get_vertex(e[0]));
-    btensor_i<M + K, double> &btb =
-            tensor_from_node<M + K>(m_tree.get_vertex(e[1]));
+    btensor_from_node<N + K, double> bta(m_tree, e[0]);
+    btensor_from_node<M + K, double> btb(m_tree, e[1]);
 
     sequence<N + K, size_t> seqa1, seqa2;
     sequence<M + K, size_t> seqb1, seqb2;
@@ -221,11 +216,17 @@ void eval_contract_impl::do_evaluate_ewmult(
     permutation_builder<N + K> pba(seqa2, seqa1);
     permutation_builder<M + K> pbb(seqb2, seqb1);
     permutation_builder<N + M + K> pbc(seqc1, seqc2);
+    permutation<N + K> perma(bta.get_transf().get_perm());
+    perma.permute(pba.get_perm());
+    permutation<M + K> permb(btb.get_transf().get_perm());
+    permb.permute(pbb.get_perm());
 
     tensor_transf<N + M + K, double> trc1(pbc.get_perm());
     trc1.transform(trc);
+    trc1.transform(bta.get_transf().get_scalar_tr());
+    trc1.transform(btb.get_transf().get_scalar_tr());
 
-    btod_ewmult2<N, M, K> op(bta, pba.get_perm(), btb, pbb.get_perm(),
+    btod_ewmult2<N, M, K> op(bta.get_btensor(), perma, btb.get_btensor(), permb,
         trc1.get_perm(), trc1.get_scalar_tr().get_coeff());
     btensor<N + M + K, double> &btc =
         tensor_from_node<N + M + K>(t, op.get_bis());
@@ -280,57 +281,6 @@ void eval_contract_impl::dispatch_ewmult_2<NC, NA>::dispatch() {
         M = NC - N - K
     };
     eval.template do_evaluate_ewmult<N, M, K>(trc, t);
-}
-
-
-template<size_t N>
-btensor_i<N, double> &eval_contract_impl::tensor_from_node(const node &n) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return ni.get_tensor().template get_tensor< btensor_i<N, double> >();
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) throw 73;
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
-template<size_t N>
-btensor<N, double> &eval_contract_impl::tensor_from_node(const node &n,
-    const block_index_space<N> &bis) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) ph.create_btensor(bis);
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
 }
 
 
