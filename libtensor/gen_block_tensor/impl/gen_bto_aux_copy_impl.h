@@ -91,12 +91,12 @@ void gen_bto_aux_copy<N, Traits>::put(
             ibs = m_blkstat.insert(std::make_pair(aidx, bs)).first;
         }
     } else {
-        typename std::map<size_t, libutil::mutex*>::iterator imtx =
-            m_blkmtx.find(aidx);
-        if(imtx == m_blkmtx.end()) {
-            m_blkmtx.insert(std::make_pair(aidx, (libutil::mutex*)0));
-        } else {
-            touched = true;
+        ibs = m_blkstat.find(aidx);
+        if(ibs == m_blkstat.end()) {
+            block_status bs;
+            bs.mtx = 0;
+            bs.touched = false;
+            ibs = m_blkstat.insert(std::make_pair(aidx, bs)).first;
         }
     }
 
@@ -108,8 +108,9 @@ void gen_bto_aux_copy<N, Traits>::put(
         ibs->second.touched = true;
     } else {
         wr_block_type &blk_tgt = m_ctrl.req_block(idx);
-        to_copy_type(blk, tr).perform(!touched, blk_tgt);
+        to_copy_type(blk, tr).perform(!ibs->second.touched, blk_tgt);
         m_ctrl.ret_block(idx);
+        ibs->second.touched = true;
     }
 }
 
