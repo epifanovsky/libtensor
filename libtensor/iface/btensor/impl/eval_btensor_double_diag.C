@@ -2,6 +2,7 @@
 #include <libtensor/expr/node_diag.h>
 #include "metaprog.h"
 #include "node_interm.h"
+#include "tensor_from_node.h"
 #include "eval_btensor_double_diag.h"
 
 namespace libtensor {
@@ -44,14 +45,6 @@ public:
     template<size_t N, size_t M>
     void do_evaluate(const tensor_transf<N - M + 1, double> &tr,
         const node &t);
-
-private:
-    template<size_t N>
-    btensor_i<N, double> &tensor_from_node(const node &n);
-
-    template<size_t N>
-    btensor<N, double> &tensor_from_node(const node &n,
-        const block_index_space<N> &bis);
 
 };
 
@@ -124,57 +117,6 @@ void eval_diag_impl::dispatch_diag<N>::dispatch() {
 }
 
 
-template<size_t N>
-btensor_i<N, double> &eval_diag_impl::tensor_from_node(const node &n) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return ni.get_tensor().template get_tensor< btensor_i<N, double> >();
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) throw 73;
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
-template<size_t N>
-btensor<N, double> &eval_diag_impl::tensor_from_node(const node &n,
-    const block_index_space<N> &bis) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) ph.create_btensor(bis);
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
 } // unnamed namespace
 
 
@@ -186,16 +128,16 @@ void diag::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates diag::evaluate<N>
-namespace diag_ns {
+namespace {
 template<size_t N>
-struct aux {
+struct aux_diag {
     diag *e;
     tensor_transf<N, double> *tr;
     node *n;
-    aux() { e->evaluate(*tr, *n); }
+    aux_diag() { e->evaluate(*tr, *n); }
 };
 } // unnamed namespace
-template class instantiate_template_1<1, diag::Nmax, diag_ns::aux>;
+template class instantiate_template_1<1, diag::Nmax, aux_diag>;
 
 
 } // namespace eval_btensor_double

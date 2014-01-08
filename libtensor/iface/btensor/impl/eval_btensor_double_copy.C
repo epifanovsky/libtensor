@@ -2,6 +2,7 @@
 #include <libtensor/expr/node_ident.h>
 #include "metaprog.h"
 #include "node_interm.h"
+#include "tensor_from_node.h"
 #include "eval_btensor_double_copy.h"
 
 namespace libtensor {
@@ -31,14 +32,6 @@ public:
     template<size_t NC>
     void evaluate(const tensor_transf<NC, double> &trc, const node &t);
 
-private:
-    template<size_t N>
-    btensor_i<N, double> &tensor_from_node(const node &n);
-
-    template<size_t N>
-    btensor<N, double> &tensor_from_node(const node &n,
-        const block_index_space<N> &bis);
-
 };
 
 
@@ -62,57 +55,6 @@ void eval_copy_impl::evaluate(
 }
 
 
-template<size_t N>
-btensor_i<N, double> &eval_copy_impl::tensor_from_node(const node &n) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return ni.get_tensor().template get_tensor< btensor_i<N, double> >();
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) throw 73;
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
-template<size_t N>
-btensor<N, double> &eval_copy_impl::tensor_from_node(const node &n,
-    const block_index_space<N> &bis) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) ph.create_btensor(bis);
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
 } // unnamed namespace
 
 
@@ -124,16 +66,16 @@ void copy::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates copy::evaluate<N>
-namespace copy_ns {
+namespace {
 template<size_t N>
-struct aux {
+struct aux_copy {
     copy *e;
     tensor_transf<N, double> *tr;
     node *n;
-    aux() { e->evaluate(*tr, *n); }
+    aux_copy() { e->evaluate(*tr, *n); }
 };
 } // unnamed namespace
-template class instantiate_template_1<1, copy::Nmax, copy_ns::aux>;
+template class instantiate_template_1<1, copy::Nmax, aux_copy>;
 
 
 } // namespace eval_btensor_double

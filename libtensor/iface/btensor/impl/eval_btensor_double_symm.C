@@ -5,6 +5,7 @@
 #include <libtensor/expr/node_symm.h>
 #include "metaprog.h"
 #include "node_interm.h"
+#include "tensor_from_node.h"
 #include "eval_btensor_double_symm.h"
 
 namespace libtensor {
@@ -37,11 +38,6 @@ public:
     void evaluate(const tensor_transf<1, double> &tr, const node &t);
 
 private:
-    template<size_t N>
-    btensor_i<N, double> &tensor_from_node(const node &n);
-    template<size_t N>
-    btensor<N, double> &tensor_from_node(const node &n,
-        const block_index_space<N> &bis);
     template<size_t N>
     expr_tree::node_id_t gather_info(expr_tree::node_id_t id,
         tensor_transf<N, double> &tr);
@@ -116,57 +112,6 @@ void eval_symm_impl::evaluate(const tensor_transf<1, double> &tr, const node &t)
 
 
 template<size_t N>
-btensor_i<N, double> &eval_symm_impl::tensor_from_node(const node &n) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return ni.get_tensor().template get_tensor< btensor_i<N, double> >();
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) throw 73;
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
-template<size_t N>
-btensor<N, double> &eval_symm_impl::tensor_from_node(const node &n,
-    const block_index_space<N> &bis) {
-
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
-
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) ph.create_btensor(bis);
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
-template<size_t N>
 expr_tree::node_id_t eval_symm_impl::gather_info(
     expr_tree::node_id_t id, tensor_transf<N, double> &tr) {
 
@@ -206,16 +151,16 @@ void symm::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates symm::evaluate<N>
-namespace symm_ns {
+namespace {
 template<size_t N>
-struct aux {
+struct aux_symm {
     symm *e;
     tensor_transf<N, double> *tr;
     node *n;
-    aux() { e->evaluate(*tr, *n); }
+    aux_symm() { e->evaluate(*tr, *n); }
 };
 } // unnamed namespace
-template class instantiate_template_1<1, symm::Nmax, symm_ns::aux>;
+template class instantiate_template_1<1, symm::Nmax, aux_symm>;
 
 
 } // namespace eval_btensor_double

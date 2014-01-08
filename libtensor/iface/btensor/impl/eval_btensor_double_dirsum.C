@@ -2,8 +2,8 @@
 #include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/expr/node_dirsum.h>
 #include "metaprog.h"
-#include "eval_btensor_double_dirsum.h"
 #include "tensor_from_node.h"
+#include "eval_btensor_double_dirsum.h"
 
 namespace libtensor {
 namespace iface {
@@ -111,16 +111,16 @@ void dirsum::evaluate(const tensor_transf<NC, double> &trc, const node &t) {
 
 
 //  The code here explicitly instantiates dirsum::evaluate<NC>
-namespace dirsum_ns {
+namespace {
 template<size_t N>
-struct aux {
+struct aux_dirsum {
     dirsum *e;
     tensor_transf<N, double> *tr;
     node *n;
-    aux() { e->evaluate(*tr, *n); }
+    aux_dirsum() { e->evaluate(*tr, *n); }
 };
 } // unnamed namespace
-template class instantiate_template_1<1, dirsum::Nmax, dirsum_ns::aux>;
+template class instantiate_template_1<1, dirsum::Nmax, aux_dirsum>;
 
 
 } // namespace eval_btensor_double
