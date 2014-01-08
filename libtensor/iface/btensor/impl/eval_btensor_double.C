@@ -4,6 +4,7 @@
 #include <libtensor/expr/node_ident.h>
 #include <libtensor/expr/node_diag.h>
 #include <libtensor/expr/node_dirsum.h>
+#include <libtensor/expr/node_div.h>
 #include <libtensor/expr/node_transform.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
@@ -12,6 +13,7 @@
 #include "eval_btensor_double_copy.h"
 #include "eval_btensor_double_diag.h"
 #include "eval_btensor_double_dirsum.h"
+#include "eval_btensor_double_div.h"
 #include "eval_btensor_double_symm.h"
 #include "eval_tree_builder_btensor.h"
 
@@ -106,6 +108,10 @@ void eval_node::evaluate(const node &lhs) {
     } else if(n.get_op().compare(node_dirsum::k_op_type) == 0) {
 
         eval_btensor_double::dirsum(m_tree, rhs, m_add).evaluate(tr, lhs);
+
+    } else if(n.get_op().compare(node_div::k_op_type) == 0) {
+
+        eval_btensor_double::div(m_tree, rhs, m_add).evaluate(tr, lhs);
 
     } else if(n.get_op().compare(node_symm_base::k_op_type) == 0) {
 
