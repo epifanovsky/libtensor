@@ -75,11 +75,11 @@ void eval_dirsum_impl::do_evaluate(
     const node &n = m_tree.get_vertex(m_id);
     const node_dirsum &nd = n.recast_as<node_dirsum>();
 
-    btensor_i<N, double> &bta = tensor_from_node<N>(m_tree.get_vertex(e[0]));
-    btensor_i<M, double> &btb = tensor_from_node<M>(m_tree.get_vertex(e[1]));
+    btensor_from_node<N, double> bta(m_tree, e[0]);
+    btensor_from_node<M, double> btb(m_tree, e[1]);
 
-    btod_dirsum<N, M> op(bta, scalar_transf<double>(), btb,
-        scalar_transf<double>(), trc);
+    btod_dirsum<N, M> op(bta.get_btensor(), bta.get_transf().get_scalar_tr(),
+        btb.get_btensor(), btb.get_transf().get_scalar_tr(), trc);
     btensor<N + M, double> &btc = tensor_from_node<N + M>(t, op.get_bis());
     if(m_add) {
         op.perform(btc, 1.0);
