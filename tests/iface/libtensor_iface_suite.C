@@ -13,8 +13,8 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("btensor", m_utf_btensor);
     add_test("contract", m_utf_contract);
     add_test("diag", m_utf_diag);
-    add_test("direct_btensor", m_utf_direct_btensor);
-    add_test("direct_eval", m_utf_direct_eval);
+//    add_test("direct_btensor", m_utf_direct_btensor);
+//    add_test("direct_eval", m_utf_direct_eval);
     add_test("direct_product", m_utf_direct_product);
     add_test("dirsum", m_utf_dirsum);
     add_test("dot_product", m_utf_dot_product);
