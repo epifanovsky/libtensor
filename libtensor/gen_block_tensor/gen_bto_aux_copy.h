@@ -52,6 +52,12 @@ public:
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
 private:
+    struct block_status {
+        libutil::mutex *mtx;
+        bool touched;
+    };
+
+private:
     symmetry<N, element_type> m_sym; //!< Symmetry of target block tensor
     gen_block_tensor_wr_i<N, bti_traits> &m_bt; //!< Target block tensor
     gen_block_tensor_wr_ctrl<N, bti_traits> m_ctrl; //!< Block tensor control
@@ -59,7 +65,7 @@ private:
     bool m_open; //!< Open state
     bool m_sync; //!< Explicit synchronization
     libutil::mutex m_mtx; //!< Global mutex
-    std::map<size_t, libutil::mutex*> m_blkmtx; //!< Per-block mutexes
+    std::map<size_t, block_status> m_blkstat; //!< Block status data
 
 public:
     /** \brief Constructs the operation
