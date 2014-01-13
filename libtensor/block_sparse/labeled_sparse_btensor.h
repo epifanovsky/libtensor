@@ -66,7 +66,8 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
 	std::vector<size_t> permutation_entries(N);
     std::vector< sparse_bispace_any_order > bispaces(1,this->m_tensor.get_bispace());
     bispaces.push_back(rhs.m_tensor.get_bispace());
-    sparse_loop_list sll(bispaces);
+
+    std::vector<block_loop> loops;
     for(size_t i = 0; i < N; ++i)
     {
         const letter& a = m_le.letter_at(i);
@@ -77,8 +78,9 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
 		block_loop bl(bispaces);
 		bl.set_subspace_looped(0,i);
 		bl.set_subspace_looped(1,rhs_idx);
-		sll.add_loop(bl);
+		loops.push_back(bl);
     }
+    sparse_loop_list sll(loops);
     runtime_permutation perm(permutation_entries);
     block_permute_kernel<T> bpk(perm);
 

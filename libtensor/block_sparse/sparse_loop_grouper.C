@@ -6,7 +6,7 @@ namespace libtensor {
 
 const char* sparse_loop_grouper::k_clazz = "sparse_loop_grouper";
 
-sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf) 
+sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
 {
 
     //Check that all loops are fused appropriately for grouping

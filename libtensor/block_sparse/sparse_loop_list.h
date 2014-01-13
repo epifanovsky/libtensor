@@ -14,9 +14,6 @@
 #include "block_kernel_i.h"
 #include "loop_list_sparsity_data.h"
 
-//TODO: REMOVE
-#include <iostream>
-
 namespace libtensor
 {
 
@@ -27,8 +24,8 @@ class sparse_loop_list
 {
 private:
     static const char* k_clazz; //!< Class name
-    std::vector< block_loop > m_loops;
-    std::vector< sparse_bispace_any_order > m_bispaces;
+    std::vector<block_loop> m_loops;
+    std::vector<sparse_bispace_any_order> m_bispaces;
 
 	template<typename T>
     void _run_internal(block_kernel_i<T>& kernel,
@@ -39,9 +36,7 @@ private:
     				   block_list& loop_indices,
     				   size_t loop_idx=0);
 public:
-	sparse_loop_list(const std::vector< sparse_bispace_any_order >& bispaces);
-
-	void add_loop(const block_loop& loop);
+	sparse_loop_list(const std::vector<block_loop>& loops);
 
 	template<typename T>
 	void run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs);

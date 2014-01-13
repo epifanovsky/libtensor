@@ -10,19 +10,15 @@
 #include <libtensor/block_sparse/block_contract2_kernel.h>
 #include "sparse_loop_list_test.h"
 
-//TODO REMOVE
-#include <iostream>
+using namespace std;
 
 namespace libtensor
 {
 
 void sparse_loop_list_test::perform() throw(libtest::test_exception) {
-	test_add_loop_invalid_loop_bispaces();
-    test_add_loop_all_ignored();
-    test_add_loop_duplicate_subspaces_looped();
-
-    test_get_loops_that_access_bispace_invalid_bispace();
-    test_get_loops_that_access_bispace_2d_matmul();
+	test_construct_invalid_loop_bispaces();
+    test_construct_all_ignored();
+    test_construct_duplicate_subspaces_looped();
 
     test_run_block_permute_kernel_2d();
     test_run_block_permute_kernel_2d_sparse();
@@ -39,47 +35,46 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
 #endif
 }
 
-void sparse_loop_list_test::test_add_loop_invalid_loop_bispaces() throw(libtest::test_exception)
+void sparse_loop_list_test::test_construct_invalid_loop_bispaces() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_add_loop_invalid_loop_bispaces()";
+    static const char *test_name = "sparse_loop_list_test::test_construct_invalid_loop_bispaces()";
 
 	//bispaces
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
     sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
+    vector<size_t> split_points_3;
     split_points_3.push_back(2);
     split_points_3.push_back(4);
     spb_3.split(split_points_3);
 
-    std::vector< sparse_bispace_any_order > bispaces_1;
+    vector<sparse_bispace_any_order> bispaces_1;
     bispaces_1.push_back(spb_1|spb_2|spb_3);
     bispaces_1.push_back(spb_2|spb_3);
 
     //We alter middle subspace of first bispace to make them not match
-    std::vector< sparse_bispace_any_order > bispaces_2;
+    vector<sparse_bispace_any_order> bispaces_2;
     bispaces_2.push_back(spb_1|spb_3|spb_3);
     bispaces_2.push_back(spb_2|spb_3);
 
-    block_loop bl_1(bispaces_1);
-    bl_1.set_subspace_looped(0,1);
-    block_loop bl_2(bispaces_2);
-    bl_2.set_subspace_looped(0,2);
+    vector<block_loop> loops(1,block_loop(bispaces_1));
+    loops[0].set_subspace_looped(0,1);
+    loops.push_back(block_loop(bispaces_2));
+    loops[1].set_subspace_looped(0,2);
+
     //Should fail due to incompatible bispaces
-    sparse_loop_list sll(bispaces_1);
-	sll.add_loop(bl_1);
     bool threw_exception = false;
     try
     {
-    	sll.add_loop(block_loop(bispaces_2));
+        sparse_loop_list sll(loops);
     }
     catch(bad_parameter&)
     {
@@ -89,41 +84,40 @@ void sparse_loop_list_test::test_add_loop_invalid_loop_bispaces() throw(libtest:
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::add_loop(...) did not throw exception when adding loop with invalid bispaces");
+                "sparse_loop_list::sparse_loop_list(...) did not throw exception when adding loop with invalid bispaces");
     }
 }
 
-void sparse_loop_list_test::test_add_loop_all_ignored() throw(libtest::test_exception)
+void sparse_loop_list_test::test_construct_all_ignored() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_add_loop_all_ignore()";
+    static const char *test_name = "sparse_loop_list_test::test_construct_all_ignore()";
 
 	//bispaces
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
     sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
+    vector<size_t> split_points_3;
     split_points_3.push_back(2);
     split_points_3.push_back(4);
     spb_3.split(split_points_3);
 
-    std::vector< sparse_bispace_any_order > bispaces_1;
+    vector< sparse_bispace_any_order > bispaces_1;
     bispaces_1.push_back(spb_1|spb_2|spb_3);
     bispaces_1.push_back(spb_2|spb_3);
 
     //Should fail due to loop not touching any subspaces
-    sparse_loop_list sll(bispaces_1);
     bool threw_exception = false;
     try
     {
-    	sll.add_loop(block_loop(bispaces_1));
+        sparse_loop_list sll(vector<block_loop>(1,block_loop(bispaces_1)));
     }
     catch(bad_parameter&)
     {
@@ -133,53 +127,46 @@ void sparse_loop_list_test::test_add_loop_all_ignored() throw(libtest::test_exce
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::add_loop(...) did not throw exception when adding loop that does not touch any subspaces");
+                "sparse_loop_list::sparse_loop_list(...) did not throw exception when adding loop that does not touch any subspaces");
     }
 }
 
-void sparse_loop_list_test::test_add_loop_duplicate_subspaces_looped() throw(libtest::test_exception)
+void sparse_loop_list_test::test_construct_duplicate_subspaces_looped() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_add_loop_duplicate_subspaces_looped()";
+    static const char *test_name = "sparse_loop_list_test::test_construct_duplicate_subspaces_looped()";
 
 	//bispaces
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
     sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
+    vector<size_t> split_points_3;
     split_points_3.push_back(2);
     split_points_3.push_back(4);
     spb_3.split(split_points_3);
 
-    std::vector< sparse_bispace_any_order > bispaces_1;
+    vector< sparse_bispace_any_order > bispaces_1;
     bispaces_1.push_back(spb_1|spb_2|spb_3);
     bispaces_1.push_back(spb_2|spb_3);
 
-    block_loop bl_1(bispaces_1);
-    bl_1.set_subspace_looped(0,1);
-    block_loop bl_2(bispaces_1);
-    bl_2.set_subspace_looped(0,2);
-    block_loop bl_3(bispaces_1);
-    bl_3.set_subspace_looped(1,1);
-    block_loop bl_4(bispaces_1);
-    bl_4.set_subspace_looped(0,1);
+    vector<block_loop> loops(4,block_loop(bispaces_1));
+    loops[0].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(0,2);
+    loops[2].set_subspace_looped(1,1);
+    loops[3].set_subspace_looped(0,1); //Intentional duplicate
 
     //Should fail due to two loops touching the same subspace of the same bispace
-    sparse_loop_list sll(bispaces_1);
-	sll.add_loop(bl_1);
-	sll.add_loop(bl_2);
-	sll.add_loop(bl_3);
     bool threw_exception = false;
     try
     {
-		sll.add_loop(bl_4);
+        sparse_loop_list sll(loops);
     }
     catch(bad_parameter&)
     {
@@ -189,91 +176,8 @@ void sparse_loop_list_test::test_add_loop_duplicate_subspaces_looped() throw(lib
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::add_loop(...) did not throw exception when adding duplicate loops over the same bispaces");
+                "sparse_loop_list::sparse_loop_list(...) did not throw exception when adding duplicate loops over the same bispaces");
     }
-}
-
-void sparse_loop_list_test::test_get_loops_that_access_bispace_invalid_bispace() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_loop_list_test::test_get_loops_that_access_bispace_invalid_bispace()";
-
-	//Matrix multiply bispaces
-    sparse_bispace<1> spb_i(4);
-    sparse_bispace<1> spb_j(5);
-    sparse_bispace<1> spb_k(6);
-
-    std::vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_i|spb_j);
-    bispaces.push_back(spb_i|spb_k);
-    bispaces.push_back(spb_k|spb_j);
-
-    sparse_loop_list sll(bispaces);
-    bool threw_exception = false;
-    try
-    {
-    	//Fail: no fourth bispace
-		sll.get_loops_that_access_bispace(3);
-    }
-    catch(out_of_bounds&)
-    {
-    	threw_exception = true;
-    }
-    if(! threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::get_loops_that_access_bispace(...) did not throw exception when bispace index out of bounds");
-    }
-}
-
-void sparse_loop_list_test::test_get_loops_that_access_bispace_2d_matmul() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_loop_list_test::test_get_loops_that_access_bispace_2d_matmul()";
-
-	//Matrix multiply bispaces
-    sparse_bispace<1> spb_i(4);
-    sparse_bispace<1> spb_j(5);
-    sparse_bispace<1> spb_k(6);
-
-    std::vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_i|spb_j);
-    bispaces.push_back(spb_i|spb_k);
-    bispaces.push_back(spb_k|spb_j);
-
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,0);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(2,1);
-    block_loop bl_3(bispaces);
-    bl_3.set_subspace_looped(1,1);
-    bl_3.set_subspace_looped(2,0);
-
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-    sll.add_loop(bl_3);
-
-	//Fail: no fourth bispace
-	std::vector<size_t> loops = sll.get_loops_that_access_bispace(2);
-
-	//Correct answer: {1,2}
-	std::vector<size_t> loops_correct(1,1);
-	loops_correct.push_back(2);
-	if(loops.size() != loops_correct.size())
-	{
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::get_loops_that_access_bispace(...) returned incorrect size vector");
-	}
-
-	for(size_t i = 0; i < loops.size(); ++i)
-	{
-		if(loops[i] != loops_correct[i])
-		{
-			fail_test(test_name,__FILE__,__LINE__,
-					"sparse_loop_list::get_loops_that_access_bispace(...) returned incorrect value");
-		}
-	}
 }
 
 //Permutation 01
@@ -321,17 +225,17 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     //Second bispace (fast index) and splitting
     sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
-    std::vector< sparse_bispace_any_order > bispaces;
+    vector< sparse_bispace_any_order > bispaces;
     bispaces.push_back(spb_2 | spb_1);
     bispaces.push_back(spb_1 | spb_2);
 
@@ -341,20 +245,15 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
 
 
     //We stride the input, not the output
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,1);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(1,0);
+    vector<block_loop> loops(2,block_loop(bispaces));
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,1);
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(1,0);
 
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-
-    std::vector<double*> ptrs(1,test_output_arr);
+    sparse_loop_list sll(loops);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
-
     sll.run(bpk,ptrs);
 
     for(int i = 0; i < 20; ++i)
@@ -399,24 +298,24 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
 
     double test_output_arr[14];
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     //Second bispace (fast index) and splitting
     sparse_bispace<1> spb_2(7);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     split_points_2.push_back(4);
     spb_2.split(split_points_2);
 
     //Sparsity information
-    std::vector< sequence<2,size_t> > sig_blocks(3);
+    vector< sequence<2,size_t> > sig_blocks(3);
     sig_blocks[0][0] = 0;
     sig_blocks[0][1] = 0;
     sig_blocks[1][0] = 0;
@@ -428,7 +327,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
     perm.permute(0,1);
     sparse_bispace<2> two_d_input = spb_1 % spb_2 << sig_blocks;
     sparse_bispace<2> two_d_output = two_d_input.permute(perm);
-    std::vector< sparse_bispace_any_order > bispaces(1,two_d_output);
+    vector< sparse_bispace_any_order > bispaces(1,two_d_output);
     bispaces.push_back(two_d_input);
 
     runtime_permutation rperm(2);
@@ -436,17 +335,13 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
     block_permute_kernel<double> bpk(rperm);
 
 
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,1);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(1,0);
+    vector<block_loop> loops(2,block_loop(bispaces));
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,1);
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(1,0);
 
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-
+    sparse_loop_list sll(loops);
     sll.run(bpk,ptrs);
 
     for(int i = 0; i < 14; ++i)
@@ -555,28 +450,28 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest
 
     double test_output_arr[60];
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
 
     //First bispace (slow index in input) and splitting
     sparse_bispace<1> spb_1(3);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(1);
     spb_1.split(split_points_1);
 
     //Second bispace (mid index in input) and splitting
     sparse_bispace<1> spb_2(4);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(3);
     spb_2.split(split_points_2);
 
     //Third bispace (fast index in input) and splitting
     sparse_bispace<1> spb_3(5);
-    std::vector<size_t> split_points_3;
+    vector<size_t> split_points_3;
     split_points_3.push_back(2);
     spb_3.split(split_points_3);
 
-    std::vector<sparse_bispace_any_order> bispaces;
+    vector<sparse_bispace_any_order> bispaces;
     bispaces.push_back(spb_2 | spb_3 | spb_1);
     bispaces.push_back(spb_1 | spb_2 | spb_3);
 
@@ -585,20 +480,14 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest
     perm.permute(0,1);
     block_permute_kernel<double> bpk(perm);
 
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,1);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(1,2);
-    block_loop bl_3(bispaces);
-    bl_3.set_subspace_looped(0,2);
-    bl_3.set_subspace_looped(1,0);
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-    sll.add_loop(bl_3);
-
+    vector<block_loop> loops(3,block_loop(bispaces));
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,1);
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(1,2);
+    loops[2].set_subspace_looped(0,2);
+    loops[2].set_subspace_looped(1,0);
+    sparse_loop_list sll(loops);
     sll.run(bpk,ptrs);
 
     for(int i = 0; i < 60; ++i)
@@ -683,29 +572,29 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(
 
     double test_output_arr[35];
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
 
     //First bispace (slow index in input) and splitting
     sparse_bispace<1> spb_1(3);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(1);
     spb_1.split(split_points_1);
 
     //Second bispace (mid index in input) and splitting
     sparse_bispace<1> spb_2(4);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(3);
     spb_2.split(split_points_2);
 
     //Third bispace (fast index in input) and splitting
     sparse_bispace<1> spb_3(5);
-    std::vector<size_t> split_points_3;
+    vector<size_t> split_points_3;
     split_points_3.push_back(2);
     spb_3.split(split_points_3);
 
     //Sparsity data
-    std::vector< sequence<3,size_t> > sig_blocks(5);
+    vector< sequence<3,size_t> > sig_blocks(5);
     sig_blocks[0][0] = 0;
     sig_blocks[0][1] = 0;
     sig_blocks[0][2] = 0;
@@ -726,7 +615,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(
     permutation<3> perm;
     perm.permute(0,2).permute(0,1);
     sparse_bispace<3> three_d_output = three_d_input.permute(perm);
-    std::vector< sparse_bispace_any_order > bispaces(1,three_d_output);
+    vector< sparse_bispace_any_order > bispaces(1,three_d_output);
     bispaces.push_back(three_d_input);
 
     runtime_permutation rperm(3);
@@ -734,20 +623,15 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(
     rperm.permute(0,1);
     block_permute_kernel<double> bpk(rperm);
 
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,1);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(1,2);
-    block_loop bl_3(bispaces);
-    bl_3.set_subspace_looped(0,2);
-    bl_3.set_subspace_looped(1,0);
+    vector<block_loop> loops(3,block_loop(bispaces));
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,1);
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(1,2);
+    loops[2].set_subspace_looped(0,2);
+    loops[2].set_subspace_looped(1,0);
 
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-    sll.add_loop(bl_3);
+    sparse_loop_list sll(loops);
     sll.run(bpk,ptrs);
 
     for(int i = 0; i < 35; ++i)
@@ -822,54 +706,45 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
                                       1107,1279,1451,1623,
                                       1522,1759,1996,2233};
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr_1);
     ptrs.push_back(test_input_arr_2);
 
     //Bispace for i
     sparse_bispace<1> spb_i(4);
-    std::vector<size_t> split_points_i;
+    vector<size_t> split_points_i;
     split_points_i.push_back(2);
     spb_i.split(split_points_i);
 
     //Bispace for j
     sparse_bispace<1> spb_j(6);
-    std::vector<size_t> split_points_j;
+    vector<size_t> split_points_j;
     split_points_j.push_back(2);
     spb_j.split(split_points_j);
 
     //Bispace for k
     sparse_bispace<1> spb_k(5);
-    std::vector<size_t> split_points_k;
+    vector<size_t> split_points_k;
     split_points_k.push_back(2);
     spb_k.split(split_points_k);
 
-    std::vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
     bispaces.push_back(spb_i | spb_k);
     bispaces.push_back(spb_j | spb_k);
 
+    vector<block_loop> loops(3,block_loop(bispaces));
     //i loop
-    block_loop bl_i(bispaces);
-    bl_i.set_subspace_looped(0,0);
-    bl_i.set_subspace_looped(1,0);
-
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,0);
     //j loop
-    block_loop bl_j(bispaces);
-    bl_j.set_subspace_looped(0,1);
-    bl_j.set_subspace_looped(2,0);
-
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(2,0);
     //k loop
-    block_loop bl_k(bispaces);
-    bl_k.set_subspace_looped(1,1);
-    bl_k.set_subspace_looped(2,1);
+    loops[2].set_subspace_looped(1,1);
+    loops[2].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_i);
-    sll.add_loop(bl_j);
-    sll.add_loop(bl_k);
-
+    sparse_loop_list sll(loops);
     block_contract2_kernel<double> bc2k(sll);
-
     sll.run(bc2k,ptrs);
 
     for(int i = 0; i < 24; ++i)
@@ -881,7 +756,6 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
         }
     }
 }
-
 
 void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtest::test_exception)
 {
@@ -993,66 +867,54 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
 
     double test_output_arr[72] = {0};
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr_1);
     ptrs.push_back(test_input_arr_2);
 
     //Bispace for i
     sparse_bispace<1> spb_i(3);
-    std::vector<size_t> split_points_i;
+    vector<size_t> split_points_i;
     split_points_i.push_back(1);
     spb_i.split(split_points_i);
 
     //Bispace for j
     sparse_bispace<1> spb_j(4);
-    std::vector<size_t> split_points_j;
+    vector<size_t> split_points_j;
     split_points_j.push_back(2);
     spb_j.split(split_points_j);
 
     //Bispace for k
     sparse_bispace<1> spb_k(5);
-    std::vector<size_t> split_points_k;
+    vector<size_t> split_points_k;
     split_points_k.push_back(2);
     spb_k.split(split_points_k);
 
     //Bispace for l
     sparse_bispace<1> spb_l(6);
-    std::vector<size_t> split_points_l;
+    vector<size_t> split_points_l;
     split_points_l.push_back(3);
     spb_l.split(split_points_l);
 
-    std::vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
+    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
     bispaces.push_back(spb_i|spb_j|spb_k);
     bispaces.push_back(spb_k|spb_l);
 
+    vector<block_loop> loops(4,block_loop(bispaces));
     //i loop
-    block_loop bl_i(bispaces);
-    bl_i.set_subspace_looped(0,0);
-    bl_i.set_subspace_looped(1,0);
-
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,0);
     //j loop
-    block_loop bl_j(bispaces);
-    bl_j.set_subspace_looped(0,1);
-    bl_j.set_subspace_looped(1,1);
-
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(1,1);
     //l loop
-    block_loop bl_l(bispaces);
-    bl_l.set_subspace_looped(0,2);
-    bl_l.set_subspace_looped(2,1);
-
+    loops[2].set_subspace_looped(0,2);
+    loops[2].set_subspace_looped(2,1);
     //k loop
-    block_loop bl_k(bispaces);
-    bl_k.set_subspace_looped(1,2);
-    bl_k.set_subspace_looped(2,0);
+    loops[3].set_subspace_looped(1,2);
+    loops[3].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_i);
-    sll.add_loop(bl_j);
-    sll.add_loop(bl_l);
-    sll.add_loop(bl_k);
-
+    sparse_loop_list sll(loops);
     block_contract2_kernel<double> bc2k(sll);
-
     sll.run(bc2k,ptrs);
 
     for(int i = 0; i < 72; ++i)
@@ -1073,7 +935,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_invalid_bispace_idx() throw(li
 
     //Only need dummy bispace data for this
     sparse_bispace<1> spb(5);
-    std::vector<sparse_bispace_any_order> bispaces(2,spb|spb);
+    vector<sparse_bispace_any_order> bispaces(2,spb|spb);
     sparse_loop_list sll(bispaces);
     for(size_t i = 0; i < 2; ++i)
     {
@@ -1083,7 +945,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_invalid_bispace_idx() throw(li
     }
 
     //Dummy pointer data
-    std::vector<double*> ptrs(2,NULL);
+    vector<double*> ptrs(2,NULL);
 
     //token kernel - identity permutation
     runtime_permutation perm(2);
@@ -1091,7 +953,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_invalid_bispace_idx() throw(li
 
     //Fixed blocks data with invalid bispace index
     fixed_block_map fbm;
-    fbm.insert(std::make_pair(3,std::vector<size_t>(2,0)));
+    fbm.insert(make_pair(3,vector<size_t>(2,0)));
 
     bool threw_exception = false;
     try
@@ -1117,7 +979,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices() thr
 
     //Only need dummy bispace data for this
     sparse_bispace<1> spb(5);
-    std::vector<sparse_bispace_any_order> bispaces(2,spb|spb);
+    vector<sparse_bispace_any_order> bispaces(2,spb|spb);
     sparse_loop_list sll(bispaces);
     for(size_t i = 0; i < 2; ++i)
     {
@@ -1127,7 +989,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices() thr
     }
 
     //Dummy pointer data
-    std::vector<double*> ptrs(2,NULL);
+    vector<double*> ptrs(2,NULL);
 
     //token kernel - identity permutation
     runtime_permutation perm(2);
@@ -1135,7 +997,7 @@ void sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices() thr
 
     //Fixed blocks data with only one block index specified for a 2d bispace
     fixed_block_map fbm;
-    fbm.insert(std::make_pair(1,std::vector<size_t>(1,0)));
+    fbm.insert(make_pair(1,vector<size_t>(1,0)));
 
     bool threw_exception = false;
     try
@@ -1154,7 +1016,6 @@ void sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices() thr
     }
 }
 
-#if 0
 //Should throw exception if we fix the blocks of two coupled bispaces to incompatible values
 void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(libtest::test_exception)
 {
@@ -1187,17 +1048,17 @@ void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(l
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     //Second bispace (fast index) and splitting
     sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
-    std::vector< sparse_bispace_any_order > bispaces;
+    vector< sparse_bispace_any_order > bispaces;
     bispaces.push_back(spb_2 | spb_1);
     bispaces.push_back(spb_1 | spb_2);
 
@@ -1218,13 +1079,13 @@ void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(l
     sll.add_loop(bl_1);
     sll.add_loop(bl_2);
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
 
     fixed_block_map fbm;
-    std::vector<size_t> fixed_blocks_output(1,1);
+    vector<size_t> fixed_blocks_output(1,1);
     fixed_blocks_output.push_back(0);
-    fbm.insert(std::make_pair(0,fixed_blocks_output));
+    fbm.insert(make_pair(0,fixed_blocks_output));
 
     sll.run(bpk,ptrs,fbm);
 
@@ -1237,7 +1098,6 @@ void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(l
         }
     }
 }
-#endif
 
 //Form a single block of the output tensor by fixing the desired blocks for a subset of the loops
 //We will form the block j = 1, i = 0
@@ -1272,17 +1132,17 @@ void sparse_loop_list_test::test_run_fixed_blocks_bpk_2d() throw(libtest::test_e
 
     //First bispace (slow index) and splitting
     sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
+    vector<size_t> split_points_1;
     split_points_1.push_back(2);
     spb_1.split(split_points_1);
 
     //Second bispace (fast index) and splitting
     sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
+    vector<size_t> split_points_2;
     split_points_2.push_back(2);
     spb_2.split(split_points_2);
 
-    std::vector< sparse_bispace_any_order > bispaces;
+    vector< sparse_bispace_any_order > bispaces;
     bispaces.push_back(spb_2 | spb_1);
     bispaces.push_back(spb_1 | spb_2);
 
@@ -1303,13 +1163,13 @@ void sparse_loop_list_test::test_run_fixed_blocks_bpk_2d() throw(libtest::test_e
     sll.add_loop(bl_1);
     sll.add_loop(bl_2);
 
-    std::vector<double*> ptrs(1,test_output_arr);
+    vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
 
     fixed_block_map fbm;
-    std::vector<size_t> fixed_blocks_output(1,1);
+    vector<size_t> fixed_blocks_output(1,1);
     fixed_blocks_output.push_back(0);
-    fbm.insert(std::make_pair(0,fixed_blocks_output));
+    fbm.insert(make_pair(0,fixed_blocks_output));
 
     sll.run(bpk,ptrs,fbm);
 

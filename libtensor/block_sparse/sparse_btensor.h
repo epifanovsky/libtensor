@@ -81,13 +81,14 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
         {
 
         	std::vector<sparse_bispace_any_order> bispaces(1,m_bispace);
-        	sparse_loop_list sll(bispaces);
+            std::vector<block_loop> loops;
             for(size_t i = 0; i < N; ++i)
             {
             	block_loop loop(bispaces);
             	loop.set_subspace_looped(0,i);
-            	sll.add_loop(loop);
+            	loops.push_back(loop);
             }
+        	sparse_loop_list sll(loops);
 
             block_load_kernel<T> blk(m_bispace,mem);
             std::vector<T*> ptrs(1,m_data_ptr);
@@ -148,13 +149,15 @@ std::string sparse_btensor<N,T>::str() const
 
     //Generate the loops for this tensor in slow->fast index order
 	std::vector<sparse_bispace_any_order> bispaces(1,m_bispace);
-	sparse_loop_list sll(bispaces);
+
+    std::vector<block_loop> loops;
 	for(size_t i = 0; i < N; ++i)
 	{
 		block_loop loop(bispaces);
 		loop.set_subspace_looped(0,i);
-		sll.add_loop(loop);
+		loops.push_back(loop);
 	}
+	sparse_loop_list sll(loops);
 
 	block_print_kernel<T> bpk;
 	std::vector<T*> ptrs(1,m_data_ptr);

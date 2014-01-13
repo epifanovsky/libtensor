@@ -46,7 +46,8 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
     std::vector< sparse_bispace_any_order > bispaces(1,C.get_bispace());
     bispaces.push_back(m_A.get_bispace());
     bispaces.push_back(m_B.get_bispace());
-    sparse_loop_list sll(bispaces);
+    
+    std::vector<block_loop> loops;
     for(size_t i = 0; i < M+N-(2*K); ++i)
     {
         const letter& a = C.letter_at(i);
@@ -78,7 +79,7 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
             throw bad_parameter(g_ns, k_clazz,"operator()(...)",
                     __FILE__, __LINE__, "an index appearing in the result must be present in one input tensor");
         }
-        sll.add_loop(bl);
+        loops.push_back(bl);
     }
 
     //Now the contracted indices
@@ -94,8 +95,10 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
         block_loop bl(bispaces);
         bl.set_subspace_looped(1,m_A.index_of(a));
         bl.set_subspace_looped(2,m_B.index_of(a));
-        sll.add_loop(bl);
+        loops.push_back(bl);
     }
+
+    sparse_loop_list sll(loops);
     block_contract2_kernel<T> bc2k(sll);
 
     std::vector<T*> ptrs(1,(T*)C.get_data_ptr());

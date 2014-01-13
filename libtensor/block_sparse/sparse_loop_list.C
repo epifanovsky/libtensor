@@ -7,15 +7,72 @@
 
 #include "sparse_loop_list.h"
 
+using namespace std;
+
 namespace libtensor
 {
 
 const char* sparse_loop_list::k_clazz = "sparse_loop_list";
 
-sparse_loop_list::sparse_loop_list(const std::vector< sparse_bispace_any_order >& bispaces) : m_bispaces(bispaces)
+sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops) : m_loops(loops)
 {
+    if(m_loops.size() == 0)
+    {
+        throw bad_parameter(g_ns, k_clazz,"sparse_loop_list(...)",__FILE__, __LINE__,
+            "Cannot have an empty loop list");
+    }
+    m_bispaces = m_loops[0].get_bispaces();
+
+    //Check that all loops have compatible bispaces
+    for(size_t loop_idx = 1; loop_idx < m_loops.size(); ++loop_idx)
+    {
+        if(m_loops[loop_idx].get_bispaces() != m_bispaces)
+        {
+            throw bad_parameter(g_ns, k_clazz,"sparse_loop_list(...)",
+                    __FILE__, __LINE__, "bispaces of loops do not match");
+        }
+    }
+
+    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+    {
+        const block_loop& loop = m_loops[loop_idx];
+
+        //Check that no loop is an empty loop - one that touches no bispaces/subspaces
+        bool all_ignored = true;
+        for(size_t bispace_idx = 0 ; bispace_idx < m_bispaces.size(); ++bispace_idx)
+        {
+            if(!loop.is_bispace_ignored(bispace_idx))
+            {
+                all_ignored = false;
+                break;
+            }
+        }
+        if(all_ignored)
+        {
+            throw bad_parameter(g_ns, k_clazz,"sparse_loop_list(...)",__FILE__, __LINE__,
+                "a loop may not ignore all bispaces");
+        }
+
+		//Check that no two loops access the same subspace
+		for(size_t other_loop_idx = loop_idx + 1; other_loop_idx < m_loops.size(); ++other_loop_idx)
+		{
+			const block_loop& other_loop = m_loops[other_loop_idx];
+            for(size_t bispace_idx = 0 ; bispace_idx < m_bispaces.size(); ++bispace_idx)
+			{
+				if(!other_loop.is_bispace_ignored(bispace_idx) && !loop.is_bispace_ignored(bispace_idx))
+				{
+					if(other_loop.get_subspace_looped(bispace_idx) == loop.get_subspace_looped(bispace_idx))
+					{
+						throw bad_parameter(g_ns, k_clazz,"sparse_loop_list(...)",__FILE__, __LINE__,
+                            "Two loops cannot access the same subspace of the same bispace");
+					}
+				}
+			}
+		}
+    }
 }
 
+#if 0
 void sparse_loop_list::add_loop(const block_loop& loop)
 {
 	const std::vector< sparse_bispace_any_order >& cur_bispaces = loop.get_bispaces();
@@ -37,42 +94,11 @@ void sparse_loop_list::add_loop(const block_loop& loop)
 			}
 		}
 
-		//Check that no two loops access the same subspace
-		for(size_t cur_loop_idx = 0; cur_loop_idx < m_loops.size(); ++cur_loop_idx)
-		{
-			const block_loop& cur_loop = m_loops[cur_loop_idx];
-			for(size_t bis_idx = 0; bis_idx < cur_bispaces.size(); ++bis_idx)
-			{
-				if(!cur_loop.is_bispace_ignored(bis_idx) && !loop.is_bispace_ignored(bis_idx))
-				{
-					if(cur_loop.get_subspace_looped(bis_idx) == loop.get_subspace_looped(bis_idx))
-					{
-						throw bad_parameter(g_ns, k_clazz,"add_loop(...)",
-								__FILE__, __LINE__, "Two loops cannot access the same subspace of the same bispace");
-					}
-				}
-			}
-		}
 	}
 
-	//Loops that don't touch any subspaces aren't allowed
-	bool all_ignored = true;
-	for(size_t i = 0 ; i < cur_bispaces.size(); ++i)
-	{
-		if(!loop.is_bispace_ignored(i))
-		{
-			all_ignored = false;
-			break;
-		}
-	}
-
-	if(all_ignored)
-	{
-		throw bad_parameter(g_ns, k_clazz,"add_loop(...)",
-				__FILE__, __LINE__, "a loop may not ignore all bispaces");
-	}
 	m_loops.push_back(loop);
 }
+#endif
 
 std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(
 		size_t bispace_idx) const
