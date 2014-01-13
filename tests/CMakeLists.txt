@@ -244,6 +244,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_loop_iterator_test.C
     block_sparse/sparse_loop_list_test.C
     block_sparse/sparsity_fuser_test.C
+    block_sparse/sparse_loop_grouper_test.C
     block_sparse/sparse_block_tree_iterator_test.C
     block_sparse/sparse_block_tree_test.C
     block_sparse/direct_sparse_btensor_test.C

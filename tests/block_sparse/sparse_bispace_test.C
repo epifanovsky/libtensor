@@ -59,6 +59,7 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
 
         test_get_n_index_groups();
         test_get_index_group_dim();
+        test_get_index_group_containing_subspace();
 
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
@@ -1505,6 +1506,24 @@ void sparse_bispace_test::test_get_index_group_dim() throw(libtest::test_excepti
         {
             fail_test(test_name,__FILE__,__LINE__,
                     "sparse_bispace<N>::get_index_group_dim(...) did not return correct value");
+        }
+    }
+}
+
+void sparse_bispace_test::test_get_index_group_containing_subspace() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_index_group_containing_subspace()";
+    
+    index_groups_test_f tf = index_groups_test_f();
+
+    size_t correct_index_groups[3] = {1,2,4};
+    size_t subspaces[3] = {1,3,6};
+    for(size_t subspace_idx = 0; subspace_idx < 3; ++subspace_idx)
+    {
+        if(tf.bispace.get_index_group_containing_subspace(subspaces[subspace_idx]) != correct_index_groups[subspace_idx])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_index_group_containing_subspace(...) did not return correct value");
         }
     }
 }

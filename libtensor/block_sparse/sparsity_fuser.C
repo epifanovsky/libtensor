@@ -5,7 +5,9 @@ using namespace std;
 namespace libtensor {
 
 sparsity_fuser::sparsity_fuser(vector< block_loop >& loops,
-                               vector< sparse_bispace_any_order >& bispaces) : m_trees_for_loops(loops.size()),
+                               vector< sparse_bispace_any_order >& bispaces) : m_loops(loops), 
+                                                                               m_bispaces(bispaces),
+                                                                               m_trees_for_loops(loops.size()),
                                                                                m_subspaces_for_loops(loops.size())
 {
     //Extract all of the trees, tracking which loops access each one 
@@ -42,6 +44,10 @@ sparsity_fuser::sparsity_fuser(vector< block_loop >& loops,
 
             //Save the tree permuted into loop order
             m_trees.push_back(tree.permute(runtime_permutation(perm_entries)));
+
+            //Save the index group/bispace mapping information for the tree
+            size_t index_group = bispace.get_index_group_containing_subspace(min);
+            m_bispaces_and_index_groups_for_trees.push_back(idx_pair_list(1,idx_pair(bispace_idx,index_group)));
         }
     }
 }
@@ -54,6 +60,11 @@ idx_list sparsity_fuser::get_loops_for_tree(size_t tree_idx) const
 idx_list sparsity_fuser::get_trees_for_loop(size_t loop_idx) const
 {
     return m_trees_for_loops[loop_idx];
+}
+
+idx_pair_list sparsity_fuser::get_bispaces_and_index_groups_for_tree(size_t tree_idx) const
+{
+    return m_bispaces_and_index_groups_for_trees[tree_idx];
 }
 
 vector<off_dim_pair_list> sparsity_fuser::get_offsets_and_sizes(size_t tree_idx) const
@@ -116,6 +127,14 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
             }
         }
     }
+    
+    //The lhs tree now points to all the bispaces and index groups previously associated with the rhs tree 
+    const idx_pair_list& rhs_baig = m_bispaces_and_index_groups_for_trees[rhs_tree_idx];  
+    idx_pair_list& lhs_baig = m_bispaces_and_index_groups_for_trees[lhs_tree_idx];  
+    for(size_t baig_idx = 0; baig_idx < rhs_baig.size(); ++baig_idx)
+    {
+        lhs_baig.push_back(rhs_baig[baig_idx]);
+    }
 
     //The lhs tree is now associated with all loops that pointed to the RHS tree
     for(size_t loop_rel_idx = 0; loop_rel_idx < rhs_tree_loops.size(); ++loop_rel_idx)
@@ -127,8 +146,10 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
         }
     }
 
+
     //Remove metadata associated with the rhs tree
     m_loops_for_trees.erase(m_loops_for_trees.begin()+rhs_tree_idx);
+    m_bispaces_and_index_groups_for_trees.erase(m_bispaces_and_index_groups_for_trees.begin()+rhs_tree_idx);
 }
 
 } // namespace libtensor

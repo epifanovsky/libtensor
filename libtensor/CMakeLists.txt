@@ -229,6 +229,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_loop_iterator.C
     block_sparse/sparse_loop_list.C
     block_sparse/sparsity_fuser.C
+    block_sparse/sparse_loop_grouper.C
     block_sparse/loop_list_sparsity_data.C
     block_sparse/range.C
 )

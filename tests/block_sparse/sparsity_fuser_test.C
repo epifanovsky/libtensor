@@ -14,6 +14,7 @@ namespace libtensor {
 void sparsity_fuser_test::perform() throw(libtest::test_exception) {
     test_get_loops_for_tree();
     test_get_trees_for_loop();
+    test_get_bispaces_and_index_groups_for_tree();
     test_get_offsets_and_sizes();
     test_fuse();
 }
@@ -193,6 +194,26 @@ void sparsity_fuser_test::test_get_trees_for_loop() throw(libtest::test_exceptio
     }
 }
 
+void sparsity_fuser_test::test_get_bispaces_and_index_groups_for_tree() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparsity_fuser_test::test_get_bispaces_and_index_groups_for_tree()";
+
+    contract_test_f tf = contract_test_f();
+    sparsity_fuser sf(tf.loops,tf.bispaces);
+
+
+    for(size_t tree_idx = 0; tree_idx < sf.get_trees().size(); ++tree_idx)
+    {
+        idx_pair_list baig = sf.get_bispaces_and_index_groups_for_tree(tree_idx);
+        idx_pair_list correct_baig(1,idx_pair(tree_idx,0));
+        if(baig != correct_baig) 
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value");
+        }
+    }
+}
+
 void sparsity_fuser_test::test_get_offsets_and_sizes() throw(libtest::test_exception)
 {
     static const char *test_name = "sparsity_fuser_test::test_get_offset_and_sizes()";
@@ -268,7 +289,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
                 "sparsity_fuser::get_trees_for_loop(...) returned incorrect value for l loop after fusion 0");
     }
 
-    //CHECK LOOP->TREE MAPPING
+    //CHECK TREE->LOOP MAPPING
     idx_list loops_0 = sf.get_loops_for_tree(0);
     size_t arr_0[4] = {0,1,2,3};
     idx_list correct_loops_0(arr_0,arr_0+4);
@@ -285,6 +306,25 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 1 after fusion 0");
+    }
+
+    //CHECK TREE->(BISPACE,INDEX GROUP) MAPPING
+    idx_pair_list baig_0 = sf.get_bispaces_and_index_groups_for_tree(0);
+    idx_pair baig_arr_first_0[2] = {idx_pair(0,0),idx_pair(1,0)};
+    idx_pair_list correct_baig_first_0(baig_arr_first_0,baig_arr_first_0+2);
+    if(baig_0 != correct_baig_first_0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value for tree 0 after fusion 0");
+    }
+
+    idx_pair_list baig_1 = sf.get_bispaces_and_index_groups_for_tree(1);
+    idx_pair baig_arr_first_1[1] = {idx_pair(2,0)};
+    idx_pair_list correct_baig_first_1(baig_arr_first_1,baig_arr_first_1+1);
+    if(baig_1 != correct_baig_first_1)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value for tree 1 after fusion 0");
     }
 
     //Check the tree entries
@@ -329,6 +369,16 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparsity_fuser::get_loops_for_tree(...) returned incorrect value for tree 0 after fusion 1");
+    }
+
+    //CHECK TREE->(BISPACE,INDEX GROUP) MAPPING
+    baig_0 = sf.get_bispaces_and_index_groups_for_tree(0);
+    idx_pair baig_arr_second_0[3] = {idx_pair(0,0),idx_pair(1,0),idx_pair(2,0)};
+    idx_pair_list correct_baig_second_0(baig_arr_second_0,baig_arr_second_0+3);
+    if(baig_0 != correct_baig_second_0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value for tree 0 after fusion 1");
     }
 
     //Check the tree entries
