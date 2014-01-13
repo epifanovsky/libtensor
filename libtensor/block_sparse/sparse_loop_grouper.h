@@ -13,7 +13,7 @@ private:
     std::vector<idx_pair_list> m_bispaces_and_index_groups;
 public:
     sparse_loop_grouper(const sparsity_fuser& sf);
-    size_t get_n_groups() const { return m_offsets_and_sizes.size(); }
+    size_t get_n_groups() const { return m_bispaces_and_index_groups.size(); }
     std::vector<idx_pair_list> get_bispaces_and_index_groups() const;
     std::vector<std::vector<off_dim_pair_list> > get_offsets_and_sizes() const;
 };
