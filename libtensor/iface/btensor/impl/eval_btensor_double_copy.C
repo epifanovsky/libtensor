@@ -66,7 +66,7 @@ void copy::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates copy::evaluate<N>
-namespace {
+namespace aux {
 template<size_t N>
 struct aux_copy {
     copy *e;
@@ -74,8 +74,8 @@ struct aux_copy {
     node *n;
     aux_copy() { e->evaluate(*tr, *n); }
 };
-} // unnamed namespace
-template class instantiate_template_1<1, copy::Nmax, aux_copy>;
+} // namespace aux
+template class instantiate_template_1<1, copy::Nmax, aux::aux_copy>;
 
 
 } // namespace eval_btensor_double

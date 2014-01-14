@@ -128,7 +128,7 @@ void diag::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates diag::evaluate<N>
-namespace {
+namespace aux {
 template<size_t N>
 struct aux_diag {
     diag *e;
@@ -136,8 +136,8 @@ struct aux_diag {
     node *n;
     aux_diag() { e->evaluate(*tr, *n); }
 };
-} // unnamed namespace
-template class instantiate_template_1<1, diag::Nmax, aux_diag>;
+} // namespace aux
+template class instantiate_template_1<1, diag::Nmax, aux::aux_diag>;
 
 
 } // namespace eval_btensor_double

@@ -182,7 +182,7 @@ void symm::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates symm::evaluate<N>
-namespace {
+namespace aux {
 template<size_t N>
 struct aux_symm {
     symm *e;
@@ -190,8 +190,8 @@ struct aux_symm {
     node *n;
     aux_symm() { e->evaluate(*tr, *n); }
 };
-} // unnamed namespace
-template class instantiate_template_1<1, symm::Nmax, aux_symm>;
+} // namespace aux
+template class instantiate_template_1<1, symm::Nmax, aux::aux_symm>;
 
 
 } // namespace eval_btensor_double

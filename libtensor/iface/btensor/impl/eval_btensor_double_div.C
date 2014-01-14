@@ -75,7 +75,7 @@ void div::evaluate(const tensor_transf<N, double> &tr, const node &t) {
 
 
 //  The code here explicitly instantiates div::evaluate<N>
-namespace {
+namespace aux {
 template<size_t N>
 struct aux_div {
     div *e;
@@ -83,8 +83,8 @@ struct aux_div {
     node *n;
     aux_div() { e->evaluate(*tr, *n); }
 };
-} // unnamed namespace
-template class instantiate_template_1<1, div::Nmax, aux_div>;
+} // namespace aux
+template class instantiate_template_1<1, div::Nmax, aux::aux_div>;
 
 
 } // namespace eval_btensor_double

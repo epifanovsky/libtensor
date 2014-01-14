@@ -111,7 +111,7 @@ void dirsum::evaluate(const tensor_transf<NC, double> &trc, const node &t) {
 
 
 //  The code here explicitly instantiates dirsum::evaluate<NC>
-namespace {
+namespace aux {
 template<size_t N>
 struct aux_dirsum {
     dirsum *e;
@@ -119,8 +119,8 @@ struct aux_dirsum {
     node *n;
     aux_dirsum() { e->evaluate(*tr, *n); }
 };
-} // unnamed namespace
-template class instantiate_template_1<1, dirsum::Nmax, aux_dirsum>;
+} // namespace aux
+template class instantiate_template_1<1, dirsum::Nmax, aux::aux_dirsum>;
 
 
 } // namespace eval_btensor_double
