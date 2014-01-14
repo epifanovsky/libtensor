@@ -9,8 +9,8 @@
 #include "btensor_test.h"
 #include "contract_test.h"
 #include "diag_test.h"
-#include "direct_btensor_test.h"
-#include "direct_eval_test.h"
+//#include "direct_btensor_test.h"
+//#include "direct_eval_test.h"
 #include "direct_product_test.h"
 #include "dirsum_test.h"
 #include "dot_product_test.h"
@@ -74,8 +74,8 @@ private:
     unit_test_factory<btensor_test> m_utf_btensor;
     unit_test_factory<contract_test> m_utf_contract;
     unit_test_factory<diag_test> m_utf_diag;
-    unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
-    unit_test_factory<direct_eval_test> m_utf_direct_eval;
+//    unit_test_factory<direct_btensor_test> m_utf_direct_btensor;
+//    unit_test_factory<direct_eval_test> m_utf_direct_eval;
     unit_test_factory<direct_product_test> m_utf_direct_product;
     unit_test_factory<dirsum_test> m_utf_dirsum;
     unit_test_factory<dot_product_test> m_utf_dot_product;

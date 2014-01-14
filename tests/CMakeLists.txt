@@ -233,8 +233,8 @@ set(SRC_IFACE
     iface/btensor_test.C
     iface/contract_test.C
     iface/diag_test.C
-    iface/direct_btensor_test.C
-    iface/direct_eval_test.C
+#    iface/direct_btensor_test.C
+#    iface/direct_eval_test.C
     iface/direct_product_test.C
     iface/dirsum_test.C
     iface/dot_product_test.C
