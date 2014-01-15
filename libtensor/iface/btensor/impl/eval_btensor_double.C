@@ -252,11 +252,11 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
 
 void eval_btensor<double>::evaluate(const expr_tree &tree) {
 
-    std::cout << std::endl;
-    std::cout << "= build plan = " << std::endl;
+//    std::cout << std::endl;
+//    std::cout << "= build plan = " << std::endl;
     eval_tree_builder_btensor bld(tree);
     bld.build();
-    std::cout << "= process plan =" << std::endl;
+//    std::cout << "= process plan =" << std::endl;
     eval_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
 }
 

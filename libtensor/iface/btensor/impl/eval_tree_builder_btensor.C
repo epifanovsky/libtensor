@@ -172,7 +172,7 @@ void node_renderer::render_add()  {
     const node &n = m_tree.get_vertex(m_cur);
     const node_add &na = n.recast_as<node_add>();
 
-    const expr_tree::edge_list_t &eout = m_tree.get_edges_out(m_cur);
+    const expr_tree::edge_list_t eout(m_tree.get_edges_out(m_cur));
 
     // Since the order of terms in an addition is arbitrary,
     // merging additions does not preserve the order
@@ -183,6 +183,7 @@ void node_renderer::render_add()  {
         const node &ni = m_tree.get_vertex(id1);
         if (ni.get_n() != n.get_n()) {
             throw 2;
+
         }
 
         node_renderer r(m_tree, m_order, id1);
@@ -190,7 +191,9 @@ void node_renderer::render_add()  {
         if (r.is_ident()) continue;
         if (! r.is_addition()) {
             node_assignment(m_tree, id1).add();
-            m_order.push_back(eout[i]);
+
+            const expr_tree::edge_list_t &in1 = m_tree.get_edges_in(id1);
+            m_order.push_back(in1[0]);
         }
         else replace_addition(id1);
     }
@@ -383,8 +386,8 @@ void eval_tree_builder_btensor::build() {
                 __FILE__, __LINE__, "Assignment node missing.");
     }
 
-    std::cout << "render expression" << std::endl;
-    print_tree(m_tree, std::cout);
+//    std::cout << "render expression" << std::endl;
+//    print_tree(m_tree, std::cout);
 
     std::set<expr_tree::node_id_t> to_erase;
     for (expr_tree::iterator i = m_tree.begin(); i != m_tree.end(); i++) {
@@ -421,8 +424,9 @@ void eval_tree_builder_btensor::build() {
 
     node_renderer(m_tree, m_order, head).render();
 
-    std::cout << "rendered expression" << std::endl;
-    print_tree(m_tree, std::cout);
+//    std::cout << "rendered expression" << std::endl;
+//    print_tree(m_tree, std::cout);
+
 }
 
 
