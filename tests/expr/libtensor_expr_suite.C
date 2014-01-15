@@ -12,6 +12,7 @@ libtensor_expr_suite::libtensor_expr_suite() :
     add_test("node_add", m_utf_node_add);
     add_test("node_contract", m_utf_node_contract);
     add_test("node_diag", m_utf_node_diag);
+    add_test("node_dot_product", m_utf_node_dot_product);
     add_test("node_ident", m_utf_node_ident);
     add_test("node_product", m_utf_node_product);
     add_test("node_transform", m_utf_node_transform);
