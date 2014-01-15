@@ -1,86 +1,44 @@
-#ifndef LIBTENSOR_DOT_PRODUCT_H
-#define LIBTENSOR_DOT_PRODUCT_H
+#ifndef LIBTENSOR_IFACE_DOT_PRODUCT_H
+#define LIBTENSOR_IFACE_DOT_PRODUCT_H
 
-#include <libtensor/core/permutation_builder.h>
-#include <libtensor/block_tensor/btod_dotprod.h>
-//#include "labeled_btensor.h"
-#include "letter.h"
-#include "letter_expr.h"
+#include <libtensor/expr/node_dot_product.h>
+#include <libtensor/expr/node_scalar.h>
+#include <libtensor/iface/expr_rhs.h>
+#include <libtensor/iface/eval.h>
 
 namespace libtensor {
 namespace iface {
 
 
-#if 0
-/** \brief Dot product (tensor + tensor)
+/** \brief Dot product
 
-    \ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, typename T, bool A1, bool A2>
-double dot_product(
-    labeled_btensor<N, T, A1> bt1,
-    labeled_btensor<N, T, A2> bt2) {
-
-    size_t seq1[N], seq2[N];
-    for(size_t i = 0; i < N; i++) {
-        seq1[i] = i;
-        seq2[i] = bt2.index_of(bt1.letter_at(i));
-    }
-    permutation<N> perma;
-    permutation_builder<N> permb(seq1, seq2);
-    return btod_dotprod<N>(
-        bt1.get_btensor(), perma,
-        bt2.get_btensor(), permb.get_perm()).calculate();
-}
-
-
-/** \brief Dot product (tensor + expression)
-
-    \ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, typename T, bool A1>
-double dot_product(
-    labeled_btensor<N, T, A1> bt1,
-    expr_rhs<N, T> expr2) {
-
-    anon_eval<N, T> eval2(expr2, bt1.get_label());
-    eval2.evaluate();
-    return btod_dotprod<N>(bt1.get_btensor(), eval2.get_btensor()).calculate();
-}
-
-
-/** \brief Dot product (expression + tensor)
-
-    \ingroup libtensor_btensor_expr_op
- **/
-template<size_t N, typename T, bool A2>
-double dot_product(
-    expr_rhs<N, T> expr1,
-    labeled_btensor<N, T, A2> bt2) {
-
-    return dot_product(bt2, expr1);
-}
-#endif
-
-
-/** \brief Dot product (expression + expression)
-
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_iface
  **/
 template<size_t N, typename T>
-double dot_product(
-    expr_rhs<N, T> lhs,
-    expr_rhs<N, T> rhs) {
+T dot_product(
+    const expr_rhs<N, T> &lhs,
+    const expr_rhs<N, T> &rhs) {
 
-    std::vector<const letter*> v;
-    for(size_t i = 0; i < N; i++) v.push_back(&expr1.letter_at(i));
-    letter_expr<N> label(v);
-    anon_eval<N, T> eval1(expr1, label);
-    eval1.evaluate();
-    anon_eval<N, T> eval2(expr2, label);
-    eval2.evaluate();
-    return btod_dotprod<N>(eval1.get_btensor(), eval2.get_btensor()).
-        calculate();
+    std::vector<size_t> idxa(N), idxb(N);
+    for(size_t i = 0; i < N; i++) {
+        const letter &l = lhs.letter_at(i);
+        idxa[i] = i;
+        idxb[rhs.index_of(l)] = i;
+    }
+
+    expr::node_assign n1(0);
+    expr::expr_tree e(expr::node_assign(0));
+    expr::expr_tree::node_id_t id_res =
+        e.add(e.get_root(), expr::node_scalar<T>());
+    expr::expr_tree::node_id_t id_dot =
+        e.add(e.get_root(), expr::node_dot_product(idxa, idxb));
+    e.add(id_dot, lhs.get_expr());
+    e.add(id_dot, rhs.get_expr());
+
+    eval().evaluate(e);
+
+    return dynamic_cast< const expr::node_scalar<T>& >(e.get_vertex(id_res)).
+        get_c();
 }
 
 
@@ -90,4 +48,4 @@ using iface::dot_product;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_DOT_PRODUCT_H
+#endif // LIBTENSOR_IFACE_DOT_PRODUCT_H
