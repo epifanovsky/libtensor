@@ -4,6 +4,7 @@
 #include <cstddef> // for size_t
 #include <typeinfo>
 #include "letter_expr.h"
+#include "eval_i.h"
 
 namespace libtensor {
 namespace iface {
@@ -11,6 +12,7 @@ namespace iface {
 
 template<size_t N, typename T>
 class expr_rhs;
+
 
 /** \brief Any tensor type
     \tparam N Tensor order.
@@ -47,18 +49,20 @@ private:
     };
 
 private:
-    holder_base *m_tensor; // !< Tensor held inside
+    holder_base *m_tensor; //!< Tensor held inside
+    const eval_i &m_eval; //!< Evaluator
 
 public:
     /** \brief Creates any_tensor and places a tensor object inside
      **/
     template<typename Tensor>
-    any_tensor(Tensor &t);
+    any_tensor(Tensor &t, const eval_i &e);
 
     /** \brief Copy constructor
      **/
     any_tensor(const any_tensor<N, T> &other) :
-        m_tensor(other.m_tensor ? other.m_tensor->clone() : 0)
+        m_tensor(other.m_tensor ? other.m_tensor->clone() : 0),
+        m_eval(other.m_eval)
     { }
 
     /** \brief Destructor
@@ -68,16 +72,20 @@ public:
     /** \brief Returns the tensor object held inside as a concrete tensor type
      **/
     template<typename Tensor>
-    Tensor &get_tensor();
+    Tensor &get_tensor() const;
+
+    /** \brief Returns the evaluator associated with this tensor
+     **/
+    const eval_i &get_eval() const;
 
     /** \brief Attaches a letter label to the tensor
      **/
     expr_rhs<N, T> operator()(const letter_expr<N> &label);
 
 protected:
-    /** \brief Default constructor that can only be used by derived classes
+    /** \brief Constructor that can only be used by derived classes
      **/
-    any_tensor() : m_tensor(0) { }
+    any_tensor(const eval_i &e) : m_tensor(0), m_eval(e) { }
 
     /** \brief Actual implementation of operator(), to be redefined in derived
             classes if necessary
@@ -91,9 +99,9 @@ private:
 
 
 template<size_t N, typename T> template<typename Tensor>
-any_tensor<N, T>::any_tensor(Tensor &t) {
+any_tensor<N, T>::any_tensor(Tensor &t, const eval_i &e) :
+    m_tensor(new holder<Tensor>(t)), m_eval(e) {
 
-    m_tensor = new holder<Tensor>(t);
 }
 
 
@@ -105,13 +113,20 @@ any_tensor<N, T>::~any_tensor() {
 
 
 template<size_t N, typename T> template<typename Tensor>
-Tensor &any_tensor<N, T>::get_tensor() {
+Tensor &any_tensor<N, T>::get_tensor() const {
 
     if(m_tensor->type_info() == typeid(Tensor)) {
         return static_cast< holder<Tensor>* >(m_tensor)->m_t;
     } else {
         throw std::bad_cast();
     }
+}
+
+
+template<size_t N, typename T>
+const eval_i &any_tensor<N, T>::get_eval() const {
+
+    return m_eval;
 }
 
 

@@ -25,6 +25,13 @@ class tensor : public tensor_i {
 
 };
 
+class eval : public iface::eval_i {
+public:
+    virtual bool can_evaluate(const expr::expr_tree &tree) const { return false; }
+    virtual void evaluate(const expr::expr_tree &tree) const { }
+
+};
+
 } // unnamed namespace
 
 
@@ -38,7 +45,8 @@ void any_tensor_test::test_1() {
 
     tensor t;
     tensor_i &ti = t;
-    any_tensor<1, int> any(ti);
+    eval e;
+    any_tensor<1, int> any(ti, e);
 
     if(!t.equals(any.get_tensor<tensor_i>())) {
         fail_test(testname, __FILE__, __LINE__, "Equality test failed.");
@@ -65,7 +73,8 @@ void any_tensor_test::test_2() {
 
     tensor t;
     tensor_i &ti = t;
-    any_tensor<4, int> any(ti);
+    eval e;
+    any_tensor<4, int> any(ti, e);
 
     if(!t.equals(any.get_tensor<tensor_i>())) {
         fail_test(testname, __FILE__, __LINE__, "Equality test failed.");

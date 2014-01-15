@@ -19,7 +19,7 @@ class btensor_i :
     virtual public block_tensor_rd_i<N, T>, public any_tensor<N, T> {
 
 public:
-    btensor_i() : any_tensor<N, T>(*this) { }
+    btensor_i(const eval_i &e) : any_tensor<N, T>(*this, e) { }
 
 };
 

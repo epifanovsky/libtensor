@@ -10,13 +10,40 @@ namespace libtensor {
 namespace iface {
 
 
+template<size_t N, typename T>
+class expr_tensor_base {
+private:
+    class null_eval : public eval_i {
+    public:
+        virtual bool can_evaluate(const expr::expr_tree &tree) const {
+            return false;
+        }
+
+        virtual void evaluate(const expr::expr_tree &tree) const {
+
+        }
+
+    };
+
+private:
+    null_eval m_eval;
+
+protected:
+    const eval_i &get_eval() const { return m_eval; }
+
+};
+
+
 /** \brief Tensor-like object that stores a tensor expression
 
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T = double>
 class expr_tensor :
-    public any_tensor<N, T>, public expr_lhs<N, T>, public noncopyable {
+    public expr_tensor_base<N, T>,
+    public any_tensor<N, T>,
+    public expr_lhs<N, T>,
+    public noncopyable {
 
 private:
     expr::expr_tree *m_expr; //!< Expression
@@ -24,7 +51,11 @@ private:
 public:
     /** \brief Constructs an empty object
      **/
-    expr_tensor() : m_expr(0) { }
+    expr_tensor() :
+        any_tensor<N, T>(*this, expr_tensor_base<N, T>::get_eval()),
+        m_expr(0) {
+
+    }
 
     /** \brief Virtual destructor
      **/

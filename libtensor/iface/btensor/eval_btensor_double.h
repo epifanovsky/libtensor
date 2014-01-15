@@ -2,6 +2,7 @@
 #define LIBTENSOR_IFACE_EVAL_BTENSOR_DOUBLE_H
 
 #include <libtensor/expr/expr_tree.h>
+#include <libtensor/iface/eval_i.h>
 
 namespace libtensor {
 namespace iface {
@@ -12,16 +13,24 @@ namespace iface {
     \ingroup libtensor_iface
  **/
 template<>
-class eval_btensor<double> {
+class eval_btensor<double> : public eval_i {
 public:
     enum {
         Nmax = 8
     };
 
 public:
+    /** \brief Virtual destructor
+     **/
+    virtual ~eval_btensor<double>();
+
+    /** \brief Checks if this evaluator can handle the given expression
+     **/
+    virtual bool can_evaluate(const expr::expr_tree &e) const;
+
     /** \brief Evaluates an expression tree
      **/
-    void evaluate(const expr::expr_tree &tree);
+    virtual void evaluate(const expr::expr_tree &tree) const;
 
 };
 

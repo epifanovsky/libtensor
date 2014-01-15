@@ -18,22 +18,36 @@ namespace libtensor {
 namespace iface {
 
 
+template<size_t N, typename T>
+class btensor_base {
+private:
+    eval_btensor<T> m_eval;
+
+protected:
+    const eval_btensor<T> &get_eval() const { return m_eval; }
+
+};
+
+
 /** \brief User-friendly block tensor
 
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T = double>
 class btensor :
+    public btensor_base<N, T>,
     virtual public btensor_i<N, T>,
     virtual public block_tensor< N, T, allocator<T> >,
     public expr_lhs<N, T> {
 
 public:
     btensor(const bispace<N> &bi) :
+        btensor_i<N, T>(btensor_base<N, T>::get_eval()),
         block_tensor< N, T, allocator<T> >(bi.get_bis())
     { }
 
     btensor(const block_index_space<N> &bis) :
+        btensor_i<N, T>(btensor_base<N, T>::get_eval()),
         block_tensor< N, T, allocator<T> >(bis)
     { }
 

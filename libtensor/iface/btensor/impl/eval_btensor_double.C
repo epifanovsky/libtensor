@@ -250,7 +250,18 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
 } // unnamed namespace
 
 
-void eval_btensor<double>::evaluate(const expr_tree &tree) {
+eval_btensor<double>::~eval_btensor<double>() {
+
+}
+
+
+bool eval_btensor<double>::can_evaluate(const expr::expr_tree &e) const {
+
+    return true;
+}
+
+
+void eval_btensor<double>::evaluate(const expr_tree &tree) const {
 
 //    std::cout << std::endl;
 //    std::cout << "= build plan = " << std::endl;
