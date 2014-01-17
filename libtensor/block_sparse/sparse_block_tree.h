@@ -33,6 +33,7 @@ public:
     void set_offsets_sizes_nnz(const std::vector< sparse_bispace<1> >& subspaces) { sparse_block_tree_any_order::set_offsets_sizes_nnz(subspaces); }
 
     size_t get_nnz() const { return sparse_block_tree_any_order::get_nnz(); }
+    size_t get_n_entries() const { return sparse_block_tree_any_order::get_n_entries(); }
 
 
     //Friend for contract(), fuse()

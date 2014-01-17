@@ -58,6 +58,8 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_fuse_3d_3d_invalid_no_match();
 
         test_get_n_index_groups();
+        test_get_index_group_offset();
+        test_get_index_group_order();
         test_get_index_group_dim();
         test_get_index_group_containing_subspace();
 
@@ -1490,6 +1492,40 @@ void sparse_bispace_test::test_get_n_index_groups() throw(libtest::test_exceptio
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::get_n_index_groups(...) did not return correct value");
+    }
+}
+
+void sparse_bispace_test::test_get_index_group_offset() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_index_group_offset()";
+    
+    index_groups_test_f tf = index_groups_test_f();
+
+    size_t correct_offsets[5] = {0,1,2,4,5};
+    for(size_t grp = 0; grp < tf.bispace.get_n_index_groups(); ++grp)
+    {
+        if(tf.bispace.get_index_group_offset(grp) != correct_offsets[grp])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_index_group_offset(...) did not return correct value");
+        }
+    }
+}
+
+void sparse_bispace_test::test_get_index_group_order() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_index_group_order()";
+    
+    index_groups_test_f tf = index_groups_test_f();
+
+    size_t correct_orders[5] = {1,1,2,1,2};
+    for(size_t grp = 0; grp < tf.bispace.get_n_index_groups(); ++grp)
+    {
+        if(tf.bispace.get_index_group_order(grp) != correct_orders[grp])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_index_group_order(...) did not return correct value");
+        }
     }
 }
 

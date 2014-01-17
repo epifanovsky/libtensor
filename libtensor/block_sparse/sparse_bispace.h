@@ -107,6 +107,8 @@ public:
     const size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
 
     size_t get_n_index_groups() const { return 1; }
+    size_t get_index_group_offset(size_t grp_idx) const { return 0; }
+    size_t get_index_group_order(size_t grp_idx) const { return 1; }
     size_t get_index_group_dim(size_t grp_idx) const { return m_dim; }
     size_t get_index_group_containing_subspace(size_t subspace_idx) const { if(subspace_idx != 0) {  throw bad_parameter(g_ns,"sparse_bispace<1>","get_index_group_containing_subspace",__FILE__,__LINE__,"only one subspace"); }  return 0; }
 
@@ -251,13 +253,13 @@ private:
     std::vector< sparse_block_tree_any_order > m_sparse_block_trees;
 
     //Used to store the number of nonzero elements corresponding to the significant blocks in each tree
-    //Used to construct m_dimensions
+    //Used to construct m_index_group_dims
     std::vector<size_t> m_sparse_block_tree_dimensions; 
 
     //Internal-use array containing the dimension of each subspace/sparse composite subspace group. 
     //Used to calculate number of elements and offsets
     //Should never be edited directly - instead call init()
-    std::vector<size_t> m_dimensions;
+    std::vector<size_t> m_index_group_dims;
 
     //Internal use array for improving performance by pre-computing the inner size of each index
     std::vector<size_t> m_inner_sizes;
@@ -269,7 +271,7 @@ private:
     //Initialized only once by init() for performance
     std::vector< std::vector<size_t> > m_sparse_key_vecs;
     
-    //Helper functions used to set the m_dimensions array used for calculating block offsets and nnz
+    //Helper functions used to set the m_index_group_dims array used for calculating block offsets and nnz
     //Also initializes other sparsity data
     void init();
     
@@ -358,8 +360,10 @@ public:
      **/
     const size_t get_sparse_group_offset(size_t group_idx) const;
 
-    size_t get_n_index_groups() const { return m_dimensions.size(); }
-    size_t get_index_group_dim(size_t grp_idx) const { return m_dimensions[grp_idx]; }
+    size_t get_n_index_groups() const { return m_index_group_dims.size(); }
+    size_t get_index_group_offset(size_t grp_idx) const { return m_index_group_offsets[grp_idx]; }
+    size_t get_index_group_dim(size_t grp_idx) const { return m_index_group_dims[grp_idx]; }
+    size_t get_index_group_order(size_t grp_idx) const;
     size_t get_index_group_containing_subspace(size_t subspace_idx) const;
 
     /** \brief Returns whether this object is equal to another of the same dimension. 
@@ -389,7 +393,7 @@ template<size_t N>
 void sparse_bispace<N>::init()
 {
     //Should only be called once
-    if(m_dimensions.size() > 0)
+    if(m_index_group_dims.size() > 0)
     {
         throw bad_parameter(g_ns,"sparse_bispace<N>","init(...)",
             __FILE__,__LINE__,"init should only be called once");
@@ -415,13 +419,13 @@ void sparse_bispace<N>::init()
         if(treat_as_sparse)
         {
             //We are in a sparse group, use the total group size
-            m_dimensions.push_back(m_sparse_block_tree_dimensions[cur_group_idx]);
+            m_index_group_dims.push_back(m_sparse_block_tree_dimensions[cur_group_idx]);
             subspace_idx += m_sparse_block_trees[cur_group_idx].get_order();
             ++cur_group_idx;
         }
         else
         {
-            m_dimensions.push_back(m_subspaces[subspace_idx].get_dim());
+            m_index_group_dims.push_back(m_subspaces[subspace_idx].get_dim());
             ++subspace_idx;
         }
     }
@@ -435,13 +439,13 @@ void sparse_bispace<N>::init()
     }
     
     //Precompute inner sizes
-    m_inner_sizes.resize(m_dimensions.size());
-    for(size_t inner_size_idx = 0; inner_size_idx < m_dimensions.size(); ++inner_size_idx)
+    m_inner_sizes.resize(m_index_group_dims.size());
+    for(size_t inner_size_idx = 0; inner_size_idx < m_index_group_dims.size(); ++inner_size_idx)
     {
         size_t inner_size = 1;
-        for(size_t factor_idx = inner_size_idx+1; factor_idx < m_dimensions.size(); ++factor_idx)
+        for(size_t factor_idx = inner_size_idx+1; factor_idx < m_index_group_dims.size(); ++factor_idx)
         {
-            inner_size *= m_dimensions[factor_idx];
+            inner_size *= m_index_group_dims[factor_idx];
         }
         m_inner_sizes[inner_size_idx] = inner_size;
     }
@@ -527,9 +531,9 @@ size_t sparse_bispace<N>::get_nnz() const
 {
     //TODO: Case where all elements are zero, fully sparse tensors????
     size_t nnz = 1;
-    for(int i = 0; i < m_dimensions.size(); ++i)
+    for(int i = 0; i < m_index_group_dims.size(); ++i)
     {
-        nnz *= m_dimensions[i];
+        nnz *= m_index_group_dims[i];
     }
     return nnz;
 }
@@ -841,6 +845,21 @@ const size_t sparse_bispace<N>::get_sparse_group_offset(size_t group_idx) const
     return m_sparse_indices_sets_offsets[group_idx];
 }
 
+
+
+template<size_t N>
+size_t sparse_bispace<N>::get_index_group_order(size_t grp_idx) const
+{
+    if(grp_idx == m_index_group_offsets.size() - 1)
+    {
+        return N - m_index_group_offsets.back();
+    }
+    else
+    {
+        return m_index_group_offsets[grp_idx+1] - m_index_group_offsets[grp_idx];
+    }
+}
+
 template<size_t N>
 size_t sparse_bispace<N>::get_index_group_containing_subspace(size_t subspace_idx) const
 {
@@ -996,6 +1015,8 @@ private:
         virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
         virtual size_t get_sparse_group_offset(size_t group_idx) const = 0; 
         virtual size_t get_n_index_groups() const = 0;
+        virtual size_t get_index_group_offset(size_t grp_idx) const = 0;
+        virtual size_t get_index_group_order(size_t grp_idx) const = 0;
         virtual size_t get_index_group_dim(size_t grp_idx) const = 0;
         virtual size_t get_index_group_containing_subspace(size_t subpsace_idx) const = 0;
 
@@ -1019,6 +1040,8 @@ private:
         sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
         size_t get_n_index_groups() const { return m_bispace.get_n_index_groups(); }
+        size_t get_index_group_offset(size_t grp_idx) const { return m_bispace.get_index_group_offset(grp_idx); }
+        size_t get_index_group_order(size_t grp_idx) const { return m_bispace.get_index_group_order(grp_idx); }
         size_t get_index_group_dim(size_t grp_idx) const { return m_bispace.get_index_group_dim(grp_idx); }
         size_t get_index_group_containing_subspace(size_t subspace_idx) const { return m_bispace.get_index_group_containing_subspace(subspace_idx); }
 
@@ -1053,6 +1076,8 @@ public:
     sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
     size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 
     size_t get_n_index_groups() const { return m_spb_ptr->get_n_index_groups(); }
+    size_t get_index_group_offset(size_t grp_idx) const { return m_spb_ptr->get_index_group_offset(grp_idx); }
+    size_t get_index_group_order(size_t grp_idx) const { return m_spb_ptr->get_index_group_order(grp_idx); }
     size_t get_index_group_dim(size_t grp_idx) const { return m_spb_ptr->get_index_group_dim(grp_idx); }
     size_t get_index_group_containing_subspace(size_t subspace_idx) const { return m_spb_ptr->get_index_group_containing_subspace(subspace_idx); }
 

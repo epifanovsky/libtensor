@@ -131,6 +131,8 @@ private:
      * index_group tests
      */
     void test_get_n_index_groups() throw(libtest::test_exception);
+    void test_get_index_group_offset() throw(libtest::test_exception);
+    void test_get_index_group_order() throw(libtest::test_exception);
     void test_get_index_group_dim() throw(libtest::test_exception);
     void test_get_index_group_containing_subspace() throw(libtest::test_exception);
 

@@ -6,6 +6,8 @@
  */
 
 #include "sparse_loop_list.h"
+#include "sparsity_fuser.h"
+#include "sparse_loop_grouper.h"
 
 using namespace std;
 
@@ -70,6 +72,37 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops) : m_loops(lo
 			}
 		}
     }
+
+    //Fuse all coupled sparse trees
+    sparsity_fuser sf(m_loops,m_bispaces);
+    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+    {
+        idx_list tree_indices = sf.get_trees_for_loop(loop_idx);
+
+        //Fuse in reverse order so that all tree indices remain valid throughout process
+        for(size_t tree_rel_idx = 1; tree_rel_idx < tree_indices.size(); ++tree_rel_idx)
+        {
+            //Find common loops between both trees
+            size_t rhs_tree_idx = tree_indices[tree_indices.size() - tree_rel_idx];
+            idx_list lhs_loops = sf.get_loops_for_tree(tree_indices[0]);
+            idx_list rhs_loops = sf.get_loops_for_tree(rhs_tree_idx);
+            idx_list common_loops;
+            for(size_t lhs_loop_rel_idx = 0; lhs_loop_rel_idx < lhs_loops.size(); ++lhs_loop_rel_idx)
+            {
+                size_t common_loop_idx =  lhs_loops[lhs_loop_rel_idx];
+                if(find(rhs_loops.begin(),rhs_loops.end(),common_loop_idx) != rhs_loops.end())
+                {
+                    common_loops.push_back(common_loop_idx);
+                }
+            }
+            sf.fuse(tree_indices[0],rhs_tree_idx,common_loops);
+        }
+    }
+
+    //Create block offset and size information for each loop group
+    sparse_loop_grouper slg(sf);
+    m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
+    m_group_offsets_and_sizes = slg.get_offsets_and_sizes();
 }
 
 #if 0

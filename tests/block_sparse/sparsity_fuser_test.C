@@ -15,6 +15,7 @@ void sparsity_fuser_test::perform() throw(libtest::test_exception) {
     test_get_loops_for_tree();
     test_get_trees_for_loop();
     test_get_bispaces_and_index_groups_for_tree();
+    test_get_sub_key_offsets_for_tree();
     test_get_offsets_and_sizes();
     test_fuse();
 }
@@ -206,10 +207,35 @@ void sparsity_fuser_test::test_get_bispaces_and_index_groups_for_tree() throw(li
     {
         idx_pair_list baig = sf.get_bispaces_and_index_groups_for_tree(tree_idx);
         idx_pair_list correct_baig(1,idx_pair(tree_idx,0));
-        if(baig != correct_baig) 
+        if(baig != correct_baig)
         {
             fail_test(test_name,__FILE__,__LINE__,
                     "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value");
+        }
+    }
+}
+
+void sparsity_fuser_test::test_get_sub_key_offsets_for_tree() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparsity_fuser_test::test_get_sub_key_offsets_for_tree()";
+
+    contract_test_f tf = contract_test_f();
+    sparsity_fuser sf(tf.loops,tf.bispaces);
+
+    size_t correct_0_arr[3] = {0,1,2};
+    size_t correct_1_arr[3] = {0,1,2};
+    size_t correct_2_arr[2] = {0,1};
+    vector<vector<idx_list> > correct_sub_key_offsets(3,vector<idx_list>());
+    correct_sub_key_offsets[0].push_back(idx_list(correct_0_arr,correct_0_arr+3));
+    correct_sub_key_offsets[1].push_back(idx_list(correct_1_arr,correct_1_arr+3));
+    correct_sub_key_offsets[2].push_back(idx_list(correct_2_arr,correct_2_arr+2));
+
+    for(size_t tree_idx = 0; tree_idx < sf.get_trees().size(); ++tree_idx)
+    {
+        if(sf.get_sub_key_offsets_for_tree(tree_idx) != correct_sub_key_offsets[tree_idx])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_sub_key_offsets(...) returned incorrect value");
         }
     }
 }
@@ -327,6 +353,24 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
                 "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value for tree 1 after fusion 0");
     }
 
+    //CHECK TREE->{SUB KEY OFFSETS} MAPPING
+    size_t correct_sub_key_arr_0_00[3] = {0,1,2};
+    size_t correct_sub_key_arr_0_01[3] = {0,1,3};
+    size_t correct_sub_key_arr_0_10[2] = {0,1};
+    vector<vector<idx_list> > correct_sub_key_offsets_0(2,vector<idx_list>());
+    correct_sub_key_offsets_0[0].push_back(idx_list(correct_sub_key_arr_0_00,correct_sub_key_arr_0_00+3));
+    correct_sub_key_offsets_0[0].push_back(idx_list(correct_sub_key_arr_0_01,correct_sub_key_arr_0_01+3));
+    correct_sub_key_offsets_0[1].push_back(idx_list(correct_sub_key_arr_0_10,correct_sub_key_arr_0_10+2));
+
+    for(size_t tree_idx = 0; tree_idx < 2; ++tree_idx)
+    {
+        if(sf.get_sub_key_offsets_for_tree(tree_idx) != correct_sub_key_offsets_0[tree_idx])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_sub_key_offsets_for_tree(...) returned incorrect value");
+        }
+    }
+
     //Check the tree entries
     vector<off_dim_pair_list> offsets_and_sizes_0 = sf.get_offsets_and_sizes(0);
     vector<off_dim_pair_list> correct_oas_0;
@@ -379,6 +423,24 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparsity_fuser::get_bispaces_and_index_groups_for_tree(...) returned incorrect value for tree 0 after fusion 1");
+    }
+
+    //CHECK TREE->{SUB KEY OFFSETS} MAPPING
+    size_t correct_sub_key_arr_1_00[3] = {0,1,2};
+    size_t correct_sub_key_arr_1_01[3] = {0,1,3};
+    size_t correct_sub_key_arr_1_02[2] = {2,3};
+    vector<vector<idx_list> > correct_sub_key_offsets_1(1,vector<idx_list>());
+    correct_sub_key_offsets_1[0].push_back(idx_list(correct_sub_key_arr_1_00,correct_sub_key_arr_1_00+3));
+    correct_sub_key_offsets_1[0].push_back(idx_list(correct_sub_key_arr_1_01,correct_sub_key_arr_1_01+3));
+    correct_sub_key_offsets_1[0].push_back(idx_list(correct_sub_key_arr_1_02,correct_sub_key_arr_1_02+2));
+
+    for(size_t tree_idx = 0; tree_idx < 1; ++tree_idx)
+    {
+        if(sf.get_sub_key_offsets_for_tree(tree_idx) != correct_sub_key_offsets_1[tree_idx])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_sub_key_offsets_for_tree(...) returned incorrect value");
+        }
     }
 
     //Check the tree entries

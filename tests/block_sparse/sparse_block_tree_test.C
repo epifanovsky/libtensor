@@ -184,6 +184,7 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
     test_unsorted_input();
 
     test_get_nnz_2d();
+    test_get_n_entries_3d();
 
     test_equality_false_2d();
     test_equality_true_2d();
@@ -269,7 +270,22 @@ void sparse_block_tree_test::test_get_nnz_2d() throw(libtest::test_exception)
     if(sbt_1.get_nnz() != 32)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                  "sparse_block_tree<N>::operator==(...) returned incorrect value");
+                  "sparse_block_tree<N>::get_nnz(...) returned incorrect value");
+    }
+}
+
+void sparse_block_tree_test::test_get_n_entries_3d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_get_n_entries_3d()";
+
+    three_d_test_f tf = three_d_test_f();
+    
+    sparse_block_tree<3> sbt_1(tf.keys,tf.subspaces);
+    
+    if(sbt_1.get_n_entries() != 21)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                  "sparse_block_tree<N>::get_n_entries(...) returned incorrect value");
     }
 }
 

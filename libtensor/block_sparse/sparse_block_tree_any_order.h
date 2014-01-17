@@ -64,6 +64,7 @@ public:
     iterator end();
     const_iterator end() const;
 
+    size_t get_n_entries() const { return m_n_entries; }
     size_t get_order() const { return m_order; }
 
     bool operator==(const sparse_block_tree_any_order& rhs) const;
@@ -84,6 +85,7 @@ private:
     //Utility struct used to implement permute
     struct kv_pair_compare;
 
+    size_t m_n_entries;
     size_t m_order;
     std::vector<key_t> m_keys;
     //For branch nodes only
@@ -113,6 +115,7 @@ template<typename container>
 sparse_block_tree_any_order::sparse_block_tree_any_order(const container& key,size_t key_order,size_t node_order)
 {
     m_order = node_order;
+    m_n_entries = 0;
     push_back(key,key_order);
 }
 
@@ -138,6 +141,7 @@ void sparse_block_tree_any_order::push_back(const container& key,size_t key_orde
     {
         m_children.back()->push_back(key,key_order);
     }
+    ++m_n_entries;
 }
 
 template<size_t N>
@@ -149,6 +153,7 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const std::vector< sequ
                             __FILE__,__LINE__,"cannot pass 0 dimensional sequence as argument");
     }
     m_order = N;
+    m_n_entries = 0;
 
     //Ensure that block list is sorted in lexicographic order
     size_t offset = 0;

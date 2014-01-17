@@ -21,6 +21,8 @@ private:
     void test_get_n_groups() throw(libtest::test_exception);
     void test_get_bispaces_and_index_groups() throw(libtest::test_exception);
     void test_get_offsets_and_sizes() throw(libtest::test_exception);
+    void test_get_bispaces_and_subspaces() throw(libtest::test_exception);
+    void test_get_block_dims() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

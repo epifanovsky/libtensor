@@ -26,6 +26,8 @@ private:
     **/
     void test_get_nnz_2d() throw(libtest::test_exception);
 
+    void test_get_n_entries_3d() throw(libtest::test_exception);
+
     /** \brief Test that two things that aren't equal are shown as such 
     **/
     void test_equality_false_2d() throw(libtest::test_exception);

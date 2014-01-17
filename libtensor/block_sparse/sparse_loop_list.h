@@ -35,6 +35,10 @@ private:
     				   std::vector<block_list>& bispace_block_lists,
     				   block_list& loop_indices,
     				   size_t loop_idx=0);
+    std::vector<std::vector<off_dim_pair_list> > m_group_offsets_and_sizes; //Each entry contains offsets and sizes of the blocks for each a given loop group
+    std::vector<idx_pair_list> m_bispaces_and_index_groups; //Each entry contains the bispaces and index groups touched by a given loop group
+    std::vector<dim_list> m_block_sizes; //The block sizes of each tensor 
+    std::vector<offset_list> m_block_offsets; //The block 
 public:
 	sparse_loop_list(const std::vector<block_loop>& loops);
 

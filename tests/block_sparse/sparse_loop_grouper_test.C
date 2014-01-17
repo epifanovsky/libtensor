@@ -15,6 +15,8 @@ void sparse_loop_grouper_test::perform() throw(libtest::test_exception) {
     test_get_n_groups();
     test_get_bispaces_and_index_groups();
     test_get_offsets_and_sizes();
+    test_get_bispaces_and_subspaces();
+    test_get_block_dims();
 }
 
 //Test fixtures
@@ -111,8 +113,8 @@ void sparse_loop_grouper_test::test_get_bispaces_and_index_groups() throw(libtes
     vector<idx_pair_list> bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
 
     vector<idx_pair_list> correct_bispaces_and_index_groups(2);
-    correct_bispaces_and_index_groups[0].push_back(idx_pair(1,0));
     correct_bispaces_and_index_groups[0].push_back(idx_pair(0,0));
+    correct_bispaces_and_index_groups[0].push_back(idx_pair(1,0));
     correct_bispaces_and_index_groups[0].push_back(idx_pair(2,0));
 
     correct_bispaces_and_index_groups[1].push_back(idx_pair(0,1));
@@ -121,7 +123,7 @@ void sparse_loop_grouper_test::test_get_bispaces_and_index_groups() throw(libtes
     if(bispaces_and_index_groups != correct_bispaces_and_index_groups)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_loop_grouper::get_offsets_and_sizes(...) returned incorrect value");
+                "sparsity_loop_grouper::get_bispaces_and_index_groups(...) returned incorrect value");
     }
 }
 
@@ -133,10 +135,10 @@ void sparse_loop_grouper_test::test_get_offsets_and_sizes() throw(libtest::test_
     sparse_loop_grouper slg(tf.sf);
 
     vector< vector<off_dim_pair_list> > correct_oas(2);
-    off_dim_pair correct_0_0_arr[3] = {off_dim_pair(0,4),off_dim_pair(2,2),off_dim_pair(4,2)};
-    off_dim_pair correct_0_1_arr[3] = {off_dim_pair(4,4),off_dim_pair(4,2),off_dim_pair(6,2)};
-    off_dim_pair correct_0_2_arr[3] = {off_dim_pair(12,4),off_dim_pair(8,2),off_dim_pair(10,2)};
-    off_dim_pair correct_0_3_arr[3] = {off_dim_pair(8,4),off_dim_pair(10,2),off_dim_pair(8,2)};
+    off_dim_pair correct_0_0_arr[3] = {off_dim_pair(2,2),off_dim_pair(0,4),off_dim_pair(4,2)};
+    off_dim_pair correct_0_1_arr[3] = {off_dim_pair(4,2),off_dim_pair(4,4),off_dim_pair(6,2)};
+    off_dim_pair correct_0_2_arr[3] = {off_dim_pair(8,2),off_dim_pair(12,4),off_dim_pair(10,2)};
+    off_dim_pair correct_0_3_arr[3] = {off_dim_pair(10,2),off_dim_pair(8,4),off_dim_pair(8,2)};
 
     correct_oas[0].push_back(off_dim_pair_list(correct_0_0_arr,correct_0_0_arr+3));
     correct_oas[0].push_back(off_dim_pair_list(correct_0_1_arr,correct_0_1_arr+3));
@@ -161,6 +163,51 @@ void sparse_loop_grouper_test::test_get_offsets_and_sizes() throw(libtest::test_
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparsity_loop_grouper::get_offsets_and_sizes(...) returned incorrect value");
+    }
+}
+
+void sparse_loop_grouper_test::test_get_bispaces_and_subspaces() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_grouper_test::test_get_bispaces_and_subspaces()";
+
+    dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
+    sparse_loop_grouper slg(tf.sf);
+
+    vector<idx_pair_list> bispaces_and_subspaces = slg.get_bispaces_and_subspaces();
+
+    vector<idx_pair_list> correct_bispaces_and_subspaces(2);
+    correct_bispaces_and_subspaces[0].push_back(idx_pair(0,0));
+    correct_bispaces_and_subspaces[0].push_back(idx_pair(1,1));
+    correct_bispaces_and_subspaces[0].push_back(idx_pair(1,0));
+    correct_bispaces_and_subspaces[0].push_back(idx_pair(2,0));
+
+    correct_bispaces_and_subspaces[1].push_back(idx_pair(0,1));
+    correct_bispaces_and_subspaces[1].push_back(idx_pair(2,1));
+
+    if(bispaces_and_subspaces != correct_bispaces_and_subspaces)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_loop_grouper::get_bispaces_and_subspaces(...) returned incorrect value");
+    }
+}
+
+void sparse_loop_grouper_test::test_get_block_dims() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_grouper_test::test_get_block_dims()";
+
+    dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
+    sparse_loop_grouper slg(tf.sf);
+
+    vector<vector<dim_list> > block_dims = slg.get_block_dims();
+
+    vector<vector<dim_list> > correct_block_dims(2);
+    correct_block_dims[0].resize(4,dim_list(4,2));
+    correct_block_dims[1].resize(6,dim_list(2,2));
+
+    if(block_dims != correct_block_dims)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_loop_grouper::get_block_dims(...) returned incorrect value");
     }
 }
 

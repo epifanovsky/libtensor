@@ -15,7 +15,7 @@ void sparse_block_tree_any_order::set_offsets_sizes_nnz(const std::vector< spars
 {
     if(subspaces.size() != m_order)
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_any_order","sparse_block_tree_any_order(...)",
+        throw bad_parameter(g_ns,"sparse_block_tree_any_order","set_offsets_sizes_nnz",
                             __FILE__,__LINE__,"Not enough subspaces specified!");
     }
 
@@ -46,6 +46,8 @@ sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse
         }
 
         m_order = rhs.m_order;
+        m_nnz = rhs.m_nnz;
+        m_n_entries = rhs.m_n_entries;
         m_keys.resize(rhs.m_keys.size());
         m_children.resize(rhs.m_children.size());
         m_values.resize(rhs.m_values.size());
@@ -77,6 +79,7 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const sparse_block_tree
                                                                                                                m_values(rhs.m_values)
 {
     m_order = rhs.m_order;
+    m_n_entries = rhs.m_n_entries;
 
     if(m_order > 1)
     {
@@ -100,6 +103,7 @@ sparse_block_tree_any_order::~sparse_block_tree_any_order()
 sparse_block_tree_any_order::sparse_block_tree_any_order(const std::vector< std::vector<key_t> >& sig_blocks,size_t order)
 {
     m_order = order;
+    m_n_entries = 0;
     for(size_t i = 0; i < sig_blocks.size(); ++i)
     {
         push_back(sig_blocks[i],m_order);

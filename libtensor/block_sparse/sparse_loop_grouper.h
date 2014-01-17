@@ -11,11 +11,15 @@ private:
     static const char* k_clazz; //!< Class name
     std::vector< std::vector<off_dim_pair_list> > m_offsets_and_sizes;
     std::vector<idx_pair_list> m_bispaces_and_index_groups;
+    std::vector<idx_pair_list> m_bispaces_and_subspaces;
+    std::vector<std::vector<dim_list> > m_block_dims;
 public:
     sparse_loop_grouper(const sparsity_fuser& sf);
     size_t get_n_groups() const { return m_bispaces_and_index_groups.size(); }
     std::vector<idx_pair_list> get_bispaces_and_index_groups() const;
+    std::vector<idx_pair_list> get_bispaces_and_subspaces() const;
     std::vector<std::vector<off_dim_pair_list> > get_offsets_and_sizes() const;
+    std::vector<std::vector<dim_list> > get_block_dims() const;
 };
 
 } // namespace libtensor

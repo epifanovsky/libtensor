@@ -1,5 +1,8 @@
 #include "sparse_loop_grouper.h"
 
+//TODO REMOVE
+#include <iostream>
+
 using namespace std;
 
 namespace libtensor {
@@ -19,104 +22,149 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                     "loops not fully fused");
         }
     } 
-
     vector<sparse_bispace_any_order> bispaces = sf.get_bispaces();
     vector<sparse_block_tree_any_order> trees = sf.get_trees(); 
 
     //Group the loops 
-    size_t cur_loop_idx = 0;
-    vector<bool> processed_loops(loops.size(),false);
-    while(cur_loop_idx < loops.size())
+    vector<idx_list> trees_for_groups;
+    for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
     {
-        if(!processed_loops[cur_loop_idx])
+        const block_loop& loop = loops[loop_idx];
+        size_t cur_grp_idx;
+        idx_list trees_for_loop = sf.get_trees_for_loop(loop_idx);
+
+        block_list loop_block_list;
+        idx_pair_list tree_baig;
+        vector<off_dim_pair_list> sparse_offsets_and_sizes;
+        //Sparse loop?
+        if(trees_for_loop.size() == 1)
         {
-            idx_list trees_for_loop = sf.get_trees_for_loop(cur_loop_idx);
-            idx_pair_list baig;
-            idx_list loops_in_grp(1,cur_loop_idx);
-            vector<block_list> grp_block_lists(1);
-            vector<off_dim_pair_list> cur_offsets_and_sizes;
-            if(trees_for_loop.size() == 1)
+            //Is this loop part of a group that we have already started?
+            size_t tree_idx = trees_for_loop[0];
+            const sparse_block_tree_any_order& tree = trees[tree_idx];
+            bool found = false;
+            for(size_t grp_idx = 0; grp_idx < trees_for_groups.size(); ++grp_idx)
             {
-                //Sparse loop group
-                //Get offsets for all sparse index groups associated with this loop group
-                loops_in_grp = sf.get_loops_for_tree(trees_for_loop[0]);
-                grp_block_lists.resize(loops_in_grp.size());
-                const sparse_block_tree_any_order& cur_tree = trees[m_offsets_and_sizes.size()];
-                for(sparse_block_tree_any_order::const_iterator it = cur_tree.begin(); it != cur_tree.end(); ++it)
+                const idx_list& this_grp_trees = trees_for_groups[grp_idx];
+                idx_list::const_iterator grp_pos = find(this_grp_trees.begin(),this_grp_trees.end(),tree_idx);
+                if(grp_pos != this_grp_trees.end())
                 {
-                    cur_offsets_and_sizes.push_back(*it); 
-                    for(size_t loop_rel_idx = 0; loop_rel_idx < loops_in_grp.size(); ++loop_rel_idx)
-                    {
-                        grp_block_lists[loop_rel_idx].push_back(it.key()[loop_rel_idx]);
-                    }
-                }
-
-                for(size_t loop_rel_idx = 0; loop_rel_idx < loops_in_grp.size(); ++loop_rel_idx)
-                {
-                    processed_loops[loops_in_grp[loop_rel_idx]] = true;
-                }
-                baig = sf.get_bispaces_and_index_groups_for_tree(trees_for_loop[0]);
-            }
-            else
-            {
-                //Dense loop group
-                const block_loop& loop = loops[cur_loop_idx];
-                for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
-                {
-                    if(!loop.is_bispace_ignored(bispace_idx))
-                    {
-                        const sparse_bispace<1> subspace = bispaces[bispace_idx][loop.get_subspace_looped(bispace_idx)];
-                        for(size_t block_idx = 0; block_idx < subspace.get_n_blocks(); ++block_idx)
-                        {
-                            grp_block_lists[0].push_back(block_idx);
-                        }
-                        break;
-                    }
-                }
-                cur_offsets_and_sizes.resize(grp_block_lists[0].size());
-            }
-
-            //Fill in the bispace/index group pairs and sizes and offsets that are touched in DENSE TENSORS
-            //These are not accounted for in the bispaces and index groups associated with a given tree
-            for(size_t loop_rel_idx = 0; loop_rel_idx < loops_in_grp.size(); ++loop_rel_idx)
-            {
-                const block_loop& loop = loops[loops_in_grp[loop_rel_idx]];
-                for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
-                {
-                    const sparse_bispace_any_order& bispace = bispaces[bispace_idx]; 
-                    if(!loop.is_bispace_ignored(bispace_idx))
-                    {
-                        //Append bispaces/index groups information
-                        size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
-                        idx_pair cur_pair(bispace_idx,bispace.get_index_group_containing_subspace(subspace_idx));
-                        if(find(baig.begin(),baig.end(),cur_pair) == baig.end())
-                        {
-                            baig.push_back(cur_pair);
-
-                            //Append offsets and sizes information for bispaces in which one of the loops in this group is
-                            //dense
-                            for(size_t offset_sz_idx = 0; offset_sz_idx < cur_offsets_and_sizes.size(); ++offset_sz_idx)
-                            {
-                                size_t block_idx = grp_block_lists[loop_rel_idx][offset_sz_idx];
-                                size_t offset = bispace[subspace_idx].get_block_abs_index(block_idx);
-                                size_t size = bispace[subspace_idx].get_block_size(block_idx);
-                                cur_offsets_and_sizes[offset_sz_idx].push_back(idx_pair(offset,size));
-                            }
-                        }
-
-                    }
+                    //Yes, we are part of an existing group
+                    cur_grp_idx = distance(this_grp_trees.begin(),grp_pos);
+                    found = true;
+                    break;
                 }
             }
-            m_bispaces_and_index_groups.push_back(baig);
-            m_offsets_and_sizes.push_back(cur_offsets_and_sizes);
+            if(!found)
+            {
+                //No, make a new sparse group
+                trees_for_groups.push_back(idx_list(1,tree_idx));
+                m_bispaces_and_subspaces.push_back(idx_pair_list());
+                m_bispaces_and_index_groups.push_back(idx_pair_list());
+                m_offsets_and_sizes.push_back(vector<off_dim_pair_list>(tree.get_n_entries()));
+                m_block_dims.push_back(vector<dim_list>(tree.get_n_entries()));
+                cur_grp_idx = trees_for_groups.size() - 1;
+            }
+            idx_list loops_for_tree = sf.get_loops_for_tree(tree_idx);
+            size_t tree_subspace_idx = distance(loops_for_tree.begin(),find(loops_for_tree.begin(),loops_for_tree.end(),loop_idx));
+            tree_baig = sf.get_bispaces_and_index_groups_for_tree(tree_idx);
+            for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+            {
+                loop_block_list.push_back(it.key()[tree_subspace_idx]);
+                sparse_offsets_and_sizes.push_back(*it);
+            }
         }
-        ++cur_loop_idx;
+        else
+        {
+            //Dense loop - automatically a new group unto itself
+            trees_for_groups.push_back(idx_list());
+            m_bispaces_and_subspaces.push_back(idx_pair_list());
+            m_bispaces_and_index_groups.push_back(idx_pair_list());
+            for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+            {
+                if(!loop.is_bispace_ignored(bispace_idx))
+                {
+                    size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
+                    const sparse_bispace<1>& subspace = bispaces[bispace_idx][subspace_idx];
+                    m_block_dims.push_back(vector<dim_list>(subspace.get_n_blocks()));
+                    for(size_t block_idx = 0; block_idx < subspace.get_n_blocks(); ++block_idx)
+                        loop_block_list.push_back(block_idx);
+                    break;
+                }
+            }
+            m_offsets_and_sizes.push_back(vector<off_dim_pair_list>(loop_block_list.size()));
+            cur_grp_idx = trees_for_groups.size() - 1;
+        }
+
+        //Append the bispaces/subspaces traversed by this loop to the appropriate group
+        for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+        {
+            const sparse_bispace_any_order& bispace = bispaces[bispace_idx];
+            if(!loop.is_bispace_ignored(bispace_idx))
+            {
+                size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
+                m_bispaces_and_subspaces[cur_grp_idx].push_back(idx_pair(bispace_idx,subspace_idx));
+                const sparse_bispace<1>& subspace = bispace[subspace_idx];
+                for(size_t block_rel_idx = 0; block_rel_idx < loop_block_list.size(); ++block_rel_idx)
+                {
+                    size_t size = subspace.get_block_size(loop_block_list[block_rel_idx]);
+                    m_block_dims[cur_grp_idx][block_rel_idx].push_back(size);
+                }
+
+                //Append the bispace/index group pair if it is unique
+                //Also append offset and size information associated with the index group
+                size_t idx_grp = bispace.get_index_group_containing_subspace(subspace_idx);
+                idx_pair_list& this_grp_baig = m_bispaces_and_index_groups[cur_grp_idx];
+                idx_pair baig_entry(bispace_idx,idx_grp);
+                if(find(this_grp_baig.begin(),this_grp_baig.end(),baig_entry) == this_grp_baig.end()) 
+                {
+                    this_grp_baig.push_back(baig_entry);
+
+                    //Handle sparse offsets
+                    bool treated_sparse = false;
+                    if(tree_baig.size() > 0)
+                    {
+                        idx_pair_list::iterator baig_pos = find(tree_baig.begin(),tree_baig.end(),baig_entry);
+                        if(baig_pos != tree_baig.end())
+                        {
+                            size_t baig_idx = distance(tree_baig.begin(),baig_pos);
+                            for(size_t off_sz_idx = 0; off_sz_idx < sparse_offsets_and_sizes.size(); ++off_sz_idx)
+                            {
+                                m_offsets_and_sizes[cur_grp_idx][off_sz_idx].push_back(sparse_offsets_and_sizes[off_sz_idx][baig_idx]);
+                            }
+                            treated_sparse = true;
+                        }
+                    }
+                    if(!treated_sparse)
+                    {
+                        //Handle dense offsets
+                        for(size_t block_rel_idx = 0; block_rel_idx < loop_block_list.size(); ++block_rel_idx)
+                        {
+                            size_t offset = subspace.get_block_abs_index(loop_block_list[block_rel_idx]);
+                            size_t size = subspace.get_block_size(loop_block_list[block_rel_idx]);
+                            m_offsets_and_sizes[cur_grp_idx][block_rel_idx].push_back(off_dim_pair(offset,size));
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+
 
 vector<idx_pair_list> sparse_loop_grouper::get_bispaces_and_index_groups() const
 {
     return m_bispaces_and_index_groups;
+}
+
+vector<idx_pair_list> sparse_loop_grouper::get_bispaces_and_subspaces() const
+{
+    return m_bispaces_and_subspaces;
+}
+
+vector<vector<dim_list> > sparse_loop_grouper::get_block_dims() const
+{
+    return m_block_dims;
 }
 
 vector< vector<off_dim_pair_list> > sparse_loop_grouper::get_offsets_and_sizes() const
