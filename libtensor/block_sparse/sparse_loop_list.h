@@ -14,6 +14,9 @@
 #include "block_kernel_i.h"
 #include "loop_list_sparsity_data.h"
 
+//TODO REMOVE
+#include <iostream>
+
 namespace libtensor
 {
 
@@ -30,15 +33,13 @@ private:
 	template<typename T>
     void _run_internal(block_kernel_i<T>& kernel,
     				   std::vector<T*>& ptrs,
-    				   loop_list_sparsity_data& llsd,
-    				   std::vector<dim_list>& bispace_dim_lists,
-    				   std::vector<block_list>& bispace_block_lists,
-    				   block_list& loop_indices,
-    				   size_t loop_idx=0);
-    std::vector<std::vector<off_dim_pair_list> > m_group_offsets_and_sizes; //Each entry contains offsets and sizes of the blocks for each a given loop group
+    				   std::vector<offset_list>& bispace_grp_offsets,
+    				   std::vector<dim_list>& bispace_block_dims,
+    				   size_t loop_grp_idx);
+    std::vector<std::vector<off_dim_pair_list> > m_offsets_and_sizes; //Each entry contains offsets and sizes of the blocks for each a given loop group
     std::vector<idx_pair_list> m_bispaces_and_index_groups; //Each entry contains the bispaces and index groups touched by a given loop group
-    std::vector<dim_list> m_block_sizes; //The block sizes of each tensor 
-    std::vector<offset_list> m_block_offsets; //The block 
+    std::vector<idx_pair_list> m_bispaces_and_subspaces; //Each entry contains the bispaces and subspaces touched by a given loop group
+    std::vector<std::vector<dim_list> > m_block_dims; //The block sizes of each tensor 
 public:
 	sparse_loop_list(const std::vector<block_loop>& loops);
 
@@ -66,136 +67,91 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs)
 	}
 
 	//Set up vectors for keeping track of current block indices and dimensions
-	const std::vector<sparse_bispace_any_order>& cur_bispaces = m_loops[0].get_bispaces();
-	size_t n_bispaces = cur_bispaces.size();
-	std::vector<dim_list> bispace_dim_lists(n_bispaces);
-	std::vector<block_list> bispace_block_lists(n_bispaces);
+	size_t n_bispaces = m_bispaces.size();
+	std::vector<dim_list> bispace_block_dims(n_bispaces);
+	std::vector<dim_list> bispace_grp_offsets(n_bispaces);
 	for(size_t bispace_idx = 0; bispace_idx < n_bispaces; ++bispace_idx)
 	{
-		bispace_dim_lists[bispace_idx].resize(cur_bispaces[bispace_idx].get_order());
-		bispace_block_lists[bispace_idx].resize(cur_bispaces[bispace_idx].get_order());
+        const sparse_bispace_any_order& bispace = m_bispaces[bispace_idx];
+		bispace_block_dims[bispace_idx].resize(bispace.get_order());
+		bispace_grp_offsets[bispace_idx].resize(bispace.get_n_index_groups());
+
+        //For offset calculation, each offset entry is initialized to the inner size of its group
+        size_t inner_size = 1;
+        for(size_t idx_grp_rev_idx = 1; idx_grp_rev_idx <= bispace.get_n_index_groups(); ++idx_grp_rev_idx)
+        {
+            size_t idx_grp = bispace.get_n_index_groups() - idx_grp_rev_idx;
+            bispace_grp_offsets[bispace_idx][idx_grp] = inner_size;
+            inner_size *= bispace.get_index_group_dim(idx_grp);
+        }
 	}
-
-	//Aggregate the sparsity information from all of the loops
-	loop_list_sparsity_data llsd(*this);
-
-	//Fix appropriate loop indices and block indices/dimensions based on fixed_blocks data
-	block_list loop_indices(m_loops.size());
-#if 0
-	loop_fixed_block_map lfbm;
-	for(fixed_block_map::const_iterator it = fixed_blocks.begin(); it != fixed_blocks.end(); ++it)
-	{
-		size_t bispace_idx = it->first;
-		if(bispace_idx >= m_bispaces.size())
-		{
-			throw out_of_bounds(g_ns, k_clazz,"run(...)",
-					__FILE__, __LINE__, "bispace_idx is out of bounds");
-		}
-
-		size_t cur_order = m_bispaces[bispace_idx].get_order();
-		const std::vector<size_t>& block_indices = it->second;
-		if(block_indices.size() != cur_order)
-		{
-			throw bad_parameter(g_ns, k_clazz,"run(...)",
-					__FILE__, __LINE__, "invalid number of block indices for fixed block");
-		}
-		//TODO: Add validation of whether block indices are actually traversable given sparsity (will need to search trees)
-
-		std::vector<size_t> cur_dims(block_indices.size());
-		const sparse_bispace_any_order& cur_bispace = m_bispaces[bispace_idx];
-		for(size_t i = 0; i < cur_dims.size(); ++i)
-		{
-			cur_dims[i] = cur_bispace[i].get_block_size(block_indices[i]);
-		}
-
-		//TODO: check for inconsistent indices in duplicate loops!!!!
-
-		//Determine which loops are fixed as a result of fixing the indices associated with this bispace
-		//When we run those loops, we will automatically only traverse the single fixed block value
-		std::vector<size_t> fixed_loop_indices = get_loops_that_access_bispace(bispace_idx);
-		for(size_t i = 0; i < fixed_loop_indices.size(); ++i)
-		{
-			size_t fixed_loop_idx = fixed_loop_indices[i];
-			const block_loop& cur_loop = m_loops[fixed_loop_idx];
-			size_t block_idx = block_indices[cur_loop.get_subspace_looped(bispace_idx)];
-			lfbm.insert(std::make_pair(fixed_loop_idx,block_idx));
-		}
-	}
-#endif
-	_run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,0);
+	_run_internal(kernel,ptrs,bispace_grp_offsets,bispace_block_dims,0);
 }
 
 template<typename T>
 void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
-				   std::vector<T*>& ptrs,
-				   loop_list_sparsity_data& llsd,
-				   std::vector<dim_list>& bispace_dim_lists,
-				   std::vector<block_list>& bispace_block_lists,
-				   block_list& loop_indices,
-				   size_t loop_idx)
+                                     std::vector<T*>& ptrs,
+                                     std::vector<offset_list>& bispace_grp_offsets,
+                                     std::vector<dim_list>& bispace_block_dims,
+                                     size_t loop_grp_idx)
 {
-	//Get the subspace that we are looping over
-    const block_loop& cur_loop = m_loops[loop_idx];
-    size_t first_bispace_idx, first_subspace_idx;
-    for(size_t i = 0; i < m_bispaces.size(); ++i)
+    //Loop over the significant blocks for this loop group
+    const std::vector<off_dim_pair_list>& grp_offsets_and_sizes = m_offsets_and_sizes[loop_grp_idx];
+    const std::vector<dim_list>& grp_block_dims = m_block_dims[loop_grp_idx];
+    const idx_pair_list& grp_baig = m_bispaces_and_index_groups[loop_grp_idx];
+    const idx_pair_list& grp_bas = m_bispaces_and_subspaces[loop_grp_idx];
+    for(size_t block_set_idx = 0; block_set_idx < grp_offsets_and_sizes.size(); ++block_set_idx)
     {
-    	if(!cur_loop.is_bispace_ignored(i))
-    	{
-    		first_bispace_idx = i;
-    		first_subspace_idx = cur_loop.get_subspace_looped(first_bispace_idx);
-    		break;
-    	}
-    }
-    const sparse_bispace<1>& cur_subspace = m_bispaces[first_bispace_idx][first_subspace_idx];
+        //Use a working copy of the offsets to preserve the clean one 
+        std::vector<offset_list> cur_bispace_grp_offsets(bispace_grp_offsets);
 
-    block_list block_indices;
-    //Could the range of this loop be restricted by fixing the blocks of a particular bispace?
-    //loop_fixed_block_map::const_iterator lfbm_it = lfbm.find(loop_idx);
-    //if(lfbm_it != lfbm.end())
-    //{
-        //block_indices.push_back(lfbm_it->second);
-    //}
-    //else
-    //{
-		//Get the list of blocks in that subspace that are significant
-    	block_indices = llsd.get_sig_block_list(loop_indices,loop_idx);
-    //}
-
-    for(size_t cur_block_idx = 0; cur_block_idx < block_indices.size(); ++cur_block_idx)
-    {
-        size_t cur_block = block_indices[cur_block_idx];
-        size_t block_size = cur_subspace.get_block_size(cur_block);
-
-        loop_indices[loop_idx] = cur_block;
-
-        for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
+        const off_dim_pair_list& block_set_offsets_and_sizes = grp_offsets_and_sizes[block_set_idx];
+        const dim_list& block_set_block_dims = grp_block_dims[block_set_idx];
+        //Fill in/scale offsets appropriately
+        for(size_t baig_idx = 0; baig_idx < grp_baig.size(); ++baig_idx)
         {
-            if(!cur_loop.is_bispace_ignored(bispace_idx))
+            size_t bispace_idx = grp_baig[baig_idx].first;
+            size_t idx_grp = grp_baig[baig_idx].second;
+            size_t offset = block_set_offsets_and_sizes[baig_idx].first;
+            size_t size  = block_set_offsets_and_sizes[baig_idx].second;
+            cur_bispace_grp_offsets[bispace_idx][idx_grp] *= offset;
+            for(size_t faster_grp_idx = idx_grp + 1; faster_grp_idx < m_bispaces[bispace_idx].get_n_index_groups(); ++faster_grp_idx)
             {
-				size_t cur_subspace_idx = cur_loop.get_subspace_looped(bispace_idx);
-				bispace_dim_lists[bispace_idx][cur_subspace_idx] = block_size;
-				bispace_block_lists[bispace_idx][cur_subspace_idx] = cur_block;
+                cur_bispace_grp_offsets[bispace_idx][faster_grp_idx] *= size;
             }
         }
 
-        //Base case - use kernel to process the block
-        if(loop_idx == (m_loops.size() - 1))
+        //Fill in block sizes
+        for(size_t bas_idx = 0; bas_idx < grp_bas.size(); ++bas_idx)
         {
-            //Locate the appropriate blocks
-        	std::vector<T*> bispace_block_ptrs(ptrs);
-        	for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
-        	{
-        		//If blocks for a bispace are fixed, we assume that the pointer points directly to the desired block
-                //if(fbm.find(bispace_idx) == fbm.end())
-                //{
-					bispace_block_ptrs[bispace_idx] += m_bispaces[bispace_idx].get_block_offset(bispace_block_lists[bispace_idx]);
-                //}
-        	}
-            kernel(bispace_block_ptrs,bispace_dim_lists);
+            size_t bispace_idx = grp_bas[bas_idx].first;
+            size_t subspace = grp_bas[bas_idx].second;
+            size_t block_dim = block_set_block_dims[bas_idx];
+            bispace_block_dims[bispace_idx][subspace] = block_dim;
+        }
+
+        //Inner loop?
+        if(loop_grp_idx == m_offsets_and_sizes.size() - 1)
+        {
+            //Compute all block offsets
+            std::vector<T*> block_ptrs(ptrs);
+            for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
+            {
+                size_t offset = 0;
+                for(size_t idx_grp = 0; idx_grp < m_bispaces[bispace_idx].get_n_index_groups(); ++idx_grp)
+                {
+                    offset += cur_bispace_grp_offsets[bispace_idx][idx_grp];
+                }
+                block_ptrs[bispace_idx] += offset; 
+            }
+
+            //Call kernel
+            kernel(block_ptrs,bispace_block_dims);
         }
         else
         {
-            _run_internal(kernel,ptrs,llsd,bispace_dim_lists,bispace_block_lists,loop_indices,loop_idx+1);
+            //Recurse
+            _run_internal(kernel,ptrs,cur_bispace_grp_offsets,bispace_block_dims,loop_grp_idx+1);
         }
     }
 }

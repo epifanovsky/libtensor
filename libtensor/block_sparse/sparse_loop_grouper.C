@@ -50,7 +50,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                 if(grp_pos != this_grp_trees.end())
                 {
                     //Yes, we are part of an existing group
-                    cur_grp_idx = distance(this_grp_trees.begin(),grp_pos);
+                    cur_grp_idx = grp_idx;
                     found = true;
                     break;
                 }

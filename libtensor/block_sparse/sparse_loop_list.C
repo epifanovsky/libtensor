@@ -102,36 +102,10 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops) : m_loops(lo
     //Create block offset and size information for each loop group
     sparse_loop_grouper slg(sf);
     m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
-    m_group_offsets_and_sizes = slg.get_offsets_and_sizes();
+    m_bispaces_and_subspaces = slg.get_bispaces_and_subspaces();
+    m_block_dims = slg.get_block_dims();
+    m_offsets_and_sizes = slg.get_offsets_and_sizes();
 }
-
-#if 0
-void sparse_loop_list::add_loop(const block_loop& loop)
-{
-	const std::vector< sparse_bispace_any_order >& cur_bispaces = loop.get_bispaces();
-	if(m_loops.size() > 0)
-	{
-		//Check that bispaces are compatible with existing loops
-		if(m_bispaces.size() != cur_bispaces.size())
-		{
-			throw bad_parameter(g_ns, k_clazz,"add_loop(...)",
-					__FILE__, __LINE__, "wrong number of bispaces in loop to be added");
-		}
-
-		for(size_t i = 0; i < m_bispaces.size(); ++i)
-		{
-			if(m_bispaces[i] != cur_bispaces[i])
-			{
-				throw bad_parameter(g_ns, k_clazz,"add_loop(...)",
-						__FILE__, __LINE__, "bispaces of loop do not match those already in loop list");
-			}
-		}
-
-	}
-
-	m_loops.push_back(loop);
-}
-#endif
 
 std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(
 		size_t bispace_idx) const
