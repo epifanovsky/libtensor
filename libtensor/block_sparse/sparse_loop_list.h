@@ -33,6 +33,7 @@ private:
 	template<typename T>
     void _run_internal(block_kernel_i<T>& kernel,
     				   std::vector<T*>& ptrs,
+                       std::vector<T*>& block_ptrs,
     				   std::vector<offset_list>& bispace_grp_offsets,
     				   std::vector<dim_list>& bispace_block_dims,
     				   size_t loop_grp_idx);
@@ -40,6 +41,7 @@ private:
     std::vector<idx_pair_list> m_bispaces_and_index_groups; //Each entry contains the bispaces and index groups touched by a given loop group
     std::vector<idx_pair_list> m_bispaces_and_subspaces; //Each entry contains the bispaces and subspaces touched by a given loop group
     std::vector<std::vector<dim_list> > m_block_dims; //The block sizes of each tensor 
+    std::vector<std::vector<offset_list> > m_cur_bispace_grp_offsets; //Used as 'scratch paper' for the offset calculations; pre-alloc for speed
 public:
 	sparse_loop_list(const std::vector<block_loop>& loops);
 
@@ -85,12 +87,15 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs)
             inner_size *= bispace.get_index_group_dim(idx_grp);
         }
 	}
-	_run_internal(kernel,ptrs,bispace_grp_offsets,bispace_block_dims,0);
+    m_cur_bispace_grp_offsets.resize(m_offsets_and_sizes.size(),bispace_grp_offsets);
+    std::vector<T*> block_ptrs(ptrs.size());
+	_run_internal(kernel,ptrs,block_ptrs,bispace_grp_offsets,bispace_block_dims,0);
 }
 
 template<typename T>
 void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
-                                     std::vector<T*>& ptrs,
+                                     std::vector<T*>& tensor_ptrs,
+                                     std::vector<T*>& block_ptrs,
                                      std::vector<offset_list>& bispace_grp_offsets,
                                      std::vector<dim_list>& bispace_block_dims,
                                      size_t loop_grp_idx)
@@ -102,11 +107,9 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
     const idx_pair_list& grp_bas = m_bispaces_and_subspaces[loop_grp_idx];
     for(size_t block_set_idx = 0; block_set_idx < grp_offsets_and_sizes.size(); ++block_set_idx)
     {
-        //Use a working copy of the offsets to preserve the clean one 
-        std::vector<offset_list> cur_bispace_grp_offsets(bispace_grp_offsets);
-
         const off_dim_pair_list& block_set_offsets_and_sizes = grp_offsets_and_sizes[block_set_idx];
         const dim_list& block_set_block_dims = grp_block_dims[block_set_idx];
+        m_cur_bispace_grp_offsets[loop_grp_idx] = bispace_grp_offsets;
         //Fill in/scale offsets appropriately
         for(size_t baig_idx = 0; baig_idx < grp_baig.size(); ++baig_idx)
         {
@@ -114,10 +117,10 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
             size_t idx_grp = grp_baig[baig_idx].second;
             size_t offset = block_set_offsets_and_sizes[baig_idx].first;
             size_t size  = block_set_offsets_and_sizes[baig_idx].second;
-            cur_bispace_grp_offsets[bispace_idx][idx_grp] *= offset;
+            m_cur_bispace_grp_offsets[loop_grp_idx][bispace_idx][idx_grp] *= offset;
             for(size_t faster_grp_idx = idx_grp + 1; faster_grp_idx < m_bispaces[bispace_idx].get_n_index_groups(); ++faster_grp_idx)
             {
-                cur_bispace_grp_offsets[bispace_idx][faster_grp_idx] *= size;
+                m_cur_bispace_grp_offsets[loop_grp_idx][bispace_idx][faster_grp_idx] *= size;
             }
         }
 
@@ -134,15 +137,14 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
         if(loop_grp_idx == m_offsets_and_sizes.size() - 1)
         {
             //Compute all block offsets
-            std::vector<T*> block_ptrs(ptrs);
             for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
             {
                 size_t offset = 0;
                 for(size_t idx_grp = 0; idx_grp < m_bispaces[bispace_idx].get_n_index_groups(); ++idx_grp)
                 {
-                    offset += cur_bispace_grp_offsets[bispace_idx][idx_grp];
+                    offset += m_cur_bispace_grp_offsets[loop_grp_idx][bispace_idx][idx_grp];
                 }
-                block_ptrs[bispace_idx] += offset; 
+                block_ptrs[bispace_idx] = tensor_ptrs[bispace_idx] + offset; 
             }
 
             //Call kernel
@@ -151,7 +153,7 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
         else
         {
             //Recurse
-            _run_internal(kernel,ptrs,cur_bispace_grp_offsets,bispace_block_dims,loop_grp_idx+1);
+            _run_internal(kernel,tensor_ptrs,block_ptrs,m_cur_bispace_grp_offsets[loop_grp_idx],bispace_block_dims,loop_grp_idx+1);
         }
     }
 }

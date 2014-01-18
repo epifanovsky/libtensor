@@ -104,7 +104,7 @@ public:
     size_t get_n_sparse_groups() const { return 0; }
 
     const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
-    const size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
+    size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
 
     size_t get_n_index_groups() const { return 1; }
     size_t get_index_group_offset(size_t grp_idx) const { return 0; }
@@ -358,7 +358,7 @@ public:
 
     /** \brief Get the subspace index corresponding to the beginning of a given sparsity coupled index group 
      **/
-    const size_t get_sparse_group_offset(size_t group_idx) const;
+    size_t get_sparse_group_offset(size_t group_idx) const;
 
     size_t get_n_index_groups() const { return m_index_group_dims.size(); }
     size_t get_index_group_offset(size_t grp_idx) const { return m_index_group_offsets[grp_idx]; }
@@ -835,7 +835,7 @@ const sparse_block_tree_any_order& sparse_bispace<N>::get_sparse_group_tree(size
 }
 
 template<size_t N>
-const size_t sparse_bispace<N>::get_sparse_group_offset(size_t group_idx) const
+size_t sparse_bispace<N>::get_sparse_group_offset(size_t group_idx) const
 {
     if(group_idx > (m_sparse_block_trees.size() - 1))
     {

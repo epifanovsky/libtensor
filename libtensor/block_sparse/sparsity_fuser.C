@@ -111,12 +111,12 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
     {
         idx_list& trees = m_trees_for_loops[loop_idx];
         //Does this loop point to the rhs tree?
-        idx_list::const_iterator rhs_tree_idx_it = find(trees.begin(),trees.end(),rhs_tree_idx);
+        idx_list::iterator rhs_tree_idx_it = find(trees.begin(),trees.end(),rhs_tree_idx);
         if(rhs_tree_idx_it != trees.end())
         {
             //If so, delete the reference and add one for the lhs tree in the appropriate position 
             trees.erase(rhs_tree_idx_it);
-            idx_list::const_iterator lhs_tree_idx_it = lower_bound(trees.begin(),trees.end(),lhs_tree_idx);
+            idx_list::iterator lhs_tree_idx_it = lower_bound(trees.begin(),trees.end(),lhs_tree_idx);
             if((lhs_tree_idx_it == trees.end()) || (*lhs_tree_idx_it != lhs_tree_idx))
             {
                 trees.insert(lhs_tree_idx_it,lhs_tree_idx);

@@ -39,26 +39,27 @@ void benchmark(std::vector<size_t>& split_points,std::vector< sequence<2,size_t>
 {
     sparse_bispace<1> m(N);
 	m.split(split_points);
-    sparse_bispace<3> mnl = m % m << sig_blocks | m;
+    sparse_bispace<3> spb_A = m % m << sig_blocks | m;
+    sparse_bispace<3> spb_B = m | m % m << sig_blocks;
     
 	//Don't want overflows
-	double* A_arr  = new double[mnl.get_nnz()];
-	double* B_arr  = new double[mnl.get_nnz()];
-	for(size_t i = 0; i < mnl.get_nnz(); ++i)
+	double* A_arr  = new double[spb_A.get_nnz()];
+	double* B_arr  = new double[spb_B.get_nnz()];
+	for(size_t i = 0; i < spb_A.get_nnz(); ++i)
 	{
 		A_arr[i] = double(rand())/RAND_MAX;
 		B_arr[i] = double(rand())/RAND_MAX;
 	}
     
-	sparse_btensor<3> A(mnl,A_arr,true);
-	sparse_btensor<3> B(mnl,B_arr,true);
+	sparse_btensor<3> A(spb_A,A_arr,true);
+	sparse_btensor<3> B(spb_B,B_arr,true);
 	sparse_btensor<2> C(m|m);
     
-	letter mu,nu,l,s;
+	letter mu,nu,Q,s;
 	std::cout << "Flops before: " << flops << "\n";
 	count_flops = true;
 	double seconds = read_timer();
-	C(mu|s) = contract(nu|l,A(mu|nu|l),B(nu|l|s));
+	C(mu|nu) = contract(Q|s,A(mu|Q|s),B(Q|s|nu));
 	seconds = read_timer() - seconds;
 	count_flops = false;
 	std::cout << "Flops after: " << flops << "\n";
@@ -68,7 +69,7 @@ void benchmark(std::vector<size_t>& split_points,std::vector< sequence<2,size_t>
 void benchmark_graphene_01_03()
 {
 	//This test simulates an electronic structure calculation with NB2 sparsity
-	//Data comes from a 1x3 graphene (anthracene) chain
+	//Data comes from a 1x3 graphene (anthracene) chain - TODO BASIS?????!!!!!
     
 	//Split the basis function space into atomic shells
 	std::vector<size_t> split_points;

@@ -32,11 +32,12 @@ private:
     						const std::vector<dim_list>& dim_lists,
     						size_t m,size_t n,size_t k,
     						size_t lda,size_t ldb,size_t ldc,
-    						size_t loop_idx = 0) const;
+    						size_t loop_idx = 0);
     const std::vector< block_loop >& m_loops;
     size_t m_n_contracted_inds;
     bool m_A_trans;
     bool m_B_trans;
+    std::vector<size_t> m_strides; //Must be pre-allocated for speed
     void (*m_dgemm_fn)(void*,size_t,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T); //DGEMM function to call to process deepest level
 public:
     block_contract2_kernel(const sparse_loop_list& loop_list);
@@ -52,7 +53,7 @@ template<typename T>
 inline void libtensor::block_contract2_kernel<T>::_contract_internal(
 		std::vector<T*> ptrs, const std::vector<dim_list>& dim_lists, size_t m,
 		size_t n, size_t k, size_t lda, size_t ldb, size_t ldc,
-		size_t loop_idx) const
+		size_t loop_idx)
 {
     //Base case: call matmul kernel
     if(loop_idx == m_loops.size() - m_n_contracted_inds - 2)
@@ -68,16 +69,16 @@ inline void libtensor::block_contract2_kernel<T>::_contract_internal(
     	const block_loop& cur_loop = m_loops[loop_idx];
 
         //Compute the stride for each block
-    	std::vector<size_t> strides(3,1);
     	for(size_t bispace_idx = 0; bispace_idx < dim_lists.size(); ++bispace_idx)
     	{
     		const dim_list& cur_dims = dim_lists[bispace_idx];
     		if(!cur_loop.is_bispace_ignored(bispace_idx))
     		{
 				size_t cur_subspace = cur_loop.get_subspace_looped(bispace_idx);
+                m_strides[bispace_idx] = 1;
 				for(size_t stride_idx = cur_subspace+1; stride_idx < cur_dims.size(); ++stride_idx)
 				{
-					strides[bispace_idx] *= cur_dims[stride_idx];
+					m_strides[bispace_idx] *= cur_dims[stride_idx];
 				}
     		}
     	}
@@ -92,7 +93,7 @@ inline void libtensor::block_contract2_kernel<T>::_contract_internal(
 				//Can do this bcs pass by value
     			if(!cur_loop.is_bispace_ignored(bispace_idx))
     			{
-					ptrs[bispace_idx] += strides[bispace_idx];
+					ptrs[bispace_idx] += m_strides[bispace_idx];
     			}
     		}
     	}
@@ -101,7 +102,7 @@ inline void libtensor::block_contract2_kernel<T>::_contract_internal(
 
 template<typename T>
 libtensor::block_contract2_kernel<T>::block_contract2_kernel(
-		const sparse_loop_list& sll) : m_loops(sll.get_loops()),m_A_trans(false),m_B_trans(false)
+		const sparse_loop_list& sll) : m_loops(sll.get_loops()),m_A_trans(false),m_B_trans(false),m_strides(3,1)
 {
 	//Simplest contraction is matrix multiply and requires 3 loops
 	if(m_loops.size() < 3)
