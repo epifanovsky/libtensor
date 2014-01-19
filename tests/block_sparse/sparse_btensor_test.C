@@ -842,16 +842,6 @@ void sparse_btensor_test::test_contract2_3d_2d() throw(libtest::test_exception)
     sparse_btensor<3> C_correct(C_spb,correct_output_arr,true);
     if(C != C_correct)
     {
-        for(size_t i = 0; i < 72; ++i)
-        {
-            double one = C.get_data_ptr()[i]; 
-            double two = C_correct.get_data_ptr()[i];
-            if(one != two)
-            {
-                std::cout << "mine: " << one << "\n";
-                std::cout << "correct: " << two << "\n";
-            }
-        }
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
     }

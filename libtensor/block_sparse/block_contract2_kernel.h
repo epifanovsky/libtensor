@@ -12,9 +12,6 @@
 #include "sparse_loop_list.h"
 #include "../linalg/linalg.h"
 
-//TODO REMOVE
-#include <iostream>
-
 namespace libtensor
 {
 
@@ -28,11 +25,11 @@ private:
     static const char* k_clazz; //!< Class name
     std::vector<size_t> m_block_orders; //!< Orders of each of the blocks
 
-    void _contract_internal(std::vector<T*> ptrs,
-    						const std::vector<dim_list>& dim_lists,
-    						size_t m,size_t n,size_t k,
-    						size_t lda,size_t ldb,size_t ldc,
-    						size_t loop_idx = 0);
+    //void _contract_internal(std::vector<T*>& ptrs,
+                            //const std::vector<dim_list>& dim_lists,
+                            //size_t m,size_t n,size_t k,
+                            //size_t lda,size_t ldb,size_t ldc,
+                            //size_t loop_idx = 0);
     const std::vector< block_loop >& m_loops;
     size_t m_n_contracted_inds;
     bool m_A_trans;
@@ -49,9 +46,10 @@ const char* block_contract2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
 
 } /* namespace libtensor */
 
+#if 0
 template<typename T>
 inline void libtensor::block_contract2_kernel<T>::_contract_internal(
-		std::vector<T*> ptrs, const std::vector<dim_list>& dim_lists, size_t m,
+		std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists, size_t m,
 		size_t n, size_t k, size_t lda, size_t ldb, size_t ldc,
 		size_t loop_idx)
 {
@@ -99,6 +97,7 @@ inline void libtensor::block_contract2_kernel<T>::_contract_internal(
     	}
     }
 }
+#endif
 
 template<typename T>
 libtensor::block_contract2_kernel<T>::block_contract2_kernel(
@@ -351,10 +350,13 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 	}
 #endif
 
-	size_t m,n,k = 1,lda,ldb,ldc;
+	size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
 	if(m_A_trans)
 	{
-        m = dim_lists[1].back();
+        for(size_t A_i_idx = m_n_contracted_inds; A_i_idx <  dim_lists[1].size(); ++A_i_idx)
+        {
+            m *= dim_lists[1][A_i_idx];
+        }
         for(size_t k_idx = 0; k_idx < m_n_contracted_inds; ++k_idx)
         {
 			k *= dim_lists[1][k_idx];
@@ -363,9 +365,11 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 	}
 	else
 	{
-		size_t A_i_idx = m_block_orders[1] - m_n_contracted_inds - 1;
-		m = dim_lists[1][A_i_idx];
-		for(size_t k_idx = A_i_idx + 1; k_idx < A_i_idx + m_n_contracted_inds + 1; ++k_idx)
+        for(size_t A_i_idx = 0; A_i_idx <  m_block_orders[1] - m_n_contracted_inds; ++A_i_idx)
+        {
+            m *= dim_lists[1][A_i_idx];
+        }
+		for(size_t k_idx = m_block_orders[1] - m_n_contracted_inds; k_idx < m_block_orders[1]; ++k_idx)
 		{
 			k *= dim_lists[1][k_idx];
 		}
@@ -374,16 +378,29 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 
 	if(m_B_trans)
 	{
-		n = dim_lists[2][0];
+        for(size_t B_j_idx = 0; B_j_idx < m_block_orders[2] - m_n_contracted_inds; ++B_j_idx)
+        {
+            n *= dim_lists[2][B_j_idx];
+        }
 		ldb = k;
 	}
 	else
 	{
+        for(size_t B_j_idx = m_block_orders[2] - m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
+        {
+            n *= dim_lists[2][B_j_idx];
+        }
 		n = dim_lists[2][m_n_contracted_inds];
 		ldb = n;
 	}
 	ldc = n;
-	_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
+
+    (*m_dgemm_fn)(NULL,m,n,k,ptrs[1],lda,ptrs[2],ldb,ptrs[0],ldc,1.0);
+    if(count_flops)
+    {
+        flops += 2*m*n*k;
+    }
+	//_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
 }
 
 #endif /* BLOCK_CONTRACT2_KERNEL_H_ */

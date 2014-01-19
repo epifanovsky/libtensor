@@ -1469,7 +1469,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::t
 //Contract 3d with 2d
 void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_3d_2d()";
+    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_3d_2d()";
 
     //C_ijl = \sum_k A_ijk B_kl
     //dimensions: i = 2,j = 3,k = 4,l=5
