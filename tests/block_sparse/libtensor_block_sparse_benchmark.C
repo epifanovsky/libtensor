@@ -11,10 +11,12 @@
 #include <libtensor/iface/letter.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdlib.h>
 #include <sys/time.h>
 
 using namespace libtensor;
+using namespace std;
 
 extern bool libtensor::count_flops;
 extern size_t libtensor::flops;
@@ -35,6 +37,7 @@ double read_timer()
     return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
 }
 
+#if 0
 void benchmark(std::vector<size_t>& split_points_N,
                std::vector<size_t>& split_points_X, 
                std::vector< sequence<2,size_t> >& sig_blocks_NN,
@@ -209,7 +212,6 @@ void benchmark_graphene_01_03()
     benchmark(split_points_N,split_points_X,sig_blocks_NN,sig_blocks_NX,246,3152);
 }
 
-#if 0
 void benchmark_graphene_01_06()
 {
     //This test simulates an electronic structure calculation with NB2 sparsity
@@ -240,7 +242,6 @@ void benchmark_graphene_01_06()
     std::cout << "Benchmark running: graphene_01_06\n";
     benchmark(split_points,sig_blocks,444);
 }
-#endif
 
 void print_avail_benchmarks()
 {
@@ -248,10 +249,106 @@ void print_avail_benchmarks()
     std::cout << "\t" << "graphene_01_03\n";
     std::cout << "\t" << "graphene_01_06\n";
 }
+#endif
+
+void run_benchmark(const char* file_name)
+{
+    size_t N;
+    size_t X;
+    vector<size_t> split_points_N;
+    vector<size_t> split_points_X;
+    vector< sequence<2,size_t> > sig_blocks_NN;
+    vector< sequence<2,size_t> > sig_blocks_NX;
+    string line;
+    ifstream bif(file_name);
+
+    getline(bif,line);
+    istringstream(line) >> N;
+    getline(bif,line);
+    istringstream(line) >> X;
+
+    //Read N splitting information
+    //Skip section header 
+    getline(bif,line);
+    getline(bif,line);
+    while(line.length() > 0)
+    {
+        size_t entry;
+        istringstream(line) >> entry;
+        split_points_N.push_back(entry);
+        getline(bif,line);
+    }
+
+    //Read the X splitting information  
+    getline(bif,line);
+    while(line.length() > 0)
+    {
+        size_t entry;
+        istringstream(line) >> entry;
+        split_points_X.push_back(entry);
+        getline(bif,line);
+    }
+
+    //Get the shell pair sparsity information
+    getline(bif,line);
+    while(line.length() > 0)
+    {
+        sequence<2,size_t> entry;
+        istringstream(line) >> entry[0] >> entry[1];
+        sig_blocks_NN.push_back(entry);
+        getline(bif,line);
+    }
+
+    //Get the shell-aux atom sparsity information
+    getline(bif,line);
+    while(line.length() > 0)
+    {
+        sequence<2,size_t> entry;
+        istringstream(line) >> entry[0] >> entry[1];
+        sig_blocks_NX.push_back(entry);
+        getline(bif,line);
+    }
+
+    sparse_bispace<1> spb_N(N);
+    spb_N.split(split_points_N);
+    sparse_bispace<1> spb_X(X);
+    spb_X.split(split_points_X);
+
+    sparse_bispace<3> spb_A = spb_N % spb_X << sig_blocks_NX | spb_N;
+    sparse_bispace<3> spb_B = spb_X | spb_N % spb_N << sig_blocks_NN;
+    
+    //Don't want overflows
+    double* A_arr  = new double[spb_A.get_nnz()];
+    double* B_arr  = new double[spb_B.get_nnz()];
+    for(size_t i = 0; i < spb_A.get_nnz(); ++i)
+    {
+        A_arr[i] = double(rand())/RAND_MAX;
+    }
+    for(size_t i = 0; i < spb_B.get_nnz(); ++i)
+    {
+        B_arr[i] = double(rand())/RAND_MAX;
+    }
+    
+    sparse_btensor<3> A(spb_A,A_arr,true);
+    sparse_btensor<3> B(spb_B,B_arr,true);
+    sparse_btensor<2> C(spb_N|spb_N);
+    
+    letter mu,nu,Q,s;
+    flops = 0;
+    count_flops = true;
+    double seconds = read_timer();
+    C(mu|nu) = contract(Q|s,A(mu|Q|s),B(Q|s|nu));
+    seconds = read_timer() - seconds;
+    count_flops = false;
+    std::cout << "FLOPs: " << flops << "\n";
+    std::cout << "Time (s): " << seconds << "\n";
+    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+}
 
 int main(int argc,char *argv[])
 {
 
+#if 0
     //Default is to run short benchmark
     if(argc < 2)
     {
@@ -278,4 +375,14 @@ int main(int argc,char *argv[])
             print_avail_benchmarks();
         }
     }
+#endif
+    const char* alkane_file_names[2] = {"../tests/block_sparse/alkane_010_data.txt",
+                                        "../tests/block_sparse/alkane_020_data.txt"
+                                        };
+    for(size_t i = 0; i < sizeof(alkane_file_names)/sizeof(alkane_file_names[0]); ++i)
+    {
+        std::cout << "=================\n";
+        run_benchmark(alkane_file_names[i]);
+    }
+        /*,"../tests/block_sparse/alkane_020_data.txt"};*/
 }
