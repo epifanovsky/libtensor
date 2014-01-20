@@ -42,6 +42,40 @@ expr<N, T> asymm(
 }
 
 
+/** \brief Symmetrization of an expression over three sets of indexes
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
+
+    \ingroup libtensor_btensor_expr_op
+ **/
+template<size_t N, size_t M, typename T>
+expr<N, T> symm(
+    const letter_expr<M> sym1,
+    const letter_expr<M> sym2,
+    const letter_expr<M> sym3,
+    expr<N, T> subexpr) {
+
+    return expr<N, T>(symm3_core<N, M, true, T>(sym1, sym2, sym3, subexpr));
+}
+
+
+/** \brief Anti-symmetrization of an expression over three sets of indexes
+    \tparam N Tensor order.
+    \tparam T Tensor element type.
+
+    \ingroup libtensor_btensor_expr_op
+ **/
+template<size_t N, size_t M, typename T>
+expr<N, T> asymm(
+    const letter_expr<M> sym1,
+    const letter_expr<M> sym2,
+    const letter_expr<M> sym3,
+    expr<N, T> subexpr) {
+
+    return expr<N, T>(symm3_core<N, M, false, T>(sym1, sym2, sym3, subexpr));
+}
+
+
 /** \brief Symmetrization of an expression over three indexes
     \tparam N Tensor order.
     \tparam T Tensor element type.
@@ -55,7 +89,8 @@ expr<N, T> symm(
     const letter &l3,
     expr<N, T> subexpr) {
 
-    return expr<N, T>(symm3_core<N, true, T>(l1, l2, l3, subexpr));
+    return symm(letter_expr<1>(l1), letter_expr<1>(l2), letter_expr<1>(l3),
+        subexpr);
 }
 
 
@@ -72,7 +107,8 @@ expr<N, T> asymm(
     const letter &l3,
     expr<N, T> subexpr) {
 
-    return expr<N, T>(symm3_core<N, false, T>(l1, l2, l3, subexpr));
+    return asymm(letter_expr<1>(l1), letter_expr<1>(l2), letter_expr<1>(l3),
+        subexpr);
 }
 
 

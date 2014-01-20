@@ -18,15 +18,15 @@ namespace labeled_btensor_expr {
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, bool Sym, typename T>
+template<size_t N, size_t M, bool Sym, typename T>
 class symm3_core : public expr_core_i<N, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    const letter &m_l1; //!< First %index
-    const letter &m_l2; //!< Second %index
-    const letter &m_l3; //!< Third %index
+    letter_expr<M> m_sym1; //!< First group
+    letter_expr<M> m_sym2; //!< Second group
+    letter_expr<M> m_sym3; //!< Third group
     expr<N, T> m_subexpr; //!< Sub-expression
 
 public:
@@ -37,9 +37,9 @@ public:
         \param subexpr Sub-expression.
      **/
     symm3_core(
-        const letter &l1,
-        const letter &l2,
-        const letter &l3,
+        const letter_expr<M> &sym1,
+        const letter_expr<M> &sym2,
+        const letter_expr<M> &sym3,
         const expr<N, T> &subexpr);
 
     /** \brief Virtual destructor
@@ -49,7 +49,7 @@ public:
     /** \brief Clones this object using new
      **/
     virtual expr_core_i<N, T> *clone() const {
-        return new symm3_core<N, Sym, T>(*this);
+        return new symm3_core<N, M, Sym, T>(*this);
     }
 
     /** \brief Creates an evaluation container using new, caller responsible
@@ -60,20 +60,20 @@ public:
 
     /** \brief Returns the first symmetrized index
      **/
-    const letter &get_l1() const {
-        return m_l1;
+    const letter_expr<M> &get_sym1() const {
+        return m_sym1;
     }
 
     /** \brief Returns the second symmetrized index
      **/
-    const letter &get_l2() const {
-        return m_l2;
+    const letter_expr<M> &get_sym2() const {
+        return m_sym2;
     }
 
     /** \brief Returns the third symmetrized index
      **/
-    const letter &get_l3() const {
-        return m_l3;
+    const letter_expr<M> &get_sym3() const {
+        return m_sym3;
     }
 
     /** \brief Returns the sub-expression
@@ -121,14 +121,14 @@ public:
 
     \ingroup libtensor_btensor_expr
  **/
-template<size_t N, bool Sym, typename T>
+template<size_t N, size_t M, bool Sym, typename T>
 class symm3_eval : public eval_container_i<N, T> {
 public:
     static const char k_clazz[]; //!< Class name
 
 
 private:
-    symm3_core<N, Sym, T> m_core; //!< Sub-expression
+    symm3_core<N, M, Sym, T> m_core; //!< Sub-expression
     std::auto_ptr< eval_container_i<N, T> > m_sub_eval_cont; //!< Evaluation of the sub-expression
     evalfunctor<N, T> m_functor;
     letter_expr<N> m_label;
@@ -141,7 +141,7 @@ public:
             result recipient
      **/
     symm3_eval(
-        const symm3_core<N, Sym, T> &e,
+        const symm3_core<N, M, Sym, T> &e,
         const letter_expr<N> &label);
 
     /** \brief Virtual destructor
@@ -180,44 +180,51 @@ public:
 };
 
 
-template<size_t N, bool Sym, typename T>
-const char symm3_core<N, Sym, T>::k_clazz[] = "symm3_core<N, Sym, T>";
+template<size_t N, size_t M, bool Sym, typename T>
+const char symm3_core<N, M, Sym, T>::k_clazz[] = "symm3_core<N, M, Sym, T>";
 
 
-template<size_t N, bool Sym, typename T>
-symm3_core<N, Sym, T>::symm3_core(
-    const letter &l1,
-    const letter &l2,
-    const letter &l3,
+template<size_t N, size_t M, bool Sym, typename T>
+symm3_core<N, M, Sym, T>::symm3_core(
+    const letter_expr<M> &sym1,
+    const letter_expr<M> &sym2,
+    const letter_expr<M> &sym3,
     const expr<N, T> &subexpr) :
 
-    m_l1(l1), m_l2(l2), m_l3(l3), m_subexpr(subexpr) {
+    m_sym1(sym1), m_sym2(sym2), m_sym3(sym3), m_subexpr(subexpr) {
 
     static const char method[] = "symm3_core(const letter&, "
         "const letter&, const letter&, const expr<N, T>&)";
 
-    if(m_l1 == m_l2 || m_l1 == m_l3 || m_l2 == m_l3) {
-        throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "Symmetrized indexes must be different.");
+    for(size_t i = 0; i < M; i++) {
+        const letter &l1 = m_sym1.letter_at(i);
+        const letter &l2 = m_sym2.letter_at(i);
+        const letter &l3 = m_sym3.letter_at(i);
+        if(m_sym2.contains(l1) || m_sym3.contains(l1) ||
+            m_sym1.contains(l2) || m_sym3.contains(l2) ||
+            m_sym1.contains(l3) || m_sym2.contains(l3)) {
+            throw expr_exception(g_ns, k_clazz, method, __FILE__, __LINE__,
+                "Symmetrized indexes must be different.");
+        }
     }
 }
 
 
-template<size_t N, bool Sym, typename T>
-eval_container_i<N, T> *symm3_core<N, Sym, T>::create_container(
+template<size_t N, size_t M, bool Sym, typename T>
+eval_container_i<N, T> *symm3_core<N, M, Sym, T>::create_container(
     const letter_expr<N> &label) const {
 
-    return new symm3_eval<N, Sym, T>(*this, label);
+    return new symm3_eval<N, M, Sym, T>(*this, label);
 }
 
 
-template<size_t N, bool Sym, typename T>
-const char symm3_eval<N, Sym, T>::k_clazz[] = "symm3_eval<N, Sym, T>";
+template<size_t N, size_t M, bool Sym, typename T>
+const char symm3_eval<N, M, Sym, T>::k_clazz[] = "symm3_eval<N, M, Sym, T>";
 
 
-template<size_t N, bool Sym, typename T>
-symm3_eval<N, Sym, T>::symm3_eval(
-    const symm3_core<N, Sym, T> &core,
+template<size_t N, size_t M, bool Sym, typename T>
+symm3_eval<N, M, Sym, T>::symm3_eval(
+    const symm3_core<N, M, Sym, T> &core,
     const letter_expr<N> &label) :
 
     m_core(core),
@@ -229,33 +236,41 @@ symm3_eval<N, Sym, T>::symm3_eval(
 }
 
 
-template<size_t N, bool Sym, typename T>
-symm3_eval<N, Sym, T>::~symm3_eval() {
+template<size_t N, size_t M, bool Sym, typename T>
+symm3_eval<N, M, Sym, T>::~symm3_eval() {
 
     delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
 }
 
 
-template<size_t N, bool Sym, typename T>
-void symm3_eval<N, Sym, T>::prepare() {
+template<size_t N, size_t M, bool Sym, typename T>
+void symm3_eval<N, M, Sym, T>::prepare() {
 
     m_sub_eval_cont->prepare();
 
-    size_t i1 = m_label.index_of(m_core.get_l1());
-    size_t i2 = m_label.index_of(m_core.get_l2());
-    size_t i3 = m_label.index_of(m_core.get_l3());
+    permutation<N> perm1, perm2;
+    for(size_t i = 0; i < M; i++) {
+        const letter &l1 = m_core.get_sym1().letter_at(i);
+        const letter &l2 = m_core.get_sym2().letter_at(i);
+        const letter &l3 = m_core.get_sym3().letter_at(i);
+        size_t i1 = m_label.index_of(l1);
+        size_t i2 = m_label.index_of(l2);
+        size_t i3 = m_label.index_of(l3);
+        perm1.permute(i1, i2);
+        perm2.permute(i1, i3);
+    }
 
     if (m_arg != 0) delete m_arg;
     if (m_op != 0) delete m_op;
 
-    m_op = new btod_symmetrize3<N>(m_functor.get_bto(), i1, i2, i3, Sym);
+    m_op = new btod_symmetrize3<N>(m_functor.get_bto(), perm1, perm2, Sym);
     m_arg = new arg<N, T, oper_tag>(*m_op, 1.0);
 }
 
 
-template<size_t N, bool Sym, typename T>
-void symm3_eval<N, Sym, T>::clean() {
+template<size_t N, size_t M, bool Sym, typename T>
+void symm3_eval<N, M, Sym, T>::clean() {
 
     delete m_arg; m_arg = 0;
     delete m_op; m_op = 0;
@@ -263,8 +278,8 @@ void symm3_eval<N, Sym, T>::clean() {
 }
 
 
-template<size_t N, bool Sym, typename T>
-arg<N, T, tensor_tag> symm3_eval<N, Sym, T>::get_tensor_arg(size_t i) {
+template<size_t N, size_t M, bool Sym, typename T>
+arg<N, T, tensor_tag> symm3_eval<N, M, Sym, T>::get_tensor_arg(size_t i) {
 
     static const char *method = "get_tensor_arg(size_t)";
 
@@ -273,8 +288,8 @@ arg<N, T, tensor_tag> symm3_eval<N, Sym, T>::get_tensor_arg(size_t i) {
 }
 
 
-template<size_t N, bool Sym, typename T>
-arg<N, T, oper_tag> symm3_eval<N, Sym, T>::get_oper_arg(size_t i) {
+template<size_t N, size_t M, bool Sym, typename T>
+arg<N, T, oper_tag> symm3_eval<N, M, Sym, T>::get_oper_arg(size_t i) {
 
     static const char *method = "get_arg(size_t)";
     if(i != 0) {
