@@ -251,6 +251,13 @@ void print_avail_benchmarks()
 }
 #endif
 
+//Benchmark file format:
+//N
+//X
+//
+//all shell pair sparsity entries...
+//
+//all shell->aux atom sparsity entries...
 void run_benchmark(const char* file_name)
 {
     size_t N;
@@ -318,13 +325,15 @@ void run_benchmark(const char* file_name)
     sparse_bispace<3> spb_B = spb_X | spb_N % spb_N << sig_blocks_NN;
     
     //Don't want overflows
-    double* A_arr  = new double[spb_A.get_nnz()];
-    double* B_arr  = new double[spb_B.get_nnz()];
-    for(size_t i = 0; i < spb_A.get_nnz(); ++i)
+    size_t nnz_A = spb_A.get_nnz();
+    size_t nnz_B = spb_B.get_nnz();
+    double* A_arr  = new double[nnz_A];
+    double* B_arr  = new double[nnz_B];
+    for(size_t i = 0; i < nnz_A; ++i)
     {
         A_arr[i] = double(rand())/RAND_MAX;
     }
-    for(size_t i = 0; i < spb_B.get_nnz(); ++i)
+    for(size_t i = 0; i < nnz_B; ++i)
     {
         B_arr[i] = double(rand())/RAND_MAX;
     }
@@ -337,6 +346,7 @@ void run_benchmark(const char* file_name)
     flops = 0;
     count_flops = true;
     double seconds = read_timer();
+    std::cout << "Starting contraction:\n";
     C(mu|nu) = contract(Q|s,A(mu|Q|s),B(Q|s|nu));
     seconds = read_timer() - seconds;
     count_flops = false;
@@ -376,13 +386,26 @@ int main(int argc,char *argv[])
         }
     }
 #endif
-    const char* alkane_file_names[2] = {"../tests/block_sparse/alkane_010_data.txt",
-                                        "../tests/block_sparse/alkane_020_data.txt"
+    const char* alkane_file_names[5] = {"../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
+                                        "../tests/block_sparse/alkane_dz_atom_blocked_020_data.txt",
+                                        "../tests/block_sparse/alkane_dz_010_data.txt",
+                                        "../tests/block_sparse/alkane_dz_020_data.txt",
+                                        "../tests/block_sparse/alkane_tz_010_data.txt"
                                         };
-    for(size_t i = 0; i < sizeof(alkane_file_names)/sizeof(alkane_file_names[0]); ++i)
+    if(argc < 2)
     {
-        std::cout << "=================\n";
-        run_benchmark(alkane_file_names[i]);
+        for(size_t i = 0; i < sizeof(alkane_file_names)/sizeof(alkane_file_names[0]); ++i)
+        {
+            cout << "=================\n";
+            cout << alkane_file_names[i] << "\n";
+            run_benchmark(alkane_file_names[i]);
+        }
     }
-        /*,"../tests/block_sparse/alkane_020_data.txt"};*/
+    else if(argc == 2)
+    {
+        size_t benchmark_idx = atoi(argv[1]);
+        cout << "=================\n";
+        cout << alkane_file_names[benchmark_idx] << "\n";
+        run_benchmark(alkane_file_names[benchmark_idx]);
+    }
 }
