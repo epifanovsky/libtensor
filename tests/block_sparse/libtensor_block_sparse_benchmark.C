@@ -265,7 +265,7 @@ void run_benchmark(const char* file_name)
     vector<size_t> split_points_N;
     vector<size_t> split_points_X;
     vector< sequence<2,size_t> > sig_blocks_NN;
-    vector< sequence<2,size_t> > sig_blocks_NX;
+    vector< sequence<3,size_t> > sig_blocks_NNX;
     string line;
     ifstream bif(file_name);
 
@@ -306,13 +306,13 @@ void run_benchmark(const char* file_name)
         getline(bif,line);
     }
 
-    //Get the shell-aux atom sparsity information
+    //Get the shell-shell-aux atom sparsity information
     getline(bif,line);
     while(line.length() > 0)
     {
-        sequence<2,size_t> entry;
-        istringstream(line) >> entry[0] >> entry[1];
-        sig_blocks_NX.push_back(entry);
+        sequence<3,size_t> entry;
+        istringstream(line) >> entry[0] >> entry[1] >> entry[2];
+        sig_blocks_NNX.push_back(entry);
         getline(bif,line);
     }
 
@@ -321,33 +321,70 @@ void run_benchmark(const char* file_name)
     sparse_bispace<1> spb_X(X);
     spb_X.split(split_points_X);
 
-    sparse_bispace<3> spb_A = spb_N % spb_X << sig_blocks_NX | spb_N;
-    sparse_bispace<3> spb_B = spb_X | spb_N % spb_N << sig_blocks_NN;
-    
-    //Don't want overflows
-    size_t nnz_A = spb_A.get_nnz();
-    size_t nnz_B = spb_B.get_nnz();
-    double* A_arr  = new double[nnz_A];
-    double* B_arr  = new double[nnz_B];
-    for(size_t i = 0; i < nnz_A; ++i)
+    //Construct C
+    sparse_bispace<3> spb_C_orig = spb_N % spb_N % spb_X << sig_blocks_NNX;
+    permutation<3> perm;
+    perm.permute(1,2);
+    sparse_bispace<3> spb_C = spb_C_orig.permute(perm);
+    size_t nnz_C = spb_C.get_nnz();
+    double* C_arr = new double[nnz_C];
+    for(size_t i = 0; i < nnz_C; ++i)
     {
-        A_arr[i] = double(rand())/RAND_MAX;
+        C_arr[i] = double(rand())/RAND_MAX;
     }
-    for(size_t i = 0; i < nnz_B; ++i)
+    sparse_btensor<3> C(spb_C,C_arr,true);
+    delete C_arr;
+
+    //Construct P
+    sparse_bispace<2> spb_P = spb_N|spb_N;
+    size_t nnz_P = spb_P.get_nnz();
+    double* P_arr = new double[nnz_P];
+    for(size_t i = 0; i < nnz_P; ++i)
     {
-        B_arr[i] = double(rand())/RAND_MAX;
+        P_arr[i] = double(rand())/RAND_MAX;
     }
-    
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<3> B(spb_B,B_arr,true);
-    sparse_btensor<2> C(spb_N|spb_N);
-    
-    letter mu,nu,Q,s;
+    sparse_btensor<2> P(spb_P,P_arr);
+    delete P_arr;
+
+    //Construct D result
+    sparse_bispace<3> spb_D = spb_C.contract(2) | spb_N;
+    sparse_btensor<3> D(spb_D);
+    letter mu,Q,lambda,sigma;
     flops = 0;
     count_flops = true;
+    cout << "-----------------------------\n";
+    cout << "D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda))\n";
     double seconds = read_timer();
-    std::cout << "Starting contraction:\n";
-    C(mu|nu) = contract(Q|s,A(mu|Q|s),B(Q|s|nu));
+    D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
+    seconds = read_timer() - seconds;
+    count_flops = false;
+    std::cout << "FLOPs: " << flops << "\n";
+    std::cout << "Time (s): " << seconds << "\n";
+    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+
+    //Skipping a subtraction step here - add that in later
+    //Construct L tensor 
+    sparse_bispace<3> spb_L = spb_X | spb_N % spb_N << sig_blocks_NN;
+    size_t nnz_L = spb_L.get_nnz();
+    double* L_arr  = new double[nnz_L];
+    for(size_t i = 0; i < nnz_L; ++i)
+    {
+        L_arr[i] = double(rand())/RAND_MAX;
+    }
+    sparse_btensor<3> L(spb_L,L_arr,true);
+    delete L_arr;
+
+
+    //Construct M result
+    sparse_bispace<2> spb_M = spb_N|spb_N;
+    sparse_btensor<2> M(spb_M);
+    letter nu;
+    flops = 0;
+    count_flops = true;
+    cout << "-----------------------------\n";
+    cout << "M(mu|nu) = contract(Q|sigma,D(mu|Q|sigma),L(Q|sigma|nu))\n";
+    seconds = read_timer();
+    M(mu|nu) = contract(Q|sigma,D(mu|Q|sigma),L(Q|sigma|nu));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -386,22 +423,27 @@ int main(int argc,char *argv[])
         }
     }
 #endif
+    /*const char* alkane_file_names[5] = {"../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",*/
+                                        /*"../tests/block_sparse/alkane_dz_010_data.txt",*/
+                                        /*"../tests/block_sparse/alkane_dz_020_data.txt",*/
+                                        /*"../tests/block_sparse/alkane_tz_010_data.txt"*/
+                                        /*};*/
     const char* alkane_file_names[5] = {"../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_020_data.txt",
-                                        "../tests/block_sparse/alkane_dz_010_data.txt",
-                                        "../tests/block_sparse/alkane_dz_020_data.txt",
-                                        "../tests/block_sparse/alkane_tz_010_data.txt"
-                                        };
-    if(argc < 2)
+                                        "../tests/block_sparse/alkane_aTZ_ithrsh_10_atom_blocked_010_data.txt",
+                                        "../tests/block_sparse/alkane_aTZ_ithrsh_14_atom_blocked_010_data.txt",
+                                        "../tests/block_sparse/anthracene_dz_atom_blocked.txt"};
+
+    if(argc != 2)
     {
-        for(size_t i = 0; i < sizeof(alkane_file_names)/sizeof(alkane_file_names[0]); ++i)
+        cout << "Usage: [program name] [benchmark #]\n";
+        cout << "Available benchmarks:\n";
+        for(size_t  i = 0; i < sizeof(alkane_file_names)/sizeof(alkane_file_names[0]); ++i)
         {
-            cout << "=================\n";
-            cout << alkane_file_names[i] << "\n";
-            run_benchmark(alkane_file_names[i]);
+            cout << i << ". " << alkane_file_names[i] << "\n";
         }
     }
-    else if(argc == 2)
+    else
     {
         size_t benchmark_idx = atoi(argv[1]);
         cout << "=================\n";
