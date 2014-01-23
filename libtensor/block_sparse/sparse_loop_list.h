@@ -12,10 +12,6 @@
 #include "block_loop.h"
 #include "sparse_bispace.h"
 #include "block_kernel_i.h"
-#include "loop_list_sparsity_data.h"
-
-//TODO REMOVE
-#include <iostream>
 
 namespace libtensor
 {

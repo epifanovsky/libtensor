@@ -6,7 +6,6 @@ libtensor_sparse_suite::libtensor_sparse_suite() :
     libtest::test_suite("libtensor") {
 
     add_test("block_kernels", m_utf_block_kernels);
-    add_test("loop_list_sparsity_data", m_utf_loop_list_sparsity_data);
     add_test("block_loop", m_utf_block_loop);
     add_test("sparse_loop_list", m_utf_sparse_loop_list);
     add_test("sparsity_fuser", m_utf_sparsity_fuser);

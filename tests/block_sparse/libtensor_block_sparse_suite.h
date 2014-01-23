@@ -10,7 +10,6 @@
 #include "block_loop_test.h"
 #include "sparse_btensor_test.h"
 #include "direct_sparse_btensor_test.h"
-#include "loop_list_sparsity_data_test.h"
 #include "sparse_loop_list_test.h"
 #include "sparse_loop_iterator_test.h"
 #include "sparsity_fuser_test.h"
@@ -35,7 +34,6 @@ namespace libtensor {
 class libtensor_sparse_suite : public libtest::test_suite {
 private:
     unit_test_factory<block_kernels_test> m_utf_block_kernels;
-    unit_test_factory<loop_list_sparsity_data_test> m_utf_loop_list_sparsity_data;
     unit_test_factory<block_loop_test> m_utf_block_loop;
     unit_test_factory<sparse_loop_list_test> m_utf_sparse_loop_list;
     unit_test_factory<sparse_loop_iterator_test> m_utf_sparse_loop_iterator;
