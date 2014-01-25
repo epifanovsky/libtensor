@@ -16,7 +16,7 @@ namespace libtensor
 
 const char* sparse_loop_list::k_clazz = "sparse_loop_list";
 
-sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops) : m_loops(loops)
+sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_list& direct_tensors) : m_loops(loops)
 {
     if(m_loops.size() == 0)
     {
@@ -105,6 +105,8 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops) : m_loops(lo
     m_bispaces_and_subspaces = slg.get_bispaces_and_subspaces();
     m_block_dims = slg.get_block_dims();
     m_offsets_and_sizes = slg.get_offsets_and_sizes();
+    m_loops_for_groups = slg.get_loops_for_groups();
+    m_loop_bounds.resize(m_offsets_and_sizes.size());
 }
 
 std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(

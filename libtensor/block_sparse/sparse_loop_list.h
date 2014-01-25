@@ -13,6 +13,9 @@
 #include "sparse_bispace.h"
 #include "block_kernel_i.h"
 
+//TODO REMOVE
+#include <iostream>
+
 namespace libtensor
 {
 
@@ -38,11 +41,13 @@ private:
     std::vector<idx_pair_list> m_bispaces_and_subspaces; //Each entry contains the bispaces and subspaces touched by a given loop group
     std::vector<std::vector<dim_list> > m_block_dims; //The block sizes of each tensor 
     std::vector<std::vector<offset_list> > m_cur_bispace_grp_offsets; //Used as 'scratch paper' for the offset calculations; pre-alloc for speed
+    std::vector<idx_list> m_loops_for_groups;
+    idx_pair_list m_loop_bounds; //Used to make some loops iterate over a restricted range for direct code
 public:
-	sparse_loop_list(const std::vector<block_loop>& loops);
+	sparse_loop_list(const std::vector<block_loop>& loops,const idx_list& direct_tensors = idx_list());
 
 	template<typename T>
-	void run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs);
+	void run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>()));
 
 	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
 	const std::vector< block_loop >& get_loops() const { return m_loops; }
@@ -56,7 +61,7 @@ public:
 };
 
 template<typename T>
-void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs)
+void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches)
 {
 	if(m_loops.size() == 0)
 	{
@@ -83,6 +88,29 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs)
             inner_size *= bispace.get_index_group_dim(idx_grp);
         }
 	}
+
+    //Set up loop bounds
+    for(size_t grp_idx = 0; grp_idx < m_bispaces_and_subspaces.size(); ++grp_idx)
+    {
+        m_loop_bounds[grp_idx] = idx_pair(0,m_offsets_and_sizes[grp_idx].size());
+    }
+    //Restrict the bounds of loops that involve direct tensors
+    for(std::map<size_t,idx_pair>::const_iterator it = batches.begin(); it != batches.end(); ++it)
+    {
+        //Find the loop group containing this loop
+        size_t loop_idx = it->first;
+        for(size_t grp_idx = 0; grp_idx < m_offsets_and_sizes.size(); ++grp_idx)
+        {
+            const idx_list& loops_for_group = m_loops_for_groups[grp_idx];
+            idx_list::const_iterator loop_pos = find(loops_for_group.begin(),loops_for_group.end(),loop_idx);
+            if(loop_pos != loops_for_group.end())
+            {
+                std::cout << "Group idx: " << grp_idx << "\n";
+                break;
+            }
+        }
+    }
+
     m_cur_bispace_grp_offsets.resize(m_offsets_and_sizes.size(),bispace_grp_offsets);
     std::vector<T*> block_ptrs(ptrs.size());
 	_run_internal(kernel,ptrs,block_ptrs,bispace_grp_offsets,bispace_block_dims,0);
@@ -101,7 +129,7 @@ void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
     const std::vector<dim_list>& grp_block_dims = m_block_dims[loop_grp_idx];
     const idx_pair_list& grp_baig = m_bispaces_and_index_groups[loop_grp_idx];
     const idx_pair_list& grp_bas = m_bispaces_and_subspaces[loop_grp_idx];
-    for(size_t block_set_idx = 0; block_set_idx < grp_offsets_and_sizes.size(); ++block_set_idx)
+    for(size_t block_set_idx = m_loop_bounds[loop_grp_idx].first; block_set_idx < m_loop_bounds[loop_grp_idx].second; ++block_set_idx)
     {
         const off_dim_pair_list& block_set_offsets_and_sizes = grp_offsets_and_sizes[block_set_idx];
         const dim_list& block_set_block_dims = grp_block_dims[block_set_idx];

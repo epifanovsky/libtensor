@@ -51,6 +51,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                 {
                     //Yes, we are part of an existing group
                     cur_grp_idx = grp_idx;
+                    m_loops_for_groups[cur_grp_idx].push_back(loop_idx);
                     found = true;
                     break;
                 }
@@ -58,6 +59,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
             if(!found)
             {
                 //No, make a new sparse group
+                m_loops_for_groups.push_back(idx_list(1,loop_idx));
                 trees_for_groups.push_back(idx_list(1,tree_idx));
                 m_bispaces_and_subspaces.push_back(idx_pair_list());
                 m_bispaces_and_index_groups.push_back(idx_pair_list());
@@ -78,6 +80,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
         {
             //Dense loop - automatically a new group unto itself
             trees_for_groups.push_back(idx_list());
+            m_loops_for_groups.push_back(idx_list(1,loop_idx));
             m_bispaces_and_subspaces.push_back(idx_pair_list());
             m_bispaces_and_index_groups.push_back(idx_pair_list());
             for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
@@ -170,6 +173,11 @@ vector<vector<dim_list> > sparse_loop_grouper::get_block_dims() const
 vector< vector<off_dim_pair_list> > sparse_loop_grouper::get_offsets_and_sizes() const
 {
     return m_offsets_and_sizes;
+}
+
+vector<idx_list> sparse_loop_grouper::get_loops_for_groups() const
+{
+    return m_loops_for_groups;
 }
 
 } // namespace libtensor

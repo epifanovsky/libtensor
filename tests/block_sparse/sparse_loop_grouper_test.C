@@ -17,6 +17,7 @@ void sparse_loop_grouper_test::perform() throw(libtest::test_exception) {
     test_get_offsets_and_sizes();
     test_get_bispaces_and_subspaces();
     test_get_block_dims();
+    test_get_loops_for_groups();
 }
 
 //Test fixtures
@@ -208,6 +209,29 @@ void sparse_loop_grouper_test::test_get_block_dims() throw(libtest::test_excepti
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparsity_loop_grouper::get_block_dims(...) returned incorrect value");
+    }
+}
+
+void sparse_loop_grouper_test::test_get_loops_for_groups() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_grouper_test::test_get_loops_for_groups()";
+
+    dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
+    sparse_loop_grouper slg(tf.sf);
+
+    vector<idx_list> loops_for_groups = slg.get_loops_for_groups();
+    vector<idx_list> correct_loops_for_groups(2);
+    //(ik)
+    correct_loops_for_groups[0].push_back(0);
+    correct_loops_for_groups[0].push_back(2);
+    //j
+    correct_loops_for_groups[1].push_back(1);
+
+
+    if(loops_for_groups != correct_loops_for_groups)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_loop_grouper::get_loops_for_groups(...) returned incorrect value");
     }
 }
 

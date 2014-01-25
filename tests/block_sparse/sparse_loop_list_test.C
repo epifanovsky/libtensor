@@ -28,11 +28,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_contract2_kernel_2d_2d();
     test_run_block_contract2_kernel_3d_2d();
 
-#if 0
-    test_run_fixed_blocks_invalid_bispace_idx();
-    test_run_fixed_blocks_not_enough_block_indices();
-    test_run_fixed_blocks_bpk_2d();
-#endif
+    /*test_run_direct_3d_3d();*/
 }
 
 void sparse_loop_list_test::test_construct_invalid_loop_bispaces() throw(libtest::test_exception)
@@ -927,171 +923,211 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
     }
 }
 
-#if 0
-//Passing a bispace idx > # of bispaces in the loop list in fixed_blocks_map should throw exception
-void sparse_loop_list_test::test_run_fixed_blocks_invalid_bispace_idx() throw(libtest::test_exception)
+//We specify our operand 'A' as a direct tensor, so it is accessed in batches that we manually feed to the loop
+//Cil = A(ij)k Bj(kl)
+void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_run_fixed_blocks_invalid_bispace_idx()";
+    static const char *test_name = "sparse_loop_list_test::test_run_direct_3d_3d()";
 
-    //Only need dummy bispace data for this
-    sparse_bispace<1> spb(5);
-    vector<sparse_bispace_any_order> bispaces(2,spb|spb);
-    sparse_loop_list sll(bispaces);
-    for(size_t i = 0; i < 2; ++i)
+    double A_batch_1[27] = { //i = 0 j = 0 k = 0
+                             1,2,
+                             //i = 0 j = 0 k = 1
+                             3,
+
+                             //i = 0 j = 1 k = 0
+                             6,7,
+                             8,9,
+
+                             //i = 0 j = 1 k = 1
+                             10, 
+                             11,
+
+                             //i = 1 j = 1 k = 0
+                             16,17,
+                             18,19,
+                             20,21,
+                             22,23,
+
+                             //i = 1 j = 1 k = 1
+                             24,
+                             25,
+                             26,
+                             27,
+
+                             //i = 1 j = 2 k = 0
+                             36,37,
+                             38,39,
+
+                             //i = 1 j = 2 k = 1
+                             40,
+                             41 };
+
+    double A_batch_2[18] = { //i = 0 j = 0 k = 2
+                             4,5,
+
+                             //i = 0 j = 1 k = 2
+                             12,13,
+                             14,15,
+
+                             //i = 1 j = 1 k = 2
+                             28,29,
+                             30,31,
+                             32,33,
+                             34,35,
+
+                             //i = 1 j = 2 k = 2
+                             42,43,
+                             44,45};
+                             
+
+    //Block major
+    double B_arr[60] = {  //j = 0 k = 0 l = 2
+                          1,2,
+
+                          //j = 0 k = 1 l = 1
+                          3,4,5,
+
+                          //j = 0 k = 2 l = 0
+                          6,7,8,9,
+
+                          //j = 0 k = 2 l = 1
+                          10,11,12,13,14,15,
+
+                          //j = 1 k = 0 l = 2
+                          16,17,
+                          18,19,
+
+                          //j = 1 k = 1 l = 1
+                          20,21,22,
+                          23,24,25,
+
+                          //j = 1 k = 2 l = 0
+                          26,27,28,29,
+                          30,31,32,33,
+
+                          //j = 1 k = 2 l = 1
+                          34,35,36,37,38,39,
+                          40,41,42,43,44,45,
+
+                          //j = 2 k = 0 l = 2
+                          46,47,
+
+                          //j = 2 k = 1 l = 1
+                          48,49,50,
+
+                          //j = 2 k = 2 l = 0
+                          51,52,53,54,
+
+                          //j = 2 k = 2 l = 1
+                          55,56,57,58,59,60};
+
+
+    double C_correct_arr[18] = { //i = 0
+                                 1640,1703,2661,2748,2835,535,
+                                 //i = 1
+                                 7853,8056,12337,12629,12921,4625,
+
+                                 //i = 2
+                                 8525,8748,13313,13630,13947,5091,
+                                 };
+
+    double C_arr[18] = {0};
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(3);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(1);
+    spb_i.split(split_points_i);
+
+    //Bispace for j 
+    sparse_bispace<1> spb_j(4);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(1);
+    split_points_j.push_back(3);
+    spb_j.split(split_points_j);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    split_points_k.push_back(3);
+    spb_k.split(split_points_k);
+
+    //Bispace for l 
+    sparse_bispace<1> spb_l(6);
+    std::vector<size_t> split_points_l;
+    split_points_l.push_back(2);
+    split_points_l.push_back(5);
+    spb_l.split(split_points_l);
+
+
+    //(ij) sparsity
+    size_t seq_00_arr_1[2] = {0,0};
+    size_t seq_01_arr_1[2] = {0,1};
+    size_t seq_02_arr_1[2] = {1,1};
+    size_t seq_03_arr_1[2] = {1,2};
+
+    std::vector< sequence<2,size_t> > ij_sig_blocks(4);
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[0][i] = seq_00_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[1][i] = seq_01_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[2][i] = seq_02_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[3][i] = seq_03_arr_1[i];
+
+    sparse_bispace<3> spb_A = spb_i % spb_j << ij_sig_blocks | spb_k;
+
+
+    //(kl) sparsity
+    size_t seq_00_arr_2[2] = {0,2};
+    size_t seq_01_arr_2[2] = {1,1};
+    size_t seq_02_arr_2[2] = {2,0};
+    size_t seq_03_arr_2[2] = {2,1};
+
+    std::vector< sequence<2,size_t> > kl_sig_blocks(4);
+    for(size_t i = 0; i < 2; ++i) kl_sig_blocks[0][i] = seq_00_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) kl_sig_blocks[1][i] = seq_01_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) kl_sig_blocks[2][i] = seq_02_arr_2[i];
+    for(size_t i = 0; i < 2; ++i) kl_sig_blocks[3][i] = seq_03_arr_2[i];
+
+    sparse_bispace<3> spb_B = spb_j | spb_k % spb_l << kl_sig_blocks;
+    sparse_bispace<2> spb_C = spb_i | spb_l;
+    vector<sparse_bispace_any_order>  bispaces(1,spb_C);
+    bispaces.push_back(spb_A);
+    bispaces.push_back(spb_B);
+
+    vector<block_loop> loops(4,block_loop(bispaces));
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(1,0);
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(2,2);
+    loops[2].set_subspace_looped(1,1);
+    loops[2].set_subspace_looped(2,0);
+    loops[3].set_subspace_looped(1,2);
+    loops[3].set_subspace_looped(2,1);
+
+    vector<size_t> direct_tensors(1,1);
+    sparse_loop_list sll(loops,direct_tensors);
+
+    block_contract2_kernel<double> bc2k(sll);
+
+    //We batch to truncate the 'k' loop (loop idx 3)
+    map<size_t,idx_pair> batches;
+    batches[3] = idx_pair(0,2);
+
+    //Alloc memory large enough to hold the biggest batch
+    vector<double*> ptrs(1,C_arr);
+    ptrs.push_back(A_batch_1);
+    ptrs.push_back(B_arr);
+
+    //Run the first batch
+    sll.run(bc2k,ptrs,batches);
+    //Run the seoncd batch
+    ptrs[1] = A_batch_2;
+    batches[3] = idx_pair(2,3);
+    sll.run(bc2k,ptrs,batches);
+
+    for(size_t i = 0; i < spb_C.get_nnz(); ++i)
     {
-    	block_loop bl(bispaces);
-    	bl.set_subspace_looped(i,0);
-    	sll.add_loop(bl);
-    }
-
-    //Dummy pointer data
-    vector<double*> ptrs(2,NULL);
-
-    //token kernel - identity permutation
-    runtime_permutation perm(2);
-    block_permute_kernel<double> bpk(perm);
-
-    //Fixed blocks data with invalid bispace index
-    fixed_block_map fbm;
-    fbm.insert(make_pair(3,vector<size_t>(2,0)));
-
-    bool threw_exception = false;
-    try
-    {
-    	sll.run(bpk,ptrs,fbm);
-    }
-    catch(out_of_bounds&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::run(...) did not throw exception when invalid bispace index specified in fixed_blocks");
-    }
-}
-
-//Passing wrong number of indices for fixed block of a given bispace should throw exception
-void sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_loop_list_test::test_run_fixed_blocks_not_enough_block_indices()";
-
-    //Only need dummy bispace data for this
-    sparse_bispace<1> spb(5);
-    vector<sparse_bispace_any_order> bispaces(2,spb|spb);
-    sparse_loop_list sll(bispaces);
-    for(size_t i = 0; i < 2; ++i)
-    {
-    	block_loop bl(bispaces);
-    	bl.set_subspace_looped(i,0);
-    	sll.add_loop(bl);
-    }
-
-    //Dummy pointer data
-    vector<double*> ptrs(2,NULL);
-
-    //token kernel - identity permutation
-    runtime_permutation perm(2);
-    block_permute_kernel<double> bpk(perm);
-
-    //Fixed blocks data with only one block index specified for a 2d bispace
-    fixed_block_map fbm;
-    fbm.insert(make_pair(1,vector<size_t>(1,0)));
-
-    bool threw_exception = false;
-    try
-    {
-    	sll.run(bpk,ptrs,fbm);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::run(...) did not throw exception when invalid block indices specified in fixed_blocks");
-    }
-}
-
-//Should throw exception if we fix the blocks of two coupled bispaces to incompatible values
-void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices()";
-
-    //Just need dummy pointers for this test
-    double test_input_arr[20] = { //i = 0, j = 0
-                                  1,2,
-                                  6,7,
-
-                                 //i = 0, j = 1
-                                 3,4,5,
-                                 8,9,10,
-
-                                 //i = 1, j = 0
-                                 11,12,
-                                 16,17,
-
-                                 //i = 0, j = 1
-                                 13,14,15,
-                                 18,19,20 };
-
-    //We only need an array of size 6 to hold our block
-    double correct_output_arr[6] = { //j = 1, i = 0
-									 3,8,
-									 4,9,
-									 5,10 };
-
-    double test_output_arr[6];
-
-    //First bispace (slow index) and splitting
-    sparse_bispace<1> spb_1(4);
-    vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    //Second bispace (fast index) and splitting
-    sparse_bispace<1> spb_2(5);
-    vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_2 | spb_1);
-    bispaces.push_back(spb_1 | spb_2);
-
-    runtime_permutation perm(2);
-    perm.permute(0,1);
-    block_permute_kernel<double> bpk(perm);
-
-
-    //We stride the input, not the output
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,1);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(1,0);
-
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-
-    vector<double*> ptrs(1,test_output_arr);
-    ptrs.push_back(test_input_arr);
-
-    fixed_block_map fbm;
-    vector<size_t> fixed_blocks_output(1,1);
-    fixed_blocks_output.push_back(0);
-    fbm.insert(make_pair(0,fixed_blocks_output));
-
-    sll.run(bpk,ptrs,fbm);
-
-    for(int i = 0; i < 6; ++i)
-    {
-        if(test_output_arr[i] != correct_output_arr[i])
+        if(C_arr[i] != C_correct_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
                     "sparse_loop_list::run(...) produced incorrect output");
@@ -1099,89 +1135,5 @@ void sparse_loop_list_test::test_run_fixed_blocks_incompatible_indices() throw(l
     }
 }
 
-//Form a single block of the output tensor by fixing the desired blocks for a subset of the loops
-//We will form the block j = 1, i = 0
-void sparse_loop_list_test::test_run_fixed_blocks_bpk_2d() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_loop_list_test::test_run_fixed_blocks_bpk_2d()";
-
-	//Indices in comments are block indices
-    double test_input_arr[20] = { //i = 0, j = 0
-                                  1,2,
-                                  6,7,
-
-                                 //i = 0, j = 1
-                                 3,4,5,
-                                 8,9,10,
-
-                                 //i = 1, j = 0
-                                 11,12,
-                                 16,17,
-
-                                 //i = 0, j = 1
-                                 13,14,15,
-                                 18,19,20 };
-
-    //We only need an array of size 6 to hold our block
-    double correct_output_arr[6] = { //j = 1, i = 0
-									 3,8,
-									 4,9,
-									 5,10 };
-
-    double test_output_arr[6];
-
-    //First bispace (slow index) and splitting
-    sparse_bispace<1> spb_1(4);
-    vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    //Second bispace (fast index) and splitting
-    sparse_bispace<1> spb_2(5);
-    vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_2 | spb_1);
-    bispaces.push_back(spb_1 | spb_2);
-
-    runtime_permutation perm(2);
-    perm.permute(0,1);
-    block_permute_kernel<double> bpk(perm);
-
-
-    //We stride the input, not the output
-    block_loop bl_1(bispaces);
-    bl_1.set_subspace_looped(0,0);
-    bl_1.set_subspace_looped(1,1);
-    block_loop bl_2(bispaces);
-    bl_2.set_subspace_looped(0,1);
-    bl_2.set_subspace_looped(1,0);
-
-    sparse_loop_list sll(bispaces);
-    sll.add_loop(bl_1);
-    sll.add_loop(bl_2);
-
-    vector<double*> ptrs(1,test_output_arr);
-    ptrs.push_back(test_input_arr);
-
-    fixed_block_map fbm;
-    vector<size_t> fixed_blocks_output(1,1);
-    fixed_blocks_output.push_back(0);
-    fbm.insert(make_pair(0,fixed_blocks_output));
-
-    sll.run(bpk,ptrs,fbm);
-
-    for(int i = 0; i < 6; ++i)
-    {
-        if(test_output_arr[i] != correct_output_arr[i])
-        {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "sparse_loop_list::run(...) produced incorrect output");
-        }
-    }
-}
-#endif
 
 } /* namespace libtensor */

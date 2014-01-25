@@ -30,9 +30,7 @@ private:
     void test_run_block_contract2_kernel_2d_2d() throw(libtest::test_exception);
     void test_run_block_contract2_kernel_3d_2d() throw(libtest::test_exception);
 
-    void test_run_fixed_blocks_invalid_bispace_idx() throw(libtest::test_exception);
-    void test_run_fixed_blocks_not_enough_block_indices() throw(libtest::test_exception);
-    void test_run_fixed_blocks_bpk_2d() throw(libtest::test_exception);
+    void test_run_direct_3d_3d() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

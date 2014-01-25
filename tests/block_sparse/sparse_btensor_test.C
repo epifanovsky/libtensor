@@ -1341,9 +1341,6 @@ void sparse_btensor_test::test_contract2_two_indices_3d_3d_sparse_sparse() throw
                          42,43,
                          44,45};
 
-                             
-
-
     //Block major
     double B_arr[60] = {  //j = 0 k = 0 l = 2
                           1,2,
