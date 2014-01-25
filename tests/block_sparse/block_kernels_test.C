@@ -42,6 +42,7 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_2d_ik_jk();
     test_block_contract2_kernel_2d_ki_kj();
     test_block_contract2_kernel_2d_ki_jk();
+    test_block_contract2_kernel_2d_ki_kj_permuted_loops();
     test_block_contract2_kernel_3d_2d();
     test_block_contract2_kernel_3d_3d_multi_index();
 
@@ -1456,6 +1457,85 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::t
     bc2k(ptrs,dim_lists);
 
 
+    for(int i = 0; i < 6; ++i)
+    {
+        if(test_output_block[i] != correct_output_block[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_contract2_kernel::operator(...) did not produce correct result");
+        }
+    }
+}
+
+//This test ensures that the contraction still works when the block loops are in a nontraditional order, 
+//as long as the subspaces are compatible
+void block_kernels_test::test_block_contract2_kernel_2d_ki_kj_permuted_loops() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_ki_kj_permuted_loops()";
+
+    //C_ij = \sum_k A_ki B_kj
+    //dimensions: i = 2,j = 3,k = 4
+    
+    //C
+    double test_output_block[6] = {0}; 
+    //A
+    double test_input_block_1[8] = {1,5,
+                                    2,6,
+                                    3,7,
+                                    4,8};
+
+    //B
+    double test_input_block_2[12] = {9,10,11,
+                                     12,13,14,
+                                     15,16,17,
+                                     18,19,20};
+
+    //Correct C
+    double correct_output_block[6] = {150, 160, 170, 
+                                      366, 392, 418};
+
+    vector<double*> ptrs(1,test_output_block);
+    ptrs.push_back(test_input_block_1);
+    ptrs.push_back(test_input_block_2);
+
+    //bispaces
+    sparse_bispace<1> spb_i(2);
+    sparse_bispace<1> spb_j(3);
+    sparse_bispace<1> spb_k(4);
+
+    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    bispaces.push_back(spb_k|spb_i);
+    bispaces.push_back(spb_k|spb_j);
+
+    vector<block_loop> loops(3,block_loop(bispaces));
+
+    //k loop
+    loops[0].set_subspace_looped(1,0);
+    loops[0].set_subspace_looped(2,0);
+
+    //i loop
+    loops[1].set_subspace_looped(0,0);
+    loops[1].set_subspace_looped(1,1);
+    //j loop
+    loops[2].set_subspace_looped(0,1);
+    loops[2].set_subspace_looped(2,1);
+
+    sparse_loop_list sll(loops);
+
+
+    block_contract2_kernel<double> bc2k(sll);
+
+    size_t C_dim_list_arr[2] = {2,3};
+    size_t A_dim_list_arr[2] = {4,2};
+    size_t B_dim_list_arr[2] = {4,3};
+
+    vector<dim_list> dim_lists(3,dim_list(2));
+    for(size_t i = 0; i < 2; ++i) dim_lists[0][i] = C_dim_list_arr[i];
+    for(size_t i = 0; i < 2; ++i) dim_lists[1][i] = A_dim_list_arr[i];
+    for(size_t i = 0; i < 2; ++i) dim_lists[2][i] = B_dim_list_arr[i];
+
+    bc2k(ptrs,dim_lists);
+    
     for(int i = 0; i < 6; ++i)
     {
         if(test_output_block[i] != correct_output_block[i])

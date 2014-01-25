@@ -91,14 +91,6 @@ public:
     const sparse_bispace<1>& operator[](size_t  idx) const
         throw(out_of_bounds);
 
-    /** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
-     **/
-    size_t get_block_offset(const std::vector<size_t>& block_indices) const;
-
-    /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
-     **/
-    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
-
     /** Stub methods for general compatibility, even though can't have sparse groups in a 1d bispace
      **/
     size_t get_n_sparse_groups() const { return 0; }
@@ -205,28 +197,6 @@ inline const sparse_bispace<1>& sparse_bispace<1>::operator[](size_t idx) const 
     return *this;
 }
 
-/** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
- **/
-inline size_t sparse_bispace<1>::get_block_offset(const std::vector<size_t>& block_indices) const
-{
-    if(block_indices.size() != 1)
-    {
-        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_block_offset(...)",
-                __FILE__,__LINE__,"vector passed with size != 1"); 
-    }
-    if(block_indices[0] > (m_abs_indices.size() - 1))
-    {
-        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_block_offset(...)",
-                __FILE__,__LINE__,"vector passed containing indices > max block idx"); 
-    }
-    return m_abs_indices[block_indices[0]];
-}
-
-inline size_t sparse_bispace<1>::get_block_offset_canonical(const std::vector<size_t>& block_indices) const
-{
-    return get_block_offset(block_indices); 
-}
-
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 {
     return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
@@ -324,15 +294,6 @@ public:
      **/
     const sparse_bispace<1>& operator[](size_t  idx) const
         throw(out_of_bounds);
-
-    /** \brief Returns offset of a given tile in this bispace assuming block-major layout. The tile is specified by a vector of block indices
-     **/
-    size_t get_block_offset(const std::vector<size_t>& block_indices);
-
-    /** \brief Returns offset of a given tile in this bispace assuming canonical (row-major) layout. The tile is specified by a vector of block indices
-     **/
-    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const;
-
 
     /** \brief Returns an appropriately permuted copy of this bispace 
      **/
@@ -554,87 +515,6 @@ const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const throw(o
                 __FILE__,__LINE__,"idx > (# of subspaces - 1) was specified"); 
     }
     return m_subspaces[idx];
-}
-
-/** \brief Returns offset of a given tile in this bispace. The tile is specified by a vector of block indices
- **/
-template<size_t N>
-size_t sparse_bispace<N>::get_block_offset(const std::vector<size_t>& block_indices)
-{
-    //We process the blocks in chunks corresponding to each set that is coupled by sparsity
-    size_t offset = 0;
-    size_t outer_size = 1;
-    size_t subspace_idx = 0;
-    size_t cur_group_idx = 0;
-    size_t cur_sparse_indices_set_idx = 0; 
-    size_t abs_index;
-    while(subspace_idx < block_indices.size())
-    {
-        //The outer size will be scaled by a factor corresponding to the size of
-        //a single block dimension in the dense case or multiple in the sparse case
-        size_t outer_size_scale_fac;
-
-        bool treat_as_sparse = false;
-        if(cur_sparse_indices_set_idx < m_sparse_indices_sets_offsets.size())
-        {
-            if(subspace_idx == m_sparse_indices_sets_offsets[cur_sparse_indices_set_idx])
-            {
-                treat_as_sparse = true;
-            }
-        }
-        if(treat_as_sparse)
-        {
-            //Get the current key
-            const sparse_block_tree_any_order& sbt = m_sparse_block_trees[cur_sparse_indices_set_idx];
-            size_t cur_order = sbt.get_order();
-            std::vector<size_t>& cur_key = m_sparse_key_vecs[cur_sparse_indices_set_idx];
-            for(size_t key_idx = 0; key_idx < cur_order; ++key_idx)
-            {
-                cur_key[key_idx] = block_indices[subspace_idx+key_idx];
-            }
-
-            //Outer size consists of the size of all blocks involved in this sparse group
-            outer_size_scale_fac = 1;
-            for(size_t outer_size_idx = 0; outer_size_idx < cur_order; ++outer_size_idx)
-            {
-                outer_size_scale_fac *= m_subspaces[subspace_idx+outer_size_idx].get_block_size(cur_key[outer_size_idx]);
-            }
-            abs_index = (*sbt.search(cur_key))[0].first;
-            ++cur_sparse_indices_set_idx;
-            subspace_idx += cur_order;
-        }
-        else
-        {
-            //Treat as dense (1 element chunk)
-            size_t block_idx = block_indices[subspace_idx];
-            abs_index = m_subspaces[subspace_idx].get_block_abs_index(block_idx);
-            outer_size_scale_fac = m_subspaces[subspace_idx].get_block_size(block_idx);
-            ++subspace_idx;
-        }
-        
-        offset += outer_size * abs_index * m_inner_sizes[cur_group_idx];
-        outer_size *= outer_size_scale_fac;
-        ++cur_group_idx;
-    }
-
-    return offset;
-}
-
-template<size_t N>
-size_t sparse_bispace<N>::get_block_offset_canonical(const std::vector<size_t>& block_indices) const
-{
-    size_t offset = 0; 
-    for(size_t i = 0; i < block_indices.size(); ++i)
-    {
-        size_t inner_size = 1;
-        for(size_t inner_size_idx = i+1; inner_size_idx < N; ++inner_size_idx)
-        {
-            //TODO: This needs to call some sparsity-aware function to determine this
-            inner_size *= m_subspaces[inner_size_idx].get_dim();
-        }
-        offset += m_subspaces[i].get_block_abs_index(block_indices[i])*inner_size;
-    }
-    return offset;
 }
 
 template<size_t N> 
@@ -1008,8 +888,6 @@ private:
     public:
         virtual const sparse_bispace<1>& operator[](size_t idx) const = 0; 
         virtual size_t get_order() const = 0;
-        virtual size_t get_block_offset(const std::vector<size_t>& block_indices) = 0;
-        virtual size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const = 0;
         virtual sparse_bispace_generic_i* clone() const = 0;
         virtual size_t get_n_sparse_groups() const  = 0;
         virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
@@ -1034,8 +912,6 @@ private:
 
         const sparse_bispace<1>& operator[](size_t idx) const { return m_bispace[idx]; }
         size_t get_order() const { return N; }
-        size_t get_block_offset(const std::vector<size_t>& block_indices) { return m_bispace.get_block_offset(block_indices); }
-        size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_bispace.get_block_offset_canonical(block_indices); }
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
         sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
@@ -1070,8 +946,6 @@ public:
 
     const sparse_bispace<1>& operator[](size_t idx) const { return (*m_spb_ptr)[idx]; }
     size_t get_order() const { return m_spb_ptr->get_order(); }
-    size_t get_block_offset(const std::vector<size_t>& block_indices) { return m_spb_ptr->get_block_offset(block_indices); }
-    size_t get_block_offset_canonical(const std::vector<size_t>& block_indices) const { return m_spb_ptr->get_block_offset_canonical(block_indices); }
     size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }
     sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
     size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 

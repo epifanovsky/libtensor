@@ -88,8 +88,18 @@ void block_load_kernel<T>::operator()(const std::vector<T*>& ptrs, const std::ve
         throw bad_parameter(g_ns, k_clazz,"operator()(...)",
                 __FILE__, __LINE__, "must pass exactly one pointer and dim_list");
 	}
-    size_t block_offset = m_bispace.get_block_offset_canonical(cur_block_indices);
-    _load(ptrs[0],m_data_ptr+block_offset,dim_lists[0]);
+    size_t offset = 0; 
+    for(size_t i = 0; i < cur_block_indices.size(); ++i)
+    {
+        size_t inner_size = 1;
+        for(size_t inner_size_idx = i+1; inner_size_idx < m_bispace.get_order(); ++inner_size_idx)
+        {
+            //TODO: This needs to call some sparsity-aware function to determine this
+            inner_size *= m_bispace[inner_size_idx].get_dim();
+        }
+        offset += m_bispace[i].get_block_abs_index(cur_block_indices[i])*inner_size;
+    }
+    _load(ptrs[0],m_data_ptr+offset,dim_lists[0]);
 
     //Move to the next block
     size_t cur_idx = m_bispace.get_order() - 1;
