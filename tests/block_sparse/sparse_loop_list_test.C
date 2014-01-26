@@ -28,7 +28,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_contract2_kernel_2d_2d();
     test_run_block_contract2_kernel_3d_2d();
 
-    /*test_run_direct_3d_3d();*/
+    test_run_direct_3d_3d();
 }
 
 void sparse_loop_list_test::test_construct_invalid_loop_bispaces() throw(libtest::test_exception)
@@ -1095,23 +1095,27 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
     bispaces.push_back(spb_B);
 
     vector<block_loop> loops(4,block_loop(bispaces));
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,2);
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
-    loops[3].set_subspace_looped(1,2);
-    loops[3].set_subspace_looped(2,1);
+
+    //k loop must be before 'l' loop so we can batch over it
+    //We therefore make the indices of contraction the outer loops
+    //i loop 
+    loops[0].set_subspace_looped(1,1);
+    loops[0].set_subspace_looped(2,0);
+    loops[1].set_subspace_looped(1,2);
+    loops[1].set_subspace_looped(2,1);
+    loops[2].set_subspace_looped(0,0);
+    loops[2].set_subspace_looped(1,0);
+    loops[3].set_subspace_looped(0,1);
+    loops[3].set_subspace_looped(2,2);
 
     vector<size_t> direct_tensors(1,1);
     sparse_loop_list sll(loops,direct_tensors);
 
     block_contract2_kernel<double> bc2k(sll);
 
-    //We batch to truncate the 'k' loop (loop idx 3)
+    //We batch to truncate the 'k' loop (loop idx 1)
     map<size_t,idx_pair> batches;
-    batches[3] = idx_pair(0,2);
+    batches[1] = idx_pair(0,2);
 
     //Alloc memory large enough to hold the biggest batch
     vector<double*> ptrs(1,C_arr);
@@ -1122,7 +1126,7 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
     sll.run(bc2k,ptrs,batches);
     //Run the seoncd batch
     ptrs[1] = A_batch_2;
-    batches[3] = idx_pair(2,3);
+    batches[1] = idx_pair(2,3);
     sll.run(bc2k,ptrs,batches);
 
     for(size_t i = 0; i < spb_C.get_nnz(); ++i)

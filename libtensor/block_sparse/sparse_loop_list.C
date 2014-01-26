@@ -99,6 +99,7 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_lis
         }
     }
 
+
     //Create block offset and size information for each loop group
     sparse_loop_grouper slg(sf);
     m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
@@ -107,6 +108,24 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_lis
     m_offsets_and_sizes = slg.get_offsets_and_sizes();
     m_loops_for_groups = slg.get_loops_for_groups();
     m_loop_bounds.resize(m_offsets_and_sizes.size());
+
+    //How to figure out what tree goes with what group?
+    //Save the tree keys for use in calculating batch bounds for direct code
+    vector<sparse_block_tree_any_order> trees = sf.get_trees();
+    m_tree_keys_for_groups.resize(m_loops_for_groups.size());
+    for(size_t grp_idx = 0; grp_idx < m_loops_for_groups.size(); ++grp_idx)
+    {
+        const idx_list& loops_for_group = m_loops_for_groups[grp_idx];
+        if(loops_for_group.size() > 1)
+        {
+            size_t tree_idx = sf.get_trees_for_loop(loops_for_group[0])[0];
+            const sparse_block_tree_any_order& tree = trees[tree_idx];
+            for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+            {
+                m_tree_keys_for_groups[grp_idx].push_back(it.key());
+            }
+        }
+    }
 }
 
 std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(

@@ -42,6 +42,7 @@ private:
     std::vector<std::vector<dim_list> > m_block_dims; //The block sizes of each tensor 
     std::vector<std::vector<offset_list> > m_cur_bispace_grp_offsets; //Used as 'scratch paper' for the offset calculations; pre-alloc for speed
     std::vector<idx_list> m_loops_for_groups;
+    std::vector<std::vector<block_list> > m_tree_keys_for_groups; //The keys of each tree corresponding to a given loop group, for use building offsets for direct code
     idx_pair_list m_loop_bounds; //Used to make some loops iterate over a restricted range for direct code
 public:
 	sparse_loop_list(const std::vector<block_loop>& loops,const idx_list& direct_tensors = idx_list());
@@ -94,11 +95,13 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const
     {
         m_loop_bounds[grp_idx] = idx_pair(0,m_offsets_and_sizes[grp_idx].size());
     }
+
     //Restrict the bounds of loops that involve direct tensors
     for(std::map<size_t,idx_pair>::const_iterator it = batches.begin(); it != batches.end(); ++it)
     {
         //Find the loop group containing this loop
         size_t loop_idx = it->first;
+        const idx_pair& bounds = it->second;
         for(size_t grp_idx = 0; grp_idx < m_offsets_and_sizes.size(); ++grp_idx)
         {
             const idx_list& loops_for_group = m_loops_for_groups[grp_idx];
@@ -106,6 +109,49 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,std::vector<T*>& ptrs,const
             if(loop_pos != loops_for_group.end())
             {
                 std::cout << "Group idx: " << grp_idx << "\n";
+                //Cannot restrict the range of a sparse index that isn't the dominant one - too hard
+                if(distance(loops_for_group.begin(),loop_pos) != 0)
+                {
+                    throw bad_parameter(g_ns, k_clazz,"run(...)",
+                            __FILE__, __LINE__, "Can only batch over first sparse index in a group!");
+                }
+
+                //If the loops is sparse, we need to figure out how the loop index bounds actually translate to bounds
+                //on the offset and sizes list. 
+                if(loops_for_group.size() > 1)
+                {
+                    const std::vector<block_list>& grp_keys = m_tree_keys_for_groups[grp_idx];
+                    //Don't do this if the tree is empty
+                    if(grp_keys.size() > 0)
+                    {
+                        //Lower bound
+                        block_list lower_bound_vec(grp_keys[0].size(),0);
+                        lower_bound_vec[0] = bounds.first;
+                        std::vector<block_list>::const_iterator block_lower_bound_pos = std::lower_bound(grp_keys.begin(),grp_keys.end(),lower_bound_vec);
+                        if((*block_lower_bound_pos)[0] != bounds.first)
+                        {
+                            if((*block_lower_bound_pos)[0] != bounds.first)
+                            {
+                                throw bad_parameter(g_ns, k_clazz,"run(...)",__FILE__, __LINE__,
+                                        "Invalid index for lower bound of batch!");
+                            }
+                        }
+                        m_loop_bounds[grp_idx].first = distance(grp_keys.begin(),block_lower_bound_pos);
+
+                        //Upper bound
+                        block_list upper_bound_vec(grp_keys[0].size(),0);
+                        upper_bound_vec[0] = bounds.second;
+                        std::vector<block_list>::const_iterator block_upper_bound_pos = std::lower_bound(grp_keys.begin(),grp_keys.end(),upper_bound_vec);
+                        m_loop_bounds[grp_idx].second = distance(grp_keys.begin(),block_upper_bound_pos);
+                    }
+                }
+                else
+                {
+                    //Otherwise, can just use directly
+                    m_loop_bounds[grp_idx] = bounds;
+                }
+
+                std::cout << "Bounds are: (" << m_loop_bounds[grp_idx].first << "," << m_loop_bounds[grp_idx].second << "\n";
                 break;
             }
         }
