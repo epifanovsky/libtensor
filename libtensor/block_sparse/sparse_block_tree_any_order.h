@@ -4,10 +4,9 @@
 #include <vector>
 #include "../core/sequence.h"
 #include "runtime_permutation.h" 
+#include "sparse_defs.h"
 
 namespace libtensor { 
-
-class loop_list_sparsity_data;
 
 template<size_t N>
 class sparse_bispace;
@@ -70,10 +69,12 @@ public:
     bool operator==(const sparse_block_tree_any_order& rhs) const;
     bool operator!=(const sparse_block_tree_any_order& rhs) const;
 
+    //Used to remove keys from the tree that have values in a particular subspace outside
+    //of the specified range. This is needed for direct tensors
+    sparse_block_tree_any_order truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const;
+
     template<bool is_const>
     friend class sparse_block_tree_iterator;
-
-    friend class libtensor::loop_list_sparsity_data;
 
 protected:
 
@@ -106,7 +107,6 @@ private:
     //Used by permute/fuse/contract to create new instances
     //Does not do the same input validation as primary constructor 
     sparse_block_tree_any_order(const std::vector< std::vector<key_t> >& sig_blocks,size_t order);
-
 
     static const char *k_clazz; //!< Class name
 };

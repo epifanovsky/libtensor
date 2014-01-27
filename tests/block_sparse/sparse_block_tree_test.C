@@ -206,6 +206,8 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
     test_fuse_3d_2d();
     test_fuse_3d_3d_non_contiguous();
     test_fuse_3d_3d_multi_index();
+
+    test_truncate_subspace_3d();
 }
 
 //Cannot have a zero-order tree - throw an exception if this is requested
@@ -880,6 +882,48 @@ void sparse_block_tree_test::test_fuse_3d_3d_multi_index() throw(libtest::test_e
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_block_tree<N>L::fuse(...) returned incorrect value");
+    }
+}
+
+void sparse_block_tree_test::test_truncate_subspace_3d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_truncate_subspace_3d()";
+
+    three_d_test_f tf = three_d_test_f();
+    sparse_block_tree<3> sbt_1(tf.keys,tf.subspaces);
+
+    idx_pair subspace_bounds(3,5);
+    sparse_block_tree<3> sbt_truncated = sbt_1.truncate_subspace(1,subspace_bounds);
+    sbt_truncated.set_offsets_sizes_nnz(tf.subspaces);
+
+    //Correct keys
+    std::vector< std::vector<size_t> > correct_keys;
+    size_t correct_key0_arr[3] = {1,3,1}; correct_keys.push_back(block_list(&correct_key0_arr[0],&correct_key0_arr[0]+3));
+    size_t correct_key1_arr[3] = {2,3,1}; correct_keys.push_back(block_list(&correct_key1_arr[0],&correct_key1_arr[0]+3));
+    size_t correct_key2_arr[3] = {2,4,2}; correct_keys.push_back(block_list(&correct_key2_arr[0],&correct_key2_arr[0]+3));
+    size_t correct_key3_arr[3] = {2,4,5}; correct_keys.push_back(block_list(&correct_key3_arr[0],&correct_key3_arr[0]+3));
+    size_t correct_key4_arr[3] = {4,3,5}; correct_keys.push_back(block_list(&correct_key4_arr[0],&correct_key4_arr[0]+3));
+    size_t correct_key5_arr[3] = {4,3,6}; correct_keys.push_back(block_list(&correct_key5_arr[0],&correct_key5_arr[0]+3));
+    size_t correct_key6_arr[3] = {4,3,7}; correct_keys.push_back(block_list(&correct_key6_arr[0],&correct_key6_arr[0]+3));
+    size_t correct_key7_arr[3] = {7,4,5}; correct_keys.push_back(block_list(&correct_key7_arr[0],&correct_key7_arr[0]+3));
+    size_t correct_key8_arr[3] = {7,4,6}; correct_keys.push_back(block_list(&correct_key8_arr[0],&correct_key8_arr[0]+3));
+
+    //Correct values
+    std::vector< sparse_block_tree<3>::value_t > correct_vals;
+    off_dim_pair correct_value0_arr[1] = { off_dim_pair(0,8) };  correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value0_arr[0],&correct_value0_arr[0]+1));
+    off_dim_pair correct_value1_arr[1] = { off_dim_pair(8,8) };  correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value1_arr[0],&correct_value1_arr[0]+1));
+    off_dim_pair correct_value2_arr[1] = { off_dim_pair(16,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value2_arr[0],&correct_value2_arr[0]+1));
+    off_dim_pair correct_value3_arr[1] = { off_dim_pair(24,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value3_arr[0],&correct_value3_arr[0]+1));
+    off_dim_pair correct_value4_arr[1] = { off_dim_pair(32,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value4_arr[0],&correct_value4_arr[0]+1));
+    off_dim_pair correct_value5_arr[1] = { off_dim_pair(40,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value5_arr[0],&correct_value5_arr[0]+1));
+    off_dim_pair correct_value6_arr[1] = { off_dim_pair(48,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value6_arr[0],&correct_value6_arr[0]+1));
+    off_dim_pair correct_value7_arr[1] = { off_dim_pair(56,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value7_arr[0],&correct_value7_arr[0]+1));
+    off_dim_pair correct_value8_arr[1] = { off_dim_pair(64,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value8_arr[0],&correct_value8_arr[0]+1));
+
+    if(!verify_tree(sbt_truncated,correct_keys,correct_vals))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_block_tree<N>L::truncate_subspace(...) returned incorrect value");
     }
 }
 

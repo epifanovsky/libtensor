@@ -35,6 +35,8 @@ public:
     size_t get_nnz() const { return sparse_block_tree_any_order::get_nnz(); }
     size_t get_n_entries() const { return sparse_block_tree_any_order::get_n_entries(); }
 
+    sparse_block_tree<N> truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const { return sparse_block_tree_any_order::truncate_subspace(subspace_idx,subspace_bounds); }
+
 
     //Friend for contract(), fuse()
     template<size_t M>

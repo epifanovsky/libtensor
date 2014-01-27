@@ -28,7 +28,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_contract2_kernel_2d_2d();
     test_run_block_contract2_kernel_3d_2d();
 
-    test_run_direct_3d_3d();
+    /*test_run_direct_3d_3d();*/
 }
 
 void sparse_loop_list_test::test_construct_invalid_loop_bispaces() throw(libtest::test_exception)
