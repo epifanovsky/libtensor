@@ -28,7 +28,6 @@ public:
     idx_pair_list get_bispaces_and_index_groups_for_tree(size_t tree_idx) const;
     std::vector<idx_list> get_sub_key_offsets_for_tree(size_t tree_idx) const;
 
-    std::vector<off_dim_pair_list> get_offsets_and_sizes(size_t tree_idx) const;
     void fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list& loop_indices); 
 };
 

@@ -16,7 +16,6 @@ void sparsity_fuser_test::perform() throw(libtest::test_exception) {
     test_get_trees_for_loop();
     test_get_bispaces_and_index_groups_for_tree();
     test_get_sub_key_offsets_for_tree();
-    test_get_offsets_and_sizes();
     test_fuse();
 }
 
@@ -240,30 +239,6 @@ void sparsity_fuser_test::test_get_sub_key_offsets_for_tree() throw(libtest::tes
     }
 }
 
-void sparsity_fuser_test::test_get_offsets_and_sizes() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparsity_fuser_test::test_get_offset_and_sizes()";
-
-    contract_test_f tf = contract_test_f();
-
-    sparsity_fuser sf(tf.loops,tf.bispaces);
-
-    vector<off_dim_pair_list> offsets_and_sizes = sf.get_offsets_and_sizes(0);
-    vector<off_dim_pair_list> correct_oas;
-    off_dim_pair correct_0_arr[1] = {off_dim_pair(0,8)  }; correct_oas.push_back(off_dim_pair_list(correct_0_arr,correct_0_arr+1));
-    off_dim_pair correct_1_arr[1] = {off_dim_pair(8,8)  }; correct_oas.push_back(off_dim_pair_list(correct_1_arr,correct_1_arr+1));
-    off_dim_pair correct_2_arr[1] = {off_dim_pair(16,8) }; correct_oas.push_back(off_dim_pair_list(correct_2_arr,correct_2_arr+1));
-    off_dim_pair correct_3_arr[1] = {off_dim_pair(24,8) }; correct_oas.push_back(off_dim_pair_list(correct_3_arr,correct_3_arr+1));
-    off_dim_pair correct_4_arr[1] = {off_dim_pair(32,8) }; correct_oas.push_back(off_dim_pair_list(correct_4_arr,correct_4_arr+1));
-    off_dim_pair correct_5_arr[1] = {off_dim_pair(40,8) }; correct_oas.push_back(off_dim_pair_list(correct_5_arr,correct_5_arr+1));
-
-    if(offsets_and_sizes != correct_oas)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_offsets_and_sizes(...) returned incorrect value C tree");
-    }
-}
-
 void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
 {
     static const char *test_name = "sparsity_fuser_test::test_fuse()";
@@ -372,20 +347,30 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     }
 
     //Check the tree entries
-    vector<off_dim_pair_list> offsets_and_sizes_0 = sf.get_offsets_and_sizes(0);
-    vector<off_dim_pair_list> correct_oas_0;
-    off_dim_pair correct_0_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(0,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_0_arr_0,correct_0_arr_0+2));
-    off_dim_pair correct_1_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(8,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_1_arr_0,correct_1_arr_0+2));
-    off_dim_pair correct_2_arr_0[2] = {off_dim_pair(8,8),off_dim_pair(0,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_2_arr_0,correct_2_arr_0+2));
-    off_dim_pair correct_3_arr_0[2] = {off_dim_pair(8,8),off_dim_pair(8,8) };   correct_oas_0.push_back(off_dim_pair_list(correct_3_arr_0,correct_3_arr_0+2));
-    off_dim_pair correct_4_arr_0[2] = {off_dim_pair(24,8),off_dim_pair(24,8) }; correct_oas_0.push_back(off_dim_pair_list(correct_4_arr_0,correct_4_arr_0+2));
-    off_dim_pair correct_5_arr_0[2] = {off_dim_pair(32,8),off_dim_pair(16,8) }; correct_oas_0.push_back(off_dim_pair_list(correct_5_arr_0,correct_5_arr_0+2));
-    off_dim_pair correct_6_arr_0[2] = {off_dim_pair(40,8),off_dim_pair(16,8) }; correct_oas_0.push_back(off_dim_pair_list(correct_6_arr_0,correct_6_arr_0+2));
+    sparse_block_tree_any_order sbt_fusion_0 = sf.get_trees()[0];
+    vector<off_dim_pair_list> correct_vals_0;
+    off_dim_pair correct_0_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(0,8) };   correct_vals_0.push_back(off_dim_pair_list(correct_0_arr_0,correct_0_arr_0+2));
+    off_dim_pair correct_1_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(8,8) };   correct_vals_0.push_back(off_dim_pair_list(correct_1_arr_0,correct_1_arr_0+2));
+    off_dim_pair correct_2_arr_0[2] = {off_dim_pair(8,8),off_dim_pair(0,8) };   correct_vals_0.push_back(off_dim_pair_list(correct_2_arr_0,correct_2_arr_0+2));
+    off_dim_pair correct_3_arr_0[2] = {off_dim_pair(8,8),off_dim_pair(8,8) };   correct_vals_0.push_back(off_dim_pair_list(correct_3_arr_0,correct_3_arr_0+2));
+    off_dim_pair correct_4_arr_0[2] = {off_dim_pair(24,8),off_dim_pair(24,8) }; correct_vals_0.push_back(off_dim_pair_list(correct_4_arr_0,correct_4_arr_0+2));
+    off_dim_pair correct_5_arr_0[2] = {off_dim_pair(32,8),off_dim_pair(16,8) }; correct_vals_0.push_back(off_dim_pair_list(correct_5_arr_0,correct_5_arr_0+2));
+    off_dim_pair correct_6_arr_0[2] = {off_dim_pair(40,8),off_dim_pair(16,8) }; correct_vals_0.push_back(off_dim_pair_list(correct_6_arr_0,correct_6_arr_0+2));
 
-    if(offsets_and_sizes_0 != correct_oas_0)
+    size_t m = 0;
+    for(sparse_block_tree_any_order::iterator it = sbt_fusion_0.begin(); it != sbt_fusion_0.end(); ++it)
+    {
+        if(*it != correct_vals_0[m])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_trees(...) returned incorrect value for tree 0 after fusion 0");
+        }
+        ++m;
+    }
+    if(m != correct_vals_0.size())
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_offsets_and_sizes(...) returned incorrect value for tree 0 after fusion 0");
+                "sparsity_fuser::get_trees(...) returned incorrect value for tree 0 after fusion 0");
     }
 
     /*** FUSE REMAINING TREE ***/
@@ -444,16 +429,26 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     }
 
     //Check the tree entries
-    vector<off_dim_pair_list> offsets_and_sizes_1 = sf.get_offsets_and_sizes(0);
-    vector<off_dim_pair_list> correct_oas_1;
-    off_dim_pair correct_0_arr_1[3] = {off_dim_pair(8,8),off_dim_pair(8,8),off_dim_pair(12,4)};    correct_oas_1.push_back(off_dim_pair_list(correct_0_arr_1,correct_0_arr_1+3));
-    off_dim_pair correct_1_arr_1[3] = {off_dim_pair(24,8),off_dim_pair(24,8),off_dim_pair(4,4)};   correct_oas_1.push_back(off_dim_pair_list(correct_1_arr_1,correct_1_arr_1+3));
-    off_dim_pair correct_2_arr_1[3] = {off_dim_pair(40,8),off_dim_pair(16,8),off_dim_pair(12,4)};  correct_oas_1.push_back(off_dim_pair_list(correct_2_arr_1,correct_2_arr_1+3));
+    vector<off_dim_pair_list> correct_vals_1;
+    off_dim_pair correct_0_arr_1[3] = {off_dim_pair(8,8),off_dim_pair(8,8),off_dim_pair(12,4)};    correct_vals_1.push_back(off_dim_pair_list(correct_0_arr_1,correct_0_arr_1+3));
+    off_dim_pair correct_1_arr_1[3] = {off_dim_pair(24,8),off_dim_pair(24,8),off_dim_pair(4,4)};   correct_vals_1.push_back(off_dim_pair_list(correct_1_arr_1,correct_1_arr_1+3));
+    off_dim_pair correct_2_arr_1[3] = {off_dim_pair(40,8),off_dim_pair(16,8),off_dim_pair(12,4)};  correct_vals_1.push_back(off_dim_pair_list(correct_2_arr_1,correct_2_arr_1+3));
 
-    if(offsets_and_sizes_1 != correct_oas_1)
+    sparse_block_tree_any_order sbt_fusion_1 = sf.get_trees()[0];
+    m = 0;
+    for(sparse_block_tree_any_order::iterator it = sbt_fusion_1.begin(); it != sbt_fusion_1.end(); ++it)
+    {
+        if(*it != correct_vals_1[m])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparsity_fuser::get_trees(...) returned incorrect value for tree 0 after fusion 1");
+        }
+        ++m;
+    }
+    if(m != correct_vals_1.size())
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparsity_fuser::get_offsets_and_sizes(...) returned incorrect value for tree 0 after fusion 1");
+                "sparsity_fuser::get_trees(...) returned incorrect value for tree 0 after fusion 1");
     }
 }
 

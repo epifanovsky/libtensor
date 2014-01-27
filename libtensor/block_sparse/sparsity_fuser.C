@@ -71,17 +71,6 @@ idx_pair_list sparsity_fuser::get_bispaces_and_index_groups_for_tree(size_t tree
     return m_bispaces_and_index_groups_for_trees[tree_idx];
 }
 
-vector<off_dim_pair_list> sparsity_fuser::get_offsets_and_sizes(size_t tree_idx) const
-{
-    vector<off_dim_pair_list> offsets_and_sizes;
-    const sparse_block_tree_any_order& tree = m_trees[tree_idx];
-    for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
-    {
-        offsets_and_sizes.push_back(*it);
-    }
-    return offsets_and_sizes;
-}
-
 vector<idx_list> sparsity_fuser::get_sub_key_offsets_for_tree(size_t tree_idx) const
 {
     return m_sub_key_offsets_for_trees[tree_idx];

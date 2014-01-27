@@ -22,7 +22,6 @@ private:
     void test_get_trees_for_loop() throw(libtest::test_exception);
     void test_get_bispaces_and_index_groups_for_tree() throw(libtest::test_exception);
     void test_get_sub_key_offsets_for_tree() throw(libtest::test_exception);
-    void test_get_offsets_and_sizes() throw(libtest::test_exception);
     void test_fuse() throw(libtest::test_exception);
 };
 
