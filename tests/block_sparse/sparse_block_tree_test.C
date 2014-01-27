@@ -894,7 +894,6 @@ void sparse_block_tree_test::test_truncate_subspace_3d() throw(libtest::test_exc
 
     idx_pair subspace_bounds(3,5);
     sparse_block_tree<3> sbt_truncated = sbt_1.truncate_subspace(1,subspace_bounds);
-    sbt_truncated.set_offsets_sizes_nnz(tf.subspaces);
 
     //Correct keys
     std::vector< std::vector<size_t> > correct_keys;
@@ -910,15 +909,15 @@ void sparse_block_tree_test::test_truncate_subspace_3d() throw(libtest::test_exc
 
     //Correct values
     std::vector< sparse_block_tree<3>::value_t > correct_vals;
-    off_dim_pair correct_value0_arr[1] = { off_dim_pair(0,8) };  correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value0_arr[0],&correct_value0_arr[0]+1));
-    off_dim_pair correct_value1_arr[1] = { off_dim_pair(8,8) };  correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value1_arr[0],&correct_value1_arr[0]+1));
-    off_dim_pair correct_value2_arr[1] = { off_dim_pair(16,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value2_arr[0],&correct_value2_arr[0]+1));
-    off_dim_pair correct_value3_arr[1] = { off_dim_pair(24,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value3_arr[0],&correct_value3_arr[0]+1));
-    off_dim_pair correct_value4_arr[1] = { off_dim_pair(32,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value4_arr[0],&correct_value4_arr[0]+1));
-    off_dim_pair correct_value5_arr[1] = { off_dim_pair(40,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value5_arr[0],&correct_value5_arr[0]+1));
-    off_dim_pair correct_value6_arr[1] = { off_dim_pair(48,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value6_arr[0],&correct_value6_arr[0]+1));
-    off_dim_pair correct_value7_arr[1] = { off_dim_pair(56,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value7_arr[0],&correct_value7_arr[0]+1));
-    off_dim_pair correct_value8_arr[1] = { off_dim_pair(64,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value8_arr[0],&correct_value8_arr[0]+1));
+    off_dim_pair correct_value0_arr[1] = { off_dim_pair(16,8) };  correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value0_arr[0],&correct_value0_arr[0]+1));
+    off_dim_pair correct_value1_arr[1] = { off_dim_pair(32,8) };  correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value1_arr[0],&correct_value1_arr[0]+1));
+    off_dim_pair correct_value2_arr[1] = { off_dim_pair(40,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value2_arr[0],&correct_value2_arr[0]+1));
+    off_dim_pair correct_value3_arr[1] = { off_dim_pair(48,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value3_arr[0],&correct_value3_arr[0]+1));
+    off_dim_pair correct_value4_arr[1] = { off_dim_pair(96,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value4_arr[0],&correct_value4_arr[0]+1));
+    off_dim_pair correct_value5_arr[1] = { off_dim_pair(104,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value5_arr[0],&correct_value5_arr[0]+1));
+    off_dim_pair correct_value6_arr[1] = { off_dim_pair(112,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value6_arr[0],&correct_value6_arr[0]+1));
+    off_dim_pair correct_value7_arr[1] = { off_dim_pair(144,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value7_arr[0],&correct_value7_arr[0]+1));
+    off_dim_pair correct_value8_arr[1] = { off_dim_pair(152,8) }; correct_vals.push_back(sparse_block_tree<3>::value_t(&correct_value8_arr[0],&correct_value8_arr[0]+1));
 
     if(!verify_tree(sbt_truncated,correct_keys,correct_vals))
     {

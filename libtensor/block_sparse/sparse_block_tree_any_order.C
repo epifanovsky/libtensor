@@ -490,6 +490,8 @@ bool sparse_block_tree_any_order::operator!=(const sparse_block_tree_any_order& 
 sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const
 {
     vector< vector<key_t> > new_keys; 
+    vector<value_t> new_values; 
+
     size_t min = subspace_bounds.first;
     size_t max = subspace_bounds.second;
     for(const_iterator it = begin(); it != end(); ++it)
@@ -498,9 +500,19 @@ sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_
         if((min <= cur_key[subspace_idx]) && (cur_key[subspace_idx] < max))
         {
             new_keys.push_back(cur_key);
+            new_values.push_back(*it);
         }
     }
-    return sparse_block_tree_any_order(new_keys,m_order);
+    
+    //Preserve the original values in the tree
+    sparse_block_tree_any_order sbt(new_keys,m_order);
+    size_t m = 0;
+    for(iterator it = sbt.begin(); it != sbt.end(); ++it)
+    {
+        *it = new_values[m];
+        ++m;
+    }
+    return sbt;
 }
 
 const char* sparse_block_tree_any_order::k_clazz = "sparse_block_tree_any_order";
