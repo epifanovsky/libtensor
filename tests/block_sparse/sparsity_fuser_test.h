@@ -23,6 +23,8 @@ private:
     void test_get_bispaces_and_index_groups_for_tree() throw(libtest::test_exception);
     void test_get_sub_key_offsets_for_tree() throw(libtest::test_exception);
     void test_fuse() throw(libtest::test_exception);
+
+    void test_construct_with_B_direct() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

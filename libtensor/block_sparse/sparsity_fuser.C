@@ -4,10 +4,12 @@ using namespace std;
 
 namespace libtensor {
 
-sparsity_fuser::sparsity_fuser(vector< block_loop >& loops,
-                               vector< sparse_bispace_any_order >& bispaces) : m_loops(loops), 
-                                                                               m_bispaces(bispaces),
-                                                                               m_trees_for_loops(loops.size())
+sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
+                               const vector< sparse_bispace_any_order >& bispaces,
+                               const idx_list& direct_tensors,
+                               const map<size_t,idx_pair>& batches) : m_loops(loops), 
+                                                                      m_bispaces(bispaces),
+                                                                      m_trees_for_loops(loops.size())
 {
     //Extract all of the trees, tracking which loops access each one 
     //Also track the inverse - which trees a given loop accesses
@@ -42,6 +44,25 @@ sparsity_fuser::sparsity_fuser(vector< block_loop >& loops,
                         m_trees_for_loops[loop_idx].push_back(m_trees.size());
                         perm_entries[loops_accessing_tree_idx] = subspace_looped - min;
                         ++loops_accessing_tree_idx;
+
+                        //Truncate the tree appropriately if the loop is batched 
+                        if(batches.find(loop_idx) != batches.end())
+                        {
+                            size_t tree_subspace = subspace_looped - min;
+                            tree = tree.truncate_subspace(tree_subspace,batches.at(loop_idx));
+                            
+                            //If the tensor is direct, offsets must be recomputed relative to the CURRENT BATCH
+                            //rather than the whole tensor
+                            if(binary_search(direct_tensors.begin(),direct_tensors.end(),bispace_idx))
+                            {
+                                vector<sparse_bispace<1> > subspaces;
+                                for(size_t tree_subspace_idx = 0; tree_subspace_idx < tree.get_order(); ++tree_subspace_idx)
+                                {
+                                    subspaces.push_back(bispace[min+tree_subspace_idx]);
+                                }
+                                tree.set_offsets_sizes_nnz(subspaces);
+                            }
+                        }
                     }
                 }
             }

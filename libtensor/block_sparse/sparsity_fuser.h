@@ -16,8 +16,10 @@ private:
     std::vector<idx_pair_list> m_bispaces_and_index_groups_for_trees;
     std::vector<std::vector<idx_list> > m_sub_key_offsets_for_trees;
 public:
-    sparsity_fuser(std::vector< block_loop >& loops,
-                   std::vector< sparse_bispace_any_order >& bispaces);
+    sparsity_fuser(const std::vector< block_loop >& loops,
+                   const std::vector< sparse_bispace_any_order >& bispaces,
+                   const idx_list& direct_tensors = idx_list(),
+                   const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>()));
 
     std::vector<block_loop> get_loops() const { return m_loops; }
     std::vector<sparse_bispace_any_order> get_bispaces() const { return m_bispaces; }
