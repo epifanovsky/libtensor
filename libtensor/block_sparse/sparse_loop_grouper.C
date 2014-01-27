@@ -24,6 +24,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
     } 
     vector<sparse_bispace_any_order> bispaces = sf.get_bispaces();
     vector<sparse_block_tree_any_order> trees = sf.get_trees(); 
+    map<size_t,idx_pair> batches = sf.get_batches();
 
     //Group the loops 
     vector<idx_list> trees_for_groups;
@@ -90,7 +91,21 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                     size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
                     const sparse_bispace<1>& subspace = bispaces[bispace_idx][subspace_idx];
                     m_block_dims.push_back(vector<dim_list>(subspace.get_n_blocks()));
-                    for(size_t block_idx = 0; block_idx < subspace.get_n_blocks(); ++block_idx)
+
+                    //If the loop is batched, keep only blocks from the current batch
+                    size_t min_block_idx,max_block_idx;
+                    if(batches.find(loop_idx) != batches.end())
+                    {
+                        min_block_idx = batches[loop_idx].first;
+                        max_block_idx = batches[loop_idx].second;
+                    }
+                    else
+                    {
+                        min_block_idx = 0;
+                        max_block_idx = subspace.get_n_blocks();
+                    }
+
+                    for(size_t block_idx = min_block_idx; block_idx < max_block_idx; ++block_idx)
                         loop_block_list.push_back(block_idx);
                     break;
                 }
@@ -141,9 +156,32 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                     if(!treated_sparse)
                     {
                         //Handle dense offsets
+
+                        //Offsets of direct tensors must be relative to the beginning of the batch
+                        //This is taken care of in sparsity_fuser for sparse offsets
+                        idx_list direct_tensors = sf.get_direct_tensors();
+                        size_t base_offset;
+                        idx_list::iterator direct_pos = find(direct_tensors.begin(),direct_tensors.end(),bispace_idx);
+                        if(direct_pos != direct_tensors.end())
+                        {
+                            //Edge case for empty batch
+                            if(loop_block_list.size() == 0)
+                            {
+                                base_offset = 0;
+                            }
+                            else
+                            {
+                                base_offset = subspace.get_block_abs_index(loop_block_list[0]);
+                            }
+                        }
+                        else
+                        {
+                            base_offset = 0;
+                        }
+
                         for(size_t block_rel_idx = 0; block_rel_idx < loop_block_list.size(); ++block_rel_idx)
                         {
-                            size_t offset = subspace.get_block_abs_index(loop_block_list[block_rel_idx]);
+                            size_t offset = subspace.get_block_abs_index(loop_block_list[block_rel_idx]) - base_offset;
                             size_t size = subspace.get_block_size(loop_block_list[block_rel_idx]);
                             m_offsets_and_sizes[cur_grp_idx][block_rel_idx].push_back(off_dim_pair(offset,size));
                         }

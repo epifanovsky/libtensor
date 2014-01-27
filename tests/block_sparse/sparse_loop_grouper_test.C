@@ -18,6 +18,8 @@ void sparse_loop_grouper_test::perform() throw(libtest::test_exception) {
     test_get_bispaces_and_subspaces();
     test_get_block_dims();
     test_get_loops_for_groups();
+
+    test_get_offsets_and_sizes_C_direct();
 }
 
 //Test fixtures
@@ -27,14 +29,14 @@ namespace {
 //get_offsets_and_sizes correctly include information for the dense tensors coupled to the primary tree
 //Cij = A(ki) Bkj
 class dense_and_sparse_bispaces_test_f {
-public:
-    sparsity_fuser sf;
+private:
+    typedef pair<vector<block_loop>,
+                 vector<sparse_bispace_any_order> > loops_bispaces_pair;
 
-    //Reuse previous data structure as much as possible
-    static sparsity_fuser init_sf()
+    static loops_bispaces_pair init_loops_and_bispaces()
     {
-        vector< sparse_bispace_any_order > bispaces;
-        vector< block_loop > loops;
+        vector<block_loop> loops;
+        vector<sparse_bispace_any_order> bispaces;
 
         //Set up bispaces - need 6 blocks of size 2 each
         sparse_bispace<1> spb_i(12);
@@ -81,11 +83,13 @@ public:
         loops[2].set_subspace_looped(1,0);
         loops[2].set_subspace_looped(2,0);
 
-        sparsity_fuser sf(loops,bispaces);
-        return sf; 
+        return loops_bispaces_pair(loops,bispaces);
     }
+public:
+    vector<block_loop> loops;
+    vector<sparse_bispace_any_order> bispaces;
 
-    dense_and_sparse_bispaces_test_f() : sf(init_sf()) {}
+    dense_and_sparse_bispaces_test_f() : loops(init_loops_and_bispaces().first), bispaces(init_loops_and_bispaces().second) {}
 };
 
 } // namespace unnamed
@@ -95,7 +99,7 @@ void sparse_loop_grouper_test::test_get_n_groups() throw(libtest::test_exception
     static const char *test_name = "sparse_loop_grouper_test::test_get_n_groups()";
 
     dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
-    sparse_loop_grouper slg(tf.sf);
+    sparse_loop_grouper slg(sparsity_fuser(tf.loops,tf.bispaces));
 
     if(slg.get_n_groups() != 2)
     {
@@ -109,7 +113,7 @@ void sparse_loop_grouper_test::test_get_bispaces_and_index_groups() throw(libtes
     static const char *test_name = "sparse_loop_grouper_test::test_get_bispaces_and_index_groups()";
 
     dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
-    sparse_loop_grouper slg(tf.sf);
+    sparse_loop_grouper slg(sparsity_fuser(tf.loops,tf.bispaces));
 
     vector<idx_pair_list> bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
 
@@ -133,7 +137,7 @@ void sparse_loop_grouper_test::test_get_offsets_and_sizes() throw(libtest::test_
     static const char *test_name = "sparse_loop_grouper_test::test_get_offsets_and_sizes()";
 
     dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
-    sparse_loop_grouper slg(tf.sf);
+    sparse_loop_grouper slg(sparsity_fuser(tf.loops,tf.bispaces));
 
     vector< vector<off_dim_pair_list> > correct_oas(2);
     off_dim_pair correct_0_0_arr[3] = {off_dim_pair(2,2),off_dim_pair(0,4),off_dim_pair(4,2)};
@@ -172,7 +176,7 @@ void sparse_loop_grouper_test::test_get_bispaces_and_subspaces() throw(libtest::
     static const char *test_name = "sparse_loop_grouper_test::test_get_bispaces_and_subspaces()";
 
     dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
-    sparse_loop_grouper slg(tf.sf);
+    sparse_loop_grouper slg(sparsity_fuser(tf.loops,tf.bispaces));
 
     vector<idx_pair_list> bispaces_and_subspaces = slg.get_bispaces_and_subspaces();
 
@@ -197,7 +201,7 @@ void sparse_loop_grouper_test::test_get_block_dims() throw(libtest::test_excepti
     static const char *test_name = "sparse_loop_grouper_test::test_get_block_dims()";
 
     dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
-    sparse_loop_grouper slg(tf.sf);
+    sparse_loop_grouper slg(sparsity_fuser(tf.loops,tf.bispaces));
 
     vector<vector<dim_list> > block_dims = slg.get_block_dims();
 
@@ -217,7 +221,7 @@ void sparse_loop_grouper_test::test_get_loops_for_groups() throw(libtest::test_e
     static const char *test_name = "sparse_loop_grouper_test::test_get_loops_for_groups()";
 
     dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
-    sparse_loop_grouper slg(tf.sf);
+    sparse_loop_grouper slg(sparsity_fuser(tf.loops,tf.bispaces));
 
     vector<idx_list> loops_for_groups = slg.get_loops_for_groups();
     vector<idx_list> correct_loops_for_groups(2);
@@ -232,6 +236,69 @@ void sparse_loop_grouper_test::test_get_loops_for_groups() throw(libtest::test_e
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparsity_loop_grouper::get_loops_for_groups(...) returned incorrect value");
+    }
+}
+
+//This will show that the grouper comes up with the correct batch-relative offset for C when the batched index is dense
+void sparse_loop_grouper_test::test_get_offsets_and_sizes_C_direct() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_grouper_test::test_get_offsets_and_sizes_C_direct()";
+
+    dense_and_sparse_bispaces_test_f tf = dense_and_sparse_bispaces_test_f();
+    idx_list direct_tensors(1,0);
+
+    /*** FIRST BATCH ***/
+    //Batch over i
+    map<size_t,idx_pair> batches;
+    batches[0] = idx_pair(0,5);
+    sparse_loop_grouper slg_0(sparsity_fuser(tf.loops,tf.bispaces,direct_tensors,batches));
+
+    //First loop group, first batch
+    vector< vector<off_dim_pair_list> > correct_oas_0(2);
+    off_dim_pair correct_0_0_0_arr[3] = {off_dim_pair(0,2),off_dim_pair(0,4),off_dim_pair(4,2)};
+    off_dim_pair correct_0_0_1_arr[3] = {off_dim_pair(2,2),off_dim_pair(4,4),off_dim_pair(6,2)};
+    off_dim_pair correct_0_0_2_arr[3] = {off_dim_pair(6,2),off_dim_pair(12,4),off_dim_pair(10,2)};
+
+    correct_oas_0[0].push_back(off_dim_pair_list(correct_0_0_0_arr,correct_0_0_0_arr+3));
+    correct_oas_0[0].push_back(off_dim_pair_list(correct_0_0_1_arr,correct_0_0_1_arr+3));
+    correct_oas_0[0].push_back(off_dim_pair_list(correct_0_0_2_arr,correct_0_0_2_arr+3));
+
+    //Second loop group, first and second batches (doesn't change)
+    off_dim_pair correct_0_1_0_arr[2] = {off_dim_pair(0,2),off_dim_pair(0,2)};
+    off_dim_pair correct_0_1_1_arr[2] = {off_dim_pair(2,2),off_dim_pair(2,2)};
+    off_dim_pair correct_0_1_2_arr[2] = {off_dim_pair(4,2),off_dim_pair(4,2)};
+    off_dim_pair correct_0_1_3_arr[2] = {off_dim_pair(6,2),off_dim_pair(6,2)};
+    off_dim_pair correct_0_1_4_arr[2] = {off_dim_pair(8,2),off_dim_pair(8,2)};
+    off_dim_pair correct_0_1_5_arr[2] = {off_dim_pair(10,2),off_dim_pair(10,2)};
+
+    correct_oas_0[1].push_back(off_dim_pair_list(correct_0_1_0_arr,correct_0_1_0_arr+2));
+    correct_oas_0[1].push_back(off_dim_pair_list(correct_0_1_1_arr,correct_0_1_1_arr+2));
+    correct_oas_0[1].push_back(off_dim_pair_list(correct_0_1_2_arr,correct_0_1_2_arr+2));
+    correct_oas_0[1].push_back(off_dim_pair_list(correct_0_1_3_arr,correct_0_1_3_arr+2));
+    correct_oas_0[1].push_back(off_dim_pair_list(correct_0_1_4_arr,correct_0_1_4_arr+2));
+    correct_oas_0[1].push_back(off_dim_pair_list(correct_0_1_5_arr,correct_0_1_5_arr+2));
+
+    if(slg_0.get_offsets_and_sizes()  != correct_oas_0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_loop_grouper::get_offsets_and_sizes(...) returned incorrect value");
+    }
+
+    /*** SECOND BATCH ***/
+    batches[0] = idx_pair(5,6);
+    sparse_loop_grouper slg_1(sparsity_fuser(tf.loops,tf.bispaces,direct_tensors,batches));
+
+    //First loop group, second batch
+    vector< vector<off_dim_pair_list> > correct_oas_1(2);
+    off_dim_pair correct_1_0_0_arr[3] = {off_dim_pair(0,2),off_dim_pair(8,4),off_dim_pair(8,2)};
+    correct_oas_1[0].push_back(off_dim_pair_list(correct_1_0_0_arr,correct_1_0_0_arr+3));
+
+    correct_oas_1[1] = correct_oas_0[1];
+
+    if(slg_1.get_offsets_and_sizes()  != correct_oas_1)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparsity_loop_grouper::get_offsets_and_sizes(...) returned incorrect value");
     }
 }
 

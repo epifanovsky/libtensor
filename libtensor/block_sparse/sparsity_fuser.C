@@ -9,7 +9,9 @@ sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
                                const idx_list& direct_tensors,
                                const map<size_t,idx_pair>& batches) : m_loops(loops), 
                                                                       m_bispaces(bispaces),
-                                                                      m_trees_for_loops(loops.size())
+                                                                      m_trees_for_loops(loops.size()),
+                                                                      m_direct_tensors(direct_tensors),
+                                                                      m_batches(batches)
 {
     //Extract all of the trees, tracking which loops access each one 
     //Also track the inverse - which trees a given loop accesses
