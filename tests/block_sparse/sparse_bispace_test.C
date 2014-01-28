@@ -43,6 +43,8 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_contract_3d_sparse_2_nnz();
         test_contract_3d_sparse_destroy_all_sparsity();
 
+        test_truncate_subspace();
+
         test_fuse_2d_2d();
         test_fuse_3d_3d_no_overlap();
         test_fuse_3d_3d_invalid_no_match();
@@ -60,6 +62,7 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
 
         test_equality_false_sparsity_2d();
         test_equality_true_sparsity_2d();
+
 }
 
 //TEST FIXTURES
@@ -1034,6 +1037,30 @@ void sparse_bispace_test::test_contract_3d_sparse_destroy_all_sparsity() throw(l
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::contract(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_test::test_truncate_subspace() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_truncate_subspace()";
+
+    index_groups_test_f tf = index_groups_test_f();
+    sparse_bispace<7> bispace = tf.bispace;
+
+    //Truncate a sparse subspace
+    bispace.truncate_subspace(3,idx_pair(2,4));
+    if(bispace.get_index_group_dim(bispace.get_index_group_containing_subspace(3)) != 12)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_index_group_dim(...) did not return correct value");
+    }
+
+    //Contract a dense bispace
+    bispace.truncate_subspace(4,idx_pair(1,4));
+    if(bispace.get_index_group_dim(bispace.get_index_group_containing_subspace(4)) != 6)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_index_group_dim(...) did not return correct value");
     }
 }
 

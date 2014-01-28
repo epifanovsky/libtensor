@@ -104,6 +104,8 @@ public:
     size_t get_index_group_dim(size_t grp_idx) const { return m_dim; }
     size_t get_index_group_containing_subspace(size_t subspace_idx) const { if(subspace_idx != 0) {  throw bad_parameter(g_ns,"sparse_bispace<1>","get_index_group_containing_subspace",__FILE__,__LINE__,"only one subspace"); }  return 0; }
 
+    void truncate_subspace(size_t subspace_idx,const idx_pair& bounds);
+
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
      **/
@@ -197,6 +199,34 @@ inline const sparse_bispace<1>& sparse_bispace<1>::operator[](size_t idx) const 
     return *this;
 }
 
+inline void sparse_bispace<1>::truncate_subspace(size_t subspace_idx, const idx_pair& bounds)
+{
+    if(subspace_idx != 0)
+    {
+        throw out_of_bounds(g_ns,"sparse_bispace<1>","truncate_subspace(...)",
+                __FILE__,__LINE__,"Invalid subspace index specified (can only specify 0"); 
+
+    }
+
+    //Construct new dim and split points
+    size_t dim = 0;
+    std::vector<size_t> split_points;
+    for(size_t block_idx = bounds.first+1; block_idx < bounds.second; ++block_idx)
+    {
+        split_points.push_back(m_abs_indices[block_idx] - m_abs_indices[bounds.first]);
+        dim += m_abs_indices[block_idx] - m_abs_indices[block_idx-1];
+    }
+    size_t upper_bound = (bounds.second == m_abs_indices.size()) ? m_dim : m_abs_indices[bounds.second];
+    dim += upper_bound - m_abs_indices[bounds.second - 1];
+
+    sparse_bispace<1> truncated(dim);
+    if(split_points.size() > 0)
+    {
+        truncated.split(split_points);
+    }
+    *this = truncated;
+}
+
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 {
     return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
@@ -205,7 +235,7 @@ inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 inline bool sparse_bispace<1>::operator!=(const sparse_bispace<1>& rhs) const
 {
     return ! (*this == rhs);
-}
+} 
 
 //General N-dimensional case
 template<size_t N>
@@ -304,6 +334,7 @@ public:
      **/
     sparse_bispace<N-1> contract(size_t contract_idx) const;
 
+    void truncate_subspace(size_t subspace_idx,const idx_pair& bounds);
 
     template<size_t L>
     sparse_bispace<N+L-1> fuse(const sparse_bispace<L>& rhs) const;
@@ -353,12 +384,10 @@ public:
 template<size_t N>
 void sparse_bispace<N>::init()
 {
-    //Should only be called once
-    if(m_index_group_dims.size() > 0)
-    {
-        throw bad_parameter(g_ns,"sparse_bispace<N>","init(...)",
-            __FILE__,__LINE__,"init should only be called once");
-    }
+    //Assume init() has been called before
+    m_index_group_offsets.resize(0);
+    m_index_group_dims.resize(0);
+    m_sparse_key_vecs.resize(0);
 
     size_t subspace_idx = 0; 
     size_t cur_group_idx = 0;
@@ -645,6 +674,56 @@ sparse_bispace<N-1> sparse_bispace<N>::contract(size_t contract_idx) const
     return sparse_bispace<N-1>(*this,contract_idx);
 }
 
+template<size_t N>
+void sparse_bispace<N>::truncate_subspace(size_t subspace_idx,const idx_pair& bounds)
+{
+    //Modify the subspace appropriately
+    m_subspaces[subspace_idx].truncate_subspace(0,bounds);
+
+    //Is the subspace in a sparse group? If so, truncate the tree
+    size_t target_sparse_grp_idx;
+    bool found = false;
+    for(size_t sparse_grp_idx = 0; sparse_grp_idx < m_sparse_indices_sets_offsets.size(); ++sparse_grp_idx)
+    {
+        size_t min = m_sparse_indices_sets_offsets[sparse_grp_idx];
+        size_t max = min + m_sparse_block_trees[sparse_grp_idx].get_order();
+        if((min <= subspace_idx) && (subspace_idx < max))
+        {
+            found = true;
+            target_sparse_grp_idx = sparse_grp_idx;
+            break;
+        }
+    }
+    if(found)
+    {
+        size_t grp_offset = m_sparse_indices_sets_offsets[target_sparse_grp_idx];
+        size_t tree_subspace = subspace_idx - grp_offset;
+        sparse_block_tree_any_order& cur_tree = m_sparse_block_trees[target_sparse_grp_idx];
+        cur_tree = cur_tree.truncate_subspace(tree_subspace,bounds);
+        std::vector< sparse_bispace<1> > subspaces;
+
+        //sparse_block_tree::truncate_subspace is designed to preserve the original keys
+        //so that we can use them to match up dense offsets in other tensors
+        //We need to make the keys internally consistent
+        std::vector<std::vector<size_t> > new_keys;
+        for(sparse_block_tree_any_order::iterator it = cur_tree.begin(); it != cur_tree.end(); ++it)
+        {
+            std::vector<size_t> cur_key = it.key();
+            cur_key[tree_subspace] -= bounds.first;
+            new_keys.push_back(cur_key);
+        }
+        cur_tree = sparse_block_tree_any_order(new_keys,cur_tree.get_order());
+
+        for(size_t tree_subspace_idx = 0; tree_subspace_idx < cur_tree.get_order(); ++tree_subspace_idx)
+        {
+            subspaces.push_back(m_subspaces[grp_offset + tree_subspace_idx]);
+        }
+        cur_tree.set_offsets_sizes_nnz(subspaces);
+        m_sparse_block_tree_dimensions[target_sparse_grp_idx] = cur_tree.get_nnz();
+    }
+    init();
+}
+
 template<size_t N> template<size_t L> 
 sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse_bispace<L>& rhs)
 {
@@ -897,6 +976,7 @@ private:
         virtual size_t get_index_group_order(size_t grp_idx) const = 0;
         virtual size_t get_index_group_dim(size_t grp_idx) const = 0;
         virtual size_t get_index_group_containing_subspace(size_t subpsace_idx) const = 0;
+        virtual void truncate_subspace(size_t subspace_idx,const idx_pair& bounds) = 0;
 
         virtual bool equals(const sparse_bispace_generic_i* rhs) const = 0;
 
@@ -920,6 +1000,7 @@ private:
         size_t get_index_group_order(size_t grp_idx) const { return m_bispace.get_index_group_order(grp_idx); }
         size_t get_index_group_dim(size_t grp_idx) const { return m_bispace.get_index_group_dim(grp_idx); }
         size_t get_index_group_containing_subspace(size_t subspace_idx) const { return m_bispace.get_index_group_containing_subspace(subspace_idx); }
+        void truncate_subspace(size_t subspace_idx,const idx_pair& bounds) { return m_bispace.truncate_subspace(subspace_idx,bounds); }
 
         //Same order is assured upstream
         bool equals(const sparse_bispace_generic_i* rhs) const { return m_bispace == static_cast< const sparse_bispace_generic_wrapper<N>* >(rhs)->m_bispace; }
@@ -954,6 +1035,8 @@ public:
     size_t get_index_group_order(size_t grp_idx) const { return m_spb_ptr->get_index_group_order(grp_idx); }
     size_t get_index_group_dim(size_t grp_idx) const { return m_spb_ptr->get_index_group_dim(grp_idx); }
     size_t get_index_group_containing_subspace(size_t subspace_idx) const { return m_spb_ptr->get_index_group_containing_subspace(subspace_idx); }
+    
+    void truncate_subspace(size_t subspace_idx,const idx_pair& bounds) { return m_spb_ptr->truncate_subspace(subspace_idx,bounds); }
 
 
     //We have to check NULL bcs of stupid default constructor hack

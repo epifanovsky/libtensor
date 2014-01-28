@@ -631,6 +631,7 @@ void sparse_btensor_test::test_contract2_2d_2d() throw(libtest::test_exception)
     }
 }
 
+//Cij = A(ik) Bjk
 void sparse_btensor_test::test_contract2_2d_2d_sparse_dense() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_btensor_test::test_contract2_2d_2d_sparse_dense()";
@@ -1383,6 +1384,7 @@ void sparse_btensor_test::test_contract2_two_indices_3d_3d_sparse_sparse() throw
                           55,56,57,58,59,60};
 
 
+    //Row major!
     double C_correct_arr[18] = { //i = 0
                                  1640,1703,2661,2748,2835,535,
                                  //i = 1

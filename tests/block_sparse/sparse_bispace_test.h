@@ -120,6 +120,8 @@ private:
     void test_contract_3d_sparse_2_nnz() throw(libtest::test_exception);
     void test_contract_3d_sparse_destroy_all_sparsity() throw(libtest::test_exception);
 
+    void test_truncate_subspace() throw(libtest::test_exception);
+
     /*
      * sparse_bispace<N>::fuse(...) tests
      */

@@ -28,7 +28,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_contract2_kernel_2d_2d();
     test_run_block_contract2_kernel_3d_2d();
 
-    /*test_run_direct_3d_3d();*/
+    test_run_direct_3d_3d();
 }
 
 void sparse_loop_list_test::test_construct_invalid_loop_bispaces() throw(libtest::test_exception)
@@ -1022,13 +1022,28 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
                           55,56,57,58,59,60};
 
 
-    double C_correct_arr[18] = { //i = 0
-                                 1640,1703,2661,2748,2835,535,
-                                 //i = 1
-                                 7853,8056,12337,12629,12921,4625,
+    //Block major
+    double C_correct_arr[18] = { //i = 0 l = 0
+                                 1640,1703,
+                                 
+                                 //i = 0 l = 1
+                                 2661,2748,2835,
 
-                                 //i = 2
-                                 8525,8748,13313,13630,13947,5091,
+                                 //i = 0 l = 2
+                                 535,
+
+                                 //i = 1 l = 0
+                                 7853,8056,
+                                 8525,8748,
+                                 
+                                 
+                                 //i = 1 l = 1
+                                 12337,12629,12921,
+                                 13313,13630,13947,
+                                 
+                                 //i = 1 l = 2
+                                 4625,
+                                 5091
                                  };
 
     double C_arr[18] = {0};
@@ -1098,13 +1113,16 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
 
     //k loop must be before 'l' loop so we can batch over it
     //We therefore make the indices of contraction the outer loops
-    //i loop 
+    //j loop
     loops[0].set_subspace_looped(1,1);
     loops[0].set_subspace_looped(2,0);
+    //k loop
     loops[1].set_subspace_looped(1,2);
     loops[1].set_subspace_looped(2,1);
+    //i loop
     loops[2].set_subspace_looped(0,0);
     loops[2].set_subspace_looped(1,0);
+    //l loop
     loops[3].set_subspace_looped(0,1);
     loops[3].set_subspace_looped(2,2);
 
@@ -1113,17 +1131,17 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
 
     block_contract2_kernel<double> bc2k(sll);
 
-    //We batch to truncate the 'k' loop (loop idx 1)
-    map<size_t,idx_pair> batches;
-    batches[1] = idx_pair(0,2);
-
-    //Alloc memory large enough to hold the biggest batch
     vector<double*> ptrs(1,C_arr);
     ptrs.push_back(A_batch_1);
     ptrs.push_back(B_arr);
 
+    //We batch to truncate the 'k' loop (loop idx 1)
+    map<size_t,idx_pair> batches;
+
     //Run the first batch
+    batches[1] = idx_pair(0,2);
     sll.run(bc2k,ptrs,batches);
+
     //Run the seoncd batch
     ptrs[1] = A_batch_2;
     batches[1] = idx_pair(2,3);

@@ -76,6 +76,9 @@ public:
     template<bool is_const>
     friend class sparse_block_tree_iterator;
 
+    template<size_t N>
+    friend class sparse_bispace;
+
 protected:
 
     //We don't want these to be directly instantiable - force people to use the templated interface instead

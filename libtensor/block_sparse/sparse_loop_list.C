@@ -6,8 +6,6 @@
  */
 
 #include "sparse_loop_list.h"
-#include "sparsity_fuser.h"
-#include "sparse_loop_grouper.h"
 
 using namespace std;
 
@@ -16,7 +14,7 @@ namespace libtensor
 
 const char* sparse_loop_list::k_clazz = "sparse_loop_list";
 
-sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_list& direct_tensors) : m_loops(loops)
+sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_list& direct_tensors) : m_loops(loops),m_direct_tensors(direct_tensors)
 {
     if(m_loops.size() == 0)
     {
@@ -73,59 +71,6 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_lis
 		}
     }
 
-    //Fuse all coupled sparse trees
-    sparsity_fuser sf(m_loops,m_bispaces);
-    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-    {
-        idx_list tree_indices = sf.get_trees_for_loop(loop_idx);
-
-        //Fuse in reverse order so that all tree indices remain valid throughout process
-        for(size_t tree_rel_idx = 1; tree_rel_idx < tree_indices.size(); ++tree_rel_idx)
-        {
-            //Find common loops between both trees
-            size_t rhs_tree_idx = tree_indices[tree_indices.size() - tree_rel_idx];
-            idx_list lhs_loops = sf.get_loops_for_tree(tree_indices[0]);
-            idx_list rhs_loops = sf.get_loops_for_tree(rhs_tree_idx);
-            idx_list common_loops;
-            for(size_t lhs_loop_rel_idx = 0; lhs_loop_rel_idx < lhs_loops.size(); ++lhs_loop_rel_idx)
-            {
-                size_t common_loop_idx =  lhs_loops[lhs_loop_rel_idx];
-                if(find(rhs_loops.begin(),rhs_loops.end(),common_loop_idx) != rhs_loops.end())
-                {
-                    common_loops.push_back(common_loop_idx);
-                }
-            }
-            sf.fuse(tree_indices[0],rhs_tree_idx,common_loops);
-        }
-    }
-
-
-    //Create block offset and size information for each loop group
-    sparse_loop_grouper slg(sf);
-    m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
-    m_bispaces_and_subspaces = slg.get_bispaces_and_subspaces();
-    m_block_dims = slg.get_block_dims();
-    m_offsets_and_sizes = slg.get_offsets_and_sizes();
-    m_loops_for_groups = slg.get_loops_for_groups();
-    m_loop_bounds.resize(m_offsets_and_sizes.size());
-
-    //How to figure out what tree goes with what group?
-    //Save the tree keys for use in calculating batch bounds for direct code
-    vector<sparse_block_tree_any_order> trees = sf.get_trees();
-    m_tree_keys_for_groups.resize(m_loops_for_groups.size());
-    for(size_t grp_idx = 0; grp_idx < m_loops_for_groups.size(); ++grp_idx)
-    {
-        const idx_list& loops_for_group = m_loops_for_groups[grp_idx];
-        if(loops_for_group.size() > 1)
-        {
-            size_t tree_idx = sf.get_trees_for_loop(loops_for_group[0])[0];
-            const sparse_block_tree_any_order& tree = trees[tree_idx];
-            for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
-            {
-                m_tree_keys_for_groups[grp_idx].push_back(it.key());
-            }
-        }
-    }
 }
 
 std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(

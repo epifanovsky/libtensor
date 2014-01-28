@@ -42,8 +42,8 @@ void block_loop::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
 	}
 	if(subspace_idx >= m_bispaces[bispace_idx].get_order())
 	{
-		throw out_of_bounds(g_ns, k_clazz,"set_subspace_looped(...)",
-				__FILE__, __LINE__, "subspace_idx is out of bounds");
+		throw out_of_bounds(g_ns, k_clazz,"set_subspace_looped(...)",__FILE__, __LINE__,
+                "subspace_idx is out of bounds");
 	}
 
 	//Verify that all of the subspaces accessed by this loop are identical
