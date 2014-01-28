@@ -47,7 +47,7 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
     bispaces.push_back(m_A.get_bispace());
     bispaces.push_back(m_B.get_bispace());
     
-    std::vector<block_loop> loops;
+    std::vector<block_loop> uncontracted_loops;
     for(size_t i = 0; i < M+N-(2*K); ++i)
     {
         const letter& a = C.letter_at(i);
@@ -79,10 +79,11 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
             throw bad_parameter(g_ns, k_clazz,"operator()(...)",
                     __FILE__, __LINE__, "an index appearing in the result must be present in one input tensor");
         }
-        loops.push_back(bl);
+        uncontracted_loops.push_back(bl);
     }
 
     //Now the contracted indices
+    std::vector<block_loop> contracted_loops;
     for(size_t k = 0; k < K; ++k)
     {
         const letter& a = m_le.letter_at(k);
@@ -95,7 +96,51 @@ void contract_eval_functor<K,M,N,T>::operator()(labeled_sparse_btensor<M+N-(2*K)
         block_loop bl(bispaces);
         bl.set_subspace_looped(1,m_A.index_of(a));
         bl.set_subspace_looped(2,m_B.index_of(a));
-        loops.push_back(bl);
+        contracted_loops.push_back(bl);
+    }
+
+    //Figure out whether we should make the loops over the contracted or uncontracted indices
+    //the outer loops based on a crude estimate of their combined size.
+    //We wanted contracted indices as outer loops for dot-product like things
+    //TODO: account for sparsity here
+    size_t uncontracted_dim = 1;
+    for(size_t loop_idx = 0; loop_idx < uncontracted_loops.size(); ++loop_idx)
+    {
+        const block_loop& loop = uncontracted_loops[loop_idx];
+        for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+        {
+            if(!loop.is_bispace_ignored(bispace_idx))
+            {
+                size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
+                uncontracted_dim *= bispaces[bispace_idx][subspace_idx].get_dim();
+            }
+        }
+    }
+    size_t contracted_dim = 1;
+    for(size_t loop_idx = 0; loop_idx < contracted_loops.size(); ++loop_idx)
+    {
+        const block_loop& loop = contracted_loops[loop_idx];
+        for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+        {
+            if(!loop.is_bispace_ignored(bispace_idx))
+            {
+                size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
+                contracted_dim *= bispaces[bispace_idx][subspace_idx].get_dim();
+            }
+        }
+    }
+    std::vector<block_loop> loops;
+    //Fudge factor of 2 for writes being more expensive 
+    if(contracted_dim > uncontracted_dim*2)
+    {
+        std::cout << "Contraction loops outside!\n";
+        loops.insert(loops.end(),contracted_loops.begin(),contracted_loops.end());
+        loops.insert(loops.end(),uncontracted_loops.begin(),uncontracted_loops.end());
+    }
+    else
+    {
+        loops.insert(loops.end(),uncontracted_loops.begin(),uncontracted_loops.end());
+        loops.insert(loops.end(),contracted_loops.begin(),contracted_loops.end());
     }
 
     sparse_loop_list sll(loops);

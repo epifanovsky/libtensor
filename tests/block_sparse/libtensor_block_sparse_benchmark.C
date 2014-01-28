@@ -428,8 +428,10 @@ int main(int argc,char *argv[])
                                         /*"../tests/block_sparse/alkane_dz_020_data.txt",*/
                                         /*"../tests/block_sparse/alkane_tz_010_data.txt"*/
                                         /*};*/
-    const char* alkane_file_names[5] = {"../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
+    const char* alkane_file_names[7] = {"../tests/block_sparse/alkane_dz_010_data.txt",
+                                        "../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_020_data.txt",
+                                        "../tests/block_sparse/alkane_aTZ_ithrsh_10_010_data.txt",
                                         "../tests/block_sparse/alkane_aTZ_ithrsh_10_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/alkane_aTZ_ithrsh_14_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/anthracene_dz_atom_blocked.txt"};
