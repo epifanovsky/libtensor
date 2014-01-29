@@ -4,6 +4,7 @@
 #include <sstream>
 #include "sparse_bispace.h"
 #include "../iface/letter_expr.h"
+#include "../iface/letter.h"
 #include "sparse_loop_list.h"
 #include "block_load_kernel.h"
 #include "block_print_kernel.h"

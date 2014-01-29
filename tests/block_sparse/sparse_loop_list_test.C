@@ -923,6 +923,7 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
     }
 }
 
+//TODO: These tensors are used in sparse_btensor and direct_sparse_btensor test - refactor into test fixture
 //We specify our operand 'A' as a direct tensor, so it is accessed in batches that we manually feed to the loop
 //Cil = A(ij)k Bj(kl)
 void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exception)

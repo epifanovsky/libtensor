@@ -1,7 +1,6 @@
 
 #include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/block_sparse/contract.h>
-#include <libtensor/iface/letter.h>
 #include "sparse_btensor_test.h"
 
 //TODO REMOVE

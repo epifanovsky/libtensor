@@ -1,16 +1,18 @@
 #ifndef DIRECT_SPARSE_BTENSOR_H
 #define DIRECT_SPARSE_BTENSOR_H
 
-#include "lazy_eval_functor.h"
+#include "sparse_bispace.h"
 
 namespace libtensor {
 
-template<size_t N, typename T> 
+template<size_t N, typename T=double> 
 class direct_sparse_btensor
 {
 private:
-    lazy_eval_functor<N,T>* funct;
+    sparse_bispace<N> m_bispace;
+
 public:
+    direct_sparse_btensor(const sparse_bispace<N>& bispace) : m_bispace(bispace) {}
 
 };
 
