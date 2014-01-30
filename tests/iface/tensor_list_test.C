@@ -1,7 +1,6 @@
 #include <libtensor/exception.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/iface/tensor_list.h>
-#include <libtensor/iface/btensor.h>
 #include "tensor_list_test.h"
 
 namespace libtensor {
@@ -31,13 +30,6 @@ class tensor : public tensor_i {
 
 };
 
-class eval : public iface::eval_i {
-public:
-    virtual bool can_evaluate(const expr::expr_tree &tree) const { return false; }
-    virtual void evaluate(const expr::expr_tree &tree) const { }
-
-};
-
 } // unnamed namespace
 
 
@@ -49,9 +41,8 @@ void tensor_list_test::test_1() {
 
     tensor t;
     tensor_i &ti = t;
-    eval e;
-    any_tensor<1, int> tt1(ti, e);
-    any_tensor<2, double> tt2(ti, e);
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
 
     iface::tensor_list tl;
     size_t tid1 = tl.get_tensor_id(tt1);
@@ -180,9 +171,8 @@ void tensor_list_test::test_4() {
 
     tensor t;
     tensor_i &ti = t;
-    eval e;
-    any_tensor<1, int> tt1(ti, e);
-    any_tensor<2, double> tt2(ti, e);
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
 
     iface::tensor_list *tl1 = new iface::tensor_list;
     size_t tid1 = tl1->get_tensor_id(tt1);
@@ -212,9 +202,8 @@ void tensor_list_test::test_5() {
 
     tensor t;
     tensor_i &ti = t;
-    eval e;
-    any_tensor<1, int> tt1(ti, e);
-    any_tensor<2, double> tt2(ti, e);
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
 
     iface::tensor_list *tl1 = new iface::tensor_list;
     size_t tid1 = tl1->get_tensor_id(tt1);
@@ -244,10 +233,9 @@ void tensor_list_test::test_6() {
 
     tensor t;
     tensor_i &ti = t;
-    eval e;
-    any_tensor<1, int> tt1(ti, e);
-    any_tensor<2, double> tt2(ti, e);
-    any_tensor<3, int> tt3(ti, e);
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
+    any_tensor<3, int> tt3(ti);
 
     iface::tensor_list tl1, tl2;
     size_t tid1 = tl1.get_tensor_id(tt1);

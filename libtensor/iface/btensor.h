@@ -42,12 +42,10 @@ class btensor :
 
 public:
     btensor(const bispace<N> &bi) :
-        btensor_i<N, T>(btensor_base<N, T>::get_eval()),
         block_tensor< N, T, allocator<T> >(bi.get_bis())
     { }
 
     btensor(const block_index_space<N> &bis) :
-        btensor_i<N, T>(btensor_base<N, T>::get_eval()),
         block_tensor< N, T, allocator<T> >(bis)
     { }
 

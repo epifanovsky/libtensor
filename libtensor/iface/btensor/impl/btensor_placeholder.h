@@ -14,30 +14,15 @@ public:
 };
 
 
-template<typename T>
-class btensor_placeholder_base2 : public btensor_placeholder_base {
-private:
-    eval_btensor<T> m_eval;
-
-protected:
-    const eval_btensor<T> &get_eval() const {
-        return m_eval;
-    }
-
-};
-
-
 template<size_t N, typename T>
 class btensor_placeholder :
-    public btensor_placeholder_base2<T>, public any_tensor<N, T> {
+    public btensor_placeholder_base, public any_tensor<N, T> {
 
 private:
     btensor<N, T> *m_bt; //!< Pointer to the real tensor
 
 public:
-    btensor_placeholder() :
-        any_tensor<N, T>(*this, btensor_placeholder_base2<T>::get_eval()),
-        m_bt(0) {
+    btensor_placeholder() : any_tensor<N, T>(*this), m_bt(0) {
     }
 
     virtual ~btensor_placeholder() {
