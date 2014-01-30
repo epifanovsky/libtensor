@@ -2,8 +2,9 @@
 #define LABELED_SPARSE_BTENSOR_H
 
 #include "sparse_btensor.h"
-#include "lazy_eval_functor.h"
+#include "gen_labeled_btensor.h"
 #include "block_permute_kernel.h"
+#include "batch_provider_factory.h"
 
 namespace libtensor {
 
@@ -11,10 +12,8 @@ namespace libtensor {
 template<size_t N,typename T>
 class sparse_btensor;
 
-//TODO: Make templated labeledXXX classs to unify tensor types
-//For labeling general tensors
 template<size_t N,typename T = double> 
-class labeled_sparse_btensor
+class labeled_sparse_btensor : public gen_labeled_btensor<N,T>
 {
 private:
     sparse_btensor<N,T>& m_tensor; 
@@ -23,39 +22,19 @@ public:
 
     labeled_sparse_btensor(sparse_btensor<N,T>& tensor,const letter_expr<N>& le) : m_tensor(tensor),m_le(le) { };
 
-    /** \brief Returns the %letter at a given position
-        \throw out_of_bounds If the %index is out of bounds.
-     **/
-    const letter &letter_at(size_t i) const throw(out_of_bounds) {
-        return m_le.letter_at(i);
-    }
-
-    /** \brief Returns whether the associated expression contains a %letter
-     **/
-    bool contains(const letter &let) const {
-        return m_le.contains(let);
-    }
-
-    /** \brief Returns the %index of a %letter in the expression
-        \throw exception If the expression doesn't contain the %letter.
-     **/
-    size_t index_of(const letter &let) const throw(exception) {
-        return m_le.index_of(let);
-    }
-
+    letter_expr<N> get_letter_expr() const { return m_le; }
     const T* get_data_ptr() const { return m_tensor.get_data_ptr(); }
 
     /** \brief Return the sparse_bispace defining this tensor 
      **/
-    const sparse_bispace<N>& get_bispace() const { return m_tensor.get_bispace(); }; 
+    sparse_bispace<N> get_bispace() const { return m_tensor.get_bispace(); }; 
 
     //TODO - could template this later to allow assignment across tensor formats
     //For permutations
     labeled_sparse_btensor<N,T>& operator=(const labeled_sparse_btensor<N,T>& rhs);
 
-    //For contractions
-    labeled_sparse_btensor<N,T>& operator=(const lazy_eval_functor<N,T>& functor);
-
+    //Store the result of an expression in this tensor
+    labeled_sparse_btensor<N,T>& operator=(const batch_provider_factory<N,T>& functor);
 };
 
 template<size_t N,typename T> 
@@ -93,10 +72,12 @@ labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const labele
 
 //Used for evaluating contractions, to prevent an unnecessary copy at the end
 template<size_t N,typename T>
-labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const lazy_eval_functor<N,T>& functor)
+labeled_sparse_btensor<N,T>& labeled_sparse_btensor<N,T>::operator=(const batch_provider_factory<N,T>& factory)
 {
-    functor(*this);
-    return *this; 
+    batch_provider<T>* bp = factory.get_batch_provider(*this);
+    bp->get_batch((T*)m_tensor.get_data_ptr());
+    delete bp;
+    return *this;
 }
 
 

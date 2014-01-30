@@ -47,6 +47,8 @@ public:
      **/
     size_t get_dim() const;
 
+    size_t get_nnz() const { return m_dim; }
+
     /** \brief Returns the number blocks into which this space has been split 
      **/
     size_t get_n_blocks() const;
@@ -967,6 +969,7 @@ private:
     public:
         virtual const sparse_bispace<1>& operator[](size_t idx) const = 0; 
         virtual size_t get_order() const = 0;
+        virtual size_t get_nnz() const = 0; 
         virtual sparse_bispace_generic_i* clone() const = 0;
         virtual size_t get_n_sparse_groups() const  = 0;
         virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
@@ -992,6 +995,7 @@ private:
 
         const sparse_bispace<1>& operator[](size_t idx) const { return m_bispace[idx]; }
         size_t get_order() const { return N; }
+        size_t get_nnz() const { return m_bispace.get_nnz(); }
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
         sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
@@ -1027,6 +1031,7 @@ public:
 
     const sparse_bispace<1>& operator[](size_t idx) const { return (*m_spb_ptr)[idx]; }
     size_t get_order() const { return m_spb_ptr->get_order(); }
+    size_t get_nnz() const { return m_spb_ptr->get_nnz(); }
     size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }
     sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
     size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 
