@@ -3,6 +3,7 @@
 
 #include <libtensor/block_tensor/block_tensor_i.h>
 #include "any_tensor_impl.h"
+#include "btensor/eval_btensor_holder.h"
 
 namespace libtensor {
 namespace iface {
@@ -19,7 +20,14 @@ class btensor_i :
     virtual public block_tensor_rd_i<N, T>, public any_tensor<N, T> {
 
 public:
-    btensor_i() : any_tensor<N, T>(*this) { }
+    btensor_i() : any_tensor<N, T>(*this) {
+
+        eval_btensor_holder<T>::get_instance().inc_counter();
+    }
+
+    virtual ~btensor_i() {
+        eval_btensor_holder<T>::get_instance().dec_counter();
+    }
 
 };
 
