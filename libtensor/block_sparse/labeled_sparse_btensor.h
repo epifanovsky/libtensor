@@ -34,7 +34,7 @@ public:
     labeled_sparse_btensor<N,T>& operator=(const labeled_sparse_btensor<N,T>& rhs);
 
     //Store the result of an expression in this tensor
-    labeled_sparse_btensor<N,T>& operator=(const batch_provider_factory<N,T>& functor);
+    labeled_sparse_btensor<N,T>& operator=(const batch_provider_factory<N,T>& factory);
 };
 
 template<size_t N,typename T> 

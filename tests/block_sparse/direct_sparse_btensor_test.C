@@ -1,5 +1,6 @@
 #include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include <libtensor/block_sparse/sparse_btensor.h>
+#include <libtensor/block_sparse/contract.h>
 #include "direct_sparse_btensor_test.h"
 
 namespace libtensor {
@@ -10,7 +11,6 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
 
 void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_exception)
 {
-#if 0 
     static const char *test_name = "direct_sparse_btensor_test::test_get_batch_contract2()";
 
     //Block major
@@ -199,8 +199,8 @@ void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_
     letter i,j,k,l;
     C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
 
-    std::map<size_t,idx_pair> batches;
-    batches[0] = idx_pair(0,1);
+    std::map<idx_pair,idx_pair> batches;
+    batches[idx_pair(0,0)] = idx_pair(0,1);
     C.get_batch(C_batch_arr,batches);
 
     for(size_t i = 0; i < sizeof(C_batch_0_correct_arr)/sizeof(C_batch_0_correct_arr[0]); ++i)
@@ -212,17 +212,16 @@ void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_
         }
     }
     
-    batches[0] = idx_pair(1,2);
+    batches[idx_pair(0,0)] = idx_pair(1,2);
     C.get_batch(C_batch_arr,batches);
-    for(size_t i = 0; i < sizeof(C_batch_0_correct_arr)/sizeof(C_batch_0_correct_arr[0]); ++i)
+    for(size_t i = 0; i < sizeof(C_batch_1_correct_arr)/sizeof(C_batch_1_correct_arr[0]); ++i)
     {
-        if(C_batch_arr[i] != C_batch_0_correct_arr[i])
+        if(C_batch_arr[i] != C_batch_1_correct_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "contract(...) did not produce correct result for batch 0");
+                    "contract(...) did not produce correct result for batch 1");
         }
     }
-#endif
 }
 
 } // namespace libtensor

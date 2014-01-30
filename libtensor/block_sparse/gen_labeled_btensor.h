@@ -1,6 +1,8 @@
 #ifndef GEN_LABELED_BTENSOR_H
 #define GEN_LABELED_BTENSOR_H
 
+#include "../iface/letter_expr.h"
+
 namespace libtensor { 
 
 template<size_t N,typename T = double>

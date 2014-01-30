@@ -11,24 +11,48 @@ template<typename T>
 class contract2_batch_provider : public batch_provider<T>
 {
 private:
+    //TODO: ugly, shouldn't have m_loops and m_sll
+    std::vector<block_loop> m_loops;
     sparse_loop_list m_sll;
     std::vector<T*> m_ptrs;
     block_contract2_kernel<T> m_bc2k;
 public:
-    contract2_batch_provider(const std::vector<block_loop>& loops,const std::vector<T*>& ptrs) : m_sll(loops), m_ptrs(ptrs),m_bc2k(m_sll) {};
+    contract2_batch_provider(const std::vector<block_loop>& loops,const std::vector<size_t>& direct_tensors,const std::vector<T*>& ptrs) : m_loops(loops),m_sll(loops,direct_tensors), m_ptrs(ptrs),m_bc2k(m_sll) {};
 
-    virtual void get_batch(T* batch_ptr)
+    virtual void get_batch(T* batch_ptr,const std::map<idx_pair,idx_pair>& batches = (std::map<idx_pair,idx_pair>()))
     {
+        //How is the output bispace size truncated by the batching?
+        //Also set the loop map to the appropriate bounds
+        std::map<size_t,idx_pair> loop_batches;
+        std::vector<sparse_bispace_any_order> bispaces = m_sll.get_bispaces();
+        for(std::map<idx_pair,idx_pair>::const_iterator it = batches.begin(); it != batches.end(); ++it)
+        {
+            size_t bispace_idx = it->first.first;
+            size_t subspace_idx = it->first.second;
+            idx_pair bounds = it->second;
+            for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+            {
+                const block_loop& loop = m_loops[loop_idx];
+                if(!loop.is_bispace_ignored(bispace_idx))
+                {
+                    if(subspace_idx == loop.get_subspace_looped(bispace_idx))
+                    {
+                        loop_batches[loop_idx] = bounds;
+                        bispaces[bispace_idx].truncate_subspace(subspace_idx,bounds);
+                    }
+                }
+            }
+        }
+
         //Compute the batch size
-        size_t batch_size;
-        batch_size = m_sll.get_bispaces()[0].get_nnz()*sizeof(T);
+        size_t batch_size = bispaces[0].get_nnz()*sizeof(T);
 
         //Need to make sure C is zeroed out before contraction
         memset(batch_ptr,0,batch_size);
 
         //Place output in the provided batch memory
         m_ptrs[0] = batch_ptr;
-        m_sll.run(m_bc2k,m_ptrs);
+        m_sll.run(m_bc2k,m_ptrs,loop_batches);
     }
 };
 
@@ -160,11 +184,18 @@ public:
             loops.insert(loops.end(),contracted_loops.begin(),contracted_loops.end());
         }
 
+        //Direct tensor?
+        std::vector<size_t> direct_tensors;
+        if(C.get_data_ptr() == NULL)
+        {
+            direct_tensors.push_back(0);
+        }
+
         //Empty entry will be filled in by output batch
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
-        return new contract2_batch_provider<T>(loops,ptrs);
+        return new contract2_batch_provider<T>(loops,direct_tensors,ptrs);
     };
 };
 
