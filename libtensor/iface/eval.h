@@ -25,6 +25,10 @@ public:
      **/
     virtual void evaluate(const expr::expr_tree &e) const;
 
+private:
+    const eval_i *find_evaluator(const expr::graph &g,
+        expr::graph::node_id_t nid, const expr::expr_tree &e) const;
+
 };
 
 
