@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_EVAL_H
 #define LIBTENSOR_IFACE_EVAL_H
 
-#include "eval_i.h"
+#include "eval/eval_i.h"
 
 namespace libtensor {
 namespace iface {

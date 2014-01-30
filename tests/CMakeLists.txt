@@ -241,6 +241,7 @@ set(SRC_IFACE
     iface/dirsum_test.C
     iface/dot_product_test.C
     iface/eval_btensor_double_test.C
+    iface/eval_register_test.C
     iface/ewmult_test.C
     iface/expr_test.C
     iface/expr_tensor_test.C

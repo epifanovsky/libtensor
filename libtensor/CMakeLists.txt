@@ -26,6 +26,7 @@ set(SRC
     expr/print_node.C
     expr/print_tree.C
     iface/eval.C
+    iface/eval/eval_register.C
     iface/tensor_list.C
     iface/btensor/impl/eval_btensor_double.C
     iface/btensor/impl/eval_btensor_double_contract.C

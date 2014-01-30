@@ -4,7 +4,7 @@
 #include <cstddef> // for size_t
 #include <typeinfo>
 #include "letter_expr.h"
-#include "eval_i.h"
+#include "eval/eval_i.h"
 
 namespace libtensor {
 namespace iface {

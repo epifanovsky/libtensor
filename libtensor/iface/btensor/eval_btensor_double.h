@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_EVAL_BTENSOR_DOUBLE_H
 
 #include <libtensor/expr/expr_tree.h>
-#include <libtensor/iface/eval_i.h>
+#include <libtensor/iface/eval/eval_i.h>
 
 namespace libtensor {
 namespace iface {
