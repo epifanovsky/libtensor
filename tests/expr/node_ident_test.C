@@ -27,13 +27,6 @@ class tensor : public tensor_i {
 
 };
 
-class eval : public iface::eval_i {
-public:
-    virtual bool can_evaluate(const expr::expr_tree &tree) const { return false; }
-    virtual void evaluate(const expr::expr_tree &tree) const { }
-
-};
-
 } // unnamed namespace
 
 
@@ -45,9 +38,8 @@ void node_ident_test::test_1() {
 
     tensor t;
     tensor_i &ti = t;
-    eval e;
-    any_tensor<1, int> tt1(ti, e);
-    any_tensor<2, double> tt2(ti, e);
+    any_tensor<1, int> tt1(ti);
+    any_tensor<2, double> tt2(ti);
 
     expr::node_ident<1, int> i1(tt1);
     expr::node_ident<2, double> i2(tt2);
@@ -84,9 +76,8 @@ void node_ident_test::test_2() {
     tensor t1, t2;
     tensor_i &t1i = t1, &t2i = t2;
 
-    eval e;
-    any_tensor<1, double> at1(t1, e);
-    any_tensor<2, double> at2(t2, e);
+    any_tensor<1, double> at1(t1);
+    any_tensor<2, double> at2(t2);
 
     expr::node_ident<1, double> i1(at1);
     expr::node_ident<2, double> i2(at2);

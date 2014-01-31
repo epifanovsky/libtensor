@@ -4,7 +4,7 @@
 #include <libtensor/expr/node_dot_product.h>
 #include <libtensor/expr/node_scalar.h>
 #include <libtensor/iface/expr_rhs.h>
-#include <libtensor/iface/eval.h>
+#include <libtensor/iface/eval/eval.h>
 
 namespace libtensor {
 namespace iface {

@@ -25,6 +25,10 @@ public:
      **/
     virtual void try_evaluator(const eval_i &e) = 0;
 
+    /** \brief Returns the selected evaluator or throws an exception
+     **/
+    virtual const eval_i &get_selected() const = 0;
+
 };
 
 

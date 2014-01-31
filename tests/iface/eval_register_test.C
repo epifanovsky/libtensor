@@ -38,6 +38,9 @@ public:
     virtual void try_evaluator(const eval_i &e) {
         m_ntries++;
     }
+
+    virtual const eval_i &get_selected() const { throw 0; }
+
 };
 
 } // unnamed namespace
