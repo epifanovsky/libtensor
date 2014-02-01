@@ -208,20 +208,30 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
         throw 11;
     }
 
-    // Check l.h.s
     const node &lhs = m_tree.get_vertex(out[0]);
-    verify_tensor(lhs);
 
-    // Evaluate r.h.s. before performing the assignment
-    for (size_t i = 1; i < out.size(); i++) {
+    if(lhs.get_n() > 0) {
 
-        eval_assign e(m_tree, lhs, out[i], (i != 1));
-        dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
+        // Check l.h.s
+        verify_tensor(lhs);
+
+        // Evaluate r.h.s. before performing the assignment
+        for (size_t i = 1; i < out.size(); i++) {
+
+            eval_assign e(m_tree, lhs, out[i], (i != 1));
+            dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
+        }
+
+        // Put lhs at position of assignment and erase subtree
+        m_tree.graph::replace(id, lhs);
+        for (size_t i = 0; i < out.size(); i++) m_tree.erase_subtree(out[i]);
+
+    } else {
+
+        // Dealing with a scalar
+        throw not_implemented("iface", "eval_btensor", "handle_assign()",
+                __FILE__, __LINE__);
     }
-
-    // Put lhs at position of assignment and erase subtree
-    m_tree.graph::replace(id, lhs);
-    for (size_t i = 0; i < out.size(); i++) m_tree.erase_subtree(out[i]);
 }
 
 
@@ -263,11 +273,11 @@ bool eval_btensor<double>::can_evaluate(const expr::expr_tree &e) const {
 
 void eval_btensor<double>::evaluate(const expr_tree &tree) const {
 
-//    std::cout << std::endl;
-//    std::cout << "= build plan = " << std::endl;
+    std::cout << std::endl;
+    std::cout << "= build plan = " << std::endl;
     eval_tree_builder_btensor bld(tree);
     bld.build();
-//    std::cout << "= process plan =" << std::endl;
+    std::cout << "= process plan =" << std::endl;
     eval_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
 }
 

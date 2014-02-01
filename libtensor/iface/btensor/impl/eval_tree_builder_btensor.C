@@ -3,6 +3,7 @@
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/node_assign.h>
 #include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_scalar.h>
 #include <libtensor/expr/node_transform.h>
 #include <libtensor/expr/print_tree.h>
 #include "node_interm.h"
@@ -139,8 +140,8 @@ private:
     //! \brief Combines several subsequent transforms into one
     void combine_transform(expr_tree::node_id_t id1);
 
-    //! \brief Verify that the given node is a tensor
-    void verify_tensor(const node &n);
+    //! \brief Verify that the given node is a proper l-value
+    void verify_lvalue(const node &n);
 };
 
 
@@ -213,7 +214,7 @@ void node_renderer::render_assign()  {
     }
 
     const node &lhs = m_tree.get_vertex(out[0]);
-    verify_tensor(lhs);
+    verify_lvalue(lhs);
 
     for (size_t i = 1; i < out.size(); i++) {
 
@@ -345,27 +346,31 @@ void node_renderer::combine_transform(expr_tree::node_id_t id1)  {
 }
 
 
-void node_renderer::verify_tensor(const node &n) {
+void node_renderer::verify_lvalue(const node &n) {
 
-    static const char method[] = "verify_tensor(const node &)";
+    static const char method[] = "verify_lvalue(const node &)";
 
     if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
         const node_ident_base &nn = n.recast_as<node_ident_base>();
         if (nn.get_t() != typeid(double)) {
-            throw not_implemented("iface", k_clazz,
-                    method, __FILE__, __LINE__);
+            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
         }
     }
     else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
         const node_interm_base &nn = n.recast_as<node_interm_base>();
         if (nn.get_t() != typeid(double)) {
-            throw not_implemented("iface", k_clazz,
-                    method, __FILE__, __LINE__);
+            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
+        }
+    }
+    else if (n.get_op().compare(node_scalar_base::k_op_type) == 0) {
+        const node_scalar_base &nn = n.recast_as<node_scalar_base>();
+        if (nn.get_type() != typeid(double)) {
+            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
         }
     }
     else {
-        throw bad_parameter("iface", k_clazz, method,
-                __FILE__, __LINE__, "Invalid lhs.");
+        throw bad_parameter("iface", k_clazz, method, __FILE__, __LINE__,
+            "Invalid lhs.");
     }
 }
 
@@ -424,8 +429,8 @@ void eval_tree_builder_btensor::build() {
 
     node_renderer(m_tree, m_order, head).render();
 
-//    std::cout << "rendered expression" << std::endl;
-//    print_tree(m_tree, std::cout);
+    std::cout << "rendered expression" << std::endl;
+    print_tree(m_tree, std::cout);
 
 }
 
