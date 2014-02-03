@@ -56,6 +56,7 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_index_group_containing_subspace();
 
         test_get_batches();
+        test_get_batch_size();
 
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
@@ -1372,7 +1373,6 @@ void sparse_bispace_test::test_get_batches() throw(libtest::test_exception)
     static const char *test_name = "sparse_bispace_test::test_get_batches()";
     
     index_groups_test_f tf = index_groups_test_f();
-
     sparse_bispace<7> bispace = tf.bispace;
 
 
@@ -1414,7 +1414,63 @@ void sparse_bispace_test::test_get_batches() throw(libtest::test_exception)
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<1>::get_batches(...) did not return correct value for 1d test case");
     }
+}
 
+void sparse_bispace_test::test_get_batch_size() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_batch_size()";
+
+    index_groups_test_f tf = index_groups_test_f();
+    sparse_bispace<7> bispace = tf.bispace;
+
+    /*** BATCHING OVER SUBSPACE 1 - DENSE CASE ***/
+    std::vector<idx_pair> batches_0(1,idx_pair(0,3));
+    batches_0.push_back(idx_pair(3,5));
+    size_t correct_batch_sizes_0[2] = {.6*bispace.get_nnz(),
+                                     .4*bispace.get_nnz()};
+
+    for(size_t i = 0; i < sizeof(correct_batch_sizes_0)/sizeof(correct_batch_sizes_0[0]); ++i)
+    {
+        if(bispace.get_batch_size(1,batches_0[i]) != correct_batch_sizes_0[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_batch_size(...) did not return correct value for batches over subspace 1");
+        }
+    }
+
+    /*** BATCHING OVER SUBSPACE 2 - SPARSE CASE ***/
+    std::vector<idx_pair> batches_1(1,idx_pair(0,3));
+    batches_1.push_back(idx_pair(3,4));
+    batches_1.push_back(idx_pair(4,5));
+    batches_1.push_back(idx_pair(5,6));
+    size_t correct_batch_sizes_1[4] = {.25*bispace.get_nnz(),
+                                       .25*bispace.get_nnz(),
+                                       .25*bispace.get_nnz(),
+                                       .25*bispace.get_nnz()};
+
+    for(size_t i = 0; i < sizeof(correct_batch_sizes_1)/sizeof(correct_batch_sizes_1[0]); ++i)
+    {
+        if(bispace.get_batch_size(2,batches_1[i]) != correct_batch_sizes_1[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<N>::get_batch_size(...) did not return correct value for batches over subspace 2");
+        }
+    }
+
+    /*** TEST 1D BATCHING ***/
+    sparse_bispace<1> one_d = bispace[4];
+    std::vector<idx_pair> batches_2(1,idx_pair(0,3));
+    batches_2.push_back(idx_pair(3,5));
+    size_t correct_batch_sizes_2[2] = {6,4};
+
+    for(size_t i = 0; i < sizeof(correct_batch_sizes_2)/sizeof(correct_batch_sizes_2[0]); ++i)
+    {
+        if(one_d.get_batch_size(0,batches_2[i]) != correct_batch_sizes_2[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_bispace<1>::get_batch_size(...) did not return correct value for 1d test case");
+        }
+    }
 }
 
 //Get the correct number of elements for a 2d tensor with both indices coupled by sparsity

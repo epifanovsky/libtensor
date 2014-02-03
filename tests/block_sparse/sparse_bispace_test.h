@@ -123,9 +123,10 @@ private:
     void test_get_index_group_containing_subspace() throw(libtest::test_exception);
 
     /*
-     * get_batches_test
+     * Batching tests
      */
     void test_get_batches() throw(libtest::test_exception);
+    void test_get_batch_size() throw(libtest::test_exception);
 
     /*  ALL TESTS INVOLVING SPARSITY!!
      *
