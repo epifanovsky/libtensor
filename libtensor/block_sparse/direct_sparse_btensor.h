@@ -16,7 +16,7 @@ public:
     direct_sparse_btensor(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL) {}
     labeled_direct_sparse_btensor<N,T> operator()(const letter_expr<N>& le);
 
-    void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& batches);
+    void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches);
     ~direct_sparse_btensor() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
 };
 

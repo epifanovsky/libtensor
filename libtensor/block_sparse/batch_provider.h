@@ -9,7 +9,7 @@ template<typename T>
 class batch_provider 
 {
 public:
-    virtual void get_batch(T* batch_ptr,const std::map<idx_pair,idx_pair>& batches = (std::map<idx_pair,idx_pair>())) = 0;
+    virtual void get_batch(T* batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>())) = 0;
     virtual ~batch_provider() {}
 };
 

@@ -108,6 +108,8 @@ public:
 
     void truncate_subspace(size_t subspace_idx,const idx_pair& bounds);
 
+    std::vector<idx_pair> get_batches(size_t subspace_idx,size_t max_n_elem) const;
+
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern
      **/
@@ -229,6 +231,32 @@ inline void sparse_bispace<1>::truncate_subspace(size_t subspace_idx, const idx_
     *this = truncated;
 }
 
+inline std::vector<idx_pair> sparse_bispace<1>::get_batches(size_t subspace_idx,size_t max_n_elem) const
+{
+    if(subspace_idx != 0)
+    {
+        throw out_of_bounds(g_ns,"sparse_bispace<1>","get_batches(...)",
+                __FILE__,__LINE__,"Can only return batches for subspace 0"); 
+    }
+
+    std::vector<idx_pair> batches;
+    size_t start_idx = 0;
+    size_t n_elem = 0;
+    for(size_t block_idx = 0; block_idx < get_n_blocks(); ++block_idx)
+    {
+        size_t this_block_contrib = get_block_size(block_idx);
+        if(n_elem + this_block_contrib > max_n_elem)
+        {
+            batches.push_back(idx_pair(start_idx,block_idx));
+            start_idx = block_idx;
+            n_elem = 0;
+        }
+        n_elem += this_block_contrib;
+    }
+    batches.push_back(idx_pair(start_idx,get_n_blocks()));
+    return batches;
+}
+
 inline bool sparse_bispace<1>::operator==(const sparse_bispace<1>& rhs) const
 {
     return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
@@ -337,6 +365,7 @@ public:
     sparse_bispace<N-1> contract(size_t contract_idx) const;
 
     void truncate_subspace(size_t subspace_idx,const idx_pair& bounds);
+    std::vector<idx_pair> get_batches(size_t subspace_idx,size_t max_n_elem) const;
 
     template<size_t L>
     sparse_bispace<N+L-1> fuse(const sparse_bispace<L>& rhs) const;
@@ -726,6 +755,75 @@ void sparse_bispace<N>::truncate_subspace(size_t subspace_idx,const idx_pair& bo
     init();
 }
 
+template<size_t N>
+std::vector<idx_pair> sparse_bispace<N>::get_batches(size_t subspace_idx,size_t max_n_elem) const
+{
+    bool is_sparse = false;
+    size_t idx_grp = get_index_group_containing_subspace(subspace_idx);
+    size_t target_sparse_grp;
+    size_t idx_grp_offset = get_index_group_offset(idx_grp);
+    std::vector<size_t>::const_iterator sparse_pos = find(m_sparse_indices_sets_offsets.begin(),m_sparse_indices_sets_offsets.end(),idx_grp_offset);
+    if(sparse_pos != m_sparse_indices_sets_offsets.end())
+    {
+        is_sparse = true;
+        target_sparse_grp = distance(m_sparse_indices_sets_offsets.begin(),sparse_pos);
+    }
+
+    std::vector<idx_pair> batches;
+
+    size_t scale_fac = 1;
+    for(size_t outer_idx_grp = 0; outer_idx_grp < idx_grp; ++outer_idx_grp)
+    {
+        scale_fac *= get_index_group_dim(outer_idx_grp);
+    }
+    for(size_t inner_idx_grp = idx_grp+1; inner_idx_grp < get_n_index_groups(); ++inner_idx_grp)
+    {
+        scale_fac *= get_index_group_dim(inner_idx_grp);
+    }
+
+    size_t start_idx = 0;
+    size_t n_elem = 0;
+    size_t n_blocks = m_subspaces[subspace_idx].get_n_blocks();
+    if(!is_sparse)
+    {
+        //Dense case
+        for(size_t block_idx = 0; block_idx < n_blocks; ++block_idx)
+        {
+            size_t this_block_contrib = m_subspaces[subspace_idx].get_block_size(block_idx)*scale_fac;
+            if(n_elem + this_block_contrib > max_n_elem)
+            {
+                batches.push_back(idx_pair(start_idx,block_idx));
+                start_idx = block_idx;
+                n_elem = 0;
+            }
+            n_elem += this_block_contrib;
+        }
+    }
+    else
+    {
+        //Sparse case
+        size_t min = m_sparse_indices_sets_offsets[target_sparse_grp];
+        size_t tree_subspace = subspace_idx - min;
+        const sparse_block_tree_any_order& tree = m_sparse_block_trees[target_sparse_grp];
+        for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+        {
+            size_t this_block_contrib = (*it)[0].second*scale_fac;
+            size_t block_idx = it.key()[tree_subspace];
+            if(n_elem + this_block_contrib > max_n_elem)
+            {
+                batches.push_back(idx_pair(start_idx,block_idx));
+                start_idx = block_idx;
+                n_elem = 0;
+            }
+            n_elem += this_block_contrib;
+        }
+    }
+    //Handle last batch
+    batches.push_back(idx_pair(start_idx,n_blocks));
+
+    return batches;
+}
+
 template<size_t N> template<size_t L> 
 sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse_bispace<L>& rhs)
 {
@@ -980,6 +1078,7 @@ private:
         virtual size_t get_index_group_dim(size_t grp_idx) const = 0;
         virtual size_t get_index_group_containing_subspace(size_t subpsace_idx) const = 0;
         virtual void truncate_subspace(size_t subspace_idx,const idx_pair& bounds) = 0;
+        virtual std::vector<idx_pair> get_batches(size_t subspace_idx,size_t max_n_elem) const = 0;
 
         virtual bool equals(const sparse_bispace_generic_i* rhs) const = 0;
 
@@ -1005,6 +1104,7 @@ private:
         size_t get_index_group_dim(size_t grp_idx) const { return m_bispace.get_index_group_dim(grp_idx); }
         size_t get_index_group_containing_subspace(size_t subspace_idx) const { return m_bispace.get_index_group_containing_subspace(subspace_idx); }
         void truncate_subspace(size_t subspace_idx,const idx_pair& bounds) { return m_bispace.truncate_subspace(subspace_idx,bounds); }
+        virtual std::vector<idx_pair> get_batches(size_t subspace_idx,size_t max_n_elem) const { return m_bispace.get_batches(subspace_idx,max_n_elem); }
 
         //Same order is assured upstream
         bool equals(const sparse_bispace_generic_i* rhs) const { return m_bispace == static_cast< const sparse_bispace_generic_wrapper<N>* >(rhs)->m_bispace; }
@@ -1042,6 +1142,7 @@ public:
     size_t get_index_group_containing_subspace(size_t subspace_idx) const { return m_spb_ptr->get_index_group_containing_subspace(subspace_idx); }
     
     void truncate_subspace(size_t subspace_idx,const idx_pair& bounds) { return m_spb_ptr->truncate_subspace(subspace_idx,bounds); }
+    std::vector<idx_pair> get_batches(size_t subspace_idx,size_t max_n_elem) const { return m_spb_ptr->get_batches(subspace_idx,max_n_elem); }
 
 
     //We have to check NULL bcs of stupid default constructor hack

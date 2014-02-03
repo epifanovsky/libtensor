@@ -10,6 +10,7 @@ public:
     virtual void perform() throw(libtest::test_exception);
 private:
     void test_get_batch_contract2() throw(libtest::test_exception);
+    void test_contract2_direct_rhs() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

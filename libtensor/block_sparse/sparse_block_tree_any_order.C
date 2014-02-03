@@ -34,6 +34,7 @@ void sparse_block_tree_any_order::set_offsets_sizes_nnz(const vector< sparse_bis
     m_nnz = offset;
 }
 
+//Assignment operator
 sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse_block_tree_any_order& rhs)
 {
     if(this != &rhs)
@@ -74,11 +75,13 @@ sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse
     return *this;
 }
 
+//Copy constructor
 sparse_block_tree_any_order::sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs) : m_keys(rhs.m_keys),
                                                                                                                m_values(rhs.m_values)
 {
     m_order = rhs.m_order;
     m_n_entries = rhs.m_n_entries;
+    m_nnz = rhs.m_nnz;
 
     if(m_order > 1)
     {

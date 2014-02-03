@@ -55,6 +55,8 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_index_group_dim();
         test_get_index_group_containing_subspace();
 
+        test_get_batches();
+
         test_get_nnz_2d_sparsity();
         test_get_nnz_3d_dense_sparse();
         test_get_nnz_3d_sparse_dense();
@@ -1363,6 +1365,56 @@ void sparse_bispace_test::test_get_index_group_containing_subspace() throw(libte
                     "sparse_bispace<N>::get_index_group_containing_subspace(...) did not return correct value");
         }
     }
+}
+
+void sparse_bispace_test::test_get_batches() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_batches()";
+    
+    index_groups_test_f tf = index_groups_test_f();
+
+    sparse_bispace<7> bispace = tf.bispace;
+
+
+    /*** BATCHING OVER SUBSPACE 1 - DENSE CASE ***/
+    size_t max_n_elem = 0.6*bispace.get_nnz();
+    std::vector<idx_pair> correct_batches_0(1,idx_pair(0,3));
+    correct_batches_0.push_back(idx_pair(3,5));
+    std::vector<idx_pair> batches_0 = bispace.get_batches(1,max_n_elem);
+
+    if(batches_0 != correct_batches_0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_batches(...) did not return correct value for batching over subspace 1");
+    }
+
+    /*** BATCHING OVER SUBSPACE 2 - SPARSE CASE ***/
+    max_n_elem = 0.4*bispace.get_nnz();
+    std::vector<idx_pair> correct_batches_1(1,idx_pair(0,3));
+    correct_batches_1.push_back(idx_pair(3,4));
+    correct_batches_1.push_back(idx_pair(4,5));
+    correct_batches_1.push_back(idx_pair(5,6));
+    std::vector<idx_pair> batches_1 = bispace.get_batches(2,max_n_elem);
+
+    if(batches_1 != correct_batches_1)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_batches(...) did not return correct value for batching over subspace 2");
+    }
+
+    /*** TEST 1D BATCHING ***/
+    sparse_bispace<1> one_d = bispace[4];
+    max_n_elem = 6;
+    std::vector<idx_pair> correct_batches_2(1,idx_pair(0,3));
+    correct_batches_2.push_back(idx_pair(3,5));
+    std::vector<idx_pair> batches_2 = one_d.get_batches(0,max_n_elem);
+
+    if(batches_2 != correct_batches_2)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<1>::get_batches(...) did not return correct value for 1d test case");
+    }
+
 }
 
 //Get the correct number of elements for a 2d tensor with both indices coupled by sparsity
