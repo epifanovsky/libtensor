@@ -19,6 +19,7 @@ public:
     letter_expr<N> get_letter_expr() const { return m_le; }
 
     const T* get_data_ptr() const { return NULL; }
+    virtual batch_provider<T>* get_batch_provider() const { return *m_batch_provider_ptr_ptr; }
 
     sparse_bispace<N> get_bispace() const { return m_bispace; }; 
 

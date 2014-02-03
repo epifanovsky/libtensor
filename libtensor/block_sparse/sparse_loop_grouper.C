@@ -157,12 +157,13 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                     {
                         //Handle dense offsets
 
-                        //Offsets of direct tensors must be relative to the beginning of the batch
+                        //Offsets of direct tensors must be relative to the beginning of the batch,
+                        //but only if that tensor is batched over this index
                         //This is taken care of in sparsity_fuser for sparse offsets
                         idx_list direct_tensors = sf.get_direct_tensors();
                         size_t base_offset;
                         idx_list::iterator direct_pos = find(direct_tensors.begin(),direct_tensors.end(),bispace_idx);
-                        if(direct_pos != direct_tensors.end())
+                        if((direct_pos != direct_tensors.end()) && (batches.find(loop_idx) != batches.end()))
                         {
                             //Edge case for empty batch
                             if(loop_block_list.size() == 0)

@@ -7,7 +7,7 @@ namespace libtensor {
 
 void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_get_batch_contract2();
-    /*test_contract2_direct_rhs();*/
+    test_contract2_direct_rhs();
 }
 
 void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_exception)
@@ -228,7 +228,6 @@ void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_
 //TODO: group with other test in test fixture
 void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test_exception)
 {
-#if 0
     static const char *test_name = "direct_sparse_btensor_test::test_contract2_direct_rhs()";
 
     //Block major
@@ -323,29 +322,6 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
                           55,56,57,58,59,60};
 
 
-    double C_batch_0_correct_arr[6] = {  //i = 0 l = 0
-                                         1640,1703,
-                                         
-                                         //i = 0 l = 1
-                                         2661,2748,2835,
-
-                                         //i = 0 l = 2
-                                         535,
-                                         };
-
-    double C_batch_1_correct_arr[12] = { //i = 1 l = 0
-                                         7853,8056,
-                                         8525,8748,
-                                         
-                                         
-                                         //i = 1 l = 1
-                                         12337,12629,12921,
-                                         13313,13630,13947,
-                                         
-                                         //i = 1 l = 2
-                                         4625,
-                                         5091
-                                         };
 
     //Bispace for i 
     sparse_bispace<1> spb_i(3);
@@ -405,7 +381,7 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
 
     sparse_bispace<3> spb_B = spb_j | spb_k % spb_l << kl_sig_blocks;
 
-    /*** FIRST STEP - SET UP DIRECDT TENSOR ***/
+    /*** FIRST STEP - SET UP DIRECT TENSOR ***/
     sparse_btensor<3> A(spb_A,A_arr,true);
     sparse_btensor<3> B(spb_B,B_arr,true);
     sparse_bispace<2> spb_C = spb_i | spb_l;
@@ -496,7 +472,6 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
     }
-#endif
 }
 
 } // namespace libtensor

@@ -23,7 +23,8 @@ public:
     labeled_sparse_btensor(sparse_btensor<N,T>& tensor,const letter_expr<N>& le) : m_tensor(tensor),m_le(le) { };
 
     letter_expr<N> get_letter_expr() const { return m_le; }
-    const T* get_data_ptr() const { return m_tensor.get_data_ptr(); }
+    virtual const T* get_data_ptr() const { return m_tensor.get_data_ptr(); }
+    virtual batch_provider<T>* get_batch_provider() const { return NULL; } 
 
     /** \brief Return the sparse_bispace defining this tensor 
      **/

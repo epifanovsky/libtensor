@@ -19,14 +19,15 @@ private:
     std::vector<T*> m_ptrs;
     block_contract2_kernel<T> m_bc2k;
     std::vector<size_t> m_direct_tensors;
+    std::vector<batch_provider<T>* > m_batch_providers;
     size_t m_mem_avail;
 public:
-    contract2_batch_provider(const std::vector<block_loop>& loops,const std::vector<size_t>& direct_tensors,const std::vector<T*>& ptrs,size_t mem_avail = 0) : m_loops(loops),
-                                                                                                                                                                m_sll(loops,direct_tensors),
-                                                                                                                                                                m_ptrs(ptrs),m_bc2k(m_sll),
-                                                                                                                                                                m_direct_tensors(direct_tensors),
-                                                                                                                                                                m_mem_avail(mem_avail) {};
-
+    contract2_batch_provider(const std::vector<block_loop>& loops,const std::vector<size_t>& direct_tensors,const std::vector<batch_provider<T>*>& batch_providers,const std::vector<T*>& ptrs,size_t mem_avail = 0) : m_loops(loops),
+                                                                                                                                                                                                                       m_sll(loops,direct_tensors),
+                                                                                                                                                                                                                       m_ptrs(ptrs),m_bc2k(m_sll),
+                                                                                                                                                                                                                       m_direct_tensors(direct_tensors),
+                                                                                                                                                                                                                       m_mem_avail(mem_avail),
+                                                                                                                                                                                                                       m_batch_providers(batch_providers) {}
     virtual void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()))
     {
         //Client code cannot assume a particular loop ordering, so it must specify the output batch
@@ -186,9 +187,19 @@ public:
         //Loop over the input direct tensor batches 
         if(batches.size() > 0)
         {
+            //Generate the necessary input batches
+            const block_loop& batched_loop = m_loops[batched_loop_idx];
             for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
             {
                 loop_batches[batched_loop_idx] = batches[batch_idx];
+                for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
+                {
+                    size_t bispace_idx = m_direct_tensors[direct_tensor_rel_idx];
+                    size_t subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
+                    std::map<idx_pair,idx_pair> this_bispace_batch;
+                    this_bispace_batch[idx_pair(0,subspace_idx)] = batches[batch_idx];
+                    m_batch_providers[direct_tensor_rel_idx]->get_batch(m_ptrs[bispace_idx],this_bispace_batch);
+                }
                 m_sll.run(m_bc2k,m_ptrs,loop_batches);
             }
         }
@@ -220,15 +231,21 @@ private:
     sparse_bispace<N> m_B_bispace;
     T* m_A_data_ptr;
     T* m_B_data_ptr;
+    batch_provider<T>* m_A_batch_provider;
+    batch_provider<T>* m_B_batch_provider;
+    size_t m_mem_avail;
 public:
     //Constructor
-    contract2_batch_provider_factory(const letter_expr<K>& le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B) : m_le(le),
-                                                                                                                                     m_A_letter_expr(A.get_letter_expr()),m_B_letter_expr(B.get_letter_expr()),
-                                                                                                                                     m_A_bispace(A.get_bispace()),m_B_bispace(B.get_bispace())
+    contract2_batch_provider_factory(const letter_expr<K>& le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail) : m_le(le),
+                                                                                                                                                      m_A_letter_expr(A.get_letter_expr()),m_B_letter_expr(B.get_letter_expr()),
+                                                                                                                                                      m_A_bispace(A.get_bispace()),m_B_bispace(B.get_bispace()),
+                                                                                                                                                      m_mem_avail(mem_avail)
 
     {
         m_A_data_ptr = (T*) A.get_data_ptr();
         m_B_data_ptr = (T*) B.get_data_ptr();
+        m_A_batch_provider = A.get_batch_provider();
+        m_B_batch_provider = B.get_batch_provider();
     }
 
     //Creates a batch provider that will produce a given batch of C 
@@ -336,18 +353,29 @@ public:
             loops.insert(loops.end(),contracted_loops.begin(),contracted_loops.end());
         }
 
-        //Direct tensor?
+        //Direct tensors?
         std::vector<size_t> direct_tensors;
+        std::vector<batch_provider<T>* > batch_providers;
         if(C.get_data_ptr() == NULL)
         {
             direct_tensors.push_back(0);
+        }
+        if(m_A_data_ptr == NULL)
+        {
+            direct_tensors.push_back(1);
+            batch_providers.push_back(m_A_batch_provider);
+        }
+        if(m_B_data_ptr == NULL)
+        {
+            direct_tensors.push_back(2);
+            batch_providers.push_back(m_B_batch_provider);
         }
 
         //Empty entry will be filled in by output batch
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
-        return new contract2_batch_provider<T>(loops,direct_tensors,ptrs);
+        return new contract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,m_mem_avail);
     };
 };
 
@@ -355,33 +383,17 @@ template<size_t K,size_t M, size_t N,typename T>
 const char* contract2_batch_provider_factory<K,M,N,T>::k_clazz = "contract2_batch_provider_factor<K,M,N,T>";
 
 template<size_t K,size_t M,size_t N,typename T>
-contract2_batch_provider_factory<K,M,N,T> contract(letter_expr<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B)
+contract2_batch_provider_factory<K,M,N,T> contract(letter_expr<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
 {
-    return contract2_batch_provider_factory<K,M,N,T>(le,A,B);
+    return contract2_batch_provider_factory<K,M,N,T>(le,A,B,mem_avail);
 }
 
 //Special case for one index contractions
 template<size_t M,size_t N,typename T>
-contract2_batch_provider_factory<1,M,N,T> contract(const letter& a,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B)
+contract2_batch_provider_factory<1,M,N,T> contract(const letter& a,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
 {
-    return contract2_batch_provider_factory<1,M,N,T>(letter_expr<1>(a),A,B);
+    return contract2_batch_provider_factory<1,M,N,T>(letter_expr<1>(a),A,B,mem_avail);
 }
-#if 0
-template<size_t K,size_t M,size_t N,typename T>
-contract_eval_functor<K,M,N,T> contract(letter_expr<K> le,const labeled_tensor<M,T>& A,const labeled_tensor<N,T>& B)
-{
-    return contract_eval_functor<K,M,N,T>(le,A,B);
-}
-
-
-
-//Special case for one index contractions
-template<size_t M,size_t N,typename T>
-contract_eval_functor<1,M,N,T> contract(const letter& a,const labeled_tensor<M,T>& A,const labeled_tensor<N,T>& B)
-{
-    return contract_eval_functor<1,M,N,T>(letter_expr<1>(a),A,B);
-}
-#endif
 
 } // namespace libtensor
 

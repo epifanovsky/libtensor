@@ -804,8 +804,9 @@ std::vector<idx_pair> sparse_bispace<N>::get_batches(size_t subspace_idx,size_t 
             size_t this_block_contrib = m_subspaces[subspace_idx].get_block_size(block_idx)*scale_fac;
             if(this_block_contrib > max_n_elem)
             {
-                throw bad_parameter(g_ns,"sparse_bispace<N>","get_batches(...)",
-                    __FILE__,__LINE__,"single block does not fit in batch"); 
+                throw bad_parameter(g_ns,"sparse_bispace<N>","get_batches(...)",__FILE__,__LINE__,
+                        "single block does not fit in batch"); 
+                    
             }
 
             if(n_elem + this_block_contrib > max_n_elem)
@@ -828,8 +829,9 @@ std::vector<idx_pair> sparse_bispace<N>::get_batches(size_t subspace_idx,size_t 
             size_t this_block_contrib = (*it)[0].second*scale_fac;
             if(this_block_contrib > max_n_elem)
             {
-                throw bad_parameter(g_ns,"sparse_bispace<N>","get_batches(...)",
-                    __FILE__,__LINE__,"single block does not fit in batch"); 
+                throw bad_parameter(g_ns,"sparse_bispace<N>","get_batches(...)",__FILE__,__LINE__,
+                        "single block does not fit in batch"); 
+                    
             }
 
             size_t block_idx = it.key()[tree_subspace];

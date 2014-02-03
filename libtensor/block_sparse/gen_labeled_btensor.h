@@ -2,6 +2,7 @@
 #define GEN_LABELED_BTENSOR_H
 
 #include "../iface/letter_expr.h"
+#include "batch_provider.h"
 
 namespace libtensor { 
 
@@ -13,6 +14,8 @@ public:
     virtual sparse_bispace<N> get_bispace() const = 0;
 
     virtual const T* get_data_ptr() const = 0;
+
+    virtual batch_provider<T>* get_batch_provider() const = 0; 
 };
 
 } // namespace libtensor
