@@ -35,6 +35,7 @@ set(SRC
     iface/btensor/impl/eval_btensor_double_diag.C
     iface/btensor/impl/eval_btensor_double_dirsum.C
     iface/btensor/impl/eval_btensor_double_div.C
+    iface/btensor/impl/eval_btensor_double_dot_product.C
     iface/btensor/impl/eval_btensor_double_symm.C
     iface/btensor/impl/eval_tree_builder_btensor.C
     iface/btensor/impl/node_interm.C

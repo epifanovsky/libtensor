@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_IFACE_DOT_PRODUCT_H
-#define LIBTENSOR_IFACE_DOT_PRODUCT_H
+#ifndef LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
+#define LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
 
 #include <libtensor/expr/node_dot_product.h>
 #include <libtensor/expr/node_scalar.h>
@@ -26,10 +26,12 @@ T dot_product(
         idxb[rhs.index_of(l)] = i;
     }
 
+    T d;
+
     expr::node_assign n1(0);
     expr::expr_tree e(expr::node_assign(0));
     expr::expr_tree::node_id_t id_res =
-        e.add(e.get_root(), expr::node_scalar<T>());
+        e.add(e.get_root(), expr::node_scalar<T>(d));
     expr::expr_tree::node_id_t id_dot =
         e.add(e.get_root(), expr::node_dot_product(idxa, idxb));
     e.add(id_dot, lhs.get_expr());
@@ -37,8 +39,7 @@ T dot_product(
 
     eval().evaluate(e);
 
-    return dynamic_cast< const expr::node_scalar<T>& >(e.get_vertex(id_res)).
-        get_c();
+    return d;
 }
 
 
@@ -48,4 +49,4 @@ using iface::dot_product;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_DOT_PRODUCT_H
+#endif // LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H

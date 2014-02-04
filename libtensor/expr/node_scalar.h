@@ -14,14 +14,13 @@ namespace expr {
 template<typename T>
 class node_scalar : public node_scalar_base {
 private:
-    T m_c; //!< Value of scalar
+    T &m_c; //!< Reference to scalar
 
 public:
     /** \brief Creates the node
-        \param c Value of scalar.
+        \param c Reference to scalar.
      **/
-    node_scalar(const T &c = T()) :
-        m_c(c)
+    node_scalar(T &c) : m_c(c)
     { }
 
     /** \brief Virtual destructor
@@ -40,15 +39,9 @@ public:
         return typeid(T);
     }
 
-    /** \brief Returns the scalar (const)
+    /** \brief Returns the scalar
      **/
-    const T &get_c() const {
-        return m_c;
-    }
-
-    /** \brief Returns the scalar (non-const)
-     **/
-    T &get_c() {
+    T &get_c() const {
         return m_c;
     }
 

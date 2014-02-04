@@ -5,6 +5,8 @@
 #include <libtensor/expr/node_diag.h>
 #include <libtensor/expr/node_dirsum.h>
 #include <libtensor/expr/node_div.h>
+#include <libtensor/expr/node_dot_product.h>
+#include <libtensor/expr/node_scalar.h>
 #include <libtensor/expr/node_transform.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
@@ -14,6 +16,7 @@
 #include "eval_btensor_double_diag.h"
 #include "eval_btensor_double_dirsum.h"
 #include "eval_btensor_double_div.h"
+#include "eval_btensor_double_dot_product.h"
 #include "eval_btensor_double_symm.h"
 #include "eval_tree_builder_btensor.h"
 
@@ -49,6 +52,7 @@ public:
 private:
     void handle_assign(const expr_tree::node_id_t id);
 
+    void verify_scalar(const node &n);
     void verify_tensor(const node &n);
 
 };
@@ -68,6 +72,8 @@ public:
         m_tree(tr), m_rhs(rhs), m_add(add)
     { }
 
+    void evaluate_scalar(expr_tree::node_id_t lhs);
+
     template<size_t N>
     void evaluate(const node &lhs);
 
@@ -84,6 +90,17 @@ private:
 
 
 const char eval_node::k_clazz[] = "eval_node";
+
+
+void eval_node::evaluate_scalar(expr_tree::node_id_t lhs) {
+
+    const node &n = m_tree.get_vertex(m_rhs);
+
+    if(n.get_op().compare(node_dot_product::k_op_type) == 0) {
+        eval_btensor_double::dot_product(m_tree, m_rhs).evaluate(lhs);
+    }
+}
+
 
 template<size_t N>
 void eval_node::evaluate(const node &lhs) {
@@ -152,7 +169,7 @@ expr_tree::node_id_t eval_node::gather_info(
 }
 
 
-class eval_assign {
+class eval_assign_tensor {
 public:
     typedef tensor_list::tid_t tid_t;
 
@@ -163,7 +180,7 @@ private:
     bool m_add; //!< True if addition and assignment
 
 public:
-    eval_assign(const expr_tree &tr, const node &lhs,
+    eval_assign_tensor(const expr_tree &tr, const node &lhs,
         expr_tree::node_id_t rhs, bool add) :
         m_tree(tr), m_lhs(lhs), m_rhs(rhs), m_add(add)
     { }
@@ -204,7 +221,7 @@ void eval_btensor_double_impl::evaluate() {
 void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 
     const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
-    if (out.size() < 2) {
+    if(out.size() < 2) {
         throw 11;
     }
 
@@ -212,48 +229,71 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 
     if(lhs.get_n() > 0) {
 
-        // Check l.h.s
+        // Check l.h.s.
         verify_tensor(lhs);
 
         // Evaluate r.h.s. before performing the assignment
-        for (size_t i = 1; i < out.size(); i++) {
-
-            eval_assign e(m_tree, lhs, out[i], (i != 1));
+        for(size_t i = 1; i < out.size(); i++) {
+            eval_assign_tensor e(m_tree, lhs, out[i], (i != 1));
             dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
         }
 
-        // Put lhs at position of assignment and erase subtree
+        // Put l.h.s. at position of assignment and erase subtree
         m_tree.graph::replace(id, lhs);
         for (size_t i = 0; i < out.size(); i++) m_tree.erase_subtree(out[i]);
 
     } else {
 
-        // Dealing with a scalar
-        throw not_implemented("iface", "eval_btensor", "handle_assign()",
-                __FILE__, __LINE__);
+        // Check l.h.s
+        verify_scalar(lhs);
+
+        // Check r.h.s
+        if(out.size() != 2) {
+            throw 12;
+        }
+
+        // Evaluate r.h.s. and assign
+        eval_node(m_tree, out[1], false).evaluate_scalar(out[0]);
+
     }
+}
+
+
+void eval_btensor_double_impl::verify_scalar(const node &t) {
+
+    if(t.get_op().compare(node_scalar_base::k_op_type) == 0) {
+        const node_scalar_base &ti = t.recast_as<node_scalar_base>();
+        if(ti.get_type() != typeid(double)) {
+            throw not_implemented("iface", "eval_btensor", "verify_scalar()",
+                __FILE__, __LINE__);
+        }
+        return;
+    }
+
+    throw 2;
 }
 
 
 void eval_btensor_double_impl::verify_tensor(const node &t) {
 
-    if (t.get_op().compare(node_ident_base::k_op_type) == 0) {
+    if(t.get_op().compare(node_ident_base::k_op_type) == 0) {
         const node_ident_base &ti = t.recast_as<node_ident_base>();
         if(ti.get_t() != typeid(double)) {
-            throw not_implemented("iface", "eval_btensor", "evaluate()",
-                    __FILE__, __LINE__);
+            throw not_implemented("iface", "eval_btensor", "verify_tensor()",
+                __FILE__, __LINE__);
         }
+        return;
     }
-    else if (t.get_op().compare(node_interm_base::k_op_type) == 0) {
+    if(t.get_op().compare(node_interm_base::k_op_type) == 0) {
         const node_interm_base &ti = t.recast_as<node_interm_base>();
         if(ti.get_t() != typeid(double)) {
-            throw not_implemented("iface", "eval_btensor", "evaluate()",
-                    __FILE__, __LINE__);
+            throw not_implemented("iface", "eval_btensor", "verify_tensor()",
+                __FILE__, __LINE__);
         }
+        return;
     }
-    else {
-        throw 2;
-    }
+
+    throw 2;
 }
 
 
