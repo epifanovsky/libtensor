@@ -96,7 +96,9 @@ public:
                 sparse_bispace_any_order& bispace = bispaces[bispace_idx];
 
                 //Find another loop accessing this bispace that isn't currently batched
+                //Prioritize choosing a loop that accesses the most direct tensors
                 bool found = false;
+                size_t max_n_direct_tensors_touched = 0;
                 for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
                 {
                     const block_loop& loop = m_loops[loop_idx];
@@ -105,8 +107,19 @@ public:
                         if(loop_batches.find(batched_loop_idx) == loop_batches.end())
                         {
                             found = true;
-                            batched_loop_idx = loop_idx;
-                            break;
+                            size_t n_direct_tensors_touched = 0;    
+                            for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
+                            {
+                                if(!loop.is_bispace_ignored(direct_tensors_to_alloc[direct_tensor_rel_idx]))
+                                {
+                                    ++n_direct_tensors_touched;
+                                }
+                            }
+                            if(n_direct_tensors_touched > max_n_direct_tensors_touched)
+                            {
+                                batched_loop_idx = loop_idx;
+                                max_n_direct_tensors_touched = n_direct_tensors_touched;
+                            }
                         }
                     }
                 }
@@ -161,16 +174,6 @@ public:
                 else
                 {
                     m_ptrs[cur_bispace_idx] = new T[bispaces[cur_bispace_idx].get_nnz()];
-                }
-            }
-
-            //TODO: Currently don't support batching over different subspaces, as this would require recursion
-            for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-            {
-                if(batches[direct_tensor_rel_idx] != batches[0])
-                {
-                    throw bad_parameter(g_ns, k_clazz,"get_batch(...)",
-                            __FILE__, __LINE__, "Can currently only batch over a shared index");
                 }
             }
         }
@@ -251,7 +254,7 @@ public:
     //Creates a batch provider that will produce a given batch of C 
     virtual batch_provider<T>* get_batch_provider(gen_labeled_btensor<M+N-(2*K),T>& C) const 
     {
-        letter_expr<M+N-(2*K)> m_C_le(C.get_letter_expr());
+        letter_expr<M+N-(2*K)> C_le(C.get_letter_expr());
         //Build the loops for the contraction
         //First do the uncontracted indices
         std::vector< sparse_bispace_any_order > bispaces(1,C.get_bispace());
@@ -261,7 +264,7 @@ public:
         std::vector<block_loop> uncontracted_loops;
         for(size_t i = 0; i < M+N-(2*K); ++i)
         {
-            const letter& a = m_C_le.letter_at(i);
+            const letter& a = C_le.letter_at(i);
 
             //Ensure that this index should actually be appearing on the LHS
             if(m_le.contains(a))

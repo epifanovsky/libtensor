@@ -6,6 +6,7 @@
  */
 
 #include <libtensor/block_sparse/sparse_btensor.h>
+#include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include <libtensor/block_sparse/contract.h>
 #include <libtensor/core/sequence.h>
 #include <libtensor/iface/letter.h>
@@ -346,45 +347,82 @@ void run_benchmark(const char* file_name)
     sparse_btensor<2> P(spb_P,P_arr);
     delete P_arr;
 
+    //Construct V
+    sparse_btensor<2> V(spb_X|spb_X);
+    for(size_t i = 0; i < (spb_X.get_nnz()*spb_X.get_nnz()); ++i)
+    {
+        //We know what we're doing - cast away const
+        ((double*)V.get_data_ptr())[i] = double(rand())/RAND_MAX;
+    }
+
+    cout << "===========================\n";
+    cout << "IN-CORE BENCHMARK:\n";
+
     //Construct D result
     sparse_bispace<3> spb_D = spb_C.contract(2) | spb_N;
     sparse_btensor<3> D(spb_D);
     letter mu,Q,lambda,sigma;
+    cout << "-----------------------------\n";
+    /*cout << "D(sigma|Q|mu) = contract(lambda,P(sigma|lambda),C(lambda|Q|mu))\n";*/
     flops = 0;
     count_flops = true;
-    cout << "-----------------------------\n";
-    cout << "D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda))\n";
     double seconds = read_timer();
-    D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
+    /*D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));*/
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
-    //Skipping a subtraction step here - add that in later
-    //Construct L tensor 
-    sparse_bispace<3> spb_L = spb_X | spb_N % spb_N << sig_blocks_NN;
-    size_t nnz_L = spb_L.get_nnz();
-    double* L_arr  = new double[nnz_L];
-    for(size_t i = 0; i < nnz_L; ++i)
-    {
-        L_arr[i] = double(rand())/RAND_MAX;
-    }
-    sparse_btensor<3> L(spb_L,L_arr,true);
-    delete L_arr;
 
+    //Construct E tensor 
+    sparse_btensor<3> C_aux_fast(spb_C_orig);
+    letter nu,R;
+    C_aux_fast(nu|sigma|Q) = C(nu|Q|sigma);
+    sparse_bispace<3> spb_E = spb_X | spb_C.contract(1);
+    sparse_btensor<3> E(spb_E);
+    cout << "-----------------------------\n";
+    /*cout << "E(nu|sigma|Q) = contract(lambda,C(nu|sigma|R),V(R|Q))\n";*/
+    flops = 0;
+    count_flops = true;
+    seconds = read_timer();
+    /*E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));*/
+    count_flops = false;
+    seconds = read_timer() - seconds;
+    std::cout << "FLOPs: " << flops << "\n";
+    std::cout << "Time (s): " << seconds << "\n";
+    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+
+    //Skipping a subtraction step here - add that in later
 
     //Construct M result
     sparse_bispace<2> spb_M = spb_N|spb_N;
     sparse_btensor<2> M(spb_M);
-    letter nu;
+    cout << "-----------------------------\n";
+    /*cout << "M(nu|mu) = contract(sigma|Q,E(nu|sigma|Q),D(sigma|Q|mu))\n";*/
     flops = 0;
     count_flops = true;
-    cout << "-----------------------------\n";
-    cout << "M(mu|nu) = contract(Q|sigma,D(mu|Q|sigma),L(Q|sigma|nu))\n";
     seconds = read_timer();
-    M(mu|nu) = contract(Q|sigma,D(mu|Q|sigma),L(Q|sigma|nu));
+    /*M(nu|mu) = contract(Q|sigma,D(mu|Q|sigma),E(Q|sigma|nu));*/
+    seconds = read_timer() - seconds;
+    count_flops = false;
+    std::cout << "FLOPs: " << flops << "\n";
+    std::cout << "Time (s): " << seconds << "\n";
+    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+
+    cout << "===========================\n";
+    cout << "DIRECT BENCHMARK:\n";
+    direct_sparse_btensor<3> D_direct(spb_D);
+    direct_sparse_btensor<3> E_direct(spb_E);
+    D_direct(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
+    E_direct(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
+    sparse_btensor<2> M_from_direct(spb_M);
+    cout << "-----------------------------\n";
+    /*cout << "M(nu|mu) = contract(sigma|Q,E_direct(nu|sigma|Q),D_direct(sigma|Q|mu))\n";*/
+    flops = 0;
+    count_flops = true;
+    seconds = read_timer();
+    M_from_direct(nu|mu) = contract(Q|sigma,D_direct(mu|Q|sigma),E_direct(Q|sigma|nu),400e6);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";

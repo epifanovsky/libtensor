@@ -823,8 +823,15 @@ std::vector<idx_pair> sparse_bispace<N>::get_batches(size_t subspace_idx,size_t 
         //Sparse case
         size_t min = m_sparse_indices_sets_offsets[target_sparse_grp];
         size_t tree_subspace = subspace_idx - min;
-        const sparse_block_tree_any_order& tree = m_sparse_block_trees[target_sparse_grp];
-        for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+
+        //We must place the batched index at 0 to ensure that it is strictly increasing so that we can batch over it
+        const sparse_block_tree_any_order& orig_tree = m_sparse_block_trees[target_sparse_grp];
+        runtime_permutation perm(orig_tree.get_order());
+        perm.permute(0,tree_subspace);
+        sparse_block_tree_any_order permuted_tree = orig_tree.permute(perm);
+        size_t prev_block_idx = 0;
+        size_t this_block_idx_subtotal = 0;
+        for(sparse_block_tree_any_order::iterator it = permuted_tree.begin(); it != permuted_tree.end(); ++it)
         {
             size_t this_block_contrib = (*it)[0].second*scale_fac;
             if(this_block_contrib > max_n_elem)
@@ -834,14 +841,28 @@ std::vector<idx_pair> sparse_bispace<N>::get_batches(size_t subspace_idx,size_t 
                     
             }
 
-            size_t block_idx = it.key()[tree_subspace];
-            if(n_elem + this_block_contrib > max_n_elem)
+            //std::cout << "key: ";
+            //for(size_t i = 0; i < it.key().size(); ++i)
+            //{
+                //std::cout << it.key()[i] << ",";
+            //}
+            //std::cout << "\n";
+            size_t block_idx = it.key()[0];
+            if(block_idx != prev_block_idx)
             {
+                n_elem += this_block_idx_subtotal;
+                this_block_idx_subtotal = 0;
+                prev_block_idx = block_idx;
+            }
+
+            this_block_idx_subtotal += this_block_contrib;
+            if(n_elem + this_block_idx_subtotal > max_n_elem)
+            {
+                //std::cout << "===============BATCH=================\n";
                 batches.push_back(idx_pair(start_idx,block_idx));
                 start_idx = block_idx;
                 n_elem = 0;
             }
-            n_elem += this_block_contrib;
         }
     }
     //Handle last batch
