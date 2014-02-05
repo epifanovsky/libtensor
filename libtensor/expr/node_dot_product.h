@@ -15,10 +15,6 @@ namespace expr {
 
     See node_product for a full description of the data structure.
 
-    The diagonal index is the repeating index the diagonal to be extracted.
-    For example, A(ii) has indices (0, 0) with the diagonal index 0;
-    A(aii) has indices (0, 1, 1) with the diagonal index 1.
-
     \ingroup libtensor_expr
  **/
 class node_dot_product : public node_product {

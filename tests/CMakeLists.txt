@@ -222,6 +222,7 @@ set(SRC_EXPR
     expr/node_ident_test.C
     expr/node_product_test.C
     expr/node_scalar_test.C
+    expr/node_trace_test.C
     expr/node_transform_test.C
 )
 

@@ -23,6 +23,7 @@ set(SRC
     expr/node_dot_product.C
     expr/node_product.C
     expr/node_statics.C
+    expr/node_trace.C
     expr/print_node.C
     expr/print_tree.C
     iface/eval/default_eval_selector.C
