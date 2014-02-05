@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_IFACE_TRACE_OPERATOR_H
 #define LIBTENSOR_IFACE_TRACE_OPERATOR_H
 
+#include <libtensor/expr/node_scalar.h>
+#include <libtensor/expr/node_trace.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/block_tensor/btod_trace.h>
 #include "../expr_rhs.h"
@@ -9,43 +11,60 @@ namespace libtensor {
 namespace iface {
 
 
-/** \brief Trace of a matrix expression
-
-    \ingroup libtensor_iface
- **/
-template<typename T>
-double trace(
-    const letter &l1,
-    const letter &l2,
-    const expr_rhs<2, T> &expr) {
-
-    return 0;
-//    letter_expr<2> le(l1|l2);
-//    anon_eval<2, T> eval(expr, le);
-//    eval.evaluate();
-//    return btod_trace<1>(eval.get_btensor()).calculate();
-}
-
-
 /** \brief Trace of a tensor expression
 
     \ingroup libtensor_iface
  **/
 template<size_t N, size_t N2, typename T>
-double trace(
+T trace(
     const letter_expr<N> le1,
     const letter_expr<N> le2,
-    expr_rhs<N2, T> expr) {
+    const expr_rhs<N2, T> &rhs) {
 
-    return 0;
-//    trace_subexpr_label_builder<N> lb(le1, le2);
-//    anon_eval<2 * N, T> eval(expr, lb.get_label());
-//    eval.evaluate();
-//    return btod_trace<N>(eval.get_btensor()).calculate();
+    std::vector<size_t> idx(N2), cidx(N);
+    for(size_t i = 0; i < N; i++) cidx[i] = i;
+    for(size_t i = 0; i < N2; i++) {
+        const letter &l = rhs.letter_at(i);
+        if(le1.contains(l)) {
+            idx[i] = le1.index_of(l);
+        } else if(le2.contains(l)) {
+            idx[i] = le2.index_of(l);
+        } else {
+            throw 0;
+        }
+    }
+
+    T d;
+
+    expr::node_assign n1(0);
+    expr::expr_tree e(expr::node_assign(0));
+    expr::expr_tree::node_id_t id_res =
+        e.add(e.get_root(), expr::node_scalar<T>(d));
+    expr::expr_tree::node_id_t id_trace =
+        e.add(e.get_root(), expr::node_trace(idx, cidx));
+    e.add(id_trace, rhs.get_expr());
+
+    eval().evaluate(e);
+
+    return d;
 }
 
 
-} // namespace labeled_btensor_expr
+/** \brief Trace of a matrix expression
+
+    \ingroup libtensor_iface
+ **/
+template<typename T>
+T trace(
+    const letter &l1,
+    const letter &l2,
+    const expr_rhs<2, T> &expr) {
+
+    return trace(letter_expr<1>(l1), letter_expr<1>(l2), expr);
+}
+
+
+} // namespace iface
 
 using iface::trace;
 
