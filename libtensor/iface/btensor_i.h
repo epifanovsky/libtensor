@@ -17,11 +17,11 @@ namespace iface {
 **/
 template<size_t N, typename T>
 class btensor_i :
-    virtual public block_tensor_rd_i<N, T>, public any_tensor<N, T> {
+    public any_tensor<N, T>,
+    virtual public block_tensor_rd_i<N, T> {
 
 public:
     btensor_i() : any_tensor<N, T>(*this) {
-
         eval_btensor_holder<T>::get_instance().inc_counter();
     }
 

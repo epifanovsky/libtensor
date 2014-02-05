@@ -1093,7 +1093,7 @@ void contract_test::test_ee_3() {
 }
 
 
-void contract_test::test_contract3_ttt_1() {
+void contract_test::test_contract3_ttt_1() try {
 
     const char testname[] = "contract_test::test_contract3_ttt_1()";
 
@@ -1127,7 +1127,7 @@ void contract_test::test_contract3_ttt_1() {
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
-}
+} catch(...) { throw; }
 
 
 } // namespace libtensor
