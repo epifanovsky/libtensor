@@ -1,4 +1,3 @@
-#include <iomanip>
 #include <libtensor/block_tensor/btod_dotprod.h>
 #include <libtensor/expr/node_dot_product.h>
 #include <libtensor/expr/node_scalar.h>

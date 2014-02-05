@@ -7,6 +7,7 @@
 #include <libtensor/expr/node_div.h>
 #include <libtensor/expr/node_dot_product.h>
 #include <libtensor/expr/node_scalar.h>
+#include <libtensor/expr/node_trace.h>
 #include <libtensor/expr/node_transform.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
@@ -18,6 +19,7 @@
 #include "eval_btensor_double_div.h"
 #include "eval_btensor_double_dot_product.h"
 #include "eval_btensor_double_symm.h"
+#include "eval_btensor_double_trace.h"
 #include "eval_tree_builder_btensor.h"
 
 namespace libtensor {
@@ -98,6 +100,8 @@ void eval_node::evaluate_scalar(expr_tree::node_id_t lhs) {
 
     if(n.get_op().compare(node_dot_product::k_op_type) == 0) {
         eval_btensor_double::dot_product(m_tree, m_rhs).evaluate(lhs);
+    } else if(n.get_op().compare(node_trace::k_op_type) == 0) {
+        eval_btensor_double::trace(m_tree, m_rhs).evaluate(lhs);
     }
 }
 
