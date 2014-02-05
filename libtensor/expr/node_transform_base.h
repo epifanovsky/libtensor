@@ -43,6 +43,10 @@ public:
         return m_perm;
     }
 
+    /** \brief Returns the scalar type of transformation
+     **/
+    virtual const std::type_info &get_type() const = 0;
+
 private:
     void check() {
 #ifdef LIBTENSOR_DEBUG

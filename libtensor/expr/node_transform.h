@@ -40,6 +40,12 @@ public:
         return new node_transform<T>(*this);
     }
 
+    /** \brief Returns the scalar type of transformation
+     **/
+    virtual const std::type_info &get_type() const {
+        return typeid(T);
+    }
+
     /** \brief Returns the scaling coefficient
      **/
     const scalar_transf<T> &get_coeff() const {

@@ -429,8 +429,8 @@ void eval_tree_builder_btensor::build() {
 
     node_renderer(m_tree, m_order, head).render();
 
-    std::cout << "rendered expression" << std::endl;
-    print_tree(m_tree, std::cout);
+//    std::cout << "rendered expression" << std::endl;
+//    print_tree(m_tree, std::cout);
 
 }
 
