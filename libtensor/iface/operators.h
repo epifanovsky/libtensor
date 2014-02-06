@@ -2,7 +2,6 @@
 #define LIBTENSOR_LABELED_BTENSOR_EXPR_OPERATORS_H
 
 #include "labeled_btensor_expr.h"
-#include "ident/ident_core.h"
 
 #include "expr_operator/add_operator.h"
 #include "expr_operator/mul_operator.h"

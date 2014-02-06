@@ -212,7 +212,6 @@ set(SRC_LINALG
 set(SRC_EXPR
     expr/libtensor_expr_tests.C
     expr/libtensor_expr_suite.C
-#    expr/eval_plan_test.C
     expr/expr_tree_test.C
     expr/graph_test.C
     expr/node_add_test.C
@@ -229,15 +228,12 @@ set(SRC_EXPR
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
-    iface/anon_eval_test.C
     iface/any_tensor_test.C
     iface/bispace_expr_test.C
     iface/bispace_test.C
     iface/btensor_test.C
     iface/contract_test.C
     iface/diag_test.C
-#    iface/direct_btensor_test.C
-#    iface/direct_eval_test.C
     iface/direct_product_test.C
     iface/dirsum_test.C
     iface/dot_product_test.C
@@ -246,7 +242,6 @@ set(SRC_IFACE
     iface/ewmult_test.C
     iface/expr_test.C
     iface/expr_tensor_test.C
-    iface/labeled_btensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
     iface/mult_test.C
