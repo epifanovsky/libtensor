@@ -15,6 +15,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <math.h>
 
 using namespace libtensor;
 using namespace std;
@@ -38,220 +39,6 @@ double read_timer()
     return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
 }
 
-#if 0
-void benchmark(std::vector<size_t>& split_points_N,
-               std::vector<size_t>& split_points_X, 
-               std::vector< sequence<2,size_t> >& sig_blocks_NN,
-               std::vector< sequence<2,size_t> >& sig_blocks_NX,
-               size_t N,
-               size_t X)
-{
-    /*for(size_t i = 0; i < split_points_N.size(); ++i)*/
-    /*{*/
-        /*std::cout << split_points_N[i] << "\n";*/
-    /*}*/
-
-    /*std::cout << "split_points_X:\n";*/
-    /*for(size_t i = 0; i < split_points_X.size(); ++i)*/
-    /*{*/
-        /*std::cout << split_points_X[i] << "\n";*/
-    /*}*/
-
-    /*std::cout << "sig_blocks_NN:\n";*/
-    /*for(size_t i = 0; i < sig_blocks_NN.size(); ++i)*/
-    /*{*/
-        /*std::cout << sig_blocks_NN[i][0] << "," << sig_blocks_NN[i][1] << "\n";*/
-    /*}*/
-
-    /*std::cout << "sig_blocks_NX:\n";*/
-    /*for(size_t i = 0; i < sig_blocks_NX.size(); ++i)*/
-    /*{*/
-        /*std::cout << sig_blocks_NX[i][0] << "," << sig_blocks_NX[i][1] << "\n";*/
-    /*}*/
-    
-
-    //Shell pair sparsity test
-    {
-    sparse_bispace<1> m(N);
-	m.split(split_points_N);
-    sparse_bispace<3> spb_A = m % m << sig_blocks_NN | m;
-    sparse_bispace<3> spb_B = m | m % m << sig_blocks_NN;
-    
-    //Don't want overflows
-    double* A_arr  = new double[spb_A.get_nnz()];
-    double* B_arr  = new double[spb_B.get_nnz()];
-    for(size_t i = 0; i < spb_A.get_nnz(); ++i)
-    {
-        A_arr[i] = double(rand())/RAND_MAX;
-    }
-    for(size_t i = 0; i < spb_B.get_nnz(); ++i)
-    {
-        B_arr[i] = double(rand())/RAND_MAX;
-    }
-    
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<3> B(spb_B,B_arr,true);
-    sparse_btensor<2> C(m|m);
-    
-    letter mu,nu,Q,s;
-    std::cout << "==========================\n";
-    std::cout << "SMALL BLOCK BENCHMARK: ONLY NB2 SPARSITY\n";
-    std::cout << "Flops before: " << flops << "\n";
-    count_flops = true;
-    double seconds = read_timer();
-    C(mu|nu) = contract(Q|s,A(mu|Q|s),B(Q|s|nu));
-    seconds = read_timer() - seconds;
-    count_flops = false;
-    std::cout << "Flops after: " << flops << "\n";
-    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
-    }
-
-    //shell->aux atom pair sparsity test
-    {
-    sparse_bispace<1> spb_N(N);
-    spb_N.split(split_points_N);
-    sparse_bispace<1> spb_X(X);
-    spb_X.split(split_points_X);
-
-    sparse_bispace<3> spb_A = spb_N % spb_X << sig_blocks_NX | spb_N;
-    sparse_bispace<3> spb_B = spb_X | spb_N % spb_N << sig_blocks_NN;
-    
-    //Don't want overflows
-    double* A_arr  = new double[spb_A.get_nnz()];
-    double* B_arr  = new double[spb_B.get_nnz()];
-    for(size_t i = 0; i < spb_A.get_nnz(); ++i)
-    {
-        A_arr[i] = double(rand())/RAND_MAX;
-    }
-    for(size_t i = 0; i < spb_B.get_nnz(); ++i)
-    {
-        B_arr[i] = double(rand())/RAND_MAX;
-    }
-    
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<3> B(spb_B,B_arr,true);
-    sparse_btensor<2> C(spb_N|spb_N);
-    
-    letter mu,nu,Q,s;
-    flops = 0;
-    std::cout << "==========================\n";
-    std::cout << "LARGE BLOCK BENCHMARK: SHELL/AUX ATOM SPARSITY\n";
-    std::cout << "Flops before: " << flops << "\n";
-    count_flops = true;
-    double seconds = read_timer();
-    C(mu|nu) = contract(Q|s,A(mu|Q|s),B(Q|s|nu));
-    seconds = read_timer() - seconds;
-    count_flops = false;
-    std::cout << "Flops after: " << flops << "\n";
-    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
-    }
-}
-
-void benchmark_graphene_01_03()
-{
-	//This test simulates an electronic structure calculation with NB2 sparsity
-	//Data comes from a 1x3 graphene (anthracene) chain - cc-pVDZ basis, rimp2-aug-cc-pVQZ aux basis
-    
-	//Split the basis function space into atomic shells
-	std::vector<size_t> split_points_N;
-	std::ifstream split_ifstr;
-	split_ifstr.open("../tests/block_sparse/graphene_01_03_split_points_N.txt");
-	while(split_ifstr.good())
-	{
-		size_t val;
-		split_ifstr >> val;
-        if(split_ifstr.eof())
-        {
-            break;
-        }
-		split_points_N.push_back(val);
-	}
-
-	//Split the aux basis into atom blocks 
-	std::vector<size_t> split_points_X;
-    std::ifstream split_ifstr_X("../tests/block_sparse/graphene_01_03_split_points_X.txt");
-	while(split_ifstr_X.good())
-	{
-		size_t val;
-		split_ifstr_X >> val;
-        if(split_ifstr_X.eof())
-        {
-            break;
-        }
-		split_points_X.push_back(val);
-	}
-    
-	//Load the NB2 sparsity information
-	std::vector< sequence<2,size_t> > sig_blocks_NN;
-	std::ifstream sb_ifstr_N("../tests/block_sparse/graphene_01_03_sig_blocks_NN.txt");
-	while(sb_ifstr_N.good())
-	{
-		sequence<2,size_t> entry;
-		sb_ifstr_N >> entry[0] >> entry[1];
-        if(sb_ifstr_N.eof())
-        {
-            break;
-        }
-		sig_blocks_NN.push_back(entry);
-	}
-
-    //Load the basis shell->aux atom block sparsity information
-	std::vector< sequence<2,size_t> > sig_blocks_NX;
-    std::ifstream sb_ifstr_X("../tests/block_sparse/graphene_01_03_sig_blocks_NX.txt");
-	while(sb_ifstr_X.good())
-	{
-		sequence<2,size_t> entry;
-		sb_ifstr_X >> entry[0] >> entry[1];
-        if(sb_ifstr_X.eof())
-        {
-            break;
-        }
-		sig_blocks_NX.push_back(entry);
-	}
-    
-    std::cout << "Benchmark running: graphene_01_03\n";
-    benchmark(split_points_N,split_points_X,sig_blocks_NN,sig_blocks_NX,246,3152);
-}
-
-void benchmark_graphene_01_06()
-{
-    //This test simulates an electronic structure calculation with NB2 sparsity
-	//Data comes from a 1x6 graphene chain
-    
-	//Split the basis function space into atomic shells
-	std::vector<size_t> split_points;
-	std::ifstream split_ifstr;
-	split_ifstr.open("../tests/block_sparse/graphene_01_06_split_points.txt");
-	while(split_ifstr.good())
-	{
-		size_t val;
-		split_ifstr >> val;
-		split_points.push_back(val);
-	}
-    
-	//Load the NB2 sparsity information
-	std::vector< sequence<2,size_t> > sig_blocks;
-	std::ifstream sb_ifstr;
-	sb_ifstr.open("../tests/block_sparse/graphene_01_06_sig_blocks.txt");
-	while(sb_ifstr.good())
-	{
-		sequence<2,size_t> entry;
-		sb_ifstr >> entry[0] >> entry[1];
-		sig_blocks.push_back(entry);
-	}
-    
-    std::cout << "Benchmark running: graphene_01_06\n";
-    benchmark(split_points,sig_blocks,444);
-}
-
-void print_avail_benchmarks()
-{
-    std::cout << "Available benchmarkes are:\n";
-    std::cout << "\t" << "graphene_01_03\n";
-    std::cout << "\t" << "graphene_01_06\n";
-}
-#endif
-
 //Benchmark file format:
 //N
 //X
@@ -261,6 +48,8 @@ void print_avail_benchmarks()
 //all shell->aux atom sparsity entries...
 void run_benchmark(const char* file_name)
 {
+    srand(time(NULL));
+
     size_t N;
     size_t X;
     vector<size_t> split_points_N;
@@ -355,6 +144,7 @@ void run_benchmark(const char* file_name)
         ((double*)V.get_data_ptr())[i] = double(rand())/RAND_MAX;
     }
 
+
     cout << "===========================\n";
     cout << "IN-CORE BENCHMARK:\n";
 
@@ -363,17 +153,16 @@ void run_benchmark(const char* file_name)
     sparse_btensor<3> D(spb_D);
     letter mu,Q,lambda,sigma;
     cout << "-----------------------------\n";
-    /*cout << "D(sigma|Q|mu) = contract(lambda,P(sigma|lambda),C(lambda|Q|mu))\n";*/
+    cout << "D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda))\n";
     flops = 0;
     count_flops = true;
     double seconds = read_timer();
-    /*D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));*/
+    D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
-
 
     //Construct E tensor 
     sparse_btensor<3> C_aux_fast(spb_C_orig);
@@ -382,16 +171,18 @@ void run_benchmark(const char* file_name)
     sparse_bispace<3> spb_E = spb_X | spb_C.contract(1);
     sparse_btensor<3> E(spb_E);
     cout << "-----------------------------\n";
-    /*cout << "E(nu|sigma|Q) = contract(lambda,C(nu|sigma|R),V(R|Q))\n";*/
+    cout << "E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R))\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    /*E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));*/
+    E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
     count_flops = false;
     seconds = read_timer() - seconds;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+
+
 
     //Skipping a subtraction step here - add that in later
 
@@ -399,11 +190,11 @@ void run_benchmark(const char* file_name)
     sparse_bispace<2> spb_M = spb_N|spb_N;
     sparse_btensor<2> M(spb_M);
     cout << "-----------------------------\n";
-    /*cout << "M(nu|mu) = contract(sigma|Q,E(nu|sigma|Q),D(sigma|Q|mu))\n";*/
+    cout << "M(nu|mu) = contract(Q|sigma,E(Q|sigma|nu),D(mu|Q|sigma))\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    /*M(nu|mu) = contract(Q|sigma,D(mu|Q|sigma),E(Q|sigma|nu));*/
+    M(nu|mu) = contract(Q|sigma,E(Q|sigma|nu),D(mu|Q|sigma));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -416,56 +207,42 @@ void run_benchmark(const char* file_name)
     direct_sparse_btensor<3> E_direct(spb_E);
     D_direct(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
     E_direct(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
+
     sparse_btensor<2> M_from_direct(spb_M);
     cout << "-----------------------------\n";
-    /*cout << "M(nu|mu) = contract(sigma|Q,E_direct(nu|sigma|Q),D_direct(sigma|Q|mu))\n";*/
+    cout << "M(nu|mu) = contract(Q|sigma,E_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6)\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(nu|mu) = contract(Q|sigma,D_direct(mu|Q|sigma),E_direct(Q|sigma|nu),400e6);
+    M_from_direct(nu|mu) = contract(Q|sigma,E_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+
+    cout << "===========================\n";
+    cout << "Direct and Indirect Results Equal?\n";
+    bool M_equal = true;
+    for(size_t i = 0; i < spb_M.get_nnz(); ++i)
+    {
+        if(fabs(M_from_direct.get_data_ptr()[i] - M.get_data_ptr()[i]) > 0)
+        {
+            cout << "----------------\n";
+            cout << "FAILURE!\n";
+            cout << "Element idx: " << i << " out of " << spb_M.get_nnz() << "\n";
+            cout << "Indirect: " << M.get_data_ptr()[i] << "\n";
+            cout << "Direct: " << M_from_direct.get_data_ptr()[i] << "\n";
+            cout << "Delta: " << fabs(M_from_direct.get_data_ptr()[i] - M.get_data_ptr()[i]) << "\n";
+            M_equal = false;
+            break;
+        }
+    }
+    cout << "M_equal: " << (M_equal ? "YES" : "NO") << "\n";
 }
 
 int main(int argc,char *argv[])
 {
-
-#if 0
-    //Default is to run short benchmark
-    if(argc < 2)
-    {
-        benchmark_graphene_01_03();
-    }
-    else if(argc > 2)
-    {
-        std::cout << "Error: Specify only one benchmark to run at a time!\n";
-        print_avail_benchmarks();
-    }
-    else
-    {
-        if(strcmp(argv[1],"graphene_01_03") == 0)
-        {
-            benchmark_graphene_01_03();
-        }
-        else if(strcmp(argv[1],"graphene_01_06") == 0)
-        {
-            /*benchmark_graphene_01_06();*/
-        }
-        else
-        {
-            std::cout << "Invalid benchmark specified!\n";
-            print_avail_benchmarks();
-        }
-    }
-#endif
-    /*const char* alkane_file_names[5] = {"../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",*/
-                                        /*"../tests/block_sparse/alkane_dz_010_data.txt",*/
-                                        /*"../tests/block_sparse/alkane_dz_020_data.txt",*/
-                                        /*"../tests/block_sparse/alkane_tz_010_data.txt"*/
-                                        /*};*/
     const char* alkane_file_names[7] = {"../tests/block_sparse/alkane_dz_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_020_data.txt",

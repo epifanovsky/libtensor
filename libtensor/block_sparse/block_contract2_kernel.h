@@ -167,30 +167,11 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 		}
 	}
 
+
 	if(A_contracted_indices.size() == 0)
 	{
 		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
 				__FILE__, __LINE__, "must have at least one contracted index");
-	}
-
-	//Check for strided output
-	//Output is strided if the maximum (innermost) subspace index is not traversed last
-	for(size_t loop_idx_rev = 0; loop_idx_rev < m_loops.size(); ++loop_idx_rev)
-	{
-		size_t loop_idx = m_loops.size() - loop_idx_rev - 1;
-		const block_loop& cur_loop = m_loops[loop_idx];
-		if(!cur_loop.is_bispace_ignored(0))
-		{
-			if(cur_loop.get_subspace_looped(0) != bispaces[0].get_order() - 1)
-			{
-				throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-						__FILE__, __LINE__, "strided output is not supported");
-			}
-			else
-			{
-				break;
-			}
-		}
 	}
 
 	//Determine the type of matmul required to execute the contraction:
@@ -219,7 +200,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 	}
 
 	//Check contracted index position and order
-	for(size_t A_contr_idx = 0; A_contr_idx < A_contracted_indices.size(); ++ A_contr_idx)
+	for(size_t A_contr_idx = 0; A_contr_idx < A_contracted_indices.size(); ++A_contr_idx)
 	{
 		if(A_contracted_indices[A_contr_idx] != A_first_contr_subspace + A_contr_idx)
 		{
@@ -272,6 +253,53 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
 				__FILE__, __LINE__, "last uncontracted index common to B and C in wrong position");
 	}
+
+    //Check for strided output
+    size_t A_i_subspace;
+    if(m_A_trans)
+    {
+        A_i_subspace = A_order - 1;
+    }
+    else
+    {
+        A_i_subspace = A_order - A_contracted_indices.size() - 1; 
+    }
+    size_t B_j_subspace;
+    if(m_B_trans)
+    {
+        B_j_subspace = 0;
+    }
+    else
+    {
+        B_j_subspace = B_contracted_indices.size();
+    }
+
+    size_t A_i_subspace_loop_idx;
+    size_t B_j_subspace_loop_idx;
+    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+    {
+        const block_loop& loop = m_loops[loop_idx];
+        if(!loop.is_bispace_ignored(1))
+        {
+            if(loop.get_subspace_looped(1) == A_i_subspace)
+            {
+                A_i_subspace_loop_idx = loop_idx;
+            }
+        }
+        if(!loop.is_bispace_ignored(2))
+        {
+            if(loop.get_subspace_looped(2) == B_j_subspace)
+            {
+                B_j_subspace_loop_idx = loop_idx;
+            }
+        }
+    }
+
+    if(m_loops[A_i_subspace_loop_idx].get_subspace_looped(0) != m_loops[B_j_subspace_loop_idx].get_subspace_looped(0) - 1)
+    {
+        throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",__FILE__, __LINE__, 
+                "Strided output is unsupported!");
+    }
 
 	m_n_contracted_inds = A_contracted_indices.size();
 	if(m_A_trans)
@@ -349,6 +377,7 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 		}
 	}
 #endif
+    //TODO: This will break for tensors that are both permuted and contracted!!!!!!!!!
 
 	size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
 	if(m_A_trans)
@@ -386,11 +415,10 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 	}
 	else
 	{
-        for(size_t B_j_idx = m_block_orders[2] - m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
+        for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
         {
             n *= dim_lists[2][B_j_idx];
         }
-		n = dim_lists[2][m_n_contracted_inds];
 		ldb = n;
 	}
 	ldc = n;

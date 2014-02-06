@@ -26,6 +26,7 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
 
     test_contract2_2d_2d();
     test_contract2_3d_2d();
+    test_contract2_3d_sparse_eye();
     test_contract2_2d_2d_sparse_dense(); 
     test_contract2_3d_2d_sparse_dense();
     test_contract2_3d_2d_sparse_sparse();
@@ -844,6 +845,130 @@ void sparse_btensor_test::test_contract2_3d_2d() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
+    }
+}
+
+//Contraction with eye (identity matrix) should preserve a tensor
+void sparse_btensor_test::test_contract2_3d_sparse_eye() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_btensor_test::test_contract2_3d_sparse_eye()";
+
+    //Block major
+    double A_arr[45] = { //i = 0 j = 0 k = 0
+                         1,2,
+                         //i = 0 j = 0 k = 1
+                         3,
+                         //i = 0 j = 0 k = 2
+                         4,5,
+
+                         //i = 0 j = 1 k = 0
+                         6,7,
+                         8,9,
+
+                         //i = 0 j = 1 k = 1
+                         10, 
+                         11,
+                        
+                         //i = 0 j = 1 k = 2
+                         12,13,
+                         14,15,
+
+                         //i = 1 j = 1 k = 0
+                         16,17,
+                         18,19,
+                         20,21,
+                         22,23,
+
+                         //i = 1 j = 1 k = 1
+                         24,
+                         25,
+                         26,
+                         27,
+
+                         //i = 1 j = 1 k = 2
+                         28,29,
+                         30,31,
+                         32,33,
+                         34,35,
+
+                         //i = 1 j = 2 k = 0
+                         36,37,
+                         38,39,
+
+                         //i = 1 j = 2 k = 1
+                         40,
+                         41,
+
+                         //i = 1 j = 2 k = 2
+                         42,43,
+                         44,45};
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(3);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(1);
+    spb_i.split(split_points_i);
+
+    //Bispace for j 
+    sparse_bispace<1> spb_j(4);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(1);
+    split_points_j.push_back(3);
+    spb_j.split(split_points_j);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    split_points_k.push_back(3);
+    spb_k.split(split_points_k);
+
+    //(ij) sparsity
+    size_t seq_00_arr_1[2] = {0,0};
+    size_t seq_01_arr_1[2] = {0,1};
+    size_t seq_02_arr_1[2] = {1,1};
+    size_t seq_03_arr_1[2] = {1,2};
+
+    std::vector< sequence<2,size_t> > ij_sig_blocks(4);
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[0][i] = seq_00_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[1][i] = seq_01_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[2][i] = seq_02_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[3][i] = seq_03_arr_1[i];
+
+    sparse_bispace<3> spb_A = spb_i % spb_j << ij_sig_blocks | spb_k;
+    sparse_btensor<3> A(spb_A,A_arr,true);
+
+    //Construct identity matrix
+    sparse_bispace<2> spb_eye = spb_k|spb_k;
+    double* eye_arr = new double[spb_eye.get_nnz()];
+    memset(eye_arr,0,spb_eye.get_nnz()*sizeof(double));
+    for(size_t i = 0; i < spb_k.get_dim(); ++i)
+    {
+        eye_arr[i*spb_k.get_dim()+i] = 1;
+    }
+    sparse_btensor<2> eye(spb_eye,eye_arr,false);
+
+    sparse_btensor<3> A_from_contract(spb_A);
+    letter i,j,k,l;
+    A_from_contract(i|j|l) = contract(k,A(i|j|k),eye(k|l));
+
+    if(A_from_contract != A)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "contract(...) with eye on RHS did not produce correct result");
+    }
+
+    //Test contracting from the lhs with eye
+    sparse_bispace<3> spb_B = spb_k | spb_A.contract(2);
+    sparse_btensor<3> B(spb_B);
+    B(k|i|j) = A(i|j|k);
+    sparse_btensor<3> B_from_contract(spb_B);
+    B_from_contract(l|i|j) = contract(k,eye(l|k),B(k|i|j));
+
+    if(B_from_contract != B)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "contract(...) with eye on LHS did not produce correct result");
     }
 }
 

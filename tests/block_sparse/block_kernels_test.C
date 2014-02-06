@@ -541,17 +541,17 @@ void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(l
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector< sparse_bispace_any_order > bispaces(1,spb_j | spb_i);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
     vector<block_loop> loops(3,block_loop(bispaces));
     //Deliberately swap i and j order
     //j loop
-    loops[0].set_subspace_looped(0,1);
+    loops[0].set_subspace_looped(0,0);
     loops[0].set_subspace_looped(2,1);
     //i loop
-    loops[1].set_subspace_looped(0,0);
+    loops[1].set_subspace_looped(0,1);
     loops[1].set_subspace_looped(1,0);
     //k loop
     loops[2].set_subspace_looped(1,1);

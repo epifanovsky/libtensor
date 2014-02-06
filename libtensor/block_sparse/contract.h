@@ -60,19 +60,8 @@ public:
         for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors.size(); ++direct_tensor_rel_idx)
         {
             size_t direct_tensor_idx = m_direct_tensors[direct_tensor_rel_idx];
-            //Is this one of the output bispaces that already has memory allocated for it?
-            bool found = false;
-            for(std::map<idx_pair,idx_pair>::const_iterator it = output_batches.begin(); it != output_batches.end(); ++it)
-            {
-                if(it->first.first == direct_tensor_idx)
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            //No - it is an input direct tensor - we need to figure out how much batch memory to allocate for it
-            if(!found)
+            //It is an input direct tensor - we need to figure out how much batch memory to allocate for it
+            if(direct_tensor_idx != 0)
             {
                 direct_tensors_to_alloc.push_back(direct_tensor_idx);
             }
@@ -131,20 +120,28 @@ public:
                 }
                 const block_loop& batched_loop = m_loops[batched_loop_idx];
 
+                //TODO: must consider ALL bispaces
                 //Break the bispace down into batches
                 size_t batched_subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
                 batches = bispace.get_batches(batched_subspace_idx,mem_per_tensor/sizeof(T));
 
-                //We will allocate memory large enough to hold the biggest batch for this bispace
-                size_t max_batch_size = 0;
-                size_t max_batch_idx;
+                //We will allocate memory large enough to hold the biggest batch for each bispace
+                std::vector<size_t> max_batch_sizes(bispaces.size(),0);
+                std::vector<size_t> max_batch_inds(bispaces.size(),0);
                 for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
                 {
-                    size_t batch_size = bispace.get_batch_size(batched_subspace_idx,batches[batch_idx]);
-                    if(batch_size > max_batch_size)
+                    for(size_t cur_bispace_idx = 0; cur_bispace_idx < bispaces.size(); ++cur_bispace_idx)
                     {
-                        max_batch_size = batch_size;
-                        max_batch_idx = batch_idx;
+                        if(!batched_loop.is_bispace_ignored(cur_bispace_idx))
+                        {
+                            size_t cur_batched_subspace_idx = batched_loop.get_subspace_looped(cur_bispace_idx);
+                            size_t batch_size = bispaces[cur_bispace_idx].get_batch_size(cur_batched_subspace_idx,batches[batch_idx]);
+                            if(batch_size > max_batch_sizes[cur_bispace_idx])
+                            {
+                                max_batch_sizes[cur_bispace_idx] = batch_size;
+                                max_batch_inds[cur_bispace_idx] = batch_idx;
+                            }
+                        }
                     }
                 }
 
@@ -156,7 +153,7 @@ public:
                     if(!batched_loop.is_bispace_ignored(cur_bispace_idx))
                     {
                         size_t subspace_idx = batched_loop.get_subspace_looped(cur_bispace_idx);
-                        bispaces[cur_bispace_idx].truncate_subspace(subspace_idx,batches[max_batch_idx]);
+                        bispaces[cur_bispace_idx].truncate_subspace(subspace_idx,batches[max_batch_inds[cur_bispace_idx]]);
                     }
                 }
             }
@@ -208,6 +205,12 @@ public:
         }
         else
         {
+            //The input direct tensors can be formed as one batch
+            for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
+            {
+                size_t bispace_idx = m_direct_tensors[direct_tensor_rel_idx];
+                m_batch_providers[direct_tensor_rel_idx]->get_batch(m_ptrs[bispace_idx]);
+            }
             m_sll.run(m_bc2k,m_ptrs,loop_batches);
         }
 
