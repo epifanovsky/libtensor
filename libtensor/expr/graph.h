@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <libtensor/exception.h>
+#include <libtensor/core/noncopyable.h>
 #include "node.h"
 
 namespace libtensor {
@@ -14,7 +15,7 @@ namespace expr {
 
     \ingroup libtensor_expr
  **/
-class graph {
+class graph : public noncopyable {
 public:
     typedef size_t node_id_t; //!< Node ID type
     typedef std::vector<node_id_t> edge_list_t; //!< Edge list type
@@ -170,6 +171,7 @@ protected:
     }
 
     bool is_connected(iterator i1, iterator i2) const;
+
 };
 
 
