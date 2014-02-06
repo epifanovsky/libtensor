@@ -1,19 +1,19 @@
 /*
- * block_subtract_kernel.h
+ * block_add2_kernel.h
  *
  *  Created on: Nov 20, 2013
  *      Author: smanzer
  */
 
-#ifndef BLOCK_SUBTRACT_KERNEL_H_
-#define BLOCK_SUBTRACT_KERNEL_H_
+#ifndef BLOCK_ADD2_KERNEL_H_
+#define BLOCK_ADD2_KERNEL_H_
 
 #include "block_kernel_i.h"
 
 namespace libtensor {
 
 template<typename T>
-class block_subtract2_kernel: public libtensor::block_kernel_i<T>
+class block_add2_kernel: public libtensor::block_kernel_i<T>
 {
 private:
     static const char* k_clazz; //!< Class name
@@ -22,12 +22,12 @@ public:
 };
 
 template<typename T>
-const char* block_subtract2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
+const char* block_add2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
 
 } /* namespace libtensor */
 
 template<typename T>
-void libtensor::block_subtract2_kernel<T>::operator()(
+void libtensor::block_add2_kernel<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
 	if(dim_lists.size() != 3 || ptrs.size() != dim_lists.size())
@@ -58,7 +58,7 @@ void libtensor::block_subtract2_kernel<T>::operator()(
 		}
 	}
 
-	//Just do the subtraction
+	//Just do the add
 	size_t n_elements = 1;
 	for(size_t i = 0; i < first_size; ++i)
 	{
@@ -67,8 +67,8 @@ void libtensor::block_subtract2_kernel<T>::operator()(
 
 	for(size_t i = 0; i < n_elements; ++i)
 	{
-		ptrs[0][i] = ptrs[1][i] - ptrs[2][i];
+		ptrs[0][i] = ptrs[1][i] + ptrs[2][i];
 	}
 }
 
-#endif /* BLOCK_SUBTRACT_KERNEL_H_ */
+#endif /* BLOCK_ADD2_KERNEL_H_ */

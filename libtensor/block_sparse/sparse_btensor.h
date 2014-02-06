@@ -9,6 +9,7 @@
 #include "block_load_kernel.h"
 #include "block_print_kernel.h"
 #include "labeled_sparse_btensor.h"
+#include "subtract.h"
 
 namespace libtensor {
 

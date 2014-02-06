@@ -3,9 +3,6 @@
 #include <libtensor/block_sparse/contract.h>
 #include "sparse_btensor_test.h"
 
-//TODO REMOVE
-#include <iostream>
-
 namespace libtensor {
    
 void sparse_btensor_test::perform() throw(libtest::test_exception) {
@@ -32,6 +29,8 @@ void sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_3d_2d_sparse_sparse();
     test_contract2_two_indices_3d_3d_dense_dense();
     test_contract2_two_indices_3d_3d_sparse_sparse();
+
+    test_subtract2_3d_dense_from_sparse();
 }
 
 void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
@@ -1589,6 +1588,257 @@ void sparse_btensor_test::test_contract2_two_indices_3d_3d_sparse_sparse() throw
                 "contract(...) did not produce correct result");
     }
 
+}
+
+//The subtraction operation DESTROYS sparsity in this case, because the zero blocks of the sparse tensor
+//may have nonzero blocks subtracted from them
+void sparse_btensor_test::test_subtract2_3d_dense_from_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_btensor_test::test_subtract2_3d_dense_from_sparse()";
+
+    //Block major
+    double A_arr[45] = { //i = 0 j = 0 k = 0
+                         1,2,
+                         //i = 0 j = 0 k = 1
+                         3,
+                         //i = 0 j = 0 k = 2
+                         4,5,
+
+                         //i = 0 j = 1 k = 0
+                         6,7,
+                         8,9,
+
+                         //i = 0 j = 1 k = 1
+                         10, 
+                         11,
+                        
+                         //i = 0 j = 1 k = 2
+                         12,13,
+                         14,15,
+
+                         //i = 1 j = 1 k = 0
+                         16,17,
+                         18,19,
+                         20,21,
+                         22,23,
+
+                         //i = 1 j = 1 k = 1
+                         24,
+                         25,
+                         26,
+                         27,
+
+                         //i = 1 j = 1 k = 2
+                         28,29,
+                         30,31,
+                         32,33,
+                         34,35,
+
+                         //i = 1 j = 2 k = 0
+                         36,37,
+                         38,39,
+
+                         //i = 1 j = 2 k = 1
+                         40,
+                         41,
+
+                         //i = 1 j = 2 k = 2
+                         42,43,
+                         44,45};
+
+    //Block major
+    double B_arr[60] = { //i = 0 j = 0 k = 0
+                         2,4,
+                         //i = 0 j = 0 k = 1
+                         6,
+                         //i = 0 j = 0 k = 2
+                         8,10,
+
+                         //i = 0 j = 1 k = 0
+                         12,14,
+                         16,18,
+
+                         //i = 0 j = 1 k = 1
+                         20,
+                         22,
+                        
+                         //i = 0 j = 1 k = 2
+                         24,26,
+                         28,30,
+
+                         //i = 0 j = 2 k = 0
+                         32,34,
+
+                         //i = 0 j = 2 k = 1
+                         36,
+
+                         //i = 0 j = 2 k = 2
+                         38,40,
+
+                         //i = 1 j = 0 k = 0
+                         42,44,
+                         46,48,
+
+                         //i = 1 j = 0 k = 1
+                         50,
+                         52,
+
+                         //i = 1 j = 0 k = 2
+                         54,56,
+                         58,60,
+
+                         //i = 1 j = 1 k = 0
+                         62,64,
+                         66,68,
+                         70,72,
+                         74,76,
+
+                         //i = 1 j = 1 k = 1
+                         78,
+                         80,
+                         82,
+                         84,
+
+                         //i = 1 j = 1 k = 2
+                         86,88,
+                         90,92,
+                         94,96,
+                         98,100,
+
+                         //i = 1 j = 2 k = 0
+                         102,104,
+                         106,108,
+
+                         //i = 1 j = 2 k = 1
+                         110,
+                         112,
+
+                         //i = 1 j = 2 k = 2
+                         114,116,
+                         118,120};
+
+    //Block major
+    double C_correct_arr[60] = { //i = 0 j = 0 k = 0
+                                 -1,-2,
+                                 //i = 0 j = 0 k = 1
+                                 -3,
+                                 //i = 0 j = 0 k = 2
+                                 -4,-5,
+
+                                 //i = 0 j = 1 k = 0
+                                 -6,-7,
+                                 -8,-9,
+
+                                 //i = 0 j = 1 k = 1
+                                 -10,
+                                 -11,
+                                
+                                 //i = 0 j = 1 k = 2
+                                 -12,-13,
+                                 -14,-15,
+
+                                 //i = 0 j = 2 k = 0
+                                 -32,-34,
+
+                                 //i = 0 j = 2 k = 1
+                                 -36,
+
+                                 //i = 0 j = 2 k = 2
+                                 -38,-40,
+
+                                 //i = 1 j = 0 k = 0
+                                 -42,-44,
+                                 -46,-48,
+
+                                 //i = 1 j = 0 k = 1
+                                 -50,
+                                 -52,
+
+                                 //i = 1 j = 0 k = 2
+                                 -54,-56,
+                                 -58,-60,
+
+                                 //i = 1 j = 1 k = 0
+                                 -46,-47,
+                                 -48,-49,
+                                 -50,-51,
+                                 -52,-53,
+
+                                 //i = 1 j = 1 k = 1
+                                 -54,
+                                 -55,
+                                 -56,
+                                 -57,
+
+                                 //i = 1 j = 1 k = 2
+                                 -58,-59, 
+                                 -60,-61,
+                                 -62,-63,
+                                 -64,-65,
+
+                                 //i = 1 j = 2 k = 0
+                                 -66,-67,
+                                 -68,-69,
+
+                                 //i = 1 j = 2 k = 1
+                                 -70,
+                                 -71,
+
+                                 //i = 1 j = 2 k = 2
+                                 -72,-73,
+                                 -74,-75};
+
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(3);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(1);
+    spb_i.split(split_points_i);
+
+    //Bispace for j 
+    sparse_bispace<1> spb_j(4);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(1);
+    split_points_j.push_back(3);
+    spb_j.split(split_points_j);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    split_points_k.push_back(3);
+    spb_k.split(split_points_k);
+
+
+    //(ij) sparsity
+    size_t seq_00_arr_1[2] = {0,0};
+    size_t seq_01_arr_1[2] = {0,1};
+    size_t seq_02_arr_1[2] = {1,1};
+    size_t seq_03_arr_1[2] = {1,2};
+
+    std::vector< sequence<2,size_t> > ij_sig_blocks(4);
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[0][i] = seq_00_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[1][i] = seq_01_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[2][i] = seq_02_arr_1[i];
+    for(size_t i = 0; i < 2; ++i) ij_sig_blocks[3][i] = seq_03_arr_1[i];
+
+    sparse_bispace<3> spb_A = spb_i % spb_j << ij_sig_blocks | spb_k;
+    sparse_bispace<3> spb_B = spb_i | spb_j | spb_k;
+    sparse_bispace<3> spb_C = spb_B;
+
+    sparse_btensor<3> A(spb_A,A_arr,true);
+    sparse_btensor<3> B(spb_B,B_arr,true);
+    sparse_btensor<3> C(spb_C);
+
+    letter i,j,k;
+    C(i|j|k) = A(i|j|k) - B(i|j|k);
+
+    sparse_btensor<3> C_correct(spb_C,C_correct_arr,true);
+    if(C != C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "C(i|j|k) = A(i|j|k) - B(i|j|k) did not produce correct result");
+    }
 }
 
 } // namespace libtensor

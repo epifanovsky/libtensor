@@ -272,12 +272,12 @@ public:
             //Ensure that this index should actually be appearing on the LHS
             if(m_le.contains(a))
             {
-                throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                throw bad_parameter(g_ns, k_clazz,"get_batch_provider()(...)",
                         __FILE__, __LINE__, "an index cannot be contracted and appear in the output");
             }
             else if(m_A_letter_expr.contains(a) && m_B_letter_expr.contains(a))
             {
-                throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                throw bad_parameter(g_ns, k_clazz,"get_batch_provider()(...)",
                         __FILE__, __LINE__, "both tensors cannot contain an uncontracted index");
             }
 
@@ -293,7 +293,7 @@ public:
             }
             else
             {
-                throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                throw bad_parameter(g_ns, k_clazz,"get_batch_provider()(...)",
                         __FILE__, __LINE__, "an index appearing in the result must be present in one input tensor");
             }
             uncontracted_loops.push_back(bl);
@@ -306,7 +306,7 @@ public:
             const letter& a = m_le.letter_at(k);
             if((!m_A_letter_expr.contains(a)) || (!m_B_letter_expr.contains(a)))
             {
-                throw bad_parameter(g_ns, k_clazz,"operator()(...)",
+                throw bad_parameter(g_ns, k_clazz,"get_batch_provider()(...)",
                         __FILE__, __LINE__, "a contracted index must appear in all RHS tensors");
             }
 
@@ -386,7 +386,7 @@ public:
 };
 
 template<size_t K,size_t M, size_t N,typename T>
-const char* contract2_batch_provider_factory<K,M,N,T>::k_clazz = "contract2_batch_provider_factor<K,M,N,T>";
+const char* contract2_batch_provider_factory<K,M,N,T>::k_clazz = "contract2_batch_provider_factory<K,M,N,T>";
 
 template<size_t K,size_t M,size_t N,typename T>
 contract2_batch_provider_factory<K,M,N,T> contract(letter_expr<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)

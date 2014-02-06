@@ -52,6 +52,8 @@ private:
     void test_contract2_3d_2d_sparse_sparse() throw(libtest::test_exception);
     void test_contract2_two_indices_3d_3d_dense_dense() throw(libtest::test_exception);
     void test_contract2_two_indices_3d_3d_sparse_sparse() throw(libtest::test_exception);
+
+    void test_subtract2_3d_dense_from_sparse() throw(libtest::test_exception);
 };
 
 } // namespace libtensor
