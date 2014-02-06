@@ -12,37 +12,90 @@ namespace libtensor {
 template<typename T>
 class subtract2_batch_provider : public batch_provider<T>
 {
-public:
-    static const char *k_clazz; //!< Class name
 private:
-    sparse_loop_list m_add_sll;
-    sparse_loop_list m_sub_sll;
-    std::vector<T*> m_add_ptrs;
-    std::vector<T*> m_sub_ptrs;
-    std::vector<size_t> m_direct_tensors;
-    std::vector<batch_provider<T>* > m_batch_providers;
+    static const char *k_clazz; //!< Class name
+    std::vector<T*> m_ptrs;
+
+    virtual void init(const std::vector<block_loop>& loops,
+                      const idx_list& direct_tensors,
+                      const std::vector<sparse_bispace_any_order>& truncated_bispaces,
+                      const std::vector<T*>& ptrs,
+                      const std::map<size_t,idx_pair>& loop_batches) 
+    { 
+        //TODO: This will break for a '-=' type operation
+        //Need to make sure C is zeroed out before contraction
+        memset(ptrs[0],0,truncated_bispaces[0].get_nnz()*sizeof(T));
+    };
+
+    virtual void run_impl(const std::vector<block_loop>& loops,
+                          const idx_list& direct_tensors,
+                          const std::vector<sparse_bispace_any_order>& truncated_bispaces,
+                          const std::vector<T*>& ptrs,
+                          const std::map<size_t,idx_pair>& loop_batches)
+    {
+        m_ptrs = ptrs;
+
+        //Due to the fact that sparse_loop_list currently fuses sparsity by default, 
+        //we must separate adding the first entry from subtracting the second
+        //Add the first operand
+        std::vector<sparse_bispace_any_order> add_bispaces(2,truncated_bispaces[0]);
+        add_bispaces.push_back(truncated_bispaces[1]);
+        std::vector<sparse_bispace_any_order> sub_bispaces(2,truncated_bispaces[0]);
+        sub_bispaces.push_back(truncated_bispaces[2]);
+        std::vector<block_loop> add_loops;
+        std::vector<block_loop> sub_loops;
+        for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
+        {
+            const block_loop& loop = loops[loop_idx];
+            block_loop bl_add(add_bispaces);
+            bl_add.set_subspace_looped(0,loop.get_subspace_looped(0));
+            bl_add.set_subspace_looped(1,loop.get_subspace_looped(0));
+            bl_add.set_subspace_looped(2,loop.get_subspace_looped(1));
+            add_loops.push_back(bl_add);
+
+            block_loop bl_sub(sub_bispaces);
+            bl_sub.set_subspace_looped(0,loop.get_subspace_looped(0));
+            bl_sub.set_subspace_looped(1,loop.get_subspace_looped(0));
+            bl_sub.set_subspace_looped(2,loop.get_subspace_looped(2));
+            sub_loops.push_back(bl_sub);
+        }
+
+        idx_list new_direct_tensors(3);
+        if(find(direct_tensors.begin(),direct_tensors.end(),0) != direct_tensors.end())
+        {
+            new_direct_tensors.push_back(0);
+            new_direct_tensors.push_back(1);
+        }
+        block_add2_kernel<T> ba2k;
+        T* saved_B_ptr = m_ptrs[2];
+        m_ptrs[2] = m_ptrs[1];
+        m_ptrs[1] = m_ptrs[0];
+        if(find(direct_tensors.begin(),direct_tensors.end(),1) != direct_tensors.end())
+        {
+            new_direct_tensors.push_back(2);
+        }
+        sparse_loop_list add_sll(add_loops,new_direct_tensors);
+        add_sll.run(ba2k,m_ptrs,loop_batches);
+
+        if(new_direct_tensors.back() == 2)
+        {
+            new_direct_tensors.pop_back();
+        }
+        if(find(direct_tensors.begin(),direct_tensors.end(),2) != direct_tensors.end())
+        {
+            new_direct_tensors.push_back(2);
+        }
+        block_subtract2_kernel<T> bs2k;
+        m_ptrs[2] = saved_B_ptr; 
+        sparse_loop_list sub_sll(sub_loops);
+        sub_sll.run(bs2k,m_ptrs,loop_batches);
+    }
 public:
-    subtract2_batch_provider(const std::vector<block_loop>& add_loops,
-                             const std::vector<block_loop>& sub_loops,
+
+    subtract2_batch_provider(const std::vector<block_loop>& loops,
                              const std::vector<size_t>& direct_tensors,
                              const std::vector<batch_provider<T>*>& batch_providers,
-                             const std::vector<T*>& ptrs) : m_add_sll(add_loops),m_sub_sll(sub_loops),m_add_ptrs(3,ptrs[1]),m_sub_ptrs(3,ptrs[2]) {}
-
-    virtual void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()))
-    {
-        //TODO: This will break for a '-=' type operation
-        memset(output_batch_ptr,0,m_add_sll.get_bispaces()[0].get_nnz()*sizeof(T));
-
-        block_add2_kernel<T> ba2k;
-        m_add_ptrs[0] = output_batch_ptr;
-        m_add_ptrs[1] = output_batch_ptr;
-        m_add_sll.run(ba2k,m_add_ptrs);
-        block_subtract2_kernel<T> bs2k;
-        m_sub_ptrs[0] = output_batch_ptr;
-        m_sub_ptrs[1] = output_batch_ptr;
-        m_sub_sll.run(bs2k,m_sub_ptrs);
-    }
-
+                             const std::vector<T*>& ptrs) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,0) {}
 };
 
 template<size_t N,typename T>
@@ -76,14 +129,13 @@ public:
         sparse_bispace_any_order C_bispace = C.get_bispace();
 
         //To obtain correct results 
-        std::vector<sparse_bispace_any_order> add_bispaces(2,C_bispace);
-        add_bispaces.push_back(m_A_bispace);
-        std::vector<sparse_bispace_any_order> sub_bispaces(2,C_bispace);  
-        sub_bispaces.push_back(m_B_bispace);
+        std::vector<sparse_bispace_any_order> bispaces(1,C_bispace);
+        bispaces.push_back(m_A_bispace);
+        bispaces.push_back(m_B_bispace);
 
         //We must use separate loops so that sparse fusion does not occur when subtracting
         //sparse from dense
-        std::vector<block_loop> add_loops;
+        std::vector<block_loop> loops;
         std::vector<block_loop> sub_loops;
         for(size_t i = 0; i < N; ++i)
         {
@@ -99,17 +151,12 @@ public:
                         "Permutations are not supported for subtraction at this time");
             }
 
-            block_loop bl_add(add_bispaces);
-            bl_add.set_subspace_looped(0,i);
-            bl_add.set_subspace_looped(1,i);
-            bl_add.set_subspace_looped(2,i);
-            add_loops.push_back(bl_add);
+            block_loop bl(bispaces);
+            bl.set_subspace_looped(0,i);
+            bl.set_subspace_looped(1,i);
+            bl.set_subspace_looped(2,i);
 
-            block_loop bl_sub(sub_bispaces);
-            bl_sub.set_subspace_looped(0,i);
-            bl_sub.set_subspace_looped(1,i);
-            bl_sub.set_subspace_looped(2,i);
-            sub_loops.push_back(bl_sub);
+            loops.push_back(bl);
         }
 
         //Direct tensors?
@@ -134,7 +181,7 @@ public:
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
-        return new subtract2_batch_provider<T>(add_loops,sub_loops,direct_tensors,batch_providers,ptrs);
+        return new subtract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs);
     };
 };
 

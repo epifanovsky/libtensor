@@ -30,7 +30,7 @@ private:
                             //size_t m,size_t n,size_t k,
                             //size_t lda,size_t ldb,size_t ldc,
                             //size_t loop_idx = 0);
-    const std::vector< block_loop >& m_loops;
+    std::vector<block_loop> m_loops;
     size_t m_n_contracted_inds;
     bool m_A_trans;
     bool m_B_trans;
