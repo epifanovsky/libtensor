@@ -2,7 +2,6 @@
 #define LIBTENSOR_IFACE_EXPR_LHS_H
 
 #include "expr_rhs.h"
-#include "labeled.h"
 
 namespace libtensor {
 namespace iface {
@@ -41,7 +40,7 @@ public:
     \ingroup libtensor_iface
  **/
 template<size_t N, typename T>
-class labeled_lhs : virtual public labeled<N> {
+class labeled_lhs {
 private:
     expr_lhs<N, T> &m_lhs; //!< Left-hand-side
     letter_expr<N> m_label; //!< Letter label
