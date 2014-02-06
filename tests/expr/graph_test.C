@@ -10,6 +10,7 @@ void graph_test::perform() throw(libtest::test_exception) {
 
     test_1();
     test_2();
+    test_3();
 }
 
 
@@ -303,5 +304,74 @@ void graph_test::test_2() {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
+
+/** \brief Tests the copy constructor
+ **/
+void graph_test::test_3() {
+
+    static const char testname[] = "graph_test::test_3()";
+
+    try {
+
+    graph g0;
+
+    test_node n1(1), n2(2), n3(3), n4(4);
+    std::vector<graph::node_id_t> ids(4, 0);
+    ids[0] = g0.add(n1);
+    ids[1] = g0.add(n2);
+    ids[2] = g0.add(n3);
+    ids[3] = g0.add(n4);
+
+    g0.add(ids[0], ids[1]);
+    g0.add(ids[0], ids[2]);
+    g0.add(ids[1], ids[2]);
+    g0.add(ids[2], ids[3]);
+    g0.add(ids[3], ids[1]);
+
+    graph g(g0);
+
+    if (! g.is_connected(ids[0], ids[1])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (1->2).");
+    }
+    if (! g.is_connected(ids[0], ids[2])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (1->3).");
+    }
+    if (! g.is_connected(ids[0], ids[3])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (1->4).");
+    }
+    if (g.is_connected(ids[1], ids[0])) {
+        fail_test(testname, __FILE__, __LINE__, "Connection (2->1).");
+    }
+    if (! g.is_connected(ids[1], ids[2])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (2->3).");
+    }
+    if (! g.is_connected(ids[1], ids[3])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (2->4).");
+    }
+    if (g.is_connected(ids[2], ids[0])) {
+        fail_test(testname, __FILE__, __LINE__, "Connection (3->1).");
+    }
+    if (! g.is_connected(ids[2], ids[1])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (3->2).");
+    }
+    if (! g.is_connected(ids[2], ids[3])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (3->4).");
+    }
+    if (g.is_connected(ids[3], ids[0])) {
+        fail_test(testname, __FILE__, __LINE__, "Connection (4->1).");
+    }
+    if (! g.is_connected(ids[3], ids[1])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (4->2).");
+    }
+    if (! g.is_connected(ids[3], ids[2])) {
+        fail_test(testname, __FILE__, __LINE__, "No connection (4->3).");
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
 
 } // namespace libtensor

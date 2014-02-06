@@ -21,7 +21,8 @@ void node_scalar_test::test_1() {
 
     try {
 
-    node_scalar<double> n1(0.2);
+    double d = 0.2;
+    node_scalar<double> n1(d);
 
     if(n1.get_n() != 0) {
         fail_test(testname, __FILE__, __LINE__, "n1.get_n() != 0");
