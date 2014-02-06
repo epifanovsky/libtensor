@@ -20,7 +20,6 @@
 #include "letter_test.h"
 #include "mult_test.h"
 #include "symm_test.h"
-#include "tensor_list_test.h"
 #include "trace_test.h"
 
 using libtest::unit_test_factory;
@@ -54,7 +53,6 @@ namespace libtensor {
      - libtensor::letter_expr_test
      - libtensor::mult_test
      - libtensor::symm_test
-     - libtensor::tensor_list_test
      - libtensor::trace_test
 
     \ingroup libtensor_tests
@@ -79,7 +77,6 @@ private:
     unit_test_factory<letter_expr_test> m_utf_letter_expr;
     unit_test_factory<mult_test> m_utf_mult;
     unit_test_factory<symm_test> m_utf_symm;
-    unit_test_factory<tensor_list_test> m_utf_tensor_list;
     unit_test_factory<trace_test> m_utf_trace;
 
 public:

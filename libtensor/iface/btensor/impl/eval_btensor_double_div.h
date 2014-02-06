@@ -3,7 +3,6 @@
 
 #include <libtensor/expr/node_div.h>
 #include "../eval_btensor.h"
-#include "interm.h"
 
 namespace libtensor {
 namespace iface {

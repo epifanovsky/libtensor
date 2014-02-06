@@ -24,7 +24,6 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("letter_expr", m_utf_letter_expr);
     add_test("mult", m_utf_mult);
     add_test("symm", m_utf_symm);
-    add_test("tensor_list", m_utf_tensor_list);
     add_test("trace", m_utf_trace);
 }
 

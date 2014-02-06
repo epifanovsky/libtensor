@@ -174,9 +174,6 @@ expr_tree::node_id_t eval_node::gather_info(
 
 
 class eval_assign_tensor {
-public:
-    typedef tensor_list::tid_t tid_t;
-
 private:
     const expr_tree &m_tree;
     const node &m_lhs; //!< Left-hand side node (has to be ident or interm)

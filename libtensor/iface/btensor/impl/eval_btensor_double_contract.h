@@ -4,7 +4,6 @@
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/iface/btensor.h>
 #include "../eval_btensor.h"
-#include "interm.h"
 
 namespace libtensor {
 namespace iface {

@@ -246,7 +246,6 @@ set(SRC_IFACE
     iface/letter_test.C
     iface/mult_test.C
     iface/symm_test.C
-    iface/tensor_list_test.C
     iface/trace_test.C
 )
 
