@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_PRODUCT_H
 
 #include <vector>
-#include "node.h"
+#include <libtensor/expr/dag/node.h>
 
 namespace libtensor {
 namespace expr {

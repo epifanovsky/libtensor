@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_NODE_INTERM_H
 
 #include <map>
-#include <libtensor/expr/node.h>
+#include <libtensor/expr/dag/node.h>
 #include "btensor_placeholder.h"
 
 namespace libtensor {

@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include <vector>
 #include <libtensor/exception.h>
-#include "node.h"
+#include <libtensor/expr/dag/node.h>
 
 namespace libtensor {
 namespace expr {

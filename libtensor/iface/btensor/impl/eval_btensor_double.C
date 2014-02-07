@@ -1,7 +1,7 @@
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/expr/node_contract.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_diag.h>
 #include <libtensor/expr/node_dirsum.h>
 #include <libtensor/expr/node_div.h>
@@ -113,7 +113,7 @@ void eval_node::evaluate(const node &lhs) {
     expr_tree::node_id_t rhs = gather_info<N>(m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    if(n.get_op().compare(node_ident_base::k_op_type) == 0 ||
+    if(n.get_op().compare(node_ident::k_op_type) == 0 ||
             n.get_op().compare(node_interm_base::k_op_type) == 0) {
 
         eval_btensor_double::copy(m_tree, rhs, m_add).evaluate(tr, lhs);
@@ -277,8 +277,8 @@ void eval_btensor_double_impl::verify_scalar(const node &t) {
 
 void eval_btensor_double_impl::verify_tensor(const node &t) {
 
-    if(t.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident_base &ti = t.recast_as<node_ident_base>();
+    if(t.get_op().compare(node_ident::k_op_type) == 0) {
+        const node_ident &ti = t.recast_as<node_ident>();
         if(ti.get_t() != typeid(double)) {
             throw not_implemented("iface", "eval_btensor", "verify_tensor()",
                 __FILE__, __LINE__);

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_transform.h>
 #include "node_transform_test.h"
 

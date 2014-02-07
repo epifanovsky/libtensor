@@ -6,18 +6,18 @@
 namespace libtensor {
 
 
-/** \brief Tests the libtensor::node_ident class
+/** \brief Tests the libtensor::expr::node_ident_any_tensor class
 
     \ingroup libtensor_tests_iface
 **/
-class node_ident_test : public libtest::unit_test {
+class node_ident_any_tensor_test : public libtest::unit_test {
 public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
     void test_1();
     void test_2();
-    void test_3();
+
 };
 
 

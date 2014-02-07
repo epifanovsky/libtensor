@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <libtensor/exception.h>
-#include <libtensor/expr/graph.h>
+#include <libtensor/expr/dag/graph.h>
 #include "graph_test.h"
 
 namespace libtensor {

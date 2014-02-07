@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_EXPR_TENSOR_H
 
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/expr/node_null.h>
+#include <libtensor/expr/dag/node_null.h>
 #include "any_tensor.h"
 #include "labeled_lhs_rhs.h"
 

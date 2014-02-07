@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_ADD_H
 
 #include <map>
-#include "node.h"
+#include <libtensor/expr/dag/node.h>
 
 namespace libtensor {
 namespace expr {

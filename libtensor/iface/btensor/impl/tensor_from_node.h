@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TENSOR_FROM_NODE_H
 #define LIBTENSOR_TENSOR_FROM_NODE_H
 
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include "node_interm.h"
 
 namespace libtensor {
@@ -49,10 +49,10 @@ btensor<N, T> &btensor_from_node<N, T>::get_btensor() const {
 
     const node &n = m_tree.get_vertex(m_leaf);
 
-    if(n.get_op().compare(node_ident_base::k_op_type) == 0) {
+    if(n.get_op().compare(node_ident::k_op_type) == 0) {
 
-        const node_ident<N, double> &ni =
-            n.recast_as< node_ident<N, double> >();
+        const node_ident_any_tensor<N, double> &ni =
+            n.recast_as< node_ident_any_tensor<N, double> >();
         return btensor<N, double>::from_any_tensor(ni.get_tensor());
 
     } else if(n.get_op().compare(node_interm_base::k_op_type) == 0) {
@@ -76,10 +76,10 @@ btensor<N, T> &btensor_from_node<N, T>::get_or_create_btensor(
 
     const node &n = m_tree.get_vertex(m_leaf);
 
-    if(n.get_op().compare(node_ident_base::k_op_type) == 0) {
+    if(n.get_op().compare(node_ident::k_op_type) == 0) {
 
-        const node_ident<N, double> &ni =
-            n.recast_as< node_ident<N, double> >();
+        const node_ident_any_tensor<N, double> &ni =
+            n.recast_as< node_ident_any_tensor<N, double> >();
         return btensor<N, double>::from_any_tensor(ni.get_tensor());
 
     } else if(n.get_op().compare(node_interm_base::k_op_type) == 0) {
@@ -103,7 +103,7 @@ expr_tree::node_id_t btensor_from_node<N, T>::inspect_node(
 
     const node &n = tree.get_vertex(head);
 
-    if(n.get_op().compare(node_ident_base::k_op_type) == 0) {
+    if(n.get_op().compare(node_ident::k_op_type) == 0) {
         return head;
     } else if(n.get_op().compare(node_interm_base::k_op_type) == 0) {
         return head;
@@ -129,9 +129,9 @@ expr_tree::node_id_t btensor_from_node<N, T>::inspect_node(
 template<size_t N>
 btensor<N, double> &tensor_from_node(const node &n) {
 
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
+    if (n.get_op().compare(node_ident::k_op_type) == 0) {
+        const node_ident_any_tensor<N, double> &ni =
+                n.recast_as< node_ident_any_tensor<N, double> >();
 
         return btensor<N, double>::from_any_tensor(ni.get_tensor());
     }
@@ -155,9 +155,9 @@ template<size_t N>
 btensor<N, double> &tensor_from_node(const node &n,
     const block_index_space<N> &bis) {
 
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident<N, double> &ni =
-                n.recast_as< node_ident<N, double> >();
+    if (n.get_op().compare(node_ident::k_op_type) == 0) {
+        const node_ident_any_tensor<N, double> &ni =
+                n.recast_as< node_ident_any_tensor<N, double> >();
 
         return btensor<N, double>::from_any_tensor(ni.get_tensor());
     }

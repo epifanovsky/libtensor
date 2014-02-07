@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_symmetrize2.h>
 #include <libtensor/block_tensor/btod_symmetrize3.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_symm.h>
 #include "metaprog.h"
 #include "node_interm.h"

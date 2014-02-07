@@ -1,7 +1,7 @@
 #include <memory>
 #include <libtensor/exception.h>
 #include <libtensor/expr/node_diag.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include "node_diag_test.h"
 
 namespace libtensor {

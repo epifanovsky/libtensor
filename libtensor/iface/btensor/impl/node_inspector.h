@@ -4,7 +4,7 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/expr/node.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_transform.h>
 
 namespace libtensor {
@@ -37,7 +37,7 @@ public:
     node_with_transf<N> gather_transf() const;
 
     template<size_t N>
-    const node_ident<N, double> &extract_ident() const;
+    const node_ident_any_tensor<N, double> &extract_ident() const;
 
 private:
     template<size_t N>
@@ -71,11 +71,11 @@ node_with_transf<N> node_inspector::gather_transf() const {
 
 
 template<size_t N>
-const node_ident<N, double> &node_inspector::extract_ident() const {
+const node_ident_any_tensor<N, double> &node_inspector::extract_ident() const {
 
-    if(m_node.get_op().compare(node_ident_base::k_op_type) == 0) {
+    if(m_node.get_op().compare(node_ident::k_op_type) == 0) {
 
-        return m_node.recast_as< node_ident<N, double> >();
+        return m_node.recast_as< node_ident_any_tensor<N, double> >();
 
     } else if(m_node.get_op().compare(node_transform_base::k_op_type) == 0) {
 

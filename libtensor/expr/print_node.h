@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_PRINT_NODE_H
 
 #include <iostream>
-#include "node.h"
+#include <libtensor/expr/dag/node.h>
 
 namespace libtensor {
 namespace expr {

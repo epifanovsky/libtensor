@@ -1,8 +1,8 @@
-#ifndef LIBTENSOR_EXPR_NODE_IDENT_H
-#define LIBTENSOR_EXPR_NODE_IDENT_H
+#ifndef LIBTENSOR_EXPR_NODE_IDENT_ANY_TENSOR_H
+#define LIBTENSOR_EXPR_NODE_IDENT_ANY_TENSOR_H
 
+#include <libtensor/expr/dag/node_ident.h>
 #include <libtensor/iface/any_tensor.h>
-#include "node_ident_base.h"
 
 namespace libtensor {
 namespace expr {
@@ -13,24 +13,24 @@ namespace expr {
     \ingroup libtensor_expr
  **/
 template<size_t N, typename T>
-class node_ident : public node_ident_base {
+class node_ident_any_tensor : public node_ident {
 private:
     iface::any_tensor<N, T> &m_t;
 
 public:
     /** \brief Creates an identity node
      **/
-    node_ident(iface::any_tensor<N, T> &t) : node_ident_base(N), m_t(t)
+    node_ident_any_tensor(iface::any_tensor<N, T> &t) : node_ident(N), m_t(t)
     { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~node_ident() { }
+    virtual ~node_ident_any_tensor() { }
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_ident *clone() const {
-        return new node_ident(*this);
+    virtual node_ident_any_tensor *clone() const {
+        return new node_ident_any_tensor(*this);
     }
 
     virtual const std::type_info &get_t() const {
@@ -45,7 +45,7 @@ public:
 
     /** \brief Checks if both identity nodes contain the same tensor
      **/
-    virtual bool operator==(const node_ident_base &n) const;
+    virtual bool operator==(const node_ident &n) const;
 
 private:
     bool tensor_equals(any_tensor<N, T> &t) {
@@ -55,11 +55,11 @@ private:
 
 
 template<size_t N, typename T>
-bool node_ident<N, T>::operator==(const node_ident_base &n) const {
+bool node_ident_any_tensor<N, T>::operator==(const node_ident &n) const {
 
     if (n.get_n() == N || n.get_t() == typeid(T)) {
         iface::any_tensor<N, T> &t2 =
-                static_cast<const node_ident<N, T> &>(n).get_tensor();
+                static_cast<const node_ident_any_tensor<N, T> &>(n).get_tensor();
         return &m_t == &t2;
     }
 
@@ -70,4 +70,4 @@ bool node_ident<N, T>::operator==(const node_ident_base &n) const {
 } // namespace expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_EXPR_NODE_IDENT_H
+#endif // LIBTENSOR_EXPR_NODE_IDENT_ANY_TENSOR_H

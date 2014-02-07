@@ -11,9 +11,14 @@ namespace libtensor {
 namespace expr {
 
 
-/** \brief Implementation of a directed graph of nodes
-
+/** \defgroup libtensor_expr_dag Graph of tensor expressions
     \ingroup libtensor_expr
+ **/
+
+
+/** \brief Directed acyclic graph (DAG) of a tensor expression
+
+    \ingroup libtensor_expr_dag
  **/
 class graph : public noncopyable {
 public:
@@ -33,9 +38,12 @@ private:
     map_t m_lst; //!< List of vertexes
 
 public:
-    typedef map_t::const_iterator iterator;
+    typedef map_t::const_iterator iterator; //!< Node iterator type
 
 public:
+    //! \name Construction and destruction
+    //@{
+
     /** \brief Constructs an empty graph
      **/
     graph() { }
@@ -44,9 +52,11 @@ public:
      **/
     graph(const graph &e);
 
-    /** \brief Destructor
+    /** \brief Virtual destructor
      **/
     virtual ~graph();
+
+    //@}
 
     //! \name Modifiers
     //@{

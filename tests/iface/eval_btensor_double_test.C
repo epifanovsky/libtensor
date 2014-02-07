@@ -1,8 +1,7 @@
 #include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
-//#include <libtensor/expr/eval_plan.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_contract.h>
 #include <libtensor/expr/node_transform.h>
 #include <libtensor/iface/btensor.h>
@@ -62,7 +61,7 @@ void eval_btensor_double_test::test_copy_1() {
 
 //    eval_plan plan;
 
-    node_ident<2, double> nid1(t_oo), nid2(t_ov), nid3(t_vv);
+    node_ident_any_tensor<2, double> nid1(t_oo), nid2(t_ov), nid3(t_vv);
 //    plan.insert_assignment(node_assign(rid_oo, nid1));
 //    plan.insert_assignment(node_assign(rid_ov, nid2));
 //    plan.insert_assignment(node_assign(rid_vv, nid3));
@@ -115,7 +114,7 @@ void eval_btensor_double_test::test_copy_2() {
     p01[0] = 0; p01[1] = 1;
     p10[0] = 1; p10[1] = 0;
 
-    node_ident<2, double> nid1(t_oo), nid2(t_ov), nid3(t_vv);
+    node_ident_any_tensor<2, double> nid1(t_oo), nid2(t_ov), nid3(t_vv);
     node_transform<double> ntr1(p01, scalar_transf<double>(-2.0)),
         ntr2(p01, scalar_transf<double>(1.0)),
         ntr3(p10, scalar_transf<double>(1.5));
@@ -165,7 +164,7 @@ void eval_btensor_double_test::test_copy_3() {
     p102[0] = 1; p102[1] = 0; p102[2] = 2;
     p021[0] = 0; p021[1] = 2; p021[2] = 1;
 
-    node_ident<3, double> nid(t_ooo);
+    node_ident_any_tensor<3, double> nid(t_ooo);
     node_transform<double> ntr1(p102, scalar_transf<double>(1.0)),
         ntr2(p021, scalar_transf<double>(1.0));
 //    plan.insert_assignment(node_assign(rid_ooo, ntr2));
@@ -206,7 +205,7 @@ void eval_btensor_double_test::test_contract_1() {
         btod_contract2<1, 1, 1>(contr2, t_ov, t_vv).perform(r2_ov_ref);
     }
 
-    node_ident<2, double> nid1(t_oo), nid2(t_ov), nid3(t_vv);
+    node_ident_any_tensor<2, double> nid1(t_oo), nid2(t_ov), nid3(t_vv);
     std::multimap<size_t, size_t> contr1, contr2;
     contr1.insert(std::pair<size_t, size_t>(0, 2));
     contr1.insert(std::pair<size_t, size_t>(1, 3));

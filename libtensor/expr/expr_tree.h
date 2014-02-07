@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_EXPR_TREE_H
 #define LIBTENSOR_EXPR_EXPR_TREE_H
 
-#include "graph.h"
+#include "dag/graph.h"
 
 namespace libtensor {
 namespace expr {

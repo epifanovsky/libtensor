@@ -1,6 +1,6 @@
 #include <string>
 #include <libtensor/core/scalar_transf_double.h>
-#include "node_ident.h"
+#include <libtensor/expr/dag/node_ident.h>
 #include "node_transform.h"
 #include "print_node.h"
 
@@ -10,8 +10,8 @@ namespace expr {
 
 void print_node(const node &n, std::ostream &os) {
 
-    if(n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident_base &n1 = dynamic_cast<const node_ident_base&>(n);
+    if(n.get_op().compare(node_ident::k_op_type) == 0) {
+        const node_ident &n1 = dynamic_cast<const node_ident&>(n);
         os << "(ident <" << n1.get_n() << ", " << n1.get_t().name() << ">)";
     } else {
         os << "(" << n.get_op();

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <set>
 #include <libtensor/expr/node_add.h>
-#include <libtensor/expr/node_assign.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/dag/node_assign.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_scalar.h>
 #include <libtensor/expr/node_transform.h>
 #include <libtensor/expr/print_tree.h>
@@ -157,7 +157,7 @@ void node_renderer::render()  {
         render_transform();
     } else if(n.get_op().compare(node_add::k_op_type) == 0) {
         render_add();
-    } else if((n.get_op().compare(node_ident_base::k_op_type) == 0) ||
+    } else if((n.get_op().compare(node_ident::k_op_type) == 0) ||
             (n.get_op().compare(node_interm_base::k_op_type) == 0)) {
         render_ident();
     } else {
@@ -350,8 +350,8 @@ void node_renderer::verify_lvalue(const node &n) {
 
     static const char method[] = "verify_lvalue(const node &)";
 
-    if (n.get_op().compare(node_ident_base::k_op_type) == 0) {
-        const node_ident_base &nn = n.recast_as<node_ident_base>();
+    if (n.get_op().compare(node_ident::k_op_type) == 0) {
+        const node_ident &nn = n.recast_as<node_ident>();
         if (nn.get_t() != typeid(double)) {
             throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
         }
@@ -398,17 +398,17 @@ void eval_tree_builder_btensor::build() {
     for (expr_tree::iterator i = m_tree.begin(); i != m_tree.end(); i++) {
 
         const node &ni = m_tree.get_vertex(i);
-        if (ni.get_op().compare(node_ident_base::k_op_type) != 0) continue;
+        if (ni.get_op().compare(node_ident::k_op_type) != 0) continue;
 
-        const node_ident_base &nii = ni.recast_as<node_ident_base>();
+        const node_ident &nii = ni.recast_as<node_ident>();
 
         expr_tree::iterator j = i; j++;
         for (; j != m_tree.end(); j++) {
 
             const node &nj = m_tree.get_vertex(j);
-            if (nj.get_op().compare(node_ident_base::k_op_type) != 0) continue;
+            if (nj.get_op().compare(node_ident::k_op_type) != 0) continue;
 
-            const node_ident_base &nij = nj.recast_as<node_ident_base>();
+            const node_ident &nij = nj.recast_as<node_ident>();
 
             if (nii == nij) {
                 expr_tree::node_id_t idi = m_tree.get_id(i);

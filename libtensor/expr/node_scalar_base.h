@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_SCALAR_BASE_H
 
 #include <typeinfo>
-#include "node.h"
+#include <libtensor/expr/dag/node.h>
 
 namespace libtensor {
 namespace expr {

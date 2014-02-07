@@ -7,9 +7,16 @@ namespace libtensor {
 namespace expr {
 
 
-/** \brief Assignment node of the expression tree
+/** \brief Tensor expression node: assignment
 
-    \ingroup libtensor_expr
+    Assignment is a binary operation that represents the evaluation of the
+    right-hand-side (rhs) and placement of the result into the left-hand-side
+    (lhs). The first argument is lhs, the second argument is rhs.
+    The expression on the lhs must be assignable (e.g. node_ident).
+
+    \sa node, node_ident
+
+    \ingroup libtensor_expr_dag
  **/
 class node_assign : public node {
 public:
@@ -20,7 +27,8 @@ public:
         \param n Tensor order
      **/
     node_assign(size_t n) :
-        node(node_assign::k_op_type, n) { }
+        node(k_op_type, n)
+    { }
 
     /** \brief Virtual destructor
      **/
@@ -28,9 +36,10 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_assign *clone() const {
+    virtual node *clone() const {
         return new node_assign(*this);
     }
+
 };
 
 

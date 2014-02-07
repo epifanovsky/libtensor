@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_NODE_DIRSUM_H
 #define LIBTENSOR_EXPR_NODE_DIRSUM_H
 
-#include "node.h"
+#include <libtensor/expr/dag/node.h>
 
 namespace libtensor {
 namespace expr {

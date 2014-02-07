@@ -4,9 +4,9 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/expr/node_assign.h>
+#include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/expr_tree.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/node_transform.h>
 #include "bispace.h"
 #include "btensor_i.h"
@@ -64,7 +64,7 @@ void btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     expr::node_assign n1(N);
     expr::expr_tree e(n1);
     expr::expr_tree::node_id_t id = e.get_root();
-    expr::node_ident<N, T> n2(*this);
+    expr::node_ident_any_tensor<N, T> n2(*this);
     e.add(id, n2);
 
     permutation<N> px = label.permutation_of(rhs.get_label());

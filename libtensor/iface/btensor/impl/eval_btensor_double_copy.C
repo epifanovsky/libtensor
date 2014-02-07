@@ -1,5 +1,5 @@
 #include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/expr/node_ident.h>
+#include <libtensor/expr/node_ident_any_tensor.h>
 #include "metaprog.h"
 #include "node_interm.h"
 #include "tensor_from_node.h"

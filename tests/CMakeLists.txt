@@ -218,7 +218,7 @@ set(SRC_EXPR
     expr/node_contract_test.C
     expr/node_diag_test.C
     expr/node_dot_product_test.C
-    expr/node_ident_test.C
+    expr/node_ident_any_tensor_test.C
     expr/node_product_test.C
     expr/node_scalar_test.C
     expr/node_trace_test.C
