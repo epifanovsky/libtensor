@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/btod_dotprod.h>
 #include <libtensor/expr/node_dot_product.h>
-#include <libtensor/expr/node_scalar.h>
+#include <libtensor/expr/dag/node_scalar.h>
 #include "metaprog.h"
 #include "node_interm.h"
 #include "tensor_from_node.h"
@@ -91,7 +91,7 @@ void eval_dot_product_impl::do_evaluate(expr_tree::node_id_t lhs) {
     d *= btb.get_transf().get_scalar_tr().get_coeff();
 
     const node_scalar<double> &ns = m_tree.get_vertex(lhs).recast_as< node_scalar<double> >();
-    ns.get_c() = d;
+    ns.get_scalar() = d;
 }
 
 

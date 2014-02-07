@@ -36,11 +36,20 @@ public:
      **/
     virtual ~node_ident() { }
 
-    virtual const std::type_info &get_t() const = 0;
+    /** \brief Returns the element type in the tensor
+     **/
+    virtual const std::type_info &get_type() const = 0;
 
     /** \brief Checks if both identity nodes contain the same tensor
      **/
-    virtual bool operator==(const node_ident &n) const = 0;
+    virtual bool equals(const node_ident &n) const = 0;
+
+    /** \brief Comparison of two identity nodes returns true if they contain
+            the same tensor
+     **/
+    bool operator==(const node_ident &other) const {
+        return equals(other);
+    }
 
 };
 

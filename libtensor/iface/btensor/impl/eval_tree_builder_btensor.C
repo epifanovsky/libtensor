@@ -3,7 +3,7 @@
 #include <libtensor/expr/node_add.h>
 #include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/node_ident_any_tensor.h>
-#include <libtensor/expr/node_scalar.h>
+#include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/node_transform.h>
 #include <libtensor/expr/print_tree.h>
 #include "node_interm.h"
@@ -352,7 +352,7 @@ void node_renderer::verify_lvalue(const node &n) {
 
     if (n.get_op().compare(node_ident::k_op_type) == 0) {
         const node_ident &nn = n.recast_as<node_ident>();
-        if (nn.get_t() != typeid(double)) {
+        if (nn.get_type() != typeid(double)) {
             throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
         }
     }

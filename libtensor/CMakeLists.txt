@@ -250,6 +250,7 @@ set(SRC_EXPR
     expr/dag/node_assign.C
     expr/dag/node_ident.C
     expr/dag/node_null.C
+    expr/dag/node_scalar.C
 )
 
 if(WITH_ARMADILLO)

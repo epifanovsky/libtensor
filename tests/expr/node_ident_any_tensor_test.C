@@ -48,13 +48,13 @@ void node_ident_any_tensor_test::test_1() {
     if(i1b.get_n() != 1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
     }
-    if(i1b.get_t() != typeid(int)) {
+    if(i1b.get_type() != typeid(int)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
     }
     if(i2b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
     }
-    if(i2b.get_t() != typeid(double)) {
+    if(i2b.get_type() != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
     }
 
@@ -87,19 +87,19 @@ void node_ident_any_tensor_test::test_2() {
     if(i1b.get_n() != 1) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (1).");
     }
-    if(i1b.get_t() != typeid(double)) {
+    if(i1b.get_type() != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (1).");
     }
     if(i2b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (2).");
     }
-    if(i2b.get_t() != typeid(double)) {
+    if(i2b.get_type() != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (2).");
     }
     if(i3b.get_n() != 2) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor order (3).");
     }
-    if(i3b.get_t() != typeid(double)) {
+    if(i3b.get_type() != typeid(double)) {
         fail_test(testname, __FILE__, __LINE__, "Wrong tensor type (3).");
     }
 

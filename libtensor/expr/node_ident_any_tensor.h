@@ -33,7 +33,9 @@ public:
         return new node_ident_any_tensor(*this);
     }
 
-    virtual const std::type_info &get_t() const {
+    /** \brief Returns the element type in the tensor
+     **/
+    virtual const std::type_info &get_type() const {
         return typeid(T);
     }
 
@@ -45,7 +47,7 @@ public:
 
     /** \brief Checks if both identity nodes contain the same tensor
      **/
-    virtual bool operator==(const node_ident &n) const;
+    virtual bool equals(const node_ident &n) const;
 
 private:
     bool tensor_equals(any_tensor<N, T> &t) {
@@ -55,9 +57,9 @@ private:
 
 
 template<size_t N, typename T>
-bool node_ident_any_tensor<N, T>::operator==(const node_ident &n) const {
+bool node_ident_any_tensor<N, T>::equals(const node_ident &n) const {
 
-    if (n.get_n() == N || n.get_t() == typeid(T)) {
+    if (n.get_n() == N || n.get_type() == typeid(T)) {
         iface::any_tensor<N, T> &t2 =
                 static_cast<const node_ident_any_tensor<N, T> &>(n).get_tensor();
         return &m_t == &t2;

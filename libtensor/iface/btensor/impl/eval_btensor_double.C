@@ -6,7 +6,7 @@
 #include <libtensor/expr/node_dirsum.h>
 #include <libtensor/expr/node_div.h>
 #include <libtensor/expr/node_dot_product.h>
-#include <libtensor/expr/node_scalar.h>
+#include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/node_trace.h>
 #include <libtensor/expr/node_transform.h>
 #include "../eval_btensor.h"
@@ -279,7 +279,7 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
 
     if(t.get_op().compare(node_ident::k_op_type) == 0) {
         const node_ident &ti = t.recast_as<node_ident>();
-        if(ti.get_t() != typeid(double)) {
+        if(ti.get_type() != typeid(double)) {
             throw not_implemented("iface", "eval_btensor", "verify_tensor()",
                 __FILE__, __LINE__);
         }
