@@ -183,9 +183,9 @@ dimensions<N + M + K> tod_ewmult2<N, M, K>::make_dimsc(
     dimsb1.permute(permb);
 
     index<k_orderc> i1, i2;
-    for(size_t i = 0; i < N; i++) i2[i] = dimsa1[i] - 1;
-    for(size_t i = 0; i < M; i++) i2[N + i] = dimsb1[i] - 1;
-    for(size_t i = 0; i < K; i++) {
+    for(size_t i = 0; i != N; i++) i2[i] = dimsa1[i] - 1;
+    for(size_t i = 0; i != M; i++) i2[N + i] = dimsb1[i] - 1;
+    for(size_t i = 0; i != K; i++) {
         if(dimsa1[N + i] != dimsb1[M + i]) {
             throw bad_dimensions(g_ns, k_clazz, method,
                 __FILE__, __LINE__, "ta,tb");

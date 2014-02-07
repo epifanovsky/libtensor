@@ -5,8 +5,8 @@
 #include <memory>
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/bad_dimensions.h>
+#include <libtensor/core/contraction2_align.h>
 #include <libtensor/core/contraction2_list_builder.h>
-#include <libtensor/core/permutation_builder.h>
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/kern_dcopy.h>
@@ -125,9 +125,12 @@ void tod_contract2<N, M, K>::perform(bool zero,
         std::list<aligned_args> argslst;
         for(typename std::list<args>::iterator i = m_argslst.begin();
             i != m_argslst.end(); ++i) {
-            aligned_args ar(*i);
-            align(i->contr.get_conn(), ar.perma, ar.permb, ar.permc);
-            if(ar.d != 0.0) argslst.push_back(ar);
+
+        	if (i->d == 0.0) continue;
+
+        	contraction2_align<N, M, K> align(i->contr);
+        	argslst.push_back(aligned_args(*i,
+        			align.get_perma(), align.get_permb(), align.get_permc()));
         }
         tod_contract2<N, M, K>::stop_timer("align");
 
@@ -234,171 +237,6 @@ void tod_contract2<N, M, K>::perform(bool zero,
     }
 
     tod_contract2<N, M, K>::stop_timer();
-}
-
-
-template<size_t N, size_t M, size_t K>
-void tod_contract2<N, M, K>::align(
-    const sequence<2 * (N + M + K), size_t> &conn,
-    permutation<N + K> &perma, permutation<M + K> &permb,
-    permutation<N + M> &permc) {
-
-    //  This algorithm reorders indexes in A, B, C so that the whole contraction
-    //  can be done in a single matrix multiplication.
-    //  Returned permutations perma, permb, permc need to be applied to
-    //  the indexes of A, B, and C to get the matricized form.
-
-    //  Numbering scheme:
-    //  0     .. N - 1         -- outer indexes from A
-    //  N     .. N + M - 1     -- outer indexes from B
-    //  N + M .. N + M + K - 1 -- inner indexes
-
-    size_t ioa = 0, iob = N, ii = N + M;
-
-    sequence<k_ordera, size_t> idxa1(0), idxa2(0);
-    sequence<k_orderb, size_t> idxb1(0), idxb2(0);
-    sequence<k_orderc, size_t> idxc1(0), idxc2(0);
-
-    //  Build initial index ordering
-
-    for(size_t i = 0; i < k_orderc; i++) {
-        size_t j = conn[i] - k_orderc;
-        if(j < k_ordera) {
-            idxc1[i] = ioa;
-            idxa1[j] = ioa;
-            ioa++;
-        } else {
-            j -= k_ordera;
-            idxc1[i] = iob;
-            idxb1[j] = iob;
-            iob++;
-        }
-    }
-    for(size_t i = 0; i < k_ordera; i++) {
-        if(conn[k_orderc + i] < k_orderc) continue;
-        size_t j = conn[k_orderc + i] - k_orderc - k_ordera;
-        idxa1[i] = ii;
-        idxb1[j] = ii;
-        ii++;
-    }
-
-    //  Build matricized index ordering
-
-    size_t iai, iao, ibi, ibo, ica, icb;
-    if(idxa1[k_ordera - 1] >= N + M) {
-        //  Last index in A is an inner index
-        iai = N + K; iao = N;
-    } else {
-        //  Last index in A is an outer index
-        iai = K; iao = N + K;
-    }
-    if(idxb1[k_orderb - 1] >= N + M) {
-        //  Last index in B is an inner index
-        ibi = M + K; ibo = M;
-    } else {
-        //  Last index in B is an outer index
-        ibi = K; ibo = M + K;
-    }
-    if(idxc1[k_orderc - 1] < N) {
-        //  Last index in C comes from A
-        ica = N + M; icb = M;
-    } else {
-        //  Last index in C comes from B
-        ica = N; icb = N + M;
-    }
-
-    for(size_t i = 0; i < k_ordera; i++) {
-        if(idxa1[k_ordera - i - 1] >= N + M) {
-            idxa2[iai - 1] = idxa1[k_ordera - i - 1];
-            iai--;
-        } else {
-            idxa2[iao - 1] = idxa1[k_ordera - i - 1];
-            iao--;
-        }
-    }
-    for(size_t i = 0; i < k_orderb; i++) {
-        if(idxb1[k_orderb - i - 1] >= N + M) {
-            idxb2[ibi - 1] = idxb1[k_orderb - i - 1];
-            ibi--;
-        } else {
-            idxb2[ibo - 1] = idxb1[k_orderb - i - 1];
-            ibo--;
-        }
-    }
-    for(size_t i = 0; i < k_orderc; i++) {
-        if(idxc1[k_orderc - i - 1] < N) {
-            idxc2[ica - 1] = idxc1[k_orderc - i - 1];
-            ica--;
-        } else {
-            idxc2[icb - 1] = idxc1[k_orderc - i - 1];
-            icb--;
-        }
-    }
-
-    bool lasta_i = (idxa2[k_ordera - 1] >= N + M);
-    bool lastb_i = (idxb2[k_orderb - 1] >= N + M);
-    bool lastc_a = (idxc2[k_orderc - 1] < N);
-
-    if(lastc_a) {
-        if(lasta_i) {
-            if(lastb_i) {
-                //  C(ji) = A(ik) B(jk)
-                for(size_t i = 0; i < N; i++) idxa2[i] = idxc2[M + i];
-                for(size_t i = 0; i < M; i++) idxc2[i] = idxb2[i];
-                for(size_t i = 0; i < K; i++) idxa2[N + i] = idxb2[M + i];
-            } else {
-                //  C(ji) = A(ik) B(kj)
-                for(size_t i = 0; i < N; i++) idxa2[i] = idxc2[M + i];
-                for(size_t i = 0; i < M; i++) idxc2[i] = idxb2[K + i];
-                for(size_t i = 0; i < K; i++) idxb2[i] = idxa2[N + i];
-            }
-        } else {
-            if(lastb_i) {
-                //  C(ji) = A(ki) B(jk)
-                for(size_t i = 0; i < N; i++) idxa2[K + i] = idxc2[M + i];
-                for(size_t i = 0; i < M; i++) idxc2[i] = idxb2[i];
-                for(size_t i = 0; i < K; i++) idxa2[i] = idxb2[M + i];
-            } else {
-                //  C(ji) = A(ki) B(kj)
-                for(size_t i = 0; i < N; i++) idxa2[K + i] = idxc2[M + i];
-                for(size_t i = 0; i < M; i++) idxc2[i] = idxb2[K + i];
-                for(size_t i = 0; i < K; i++) idxb2[i] = idxa2[i];
-            }
-        }
-    } else {
-        if(lasta_i) {
-            if(lastb_i) {
-                //  C(ij) = A(ik) B(jk)
-                for(size_t i = 0; i < N; i++) idxa2[i] = idxc2[i];
-                for(size_t i = 0; i < M; i++) idxb2[i] = idxc2[N + i];
-                for(size_t i = 0; i < K; i++) idxa2[N + i] = idxb2[M + i];
-            } else {
-                //  C(ij) = A(ik) B(kj)
-                for(size_t i = 0; i < N; i++) idxc2[i] = idxa2[i];
-                for(size_t i = 0; i < M; i++) idxb2[K + i] = idxc2[N + i];
-                for(size_t i = 0; i < K; i++) idxb2[i] = idxa2[N + i];
-            }
-        } else {
-            if(lastb_i) {
-                //  C(ij) = A(ki) B(jk)
-                for(size_t i = 0; i < N; i++) idxc2[i] = idxa2[K + i];
-                for(size_t i = 0; i < M; i++) idxb2[i] = idxc2[N + i];
-                for(size_t i = 0; i < K; i++) idxa2[i] = idxb2[M + i];
-            } else {
-                //  C(ij) = A(ki) B(kj)
-                for(size_t i = 0; i < N; i++) idxc2[i] = idxa2[K + i];
-                for(size_t i = 0; i < M; i++) idxc2[N + i] = idxb2[K + i];
-                for(size_t i = 0; i < K; i++) idxb2[i] = idxa2[i];
-            }
-        }
-    }
-
-    permutation_builder<k_ordera> pba(idxa2, idxa1);
-    permutation_builder<k_orderb> pbb(idxb2, idxb1);
-    permutation_builder<k_orderc> pbc(idxc2, idxc1);
-    perma.permute(pba.get_perm());
-    permb.permute(pbb.get_perm());
-    permc.permute(pbc.get_perm());
 }
 
 

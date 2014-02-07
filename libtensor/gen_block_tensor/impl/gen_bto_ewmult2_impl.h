@@ -164,9 +164,9 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::compute_block_untimed(
     index<NB> idxb;
     index<NC> idxstd(idxc);
     idxstd.permute(permutation<NC>(m_trc.get_perm(), true));
-    for(size_t i = 0; i < N; i++) idxa[i] = idxstd[i];
-    for(size_t i = 0; i < M; i++) idxb[i] = idxstd[N + i];
-    for(size_t i = 0; i < K; i++) {
+    for(size_t i = 0; i != N; i++) idxa[i] = idxstd[i];
+    for(size_t i = 0; i != M; i++) idxb[i] = idxstd[N + i];
+    for(size_t i = 0; i != K; i++) {
         idxa[N + i] = idxb[M + i] = idxstd[N + M +i];
     }
     idxa.permute(permutation<NA>(m_tra.get_perm(), true));
@@ -232,9 +232,9 @@ gen_bto_ewmult2<N, M, K, Traits, Timed>::make_bisc(
     //  Build the dimensions of the result
 
     index<NC> i1, i2;
-    for(size_t i = 0; i < N; i++) i2[i] = dimsa1[i] - 1;
-    for(size_t i = 0; i < M; i++) i2[N + i] = dimsb1[i] - 1;
-    for(size_t i = 0; i < K; i++) {
+    for(size_t i = 0; i != N; i++) i2[i] = dimsa1[i] - 1;
+    for(size_t i = 0; i != M; i++) i2[N + i] = dimsb1[i] - 1;
+    for(size_t i = 0; i != K; i++) {
         if(dimsa1[N + i] != dimsb1[M + i]) {
             throw bad_block_index_space(g_ns, k_clazz, method,
                 __FILE__, __LINE__, "bta,btb");
@@ -262,14 +262,14 @@ gen_bto_ewmult2<N, M, K, Traits, Timed>::make_bisc(
         if(i < N) {
             size_t j = i;
             size_t typa = bisa1.get_type(j);
-            for(size_t k = 0; k < N; k++) {
+            for(size_t k = 0; k != N; k++) {
                 mtodo[k] = (bisa1.get_type(k) == typa);
             }
             sp = &bisa1.get_splits(typa);
         } else if(i < N + M) {
             size_t j = i - N;
             size_t typb = bisb1.get_type(j);
-            for(size_t k = 0; k < M; k++) {
+            for(size_t k = 0; k != M; k++) {
                 mtodo[N + k] = (bisb1.get_type(k) == typb);
             }
             sp = &bisb1.get_splits(typb);
@@ -277,13 +277,13 @@ gen_bto_ewmult2<N, M, K, Traits, Timed>::make_bisc(
             size_t j = i - N - M;
             size_t typa = bisa1.get_type(N + j);
             size_t typb = bisb1.get_type(M + j);
-            for(size_t k = 0; k < N; k++) {
+            for(size_t k = 0; k != N; k++) {
                 mtodo[k] = (bisa1.get_type(k) == typa);
             }
-            for(size_t k = 0; k < M; k++) {
+            for(size_t k = 0; k != M; k++) {
                 mtodo[N + k] = (bisb1.get_type(k) == typb);
             }
-            for(size_t k = 0; k < K; k++) {
+            for(size_t k = 0; k != K; k++) {
                 bool b1 = (bisa1.get_type(N + k) == typa);
                 bool b2 = (bisb1.get_type(M + k) == typb);
                 if(b1 != b2) {
@@ -322,32 +322,32 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::make_symc() {
 
     sequence<NC, size_t> seq2imx, seqx;
     sequence<NA + NB, size_t> seq1im, seq2im, seq;
-    for (register size_t i = 0; i < N; i++) {
+    for (register size_t i = 0; i != N; i++) {
         seq1im[i] = i;
         seq2imx[i] = seq2a[i];
     }
-    for (register size_t i = 0, j = N; i < M; i++, j++) {
+    for (register size_t i = 0, j = N; i != M; i++, j++) {
         seq1im[j] = j;
         seq2imx[j] = seq2b[i];
     }
 
     mask<NC> mskx;
     mask<NA + NB> msk;
-    for (register size_t i = 0, j = N + M; i < K; i++, j++) {
+    for (register size_t i = 0, j = N + M; i != K; i++, j++) {
         seq1im[j] = j;
         seq2imx[j] = seq2a[i + N];
         mskx[j] = true;
         seqx[j] = i;
     }
 
-    for (register size_t i = 0, j = NC; i < K; i++, j++) {
+    for (register size_t i = 0, j = NC; i != K; i++, j++) {
         seq1im[j] = j;
         seq2im[j] = seq2b[i + M];
         msk[j] = true;
         seq[j] = i;
     }
 
-    for (register size_t i = 0; i < NC; i++) {
+    for (register size_t i = 0; i != NC; i++) {
         seq2im[i] = seq2imx[seq2c[i]];
         seq[i] = seqx[seq2c[i]];
         msk[i] = mskx[seq2c[i]];
@@ -386,9 +386,9 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::make_schedule() {
         index<NC> bidxstd;
         ol.get_index(io, bidxstd);
         bidxstd.permute(permutation<NC>(m_trc.get_perm(), true));
-        for(size_t i = 0; i < N; i++) bidxa[i] = bidxstd[i];
-        for(size_t i = 0; i < M; i++) bidxb[i] = bidxstd[N + i];
-        for(size_t i = 0; i < K; i++) {
+        for(size_t i = 0; i != N; i++) bidxa[i] = bidxstd[i];
+        for(size_t i = 0; i != M; i++) bidxb[i] = bidxstd[N + i];
+        for(size_t i = 0; i != K; i++) {
             bidxa[N + i] = bidxb[M + i] = bidxstd[N + M +i];
         }
         bidxa.permute(permutation<NA>(m_tra.get_perm(), true));

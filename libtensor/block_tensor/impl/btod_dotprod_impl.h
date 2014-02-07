@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_BTOD_DOTPROD_IMPL_H
 #define LIBTENSOR_BTOD_DOTPROD_IMPL_H
 
+#include <libtensor/core/scalar_transf_double.h>
 #include "../btod_dotprod.h"
 
 namespace libtensor {

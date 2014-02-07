@@ -174,7 +174,7 @@ size_t symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::encode(
 
     permutation<N> pinv(p, true);
     size_t idx = 0;
-    for (register size_t i = 0, j = N; i < N - 1; i++, j--) {
+    for (register size_t i = 0, j = N; i != N - 1; i++, j--) {
         size_t ii = 0;
         for (register size_t k = 0; k < pinv[i]; k++) {
             if (p[k] > i) ii++;

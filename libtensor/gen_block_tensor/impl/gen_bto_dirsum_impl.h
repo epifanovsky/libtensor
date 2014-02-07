@@ -4,6 +4,8 @@
 #include <libutil/thread_pool/thread_pool.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/core/mask.h>
+#include <libtensor/core/orbit.h>
+#include <libtensor/core/short_orbit.h>
 #include "../gen_block_tensor_ctrl.h"
 #include "../gen_bto_dirsum.h"
 #include "gen_bto_dirsum_sym_impl.h"
@@ -177,6 +179,7 @@ void gen_bto_dirsum<N, M, Traits, Timed>::compute_block_untimed(
         for(size_t i = 0; i < NC - 1; i++) cycc.permute(i, i + 1);
         permutation<NC> permc2;
         for(size_t i = 0; i < NA; i++) permc2.permute(cycc);
+        permc2.invert();
 
         tensor_transf_type trc1(permc2);
         trc1.transform(rec.ka);
@@ -212,145 +215,167 @@ void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule() {
 
     gen_bto_dirsum::start_timer("make_schedule");
 
-    gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta);
-    gen_block_tensor_rd_ctrl<M, bti_traits> cb(m_btb);
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
+    gen_block_tensor_rd_ctrl<NB, bti_traits> cb(m_btb);
 
-    orbit_list<NA, element_type> ola(ca.req_const_symmetry());
-    orbit_list<NB, element_type> olb(cb.req_const_symmetry());
-    orbit_list<NC, element_type> olc(get_symmetry());
+    const symmetry<NA, element_type> &syma = ca.req_const_symmetry();
+    const symmetry<NB, element_type> &symb = cb.req_const_symmetry();
 
-    for(typename orbit_list<NA, element_type>::iterator ioa = ola.begin();
-            ioa != ola.end(); ioa++) {
+    std::vector<size_t> nzblka, nzblkb;
+    ca.req_nonzero_blocks(nzblka);
+    cb.req_nonzero_blocks(nzblkb);
+
+    std::set<size_t> visited;
+
+    //  A block in C = A + B is nonzero if either A or B are nonzero
+    //  Hence there are three possibilities:
+    //  A(NZ) + B(NZ); A(NZ) + B(Z); A(Z) + B(NZ)
+
+    //  First handle A(NZ) + B(NZ) and A(NZ) + B(Z)
+
+    for(size_t ia = 0; ia < nzblka.size(); ia++) {
 
         index<NA> idxa;
-        ola.get_index(ioa, idxa);
-        bool zeroa = ca.req_is_zero_block(idxa);
+        abs_index<NA>::get_index(nzblka[ia], m_bidimsa, idxa);
+        orbit<NA, element_type> oa(syma, idxa);
 
-        orbit<NA, element_type> oa(ca.req_const_symmetry(), idxa);
+        abs_index<NB> idxb(m_bidimsb);
+        do {
 
-        for(typename orbit_list<NB, element_type>::iterator iob = olb.begin();
-                iob != olb.end(); iob++) {
+            for(typename orbit<NA, element_type>::iterator ja = oa.begin();
+                    ja != oa.end(); ++ja) {
 
-            index<NB> idxb;
-            olb.get_index(iob, idxb);
-            bool zerob = cb.req_is_zero_block(idxb);
-            if(zeroa && zerob) continue;
+                index<NA> idxa2;
+                abs_index<NA>::get_index(oa.get_abs_index(ja), m_bidimsa,
+                    idxa2);
+                const tensor_transf<NA, element_type> &tra = oa.get_transf(ja);
+                
+                index<NC> idxc;
+                for(size_t i = 0; i < NA; i++) idxc[i] = idxa2[i];
+                for(size_t i = 0; i < NB; i++) {
+                    idxc[NA + i] = idxb.get_index().at(i);
+                }
+                idxc.permute(m_trc.get_perm());
+                abs_index<NC> aidxc(idxc, m_bidimsc);
+                if(visited.count(aidxc.get_abs_index())) continue;
 
-            orbit<NB, element_type> ob(cb.req_const_symmetry(), idxb);
+                orbit<NC, element_type> oc(get_symmetry(), idxc, false);
+                tensor_transf<NC, element_type> trc1(oc.get_transf(idxc), true);
 
-            make_schedule(oa, zeroa, ob, zerob, olc);
-        }
+                orbit<NB, element_type> ob(symb, idxb.get_index());
+                const tensor_transf<NB, element_type> &trb =
+                    ob.get_transf(idxb.get_abs_index());
+                bool zerob = !ob.is_allowed() ||
+                    cb.req_is_zero_block(ob.get_cindex());
+
+                sequence<NA, size_t> seqa;
+                sequence<NB, size_t> seqb;
+                sequence<NC, size_t> seqc1, seqc2;
+                for(size_t i = 0; i < NA; i++) seqa[i] = i;
+                for(size_t i = 0; i < NB; i++) seqb[i] = NA + i;
+                for(size_t i = 0; i < NC; i++) seqc1[i] = i;
+                tra.get_perm().apply(seqa);
+                trb.get_perm().apply(seqb);
+                for(size_t i = 0; i < NA; i++) seqc2[i] = seqa[i];
+                for(size_t i = 0; i < NB; i++) seqc2[NA + i] = seqb[i];
+                permutation_builder<NC> pbc(seqc2, seqc1);
+                tensor_transf<NC, element_type> trc(pbc.get_perm());
+                trc.transform(m_trc);
+                trc.transform(trc1);
+
+                schrec rec;
+                rec.absidxa = oa.get_acindex();
+                rec.absidxb = ob.get_acindex();
+                rec.zeroa = false;
+                rec.zerob = zerob;
+                rec.ka.transform(tra.get_scalar_tr()).transform(m_ka);
+                rec.kb.transform(trb.get_scalar_tr()).transform(m_kb);
+                rec.trc.transform(trc);
+                m_op_sch.insert(std::make_pair(oc.get_acindex(), rec));
+                m_sch.insert(oc.get_acindex());
+
+                for(typename orbit<NC, element_type>::iterator jc = oc.begin();
+                        jc != oc.end(); ++jc) {
+                    visited.insert(oc.get_abs_index(jc));
+                }
+            }
+
+        } while(idxb.inc());
     }
 
-    // check if there are orbits in olc which have not been added to schedule
-    tensor_transf_type trc_inv(m_trc, true);
-    for (typename orbit_list<NC, element_type>::iterator ioc = olc.begin();
-            ioc != olc.end(); ioc++) {
+    //  Then add A(Z) + B(NZ)
 
-        if (m_sch.contains(olc.get_abs_index(ioc))) continue;
+    for(size_t ib = 0; ib < nzblkb.size(); ib++) {
 
-        // identify index of A and index of B
-        index<NC> idxc;
-        olc.get_index(ioc, idxc);
-        idxc.permute(trc_inv.get_perm());
-        index<NA> idxa;
-        for (register size_t i = 0; i < NA; i++) idxa[i] = idxc[i];
         index<NB> idxb;
-        for (register size_t i = 0; i < NB; i++) idxb[i] = idxc[i + NA];
+        abs_index<NB>::get_index(nzblkb[ib], m_bidimsb, idxb);
+        orbit<NB, element_type> ob(symb, idxb);
 
-        orbit<NA, double> oa(ca.req_const_symmetry(), idxa);
-        orbit<NB, double> ob(cb.req_const_symmetry(), idxb);
+        abs_index<NA> idxa(m_bidimsa);
+        do {
 
-        bool zeroa = ! oa.is_allowed();
-        bool zerob = ! ob.is_allowed();
+            for(typename orbit<NB, element_type>::iterator jb = ob.begin();
+                    jb != ob.end(); ++jb) {
 
-        if (zeroa == zerob) continue;
+                index<NB> idxb2;
+                abs_index<NB>::get_index(ob.get_abs_index(jb), m_bidimsb,
+                    idxb2);
+                const tensor_transf<NB, element_type> &trb = ob.get_transf(jb);
+                
+                index<NC> idxc;
+                for(size_t i = 0; i < NA; i++) {
+                    idxc[i] = idxa.get_index().at(i);
+                }
+                for(size_t i = 0; i < NB; i++) idxc[NA + i] = idxb2[i];
+                idxc.permute(m_trc.get_perm());
+                abs_index<NC> aidxc(idxc, m_bidimsc);
+                if(visited.count(aidxc.get_abs_index())) continue;
 
-        if (! zeroa) {
-            abs_index<NA> ai(oa.get_acindex(),
-                    m_bta.get_bis().get_block_index_dims());
-            zeroa = ca.req_is_zero_block(ai.get_index());
-        }
+                orbit<NC, element_type> oc(get_symmetry(), idxc, false);
+                tensor_transf<NC, element_type> trc1(oc.get_transf(idxc), true);
 
+                orbit<NA, element_type> oa(syma, idxa.get_index());
+                const tensor_transf<NA, element_type> &tra =
+                    oa.get_transf(idxa.get_abs_index());
+                if(oa.is_allowed() && !ca.req_is_zero_block(oa.get_cindex()))
+                    continue;
 
-        if (! zerob) {
-            abs_index<NB> bi(ob.get_acindex(),
-                    m_btb.get_bis().get_block_index_dims());
-            zerob = cb.req_is_zero_block(bi.get_index());
-        }
+                sequence<NA, size_t> seqa;
+                sequence<NB, size_t> seqb;
+                sequence<NC, size_t> seqc1, seqc2;
+                for(size_t i = 0; i < NA; i++) seqa[i] = i;
+                for(size_t i = 0; i < NB; i++) seqb[i] = NA + i;
+                for(size_t i = 0; i < NC; i++) seqc1[i] = i;
+                tra.get_perm().apply(seqa);
+                trb.get_perm().apply(seqb);
+                for(size_t i = 0; i < NA; i++) seqc2[i] = seqa[i];
+                for(size_t i = 0; i < NB; i++) seqc2[NA + i] = seqb[i];
+                permutation_builder<NC> pbc(seqc2, seqc1);
+                tensor_transf<NC, element_type> trc(pbc.get_perm());
+                trc.transform(m_trc);
+                trc.transform(trc1);
 
-        make_schedule(oa, zeroa, ob, zerob, olc);
+                schrec rec;
+                rec.absidxa = oa.get_acindex();
+                rec.absidxb = ob.get_acindex();
+                rec.zeroa = true;
+                rec.zerob = false;
+                rec.ka.transform(tra.get_scalar_tr()).transform(m_ka);
+                rec.kb.transform(trb.get_scalar_tr()).transform(m_kb);
+                rec.trc.transform(trc);
+                m_op_sch.insert(std::make_pair(oc.get_acindex(), rec));
+                m_sch.insert(oc.get_acindex());
+
+                for(typename orbit<NC, element_type>::iterator jc = oc.begin();
+                        jc != oc.end(); ++jc) {
+                    visited.insert(oc.get_abs_index(jc));
+                }
+            }
+
+        } while(idxa.inc());
     }
 
     gen_bto_dirsum::stop_timer("make_schedule");
-}
-
-
-template<size_t N, size_t M, typename Traits, typename Timed>
-void gen_bto_dirsum<N, M, Traits, Timed>::make_schedule(
-        const orbit<NA, element_type> &oa, bool zeroa,
-        const orbit<NB, element_type> &ob, bool zerob,
-        const orbit_list<NC, element_type> &olc) {
-
-    sequence<NA, size_t> seqa(0);
-    sequence<NB, size_t> seqb(0);
-    sequence<NC, size_t> seqc1(0), seqc2(0);
-
-    for(register size_t i = 0; i < NC; i++) seqc1[i] = i;
-
-    for(typename orbit<NA, element_type>::iterator ia = oa.begin();
-            ia != oa.end(); ia++) {
-
-        abs_index<NA> aidxa(oa.get_abs_index(ia), m_bidimsa);
-        const index<NA> &idxa = aidxa.get_index();
-        const tensor_transf<NA, element_type> &tra =
-                oa.get_transf(aidxa.get_abs_index());
-
-        for(register size_t i = 0; i < NA; i++) seqa[i] = i;
-        tra.get_perm().apply(seqa);
-
-        for(typename orbit<NB, element_type>::iterator ib = ob.begin();
-                ib != ob.end(); ib++) {
-
-            abs_index<NB> aidxb(ob.get_abs_index(ib), m_bidimsb);
-            const index<NB> &idxb = aidxb.get_index();
-            const tensor_transf<NB, element_type> &trb =
-                    ob.get_transf(aidxb.get_abs_index());
-
-            for(register size_t i = 0; i < NB; i++) seqb[i] = i;
-            trb.get_perm().apply(seqb);
-
-            index<NC> idxc;
-            for(register size_t i = 0; i < NA; i++) {
-                idxc[i] = idxa[i];
-                seqc2[i] = seqa[i];
-            }
-            for(register size_t i = 0, j = NA; i < NB; i++, j++) {
-                idxc[j] = idxb[i];
-                seqc2[j] = NA + seqb[i];
-            }
-
-            idxc.permute(m_trc.get_perm());
-            m_trc.get_perm().apply(seqc2);
-
-            abs_index<NC> aidxc(idxc, m_bidimsc);
-            if(! olc.contains(aidxc.get_abs_index())) continue;
-
-            permutation_builder<NC> pbc(seqc2, seqc1);
-            schrec rec;
-            rec.absidxa = oa.get_acindex();
-            rec.absidxb = ob.get_acindex();
-            rec.zeroa = zeroa;
-            rec.zerob = zerob;
-            rec.ka.transform(tra.get_scalar_tr()).transform(m_ka);
-            rec.kb.transform(trb.get_scalar_tr()).transform(m_kb);
-            rec.trc.transform(tensor_transf_type(pbc.get_perm(),
-                    m_trc.get_scalar_tr()));
-            m_op_sch.insert(
-                    std::pair<size_t, schrec>(aidxc.get_abs_index(), rec));
-            m_sch.insert(aidxc.get_abs_index());
-        } // for ib
-    } // for ia
 }
 
 

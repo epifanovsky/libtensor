@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-const char *linalg_mkl_level1::k_clazz = "mkl";
+const char linalg_mkl_level1::k_clazz[] = "mkl";
 
 
 void linalg_mkl_level1::add_i_i_x_x(

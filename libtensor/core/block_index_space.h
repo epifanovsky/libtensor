@@ -279,7 +279,7 @@ block_index_space<N>::block_index_space(const block_index_space<N> &bis) :
     m_dims(bis.m_dims), m_nsplits(bis.m_nsplits), m_type(bis.m_type),
     m_splits(NULL) {
 
-    for(size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i != N; i++) {
         if(bis.m_splits[i])
             m_splits[i] = new split_points(*(bis.m_splits[i]));
     }
@@ -536,7 +536,7 @@ template<size_t N>
 void block_index_space<N>::init_types() {
 
     size_t lasttype = 0;
-    for(register size_t i = 0; i < N; i++) {
+    for(register size_t i = 0; i != N; i++) {
         size_t type = lasttype;
         for(register size_t j = 0; j < i; j++) {
             if(m_dims[i] == m_dims[j]) {
@@ -555,7 +555,7 @@ void block_index_space<N>::init_types() {
 template<size_t N>
 void block_index_space<N>::clear_splits() {
 
-    for(size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i != N; i++) {
         delete m_splits[i];
         m_splits[i] = NULL;
     }
@@ -567,7 +567,7 @@ std::ostream &operator<<(std::ostream &os, const block_index_space<N> &bis) {
 
     size_t maxtyp = 0;
     os << "[";
-    for(size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i != N; i++) {
         if(i > 0) os << ", ";
         size_t typ = bis.get_type(i);
         os << bis.get_dims().get_dim(i) << "(" << typ << ")";
