@@ -8,6 +8,7 @@
 #ifndef RANGE_H_
 #define RANGE_H_
 
+#include <cstdlib>
 #include "sparse_defs.h"
 
 namespace libtensor

@@ -8,6 +8,7 @@
 #ifndef SPARSE_DEFS_H_
 #define SPARSE_DEFS_H_
 
+#include <cstdlib>
 #include <vector>
 
 namespace libtensor {

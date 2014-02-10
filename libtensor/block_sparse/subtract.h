@@ -38,10 +38,11 @@ private:
         //Due to the fact that sparse_loop_list currently fuses sparsity by default, 
         //we must separate adding the first entry from subtracting the second
         //Add the first operand
-        std::vector<sparse_bispace_any_order> add_bispaces(2,truncated_bispaces[0]);
-        add_bispaces.push_back(truncated_bispaces[1]);
-        std::vector<sparse_bispace_any_order> sub_bispaces(2,truncated_bispaces[0]);
-        sub_bispaces.push_back(truncated_bispaces[2]);
+        std::vector<sparse_bispace_any_order> bispaces = loops[0].get_bispaces();  
+        std::vector<sparse_bispace_any_order> add_bispaces(2,bispaces[0]);
+        add_bispaces.push_back(bispaces[1]);
+        std::vector<sparse_bispace_any_order> sub_bispaces(2,bispaces[0]);
+        sub_bispaces.push_back(bispaces[2]);
         std::vector<block_loop> add_loops;
         std::vector<block_loop> sub_loops;
         for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
@@ -60,7 +61,7 @@ private:
             sub_loops.push_back(bl_sub);
         }
 
-        idx_list new_direct_tensors(3);
+        idx_list new_direct_tensors;
         if(find(direct_tensors.begin(),direct_tensors.end(),0) != direct_tensors.end())
         {
             new_direct_tensors.push_back(0);
@@ -77,7 +78,7 @@ private:
         sparse_loop_list add_sll(add_loops,new_direct_tensors);
         add_sll.run(ba2k,m_ptrs,loop_batches);
 
-        if(new_direct_tensors.back() == 2)
+        if(new_direct_tensors.size() > 0 && new_direct_tensors.back() == 2)
         {
             new_direct_tensors.pop_back();
         }
@@ -87,7 +88,7 @@ private:
         }
         block_subtract2_kernel<T> bs2k;
         m_ptrs[2] = saved_B_ptr; 
-        sparse_loop_list sub_sll(sub_loops);
+        sparse_loop_list sub_sll(sub_loops,new_direct_tensors);
         sub_sll.run(bs2k,m_ptrs,loop_batches);
     }
 public:
