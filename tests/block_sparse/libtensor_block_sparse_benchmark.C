@@ -176,25 +176,44 @@ void run_benchmark(const char* file_name)
     count_flops = true;
     seconds = read_timer();
     E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
-    count_flops = false;
     seconds = read_timer() - seconds;
+    count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
 
+    //Construct I - mock integral tensor
+    sparse_btensor<3> I(spb_E);
+    for(size_t i = 0; i < spb_E.get_nnz(); ++i)
+    {
+        //We know what we're doing - cast away const
+        ((double*)I.get_data_ptr())[i] = double(rand())/RAND_MAX;
+    }
 
-    //Skipping a subtraction step here - add that in later
+    //Construct the L tensor
+    cout << "-----------------------------\n";
+    cout << "L(Q|sigma|nu) = I(Q|sigma|nu) - E(Q|sigma|nu)\n";
+    sparse_btensor<3> L(spb_E);
+    flops = 0;
+    count_flops = true;
+    seconds = read_timer();
+    L(Q|sigma|nu) = I(Q|sigma|nu) - E(Q|sigma|nu);
+    seconds = read_timer() - seconds;
+    count_flops = false;
+    std::cout << "FLOPs: " << flops << "\n";
+    std::cout << "Time (s): " << seconds << "\n";
+    std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
     //Construct M result
     sparse_bispace<2> spb_M = spb_N|spb_N;
     sparse_btensor<2> M(spb_M);
     cout << "-----------------------------\n";
-    cout << "M(nu|mu) = contract(Q|sigma,E(Q|sigma|nu),D(mu|Q|sigma))\n";
+    cout << "M(nu|mu) = contract(Q|sigma,L(Q|sigma|nu),D(mu|Q|sigma))\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M(nu|mu) = contract(Q|sigma,E(Q|sigma|nu),D(mu|Q|sigma));
+    M(nu|mu) = contract(Q|sigma,L(Q|sigma|nu),D(mu|Q|sigma));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -205,8 +224,10 @@ void run_benchmark(const char* file_name)
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
     direct_sparse_btensor<3> E_direct(spb_E);
+    direct_sparse_btensor<3> L_direct(spb_E);
     D_direct(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
     E_direct(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
+    L_direct(Q|sigma|nu) = I(Q|sigma|nu) - E_direct(Q|sigma|nu);
 
     sparse_btensor<2> M_from_direct(spb_M);
     cout << "-----------------------------\n";
@@ -214,7 +235,7 @@ void run_benchmark(const char* file_name)
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(nu|mu) = contract(Q|sigma,E_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6);
+    M_from_direct(nu|mu) = contract(Q|sigma,L_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
