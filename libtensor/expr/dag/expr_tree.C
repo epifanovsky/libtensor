@@ -1,5 +1,4 @@
 #include <set>
-#include <libtensor/not_implemented.h>
 #include "expr_tree.h"
 
 namespace libtensor {
@@ -126,6 +125,7 @@ expr_tree expr_tree::get_subtree(node_id_t h) const {
 
     return tr;
 }
+
 
 } // namespace expr
 } // namespace libtensor

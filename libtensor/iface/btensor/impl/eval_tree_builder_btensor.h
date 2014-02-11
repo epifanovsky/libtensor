@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_EVAL_TREE_BUILDER_BTENSOR_H
 #define LIBTENSOR_IFACE_EVAL_TREE_BUILDER_BTENSOR_H
 
-#include <libtensor/expr/expr_tree.h>
+#include <libtensor/expr/dag/expr_tree.h>
 
 namespace libtensor {
 namespace iface {

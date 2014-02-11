@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_PRINT_NODE_H
 
 #include <iostream>
-#include <libtensor/expr/dag/node.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -12,7 +12,7 @@ namespace expr {
     \param n Node.
     \param os Output stream.
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 void print_node(const node &n, std::ostream &os);
 

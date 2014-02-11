@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_EXPR_TREE_H
 #define LIBTENSOR_EXPR_EXPR_TREE_H
 
-#include "dag/graph.h"
+#include "graph.h"
 
 namespace libtensor {
 namespace expr {
@@ -9,7 +9,7 @@ namespace expr {
 
 /** \brief Context-free expression
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 class expr_tree : public graph {
 private:

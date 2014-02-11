@@ -14,7 +14,7 @@ namespace expr {
     \param os Output stream.
     \param indent Indentation (number of spaces on the left, default 0).
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 void print_tree(const expr_tree &tr, expr_tree::node_id_t h,
         std::ostream &os, size_t indent);
@@ -25,7 +25,7 @@ void print_tree(const expr_tree &tr, expr_tree::node_id_t h,
     \param os Output stream.
     \param indent Indentation (number of spaces on the left, default 0).
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 inline
 void print_tree(const expr_tree &tr, std::ostream &os, size_t indent = 0) {

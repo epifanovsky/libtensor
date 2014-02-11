@@ -18,9 +18,6 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
-    expr/expr_tree.C
-    expr/print_node.C
-    expr/print_tree.C
     iface/eval/default_eval_selector.C
     iface/eval/eval.C
     iface/eval/eval_register.C
@@ -242,6 +239,7 @@ set(SRC_DIAG_TENSOR
 )
 
 set(SRC_EXPR
+    expr/dag/expr_tree.C
     expr/dag/graph.C
     expr/dag/node_add.C
     expr/dag/node_assign.C
@@ -257,6 +255,8 @@ set(SRC_EXPR
     expr/dag/node_symm.C
     expr/dag/node_trace.C
     expr/dag/node_transform.C
+    expr/dag/print_node.C
+    expr/dag/print_tree.C
 )
 
 if(WITH_ARMADILLO)

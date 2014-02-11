@@ -1,7 +1,7 @@
 #include <string>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/expr/dag/node_ident.h>
-#include <libtensor/expr/dag/node_transform.h>
+#include "node_ident.h"
+#include "node_transform.h"
 #include "print_node.h"
 
 namespace libtensor {

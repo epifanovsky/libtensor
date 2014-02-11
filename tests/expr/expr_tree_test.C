@@ -7,7 +7,7 @@
 #include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/dag/node_transform.h>
-#include <libtensor/expr/expr_tree.h>
+#include <libtensor/expr/dag/expr_tree.h>
 #include "expr_tree_test.h"
 
 namespace libtensor {

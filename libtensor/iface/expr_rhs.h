@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_EXPR_RHS_H
 
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/expr/expr_tree.h>
+#include <libtensor/expr/dag/expr_tree.h>
 #include "letter_expr.h"
 
 
