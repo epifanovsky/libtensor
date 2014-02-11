@@ -518,6 +518,80 @@ sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_
     return sbt;
 }
 
+sparse_block_tree_any_order sparse_block_tree_any_order::insert_subspace(size_t subspace_idx,const sparse_bispace<1>& subspace) const
+{
+
+    vector< vector<size_t> > all_keys;
+    vector< vector<size_t> > batch_keys;
+    const_iterator it = begin();
+    vector<size_t> outer_inds(subspace_idx);
+    while(it != end())
+    {
+        vector<size_t> key = it.key();
+        //Did we come to a new batch?
+        bool new_batch = false;
+        if(batch_keys.size() == 0)
+        {
+            new_batch = true;
+        }
+        else
+        {
+            for(size_t i = 0; i < subspace_idx; ++i)
+            { 
+                if(key[i] != outer_inds[i])
+                {
+                    new_batch = true;
+                    break;
+                }
+            }
+        }
+
+        if(new_batch)
+        {
+            //Process the old batch, if this is not the first batch
+            if(batch_keys.size() > 0)
+            {
+                for(size_t block_idx = 0; block_idx < subspace.get_n_blocks(); ++block_idx)
+                {
+                    for(size_t key_idx = 0; key_idx < batch_keys.size(); ++key_idx)
+                    {
+                        vector<size_t> base_key = batch_keys[key_idx];
+                        base_key.insert(base_key.begin()+subspace_idx,block_idx);
+                        all_keys.push_back(base_key);
+                    }
+                }
+            }
+
+            //Start the new batch
+            for(size_t i = 0; i < subspace_idx; ++i)
+            { 
+                outer_inds[i] = key[i];
+            }
+            batch_keys = std::vector< vector<size_t> >(1,key);
+        }
+        else
+        {
+            batch_keys.push_back(key);
+        }
+
+        ++it;
+    }
+
+    //Handle the last batch
+    for(size_t block_idx = 0; block_idx < subspace.get_n_blocks(); ++block_idx)
+    {
+        for(size_t key_idx = 0; key_idx < batch_keys.size(); ++key_idx)
+        {
+            vector<size_t> base_key = batch_keys[key_idx];
+            base_key.insert(base_key.begin()+subspace_idx,block_idx);
+            all_keys.push_back(base_key);
+        }
+    }
+
+    sparse_block_tree_any_order sbt(all_keys,m_order+1);
+    return sbt;
+}
+
 const char* sparse_block_tree_any_order::k_clazz = "sparse_block_tree_any_order";
 
 } // namespace libtensor

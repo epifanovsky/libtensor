@@ -208,6 +208,8 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
     test_fuse_3d_3d_multi_index();
 
     test_truncate_subspace_3d();
+
+    test_insert_subspace_3d();
 }
 
 //Cannot have a zero-order tree - throw an exception if this is requested
@@ -923,6 +925,79 @@ void sparse_block_tree_test::test_truncate_subspace_3d() throw(libtest::test_exc
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_block_tree<N>L::truncate_subspace(...) returned incorrect value");
+    }
+}
+
+void sparse_block_tree_test::test_insert_subspace_3d() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_block_tree_test::test_insert_subspace_3d()";
+
+    three_d_test_f tf = three_d_test_f();
+    sparse_block_tree<3> sbt_1(tf.keys,tf.subspaces);
+
+    sparse_bispace<1> subspace(4);
+    subspace.split(std::vector<size_t>(1,2));
+    sparse_block_tree<4> sbt_inserted = sbt_1.insert_subspace(2,subspace);
+
+    //Correct keys
+    std::vector< std::vector<size_t> > correct_keys;
+    size_t correct_key00_arr[4] = {1,2,0,3}; correct_keys.push_back(block_list(&correct_key00_arr[0],&correct_key00_arr[0]+4));
+    size_t correct_key01_arr[4] = {1,2,0,7}; correct_keys.push_back(block_list(&correct_key01_arr[0],&correct_key01_arr[0]+4));
+    size_t correct_key02_arr[4] = {1,2,1,3}; correct_keys.push_back(block_list(&correct_key02_arr[0],&correct_key02_arr[0]+4));
+    size_t correct_key03_arr[4] = {1,2,1,7}; correct_keys.push_back(block_list(&correct_key03_arr[0],&correct_key03_arr[0]+4));
+    size_t correct_key04_arr[4] = {1,3,0,1}; correct_keys.push_back(block_list(&correct_key04_arr[0],&correct_key04_arr[0]+4));
+    size_t correct_key05_arr[4] = {1,3,1,1}; correct_keys.push_back(block_list(&correct_key05_arr[0],&correct_key05_arr[0]+4));
+    size_t correct_key06_arr[4] = {1,5,0,9}; correct_keys.push_back(block_list(&correct_key06_arr[0],&correct_key06_arr[0]+4));
+    size_t correct_key07_arr[4] = {1,5,1,9}; correct_keys.push_back(block_list(&correct_key07_arr[0],&correct_key07_arr[0]+4));
+    size_t correct_key08_arr[4] = {2,3,0,1}; correct_keys.push_back(block_list(&correct_key08_arr[0],&correct_key08_arr[0]+4));
+    size_t correct_key09_arr[4] = {2,3,1,1}; correct_keys.push_back(block_list(&correct_key09_arr[0],&correct_key09_arr[0]+4));
+    size_t correct_key10_arr[4] = {2,4,0,2}; correct_keys.push_back(block_list(&correct_key10_arr[0],&correct_key10_arr[0]+4));
+    size_t correct_key11_arr[4] = {2,4,0,5}; correct_keys.push_back(block_list(&correct_key11_arr[0],&correct_key11_arr[0]+4));
+    size_t correct_key12_arr[4] = {2,4,1,2}; correct_keys.push_back(block_list(&correct_key12_arr[0],&correct_key12_arr[0]+4));
+    size_t correct_key13_arr[4] = {2,4,1,5}; correct_keys.push_back(block_list(&correct_key13_arr[0],&correct_key13_arr[0]+4));
+    size_t correct_key14_arr[4] = {2,6,0,3}; correct_keys.push_back(block_list(&correct_key14_arr[0],&correct_key14_arr[0]+4));
+    size_t correct_key15_arr[4] = {2,6,0,4}; correct_keys.push_back(block_list(&correct_key15_arr[0],&correct_key15_arr[0]+4));
+    size_t correct_key16_arr[4] = {2,6,1,3}; correct_keys.push_back(block_list(&correct_key16_arr[0],&correct_key16_arr[0]+4));
+    size_t correct_key17_arr[4] = {2,6,1,4}; correct_keys.push_back(block_list(&correct_key17_arr[0],&correct_key17_arr[0]+4));
+    size_t correct_key18_arr[4] = {4,1,0,4}; correct_keys.push_back(block_list(&correct_key18_arr[0],&correct_key18_arr[0]+4));
+    size_t correct_key19_arr[4] = {4,1,0,7}; correct_keys.push_back(block_list(&correct_key19_arr[0],&correct_key19_arr[0]+4));
+    size_t correct_key20_arr[4] = {4,1,1,4}; correct_keys.push_back(block_list(&correct_key20_arr[0],&correct_key20_arr[0]+4));
+    size_t correct_key21_arr[4] = {4,1,1,7}; correct_keys.push_back(block_list(&correct_key21_arr[0],&correct_key21_arr[0]+4));
+    size_t correct_key22_arr[4] = {4,2,0,2}; correct_keys.push_back(block_list(&correct_key22_arr[0],&correct_key22_arr[0]+4));
+    size_t correct_key23_arr[4] = {4,2,1,2}; correct_keys.push_back(block_list(&correct_key23_arr[0],&correct_key23_arr[0]+4));
+    size_t correct_key24_arr[4] = {4,3,0,5}; correct_keys.push_back(block_list(&correct_key24_arr[0],&correct_key24_arr[0]+4));
+    size_t correct_key25_arr[4] = {4,3,0,6}; correct_keys.push_back(block_list(&correct_key25_arr[0],&correct_key25_arr[0]+4));
+    size_t correct_key26_arr[4] = {4,3,0,7}; correct_keys.push_back(block_list(&correct_key26_arr[0],&correct_key26_arr[0]+4));
+    size_t correct_key27_arr[4] = {4,3,1,5}; correct_keys.push_back(block_list(&correct_key27_arr[0],&correct_key27_arr[0]+4));
+    size_t correct_key28_arr[4] = {4,3,1,6}; correct_keys.push_back(block_list(&correct_key28_arr[0],&correct_key28_arr[0]+4));
+    size_t correct_key29_arr[4] = {4,3,1,7}; correct_keys.push_back(block_list(&correct_key29_arr[0],&correct_key29_arr[0]+4));
+    size_t correct_key30_arr[4] = {5,1,0,4}; correct_keys.push_back(block_list(&correct_key30_arr[0],&correct_key30_arr[0]+4));
+    size_t correct_key31_arr[4] = {5,1,1,4}; correct_keys.push_back(block_list(&correct_key31_arr[0],&correct_key31_arr[0]+4));
+    size_t correct_key32_arr[4] = {5,2,0,6}; correct_keys.push_back(block_list(&correct_key32_arr[0],&correct_key32_arr[0]+4));
+    size_t correct_key33_arr[4] = {5,2,0,7}; correct_keys.push_back(block_list(&correct_key33_arr[0],&correct_key33_arr[0]+4));
+    size_t correct_key34_arr[4] = {5,2,1,6}; correct_keys.push_back(block_list(&correct_key34_arr[0],&correct_key34_arr[0]+4));
+    size_t correct_key35_arr[4] = {5,2,1,7}; correct_keys.push_back(block_list(&correct_key35_arr[0],&correct_key35_arr[0]+4));
+    size_t correct_key36_arr[4] = {7,4,0,5}; correct_keys.push_back(block_list(&correct_key36_arr[0],&correct_key36_arr[0]+4));
+    size_t correct_key37_arr[4] = {7,4,0,6}; correct_keys.push_back(block_list(&correct_key37_arr[0],&correct_key37_arr[0]+4));
+    size_t correct_key38_arr[4] = {7,4,1,5}; correct_keys.push_back(block_list(&correct_key38_arr[0],&correct_key38_arr[0]+4));
+    size_t correct_key39_arr[4] = {7,4,1,6}; correct_keys.push_back(block_list(&correct_key39_arr[0],&correct_key39_arr[0]+4));
+    size_t correct_key40_arr[4] = {7,7,0,7}; correct_keys.push_back(block_list(&correct_key40_arr[0],&correct_key40_arr[0]+4));
+    size_t correct_key41_arr[4] = {7,7,1,7}; correct_keys.push_back(block_list(&correct_key41_arr[0],&correct_key41_arr[0]+4));
+
+    size_t m = 0;
+    for(sparse_block_tree_any_order::iterator it = sbt_inserted.begin(); it != sbt_inserted.end(); ++it)
+    {
+        if(it.key() != correct_keys[m])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_block_tree<N>::insert_subspace(...) returned incorrect value");
+        }
+        ++m;
+    }
+    if(m != correct_keys.size())
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_block_tree<N>::insert_subspace(...) returned incorrect value");
     }
 }
 

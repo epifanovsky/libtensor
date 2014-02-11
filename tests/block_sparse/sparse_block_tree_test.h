@@ -81,6 +81,8 @@ private:
     void test_fuse_3d_3d_multi_index() throw(libtest::test_exception);
 
     void test_truncate_subspace_3d() throw(libtest::test_exception);
+
+    void test_insert_subspace_3d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

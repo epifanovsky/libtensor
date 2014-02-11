@@ -73,6 +73,9 @@ public:
     //of the specified range. This is needed for direct tensors
     sparse_block_tree_any_order truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const;
 
+    //Used for discontinuous sparsity (ex ijk, i and k coupled by sparsity)
+    sparse_block_tree_any_order insert_subspace(size_t subspace_idx,const sparse_bispace<1>& subspace) const;
+
     template<bool is_const>
     friend class sparse_block_tree_iterator;
 
