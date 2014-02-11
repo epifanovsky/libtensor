@@ -1,18 +1,15 @@
 #ifndef LIBTENSOR_EXPR_NODE_ADD_H
 #define LIBTENSOR_EXPR_NODE_ADD_H
 
-#include <map>
-#include <libtensor/expr/dag/node.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
 
 
-/** \brief Tensor addition node of the expression tree
+/** \brief Tensor expression node: addition
 
-    Node for adding expression subtrees
-
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 class node_add : public node {
 public:
@@ -22,7 +19,8 @@ public:
     /** \brief Creates an addition node
         \param n Order of result.
      **/
-    node_add(size_t n) : node(node_add::k_op_type, n)
+    node_add(size_t n) :
+        node(k_op_type, n)
     { }
 
     /** \brief Virtual destructor
@@ -31,9 +29,10 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_add *clone() const {
+    virtual node *clone() const {
         return new node_add(*this);
     }
+
 };
 
 

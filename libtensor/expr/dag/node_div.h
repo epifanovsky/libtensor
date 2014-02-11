@@ -1,27 +1,26 @@
 #ifndef LIBTENSOR_EXPR_NODE_DIV_H
 #define LIBTENSOR_EXPR_NODE_DIV_H
 
-#include <libtensor/expr/dag/node.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
 
 
-/** \brief Element-wise tensor division node of expression tree
+/** \brief Tensor expression node: element-wise division
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 class node_div : public node {
 public:
     static const char k_op_type[]; //!< Operation type
 
 public:
-    /** \brief Creates an identity node
-        \param arg1 Left argument.
-        \param arg2 Right argument.
+    /** \brief Creates the node
+        \param n Tensor order.
      **/
     node_div(size_t n) :
-        node(node_div::k_op_type, n)
+        node(k_op_type, n)
     { }
 
     /** \brief Virtual destructor
@@ -30,13 +29,14 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_div *clone() const {
+    virtual node *clone() const {
         return new node_div(*this);
     }
+
 };
 
 
 } // namespace expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_EXPR_NODE_MULT_H
+#endif // LIBTENSOR_EXPR_NODE_DIV_H

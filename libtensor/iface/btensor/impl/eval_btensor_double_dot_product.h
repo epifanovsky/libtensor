@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EVAL_BTENSOR_DOUBLE_DOT_PRODUCT_H
 #define LIBTENSOR_EVAL_BTENSOR_DOUBLE_DOT_PRODUCT_H
 
-#include <libtensor/expr/node_dot_product.h>
+#include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/iface/btensor.h>
 #include "../eval_btensor.h"
 

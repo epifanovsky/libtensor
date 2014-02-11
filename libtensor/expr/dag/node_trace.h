@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EXPR_NODE_TRACE_H
 #define LIBTENSOR_EXPR_NODE_TRACE_H
 
-#include <vector>
 #include "node_product.h"
 
 namespace libtensor {

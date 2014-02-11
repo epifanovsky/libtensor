@@ -2,13 +2,13 @@
 #define LIBTENSOR_EXPR_NODE_CONTRACT_H
 
 #include <map>
-#include <libtensor/expr/dag/node.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
 
 
-/** \brief Tensor contraction node of the expression tree
+/** \brief Expression node: contraction of two or more tensors
 
     Represents the generalized contraction of n subexpression over indexes
     described by the map. Assuming the tensor indexes are arranged
@@ -52,17 +52,22 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_contract *clone() const {
+    virtual node *clone() const {
         return new node_contract(*this);
     }
 
+    /** \brief Returns the contraction map
+     **/
     const std::multimap<size_t, size_t> &get_map() const {
         return m_map;
     }
 
+    /** \brief Returns whether summation or no summation is to be done
+     **/
     bool do_contract() const {
         return m_do_contr;
     }
+
 };
 
 

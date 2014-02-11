@@ -1,15 +1,15 @@
 #ifndef LIBTENSOR_EXPR_NODE_DIRSUM_H
 #define LIBTENSOR_EXPR_NODE_DIRSUM_H
 
-#include <libtensor/expr/dag/node.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
 
 
-/** \brief Direct tensor sum node of the expression tree
+/** \brief Tensor expression node: direct sum of two tensors
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 class node_dirsum : public node {
 public:
@@ -17,10 +17,11 @@ public:
 
 public:
     /** \brief Creates an direct tensor sum node of two tensors
-        \param arg1 First argument
-        \param arg2 Second argument
+        \param n Tensor order of the result.
      **/
-    node_dirsum(size_t n) : node(k_op_type, n) { }
+    node_dirsum(size_t n) :
+        node(k_op_type, n)
+    { }
 
     /** \brief Virtual destructor
      **/
@@ -28,9 +29,10 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_dirsum *clone() const {
+    virtual node *clone() const {
         return new node_dirsum(*this);
     }
+
 };
 
 

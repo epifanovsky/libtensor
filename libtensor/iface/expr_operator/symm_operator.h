@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_SYMM_OPERATOR_H
 #define LIBTENSOR_IFACE_SYMM_OPERATOR_H
 
-#include <libtensor/expr/node_symm.h>
+#include <libtensor/expr/dag/node_symm.h>
 
 namespace libtensor {
 namespace iface {

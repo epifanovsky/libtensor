@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_TRACE_OPERATOR_H
 
 #include <libtensor/expr/dag/node_scalar.h>
-#include <libtensor/expr/node_trace.h>
+#include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/block_tensor/btod_trace.h>
 #include "../expr_rhs.h"

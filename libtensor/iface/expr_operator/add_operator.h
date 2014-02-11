@@ -2,8 +2,8 @@
 #define LIBTENSOR_IFACE_ADD_OPERATOR_H
 
 #include <libtensor/core/scalar_transf.h>
-#include <libtensor/expr/node_add.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_add.h>
+#include <libtensor/expr/dag/node_transform.h>
 #include "mul_operator.h"
 
 namespace libtensor {

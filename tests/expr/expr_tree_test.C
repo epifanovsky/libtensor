@@ -1,12 +1,12 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/expr/node_add.h>
+#include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_assign.h>
-#include <libtensor/expr/node_contract.h>
-#include <libtensor/expr/node_diag.h>
-#include <libtensor/expr/node_div.h>
+#include <libtensor/expr/dag/node_contract.h>
+#include <libtensor/expr/dag/node_diag.h>
+#include <libtensor/expr/dag/node_div.h>
 #include <libtensor/expr/node_ident_any_tensor.h>
-#include <libtensor/expr/node_symm.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_symm.h>
+#include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/expr_tree.h>
 #include "expr_tree_test.h"
 

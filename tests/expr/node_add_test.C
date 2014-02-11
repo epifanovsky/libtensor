@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <sstream>
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_add.h>
+#include <libtensor/expr/dag/node_add.h>
 #include "node_add_test.h"
 
 namespace libtensor {
@@ -23,7 +23,7 @@ void node_add_test::test_1() throw(libtest::test_exception) {
     try {
 
     node_add c1(5);
-    node_add *c1copy = c1.clone();
+    node_add *c1copy = dynamic_cast<node_add*>(c1.clone());
     if (c1copy->get_op().compare(node_add::k_op_type) != 0) {
         fail_test(testname, __FILE__, __LINE__, "Wrong op type.");
     }

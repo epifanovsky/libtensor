@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EVAL_BTENSOR_DOUBLE_SYMM_H
 #define LIBTENSOR_EVAL_BTENSOR_DOUBLE_SYMM_H
 
-#include <libtensor/expr/node_symm.h>
 #include <libtensor/iface/btensor.h>
 #include "../eval_btensor.h"
 

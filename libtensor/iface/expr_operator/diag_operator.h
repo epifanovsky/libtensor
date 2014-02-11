@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIAG_OPERATOR_H
 #define LIBTENSOR_IFACE_DIAG_OPERATOR_H
 
-#include <libtensor/expr/node_diag.h>
+#include <libtensor/expr/dag/node_diag.h>
 
 namespace libtensor {
 namespace iface {

@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EVAL_BTENSOR_DOUBLE_TRACE_H
 #define LIBTENSOR_EVAL_BTENSOR_DOUBLE_TRACE_H
 
-#include <libtensor/expr/node_trace.h>
 #include <libtensor/iface/btensor.h>
 #include "../eval_btensor.h"
 

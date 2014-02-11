@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_MUL_OPERATOR_H
 
 #include <libtensor/core/scalar_transf.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_transform.h>
 
 namespace libtensor {
 namespace iface {

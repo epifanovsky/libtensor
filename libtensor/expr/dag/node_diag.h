@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EXPR_NODE_DIAG_H
 #define LIBTENSOR_EXPR_NODE_DIAG_H
 
-#include <vector>
 #include "node_product.h"
 
 namespace libtensor {
@@ -44,7 +43,7 @@ public:
 
     /** \brief Creates a copy of the node via new
      **/
-    virtual node_diag *clone() const {
+    virtual node *clone() const {
         return new node_diag(*this);
     }
 

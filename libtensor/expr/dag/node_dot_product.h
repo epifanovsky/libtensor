@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EXPR_NODE_DOT_PRODUCT_H
 #define LIBTENSOR_EXPR_NODE_DOT_PRODUCT_H
 
-#include <vector>
 #include "node_product.h"
 
 namespace libtensor {
@@ -15,7 +14,7 @@ namespace expr {
 
     See node_product for a full description of the data structure.
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 class node_dot_product : public node_product {
 public:

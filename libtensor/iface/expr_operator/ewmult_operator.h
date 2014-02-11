@@ -1,9 +1,9 @@
 #ifndef LIBTENSOR_IFACE_EWMULT_OPERATOR_H
 #define LIBTENSOR_IFACE_EWMULT_OPERATOR_H
 
-#include <libtensor/expr/node_contract.h>
-#include <libtensor/expr/node_div.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_contract.h>
+#include <libtensor/expr/dag/node_div.h>
+#include <libtensor/expr/dag/node_transform.h>
 
 namespace libtensor {
 namespace iface {

@@ -27,10 +27,6 @@ public:
      **/
     virtual ~node_scalar_base() { }
 
-    /** \brief Creates a copy of the node via new
-     **/
-    virtual node *clone() const = 0;
-
     /** \brief Returns the type of scalar
      **/
     virtual const std::type_info &get_type() const = 0;
@@ -39,7 +35,7 @@ public:
 
 
 /** \brief Expression node: scalar container
-    \tparam T Scalart type.
+    \tparam T Scalar type.
 
     This node contains a reference to a scalar.
 

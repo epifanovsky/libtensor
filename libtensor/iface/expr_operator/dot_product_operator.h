@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
 #define LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
 
-#include <libtensor/expr/node_dot_product.h>
+#include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/iface/expr_rhs.h>
 #include <libtensor/iface/eval/eval.h>

@@ -2,8 +2,8 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/expr/node_ident_any_tensor.h>
-#include <libtensor/expr/node_contract.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_contract.h>
+#include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/iface/btensor.h>
 #include <libtensor/iface/btensor/eval_btensor.h>
 #include "../compare_ref.h"

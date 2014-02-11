@@ -2,7 +2,7 @@
 #include <memory>
 #include <sstream>
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_product.h>
+#include <libtensor/expr/dag/node_product.h>
 #include "node_product_test.h"
 
 namespace libtensor {

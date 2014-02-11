@@ -1,6 +1,6 @@
 #include <memory>
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_diag.h>
+#include <libtensor/expr/dag/node_diag.h>
 #include <libtensor/expr/node_ident_any_tensor.h>
 #include "node_diag_test.h"
 
@@ -31,7 +31,7 @@ void node_diag_test::test_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, "d1.get_didx() != 0");
     }
 
-    std::auto_ptr<node_diag> d1copy(d1.clone());
+    std::auto_ptr<node_diag> d1copy(dynamic_cast<node_diag*>(d1.clone()));
     if(d1copy->get_idx() != idx) {
         fail_test(testname, __FILE__, __LINE__, "Inconsistent tensor indices.");
     }

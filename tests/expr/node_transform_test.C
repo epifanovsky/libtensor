@@ -2,7 +2,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/exception.h>
 #include <libtensor/expr/node_ident_any_tensor.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_transform.h>
 #include "node_transform_test.h"
 
 namespace libtensor {
@@ -30,7 +30,8 @@ void node_transform_test::test_1() {
 
     node_transform<double> tr1(order, scalar_transf<double>(c));
 
-    node_transform<double> *tr1copy = tr1.clone();
+    node_transform<double> *tr1copy =
+        dynamic_cast< node_transform<double>* >(tr1.clone());
     if (tr1copy->get_op() != node_transform_base::k_op_type) {
         fail_test(testname, __FILE__, __LINE__, "Node name.");
     }

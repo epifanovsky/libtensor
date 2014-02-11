@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIRECT_PRODUCT_OPERATOR_H
 #define LIBTENSOR_IFACE_DIRECT_PRODUCT_OPERATOR_H
 
-#include <libtensor/expr/node_contract.h>
+#include <libtensor/expr/dag/node_contract.h>
 
 namespace libtensor {
 namespace iface {

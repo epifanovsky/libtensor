@@ -7,7 +7,7 @@
 #include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/expr_tree.h>
 #include <libtensor/expr/node_ident_any_tensor.h>
-#include <libtensor/expr/node_transform.h>
+#include <libtensor/expr/dag/node_transform.h>
 #include "bispace.h"
 #include "btensor_i.h"
 #include "expr_lhs.h"

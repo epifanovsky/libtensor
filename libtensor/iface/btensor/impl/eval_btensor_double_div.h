@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EVAL_BTENSOR_DOUBLE_DIV_H
 #define LIBTENSOR_EVAL_BTENSOR_DOUBLE_DIV_H
 
-#include <libtensor/expr/node_div.h>
 #include "../eval_btensor.h"
 
 namespace libtensor {

@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
 #define LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
 
-#include <libtensor/expr/node_dirsum.h>
+#include <libtensor/expr/dag/node_dirsum.h>
 
 namespace libtensor {
 namespace iface {

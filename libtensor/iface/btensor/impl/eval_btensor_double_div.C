@@ -1,5 +1,5 @@
 #include <libtensor/block_tensor/btod_mult.h>
-#include <libtensor/expr/node_div.h>
+#include <libtensor/expr/dag/node_div.h>
 #include "metaprog.h"
 #include "node_interm.h"
 #include "tensor_from_node.h"

@@ -19,10 +19,6 @@ set(SRC
     symmetry/product_table_container.C
     symmetry/product_table_i.C
     expr/expr_tree.C
-    expr/node_dot_product.C
-    expr/node_product.C
-    expr/node_statics.C
-    expr/node_trace.C
     expr/print_node.C
     expr/print_tree.C
     iface/eval/default_eval_selector.C
@@ -247,10 +243,20 @@ set(SRC_DIAG_TENSOR
 
 set(SRC_EXPR
     expr/dag/graph.C
+    expr/dag/node_add.C
     expr/dag/node_assign.C
+    expr/dag/node_contract.C
+    expr/dag/node_diag.C
+    expr/dag/node_dirsum.C
+    expr/dag/node_div.C
+    expr/dag/node_dot_product.C
     expr/dag/node_ident.C
     expr/dag/node_null.C
+    expr/dag/node_product.C
     expr/dag/node_scalar.C
+    expr/dag/node_symm.C
+    expr/dag/node_trace.C
+    expr/dag/node_transform.C
 )
 
 if(WITH_ARMADILLO)

@@ -2,7 +2,7 @@
 #define LIBTENSOR_EXPR_NODE_PRODUCT_H
 
 #include <vector>
-#include <libtensor/expr/dag/node.h>
+#include "node.h"
 
 namespace libtensor {
 namespace expr {
@@ -34,7 +34,7 @@ namespace expr {
 
     Trace sum(i) A(ii): I = ( 0 0 ); C = ( 0 )
 
-    \ingroup libtensor_expr
+    \ingroup libtensor_expr_dag
  **/
 class node_product : public node {
 private:

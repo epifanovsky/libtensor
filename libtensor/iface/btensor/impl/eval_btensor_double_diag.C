@@ -1,5 +1,5 @@
 #include <libtensor/block_tensor/btod_diag.h>
-#include <libtensor/expr/node_diag.h>
+#include <libtensor/expr/dag/node_diag.h>
 #include "metaprog.h"
 #include "node_interm.h"
 #include "tensor_from_node.h"

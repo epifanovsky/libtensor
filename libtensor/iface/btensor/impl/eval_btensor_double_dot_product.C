@@ -1,5 +1,5 @@
 #include <libtensor/block_tensor/btod_dotprod.h>
-#include <libtensor/expr/node_dot_product.h>
+#include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include "metaprog.h"
 #include "node_interm.h"
