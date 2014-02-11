@@ -14,7 +14,6 @@
 #include "sparse_loop_iterator_test.h"
 #include "sparsity_fuser_test.h"
 #include "sparse_loop_grouper_test.h"
-#include "direct_eval_functor_test.h"
 
 using libtest::unit_test_factory;
 
@@ -42,7 +41,6 @@ private:
     unit_test_factory<sparse_block_tree_test> m_utf_sparse_block_tree;
     unit_test_factory<sparse_bispace_test> m_utf_sparse_bispace;
     unit_test_factory<sparse_btensor_test> m_utf_sparse_btensor;
-    unit_test_factory<direct_eval_functor_test> m_utf_direct_eval_functor;
     unit_test_factory<direct_sparse_btensor_test> m_utf_direct_sparse_btensor;
     unit_test_factory<sparsity_fuser_test> m_utf_sparsity_fuser;
     unit_test_factory<sparse_loop_grouper_test> m_utf_sparse_loop_grouper;

@@ -30,6 +30,7 @@ template<typename T>
 void libtensor::block_subtract2_kernel<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
+#ifdef LIBTENSOR_DEBUG
 	if(dim_lists.size() != 3 || ptrs.size() != dim_lists.size())
 	{
 		throw bad_parameter(g_ns, k_clazz,"operator()(...)",
@@ -57,12 +58,13 @@ void libtensor::block_subtract2_kernel<T>::operator()(
 			}
 		}
 	}
+#endif
 
 	//Just do the subtraction
 	size_t n_elements = 1;
-	for(size_t i = 0; i < first_size; ++i)
+	for(size_t i = 0; i < dim_lists[0].size(); ++i)
 	{
-		n_elements *= first_dims[i];
+		n_elements *= dim_lists[0][i];
 	}
 
 	for(size_t i = 0; i < n_elements; ++i)

@@ -238,7 +238,6 @@ set(SRC_BLOCK_SPARSE
     block_sparse/libtensor_block_sparse_suite.C
     block_sparse/sparse_bispace_test.C
     block_sparse/sparse_btensor_test.C
-    block_sparse/direct_eval_functor_test.C
     block_sparse/block_kernels_test.C
     block_sparse/block_loop_test.C
     block_sparse/sparse_loop_iterator_test.C
