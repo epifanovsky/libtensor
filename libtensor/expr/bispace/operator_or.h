@@ -66,9 +66,11 @@ inline operator|(
 
 
 namespace libtensor {
+namespace expr {
 
-using expr::bispace_expr::operator|;
+using bispace_expr::operator|;
 
+} // namespace expr
 } // namespace libtensor
 
 #endif // LIBTENSOR_EXPR_BISPACE_EXPR_OPERATOR_OR_H
