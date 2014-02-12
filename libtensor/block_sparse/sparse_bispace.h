@@ -681,7 +681,6 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
                 cur_tree_subspaces.push_back(m_subspaces[src_sub_idx]);
             }
         }
-
     }
 
     copy.init();

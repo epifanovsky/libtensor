@@ -114,7 +114,7 @@ void run_benchmark(const char* file_name)
     //Construct C
     sparse_bispace<3> spb_C_orig = spb_N % spb_N % spb_X << sig_blocks_NNX;
     permutation<3> perm;
-    perm.permute(1,2);
+    perm.permute(0,2);
     sparse_bispace<3> spb_C = spb_C_orig.permute(perm);
     size_t nnz_C = spb_C.get_nnz();
     double* C_arr = new double[nnz_C];
@@ -153,35 +153,40 @@ void run_benchmark(const char* file_name)
     sparse_btensor<3> D(spb_D);
     letter mu,Q,lambda,sigma;
     cout << "-----------------------------\n";
-    cout << "D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda))\n";
+    /*cout << "D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda))\n";*/
     flops = 0;
     count_flops = true;
     double seconds = read_timer();
-    D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
+    D(Q|mu|sigma) = contract(lambda,C(Q|mu|lambda),P(sigma|lambda));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+
+    sparse_bispace<3> spb_D_perm = spb_D.permute(permutation<3>().permute(0,1).permute(1,2));
+    sparse_btensor<3> D_perm(spb_D_perm);
+    D_perm(mu|sigma|Q) = D(Q|mu|sigma);
 
     //Construct E tensor 
     sparse_btensor<3> C_aux_fast(spb_C_orig);
     letter nu,R;
-    C_aux_fast(nu|sigma|Q) = C(nu|Q|sigma);
-    sparse_bispace<3> spb_E = spb_X | spb_C.contract(1);
+    C_aux_fast(nu|sigma|Q) = C(Q|nu|sigma);
+    cout << "C_aux_fast nnz: " << spb_C_orig.get_nnz() << "\n";
+    cout << "C nnz: " << spb_C.get_nnz() << "\n";
+    sparse_bispace<3> spb_E =  spb_C_orig.contract(2) | spb_X;
     sparse_btensor<3> E(spb_E);
     cout << "-----------------------------\n";
-    cout << "E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R))\n";
+    /*cout << "E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R))\n";*/
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
+    E(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
-
 
     //Construct I - mock integral tensor
     sparse_btensor<3> I(spb_E);
@@ -193,12 +198,12 @@ void run_benchmark(const char* file_name)
 
     //Construct the L tensor
     cout << "-----------------------------\n";
-    cout << "L(Q|sigma|nu) = I(Q|sigma|nu) - E(Q|sigma|nu)\n";
+    /*cout << "L(Q|sigma|nu) = I(Q|sigma|nu) - E(Q|sigma|nu)\n";*/
     sparse_btensor<3> L(spb_E);
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    L(Q|sigma|nu) = I(Q|sigma|nu) - E(Q|sigma|nu);
+    L(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -209,33 +214,34 @@ void run_benchmark(const char* file_name)
     sparse_bispace<2> spb_M = spb_N|spb_N;
     sparse_btensor<2> M(spb_M);
     cout << "-----------------------------\n";
-    cout << "M(nu|mu) = contract(Q|sigma,L(Q|sigma|nu),D(mu|Q|sigma))\n";
+    /*cout << "M(nu|mu) = contract(Q|sigma,L(Q|sigma|nu),D(mu|Q|sigma))\n";*/
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M(nu|mu) = contract(Q|sigma,L(Q|sigma|nu),D(mu|Q|sigma));
+    M(nu|mu) = contract(sigma|Q,L(nu|sigma|Q),D_perm(mu|sigma|Q));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
+#if 0
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
     direct_sparse_btensor<3> E_direct(spb_E);
     direct_sparse_btensor<3> L_direct(spb_E);
-    D_direct(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda));
-    E_direct(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R));
-    L_direct(Q|sigma|nu) = I(Q|sigma|nu) - E_direct(Q|sigma|nu);
+    D_direct(Q|mu|sigma) = contract(lambda,C(Q|mu|lambda),P(sigma|lambda));
+    E_direct(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
+    L_direct(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q);
 
     sparse_btensor<2> M_from_direct(spb_M);
     cout << "-----------------------------\n";
-    cout << "M(nu|mu) = contract(Q|sigma,E_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6)\n";
+    /*cout << "M(nu|mu) = contract(Q|sigma,E_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6)\n";*/
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(nu|mu) = contract(Q|sigma,L_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6);
+    M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),400e6);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -260,6 +266,7 @@ void run_benchmark(const char* file_name)
         }
     }
     cout << "M_equal: " << (M_equal ? "YES" : "NO") << "\n";
+#endif
 }
 
 int main(int argc,char *argv[])
