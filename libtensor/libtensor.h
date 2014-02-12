@@ -41,7 +41,7 @@
 
 #include "expr/bispace/bispace.h"
 #include "expr/btensor/btensor.h"
-#include "expr/operators.h"
+#include "expr/operators/operators.h"
 
 #endif // LIBTENSOR_H
 

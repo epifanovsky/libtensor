@@ -1,7 +1,7 @@
 #include <libtensor/exception.h>
 #include <libtensor/expr/btensor/btensor.h>
 #include <libtensor/expr/iface/expr_tensor.h>
-#include <libtensor/expr/operators.h>
+#include <libtensor/expr/operators/operators.h>
 #include "expr_tensor_test.h"
 
 namespace libtensor {
