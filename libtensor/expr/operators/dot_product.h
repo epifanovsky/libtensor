@@ -4,7 +4,7 @@
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/iface/expr_rhs.h>
-#include <libtensor/iface/eval/eval.h>
+#include <libtensor/expr/eval/eval.h>
 
 namespace libtensor {
 namespace expr {
@@ -36,7 +36,7 @@ T dot_product(
     e.add(id_dot, lhs.get_expr());
     e.add(id_dot, rhs.get_expr());
 
-    iface::eval().evaluate(e);
+    eval().evaluate(e);
 
     return d;
 }

@@ -4,14 +4,13 @@
 #include <libtensor/expr/dag/node_contract.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
-#include <libtensor/iface/btensor.h>
-#include <libtensor/iface/btensor/eval_btensor.h>
+#include <libtensor/expr/btensor/btensor.h>
+#include <libtensor/expr/btensor/eval_btensor.h>
 #include "../compare_ref.h"
 #include "eval_btensor_double_test.h"
 
 namespace libtensor {
 using namespace expr;
-using namespace iface;
 
 
 void eval_btensor_double_test::perform() throw(libtest::test_exception) {

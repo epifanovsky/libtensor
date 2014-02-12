@@ -1,5 +1,5 @@
 #include <libtensor/exception.h>
-#include <libtensor/iface/eval/eval_register.h>
+#include <libtensor/expr/eval/eval_register.h>
 #include "eval_register_test.h"
 
 namespace libtensor {
@@ -10,9 +10,7 @@ void eval_register_test::perform() throw(libtest::test_exception) {
     test_1();
 }
 
-
-using namespace iface;
-
+using namespace expr;
 
 namespace {
 

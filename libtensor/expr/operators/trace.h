@@ -40,7 +40,7 @@ T trace(
     expr_tree::node_id_t id_trace = e.add(e.get_root(), node_trace(idx, cidx));
     e.add(id_trace, rhs.get_expr());
 
-    iface::eval().evaluate(e);
+    eval().evaluate(e);
 
     return d;
 }

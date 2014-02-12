@@ -18,20 +18,6 @@ set(SRC
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
-    iface/eval/default_eval_selector.C
-    iface/eval/eval.C
-    iface/eval/eval_register.C
-    iface/btensor/impl/eval_btensor_double.C
-    iface/btensor/impl/eval_btensor_double_contract.C
-    iface/btensor/impl/eval_btensor_double_copy.C
-    iface/btensor/impl/eval_btensor_double_diag.C
-    iface/btensor/impl/eval_btensor_double_dirsum.C
-    iface/btensor/impl/eval_btensor_double_div.C
-    iface/btensor/impl/eval_btensor_double_dot_product.C
-    iface/btensor/impl/eval_btensor_double_symm.C
-    iface/btensor/impl/eval_btensor_double_trace.C
-    iface/btensor/impl/eval_tree_builder_btensor.C
-    iface/btensor/impl/node_interm.C
 )
 
 set(SRC_LINALG_ACML
@@ -239,6 +225,17 @@ set(SRC_DIAG_TENSOR
 )
 
 set(SRC_EXPR
+    expr/btensor/impl/eval_btensor_double.C
+    expr/btensor/impl/eval_btensor_double_contract.C
+    expr/btensor/impl/eval_btensor_double_copy.C
+    expr/btensor/impl/eval_btensor_double_diag.C
+    expr/btensor/impl/eval_btensor_double_dirsum.C
+    expr/btensor/impl/eval_btensor_double_div.C
+    expr/btensor/impl/eval_btensor_double_dot_product.C
+    expr/btensor/impl/eval_btensor_double_symm.C
+    expr/btensor/impl/eval_btensor_double_trace.C
+    expr/btensor/impl/eval_tree_builder_btensor.C
+    expr/btensor/impl/node_interm.C
     expr/dag/expr_tree.C
     expr/dag/graph.C
     expr/dag/node_add.C
@@ -257,6 +254,9 @@ set(SRC_EXPR
     expr/dag/node_transform.C
     expr/dag/print_node.C
     expr/dag/print_tree.C
+    expr/eval/default_eval_selector.C
+    expr/eval/eval.C
+    expr/eval/eval_register.C
 )
 
 if(WITH_ARMADILLO)

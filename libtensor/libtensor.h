@@ -39,7 +39,8 @@
 #include "symmetry/se_part.h"
 #include "symmetry/se_perm.h"
 
-#include "iface/iface.h"
+#include "expr/bispace/bispace.h"
+#include "expr/btensor/btensor.h"
 #include "expr/operators.h"
 
 #endif // LIBTENSOR_H
