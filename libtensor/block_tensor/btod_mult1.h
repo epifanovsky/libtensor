@@ -29,7 +29,7 @@ public:
         \param recip If true, perform element-wise division
         \param c Scaling coefficient
      **/
-    btod_mult1(block_tensor_i<N, double> &btb,
+    btod_mult1(block_tensor_rd_i<N, double> &btb,
             const tensor_transf<N, double> &trb, bool recip = false,
             const scalar_transf<double> &c = scalar_transf<double>());
 
@@ -39,7 +39,7 @@ public:
         \param recip If true, perform element-wise division
         \param c Scaling coefficient
      **/
-    btod_mult1(block_tensor_i<N, double> &btb,
+    btod_mult1(block_tensor_rd_i<N, double> &btb,
             bool recip = false, double c = 1.0);
 
     /** \brief Inititalize operation
@@ -48,7 +48,7 @@ public:
         \param recip If true, perform element-wise division
         \param c Scaling coefficient
      **/
-    btod_mult1(block_tensor_i<N, double> &btb, const permutation<N> &pb,
+    btod_mult1(block_tensor_rd_i<N, double> &btb, const permutation<N> &pb,
             bool recip = false, double c = 1.0);
 
     /** \brief Perform the operation
