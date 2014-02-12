@@ -2,6 +2,7 @@
 #define LIBTENSOR_SPARSE_BISPACE_H
 
 #include <vector>
+#include <map>
 #include "../defs.h"
 #include "../core/sequence.h"
 #include "../core/permutation.h"
@@ -293,10 +294,6 @@ private:
     //Contains the trees that describe the sparsity of each group of coupled indices  
     std::vector< sparse_block_tree_any_order > m_sparse_block_trees;
 
-    //Used to store the number of nonzero elements corresponding to the significant blocks in each tree
-    //Used to construct m_index_group_dims
-    std::vector<size_t> m_sparse_block_tree_dimensions; 
-
     //Internal-use array containing the dimension of each subspace/sparse composite subspace group. 
     //Used to calculate number of elements and offsets
     //Should never be edited directly - instead call init()
@@ -452,7 +449,7 @@ void sparse_bispace<N>::init()
         if(treat_as_sparse)
         {
             //We are in a sparse group, use the total group size
-            m_index_group_dims.push_back(m_sparse_block_tree_dimensions[cur_group_idx]);
+            m_index_group_dims.push_back(m_sparse_block_trees[cur_group_idx].get_nnz());
             subspace_idx += m_sparse_block_trees[cur_group_idx].get_order();
             ++cur_group_idx;
         }
@@ -500,7 +497,6 @@ void sparse_bispace<N>::absorb_sparsity(const sparse_bispace<L>& rhs,size_t offs
     {
         m_sparse_indices_sets_offsets.push_back(rhs.m_sparse_indices_sets_offsets[i]+offset);
         m_sparse_block_trees.push_back(rhs.m_sparse_block_trees[i]);
-        m_sparse_block_tree_dimensions.push_back(rhs.m_sparse_block_tree_dimensions[i]);
     }
 }
 
@@ -551,7 +547,6 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::ve
         positions[i] = N-L+i;
     }
 
-    m_sparse_block_tree_dimensions.push_back(sbt.get_nnz());
     m_sparse_block_trees.push_back(sbt);
     m_sparse_indices_sets_offsets.push_back(N-L);
 
@@ -589,10 +584,14 @@ const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const throw(o
     return m_subspaces[idx];
 }
 
+//TODO: This is haxx, needs to be formally verified
+//TODO: This will break if I relocate an entire tree!!!!
 template<size_t N> 
 sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
 {
+    //Sparse metadata is rebuilt as we go
     sparse_bispace<N> copy(*this);
+    copy.m_sparse_indices_sets_offsets.clear();
 
     //Permute subspaces
     for(size_t i = 0; i < N; ++i)
@@ -601,38 +600,200 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
     }
 
     //Permute trees
+    std::vector<size_t> cur_perm_entries;
+    std::vector< sparse_bispace<1> > cur_tree_subspaces;
+    size_t cur_tree_idx;
+    size_t cur_order;
+    size_t cur_tree_start_dest_sub_idx;
+    std::map<size_t,size_t> cur_dense_subspaces;
+    for(size_t dest_sub_idx = 0; dest_sub_idx < N; ++dest_sub_idx)
+    {
+        size_t src_sub_idx = perm[dest_sub_idx];
+
+        //Is this index associated with a sparse group?
+        bool sparse = false;
+        for(size_t sparse_grp_idx = 0; sparse_grp_idx < m_sparse_indices_sets_offsets.size(); ++sparse_grp_idx)
+        {
+            size_t offset = m_sparse_indices_sets_offsets[sparse_grp_idx];
+            size_t order = m_sparse_block_trees[sparse_grp_idx].get_order();
+            if((offset <= src_sub_idx) && (src_sub_idx < offset+order))
+            {
+                //This index comes from this sparse group in the unpermuted bispace
+                if(cur_perm_entries.size() == 0)
+                {
+                    //This is the first index in our tree in the new,permuted,bispace
+                    cur_tree_idx = sparse_grp_idx;
+                    cur_order = order;
+                    cur_tree_start_dest_sub_idx = dest_sub_idx;
+                }
+                else if(sparse_grp_idx != cur_tree_idx)
+                {
+                    //This index comes from a different tree, and we haven't filled in our original tree yet
+                    throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
+                        __FILE__,__LINE__,"permuting between different sparse groups is not supported"); 
+                }
+
+                cur_tree_subspaces.push_back(m_subspaces[src_sub_idx]);
+                cur_perm_entries.push_back(src_sub_idx - offset);
+                sparse = true;
+                break;
+            }
+        }
+
+        if(cur_perm_entries.size() > 0)
+        {
+            //Did this iteration fill in our tree in the destination bispace?
+            if(cur_perm_entries.size() == cur_order)
+            {
+                //Insert all dense subspaces caught inside this tree
+                for(std::map<size_t,size_t>::iterator it = cur_dense_subspaces.begin(); it != cur_dense_subspaces.end(); ++it)
+                {
+                    size_t cur_dest_sub_idx = it->first;
+                    size_t cur_src_sub_idx = it->second;
+                    for(size_t entry_idx = 0; entry_idx < cur_perm_entries.size(); ++entry_idx)
+                    {
+                        if(cur_perm_entries[entry_idx] >= cur_dest_sub_idx)
+                        {
+                            ++cur_perm_entries[entry_idx];
+                        }
+                    }
+                    cur_perm_entries.insert(cur_perm_entries.begin()+cur_dest_sub_idx,cur_dest_sub_idx);
+                    copy.m_sparse_block_trees[cur_tree_idx] = copy.m_sparse_block_trees[cur_tree_idx].insert_subspace(cur_dest_sub_idx - cur_tree_start_dest_sub_idx,m_subspaces[cur_src_sub_idx]);
+                }
+                runtime_permutation tree_perm(cur_perm_entries);
+
+                //Don't permute if identity
+                if(tree_perm != runtime_permutation(cur_order))
+                {
+                    copy.m_sparse_block_trees[cur_tree_idx] = copy.m_sparse_block_trees[cur_tree_idx].permute(tree_perm);
+                    copy.m_sparse_block_trees[cur_tree_idx].set_offsets_sizes_nnz(cur_tree_subspaces);
+                    copy.m_sparse_indices_sets_offsets.push_back(cur_tree_start_dest_sub_idx);
+                }
+
+                cur_dense_subspaces.clear();
+                cur_perm_entries.clear();
+                cur_tree_subspaces.clear();
+            }
+            else if(!sparse)
+            {
+                //We don't want to log irrelevant dense bispaces - only ones caught between sparse bispaces
+                cur_dense_subspaces[dest_sub_idx - cur_tree_start_dest_sub_idx] = src_sub_idx;
+                cur_tree_subspaces.push_back(m_subspaces[src_sub_idx]);
+            }
+        }
+
+    }
+
+    copy.init();
+
+#if 0
     for(size_t i = 0; i < m_sparse_indices_sets_offsets.size(); ++i)
     {
-        //Does the permutation apply to this sparse tree
         size_t sparse_set_offset = m_sparse_indices_sets_offsets[i];
         size_t order = m_sparse_block_trees[i].get_order();
 
         size_t lower_bound = sparse_set_offset;
         size_t upper_bound = (sparse_set_offset+order-1);
 
-        //Convert the parts of the permutation that apply to this tree into 
-        //tree-relative indices
         std::vector<size_t> perm_entries;
         std::vector< sparse_bispace<1> > tree_subspaces;
+        std::vector<size_t> new_dense_ind_positions;
+
+        //Figure out where our tree starts AFTER everything has been permuted
+        size_t tree_new_offset = N;
+        for(size_t tree_rel_idx = 0; tree_rel_idx < order; ++tree_rel_idx)
+        {
+            size_t tree_subspace = sparse_set_offset + tree_rel_idx;
+            for(size_t perm_entry_idx = 0; perm_entry_idx < N; ++perm_entry_idx)
+            {
+                if(perm[perm_entry_idx] == tree_subspace)
+                {
+                    if(perm_entry_idx < tree_new_offset)
+                    {
+                        tree_new_offset = perm_entry_idx;
+                    }
+                }
+            }
+        }
+
         for(size_t order_idx = 0; order_idx < order; ++order_idx)
         {
-            //Where do 
-            size_t dest_idx = sparse_set_offset+order_idx;
+            size_t dest_idx = tree_new_offset+order_idx;
             size_t src_idx = perm[dest_idx];
-            //Should support this eventually, but for now throw if idx 
-            if(src_idx < lower_bound || src_idx > upper_bound)
-            {
-                throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
-                    __FILE__,__LINE__,"permutation breaks up sparse tuple"); 
-            }
-            size_t rel_idx = src_idx - sparse_set_offset;
-            perm_entries.push_back(rel_idx);
 
-            //We have ALREADY permuted m_subspaces, so we must save the ORIGINAL POSITION, not the DEST
-            tree_subspaces.push_back(m_subspaces[src_idx]);
+            size_t src_idx_grp = get_index_group_containing_subspace(src_idx);
+            size_t src_idx_grp_offset = get_index_group_offset(src_idx_grp);
+
+            
+
+            if(binary_search(m_sparse_indices_sets_offsets.begin(),m_sparse_indices_sets_offsets.end(),src_idx_grp_offset))
+            {
+                if(src_idx_grp_offset != sparse_set_offset)
+                {
+                    //An idx from another tree
+                    throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
+                        __FILE__,__LINE__,"permuting between different sparse groups is not supported"); 
+                }
+                else
+                {
+                    //An idx from the same tree
+                    size_t rel_idx = src_idx - sparse_set_offset;
+                    perm_entries.push_back(rel_idx);
+                    //We have ALREADY permuted m_subspaces, so we must save the ORIGINAL POSITION, not the DEST
+                    tree_subspaces.push_back(m_subspaces[src_idx]);
+                }
+            }
+            else
+            {
+                //A dense index - we incorporate it explicitly into the tree
+                new_dense_ind_positions.push_back(dest_idx - tree_new_offset);
+                tree_subspaces.push_back(m_subspaces[src_idx]);
+                copy.m_sparse_block_trees[i] = copy.m_sparse_block_trees[i].insert_subspace(order_idx,m_subspaces[src_idx]);
+            }
+        }
+
+        //Account for any new dense subspaces that have been incorporated into the tree
+        if(new_dense_ind_positions.size() > 0)
+        {
+            std::cout << "perm_entries BEFORE:\n";
+            for(size_t entry_idx = 0; entry_idx < perm_entries.size(); ++entry_idx)
+            {
+                std::cout << perm_entries[entry_idx] << ",";
+            }
+            std::cout << "\n";
+        }
+        for(size_t dense_rel_idx = 0; dense_rel_idx < new_dense_ind_positions.size(); ++dense_rel_idx)
+        {
+            size_t pos = new_dense_ind_positions[dense_rel_idx];
+            for(size_t entry_idx = 0; entry_idx < perm_entries.size(); ++entry_idx)
+            {
+                if(perm_entries[entry_idx] >= pos)
+                {
+                    ++perm_entries[entry_idx];
+                }
+            }
+            perm_entries.insert(perm_entries.begin()+pos,pos);
+        }
+
+        //TODO: DEBUG REMOVE
+        if(new_dense_ind_positions.size() > 0)
+        {
+            std::cout << "new_dense_ind_positions:\n";
+            for(size_t dense_rel_idx = 0; dense_rel_idx < new_dense_ind_positions.size(); ++dense_rel_idx)
+            {
+                std::cout << new_dense_ind_positions[dense_rel_idx] << ",";
+            }
+            std::cout << "\n";
+            std::cout << "perm_entries AFTER:\n";
+            for(size_t entry_idx = 0; entry_idx < perm_entries.size(); ++entry_idx)
+            {
+                std::cout << perm_entries[entry_idx] << ",";
+            }
+            std::cout << "\n";
         }
 
         runtime_permutation tree_perm(perm_entries);
+
         //Don't permute if identity
         if(tree_perm != runtime_permutation(order))
         {
@@ -640,6 +801,7 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
             copy.m_sparse_block_trees[i].set_offsets_sizes_nnz(tree_subspaces);
         }
     }
+#endif
     return copy;
 }
 
@@ -690,7 +852,6 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
                 //Tree-relative idx
                 size_t rel_idx = contract_idx - offset;
                 sparse_block_tree_any_order new_tree = cur_tree.contract(rel_idx,tree_subspaces);
-                m_sparse_block_tree_dimensions.push_back(new_tree.get_nnz());
                 m_sparse_block_trees.push_back(new_tree);
                 m_sparse_indices_sets_offsets.push_back(new_group_offset);
             }
@@ -699,7 +860,6 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
         {
             m_sparse_indices_sets_offsets.push_back(new_group_offset);
             m_sparse_block_trees.push_back(cur_tree);
-            m_sparse_block_tree_dimensions.push_back(parent.m_sparse_block_tree_dimensions[group_idx]);
         }
     }
 
@@ -762,7 +922,6 @@ void sparse_bispace<N>::truncate_subspace(size_t subspace_idx,const idx_pair& bo
             subspaces.push_back(m_subspaces[grp_offset + tree_subspace_idx]);
         }
         cur_tree.set_offsets_sizes_nnz(subspaces);
-        m_sparse_block_tree_dimensions[target_sparse_grp_idx] = cur_tree.get_nnz();
     }
     init();
 }
@@ -963,7 +1122,6 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs, const sparse
         //delete the no longer needed rhs tree information
         m_sparse_indices_sets_offsets.erase(m_sparse_indices_sets_offsets.begin() + first_rhs_tree_idx);
         m_sparse_block_trees.erase(m_sparse_block_trees.begin() + first_rhs_tree_idx);
-        m_sparse_block_tree_dimensions.erase(m_sparse_block_tree_dimensions.begin() + first_rhs_tree_idx); 
     }
 
     init();

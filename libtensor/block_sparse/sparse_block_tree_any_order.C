@@ -15,7 +15,7 @@ void sparse_block_tree_any_order::set_offsets_sizes_nnz(const vector< sparse_bis
     if(subspaces.size() != m_order)
     {
         throw bad_parameter(g_ns,"sparse_block_tree_any_order","set_offsets_sizes_nnz",
-                            __FILE__,__LINE__,"Not enough subspaces specified!");
+                            __FILE__,__LINE__,"Wrong number of subspaces specified!");
     }
 
     size_t offset = 0;
@@ -520,6 +520,11 @@ sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_
 
 sparse_block_tree_any_order sparse_block_tree_any_order::insert_subspace(size_t subspace_idx,const sparse_bispace<1>& subspace) const
 {
+    if(subspace_idx > m_order)
+    {
+        throw out_of_bounds(g_ns,"sparse_block_tree_any_order","insert_subspace(...)",__FILE__,__LINE__,
+                "subspace idx out of bounds"); 
+    }
 
     vector< vector<size_t> > all_keys;
     vector< vector<size_t> > batch_keys;

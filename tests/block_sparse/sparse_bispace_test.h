@@ -94,6 +94,7 @@ private:
      */
     void test_permute_2d_10() throw(libtest::test_exception);
     void test_permute_3d_dense_sparse_021() throw(libtest::test_exception);
+    void test_permute_3d_non_contiguous_sparsity() throw(libtest::test_exception);
     void test_permute_3d_fully_sparse_210() throw(libtest::test_exception);
 
     /*
