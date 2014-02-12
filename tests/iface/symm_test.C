@@ -23,6 +23,7 @@ void symm_test::perform() throw(libtest::test_exception) {
     try {
 
         test_symm2_contr_tt_1();
+        test_symm2_contr_tt_2();
         test_symm2_contr_ee_1();
         test_asymm2_contr_tt_1();
         test_asymm2_contr_tt_2();
@@ -84,6 +85,47 @@ void symm_test::test_symm2_contr_tt_1() throw(libtest::test_exception) {
 
     letter a, b, c, d, i;
     t3(a|b|c|d) = symm(a, b, contract(i, t1(i|a), t2(b|c|d|i)));
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void symm_test::test_symm2_contr_tt_2() throw(libtest::test_exception) {
+
+    const char testname[] = "symm_test::test_symm2_contr_tt_2()";
+
+    try {
+
+    bispace<1> sp_i(10), sp_a(20);
+    bispace<2> sp_ia(sp_i|sp_a), sp_ii(sp_i&sp_i);
+    bispace<4> sp_iajb(sp_ia&sp_ia);
+
+    btensor<2> t1(sp_ii);
+    btensor<4> t2(sp_iajb);
+    btensor<4> t3(sp_iajb), t3_ref(sp_iajb), t3_ref_tmp(sp_iajb);
+
+    btod_random<2>().perform(t1);
+    btod_random<4>().perform(t2);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    permutation<4> p3012;
+    p3012.permute(2, 3).permute(1, 2).permute(0, 1);
+    contraction2<3, 1, 1> contr(p3012);
+    contr.contract(0, 1);
+    btod_contract2<3, 1, 1> op(contr, t2, t1);
+    op.perform(t3_ref_tmp);
+    btod_copy<4> cp(t3_ref_tmp);
+    btod_symmetrize2<4>(cp, permutation<4>().permute(0, 2).permute(1, 3), true).
+        perform(t3_ref);
+
+    letter a, b, i, j, k;
+
+    t3(i|a|j|b) = symm(i|a, j|b, contract(k, t2(k|a|j|b), t1(i|k)));
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 

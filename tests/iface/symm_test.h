@@ -15,6 +15,7 @@ public:
 
 private:
     void test_symm2_contr_tt_1() throw(libtest::test_exception);
+    void test_symm2_contr_tt_2() throw(libtest::test_exception);
     void test_symm2_contr_ee_1() throw(libtest::test_exception);
     void test_asymm2_contr_tt_1() throw(libtest::test_exception);
     void test_asymm2_contr_tt_2() throw(libtest::test_exception);

@@ -101,7 +101,7 @@ void eval_symm_impl::do_evaluate(const tensor_transf<N, double> &tr,
     size_t nsymidx = nn.get_sym().size() / 2;
     permutation<N> symperm;
     for(size_t i = 0; i < nsymidx; i++) {
-        symperm.permute(nn.get_sym()[i], nn.get_sym()[nsymidx + i]);
+        symperm.permute(nn.get_sym()[2*i], nn.get_sym()[2*i+1]);
     }
 
     tensor_transf<N, double> tr2(tr), tr2inv(tr2, true);
