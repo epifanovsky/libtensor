@@ -4,7 +4,7 @@
 #include <libtensor/expr/dag/node_contract.h>
 #include <libtensor/expr/dag/node_div.h>
 #include <libtensor/expr/dag/node_transform.h>
-#include <libtensor/iface/expr_exception.h>
+#include <libtensor/expr/expr_exception.h>
 
 namespace libtensor {
 namespace expr {

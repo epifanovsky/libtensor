@@ -4,10 +4,12 @@
 #include <libtensor/exception.h>
 
 namespace libtensor {
+namespace expr {
+
 
 /** \brief Exception indicating an error in an expression
 
-    \ingroup libtensor_core_exc
+    \ingroup libtensor_expr
  **/
 class expr_exception : public exception_base<expr_exception> {
 public:
@@ -29,6 +31,8 @@ public:
     //@}
 };
 
+
+} // namespace expr
 } // namespace libtensor
 
 #endif // LIBTENSOR_EXPR_EXCEPTION_H
