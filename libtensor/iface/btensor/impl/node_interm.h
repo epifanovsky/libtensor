@@ -55,12 +55,13 @@ public:
         return typeid(T);
     }
 
-    iface::any_tensor<N, T> &get_tensor() const {
+    any_tensor<N, T> &get_tensor() const {
         return m_cnt->bt;
     }
 
 private:
     node_interm<N, T> &operator==(const node_interm<N, T> &);
+
 };
 
 

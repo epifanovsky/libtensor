@@ -2,10 +2,10 @@
 #include <set>
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_assign.h>
-#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/dag/print_tree.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include "node_interm.h"
 #include "metaprog.h"
 #include "eval_tree_builder_btensor.h"

@@ -4,7 +4,7 @@
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_trace.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "trace_test.h"
 
 namespace libtensor {

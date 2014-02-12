@@ -4,7 +4,7 @@
 #include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_set.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "dirsum_test.h"
 

@@ -2,7 +2,7 @@
 #define LIBTENSOR_IFACE_BTENSOR_I_H
 
 #include <libtensor/block_tensor/block_tensor_i.h>
-#include "any_tensor_impl.h"
+#include <libtensor/expr/iface/any_tensor_impl.h>
 #include "btensor/eval_btensor_holder.h"
 
 namespace libtensor {

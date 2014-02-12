@@ -1,49 +1,31 @@
-#ifndef LIBTENSOR_LETTER_EXPR_H
-#define LIBTENSOR_LETTER_EXPR_H
+#ifndef LIBTENSOR_EXPR_LABEL_H
+#define LIBTENSOR_EXPR_LABEL_H
 
 #include <vector>
 #include <libtensor/exception.h>
 #include <libtensor/core/permutation_builder.h>
 #include "letter.h"
 
-/** \defgroup libtensor_letter_expr Letter index expressions
-    \ingroup libtensor_iface
-
-    The members of this group provide the facility to operate %letter
-    indexes.
-
-    <b>See also:</b>
-
-     * libtensor::letter
-**/
-
 namespace libtensor {
+namespace expr {
 
-
-/** \brief Base class for %letter %index expressions
-
-    \ingroup libtensor_letter_expr
-**/
-template<size_t N>
-class letter_expr_base {
-};
 
 /** \brief Expression using %letter %tensor indexes
 
-    \ingroup libtensor_letter_expr
+    \ingroup libtensor_expr_iface
 **/
 template<size_t N>
-class letter_expr : public letter_expr_base<N> {
+class label {
 private:
-    letter_expr<N - 1> m_expr;
+    label<N - 1> m_expr;
     const letter &m_let;
 
 public:
-    letter_expr(const letter_expr<N - 1> &expr, const letter &let) :
+    label(const label<N - 1> &expr, const letter &let) :
         m_expr(expr), m_let(let) { }
-    letter_expr(const std::vector<const letter*> &v) :
+    label(const std::vector<const letter*> &v) :
         m_expr(v), m_let(*v[N - 1]) { }
-    letter_expr(const letter_expr<N> &expr) :
+    label(const label<N> &expr) :
         m_expr(expr.m_expr), m_let(expr.m_let) { }
 
     /** \brief Returns whether the expression contains a %letter
@@ -73,7 +55,7 @@ public:
             expression
         \param e2 Second expression.
      **/
-    permutation<N> permutation_of(const letter_expr<N> &expr) const
+    permutation<N> permutation_of(const label<N> &expr) const
         throw(exception) {
 
         const letter *seq1[N], *seq2[N];
@@ -90,18 +72,19 @@ public:
     }
 
 private:
-    letter_expr<N> &operator=(const letter_expr<N> &);
+    label<N> &operator=(const label<N> &);
 };
 
+
 template<>
-class letter_expr<1> : public letter_expr_base<1> {
+class label<1> {
 private:
     const letter &m_let;
 
 public:
-    letter_expr(const letter &let) : m_let(let) { }
-    letter_expr(const std::vector<const letter*> &v) : m_let(*v[0]) { }
-    letter_expr(const letter_expr<1> &expr) : m_let(expr.m_let) { }
+    label(const letter &let) : m_let(let) { }
+    label(const std::vector<const letter*> &v) : m_let(*v[0]) { }
+    label(const label<1> &expr) : m_let(expr.m_let) { }
 
     /** \brief Returns whether the expression contains a %letter
      **/
@@ -132,7 +115,7 @@ public:
         return m_let;
     }
 
-    permutation<1> permutation_of(const letter_expr<1> &e2) const {
+    permutation<1> permutation_of(const label<1> &e2) const {
         return permutation<1>();
     }
 
@@ -142,23 +125,23 @@ public:
     }
 
 private:
-    letter_expr<1> &operator=(const letter_expr<1> &);
+    label<1> &operator=(const label<1> &);
 };
 
 
-template<> class letter_expr<0>;
+template<> class label<0>;
 
 
 /** \brief Bitwise OR (|) operator for two letters
 
     \ingroup libtensor_letter_expr
 **/
-inline letter_expr<2> operator|(const letter &l1, const letter &l2) {
+inline label<2> operator|(const letter &l1, const letter &l2) {
     if(&l1 == &l2) {
         throw_exc("", "operator|(const letter&, const letter&)",
             "Only unique letters are allowed");
     }
-    return letter_expr<2>(letter_expr<1>(l1), l2);
+    return label<2>(label<1>(l1), l2);
 }
 
 
@@ -167,16 +150,16 @@ inline letter_expr<2> operator|(const letter &l1, const letter &l2) {
     \ingroup libtensor_letter_expr
 **/
 template<size_t N>
-inline letter_expr<N + 1> operator|(letter_expr<N> expr1, const letter &l2) {
+inline label<N + 1> operator|(label<N> expr1, const letter &l2) {
     if(expr1.contains(l2)) {
         throw_exc("", "operator|(letter_expr, const letter&)",
             "Only unique letters are allowed");
     }
-    return letter_expr<N + 1>(expr1, l2);
+    return label<N + 1>(expr1, l2);
 }
 
 
+} // namespace expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_LETTER_EXPR_H
-
+#endif // LIBTENSOR_EXPR_LABEL_H

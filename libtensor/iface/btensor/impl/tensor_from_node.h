@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_TENSOR_FROM_NODE_H
 #define LIBTENSOR_TENSOR_FROM_NODE_H
 
-#include <libtensor/expr/node_ident_any_tensor.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include "node_interm.h"
 
 namespace libtensor {

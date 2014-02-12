@@ -7,7 +7,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_dotprod.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "dot_product_test.h"
 
 namespace libtensor {

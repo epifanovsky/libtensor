@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/dag/node_transform.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include "node_transform_test.h"
 
 namespace libtensor {

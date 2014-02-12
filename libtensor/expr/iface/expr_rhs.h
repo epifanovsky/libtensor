@@ -1,13 +1,13 @@
-#ifndef LIBTENSOR_IFACE_EXPR_RHS_H
-#define LIBTENSOR_IFACE_EXPR_RHS_H
+#ifndef LIBTENSOR_EXPR_EXPR_RHS_H
+#define LIBTENSOR_EXPR_EXPR_RHS_H
 
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/expr/dag/expr_tree.h>
-#include "letter_expr.h"
+#include "label.h"
 
 
 namespace libtensor {
-namespace iface {
+namespace expr {
 
 
 /** \brief Expression meta-wrapper
@@ -23,18 +23,18 @@ namespace iface {
     This template wraps around the real expression type (core) to facilitate
     the matching of overloaded operator templates.
 
-    \ingroup libtensor_btensor_expr
+    \ingroup libtensor_expr_iface
  **/
 template<size_t N, typename T>
 class expr_rhs : public noncopyable {
 private:
-    expr::expr_tree m_expr; //!< Expression
-    letter_expr<N> m_label; //!< Letter label
+    expr_tree m_expr; //!< Expression
+    label<N> m_label; //!< Letter label
 
 public:
     /** \brief Constructs the expression using a core
      **/
-    expr_rhs(const expr::expr_tree &expr, const letter_expr<N> &l) :
+    expr_rhs(const expr_tree &expr, const label<N> &l) :
         m_expr(expr), m_label(l) { }
 
     /** \brief Copy constructor
@@ -48,17 +48,17 @@ public:
 
     /** \brief Returns the core of the expression
      **/
-    expr::expr_tree &get_expr() {
+    expr_tree &get_expr() {
         return m_expr;
     }
 
     /** \brief Returns the core of the expression (const version)
      **/
-    const expr::expr_tree &get_expr() const {
+    const expr_tree &get_expr() const {
         return m_expr;
     }
 
-    const letter_expr<N> &get_label() const {
+    const label<N> &get_label() const {
         return m_label;
     }
 
@@ -82,7 +82,7 @@ public:
 };
 
 
-} // namespace iface
+} // namespace expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_EXPR_RHS_H
+#endif // LIBTENSOR_EXPR_EXPR_RHS_H

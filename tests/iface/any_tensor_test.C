@@ -1,5 +1,5 @@
 #include <libtensor/exception.h>
-#include <libtensor/iface/any_tensor_impl.h>
+#include <libtensor/expr/iface/any_tensor_impl.h>
 #include "any_tensor_test.h"
 
 namespace libtensor {

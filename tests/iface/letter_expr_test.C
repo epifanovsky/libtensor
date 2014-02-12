@@ -1,5 +1,5 @@
-#include <libtensor/iface/letter.h>
-#include <libtensor/iface/letter_expr.h>
+#include <libtensor/expr/iface/label.h>
+#include <libtensor/expr/iface/letter.h>
 #include "letter_expr_test.h"
 
 namespace libtensor {
@@ -11,12 +11,13 @@ void letter_expr_test::perform() throw(libtest::test_exception) {
     test_permutation();
 }
 
+using expr::label;
 
 void letter_expr_test::test_contains() {
 
     letter i, j, k, l;
 
-    if(!letter_expr<1>(i).contains(i)) {
+    if(!label<1>(i).contains(i)) {
         fail_test("letter_expr_test::test_contains()", __FILE__,
             __LINE__, "Failed index location: (i).contains(i)");
     }

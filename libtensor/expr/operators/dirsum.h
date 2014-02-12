@@ -1,10 +1,10 @@
-#ifndef LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
-#define LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
+#ifndef LIBTENSOR_EXPR_OPERATORS_DIRSUM_H
+#define LIBTENSOR_EXPR_OPERATORS_DIRSUM_H
 
 #include <libtensor/expr/dag/node_dirsum.h>
 
 namespace libtensor {
-namespace iface {
+namespace expr {
 
 
 /** \brief Direct sum of two expressions
@@ -12,35 +12,39 @@ namespace iface {
     \tparam M Order of the second tensor.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, size_t M, typename T>
 expr_rhs<N + M, T> dirsum(
     const expr_rhs<N, T> &a,
     const expr_rhs<M, T> &b) {
 
-    std::vector<const letter *> label(N + M);
+    std::vector<const letter *> lab(N + M);
     for(size_t i = 0; i < N; i++) {
-        label[i] = &a.letter_at(i);
+        lab[i] = &a.letter_at(i);
     }
     for(size_t i = 0, j = N; i < M; i++, j++) {
-        label[j] = &b.letter_at(i);
+        lab[j] = &b.letter_at(i);
     }
 
     // TODO: remap tensors
 
-    expr::expr_tree e(expr::node_dirsum(N + M));
-    expr::expr_tree::node_id_t id = e.get_root();
+    expr_tree e(node_dirsum(N + M));
+    expr_tree::node_id_t id = e.get_root();
     e.add(id, a.get_expr());
     e.add(id, b.get_expr());
-    return expr_rhs<N + M, T>(e, letter_expr<N + M>(label));
+    return expr_rhs<N + M, T>(e, label<N + M>(lab));
 }
 
 
-} // namespace iface
+} // namespace expr
+} // namespace libtensor
 
-using iface::dirsum;
+
+namespace libtensor {
+
+using expr::dirsum;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_DIRSUM_OPERATOR_H
+#endif // LIBTENSOR_EXPR_OPERATORS_DIRSUM_H

@@ -1,12 +1,17 @@
-#ifndef LIBTENSOR_IFACE_ANY_TENSOR_H
-#define LIBTENSOR_IFACE_ANY_TENSOR_H
+#ifndef LIBTENSOR_EXPR_ANY_TENSOR_H
+#define LIBTENSOR_EXPR_ANY_TENSOR_H
 
 #include <cstddef> // for size_t
 #include <typeinfo>
-#include "letter_expr.h"
+#include "label.h"
 
 namespace libtensor {
-namespace iface {
+namespace expr {
+
+
+/** \defgroup libtensor_expr_iface Basic components of programming interface
+    \ingroup libtensor_expr
+ **/
 
 
 template<size_t N, typename T>
@@ -20,7 +25,7 @@ class expr_rhs;
     This template implements the any concept for tensors. The actual tensor
     type is concealed and is only known to the creator and the recipient.
 
-    \ingroup libtensor_iface
+    \ingroup libtensor_expr_iface
  **/
 template<size_t N, typename T>
 class any_tensor {
@@ -73,7 +78,7 @@ public:
 
     /** \brief Attaches a letter label to the tensor
      **/
-    expr_rhs<N, T> operator()(const letter_expr<N> &label);
+    expr_rhs<N, T> operator()(const label<N> &l);
 
 protected:
     /** \brief Constructor that can only be used by derived classes
@@ -83,7 +88,7 @@ protected:
     /** \brief Actual implementation of operator(), to be redefined in derived
             classes if necessary
      **/
-    virtual expr_rhs<N, T> make_rhs(const letter_expr<N> &label);
+    virtual expr_rhs<N, T> make_rhs(const label<N> &l);
 
 private:
     const any_tensor &operator=(const any_tensor&);
@@ -116,20 +121,20 @@ Tensor &any_tensor<N, T>::get_tensor() const {
 
 
 template<size_t N, typename T>
-expr_rhs<N, T> any_tensor<N, T>::operator()(const letter_expr<N> &label) {
+expr_rhs<N, T> any_tensor<N, T>::operator()(const label<N> &l) {
 
-    return make_rhs(label);
+    return make_rhs(l);
 }
 
 
-} // namespace iface
+} // namespace expr
 } // namespace libtensor
 
 
 namespace libtensor {
 
-using iface::any_tensor;
+using expr::any_tensor;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_ANY_TENSOR_H
+#endif // LIBTENSOR_EXPR_ANY_TENSOR_H

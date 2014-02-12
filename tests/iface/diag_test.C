@@ -3,7 +3,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_diag.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "diag_test.h"
 

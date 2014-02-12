@@ -2,7 +2,7 @@
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "direct_product_test.h"
 

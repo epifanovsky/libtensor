@@ -1,5 +1,5 @@
 #include <libtensor/exception.h>
-#include <libtensor/expr/node_ident_any_tensor.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/iface/btensor.h>
 #include "node_ident_any_tensor_test.h"
 

@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_EVAL_BTENSOR_DOUBLE_COPY_H
 #define LIBTENSOR_EVAL_BTENSOR_DOUBLE_COPY_H
 
-#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/iface/btensor.h>
 #include "../eval_btensor.h"
 

@@ -9,7 +9,7 @@
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "contract_test.h"
 

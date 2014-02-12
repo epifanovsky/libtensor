@@ -4,10 +4,10 @@
 #include <libtensor/expr/dag/node_contract.h>
 #include <libtensor/expr/dag/node_diag.h>
 #include <libtensor/expr/dag/node_div.h>
-#include <libtensor/expr/node_ident_any_tensor.h>
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/dag/expr_tree.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include "expr_tree_test.h"
 
 namespace libtensor {

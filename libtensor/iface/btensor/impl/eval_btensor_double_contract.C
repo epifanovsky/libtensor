@@ -2,7 +2,7 @@
 #include <libtensor/block_tensor/btod_ewmult2.h>
 #include <libtensor/block_tensor/btod_scale.h>
 #include <libtensor/expr/dag/node_contract.h>
-#include <libtensor/expr/node_ident_any_tensor.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include "metaprog.h"
 #include "node_interm.h"
 #include "eval_btensor_double_contract.h"

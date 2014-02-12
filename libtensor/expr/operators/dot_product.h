@@ -1,18 +1,18 @@
-#ifndef LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
-#define LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
+#ifndef LIBTENSOR_EXPR_OPERATORS_DOT_PRODUCT_H
+#define LIBTENSOR_EXPR_OPERATORS_DOT_PRODUCT_H
 
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
-#include <libtensor/iface/expr_rhs.h>
+#include <libtensor/expr/iface/expr_rhs.h>
 #include <libtensor/iface/eval/eval.h>
 
 namespace libtensor {
-namespace iface {
+namespace expr {
 
 
 /** \brief Dot product
 
-    \ingroup libtensor_iface
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, typename T>
 T dot_product(
@@ -28,25 +28,28 @@ T dot_product(
 
     T d;
 
-    expr::node_assign n1(0);
-    expr::expr_tree e(expr::node_assign(0));
-    expr::expr_tree::node_id_t id_res =
-        e.add(e.get_root(), expr::node_scalar<T>(d));
-    expr::expr_tree::node_id_t id_dot =
-        e.add(e.get_root(), expr::node_dot_product(idxa, idxb));
+    node_assign n1(0);
+    expr_tree e(node_assign(0));
+    expr_tree::node_id_t id_res = e.add(e.get_root(), node_scalar<T>(d));
+    expr_tree::node_id_t id_dot =
+        e.add(e.get_root(), node_dot_product(idxa, idxb));
     e.add(id_dot, lhs.get_expr());
     e.add(id_dot, rhs.get_expr());
 
-    eval().evaluate(e);
+    iface::eval().evaluate(e);
 
     return d;
 }
 
 
-} // namespace iface
+} // namespace expr
+} // namespace libtensor
 
-using iface::dot_product;
+
+namespace libtensor {
+
+using expr::dot_product;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_DOT_PRODUCT_OPERATOR_H
+#endif // LIBTENSOR_EXPR_OPERATORS_DOT_PRODUCT_H

@@ -1,10 +1,10 @@
-#ifndef LIBTENSOR_IFACE_SYMM_OPERATOR_H
-#define LIBTENSOR_IFACE_SYMM_OPERATOR_H
+#ifndef LIBTENSOR_EXPR_OPERATORS_SYMM_ASYMM_H
+#define LIBTENSOR_EXPR_OPERATORS_SYMM_ASYMM_H
 
 #include <libtensor/expr/dag/node_symm.h>
 
 namespace libtensor {
-namespace iface {
+namespace expr {
 
 
 /** \brief Symmetrization of an expression over two sets of indices
@@ -12,12 +12,12 @@ namespace iface {
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, size_t M, typename T>
 expr_rhs<N, T> symm(
-    const letter_expr<M> sym1,
-    const letter_expr<M> sym2,
+    const label<M> sym1,
+    const label<M> sym2,
     const expr_rhs<N, T> &subexpr) {
 
     std::vector<size_t> sym(2 * M, 0);
@@ -29,8 +29,8 @@ expr_rhs<N, T> symm(
         sym[j++] = subexpr.index_of(l2);
     }
 
-    expr::expr_tree e(expr::node_symm<T>(N, sym, 2,
-            scalar_transf<T>(), scalar_transf<T>()));
+    expr_tree e(node_symm<T>(N, sym, 2, scalar_transf<T>(),
+        scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
 }
@@ -41,12 +41,12 @@ expr_rhs<N, T> symm(
     \tparam M Number of indexes in each set.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, size_t M, typename T>
 expr_rhs<N, T> asymm(
-    const letter_expr<M> sym1,
-    const letter_expr<M> sym2,
+    const label<M> sym1,
+    const label<M> sym2,
     const expr_rhs<N, T> &subexpr) {
 
     std::vector<size_t> sym(2 * M, 0);
@@ -58,8 +58,8 @@ expr_rhs<N, T> asymm(
         sym[j++] = subexpr.index_of(l2);
     }
 
-    expr::expr_tree e(expr::node_symm<T>(N, sym, 2,
-            scalar_transf<T>(-1), scalar_transf<T>()));
+    expr_tree e(node_symm<T>(N, sym, 2, scalar_transf<T>(-1),
+        scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
 }
@@ -69,7 +69,7 @@ expr_rhs<N, T> asymm(
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> symm(
@@ -83,8 +83,8 @@ expr_rhs<N, T> symm(
     sym[1] = subexpr.index_of(l2);
     sym[2] = subexpr.index_of(l3);
 
-    expr::expr_tree e(expr::node_symm<T>(N, sym, 3,
-            scalar_transf<T>(), scalar_transf<T>()));
+    expr_tree e(node_symm<T>(N, sym, 3, scalar_transf<T>(),
+        scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
 }
@@ -94,7 +94,7 @@ expr_rhs<N, T> symm(
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> asymm(
@@ -108,8 +108,8 @@ expr_rhs<N, T> asymm(
     sym[1] = subexpr.index_of(l2);
     sym[2] = subexpr.index_of(l3);
 
-    expr::expr_tree e(expr::node_symm<T>(N, sym, 3,
-            scalar_transf<T>(-1), scalar_transf<T>()));
+    expr_tree e(node_symm<T>(N, sym, 3, scalar_transf<T>(-1),
+        scalar_transf<T>()));
     e.add(e.get_root(), subexpr.get_expr());
     return expr_rhs<N, T>(e, subexpr.get_label());
 }
@@ -119,7 +119,7 @@ expr_rhs<N, T> asymm(
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> symm(
@@ -127,7 +127,7 @@ expr_rhs<N, T> symm(
     const letter &l2,
     const expr_rhs<N, T> &subexpr) {
 
-    return symm(letter_expr<1>(l1), letter_expr<1>(l2), subexpr);
+    return symm(label<1>(l1), label<1>(l2), subexpr);
 }
 
 
@@ -135,7 +135,7 @@ expr_rhs<N, T> symm(
     \tparam N Tensor order.
     \tparam T Tensor element type.
 
-    \ingroup libtensor_btensor_expr_op
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, typename T>
 expr_rhs<N, T> asymm(
@@ -143,15 +143,19 @@ expr_rhs<N, T> asymm(
     const letter &l2,
     const expr_rhs<N, T> &subexpr) {
 
-    return asymm(letter_expr<1>(l1), letter_expr<1>(l2), subexpr);
+    return asymm(label<1>(l1), label<1>(l2), subexpr);
 }
 
 
-} // namespace iface
+} // namespace expr
+} // namespace libtensor
 
-using iface::symm;
-using iface::asymm;
+
+namespace libtensor {
+
+using expr::symm;
+using expr::asymm;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_SYMM_OPERATOR_H
+#endif // LIBTENSOR_EXPR_OPERATORS_SYMM_ASYMM_H

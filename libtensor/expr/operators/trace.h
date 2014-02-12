@@ -1,24 +1,22 @@
-#ifndef LIBTENSOR_IFACE_TRACE_OPERATOR_H
-#define LIBTENSOR_IFACE_TRACE_OPERATOR_H
+#ifndef LIBTENSOR_EXPR_OPERATORS_TRACE_H
+#define LIBTENSOR_EXPR_OPERATORS_TRACE_H
 
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/dag/node_trace.h>
-#include <libtensor/core/permutation_builder.h>
-#include <libtensor/block_tensor/btod_trace.h>
-#include "../expr_rhs.h"
+#include <libtensor/expr/iface/expr_rhs.h>
 
 namespace libtensor {
-namespace iface {
+namespace expr {
 
 
 /** \brief Trace of a tensor expression
 
-    \ingroup libtensor_iface
+    \ingroup libtensor_expr_operators
  **/
 template<size_t N, size_t N2, typename T>
 T trace(
-    const letter_expr<N> le1,
-    const letter_expr<N> le2,
+    const label<N> le1,
+    const label<N> le2,
     const expr_rhs<N2, T> &rhs) {
 
     std::vector<size_t> idx(N2), cidx(N);
@@ -36,15 +34,13 @@ T trace(
 
     T d;
 
-    expr::node_assign n1(0);
-    expr::expr_tree e(expr::node_assign(0));
-    expr::expr_tree::node_id_t id_res =
-        e.add(e.get_root(), expr::node_scalar<T>(d));
-    expr::expr_tree::node_id_t id_trace =
-        e.add(e.get_root(), expr::node_trace(idx, cidx));
+    node_assign n1(0);
+    expr_tree e(node_assign(0));
+    expr_tree::node_id_t id_res = e.add(e.get_root(), node_scalar<T>(d));
+    expr_tree::node_id_t id_trace = e.add(e.get_root(), node_trace(idx, cidx));
     e.add(id_trace, rhs.get_expr());
 
-    eval().evaluate(e);
+    iface::eval().evaluate(e);
 
     return d;
 }
@@ -52,7 +48,7 @@ T trace(
 
 /** \brief Trace of a matrix expression
 
-    \ingroup libtensor_iface
+    \ingroup libtensor_expr_operators
  **/
 template<typename T>
 T trace(
@@ -60,14 +56,18 @@ T trace(
     const letter &l2,
     const expr_rhs<2, T> &expr) {
 
-    return trace(letter_expr<1>(l1), letter_expr<1>(l2), expr);
+    return trace(label<1>(l1), label<1>(l2), expr);
 }
 
 
-} // namespace iface
+} // namespace expr
+} // namespace libtensor
 
-using iface::trace;
+
+namespace libtensor {
+
+using expr::trace;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_IFACE_TRACE_OPERATOR_H
+#endif // LIBTENSOR_EXPR_OPERATORS_TRACE_H
