@@ -257,6 +257,7 @@ set(SRC_EXPR
     expr/eval/default_eval_selector.C
     expr/eval/eval.C
     expr/eval/eval_register.C
+    expr/opt/opt_merge_equiv_ident.C
 )
 
 if(WITH_ARMADILLO)

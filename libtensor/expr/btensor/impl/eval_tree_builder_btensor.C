@@ -6,6 +6,7 @@
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/dag/print_tree.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
+#include <libtensor/expr/opt/opt_merge_equiv_ident.h>
 #include "node_interm.h"
 #include "metaprog.h"
 #include "eval_tree_builder_btensor.h"
@@ -390,47 +391,9 @@ void eval_tree_builder_btensor::build() {
                 __FILE__, __LINE__, "Assignment node missing.");
     }
 
-//    std::cout << "render expression" << std::endl;
-//    print_tree(m_tree, std::cout);
-
-    std::set<expr_tree::node_id_t> to_erase;
-    for (expr_tree::iterator i = m_tree.begin(); i != m_tree.end(); i++) {
-
-        const node &ni = m_tree.get_vertex(i);
-        if (ni.get_op().compare(node_ident::k_op_type) != 0) continue;
-
-        const node_ident &nii = ni.recast_as<node_ident>();
-
-        expr_tree::iterator j = i; j++;
-        for (; j != m_tree.end(); j++) {
-
-            const node &nj = m_tree.get_vertex(j);
-            if (nj.get_op().compare(node_ident::k_op_type) != 0) continue;
-
-            const node_ident &nij = nj.recast_as<node_ident>();
-
-            if (nii == nij) {
-                expr_tree::node_id_t idi = m_tree.get_id(i);
-                expr_tree::node_id_t idj = m_tree.get_id(j);
-                expr_tree::edge_list_t ej(m_tree.get_edges_in(j));
-                for (size_t k = 0; k < ej.size(); k++) {
-                    m_tree.graph::replace(ej[k], idj, idi);
-                }
-                to_erase.insert(idj);
-            }
-        }
-    }
-    for (std::set<expr_tree::node_id_t>::iterator i = to_erase.begin();
-            i != to_erase.end(); i++) {
-
-        m_tree.erase(*i);
-    }
+    opt_merge_equiv_ident(m_tree);
 
     node_renderer(m_tree, m_order, head).render();
-
-//    std::cout << "rendered expression" << std::endl;
-//    print_tree(m_tree, std::cout);
-
 }
 
 
