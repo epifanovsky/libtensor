@@ -6,10 +6,12 @@
 
 namespace libtensor {
 
+//TODO: Should rewrite this using mixins/CRTP so that I don't need to INHERIT from the class too much baggage
+//Constructor is too messy and huge...
 template<typename T>
 class batch_provider 
 {
-private:
+protected:
     static const char *k_clazz; //!< Class name
     std::vector<block_loop> m_loops;
     std::vector<T*> m_ptrs;
@@ -43,13 +45,19 @@ public:
     void set_mem_avail(size_t mem_avail) { m_mem_avail = mem_avail; }
     //Client code cannot assume a particular loop ordering, so it must specify the output batch
     //by specifying what bispace/subspace to truncate .
-    void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()));
+    void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()),size_t mem_avail = 0);
     virtual ~batch_provider() {}
 };
 
 template<typename T>
-void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches)
+void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail)
 {
+    //Hack for subtraction,permutation - need a better way
+    if(mem_avail != 0)
+    {
+        m_mem_avail = mem_avail;
+    }
+
     if(output_batches.size() > 1)
     {
         throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
