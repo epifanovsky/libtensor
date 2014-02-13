@@ -57,6 +57,15 @@ public:
         return m_n;
     }
 
+    /** \brief Returns true if the node has a given operation type as provided
+            by the derived class
+        \tparam T Derived node type.
+     **/
+    template<typename T>
+    bool check_type() const {
+        return m_op.compare(T::k_op_type) == 0;
+    }
+
     /** \brief Dynamically recasts this node onto a derived type
         \tparam T Derived node type.
      **/

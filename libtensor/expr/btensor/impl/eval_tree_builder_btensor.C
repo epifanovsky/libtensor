@@ -6,6 +6,7 @@
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/dag/print_tree.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
+#include <libtensor/expr/opt/opt_merge_adjacent_transf.h>
 #include <libtensor/expr/opt/opt_merge_equiv_ident.h>
 #include "node_interm.h"
 #include "metaprog.h"
@@ -392,6 +393,11 @@ void eval_tree_builder_btensor::build() {
     }
 
     opt_merge_equiv_ident(m_tree);
+//    std::cout << "== before ==" << std::endl;
+//    print_tree(m_tree, std::cout);
+    opt_merge_adjacent_transf(m_tree);
+//    std::cout << "== after ==" << std::endl;
+//    print_tree(m_tree, std::cout);
 
     node_renderer(m_tree, m_order, head).render();
 }
