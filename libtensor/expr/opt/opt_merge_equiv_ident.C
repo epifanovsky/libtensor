@@ -15,7 +15,7 @@ void opt_merge_equiv_ident(graph &g) {
     //  Make a list of all identity nodes
 
     for(graph::iterator i = g.begin(); i != g.end(); ++i) {
-        if(g.get_vertex(i).get_op().compare(node_ident::k_op_type) == 0) {
+        if(g.get_vertex(i).check_type<node_ident>()) {
             map_from.push_back(g.get_id(i));
         }
     }
