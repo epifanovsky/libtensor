@@ -1,11 +1,10 @@
-#include <iostream>
-#include <set>
+#include <deque>
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_assign.h>
+#include <libtensor/expr/dag/node_ident.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/dag/node_transform.h>
-#include <libtensor/expr/dag/print_tree.h>
-#include <libtensor/expr/iface/node_ident_any_tensor.h>
+#include <libtensor/expr/eval/eval_exception.h>
 #include <libtensor/expr/opt/opt_add_before_transf.h>
 #include <libtensor/expr/opt/opt_merge_adjacent_add.h>
 #include <libtensor/expr/opt/opt_merge_adjacent_transf.h>
@@ -16,7 +15,7 @@
 
 namespace libtensor {
 namespace expr {
-using namespace eval_btensor_double;
+using namespace eval_btensor_double; // for dispatch_1
 
 
 const char eval_tree_builder_btensor::k_clazz[] = "eval_tree_builder_btensor";
@@ -24,357 +23,144 @@ const char eval_tree_builder_btensor::k_clazz[] = "eval_tree_builder_btensor";
 
 namespace {
 
+typedef graph::node_id_t node_id_t;
 
-/** \brief Insert assignment at current position in tree
+/** \brief Inserts an intermediate assignment at current position in graph
  **/
-class node_assignment {
+class interm_inserter {
 public:
     enum {
         Nmax = eval_tree_builder_btensor::Nmax
     };
 
 private:
-    expr_tree &m_tree; //!< Evaluation tree
-    expr_tree::node_id_t m_cur; //!< ID of current node
-    size_t m_n;
+    graph &m_g; //!< Expression DAG
+    node_id_t m_nid; //!< ID of node
 
 public:
-    node_assignment(expr_tree &tr, expr_tree::node_id_t cur) :
-        m_tree(tr), m_cur(cur), m_n(0) {
-
-        const node &n = m_tree.get_vertex(m_cur);
-        m_n = n.get_n();
-    }
+    interm_inserter(graph &g, node_id_t nid) :
+        m_g(g), m_nid(nid)
+    { }
 
     void add() {
-        dispatch_1<1, Nmax>::dispatch(*this, m_n);
+        dispatch_1<1, Nmax>::dispatch(*this, m_g.get_vertex(m_nid).get_n());
     }
 
     template<size_t N>
     void dispatch() {
-
         add<N>();
     }
 
 private:
-
     template<size_t N>
     void add() {
 
-        const node &n = m_tree.get_vertex(m_cur);
-        expr_tree::node_id_t id0 = m_tree.insert(m_cur, node_assign(m_n));
-        expr_tree::node_id_t id1 = m_tree.add(id0, node_interm<N, double>());
+        node_id_t id0 = m_g.add(node_assign(m_g.get_vertex(m_nid).get_n()));
+        node_id_t id1 = m_g.add(node_interm<N, double>());
 
-        // Swap the order of the arguments to id0
-        m_tree.erase(id0, m_cur);
-        m_tree.graph::add(id0, m_cur);
+        graph::edge_list_t ei = m_g.get_edges_in(m_nid);
+        for(size_t i = 0; i < ei.size(); i++) m_g.replace(ei[i], m_nid, id0);
+
+        m_g.add(id0, id1);
+        m_g.add(id0, m_nid);
     }
+
 };
 
+void assume_adds(graph &g) {
 
-/** \brief Modifies the expression tree for evaluation
+    std::vector<node_id_t> replace, erase;
 
-    Does some basic validity checks and adds assignments to intermediate
-    tensors to the tree.
- **/
-class node_renderer {
-public:
-    static const char k_clazz[];
+    //  Find all nodes to replace
+    //  ( assign X ( + E1 E2 ... ) )
+    //  with
+    //  ( assign X E1 E2 ... )
 
-private:
-    expr_tree &m_tree; //!< Evaluation tree
-    eval_tree_builder_btensor::eval_order_t &m_order;
-    expr_tree::node_id_t m_cur; //!< ID of current node
-
-    bool m_is_ident;
-    bool m_is_transf;
-    bool m_is_add;
-
-public:
-    node_renderer(
-        expr_tree &tr, eval_tree_builder_btensor::eval_order_t &order,
-        expr_tree::node_id_t cur) :
-
-        m_tree(tr), m_order(order), m_cur(cur),
-        m_is_ident(false), m_is_transf(false), m_is_add(false)
-    { }
-
-    /** \brief Renders the current subtree
-     **/
-    void render();
-
-    /** \brief Returns if the current node is a transform node
-     **/
-    bool is_node_with_transf() const {  return m_is_transf; }
-
-    /** \brief Returns if the current node is an identity or
-            intermediate node with possibly being preceded by a transform node
-     **/
-    bool is_ident() const { return m_is_ident; }
-
-    /** \brief Returns if the current node represents a proper addition
-            with possibly being preceded a transform node
-     **/
-    bool is_addition() const { return m_is_add; }
-
-private:
-    //! \brief Renders addition node
-    void render_add();
-
-    //! \brief Renders assignment node
-    void render_assign();
-
-    //! \brief Renders non-specific node
-    void render_gen();
-
-    //! \brief Renders identity node
-    void render_ident() {
-        m_is_ident = true;
+    for(graph::iterator i = g.begin(); i != g.end(); ++i) {
+        if(!g.get_vertex(i).check_type<node_assign>()) continue;
+        const graph::edge_list_t &eo = g.get_edges_out(i);
+        if(eo.size() <= 1) continue;
+        bool all_adds = true;
+        for(size_t j = 1; j < eo.size(); j++) {
+            if(!g.get_vertex(eo[j]).check_type<node_add>()) all_adds = false;
+        }
+        if(all_adds) replace.push_back(g.get_id(i));
     }
 
-    //! \brief Renders transformation node
-    void render_transform();
+    //  Perform replacement
 
-    /** \brief Replaces addition node n1 if possible
-        \return True if successful
-     **/
-    void replace_addition(expr_tree::node_id_t n1);
+    for(size_t i = 0; i < replace.size(); i++) {
+        graph::edge_list_t eo1 = g.get_edges_out(replace[i]);
+        for(size_t j = 1; j < eo1.size(); j++) {
+            g.erase(replace[i], eo1[j]);
+            erase.push_back(eo1[j]);
+        }
+        for(size_t j = 1; j < eo1.size(); j++) {
+            graph::edge_list_t eo2 = g.get_edges_out(eo1[j]);
+            for(size_t k = 0; k < eo2.size(); k++) {
+                g.erase(eo1[j], eo2[k]);
+                g.add(replace[i], eo2[k]);
+            }
+        }
+    }
 
-    //! \brief Combines several subsequent transforms into one
-    void combine_transform(expr_tree::node_id_t id1);
+    for(size_t i = 0; i < erase.size(); i++) g.erase(erase[i]);
+}
 
-    //! \brief Verify that the given node is a proper l-value
-    void verify_lvalue(const node &n);
-};
+void insert_intermediates(graph &g, graph::node_id_t n0) {
 
+    if(!g.get_vertex(n0).check_type<node_assign>()) {
+        throw eval_exception(__FILE__, __LINE__, "eval",
+            "eval_tree_builder_btensor", "insert_intermediates()",
+            "Expected an assignment node");
+    }
 
-const char node_renderer::k_clazz[] = "node_renderer";
+    typedef graph::node_id_t node_id_t;
 
+    std::deque<node_id_t> q;
 
-void node_renderer::render()  {
+    const graph::edge_list_t &eo = g.get_edges_out(n0);
+    for(size_t i = 1; i < eo.size(); i++) q.push_back(eo[i]);
 
-    const node &n = m_tree.get_vertex(m_cur);
-    if(n.get_op().compare(node_assign::k_op_type) == 0) {
-        render_assign();
-    } else if(n.get_op().compare(node_transform_base::k_op_type) == 0) {
-        render_transform();
-    } else if(n.get_op().compare(node_add::k_op_type) == 0) {
-        render_add();
-    } else if((n.get_op().compare(node_ident::k_op_type) == 0) ||
-            (n.get_op().compare(node_interm_base::k_op_type) == 0)) {
-        render_ident();
-    } else {
-        render_gen();
+    while(!q.empty()) {
+
+        node_id_t n = q.front();
+        q.pop_front();
+
+        //  Skip nodes that won't need further inspection
+        if(g.get_vertex(n).check_type<node_ident>() ||
+            g.get_vertex(n).check_type<node_scalar_base>() ||
+            g.get_vertex(n).check_type<node_assign>()) continue;
+
+        //  Inspect children nodes further
+        const graph::edge_list_t &eo = g.get_edges_out(n);
+        for(size_t i = 0; i < eo.size(); i++) q.push_back(eo[i]);
+
+        //  Skip transformation nodes
+        if(g.get_vertex(n).check_type<node_transform_base>()) continue;
+
+        //  Skip nodes whose parent is assignment already
+        bool assigned = true;
+        const graph::edge_list_t &ei = g.get_edges_in(n);
+        for(size_t i = 0; i < ei.size(); i++) {
+            if(!g.get_vertex(ei[i]).check_type<node_assign>()) assigned = false;
+        }
+        if(assigned) continue;
+
+        //  Otherwise insert an intermediate
+        interm_inserter(g, n).add();
     }
 }
 
+void make_eval_order_depth_first(graph &g, node_id_t n,
+    std::vector<node_id_t> &order) {
 
-void node_renderer::render_add()  {
-
-    static const char method[] = "render_add()";
-
-    const node &n = m_tree.get_vertex(m_cur);
-    const node_add &na = n.recast_as<node_add>();
-
-    const expr_tree::edge_list_t eout(m_tree.get_edges_out(m_cur));
-
-    // Since the order of terms in an addition is arbitrary,
-    // merging additions does not preserve the order
-
-    for (size_t i = 0; i != eout.size(); i++) {
-
-        expr_tree::node_id_t id1 = eout[i];
-        const node &ni = m_tree.get_vertex(id1);
-        if (ni.get_n() != n.get_n()) {
-            throw 2;
-
-        }
-
-        node_renderer r(m_tree, m_order, id1);
-        r.render();
-        if (r.is_ident()) continue;
-        if (! r.is_addition()) {
-            node_assignment(m_tree, id1).add();
-
-            const expr_tree::edge_list_t &in1 = m_tree.get_edges_in(id1);
-            m_order.push_back(in1[0]);
-        }
-        else replace_addition(id1);
+    const graph::edge_list_t &eo = g.get_edges_out(n);
+    for(size_t i = 0; i < eo.size(); i++) {
+        make_eval_order_depth_first(g, eo[i], order);
     }
 
-    m_is_add = true;
-}
-
-
-void node_renderer::render_assign()  {
-
-    static const char method[] = "render_assign()";
-
-    expr_tree::edge_list_t out(m_tree.get_edges_out(m_cur));
-    if (out.size() < 2) {
-        throw bad_parameter("iface", k_clazz, method,
-                __FILE__, __LINE__, "Invalid assignment.");
-    }
-
-    const node &lhs = m_tree.get_vertex(out[0]);
-    verify_lvalue(lhs);
-
-    for (size_t i = 1; i < out.size(); i++) {
-
-        const node &rhs = m_tree.get_vertex(out[i]);
-        if (rhs.get_n() != lhs.get_n()) {
-            throw bad_parameter("iface", k_clazz, method,
-                    __FILE__, __LINE__, "Invalid dimensions of lhs and rhs.");
-        }
-
-        node_renderer r(m_tree, m_order, out[i]);
-        r.render();
-        if (r.is_addition()) replace_addition(out[i]);
-    }
-    m_is_ident = true;
-    m_order.push_back(m_cur);
-}
-
-
-void node_renderer::render_gen() {
-
-    const node &n = m_tree.get_vertex(m_cur);
-    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_cur);
-    for (size_t i = 0; i != e.size(); i++) {
-
-        expr_tree::node_id_t id = e[i];
-        node_renderer r(m_tree, m_order, id);
-        r.render();
-        if (r.is_ident()) continue;
-        if (r.is_addition()) replace_addition(id);
-        else {
-            node_assignment(m_tree, id).add();
-            m_order.push_back(e[i]);
-        }
-    }
-}
-
-
-void node_renderer::render_transform() {
-
-    const expr_tree::edge_list_t &eout = m_tree.get_edges_out(m_cur);
-    if (eout.size() != 1) throw 141;
-
-    node_renderer r(m_tree, m_order, eout[0]);
-    r.render();
-    if (r.is_node_with_transf()) combine_transform(m_cur);
-
-    m_is_transf = true;
-    m_is_ident = r.is_ident();
-    m_is_add = r.is_addition();
-}
-
-
-void node_renderer::replace_addition(expr_tree::node_id_t id1) {
-
-    const expr_tree::edge_list_t &in = m_tree.get_edges_in(id1);
-    if (in.size() != 1) {
-        node_assignment(m_tree, id1).add();
-        m_order.push_back(in[0]);
-    }
-    else {
-        const node &n0 = m_tree.get_vertex(in[0]);
-        if (n0.get_op().compare(node_assign::k_op_type) != 0 &&
-            n0.get_op().compare(node_add::k_op_type) != 0) {
-
-            node_assignment(m_tree, id1).add();
-            m_order.push_back(in[0]);
-        }
-    }
-
-    expr_tree::node_id_t id0 = in[0];
-
-    expr_tree::node_id_t id2 = id1;
-    const node &n1 = m_tree.get_vertex(id1);
-    if (n1.get_op().compare(node_transform_base::k_op_type) == 0) {
-        id2 = m_tree.get_edges_out(id1)[0];
-    }
-
-    const node &n2 = m_tree.get_vertex(id2);
-    if (n2.get_op().compare(node_add::k_op_type) != 0) {
-        throw 151;
-    }
-
-    expr_tree::edge_list_t out(m_tree.get_edges_out(id2));
-    for (size_t i = 0; i < out.size(); i++) {
-
-        m_tree.graph::erase(id2, out[i]);
-        m_tree.graph::add(id0, out[i]);
-        if (id2 != id1) {
-            expr_tree::node_id_t idx =
-                    m_tree.insert(out[i], m_tree.get_vertex(id1));
-            combine_transform(idx);
-        }
-    }
-
-    m_tree.erase_subtree(id1);
-}
-
-
-void node_renderer::combine_transform(expr_tree::node_id_t id1)  {
-
-    const node &n1 = m_tree.get_vertex(id1);
-    if (n1.get_op().compare(node_transform_base::k_op_type) != 0) return;
-
-    const expr_tree::edge_list_t e1 = m_tree.get_edges_out(id1);
-    if (e1.size() != 1) throw 161;
-
-    expr_tree::node_id_t id2 = e1[0];
-    const node &n2 = m_tree.get_vertex(id2);
-    if (n2.get_op().compare(node_transform_base::k_op_type) != 0) return;
-
-    const expr_tree::edge_list_t e2 = m_tree.get_edges_out(id2);
-    if (e2.size() != 1) throw 162;
-
-    const node_transform<double> &ntr1 =
-            n1.recast_as< node_transform<double> >();
-    const node_transform<double> &ntr2 =
-            n2.recast_as< node_transform<double> >();
-
-    const std::vector<size_t> &p1 = ntr1.get_perm(), &p2 = ntr2.get_perm();
-    std::vector<size_t> p(p1.size());
-    for (size_t i = 0; i < p.size(); i++) p[i] = p2[p1[i]];
-
-    scalar_transf<double> tr(ntr2.get_coeff());
-    tr.transform(ntr1.get_coeff());
-
-    m_tree.graph::replace(id1, node_transform<double>(p, tr));
-    m_tree.graph::add(id1, e2[0]);
-    m_tree.erase(id2);
-}
-
-
-void node_renderer::verify_lvalue(const node &n) {
-
-    static const char method[] = "verify_lvalue(const node &)";
-
-    if (n.get_op().compare(node_ident::k_op_type) == 0) {
-        const node_ident &nn = n.recast_as<node_ident>();
-        if (nn.get_type() != typeid(double)) {
-            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
-        }
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-        const node_interm_base &nn = n.recast_as<node_interm_base>();
-        if (nn.get_t() != typeid(double)) {
-            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
-        }
-    }
-    else if (n.get_op().compare(node_scalar_base::k_op_type) == 0) {
-        const node_scalar_base &nn = n.recast_as<node_scalar_base>();
-        if (nn.get_type() != typeid(double)) {
-            throw not_implemented("iface", k_clazz, method, __FILE__, __LINE__);
-        }
-    }
-    else {
-        throw bad_parameter("iface", k_clazz, method, __FILE__, __LINE__,
-            "Invalid lhs.");
-    }
+    if(g.get_vertex(n).check_type<node_assign>()) order.push_back(n);
 }
 
 } // unnamed namespace
@@ -398,13 +184,13 @@ void eval_tree_builder_btensor::build() {
     opt_merge_adjacent_transf(m_tree);
     opt_add_before_transf(m_tree);
     opt_merge_adjacent_transf(m_tree);
-//    std::cout << "== before ==" << std::endl;
-//    print_tree(m_tree, std::cout);
     opt_merge_adjacent_add(m_tree);
-//    std::cout << "== after ==" << std::endl;
-//    print_tree(m_tree, std::cout);
 
-    node_renderer(m_tree, m_order, head).render();
+    assume_adds(m_tree);
+    insert_intermediates(m_tree, m_tree.get_root());
+    assume_adds(m_tree);
+
+    make_eval_order_depth_first(m_tree, m_tree.get_root(), m_order);
 }
 
 
