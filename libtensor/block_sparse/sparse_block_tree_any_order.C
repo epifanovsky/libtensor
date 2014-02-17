@@ -93,6 +93,7 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const sparse_block_tree
     } 
 }
 
+//Destructor
 sparse_block_tree_any_order::~sparse_block_tree_any_order() 
 {
     for(size_t i = 0; i < m_children.size(); ++i)

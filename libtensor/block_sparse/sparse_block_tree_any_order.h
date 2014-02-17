@@ -162,37 +162,49 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const std::vector< sequ
     m_n_entries = 0;
 
     //Ensure that block list is sorted in lexicographic order
-    size_t offset = 0;
-    for(size_t i = 0; i < sig_blocks.size(); ++i)
+    try
     {
-        const sequence<N,key_t>& cur = sig_blocks[i];
-        if(i > 0)
+        size_t offset = 0;
+        for(size_t i = 0; i < sig_blocks.size(); ++i)
         {
-            const sequence<N,key_t>& prev = sig_blocks[i-1];
-
-            bool equal = true;
-            for(size_t j = 0; j < m_order; ++j)
+            const sequence<N,key_t>& cur = sig_blocks[i];
+            if(i > 0)
             {
-                if(cur[j] < prev[j])
+                const sequence<N,key_t>& prev = sig_blocks[i-1];
+
+                bool equal = true;
+                for(size_t j = 0; j < m_order; ++j)
                 {
-                    throw bad_parameter(g_ns,"sparse_block_tree_node","sparse_block_tree_node(...)",
-                        __FILE__,__LINE__,"list is not strictly increasing"); 
+                    if(cur[j] < prev[j])
+                    {
+                        throw bad_parameter(g_ns,"sparse_block_tree_node","sparse_block_tree_node(...)",
+                            __FILE__,__LINE__,"list is not strictly increasing"); 
+                    }
+                    else if(cur[j] > prev[j])
+                    {
+                        equal = false;
+                        break;
+                    }
                 }
-                else if(cur[j] > prev[j])
+
+                if(equal)
                 {
-                    equal = false;
-                    break;
+                    throw bad_parameter(g_ns,"sparse_block_tree<N>","sparse_block_tree(...)",
+                        __FILE__,__LINE__,"duplicate keys are not allowed"); 
                 }
             }
 
-            if(equal)
-            {
-                throw bad_parameter(g_ns,"sparse_block_tree<N>","sparse_block_tree(...)",
-                    __FILE__,__LINE__,"duplicate keys are not allowed"); 
-            }
+            push_back(cur,m_order);
         }
-
-        push_back(cur,m_order);
+    }
+    catch(bad_parameter&)
+    {
+        //Clean up after ourselves
+        for(size_t i = 0; i < m_children.size(); ++i)
+        {
+            delete m_children[i];
+        }
+        throw;
     }
 
     set_offsets_sizes_nnz(subspaces);

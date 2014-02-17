@@ -45,7 +45,8 @@ public:
 template<size_t N,typename T> 
 void labeled_sparse_btensor<N,T>::run_permutation(const gen_labeled_btensor<N,T>& rhs)
 {
-    permute2_batch_provider<T>(*this,rhs).get_batch((T*)this->m_tensor.get_data_ptr());
+    //TODO - HORRIBLE HACK, FIX 
+    permute2_batch_provider<T>(*this,rhs).get_batch((T*)this->m_tensor.get_data_ptr(),std::map<idx_pair,idx_pair>(),1e18);
 }
 
 //Used for evaluating contractions, to prevent an unnecessary copy at the end

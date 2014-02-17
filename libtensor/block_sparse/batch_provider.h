@@ -148,7 +148,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
                                 ++n_direct_tensors_touched;
                             }
                         }
-                        if(n_direct_tensors_touched > max_n_direct_tensors_touched)
+                        if(n_direct_tensors_touched >= max_n_direct_tensors_touched)
                         {
                             batched_loop_idx = loop_idx;
                             max_n_direct_tensors_touched = n_direct_tensors_touched;
@@ -236,6 +236,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
         for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
         {
             loop_batches[batched_loop_idx] = batches[batch_idx];
+
             for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
             {
                 size_t bispace_idx = direct_tensors_to_alloc[direct_tensor_rel_idx];

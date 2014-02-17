@@ -946,6 +946,7 @@ void sparse_btensor_test::test_contract2_3d_sparse_eye() throw(libtest::test_exc
         eye_arr[i*spb_k.get_dim()+i] = 1;
     }
     sparse_btensor<2> eye(spb_eye,eye_arr,false);
+    delete [] eye_arr;
 
     sparse_btensor<3> A_from_contract(spb_A);
     letter i,j,k,l;

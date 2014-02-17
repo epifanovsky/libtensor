@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <math.h>
+#include <limits>
 
 using namespace libtensor;
 using namespace std;
@@ -123,7 +124,7 @@ void run_benchmark(const char* file_name)
         C_arr[i] = double(rand())/RAND_MAX;
     }
     sparse_btensor<3> C(spb_C,C_arr,true);
-    delete C_arr;
+    delete [] C_arr;
 
     //Construct P
     sparse_bispace<2> spb_P = spb_N|spb_N;
@@ -134,7 +135,7 @@ void run_benchmark(const char* file_name)
         P_arr[i] = double(rand())/RAND_MAX;
     }
     sparse_btensor<2> P(spb_P,P_arr);
-    delete P_arr;
+    delete [] P_arr;
 
     //Construct V
     sparse_btensor<2> V(spb_X|spb_X);
@@ -153,7 +154,7 @@ void run_benchmark(const char* file_name)
     sparse_btensor<3> D(spb_D);
     letter mu,Q,lambda,sigma;
     cout << "-----------------------------\n";
-    /*cout << "D(mu|Q|sigma) = contract(lambda,C(mu|Q|lambda),P(sigma|lambda))\n";*/
+    cout << "D(Q|mu|sigma) = contract(lambda,C(Q|mu|lambda),P(sigma|lambda))\n";
     flops = 0;
     count_flops = true;
     double seconds = read_timer();
@@ -172,12 +173,10 @@ void run_benchmark(const char* file_name)
     sparse_btensor<3> C_aux_fast(spb_C_orig);
     letter nu,R;
     C_aux_fast(nu|sigma|Q) = C(Q|nu|sigma);
-    cout << "C_aux_fast nnz: " << spb_C_orig.get_nnz() << "\n";
-    cout << "C nnz: " << spb_C.get_nnz() << "\n";
     sparse_bispace<3> spb_E =  spb_C_orig.contract(2) | spb_X;
     sparse_btensor<3> E(spb_E);
     cout << "-----------------------------\n";
-    /*cout << "E(Q|sigma|nu) = contract(R,V(Q|R),C_aux_fast(sigma|nu|R))\n";*/
+    cout << "E(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R))\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
@@ -198,7 +197,7 @@ void run_benchmark(const char* file_name)
 
     //Construct the L tensor
     cout << "-----------------------------\n";
-    /*cout << "L(Q|sigma|nu) = I(Q|sigma|nu) - E(Q|sigma|nu)\n";*/
+    cout << "L(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q)\n";
     sparse_btensor<3> L(spb_E);
     flops = 0;
     count_flops = true;
@@ -213,8 +212,10 @@ void run_benchmark(const char* file_name)
     //Construct M result
     sparse_bispace<2> spb_M = spb_N|spb_N;
     sparse_btensor<2> M(spb_M);
+
+    //TODO: DEBUG REMOVE
     cout << "-----------------------------\n";
-    /*cout << "M(nu|mu) = contract(Q|sigma,L(Q|sigma|nu),D(mu|Q|sigma))\n";*/
+    cout << "M(nu|mu) = contract(sigma|Q,L(nu|sigma|Q),D_perm(mu|sigma|Q))\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
@@ -225,23 +226,32 @@ void run_benchmark(const char* file_name)
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
-#if 0
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
+    direct_sparse_btensor<3> D_direct_perm(spb_D_perm);
     direct_sparse_btensor<3> E_direct(spb_E);
     direct_sparse_btensor<3> L_direct(spb_E);
     D_direct(Q|mu|sigma) = contract(lambda,C(Q|mu|lambda),P(sigma|lambda));
+    D_direct_perm(mu|sigma|Q) = D_direct(Q|mu|sigma);
+
+    //TODO: DEBUG REMOVE
+    sparse_btensor<3> D_perm_from_direct(spb_D_perm);
+    flops = 0;
+    count_flops = true;
+    D_perm_from_direct(mu|sigma|Q) = D_direct_perm(mu|sigma|Q);
+    count_flops = false;
+
     E_direct(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
-    L_direct(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q);
+    L_direct(nu|sigma|Q) = I(nu|sigma|Q) - E_direct(nu|sigma|Q);
 
     sparse_btensor<2> M_from_direct(spb_M);
     cout << "-----------------------------\n";
-    /*cout << "M(nu|mu) = contract(Q|sigma,E_direct(Q|sigma|nu),D_direct(mu|Q|sigma),400e6)\n";*/
+    cout << "M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),4e8)\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),400e6);
+    M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),4e8);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -251,9 +261,21 @@ void run_benchmark(const char* file_name)
     cout << "===========================\n";
     cout << "Direct and Indirect Results Equal?\n";
     bool M_equal = true;
+    //We use a loose error bound to account for intermediate roundoff errors
+    sparse_btensor<2> error_mat(spb_M);
+    //L is the only tensor not positive definite
+    sparse_btensor<3> L_abs(spb_E);
+    for(size_t i = 0; i < spb_E.get_nnz(); ++i)
+    {
+        double L_abs_val = fabs(L.get_data_ptr()[i]);
+        double err_fac = std::numeric_limits<double>::epsilon()*spb_X.get_nnz()*spb_N.get_nnz();
+        ((double*)L_abs.get_data_ptr())[i] = err_fac*L_abs_val;
+    }
+    error_mat(nu|mu) = contract(sigma|Q,L_abs(nu|sigma|Q),D_perm(mu|sigma|Q));
+
     for(size_t i = 0; i < spb_M.get_nnz(); ++i)
     {
-        if(fabs(M_from_direct.get_data_ptr()[i] - M.get_data_ptr()[i]) > 0)
+        if(fabs(M_from_direct.get_data_ptr()[i] - M.get_data_ptr()[i]) > error_mat.get_data_ptr()[i])
         {
             cout << "----------------\n";
             cout << "FAILURE!\n";
@@ -261,17 +283,18 @@ void run_benchmark(const char* file_name)
             cout << "Indirect: " << M.get_data_ptr()[i] << "\n";
             cout << "Direct: " << M_from_direct.get_data_ptr()[i] << "\n";
             cout << "Delta: " << fabs(M_from_direct.get_data_ptr()[i] - M.get_data_ptr()[i]) << "\n";
+            cout << "Allowed: " << error_mat.get_data_ptr()[i] << "\n";
             M_equal = false;
             break;
         }
     }
     cout << "M_equal: " << (M_equal ? "YES" : "NO") << "\n";
-#endif
 }
 
 int main(int argc,char *argv[])
 {
-    const char* alkane_file_names[7] = {"../tests/block_sparse/alkane_dz_010_data.txt",
+    const char* alkane_file_names[8] = {"../tests/block_sparse/alkane_dz_003_data.txt",
+                                        "../tests/block_sparse/alkane_dz_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_020_data.txt",
                                         "../tests/block_sparse/alkane_aTZ_ithrsh_10_010_data.txt",
