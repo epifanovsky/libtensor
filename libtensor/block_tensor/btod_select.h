@@ -61,16 +61,16 @@ public:
          \param bt Block %tensor
         \param cmp Compare policy object (default: compare4absmin)
      **/
-    btod_select(block_tensor_i<N, double> &bt,
-            compare_type cmp=compare_type());
+    btod_select(block_tensor_rd_i<N, double> &bt,
+            compare_type cmp = compare_type());
 
     /** \brief Constuctor using symmetry
          \param bt Block %tensor
          \param sym Symmetry
         \param cmp Compare policy object (default: compare4absmin)
      **/
-    btod_select(block_tensor_i<N, double> &bt,
-            const symmetry<N, double> &sym, compare_type cmp=compare_type());
+    btod_select(block_tensor_rd_i<N, double> &bt,
+            const symmetry<N, double> &sym, compare_type cmp = compare_type());
 
     //@}
 

@@ -224,6 +224,45 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_tod_set.C
 )
 
+set(SRC_EXPR
+    expr/btensor/impl/eval_btensor_double.C
+    expr/btensor/impl/eval_btensor_double_contract.C
+    expr/btensor/impl/eval_btensor_double_copy.C
+    expr/btensor/impl/eval_btensor_double_diag.C
+    expr/btensor/impl/eval_btensor_double_dirsum.C
+    expr/btensor/impl/eval_btensor_double_div.C
+    expr/btensor/impl/eval_btensor_double_dot_product.C
+    expr/btensor/impl/eval_btensor_double_symm.C
+    expr/btensor/impl/eval_btensor_double_trace.C
+    expr/btensor/impl/eval_tree_builder_btensor.C
+    expr/btensor/impl/node_interm.C
+    expr/dag/expr_tree.C
+    expr/dag/graph.C
+    expr/dag/node_add.C
+    expr/dag/node_assign.C
+    expr/dag/node_contract.C
+    expr/dag/node_diag.C
+    expr/dag/node_dirsum.C
+    expr/dag/node_div.C
+    expr/dag/node_dot_product.C
+    expr/dag/node_ident.C
+    expr/dag/node_null.C
+    expr/dag/node_product.C
+    expr/dag/node_scalar.C
+    expr/dag/node_symm.C
+    expr/dag/node_trace.C
+    expr/dag/node_transform.C
+    expr/dag/print_node.C
+    expr/dag/print_tree.C
+    expr/eval/default_eval_selector.C
+    expr/eval/eval.C
+    expr/eval/eval_register.C
+    expr/opt/opt_add_before_transf.C
+    expr/opt/opt_merge_adjacent_add.C
+    expr/opt/opt_merge_adjacent_transf.C
+    expr/opt/opt_merge_equiv_ident.C
+)
+
 if(WITH_ARMADILLO)
     set(SRC_ARMA
         arma/impl/btod_export_arma.C
@@ -245,7 +284,7 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP} ${SRC_ARMA})
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR} ${SRC_ARMA})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)

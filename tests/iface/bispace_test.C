@@ -1,4 +1,4 @@
-#include <libtensor/iface/bispace.h>
+#include <libtensor/expr/bispace/bispace.h>
 #include "bispace_test.h"
 
 namespace libtensor {

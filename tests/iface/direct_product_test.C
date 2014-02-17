@@ -1,6 +1,8 @@
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_contract2.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "direct_product_test.h"
 
@@ -13,7 +15,7 @@ void direct_product_test::perform() throw(libtest::test_exception) {
 
     try {
 
-        test_label_1();
+//        test_label_1();
         test_tt_1();
         test_tt_2();
         test_te_1();
@@ -30,6 +32,7 @@ void direct_product_test::perform() throw(libtest::test_exception) {
 }
 
 
+#if 0
 void direct_product_test::test_label_1() throw(libtest::test_exception) {
 
     static const char *testname = "direct_product_test::test_label_1()";
@@ -62,6 +65,7 @@ void direct_product_test::test_label_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+#endif
 
 
 void direct_product_test::test_tt_1() throw(libtest::test_exception) {
