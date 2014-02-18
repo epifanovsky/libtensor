@@ -116,11 +116,11 @@ void eval_node::evaluate(const node &lhs) {
     if(n.get_op().compare(node_ident::k_op_type) == 0 ||
             n.get_op().compare(node_interm_base::k_op_type) == 0) {
 
-        eval_btensor_double::copy(m_tree, rhs, m_add).evaluate(tr, lhs);
+        eval_btensor_double::copy<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 
     } else if(n.get_op().compare(node_contract::k_op_type) == 0) {
 
-        eval_btensor_double::contract(m_tree, rhs, m_add).evaluate(tr, lhs);
+        eval_btensor_double::contract<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 
     } else if(n.get_op().compare(node_diag::k_op_type) == 0) {
 

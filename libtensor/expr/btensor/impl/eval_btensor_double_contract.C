@@ -3,10 +3,15 @@
 #include <libtensor/block_tensor/btod_scale.h>
 #include <libtensor/expr/dag/node_contract.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
+#include <libtensor/expr/eval/eval_exception.h>
 #include "metaprog.h"
 #include "node_interm.h"
 #include "eval_btensor_double_contract.h"
 #include "tensor_from_node.h"
+
+#include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 
 namespace libtensor {
 namespace expr {
@@ -15,83 +20,83 @@ namespace eval_btensor_double {
 namespace {
 
 
-class eval_contract_impl {
+template<size_t NC>
+class eval_contract_impl : public eval_btensor_evaluator_i<NC, double> {
 public:
     enum {
-        Nmax = contract::Nmax
+        Nmax = contract<NC>::Nmax
     };
 
+public:
+    typedef typename eval_btensor_evaluator_i<NC, double>::bti_traits
+        bti_traits;
+
 private:
-    template<size_t NC>
     struct dispatch_contract_1 {
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
-        const node &t;
         size_t k, na, nb;
         template<size_t NA> void dispatch();
     };
 
-    template<size_t NC, size_t NA>
+    template<size_t NA>
     struct dispatch_contract_2 {
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
-        const node &t;
         size_t k, na, nb;
         template<size_t K> void dispatch();
     };
 
-    template<size_t NC>
     struct dispatch_ewmult_1 {
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
-        const node &t;
         size_t k, na, nb;
         template<size_t NA> void dispatch();
     };
 
-    template<size_t NC, size_t NA>
+    template<size_t NA>
     struct dispatch_ewmult_2 {
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
-        const node &t;
         size_t k, na, nb;
         template<size_t K> void dispatch();
     };
 
 private:
     const expr_tree &m_tree; //!< Expression tree
-    expr_tree::node_id_t m_id; //!< ID of contraction node
-    bool m_add; //!< True if add
+    expr_tree::node_id_t m_id; //!< ID of copy node
+    additive_gen_bto<NC, bti_traits> *m_op; //!< Block tensor operation
 
 public:
-    eval_contract_impl(const expr_tree &tr, expr_tree::node_id_t id, bool add) :
-        m_tree(tr), m_id(id), m_add(add)
-    { }
+    eval_contract_impl(const expr_tree &tree, expr_tree::node_id_t id,
+        const tensor_transf<NC, double> &trc);
 
-    template<size_t NC>
-    void evaluate(const tensor_transf<NC, double> &trc, const node &t);
+    virtual ~eval_contract_impl();
 
-    template<size_t N, size_t M, size_t K>
-    void do_evaluate_contract(const tensor_transf<N + M, double> &trc,
-        const node &t);
+    virtual additive_gen_bto<NC, bti_traits> &get_bto() const {
+        return *m_op;
+    }
 
     template<size_t N, size_t M, size_t K>
-    void do_evaluate_ewmult(const tensor_transf<N + M + K, double> &trc,
-        const node &t);
+    void init_contract(const tensor_transf<NC, double> &trc);
+
+    template<size_t N, size_t M, size_t K>
+    void init_ewmult(const tensor_transf<NC, double> &trc);
 
 };
 
 
 template<size_t NC>
-void eval_contract_impl::evaluate(const tensor_transf<NC, double> &trc,
-    const node &t) {
+eval_contract_impl<NC>::eval_contract_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<NC, double> &trc) :
 
-    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node &n = m_tree.get_vertex(m_id);
-    const node_contract &nc = n.recast_as<node_contract>();
+    m_tree(tree), m_id(id), m_op(0) {
 
-    const node &arga = m_tree.get_vertex(e[0]);
-    const node &argb = m_tree.get_vertex(e[1]);
+    const expr_tree::edge_list_t &e = tree.get_edges_out(id);
+    const node_contract &nc = tree.get_vertex(id).recast_as<node_contract>();
+
+    const node &arga = tree.get_vertex(e[0]);
+    const node &argb = tree.get_vertex(e[1]);
 
     if(nc.do_contract()) {
 
@@ -100,10 +105,13 @@ void eval_contract_impl::evaluate(const tensor_transf<NC, double> &trc,
         size_t nb = argb.get_n();
 
         if(k > na || k > nb) {
-            throw "Invalid contraction order";
+            throw eval_exception(__FILE__, __LINE__,
+                "libtensor::expr::eval_btensor_double",
+                "eval_contract_impl<NC>", "eval_contract_impl()",
+                "Invalid contraction order.");
         }
 
-        dispatch_contract_1<NC> d1 = { *this, trc, t, k, na, nb };
+        dispatch_contract_1 d1 = { *this, trc, k, na, nb };
         dispatch_1<1, Nmax>::dispatch(d1, na);
 
     } else {
@@ -113,19 +121,29 @@ void eval_contract_impl::evaluate(const tensor_transf<NC, double> &trc,
         size_t nb = argb.get_n();
 
         if(k > na || k > nb) {
-            throw "Invalid contraction order";
+            throw eval_exception(__FILE__, __LINE__,
+                "libtensor::expr::eval_btensor_double",
+                "eval_contract_impl<NC>", "eval_contract_impl()",
+                "Invalid product order.");
         }
 
-        dispatch_ewmult_1<NC> d1 = { *this, trc, t, k, na, nb };
+        dispatch_ewmult_1 d1 = { *this, trc, k, na, nb };
         dispatch_1<1, NC>::dispatch(d1, na);
 
     }
 }
 
 
-template<size_t N, size_t M, size_t K>
-void eval_contract_impl::do_evaluate_contract(
-    const tensor_transf<N + M, double> &trc, const node &t) {
+template<size_t NC>
+eval_contract_impl<NC>::~eval_contract_impl() {
+
+    delete m_op;
+}
+
+
+template<size_t NC> template<size_t N, size_t M, size_t K>
+void eval_contract_impl<NC>::init_contract(
+    const tensor_transf<NC, double> &trc) {
 
     const node_contract &n = m_tree.get_vertex(m_id).recast_as<node_contract>();
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
@@ -149,32 +167,19 @@ void eval_contract_impl::do_evaluate_contract(
     contr.permute_b(btb.get_transf().get_perm());
     contr.permute_c(trc.get_perm());
 
-    scalar_transf<double> strc(trc.get_scalar_tr());
-    strc.transform(bta.get_transf().get_scalar_tr()).
-        transform(btb.get_transf().get_scalar_tr());
-
-    btod_contract2<N, M, K> op(contr, bta.get_btensor(), btb.get_btensor());
-    btensor<N + M, double> &btc = tensor_from_node<N + M>(t, op.get_bis());
-    if(m_add) {
-        op.perform(btc, strc);
-    } else {
-        op.perform(btc);
-        btod_scale<N + M>(btc, strc).perform();
-    }
+    m_op = new btod_contract2<N, M, K>(contr,
+        bta.get_btensor(), bta.get_transf().get_scalar_tr().get_coeff(),
+        btb.get_btensor(), btb.get_transf().get_scalar_tr().get_coeff(),
+        trc.get_scalar_tr().get_coeff());
 }
 
 
-template<size_t N, size_t M, size_t K>
-void eval_contract_impl::do_evaluate_ewmult(
-    const tensor_transf<N + M + K, double> &trc, const node &t) {
+template<size_t NC> template<size_t N, size_t M, size_t K>
+void eval_contract_impl<NC>::init_ewmult(const tensor_transf<NC, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
     const node_contract &nc = n.recast_as<node_contract>();
-
-    if(nc.get_map().size() != K) {
-        throw 232;
-    }
 
     btensor_from_node<N + K, double> bta(m_tree, e[0]);
     btensor_from_node<M + K, double> btb(m_tree, e[1]);
@@ -225,61 +230,55 @@ void eval_contract_impl::do_evaluate_ewmult(
     trc1.transform(bta.get_transf().get_scalar_tr());
     trc1.transform(btb.get_transf().get_scalar_tr());
 
-    btod_ewmult2<N, M, K> op(bta.get_btensor(), perma, btb.get_btensor(), permb,
-        trc1.get_perm(), trc1.get_scalar_tr().get_coeff());
-    btensor<N + M + K, double> &btc =
-        tensor_from_node<N + M + K>(t, op.get_bis());
-    if(m_add) {
-        op.perform(btc, 1.0);
-    } else {
-        op.perform(btc);
-    }
+    m_op = new btod_ewmult2<N, M, K>(bta.get_btensor(), perma,
+        btb.get_btensor(), permb, trc1.get_perm(),
+        trc1.get_scalar_tr().get_coeff());
 }
 
 
 template<size_t NC> template<size_t NA>
-void eval_contract_impl::dispatch_contract_1<NC>::dispatch() {
+void eval_contract_impl<NC>::dispatch_contract_1::dispatch() {
 
     enum {
         Kmin = meta_if<(NA > NC), (NA - NC), (NA == NC ? 1 : 0)>::value,
         Kmax = meta_min<NA, (Nmax + NA - NC)/2>::value
     };
-    dispatch_contract_2<NC, NA> d2 = { eval, trc, t, k, na, nb };
+    dispatch_contract_2<NA> d2 = { eval, trc, k, na, nb };
     dispatch_1<Kmin, Kmax>::dispatch(d2, k);
 }
 
 
-template<size_t NC, size_t NA> template<size_t K>
-void eval_contract_impl::dispatch_contract_2<NC, NA>::dispatch() {
+template<size_t NC> template<size_t NA> template<size_t K>
+void eval_contract_impl<NC>::dispatch_contract_2<NA>::dispatch() {
 
     enum {
         N = NA - K,
         M = NC - N
     };
-    eval.template do_evaluate_contract<N, M, K>(trc, t);
+    eval.template init_contract<N, M, K>(trc);
 }
 
 
 template<size_t NC> template<size_t NA>
-void eval_contract_impl::dispatch_ewmult_1<NC>::dispatch() {
+void eval_contract_impl<NC>::dispatch_ewmult_1::dispatch() {
 
     enum {
         Kmin = 1,
         Kmax = meta_min<NA, NC>::value
     };
-    dispatch_ewmult_2<NC, NA> d2 = { eval, trc, t, k, na, nb };
+    dispatch_ewmult_2<NA> d2 = { eval, trc, k, na, nb };
     dispatch_1<Kmin, Kmax>::dispatch(d2, k);
 }
 
 
-template<size_t NC, size_t NA> template<size_t K>
-void eval_contract_impl::dispatch_ewmult_2<NC, NA>::dispatch() {
+template<size_t NC> template<size_t NA> template<size_t K>
+void eval_contract_impl<NC>::dispatch_ewmult_2<NA>::dispatch() {
 
     enum {
         N = NA - K,
         M = NC - N - K
     };
-    eval.template do_evaluate_ewmult<N, M, K>(trc, t);
+    eval.template init_ewmult<N, M, K>(trc);
 }
 
 
@@ -287,23 +286,70 @@ void eval_contract_impl::dispatch_ewmult_2<NC, NA>::dispatch() {
 
 
 template<size_t NC>
-void contract::evaluate(const tensor_transf<NC, double> &trc, const node &t) {
+contract<NC>::contract(const expr_tree &tree, node_id_t &id,
+    const tensor_transf<NC, double> &tr, bool add) :
 
-    eval_contract_impl(m_tree, m_id, m_add).evaluate(trc, t);
+    m_impl(new eval_contract_impl<NC>(tree, id, tr)), m_add(add) {
+
 }
 
 
-//  The code here explicitly instantiates contract::evaluate<NC>
+template<size_t NC>
+contract<NC>::~contract() {
+
+    delete m_impl;
+}
+
+
+template<size_t NC>
+void contract<NC>::evaluate(const node &t) {
+
+    if(NC != t.get_n()) {
+        throw eval_exception(__FILE__, __LINE__,
+            "libtensor::expr::eval_btensor_double", "contract<NC>", "evaluate()",
+            "Inconsistent tensor order.");
+    }
+
+    additive_gen_bto<NC, bti_traits> &op = m_impl->get_bto();
+    btensor<NC, double> &bt = tensor_from_node<NC>(t, op.get_bis());
+
+    if(m_add) {
+        gen_block_tensor_rd_ctrl<NC, bti_traits> ctrl(bt);
+        std::vector<size_t> nzblk;
+        ctrl.req_nonzero_blocks(nzblk);
+        addition_schedule<NC, btod_traits> asch(op.get_symmetry(),
+            ctrl.req_const_symmetry());
+        asch.build(op.get_schedule(), nzblk);
+
+        gen_bto_aux_add<NC, btod_traits> out(op.get_symmetry(), asch, bt,
+            scalar_transf<double>());
+        out.open();
+        op.perform(out);
+        out.close();
+    } else {
+        gen_bto_aux_copy<NC, btod_traits> out(op.get_symmetry(), bt);
+        out.open();
+        op.perform(out);
+        out.close();
+    }
+}
+
+
+//  The code here explicitly instantiates contract<NC>
 namespace aux {
-template<size_t N>
+template<size_t NC>
 struct aux_contract {
-    contract *e;
-    tensor_transf<N, double> *tr;
-    node *n;
-    aux_contract() { e->evaluate(*tr, *n); }
+    const expr_tree *tree;
+    expr_tree::node_id_t id;
+    const tensor_transf<NC, double> *tr;
+    const node *t;
+    contract<NC> *e;
+    aux_contract() { e = new contract<NC>(*tree, id, *tr, false);
+        e->evaluate(*t); }
 };
 } // namespace aux
-template class instantiate_template_1<1, contract::Nmax, aux::aux_contract>;
+template class instantiate_template_1<1, eval_btensor<double>::Nmax,
+    aux::aux_contract>;
 
 
 } // namespace eval_btensor_double
