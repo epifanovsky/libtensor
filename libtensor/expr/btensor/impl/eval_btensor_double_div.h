@@ -2,32 +2,46 @@
 #define LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_DIV_H
 
 #include "../eval_btensor.h"
+#include "eval_btensor_evaluator_i.h"
 
 namespace libtensor {
 namespace expr {
 namespace eval_btensor_double {
 
 
-class div {
+template<size_t N>
+class div : public eval_btensor_evaluator_i<N, double> {
 public:
     enum {
         Nmax = eval_btensor<double>::Nmax
     };
 
+    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
     typedef expr_tree::node_id_t node_id_t; //!< Node ID type
 
 private:
-    const expr_tree &m_tree; //!< Expression tree
-    node_id_t m_id; //!< ID of copy node
-    bool m_add; //!< True if add
+    eval_btensor_evaluator_i<N, double> *m_impl;
+    bool m_add;
 
 public:
-    div(const expr_tree &tr, node_id_t &id, bool add) :
-        m_tree(tr), m_id(id), m_add(add)
-    { }
+    /** \brief Initializes the evaluator
+     **/
+    div(const expr_tree &tree, node_id_t &id,
+        const tensor_transf<N, double> &tr, bool add);
 
-    template<size_t N>
-    void evaluate(const tensor_transf<N, double> &tr, const node &t);
+    /** \brief Virtual destructor
+     **/
+    virtual ~div();
+
+    /** \brief Returns the block tensor operation
+     **/
+    virtual additive_gen_bto<N, bti_traits> &get_bto() const {
+        return m_impl->get_bto();
+    }
+
+    /** \brief Evaluates the result into given node
+     **/
+    void evaluate(const node &t);
 
 };
 

@@ -124,19 +124,19 @@ void eval_node::evaluate(const node &lhs) {
 
     } else if(n.get_op().compare(node_diag::k_op_type) == 0) {
 
-        eval_btensor_double::diag(m_tree, rhs, m_add).evaluate(tr, lhs);
+        eval_btensor_double::diag<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 
     } else if(n.get_op().compare(node_dirsum::k_op_type) == 0) {
 
-        eval_btensor_double::dirsum(m_tree, rhs, m_add).evaluate(tr, lhs);
+        eval_btensor_double::dirsum<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 
     } else if(n.get_op().compare(node_div::k_op_type) == 0) {
 
-        eval_btensor_double::div(m_tree, rhs, m_add).evaluate(tr, lhs);
+        eval_btensor_double::div<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 
     } else if(n.get_op().compare(node_symm_base::k_op_type) == 0) {
 
-        eval_btensor_double::symm(m_tree, rhs, m_add).evaluate(tr, lhs);
+        eval_btensor_double::symm<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 
     } else {
         throw not_implemented("iface", k_clazz, "evaluate()", __FILE__, __LINE__);
