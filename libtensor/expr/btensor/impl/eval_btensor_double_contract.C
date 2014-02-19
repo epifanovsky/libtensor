@@ -282,9 +282,9 @@ void eval_contract_impl<NC>::dispatch_ewmult_2<NA>::dispatch() {
 
 template<size_t NC>
 contract<NC>::contract(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<NC, double> &tr, bool add) :
+    const tensor_transf<NC, double> &tr) :
 
-    m_impl(new eval_contract_impl<NC>(tree, id, tr)), m_add(add) {
+    m_impl(new eval_contract_impl<NC>(tree, id, tr)) {
 
 }
 
@@ -305,7 +305,7 @@ struct aux_contract {
     const tensor_transf<NC, double> *tr;
     const node *t;
     contract<NC> *e;
-    aux_contract() { e = new contract<NC>(*tree, id, *tr, false); }
+    aux_contract() { e = new contract<NC>(*tree, id, *tr); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

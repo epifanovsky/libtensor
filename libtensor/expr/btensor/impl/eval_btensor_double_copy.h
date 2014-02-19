@@ -21,13 +21,12 @@ public:
 
 private:
     eval_btensor_evaluator_i<N, double> *m_impl;
-    bool m_add;
 
 public:
     /** \brief Initializes the evaluator
      **/
     copy(const expr_tree &tree, node_id_t &id,
-        const tensor_transf<N, double> &tr, bool add);
+        const tensor_transf<N, double> &tr);
 
     /** \brief Virtual destructor
      **/

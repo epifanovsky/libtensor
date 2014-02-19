@@ -107,9 +107,9 @@ void eval_diag_impl<N>::dispatch_diag::dispatch() {
 
 template<size_t N>
 diag<N>::diag(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr, bool add) :
+    const tensor_transf<N, double> &tr) :
 
-    m_impl(new eval_diag_impl<N>(tree, id, tr)), m_add(add) {
+    m_impl(new eval_diag_impl<N>(tree, id, tr)) {
 
 }
 
@@ -130,7 +130,7 @@ struct aux_diag {
     const tensor_transf<N, double> *tr;
     const node *t;
     diag<N> *e;
-    aux_diag() { e = new diag<N>(*tree, id, *tr, false); }
+    aux_diag() { e = new diag<N>(*tree, id, *tr); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

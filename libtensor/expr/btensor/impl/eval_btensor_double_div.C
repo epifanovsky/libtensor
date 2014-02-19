@@ -70,9 +70,9 @@ eval_div_impl<N>::~eval_div_impl() {
 
 template<size_t N>
 div<N>::div(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr, bool add) :
+    const tensor_transf<N, double> &tr) :
 
-    m_impl(new eval_div_impl<N>(tree, id, tr)), m_add(add) {
+    m_impl(new eval_div_impl<N>(tree, id, tr)) {
 
 }
 
@@ -93,7 +93,7 @@ struct aux_div {
     const tensor_transf<N, double> *tr;
     const node *t;
     div<N> *e;
-    aux_div() { e = new div<N>(*tree, id, *tr, false); }
+    aux_div() { e = new div<N>(*tree, id, *tr); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

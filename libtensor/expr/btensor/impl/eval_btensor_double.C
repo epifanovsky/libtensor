@@ -4,6 +4,7 @@
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_transform.h>
+#include <libtensor/expr/eval/eval_exception.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
 #include "node_interm.h"
@@ -58,11 +59,10 @@ public:
 private:
     const expr_tree &m_tree; //!< Expression tree
     expr_tree::node_id_t m_rhs; //!<  ID of rhs node
-    bool m_add; //!< True if evaluate and add
 
 public:
-    eval_node(const expr_tree &tr, expr_tree::node_id_t rhs, bool add) :
-        m_tree(tr), m_rhs(rhs), m_add(add)
+    eval_node(const expr_tree &tr, expr_tree::node_id_t rhs) :
+        m_tree(tr), m_rhs(rhs)
     { }
 
     void evaluate_scalar(expr_tree::node_id_t lhs);
@@ -104,7 +104,7 @@ void eval_node::evaluate(const node &lhs) {
     expr_tree::node_id_t rhs = gather_info<N>(m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    eval_btensor_double::autoselect<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
+    eval_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs);
 }
 
 
@@ -142,17 +142,16 @@ private:
     const expr_tree &m_tree;
     const node &m_lhs; //!< Left-hand side node (has to be ident or interm)
     expr_tree::node_id_t m_rhs;
-    bool m_add; //!< True if addition and assignment
 
 public:
     eval_assign_tensor(const expr_tree &tr, const node &lhs,
-        expr_tree::node_id_t rhs, bool add) :
-        m_tree(tr), m_lhs(lhs), m_rhs(rhs), m_add(add)
+        expr_tree::node_id_t rhs) :
+        m_tree(tr), m_lhs(lhs), m_rhs(rhs)
     { }
 
     template<size_t N>
     void dispatch() {
-        eval_node(m_tree, m_rhs, m_add).evaluate<N>(m_lhs);
+        eval_node(m_tree, m_rhs).evaluate<N>(m_lhs);
     }
 
 };
@@ -186,8 +185,11 @@ void eval_btensor_double_impl::evaluate() {
 void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 
     const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
-    if(out.size() < 2) {
-        throw 11;
+
+    if(out.size() != 2) {
+        throw eval_exception(__FILE__, __LINE__, "libtensor::expr",
+            "eval_btensor_double_impl", "handle_assign()",
+            "Malformed expression (assignment must have two children).");
     }
 
     const node &lhs = m_tree.get_vertex(out[0]);
@@ -198,27 +200,20 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
         verify_tensor(lhs);
 
         // Evaluate r.h.s. before performing the assignment
-        for(size_t i = 1; i < out.size(); i++) {
-            eval_assign_tensor e(m_tree, lhs, out[i], (i != 1));
-            dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
-        }
+        eval_assign_tensor e(m_tree, lhs, out[1]);
+        dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
 
         // Put l.h.s. at position of assignment and erase subtree
         m_tree.graph::replace(id, lhs);
-        for (size_t i = 0; i < out.size(); i++) m_tree.erase_subtree(out[i]);
+        for(size_t i = 0; i < out.size(); i++) m_tree.erase_subtree(out[i]);
 
     } else {
 
         // Check l.h.s
         verify_scalar(lhs);
 
-        // Check r.h.s
-        if(out.size() != 2) {
-            throw 12;
-        }
-
         // Evaluate r.h.s. and assign
-        eval_node(m_tree, out[1], false).evaluate_scalar(out[0]);
+        eval_node(m_tree, out[1]).evaluate_scalar(out[0]);
 
     }
 }

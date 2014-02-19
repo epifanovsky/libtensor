@@ -56,7 +56,7 @@ eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
     for(size_t i = 0; i < e.size(); i++) {
         tensor_transf<N, double> tr;
         expr_tree::node_id_t rhs = gather_info(tree, e[i], tr);
-        m_sub.push_back(new autoselect<N>(tree, rhs, tr, false));
+        m_sub.push_back(new autoselect<N>(tree, rhs, tr));
     }
 
     auto_ptr< btod_sum<N> > op;

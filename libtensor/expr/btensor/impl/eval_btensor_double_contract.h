@@ -28,7 +28,7 @@ public:
     /** \brief Initializes the evaluator
      **/
     contract(const expr_tree &tree, node_id_t &id,
-        const tensor_transf<NC, double> &tr, bool add);
+        const tensor_transf<NC, double> &tr);
 
     /** \brief Virtual destructor
      **/

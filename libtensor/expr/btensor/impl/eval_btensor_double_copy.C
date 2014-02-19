@@ -60,9 +60,9 @@ eval_copy_impl<N>::~eval_copy_impl() {
 
 template<size_t N>
 copy<N>::copy(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr, bool add) :
+    const tensor_transf<N, double> &tr) :
 
-    m_impl(new eval_copy_impl<N>(tree, id, tr)), m_add(add) {
+    m_impl(new eval_copy_impl<N>(tree, id, tr)) {
 
 }
 
@@ -83,7 +83,7 @@ struct aux_copy {
     const tensor_transf<N, double> *tr;
     const node *t;
     copy<N> *e;
-    aux_copy() { e = new copy<N>(*tree, id, *tr, false); }
+    aux_copy() { e = new copy<N>(*tree, id, *tr); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

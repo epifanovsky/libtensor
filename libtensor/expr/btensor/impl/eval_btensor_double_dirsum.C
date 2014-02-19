@@ -111,9 +111,9 @@ void eval_dirsum_impl<NC>::dispatch_dirsum::dispatch() {
 
 template<size_t NC>
 dirsum<NC>::dirsum(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<NC, double> &tr, bool add) :
+    const tensor_transf<NC, double> &tr) :
 
-    m_impl(new eval_dirsum_impl<NC>(tree, id, tr)), m_add(add) {
+    m_impl(new eval_dirsum_impl<NC>(tree, id, tr)) {
 
 }
 
@@ -134,7 +134,7 @@ struct aux_dirsum {
     const tensor_transf<NC, double> *tr;
     const node *t;
     dirsum<NC> *e;
-    aux_dirsum() { e = new dirsum<NC>(*tree, id, *tr, false); }
+    aux_dirsum() { e = new dirsum<NC>(*tree, id, *tr); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

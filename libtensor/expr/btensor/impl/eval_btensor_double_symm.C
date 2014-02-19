@@ -187,9 +187,9 @@ void eval_symm_impl<N>::dispatch_symm::dispatch() {
 
 template<size_t N>
 symm<N>::symm(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr, bool add) :
+    const tensor_transf<N, double> &tr) :
 
-    m_impl(new eval_symm_impl<N>(tree, id, tr)), m_add(add) {
+    m_impl(new eval_symm_impl<N>(tree, id, tr)) {
 
 }
 
@@ -210,7 +210,7 @@ struct aux_symm {
     const tensor_transf<N, double> *tr;
     const node *t;
     symm<N> *e;
-    aux_symm() { e = new symm<N>(*tree, id, *tr, false); }
+    aux_symm() { e = new symm<N>(*tree, id, *tr); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

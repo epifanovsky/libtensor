@@ -1,5 +1,3 @@
-#include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
-#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/expr/dag/node_add.h>
@@ -29,26 +27,26 @@ namespace eval_btensor_double {
 
 template<size_t N>
 autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr, bool addd) :
+    const tensor_transf<N, double> &tr) :
 
-    m_impl(0), m_add(addd) {
+    m_impl(0) {
 
     const node &n = tree.get_vertex(id);
 
     if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
-        m_impl = new copy<N>(tree, id, tr, addd);
+        m_impl = new copy<N>(tree, id, tr);
     } else if(n.check_type<node_add>()) {
         m_impl = new add<N>(tree, id);
     } else if(n.check_type<node_contract>()) {
-        m_impl = new contract<N>(tree, id, tr, addd);
+        m_impl = new contract<N>(tree, id, tr);
     } else if(n.check_type<node_diag>()) {
-        m_impl = new diag<N>(tree, id, tr, addd);
+        m_impl = new diag<N>(tree, id, tr);
     } else if(n.check_type<node_dirsum>()) {
-        m_impl = new dirsum<N>(tree, id, tr, addd);
+        m_impl = new dirsum<N>(tree, id, tr);
     } else if(n.check_type<node_div>()) {
-        m_impl = new div<N>(tree, id, tr, addd);
+        m_impl = new div<N>(tree, id, tr);
     } else if(n.check_type<node_symm_base>()) {
-        m_impl = new symm<N>(tree, id, tr, addd);
+        m_impl = new symm<N>(tree, id, tr);
     } else {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "autoselect<N>",
@@ -76,29 +74,10 @@ void autoselect<N>::evaluate(const node &t) {
     additive_gen_bto<N, bti_traits> &op = m_impl->get_bto();
     btensor<N, double> &bt = tensor_from_node<N>(t, op.get_bis());
 
-    if(m_add) {
-
-        gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
-        std::vector<size_t> nzblk;
-        ctrl.req_nonzero_blocks(nzblk);
-        addition_schedule<N, btod_traits> asch(op.get_symmetry(),
-            ctrl.req_const_symmetry());
-        asch.build(op.get_schedule(), nzblk);
-
-        gen_bto_aux_add<N, btod_traits> out(op.get_symmetry(), asch, bt,
-            scalar_transf<double>());
-        out.open();
-        op.perform(out);
-        out.close();
-
-    } else {
-
-        gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(), bt);
-        out.open();
-        op.perform(out);
-        out.close();
-
-    }
+    gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(), bt);
+    out.open();
+    op.perform(out);
+    out.close();
 }
 
 
@@ -111,7 +90,7 @@ struct aux_autoselect {
     const tensor_transf<N, double> *tr;
     const node *t;
     autoselect<N> *e;
-    aux_autoselect() { e = new autoselect<N>(*tree, id, *tr, false);
+    aux_autoselect() { e = new autoselect<N>(*tree, id, *tr);
         e->evaluate(*t); }
 };
 } // namespace aux

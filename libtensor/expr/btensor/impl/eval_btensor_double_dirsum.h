@@ -22,13 +22,12 @@ public:
 
 private:
     eval_btensor_evaluator_i<NC, double> *m_impl;
-    bool m_add;
 
 public:
     /** \brief Initializes the evaluator
      **/
     dirsum(const expr_tree &tree, node_id_t &id,
-        const tensor_transf<NC, double> &trc, bool add);
+        const tensor_transf<NC, double> &trc);
 
     /** \brief Virtual destructor
      **/
