@@ -2,6 +2,7 @@
 #define LIBTENSOR_EXPR_EVAL_BTENSOR_EVALUATOR_I_H
 
 #include <libtensor/gen_block_tensor/additive_gen_bto.h>
+#include <libtensor/block_tensor/block_tensor_i_traits.h>
 
 namespace libtensor {
 namespace expr {

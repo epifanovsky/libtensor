@@ -10,7 +10,7 @@ namespace eval_btensor_double {
 
 
 template<size_t NC>
-class dirsum {
+class dirsum : public eval_btensor_evaluator_i<NC, double> {
 public:
     enum {
         Nmax = eval_btensor<double>::Nmax
@@ -39,10 +39,6 @@ public:
     virtual additive_gen_bto<NC, bti_traits> &get_bto() const {
         return m_impl->get_bto();
     }
-
-    /** \brief Evaluates the result into given node
-     **/
-    void evaluate(const node &t);
 
 };
 

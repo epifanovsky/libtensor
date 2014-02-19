@@ -6,10 +6,6 @@
 #include "tensor_from_node.h"
 #include "eval_btensor_double_diag.h"
 
-#include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
-#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
-#include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
-
 namespace libtensor {
 namespace expr {
 namespace eval_btensor_double {
@@ -125,40 +121,6 @@ diag<N>::~diag() {
 }
 
 
-template<size_t N>
-void diag<N>::evaluate(const node &t) {
-
-    if(N != t.get_n()) {
-        throw eval_exception(__FILE__, __LINE__,
-            "libtensor::expr::eval_btensor_double", "diag<N>", "evaluate()",
-            "Inconsistent tensor order.");
-    }
-
-    additive_gen_bto<N, bti_traits> &op = m_impl->get_bto();
-    btensor<N, double> &bt = tensor_from_node<N>(t, op.get_bis());
-
-    if(m_add) {
-        gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
-        std::vector<size_t> nzblk;
-        ctrl.req_nonzero_blocks(nzblk);
-        addition_schedule<N, btod_traits> asch(op.get_symmetry(),
-            ctrl.req_const_symmetry());
-        asch.build(op.get_schedule(), nzblk);
-
-        gen_bto_aux_add<N, btod_traits> out(op.get_symmetry(), asch, bt,
-            scalar_transf<double>());
-        out.open();
-        op.perform(out);
-        out.close();
-    } else {
-        gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(), bt);
-        out.open();
-        op.perform(out);
-        out.close();
-    }
-}
-
-
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -168,7 +130,7 @@ struct aux_diag {
     const tensor_transf<N, double> *tr;
     const node *t;
     diag<N> *e;
-    aux_diag() { e = new diag<N>(*tree, id, *tr, false); e->evaluate(*t); }
+    aux_diag() { e = new diag<N>(*tree, id, *tr, false); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

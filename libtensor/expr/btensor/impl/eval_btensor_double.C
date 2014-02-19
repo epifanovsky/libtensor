@@ -1,25 +1,14 @@
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/expr/btensor/btensor.h>
-#include <libtensor/expr/dag/node_contract.h>
-#include <libtensor/expr/dag/node_diag.h>
-#include <libtensor/expr/dag/node_dirsum.h>
-#include <libtensor/expr/dag/node_div.h>
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
-#include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_transform.h>
-#include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include "../eval_btensor.h"
 #include "metaprog.h"
 #include "node_interm.h"
-#include "eval_btensor_double_contract.h"
-#include "eval_btensor_double_copy.h"
-#include "eval_btensor_double_diag.h"
-#include "eval_btensor_double_dirsum.h"
-#include "eval_btensor_double_div.h"
+#include "eval_btensor_double_autoselect.h"
 #include "eval_btensor_double_dot_product.h"
-#include "eval_btensor_double_symm.h"
 #include "eval_btensor_double_trace.h"
 #include "eval_tree_builder_btensor.h"
 
@@ -113,34 +102,7 @@ void eval_node::evaluate(const node &lhs) {
     expr_tree::node_id_t rhs = gather_info<N>(m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    if(n.get_op().compare(node_ident::k_op_type) == 0 ||
-            n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        eval_btensor_double::copy<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
-
-    } else if(n.get_op().compare(node_contract::k_op_type) == 0) {
-
-        eval_btensor_double::contract<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
-
-    } else if(n.get_op().compare(node_diag::k_op_type) == 0) {
-
-        eval_btensor_double::diag<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
-
-    } else if(n.get_op().compare(node_dirsum::k_op_type) == 0) {
-
-        eval_btensor_double::dirsum<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
-
-    } else if(n.get_op().compare(node_div::k_op_type) == 0) {
-
-        eval_btensor_double::div<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
-
-    } else if(n.get_op().compare(node_symm_base::k_op_type) == 0) {
-
-        eval_btensor_double::symm<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
-
-    } else {
-        throw not_implemented("iface", k_clazz, "evaluate()", __FILE__, __LINE__);
-    }
+    eval_btensor_double::autoselect<N>(m_tree, rhs, tr, m_add).evaluate(lhs);
 }
 
 

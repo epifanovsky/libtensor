@@ -39,10 +39,6 @@ public:
         return m_impl->get_bto();
     }
 
-    /** \brief Evaluates the result into given node
-     **/
-    void evaluate(const node &t);
-
 };
 
 
