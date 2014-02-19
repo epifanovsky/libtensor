@@ -2,7 +2,6 @@
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
 #include "metaprog.h"
-#include "node_interm.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_copy.h"
 

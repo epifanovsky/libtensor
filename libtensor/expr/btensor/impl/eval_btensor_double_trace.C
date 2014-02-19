@@ -2,7 +2,6 @@
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include "metaprog.h"
-#include "node_interm.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_trace.h"
 

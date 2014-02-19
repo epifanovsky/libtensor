@@ -1,12 +1,12 @@
 #include <libtensor/block_tensor/btod_symmetrize2.h>
 #include <libtensor/block_tensor/btod_symmetrize3.h>
+#include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
 #include "metaprog.h"
-#include "tensor_from_node.h"
-#include "eval_btensor_double_symm.h"
 #include "eval_btensor_double_autoselect.h"
+#include "eval_btensor_double_symm.h"
 
 namespace libtensor {
 namespace expr {
