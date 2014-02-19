@@ -1,13 +1,12 @@
-#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_symmetrize2.h>
 #include <libtensor/block_tensor/btod_symmetrize3.h>
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
 #include "metaprog.h"
-#include "node_interm.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_symm.h"
+#include "eval_btensor_double_autoselect.h"
 
 namespace libtensor {
 namespace expr {
@@ -39,7 +38,7 @@ private:
 private:
     const expr_tree &m_tree; //!< Expression tree
     expr_tree::node_id_t m_id; //!< ID of copy node
-    additive_gen_bto<N, bti_traits> *m_copyop; //!< Block tensor operation
+    eval_btensor_evaluator_i<N, double> *m_sub; //!< Subexpression
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
@@ -59,6 +58,10 @@ public:
 
     void init(const tensor_transf<N, double> &trc, const tag<3>&);
 
+private:
+    expr_tree::node_id_t gather_info(const expr_tree &tree,
+        expr_tree::node_id_t id, tensor_transf<N, double> &tr);
+
 };
 
 
@@ -66,7 +69,7 @@ template<size_t N>
 eval_symm_impl<N>::eval_symm_impl(const expr_tree &tree,
     expr_tree::node_id_t id, const tensor_transf<N, double> &tr) :
 
-    m_tree(tree), m_id(id), m_op(0), m_copyop(0) {
+    m_tree(tree), m_id(id), m_sub(0), m_op(0) {
 
     const node_symm<double> &n =
         m_tree.get_vertex(m_id).recast_as< node_symm<double> >();
@@ -80,7 +83,7 @@ template<size_t N>
 eval_symm_impl<N>::~eval_symm_impl() {
 
     delete m_op;
-    delete m_copyop;
+    delete m_sub;
 }
 
 
@@ -108,8 +111,6 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     //
     // => Ts' = T2 Ts T2(inv); T' = T2 T1
 
-    btensor_from_node<N, double> bta(m_tree, e[0]);
-
     if(nn.get_sym().size() % 2 != 0) {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "eval_symm_impl<N>",
@@ -122,16 +123,19 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     }
 
     tensor_transf<N, double> tr2(tr), tr2inv(tr2, true);
-    tensor_transf<N, double> tpr(bta.get_transf());
-    tpr.transform(tr2);
     tensor_transf<N, double> trs(symperm, nn.get_pair_tr());
     tensor_transf<N, double> tspr(tr2inv);
     tspr.transform(trs);
     tspr.transform(tr2);
 
-    m_copyop = new btod_copy<N>(bta.get_btensor(), tpr.get_perm(),
-        tpr.get_scalar_tr().get_coeff());
-    m_op = new btod_symmetrize2<N>(*m_copyop, tspr.get_perm(),
+    {
+        tensor_transf<N, double> trsub;
+        expr_tree::node_id_t rhs = gather_info(m_tree, e[0], trsub);
+        trsub.transform(tr2);
+        m_sub = new autoselect<N>(m_tree, rhs, trsub);
+    }
+
+    m_op = new btod_symmetrize2<N>(m_sub->get_bto(), tspr.get_perm(),
         tspr.get_scalar_tr().get_coeff() == 1.0);
 }
 
@@ -150,17 +154,20 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     const node &n = m_tree.get_vertex(m_id);
     const node_symm<double> &nn = n.recast_as< node_symm<double> >();
 
-    btensor_from_node<N, double> bta(m_tree, e[0]);
-
     if(nn.get_sym().size() != 3) {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "eval_symm_impl<N>",
             "init()", "Malformed expression (bad symm sequence).");
     }
 
-    m_copyop = new btod_copy<N>(bta.get_btensor(), bta.get_transf().get_perm(),
-        bta.get_transf().get_scalar_tr().get_coeff());
-    m_op = new btod_symmetrize3<N>(*m_copyop, nn.get_sym().at(0),
+    {
+        tensor_transf<N, double> trsub;
+        expr_tree::node_id_t rhs = gather_info(m_tree, e[0], trsub);
+        trsub.transform(tr);
+        m_sub = new autoselect<N>(m_tree, rhs, trsub);
+    }
+
+    m_op = new btod_symmetrize3<N>(m_sub->get_bto(), nn.get_sym().at(0),
         nn.get_sym().at(1), nn.get_sym().at(2),
         nn.get_pair_tr().get_coeff() == 1.0);
 }
@@ -172,6 +179,35 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
 
     throw not_implemented("libtensor::expr::eval_btensor_double",
         "eval_symm_impl<N>", "init()", __FILE__, __LINE__);
+}
+
+
+template<size_t N>
+expr_tree::node_id_t eval_symm_impl<N>::gather_info(const expr_tree &tree,
+    expr_tree::node_id_t id, tensor_transf<N, double> &tr) {
+
+    const node &n = tree.get_vertex(id);
+    if(!n.check_type<node_transform_base>()) return id;
+
+    const node_transform<double> &ntr = n.recast_as< node_transform<double> >();
+
+    const std::vector<size_t> &p = ntr.get_perm();
+    if(N != p.size()) {
+        throw eval_exception(__FILE__, __LINE__,
+            "libtensor::expr::eval_btensor_double",
+            "eval_symm_impl<N>", "gather_info()",
+            "Malformed expression (bad tensor transformation).");
+    }
+    sequence<N, size_t> s0(0), s1(0);
+    for(size_t i = 0; i < N; i++) {
+        s0[i] = i;
+        s1[i] = p[i];
+    }
+    permutation_builder<N> pb(s1, s0);
+    tr.permute(pb.get_perm());
+    tr.transform(ntr.get_coeff());
+
+    return tree.get_edges_out(id).front();
 }
 
 

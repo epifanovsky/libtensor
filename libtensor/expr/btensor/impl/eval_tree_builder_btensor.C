@@ -3,6 +3,7 @@
 #include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/dag/node_ident.h>
 #include <libtensor/expr/dag/node_scalar.h>
+#include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
 #include <libtensor/expr/opt/opt_add_before_transf.h>
@@ -143,6 +144,8 @@ void insert_intermediates(graph &g, graph::node_id_t n0) {
         if(g.get_vertex(n).check_type<node_transform_base>()) {
             l1 = l;
         } else if(g.get_vertex(n).check_type<node_add>()) {
+            l1 = 1;
+        } else if(g.get_vertex(n).check_type<node_symm_base>()) {
             l1 = 1;
         } else {
             if(l > 0) l1 = l - 1;
