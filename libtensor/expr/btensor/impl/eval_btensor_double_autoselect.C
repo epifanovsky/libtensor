@@ -2,6 +2,7 @@
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/block_tensor/btod_traits.h>
+#include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_contract.h>
 #include <libtensor/expr/dag/node_diag.h>
 #include <libtensor/expr/dag/node_dirsum.h>
@@ -9,6 +10,7 @@
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
+#include "eval_btensor_double_add.h"
 #include "eval_btensor_double_autoselect.h"
 #include "eval_btensor_double_contract.h"
 #include "eval_btensor_double_copy.h"
@@ -27,24 +29,26 @@ namespace eval_btensor_double {
 
 template<size_t N>
 autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr, bool add) :
+    const tensor_transf<N, double> &tr, bool addd) :
 
-    m_impl(0), m_add(add) {
+    m_impl(0), m_add(addd) {
 
     const node &n = tree.get_vertex(id);
 
     if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
-        m_impl = new copy<N>(tree, id, tr, add);
+        m_impl = new copy<N>(tree, id, tr, addd);
+    } else if(n.check_type<node_add>()) {
+        m_impl = new add<N>(tree, id);
     } else if(n.check_type<node_contract>()) {
-        m_impl = new contract<N>(tree, id, tr, add);
+        m_impl = new contract<N>(tree, id, tr, addd);
     } else if(n.check_type<node_diag>()) {
-        m_impl = new diag<N>(tree, id, tr, add);
+        m_impl = new diag<N>(tree, id, tr, addd);
     } else if(n.check_type<node_dirsum>()) {
-        m_impl = new dirsum<N>(tree, id, tr, add);
+        m_impl = new dirsum<N>(tree, id, tr, addd);
     } else if(n.check_type<node_div>()) {
-        m_impl = new div<N>(tree, id, tr, add);
+        m_impl = new div<N>(tree, id, tr, addd);
     } else if(n.check_type<node_symm_base>()) {
-        m_impl = new symm<N>(tree, id, tr, add);
+        m_impl = new symm<N>(tree, id, tr, addd);
     } else {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "autoselect<N>",
