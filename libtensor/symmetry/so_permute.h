@@ -54,17 +54,17 @@ class symmetry_operation_params< so_permute<N, T> > :
 public symmetry_operation_params_i {
 
 public:
-    const symmetry_element_set<N, T> &grp1; //!< Symmetry group 1
+    const symmetry_element_set<N, T> &g1; //!< Symmetry group 1
     permutation<N> perm; //!< Permutation
-    symmetry_element_set<N, T> &grp2; //!< Symmetry group 2
+    symmetry_element_set<N, T> &g2; //!< Symmetry group 2
 
 public:
     symmetry_operation_params(
-            const symmetry_element_set<N, T> &grp1_,
+            const symmetry_element_set<N, T> &g1_,
             const permutation<N> &perm_,
-            symmetry_element_set<N, T> &grp2_) :
+            symmetry_element_set<N, T> &g2_) :
 
-                grp1(grp1_), perm(perm_), grp2(grp2_) { }
+                g1(g1_), perm(perm_), g2(g2_) { }
 
     virtual ~symmetry_operation_params() { }
 };

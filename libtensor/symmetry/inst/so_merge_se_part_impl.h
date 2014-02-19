@@ -20,8 +20,8 @@ void
 symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    params.grp2.clear();
-    if (params.grp1.is_empty()) return;
+    params.g2.clear();
+    if (params.g1.is_empty()) return;
 
     // Determine index map N -> N - M
     mask<N> mm;
@@ -39,7 +39,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
         mm[i] = true;
     }
 
-    combine_part<N, T> cp(params.grp1);
+    combine_part<N, T> cp(params.g1);
     el1_t el1(cp.get_bis(), cp.get_pdims());
     cp.perform(el1);
 
@@ -127,7 +127,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
 
     } while (ai.inc());
 
-    params.grp2.insert(el2);
+    params.g2.insert(el2);
 }
 
 

@@ -77,14 +77,14 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
     // - elements with tr_e = tr
     // - elements with tr_e = 1
     // - all other elements
-    adapter_t grp2(set2);
+    adapter_t g2(set2);
     perm_lst_t plst1, plst2;
     perm_vec_t plst3;
     tr_list_t tlst;
-    for (typename adapter_t::iterator it = grp2.begin();
-            it != grp2.end(); it++) {
+    for (typename adapter_t::iterator it = g2.begin();
+            it != g2.end(); it++) {
 
-        const se_perm_t &e2 = grp2.get_elem(it);
+        const se_perm_t &e2 = g2.get_elem(it);
         if (e2.get_transf() == tr1) plst1.push_back(e2);
         else if (e2.get_transf().is_identity()) plst2.push_back(e2);
         else {
@@ -214,14 +214,14 @@ combine(const symmetry_element_set<N, T> &set1,
     // - elements with tr_e = tr
     // - elements with tr_e = 1
     // - all other elements
-    adapter_t grp1(set1);
+    adapter_t g1(set1);
     perm_lst_t plst1, plst2;
     perm_vec_t plst3;
     tr_list_t tlst;
-    for (typename adapter_t::iterator it = grp1.begin();
-            it != grp1.end(); it++) {
+    for (typename adapter_t::iterator it = g1.begin();
+            it != g1.end(); it++) {
 
-        const se_perm_t &e1 = grp1.get_elem(it);
+        const se_perm_t &e1 = g1.get_elem(it);
         if (e1.get_transf() == tr2) plst1.push_back(e1);
         else if (e1.get_transf().is_identity()) plst2.push_back(e1);
         else {

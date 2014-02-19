@@ -24,8 +24,8 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
 
-    adapter_t g1(params.grp1);
-    params.grp2.clear();
+    adapter_t g1(params.g1);
+    params.g2.clear();
 
     size_t ngrp = 0, nidx = 0;
      for (register size_t i = 0; i < N; i++) {
@@ -103,7 +103,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          er_optimize<N>(r2a, e1.get_table_id()).perform(r2b);
          e2.set_rule(r2b);
 
-         params.grp2.insert(e2);
+         params.g2.insert(e2);
      }
 }
 

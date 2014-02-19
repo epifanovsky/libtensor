@@ -24,8 +24,8 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<N - M, T> >::do_perform(
 
     typedef symmetry_element_set_adapter<N, T, el1_t> adapter1_t;
 
-    params.grp2.clear();
-    if (params.grp1.is_empty()) return;
+    params.g2.clear();
+    if (params.g1.is_empty()) return;
 
     // Create some necessary index maps
     sequence<N, size_t> mmap, lmap((size_t) -1);
@@ -42,7 +42,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<N - M, T> >::do_perform(
         }
     }
 
-    adapter1_t g1(params.grp1);
+    adapter1_t g1(params.g1);
 
     // Create block index dimensions of result se_label
     typename adapter1_t::iterator it1 = g1.begin();
@@ -155,7 +155,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<N - M, T> >::do_perform(
         er_merge<N, N - M>(r1, mmap, smsk).perform(r2a);
         er_optimize<N - M>(r2a, cl1.get_table_id()).perform(r2b);
         se2.set_rule(r2b);
-        params.grp2.insert(se2);
+        params.g2.insert(se2);
 
     } // Loop it1
 }
