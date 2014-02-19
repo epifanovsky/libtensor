@@ -53,8 +53,8 @@ eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
     const node_add &n = tree.get_vertex(id).recast_as<node_add>();
     const expr_tree::edge_list_t &e = tree.get_edges_out(id);
 
-    tensor_transf<N, double> tr;
     for(size_t i = 0; i < e.size(); i++) {
+        tensor_transf<N, double> tr;
         expr_tree::node_id_t rhs = gather_info(tree, e[i], tr);
         m_sub.push_back(new autoselect<N>(tree, rhs, tr, false));
     }

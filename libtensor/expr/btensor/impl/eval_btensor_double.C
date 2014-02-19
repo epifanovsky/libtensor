@@ -12,6 +12,8 @@
 #include "eval_btensor_double_trace.h"
 #include "eval_tree_builder_btensor.h"
 
+#include <libtensor/expr/dag/print_tree.h>
+
 namespace libtensor {
 namespace expr {
 using namespace eval_btensor_double;
@@ -278,9 +280,11 @@ void eval_btensor<double>::evaluate(const expr_tree &tree) const {
 
 //    std::cout << std::endl;
 //    std::cout << "= build plan = " << std::endl;
+//    print_tree(tree, std::cout);
     eval_tree_builder_btensor bld(tree);
     bld.build();
 //    std::cout << "= process plan =" << std::endl;
+//    print_tree(bld.get_tree(), std::cout);
     eval_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
 }
 
