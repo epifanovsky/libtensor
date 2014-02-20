@@ -87,17 +87,16 @@ template<size_t N> template<size_t NA, size_t M>
 void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node &n = m_tree.get_vertex(m_id);
-    const node_diag &nd = n.recast_as<node_diag>();
+    const node_diag &nd = m_tree.get_vertex(m_id).recast_as<node_diag>();
 
-    btensor_i<NA, double> &bta = tensor_from_node<NA>(m_tree.get_vertex(e[0]));
+    btensor_from_node<NA, double> bta(m_tree, e[0]);
 
     mask<NA> m;
 
     const std::vector<size_t> &idx = nd.get_idx();
     for(size_t i = 0; i < NA; i++) if(idx[i] == nd.get_didx()) m[i] = true;
 
-    m_op = new btod_diag<NA, M>(bta, m, trc.get_perm(),
+    m_op = new btod_diag<NA, M>(bta.get_btensor(), m, trc.get_perm(),
         trc.get_scalar_tr().get_coeff());
 }
 

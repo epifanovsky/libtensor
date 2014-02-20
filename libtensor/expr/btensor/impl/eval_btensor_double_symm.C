@@ -4,9 +4,10 @@
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include "metaprog.h"
 #include "eval_btensor_double_autoselect.h"
 #include "eval_btensor_double_symm.h"
+#include "metaprog.h"
+#include "tensor_from_node.h"
 
 namespace libtensor {
 namespace expr {
@@ -64,10 +65,6 @@ public:
     void init(const tensor_transf<N, double> &trc, const tag<2>&);
 
     void init(const tensor_transf<N, double> &trc, const tag<3>&);
-
-private:
-    expr_tree::node_id_t gather_info(const expr_tree &tree,
-        expr_tree::node_id_t id, tensor_transf<N, double> &tr);
 
 };
 
@@ -137,7 +134,7 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
 
     {
         tensor_transf<N, double> trsub;
-        expr_tree::node_id_t rhs = gather_info(m_tree, e[0], trsub);
+        expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
         trsub.transform(tr2);
         m_sub = new autoselect<N>(m_tree, rhs, trsub);
     }
@@ -169,7 +166,7 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
 
     {
         tensor_transf<N, double> trsub;
-        expr_tree::node_id_t rhs = gather_info(m_tree, e[0], trsub);
+        expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
         trsub.transform(tr);
         m_sub = new autoselect<N>(m_tree, rhs, trsub);
     }
@@ -186,35 +183,6 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
 
     throw not_implemented("libtensor::expr::eval_btensor_double",
         "eval_symm_impl<N>", "init()", __FILE__, __LINE__);
-}
-
-
-template<size_t N>
-expr_tree::node_id_t eval_symm_impl<N>::gather_info(const expr_tree &tree,
-    expr_tree::node_id_t id, tensor_transf<N, double> &tr) {
-
-    const node &n = tree.get_vertex(id);
-    if(!n.check_type<node_transform_base>()) return id;
-
-    const node_transform<double> &ntr = n.recast_as< node_transform<double> >();
-
-    const std::vector<size_t> &p = ntr.get_perm();
-    if(N != p.size()) {
-        throw eval_exception(__FILE__, __LINE__,
-            "libtensor::expr::eval_btensor_double",
-            "eval_symm_impl<N>", "gather_info()",
-            "Malformed expression (bad tensor transformation).");
-    }
-    sequence<N, size_t> s0(0), s1(0);
-    for(size_t i = 0; i < N; i++) {
-        s0[i] = i;
-        s1[i] = p[i];
-    }
-    permutation_builder<N> pb(s1, s0);
-    tr.permute(pb.get_perm());
-    tr.transform(ntr.get_coeff());
-
-    return tree.get_edges_out(id).front();
 }
 
 

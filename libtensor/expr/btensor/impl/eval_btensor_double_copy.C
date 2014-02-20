@@ -42,8 +42,9 @@ template<size_t N>
 eval_copy_impl<N>::eval_copy_impl(const expr_tree &tree,
     expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
 
-    btensor_i<N, double> &bta = tensor_from_node<N>(tree.get_vertex(id));
-    m_op = new btod_copy<N>(bta, tr.get_perm(), tr.get_scalar_tr().get_coeff());
+    btensor_from_node<N, double> bta(tree, id);
+    m_op = new btod_copy<N>(bta.get_btensor(), tr.get_perm(),
+        tr.get_scalar_tr().get_coeff());
 }
 
 

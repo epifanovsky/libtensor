@@ -29,24 +29,24 @@ template<size_t N>
 autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
     const tensor_transf<N, double> &tr) :
 
-    m_impl(0) {
+    m_tree(tree), m_impl(0) {
 
-    const node &n = tree.get_vertex(id);
+    const node &n = m_tree.get_vertex(id);
 
     if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
-        m_impl = new copy<N>(tree, id, tr);
+        m_impl = new copy<N>(m_tree, id, tr);
     } else if(n.check_type<node_add>()) {
-        m_impl = new add<N>(tree, id);
+        m_impl = new add<N>(m_tree, id);
     } else if(n.check_type<node_contract>()) {
-        m_impl = new contract<N>(tree, id, tr);
+        m_impl = new contract<N>(m_tree, id, tr);
     } else if(n.check_type<node_diag>()) {
-        m_impl = new diag<N>(tree, id, tr);
+        m_impl = new diag<N>(m_tree, id, tr);
     } else if(n.check_type<node_dirsum>()) {
-        m_impl = new dirsum<N>(tree, id, tr);
+        m_impl = new dirsum<N>(m_tree, id, tr);
     } else if(n.check_type<node_div>()) {
-        m_impl = new div<N>(tree, id, tr);
+        m_impl = new div<N>(m_tree, id, tr);
     } else if(n.check_type<node_symm_base>()) {
-        m_impl = new symm<N>(tree, id, tr);
+        m_impl = new symm<N>(m_tree, id, tr);
     } else {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "autoselect<N>",
@@ -63,18 +63,21 @@ autoselect<N>::~autoselect() {
 
 
 template<size_t N>
-void autoselect<N>::evaluate(const node &t) {
+void autoselect<N>::evaluate(node_id_t nid_lhs) {
 
-    if(N != t.get_n()) {
+    const node &lhs = m_tree.get_vertex(nid_lhs);
+
+    if(N != lhs.get_n()) {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "autoselect<N>",
             "evaluate()", "Inconsistent tensor order.");
     }
 
     additive_gen_bto<N, bti_traits> &op = m_impl->get_bto();
-    btensor<N, double> &bt = tensor_from_node<N>(t, op.get_bis());
+    btensor_from_node<N, double> bt(m_tree, nid_lhs);
 
-    gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(), bt);
+    gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(),
+        bt.get_or_create_btensor(op.get_bis()));
     out.open();
     op.perform(out);
     out.close();
@@ -88,10 +91,10 @@ struct aux_autoselect {
     const expr_tree *tree;
     expr_tree::node_id_t id;
     const tensor_transf<N, double> *tr;
-    const node *t;
+    expr_tree::node_id_t lhs;
     autoselect<N> *e;
     aux_autoselect() { e = new autoselect<N>(*tree, id, *tr);
-        e->evaluate(*t); }
+        e->evaluate(lhs); }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

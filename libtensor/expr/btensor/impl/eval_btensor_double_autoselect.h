@@ -20,6 +20,7 @@ public:
     typedef expr_tree::node_id_t node_id_t; //!< Node ID type
 
 private:
+    const expr_tree &m_tree;
     eval_btensor_evaluator_i<N, double> *m_impl;
 
 public:
@@ -40,7 +41,7 @@ public:
 
     /** \brief Evaluates the result into given node
      **/
-    void evaluate(const node &t);
+    void evaluate(node_id_t lhs);
 
 };
 

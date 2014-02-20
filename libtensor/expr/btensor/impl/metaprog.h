@@ -2,6 +2,7 @@
 #define LIBTENSOR_EXPR_METAPROG_H
 
 #include <cstdlib> // for size_t
+#include <libtensor/expr/eval/eval_exception.h>
 
 namespace libtensor {
 namespace expr {
@@ -36,12 +37,20 @@ private:
     static void do_dispatch(const tag<N>&, Tgt &tgt, size_t n) {
         if(N == n) tgt.template dispatch<N>();
         else if(N < n) do_dispatch(tag<N + 1>(), tgt, n);
-        else throw "Unable to dispatch";
+        else {
+            throw eval_exception(__FILE__, __LINE__,
+                "libtensor::expr::eval_btensor_double",
+                "dispatch_1<Nmin, Nmax>", "do_dispatch()",
+                "Failure to dispatch.");
+        }
     }
 
     template<typename Tgt>
     static void do_dispatch(const tag<Nmax + 1>&, Tgt &tgt, size_t n) {
-        throw "Unable to dispatch";
+        throw eval_exception(__FILE__, __LINE__,
+            "libtensor::expr::eval_btensor_double",
+            "dispatch_1<Nmin, Nmax>", "do_dispatch()",
+            "Failure to dispatch.");
     }
 
 };
