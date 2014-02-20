@@ -136,7 +136,10 @@ struct aux_diag {
     const tensor_transf<N, double> *tr;
     const node *t;
     diag<N> *e;
-    aux_diag() { e = new diag<N>(*tree, id, *tr); }
+    aux_diag() {
+#pragma noinline
+        { e = new diag<N>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

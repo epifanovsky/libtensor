@@ -337,7 +337,10 @@ struct aux_contract {
     const tensor_transf<NC, double> *tr;
     const node *t;
     contract<NC> *e;
-    aux_contract() { e = new contract<NC>(*tree, id, *tr); }
+    aux_contract() {
+#pragma noinline
+        { e = new contract<NC>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

@@ -221,7 +221,10 @@ struct aux_symm {
     const tensor_transf<N, double> *tr;
     const node *t;
     symm<N> *e;
-    aux_symm() { e = new symm<N>(*tree, id, *tr); }
+    aux_symm() {
+#pragma noinline
+        { e = new symm<N>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

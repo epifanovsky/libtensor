@@ -142,7 +142,10 @@ struct aux_dirsum {
     const tensor_transf<NC, double> *tr;
     const node *t;
     dirsum<NC> *e;
-    aux_dirsum() { e = new dirsum<NC>(*tree, id, *tr); }
+    aux_dirsum() {
+#pragma noinline
+        { e = new dirsum<NC>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

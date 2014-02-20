@@ -93,8 +93,10 @@ struct aux_autoselect {
     const tensor_transf<N, double> *tr;
     expr_tree::node_id_t lhs;
     autoselect<N> *e;
-    aux_autoselect() { e = new autoselect<N>(*tree, id, *tr);
-        e->evaluate(lhs); }
+    aux_autoselect() {
+#pragma noinline
+        { e = new autoselect<N>(*tree, id, *tr); e->evaluate(lhs); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

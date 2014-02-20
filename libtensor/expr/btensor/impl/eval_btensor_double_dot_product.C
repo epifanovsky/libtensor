@@ -123,7 +123,10 @@ template<size_t N>
 struct aux_dot_product {
     dot_product *e;
     expr_tree::node_id_t lhs;
-    aux_dot_product() { e->evaluate(lhs); }
+    aux_dot_product() {
+#pragma noinline
+        { e->evaluate(lhs); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, dot_product::Nmax,

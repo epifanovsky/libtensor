@@ -101,7 +101,10 @@ struct aux_add {
     const expr_tree *tree;
     expr_tree::node_id_t id;
     add<N> *e;
-    aux_add() { e = new add<N>(*tree, id); }
+    aux_add() {
+#pragma noinline
+        { e = new add<N>(*tree, id); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

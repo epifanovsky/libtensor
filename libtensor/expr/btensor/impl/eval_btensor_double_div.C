@@ -92,7 +92,10 @@ struct aux_div {
     const tensor_transf<N, double> *tr;
     const node *t;
     div<N> *e;
-    aux_div() { e = new div<N>(*tree, id, *tr); }
+    aux_div() {
+#pragma noinline
+        { e = new div<N>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

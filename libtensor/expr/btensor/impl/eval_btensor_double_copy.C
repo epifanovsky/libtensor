@@ -83,7 +83,10 @@ struct aux_copy {
     const tensor_transf<N, double> *tr;
     const node *t;
     copy<N> *e;
-    aux_copy() { e = new copy<N>(*tree, id, *tr); }
+    aux_copy() {
+#pragma noinline
+        { e = new copy<N>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,

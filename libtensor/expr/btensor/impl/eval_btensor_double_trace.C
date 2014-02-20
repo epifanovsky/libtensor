@@ -123,7 +123,10 @@ template<size_t N>
 struct aux_trace {
     trace *e;
     expr_tree::node_id_t lhs;
-    aux_trace() { e->evaluate(lhs); }
+    aux_trace() {
+#pragma noinline
+        { e->evaluate(lhs); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<2, trace::Nmax, aux::aux_trace>;
