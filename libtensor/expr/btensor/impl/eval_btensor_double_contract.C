@@ -31,6 +31,14 @@ private:
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
         size_t k, na, nb;
+
+        dispatch_contract_1(
+            eval_contract_impl &eval_,
+            const tensor_transf<NC, double> &trc_,
+            size_t k_, size_t na_, size_t nb_) :
+            eval(eval_), trc(trc_), k(k_), na(na_), nb(nb_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -39,6 +47,14 @@ private:
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
         size_t k, na, nb;
+
+        dispatch_contract_2(
+            eval_contract_impl &eval_,
+            const tensor_transf<NC, double> &trc_,
+            size_t k_, size_t na_, size_t nb_) :
+            eval(eval_), trc(trc_), k(k_), na(na_), nb(nb_)
+        { }
+
         template<size_t K> void dispatch();
     };
 
@@ -46,6 +62,14 @@ private:
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
         size_t k, na, nb;
+
+        dispatch_ewmult_1(
+            eval_contract_impl &eval_,
+            const tensor_transf<NC, double> &trc_,
+            size_t k_, size_t na_, size_t nb_) :
+            eval(eval_), trc(trc_), k(k_), na(na_), nb(nb_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -54,6 +78,14 @@ private:
         eval_contract_impl &eval;
         const tensor_transf<NC, double> &trc;
         size_t k, na, nb;
+
+        dispatch_ewmult_2(
+            eval_contract_impl &eval_,
+            const tensor_transf<NC, double> &trc_,
+            size_t k_, size_t na_, size_t nb_) :
+            eval(eval_), trc(trc_), k(k_), na(na_), nb(nb_)
+        { }
+
         template<size_t K> void dispatch();
     };
 
@@ -106,8 +138,8 @@ eval_contract_impl<NC>::eval_contract_impl(const expr_tree &tree,
                 "Invalid contraction order.");
         }
 
-        dispatch_contract_1 d1 = { *this, trc, k, na, nb };
-        dispatch_1<1, Nmax>::dispatch(d1, na);
+        dispatch_contract_1 disp(*this, trc, k, na, nb);
+        dispatch_1<1, Nmax>::dispatch(disp, na);
 
     } else {
 
@@ -122,8 +154,8 @@ eval_contract_impl<NC>::eval_contract_impl(const expr_tree &tree,
                 "Invalid product order.");
         }
 
-        dispatch_ewmult_1 d1 = { *this, trc, k, na, nb };
-        dispatch_1<1, NC>::dispatch(d1, na);
+        dispatch_ewmult_1 disp(*this, trc, k, na, nb);
+        dispatch_1<1, NC>::dispatch(disp, na);
 
     }
 }
@@ -173,7 +205,8 @@ template<size_t NC> template<size_t N, size_t M, size_t K>
 void eval_contract_impl<NC>::init_ewmult(const tensor_transf<NC, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_contract &nc = m_tree.get_vertex(m_id).recast_as<node_contract>();
+    const node_contract &nc = m_tree.get_vertex(m_id).
+        recast_as<node_contract>();
 
     btensor_from_node<N + K, double> bta(m_tree, e[0]);
     btensor_from_node<M + K, double> btb(m_tree, e[1]);
@@ -237,8 +270,8 @@ void eval_contract_impl<NC>::dispatch_contract_1::dispatch() {
         Kmin = meta_if<(NA > NC), (NA - NC), (NA == NC ? 1 : 0)>::value,
         Kmax = meta_min<NA, (Nmax + NA - NC)/2>::value
     };
-    dispatch_contract_2<NA> d2 = { eval, trc, k, na, nb };
-    dispatch_1<Kmin, Kmax>::dispatch(d2, k);
+    dispatch_contract_2<NA> disp(eval, trc, k, na, nb);
+    dispatch_1<Kmin, Kmax>::dispatch(disp, k);
 }
 
 
@@ -260,8 +293,8 @@ void eval_contract_impl<NC>::dispatch_ewmult_1::dispatch() {
         Kmin = 1,
         Kmax = meta_min<NA, NC>::value
     };
-    dispatch_ewmult_2<NA> d2 = { eval, trc, k, na, nb };
-    dispatch_1<Kmin, Kmax>::dispatch(d2, k);
+    dispatch_ewmult_2<NA> disp(eval, trc, k, na, nb);
+    dispatch_1<Kmin, Kmax>::dispatch(disp, k);
 }
 
 

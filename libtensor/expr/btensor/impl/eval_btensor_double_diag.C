@@ -27,6 +27,14 @@ private:
         eval_diag_impl &eval;
         const tensor_transf<N, double> &trc;
         size_t na;
+
+        dispatch_diag(
+            eval_diag_impl &eval_,
+            const tensor_transf<N, double> &trc_,
+            size_t na_) :
+            eval(eval_), trc(trc_), na(na_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -63,8 +71,8 @@ eval_diag_impl<N>::eval_diag_impl(const expr_tree &tree,
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
 
-    dispatch_diag dd = { *this, trc, na };
-    dispatch_1<N + 1, Nmax>::dispatch(dd, na);
+    dispatch_diag disp(*this, trc, na);
+    dispatch_1<N + 1, Nmax>::dispatch(disp, na);
 }
 
 

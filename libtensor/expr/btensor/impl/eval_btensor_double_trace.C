@@ -23,6 +23,14 @@ private:
         eval_trace_impl &eval;
         expr_tree::node_id_t lhs;
         size_t na;
+
+        dispatch_trace(
+            eval_trace_impl &eval_,
+            expr_tree::node_id_t lhs_,
+            size_t na_) :
+            eval(eval_), lhs(lhs_), na(na_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -52,7 +60,7 @@ void eval_trace_impl::evaluate(expr_tree::node_id_t lhs) {
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
 
-    dispatch_trace dt = { *this, lhs, na };
+    dispatch_trace dt(*this, lhs, na);
     dispatch_1<2, Nmax>::dispatch(dt, na);
 }
 

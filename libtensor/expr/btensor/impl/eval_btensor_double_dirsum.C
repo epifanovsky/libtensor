@@ -29,6 +29,14 @@ private:
         eval_dirsum_impl &eval;
         const tensor_transf<NC, double> &trc;
         size_t na, nb;
+
+        dispatch_dirsum(
+            eval_dirsum_impl &eval_,
+            const tensor_transf<NC, double> &trc_,
+            size_t na_, size_t nb_) :
+            eval(eval_), trc(trc_), na(na_), nb(nb_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -69,8 +77,8 @@ eval_dirsum_impl<NC>::eval_dirsum_impl(const expr_tree &tree,
     size_t na = arga.get_n();
     size_t nb = argb.get_n();
 
-    dispatch_dirsum dd = { *this, trc, na, nb };
-    dispatch_1<1, NC - 1>::dispatch(dd, na);
+    dispatch_dirsum disp(*this, trc, na, nb);
+    dispatch_1<1, NC - 1>::dispatch(disp, na);
 }
 
 

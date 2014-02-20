@@ -23,6 +23,14 @@ private:
         eval_dot_product_impl &eval;
         expr_tree::node_id_t lhs;
         size_t na;
+
+        dispatch_dot_product(
+            eval_dot_product_impl &eval_,
+            expr_tree::node_id_t lhs_,
+            size_t na_) :
+            eval(eval_), lhs(lhs_), na(na_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -58,7 +66,7 @@ void eval_dot_product_impl::evaluate(expr_tree::node_id_t lhs) {
         throw "invalid order";
     }
 
-    dispatch_dot_product dd = { *this, lhs, na };
+    dispatch_dot_product dd(*this, lhs, na);
     dispatch_1<1, Nmax>::dispatch(dd, na);
 }
 

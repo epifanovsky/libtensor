@@ -29,6 +29,13 @@ private:
     struct dispatch_symm {
         eval_symm_impl &eval;
         const tensor_transf<N, double> &tr;
+
+        dispatch_symm(
+            eval_symm_impl &eval_,
+            const tensor_transf<N, double> &tr_) :
+            eval(eval_), tr(tr_)
+        { }
+
         template<size_t M> void dispatch();
     };
 
@@ -42,7 +49,7 @@ private:
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
-    eval_symm_impl(const expr_tree &tr, expr_tree::node_id_t id,
+    eval_symm_impl(const expr_tree &tree, expr_tree::node_id_t id,
         const tensor_transf<N, double> &tr);
 
     virtual ~eval_symm_impl();
@@ -74,8 +81,8 @@ eval_symm_impl<N>::eval_symm_impl(const expr_tree &tree,
     const node_symm<double> &n =
         m_tree.get_vertex(m_id).recast_as< node_symm<double> >();
 
-    dispatch_symm d = { *this, tr };
-    dispatch_1<2, N>::dispatch(d, n.get_nsym());
+    dispatch_symm disp(*this, tr);
+    dispatch_1<2, N>::dispatch(disp, n.get_nsym());
 }
 
 

@@ -26,7 +26,7 @@ private:
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
-    eval_div_impl(const expr_tree &tr, expr_tree::node_id_t id,
+    eval_div_impl(const expr_tree &tree, expr_tree::node_id_t id,
         const tensor_transf<N, double> &tr);
 
     virtual ~eval_div_impl();
