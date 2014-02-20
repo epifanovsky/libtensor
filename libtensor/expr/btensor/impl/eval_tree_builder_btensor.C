@@ -3,6 +3,7 @@
 #include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/dag/node_ident.h>
 #include <libtensor/expr/dag/node_scalar.h>
+#include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
 #include <libtensor/expr/opt/opt_add_before_transf.h>
@@ -117,15 +118,21 @@ void insert_intermediates(graph &g, graph::node_id_t n0) {
 
     typedef graph::node_id_t node_id_t;
 
-    std::deque<node_id_t> q;
+    std::deque< std::pair<node_id_t, int> > q;
 
     const graph::edge_list_t &eo = g.get_edges_out(n0);
-    for(size_t i = 1; i < eo.size(); i++) q.push_back(eo[i]);
+    for(size_t i = 1; i < eo.size(); i++) q.push_back(std::make_pair(eo[i], 1));
 
     while(!q.empty()) {
 
-        node_id_t n = q.front();
+        //  First element in the pair is currently processed node,
+        //  second element keeps track of subtree level to enable skipping
+        //  the formation of intermediates for add, symm, etc.
+
+        std::pair<node_id_t, int> p = q.front();
         q.pop_front();
+        node_id_t n = p.first;
+        int l = p.second;
 
         //  Skip nodes that won't need further inspection
         if(g.get_vertex(n).check_type<node_ident>() ||
@@ -133,22 +140,27 @@ void insert_intermediates(graph &g, graph::node_id_t n0) {
             g.get_vertex(n).check_type<node_assign>()) continue;
 
         //  Inspect children nodes further
+        int l1 = 0;
+        if(g.get_vertex(n).check_type<node_transform_base>()) {
+            l1 = l;
+        } else if(g.get_vertex(n).check_type<node_add>()) {
+            l1 = 1;
+        } else if(g.get_vertex(n).check_type<node_symm_base>()) {
+            l1 = 1;
+        } else {
+            if(l > 0) l1 = l - 1;
+        }
+
         const graph::edge_list_t &eo = g.get_edges_out(n);
-        for(size_t i = 0; i < eo.size(); i++) q.push_back(eo[i]);
+        for(size_t i = 0; i < eo.size(); i++) {
+            q.push_back(std::make_pair(eo[i], l1));
+        }
 
         //  Skip transformation nodes
         if(g.get_vertex(n).check_type<node_transform_base>()) continue;
 
-        //  Skip nodes whose parent is assignment already
-        bool assigned = true;
-        const graph::edge_list_t &ei = g.get_edges_in(n);
-        for(size_t i = 0; i < ei.size(); i++) {
-            if(!g.get_vertex(ei[i]).check_type<node_assign>()) assigned = false;
-        }
-        if(assigned) continue;
-
         //  Otherwise insert an intermediate
-        interm_inserter(g, n).add();
+        if(l == 0) interm_inserter(g, n).add();
     }
 }
 
@@ -186,9 +198,7 @@ void eval_tree_builder_btensor::build() {
     opt_merge_adjacent_transf(m_tree);
     opt_merge_adjacent_add(m_tree);
 
-    assume_adds(m_tree);
     insert_intermediates(m_tree, m_tree.get_root());
-    assume_adds(m_tree);
 
     make_eval_order_depth_first(m_tree, m_tree.get_root(), m_order);
 }

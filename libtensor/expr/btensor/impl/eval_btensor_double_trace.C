@@ -2,7 +2,6 @@
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include "metaprog.h"
-#include "node_interm.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_trace.h"
 
@@ -24,6 +23,14 @@ private:
         eval_trace_impl &eval;
         expr_tree::node_id_t lhs;
         size_t na;
+
+        dispatch_trace(
+            eval_trace_impl &eval_,
+            expr_tree::node_id_t lhs_,
+            size_t na_) :
+            eval(eval_), lhs(lhs_), na(na_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -53,7 +60,7 @@ void eval_trace_impl::evaluate(expr_tree::node_id_t lhs) {
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
 
-    dispatch_trace dt = { *this, lhs, na };
+    dispatch_trace dt(*this, lhs, na);
     dispatch_1<2, Nmax>::dispatch(dt, na);
 }
 
@@ -116,7 +123,10 @@ template<size_t N>
 struct aux_trace {
     trace *e;
     expr_tree::node_id_t lhs;
-    aux_trace() { e->evaluate(lhs); }
+    aux_trace() {
+#pragma noinline
+        { e->evaluate(lhs); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<2, trace::Nmax, aux::aux_trace>;

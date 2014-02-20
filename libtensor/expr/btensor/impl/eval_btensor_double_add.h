@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_DIV_H
-#define LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_DIV_H
+#ifndef LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_ADD_H
+#define LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_ADD_H
 
 #include "../eval_btensor.h"
 #include "eval_btensor_evaluator_i.h"
@@ -10,7 +10,7 @@ namespace eval_btensor_double {
 
 
 template<size_t N>
-class div : public eval_btensor_evaluator_i<N, double> {
+class add : public eval_btensor_evaluator_i<N, double> {
 public:
     enum {
         Nmax = eval_btensor<double>::Nmax
@@ -25,12 +25,11 @@ private:
 public:
     /** \brief Initializes the evaluator
      **/
-    div(const expr_tree &tree, node_id_t &id,
-        const tensor_transf<N, double> &tr);
+    add(const expr_tree &tree, node_id_t id);
 
     /** \brief Virtual destructor
      **/
-    virtual ~div();
+    virtual ~add();
 
     /** \brief Returns the block tensor operation
      **/
@@ -45,4 +44,4 @@ public:
 } // namespace expr
 } // namespace libtensor
 
-#endif // LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_DIV_H
+#endif // LIBTENSOR_EXPR_EVAL_BTENSOR_DOUBLE_ADD_H

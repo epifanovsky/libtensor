@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_mult.h>
 #include <libtensor/expr/dag/node_div.h>
+#include <libtensor/expr/eval/eval_exception.h>
 #include "metaprog.h"
-#include "node_interm.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_div.h"
 
@@ -12,54 +12,55 @@ namespace eval_btensor_double {
 namespace {
 
 
-class eval_div_impl {
+template<size_t N>
+class eval_div_impl : public eval_btensor_evaluator_i<N, double> {
 private:
     enum {
-        Nmax = div::Nmax
+        Nmax = div<N>::Nmax
     };
 
+public:
+    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
+
 private:
-    const expr_tree &m_tree; //!< Expression tree
-    expr_tree::node_id_t m_id; //!< ID of copy node
-    bool m_add; //!< True if add
+    additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
-    eval_div_impl(const expr_tree &tr, expr_tree::node_id_t id, bool add) :
-        m_tree(tr), m_id(id), m_add(add)
-    { }
+    eval_div_impl(const expr_tree &tree, expr_tree::node_id_t id,
+        const tensor_transf<N, double> &tr);
 
-    template<size_t NC>
-    void evaluate(const tensor_transf<NC, double> &trc, const node &t);
+    virtual ~eval_div_impl();
+
+    virtual additive_gen_bto<N, bti_traits> &get_bto() const {
+        return *m_op;
+    }
 
 };
 
 
 template<size_t N>
-void eval_div_impl::evaluate(
-    const tensor_transf<N, double> &tr, const node &t) {
+eval_div_impl<N>::eval_div_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
 
-    if (N != t.get_n()) {
-        throw "Invalid order";
-    }
+    const expr_tree::edge_list_t &e = tree.get_edges_out(id);
 
-    const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-
-    btensor_from_node<N, double> bta(m_tree, e[0]);
-    btensor_from_node<N, double> btb(m_tree, e[1]);
+    btensor_from_node<N, double> bta(tree, e[0]);
+    btensor_from_node<N, double> btb(tree, e[1]);
 
     tensor_transf<N, double> tra(bta.get_transf()), trb(btb.get_transf());
     permutation<N> pinvc(tr.get_perm(), true);
     tra.permute(pinvc);
     trb.permute(pinvc);
 
-    btod_mult<N> op(bta.get_btensor(), tra, btb.get_btensor(), trb, true,
-        tr.get_scalar_tr());
-    btensor<N, double> &btc = tensor_from_node<N>(t, op.get_bis());
-    if(m_add) {
-        op.perform(btc, 1.0);
-    } else {
-        op.perform(btc);
-    }
+    m_op = new btod_mult<N>(bta.get_btensor(), tra, btb.get_btensor(), trb,
+        true, tr.get_scalar_tr());
+}
+
+
+template<size_t N>
+eval_div_impl<N>::~eval_div_impl() {
+
+    delete m_op;
 }
 
 
@@ -67,23 +68,38 @@ void eval_div_impl::evaluate(
 
 
 template<size_t N>
-void div::evaluate(const tensor_transf<N, double> &tr, const node &t) {
+div<N>::div(const expr_tree &tree, node_id_t &id,
+    const tensor_transf<N, double> &tr) :
 
-    eval_div_impl(m_tree, m_id, m_add).evaluate(tr, t);
+    m_impl(new eval_div_impl<N>(tree, id, tr)) {
+
 }
 
 
-//  The code here explicitly instantiates div::evaluate<N>
+template<size_t N>
+div<N>::~div() {
+
+    delete m_impl;
+}
+
+
+//  The code here explicitly instantiates div<N>
 namespace aux {
 template<size_t N>
 struct aux_div {
-    div *e;
-    tensor_transf<N, double> *tr;
-    node *n;
-    aux_div() { e->evaluate(*tr, *n); }
+    const expr_tree *tree;
+    expr_tree::node_id_t id;
+    const tensor_transf<N, double> *tr;
+    const node *t;
+    div<N> *e;
+    aux_div() {
+#pragma noinline
+        { e = new div<N>(*tree, id, *tr); }
+    }
 };
 } // namespace aux
-template class instantiate_template_1<1, div::Nmax, aux::aux_div>;
+template class instantiate_template_1<1, eval_btensor<double>::Nmax,
+    aux::aux_div>;
 
 
 } // namespace eval_btensor_double

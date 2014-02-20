@@ -2,7 +2,6 @@
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include "metaprog.h"
-#include "node_interm.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_dot_product.h"
 
@@ -24,6 +23,14 @@ private:
         eval_dot_product_impl &eval;
         expr_tree::node_id_t lhs;
         size_t na;
+
+        dispatch_dot_product(
+            eval_dot_product_impl &eval_,
+            expr_tree::node_id_t lhs_,
+            size_t na_) :
+            eval(eval_), lhs(lhs_), na(na_)
+        { }
+
         template<size_t NA> void dispatch();
     };
 
@@ -59,7 +66,7 @@ void eval_dot_product_impl::evaluate(expr_tree::node_id_t lhs) {
         throw "invalid order";
     }
 
-    dispatch_dot_product dd = { *this, lhs, na };
+    dispatch_dot_product dd(*this, lhs, na);
     dispatch_1<1, Nmax>::dispatch(dd, na);
 }
 
@@ -116,7 +123,10 @@ template<size_t N>
 struct aux_dot_product {
     dot_product *e;
     expr_tree::node_id_t lhs;
-    aux_dot_product() { e->evaluate(lhs); }
+    aux_dot_product() {
+#pragma noinline
+        { e->evaluate(lhs); }
+    }
 };
 } // namespace aux
 template class instantiate_template_1<1, dot_product::Nmax,

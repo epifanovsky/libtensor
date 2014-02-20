@@ -27,18 +27,18 @@ public:
     btensor<N, T> &get_btensor() const;
     btensor<N, T> &get_or_create_btensor(const block_index_space<N> &bis);
 
-private:
-    static expr_tree::node_id_t inspect_node(const expr_tree &tree,
-        expr_tree::node_id_t head, tensor_transf<N, T> &tr);
-
 };
+
+
+template<size_t N, typename T>
+expr_tree::node_id_t transf_from_node(const expr_tree &tree,
+    expr_tree::node_id_t head, tensor_transf<N, T> &tr);
 
 
 template<size_t N, typename T>
 btensor_from_node<N, T>::btensor_from_node(const expr_tree &tree,
     expr_tree::node_id_t head) :
-    m_tree(tree), m_head(head),
-    m_leaf(inspect_node(tree, head, m_tr)) {
+    m_tree(tree), m_head(head), m_leaf(transf_from_node(tree, head, m_tr)) {
 
 }
 
@@ -48,23 +48,32 @@ btensor<N, T> &btensor_from_node<N, T>::get_btensor() const {
 
     const node &n = m_tree.get_vertex(m_leaf);
 
-    if(n.get_op().compare(node_ident::k_op_type) == 0) {
+    if(n.check_type<node_ident>()) {
 
-        const node_ident_any_tensor<N, double> &ni =
-            n.recast_as< node_ident_any_tensor<N, double> >();
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
+        const node_ident_any_tensor<N, T> &ni =
+            n.recast_as< node_ident_any_tensor<N, T> >();
+        return btensor<N, T>::from_any_tensor(ni.get_tensor());
 
-    } else if(n.get_op().compare(node_interm_base::k_op_type) == 0) {
+    } else if(n.check_type<node_interm_base>()) {
 
-        const node_interm<N, double> &ni =
-            n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-        if(ph.is_empty()) throw 75;
+        const node_interm<N, T> &ni = n.recast_as< node_interm<N, T> >();
+        btensor_placeholder<N, T> &ph =
+            btensor_placeholder<N, T>::from_any_tensor(ni.get_tensor());
+        if(ph.is_empty()) {
+            throw eval_exception(__FILE__, __LINE__,
+                "libtensor::expr::eval_btensor_double",
+                "btensor_from_node<N, T>", "get_btensor()",
+                "Intermediate does not exist.");
+        }
         return ph.get_btensor();
 
     } else {
-        throw 76;
+
+        throw eval_exception(__FILE__, __LINE__,
+            "libtensor::expr::eval_btensor_double",
+            "btensor_from_node<N, T>", "get_btensor()",
+            "Given node is not a tensor.");
+
     }
 }
 
@@ -75,39 +84,49 @@ btensor<N, T> &btensor_from_node<N, T>::get_or_create_btensor(
 
     const node &n = m_tree.get_vertex(m_leaf);
 
-    if(n.get_op().compare(node_ident::k_op_type) == 0) {
+    if(n.check_type<node_ident>()) {
 
-        const node_ident_any_tensor<N, double> &ni =
-            n.recast_as< node_ident_any_tensor<N, double> >();
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
+        const node_ident_any_tensor<N, T> &ni =
+            n.recast_as< node_ident_any_tensor<N, T> >();
+        return btensor<N, T>::from_any_tensor(ni.get_tensor());
 
-    } else if(n.get_op().compare(node_interm_base::k_op_type) == 0) {
+    } else if(n.check_type<node_interm_base>()) {
 
-        const node_interm<N, double> &ni =
-            n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
+        const node_interm<N, T> &ni = n.recast_as< node_interm<N, T> >();
+        btensor_placeholder<N, T> &ph =
+            btensor_placeholder<N, T>::from_any_tensor(ni.get_tensor());
         if(ph.is_empty()) ph.create_btensor(bis);
         return ph.get_btensor();
 
     } else {
-        throw 77;
+
+        throw eval_exception(__FILE__, __LINE__,
+            "libtensor::expr::eval_btensor_double",
+            "btensor_from_node<N, T>", "get_btensor()",
+            "Given node is not a tensor.");
+
     }
 }
 
 
 template<size_t N, typename T>
-expr_tree::node_id_t btensor_from_node<N, T>::inspect_node(
+expr_tree::node_id_t transf_from_node(
     const expr_tree &tree, expr_tree::node_id_t head, tensor_transf<N, T> &tr) {
 
     const node &n = tree.get_vertex(head);
 
-    if(n.get_op().compare(node_ident::k_op_type) == 0) {
+    if(n.check_type<node_ident>()) {
         return head;
-    } else if(n.get_op().compare(node_interm_base::k_op_type) == 0) {
+    } else if(n.check_type<node_interm_base>()) {
         return head;
-    } else if(n.get_op().compare(node_transform_base::k_op_type) == 0) {
+    } else if(n.check_type<node_transform_base>()) {
+
         const node_transform<T> &nt = n.recast_as< node_transform<T> >();
+        if(N != nt.get_perm().size()) {
+            throw eval_exception(__FILE__, __LINE__,
+                "libtensor::expr::eval_btensor_double", 0, "transf_from_node()",
+                "Malformed expression (bad tensor transformation).");
+        }
         sequence<N, size_t> seq1(0), seq2(0);
         for(size_t i = 0; i < N; i++) {
             seq1[i] = i;
@@ -117,61 +136,12 @@ expr_tree::node_id_t btensor_from_node<N, T>::inspect_node(
         tensor_transf<N, T> tr1(pb.get_perm(), nt.get_coeff());
 
         const expr_tree::edge_list_t &e = tree.get_edges_out(head);
-        expr_tree::node_id_t leaf = inspect_node(tree, e[0], tr);
+        expr_tree::node_id_t leaf = transf_from_node(tree, e[0], tr);
         tr.transform(tr1);
         return leaf;
+
     } else {
-        throw 74;
-    }
-}
-
-template<size_t N>
-btensor<N, double> &tensor_from_node(const node &n) {
-
-    if (n.get_op().compare(node_ident::k_op_type) == 0) {
-        const node_ident_any_tensor<N, double> &ni =
-                n.recast_as< node_ident_any_tensor<N, double> >();
-
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) throw 73;
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
-    }
-}
-
-
-template<size_t N>
-btensor<N, double> &tensor_from_node(const node &n,
-    const block_index_space<N> &bis) {
-
-    if (n.get_op().compare(node_ident::k_op_type) == 0) {
-        const node_ident_any_tensor<N, double> &ni =
-                n.recast_as< node_ident_any_tensor<N, double> >();
-
-        return btensor<N, double>::from_any_tensor(ni.get_tensor());
-    }
-    else if (n.get_op().compare(node_interm_base::k_op_type) == 0) {
-
-        const node_interm<N, double> &ni =
-                n.recast_as< node_interm<N, double> >();
-        btensor_placeholder<N, double> &ph =
-            btensor_placeholder<N, double>::from_any_tensor(ni.get_tensor());
-
-        if(ph.is_empty()) ph.create_btensor(bis);
-        return ph.get_btensor();
-    }
-    else {
-        throw 74;
+        return head;
     }
 }
 
