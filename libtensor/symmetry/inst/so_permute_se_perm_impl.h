@@ -20,11 +20,11 @@ void symmetry_operation_impl< so_permute<N, T>, se_perm<N, T> >::do_perform(
     typedef symmetry_element_set_adapter< N, T, se_perm<N, T> >
     adapter_t;
 
-    adapter_t adapter1(params.grp1);
+    adapter_t adapter1(params.g1);
     permutation_group<N, T> group(adapter1);
     group.permute(params.perm);
-    params.grp2.clear();
-    group.convert(params.grp2);
+    params.g2.clear();
+    group.convert(params.g2);
 }
 
 

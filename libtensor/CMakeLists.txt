@@ -76,7 +76,14 @@ set(SRC_INST
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
     dense_tensor/impl/tod_compare.C
-    dense_tensor/impl/tod_contract2.C
+    dense_tensor/impl/tod_contract2_1.C
+    dense_tensor/impl/tod_contract2_2.C
+    dense_tensor/impl/tod_contract2_3.C
+    dense_tensor/impl/tod_contract2_4.C
+    dense_tensor/impl/tod_contract2_5.C
+    dense_tensor/impl/tod_contract2_6.C
+    dense_tensor/impl/tod_contract2_7.C
+    dense_tensor/impl/tod_contract2_8.C
     dense_tensor/impl/tod_copy.C
     dense_tensor/impl/tod_copy_wnd.C
     dense_tensor/impl/tod_diag.C

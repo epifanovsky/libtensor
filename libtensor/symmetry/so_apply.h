@@ -81,24 +81,24 @@ class symmetry_operation_params< so_apply<N, T> > :
     public symmetry_operation_params_i {
 
 public:
-    const symmetry_element_set<N, T> &grp1; //!< Symmetry group 1
+    const symmetry_element_set<N, T> &g1; //!< Symmetry group 1
     permutation<N> perm1; //!< Permutation 1
     scalar_transf<T> s1;
     scalar_transf<T> s2;
     bool keep_zero; //!< Functor maps 0 to 0
-    symmetry_element_set<N, T> &grp2; //!< Symmetry group 2 (output)
+    symmetry_element_set<N, T> &g2; //!< Symmetry group 2 (output)
 
 public:
     symmetry_operation_params(
-            const symmetry_element_set<N, T> &grp1_,
+            const symmetry_element_set<N, T> &g1_,
             const permutation<N> &perm1_,
             const scalar_transf<T> &s1_,
             const scalar_transf<T> &s2_,
             bool keep_zero_,
-            symmetry_element_set<N, T> &grp2_) :
+            symmetry_element_set<N, T> &g2_) :
 
-                grp1(grp1_), perm1(perm1_), s1(s1_), s2(s2_),
-                keep_zero(keep_zero_), grp2(grp2_) { }
+                g1(g1_), perm1(perm1_), s1(s1_), s2(s2_),
+                keep_zero(keep_zero_), g2(g2_) { }
 
     virtual ~symmetry_operation_params() { }
 };

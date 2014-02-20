@@ -97,23 +97,23 @@ class symmetry_operation_params< so_symmetrize<N, T> > :
     public symmetry_operation_params_i {
 
 public:
-    const symmetry_element_set<N, T> &grp1; //!< Symmetry group 1
+    const symmetry_element_set<N, T> &g1; //!< Symmetry group 1
     sequence<N, size_t> idxgrp; //!< Sequence of index groups
     sequence<N, size_t> symidx; //!< Sequences of symmterizations
     scalar_transf<T> trp; //!< Transformation for pair perm
     scalar_transf<T> trc; //!< Transformation for cyclic perm
-    symmetry_element_set<N, T> &grp2; //!< Symmetry group 2 (output)
+    symmetry_element_set<N, T> &g2; //!< Symmetry group 2 (output)
 
 public:
     symmetry_operation_params(
-            const symmetry_element_set<N, T> &grp1_,
+            const symmetry_element_set<N, T> &g1_,
             const sequence<N, size_t> &idxgrp_,
             const sequence<N, size_t> &symidx_,
             const scalar_transf<T> &trp_, const scalar_transf<T> &trc_,
-            symmetry_element_set<N, T> &grp2_) :
+            symmetry_element_set<N, T> &g2_) :
 
-                grp1(grp1_), idxgrp(idxgrp_), symidx(symidx_),
-                trp(trp_), trc(trc_), grp2(grp2_) { }
+                g1(g1_), idxgrp(idxgrp_), symidx(symidx_),
+                trp(trp_), trc(trc_), g2(g2_) { }
 
     virtual ~symmetry_operation_params() { }
 };

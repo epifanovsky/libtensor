@@ -28,10 +28,10 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
     }
     bool is_cyclic = tr.is_identity();
 
-    params.grp2.clear();
+    params.g2.clear();
 
-    adapter_t adapter(params.grp1);
-    permutation_group<N, T> grp2;
+    adapter_t adapter(params.g1);
+    permutation_group<N, T> g2;
 
     perm_vec_t plst;
     transf_list_t tlst;
@@ -40,11 +40,11 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
 
         const element_t &el = adapter.get_elem(it);
         if (el.get_transf().is_identity()) {
-            grp2.add_orbit(el.get_transf(), el.get_perm());
+            g2.add_orbit(el.get_transf(), el.get_perm());
         }
         else if (is_cyclic) {
             if (el.get_transf() == params.s1) {
-                grp2.add_orbit(params.s2, el.get_perm());
+                g2.add_orbit(params.s2, el.get_perm());
             }
             else {
                 tlst.push_back(transf_pair_t(plst.size(), el.get_transf()));
@@ -86,9 +86,9 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
                     }
 
                     if (trx.is_identity())
-                        grp2.add_orbit(trx, py);
+                        g2.add_orbit(trx, py);
                     else
-                        grp2.add_orbit(params.s2, py);
+                        g2.add_orbit(params.s2, py);
                 }
                 else {
                     pt2->push_back(transf_pair_t(idxb, trx));
@@ -101,8 +101,8 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
         n++;
     }
 
-    grp2.permute(params.perm1);
-    grp2.convert(params.grp2);
+    g2.permute(params.perm1);
+    g2.convert(params.g2);
 }
 
 

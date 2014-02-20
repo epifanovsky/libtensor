@@ -1,9 +1,7 @@
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <libtensor/version.h>
+#include <libtensor/linalg/linalg.h>
 #include "libtensor_expr_suite.h"
 
 using namespace libtensor;
@@ -40,7 +38,7 @@ public:
 
 int main(int argc, char **argv) {
 
-    srand48(time(0));
+    linalg::rng_setup(0);
 
     ostringstream ss1, ss2;
     ss1 << " Unit tests for libtensor " << version::get_string() << " ";

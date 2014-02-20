@@ -112,21 +112,21 @@ class symmetry_operation_params< so_reduce<N, M, T> > :
 public symmetry_operation_params_i {
 
 public:
-    const symmetry_element_set<N, T> &grp1; //!< Symmetry group
+    const symmetry_element_set<N, T> &g1; //!< Symmetry group
     mask<N> msk; //!< Mask
     sequence<N, size_t> rseq; //!< Reduction sequence
     index_range<N> rblrange; //!< Reduction block index range
     index_range<N> riblrange; //!< Reduction in-block index range
-    symmetry_element_set<N - M, T> &grp2;
+    symmetry_element_set<N - M, T> &g2;
 
 public:
     symmetry_operation_params(
-            const symmetry_element_set<N, T> &grp1_,
+            const symmetry_element_set<N, T> &g1_,
             const mask<N> &msk_, const sequence<N, size_t> &rseq_,
             const index_range<N> &rblrange_, const index_range<N> &riblrange_,
-            symmetry_element_set<N - M, T> &grp2_) :
-                grp1(grp1_), msk(msk_), rseq(rseq_),
-                rblrange(rblrange_), riblrange(riblrange_), grp2(grp2_) {
+            symmetry_element_set<N - M, T> &g2_) :
+                g1(g1_), msk(msk_), rseq(rseq_),
+                rblrange(rblrange_), riblrange(riblrange_), g2(g2_) {
     }
 
     virtual ~symmetry_operation_params() { }

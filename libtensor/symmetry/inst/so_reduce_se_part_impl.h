@@ -24,8 +24,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
     for (register size_t i = 0; i < k_order1; i++)
         invmsk[i] = !params.msk[i];
 
-    params.grp2.clear();
-    if (params.grp1.is_empty()) return;
+    params.g2.clear();
+    if (params.g1.is_empty()) return;
 
     // Create a map of indexes and a mask of reduction steps
     sequence<k_order1, size_t> map(0);
@@ -40,7 +40,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
         }
     }
 
-    combine_part<k_order1, T> cp(params.grp1);
+    combine_part<k_order1, T> cp(params.g1);
     el1_t el1(cp.get_bis(), cp.get_pdims());
     cp.perform(el1);
 
@@ -177,7 +177,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
         } // while ai2b
     } while (ai2a.inc());
 
-    if (! empty) params.grp2.insert(el2);
+    if (! empty) params.g2.insert(el2);
 }
 
 template<size_t N, size_t M, typename T>
