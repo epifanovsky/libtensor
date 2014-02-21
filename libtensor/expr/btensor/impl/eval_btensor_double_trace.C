@@ -55,7 +55,7 @@ void eval_trace_impl::evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
-    const node_trace &nt = n.recast_as<node_trace>();
+    const node_trace &nt = n.template recast_as<node_trace>();
 
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
@@ -70,7 +70,7 @@ void eval_trace_impl::do_evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
-    const node_trace &nt = n.recast_as<node_trace>();
+    const node_trace &nt = n.template recast_as<node_trace>();
 
     enum {
         NA = 2 * N
@@ -96,7 +96,7 @@ void eval_trace_impl::do_evaluate(expr_tree::node_id_t lhs) {
     d *= bta.get_transf().get_scalar_tr().get_coeff();
 
     const node_scalar<double> &ns =
-        m_tree.get_vertex(lhs).recast_as< node_scalar<double> >();
+        m_tree.get_vertex(lhs).template recast_as< node_scalar<double> >();
     ns.get_scalar() = d;
 }
 

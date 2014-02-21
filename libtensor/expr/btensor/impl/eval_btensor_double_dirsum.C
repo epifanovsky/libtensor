@@ -93,7 +93,8 @@ template<size_t NC> template<size_t NA, size_t NB>
 void eval_dirsum_impl<NC>::init(const tensor_transf<NC, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_dirsum &nd = m_tree.get_vertex(m_id).recast_as<node_dirsum>();
+    const node_dirsum &nd =
+    		m_tree.get_vertex(m_id).template recast_as<node_dirsum>();
 
     btensor_from_node<NA, double> bta(m_tree, e[0]);
     btensor_from_node<NB, double> btb(m_tree, e[1]);

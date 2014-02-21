@@ -66,7 +66,8 @@ eval_diag_impl<N>::eval_diag_impl(const expr_tree &tree,
     m_tree(tree), m_id(id), m_op(0) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_diag &nd = m_tree.get_vertex(m_id).recast_as<node_diag>();
+    const node_diag &nd =
+    		m_tree.get_vertex(m_id).template recast_as<node_diag>();
 
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
@@ -87,7 +88,8 @@ template<size_t N> template<size_t NA, size_t M>
 void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_diag &nd = m_tree.get_vertex(m_id).recast_as<node_diag>();
+    const node_diag &nd =
+    		m_tree.get_vertex(m_id).template recast_as<node_diag>();
 
     btensor_from_node<NA, double> bta(m_tree, e[0]);
 

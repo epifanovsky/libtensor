@@ -76,7 +76,7 @@ eval_symm_impl<N>::eval_symm_impl(const expr_tree &tree,
     m_tree(tree), m_id(id), m_sub(0), m_op(0) {
 
     const node_symm<double> &n =
-        m_tree.get_vertex(m_id).recast_as< node_symm<double> >();
+        m_tree.get_vertex(m_id).template recast_as< node_symm<double> >();
 
     dispatch_symm disp(*this, tr);
     dispatch_1<2, N>::dispatch(disp, n.get_nsym());
@@ -103,7 +103,7 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     }
 
     const node &n = m_tree.get_vertex(m_id);
-    const node_symm<double> &nn = n.recast_as< node_symm<double> >();
+    const node_symm<double> &nn = n.template recast_as< node_symm<double> >();
 
     // Need to convert
     // T2 S T1 A -> S' T' A, where S = I + Ts and S' = I + Ts'
@@ -156,7 +156,7 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     }
 
     const node &n = m_tree.get_vertex(m_id);
-    const node_symm<double> &nn = n.recast_as< node_symm<double> >();
+    const node_symm<double> &nn = n.template recast_as< node_symm<double> >();
 
     if(nn.get_sym().size() != 3) {
         throw eval_exception(__FILE__, __LINE__,

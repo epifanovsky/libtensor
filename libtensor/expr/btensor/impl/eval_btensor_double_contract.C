@@ -172,7 +172,8 @@ template<size_t NC> template<size_t N, size_t M, size_t K>
 void eval_contract_impl<NC>::init_contract(
     const tensor_transf<NC, double> &trc) {
 
-    const node_contract &n = m_tree.get_vertex(m_id).recast_as<node_contract>();
+    const node_contract &n =
+    		m_tree.get_vertex(m_id).template recast_as<node_contract>();
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
 
     btensor_from_node<N + K, double> bta(m_tree, e[0]);
@@ -206,7 +207,7 @@ void eval_contract_impl<NC>::init_ewmult(const tensor_transf<NC, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node_contract &nc = m_tree.get_vertex(m_id).
-        recast_as<node_contract>();
+        template recast_as<node_contract>();
 
     btensor_from_node<N + K, double> bta(m_tree, e[0]);
     btensor_from_node<M + K, double> btb(m_tree, e[1]);

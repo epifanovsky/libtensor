@@ -47,7 +47,7 @@ template<size_t N>
 eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
     expr_tree::node_id_t id) {
 
-    const node_add &n = tree.get_vertex(id).recast_as<node_add>();
+    const node_add &n = tree.get_vertex(id).template recast_as<node_add>();
     const expr_tree::edge_list_t &e = tree.get_edges_out(id);
 
     for(size_t i = 0; i < e.size(); i++) {
