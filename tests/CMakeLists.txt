@@ -250,6 +250,26 @@ set(SRC_IFACE
     iface/trace_test.C
 )
 
+set(SRC_BLOCK_SPARSE
+    block_sparse/libtensor_block_sparse_tests.C
+    block_sparse/libtensor_block_sparse_suite.C
+    block_sparse/sparse_bispace_test.C
+    block_sparse/sparse_btensor_test.C
+    block_sparse/block_kernels_test.C
+    block_sparse/block_loop_test.C
+    block_sparse/sparse_loop_iterator_test.C
+    block_sparse/sparse_loop_list_test.C
+    block_sparse/sparsity_fuser_test.C
+    block_sparse/sparse_loop_grouper_test.C
+    block_sparse/sparse_block_tree_iterator_test.C
+    block_sparse/sparse_block_tree_test.C
+    block_sparse/direct_sparse_btensor_test.C
+)
+
+set(SRC_BLOCK_SPARSE_BENCHMARK
+	block_sparse/libtensor_block_sparse_benchmark.C
+)
+
 set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
@@ -260,6 +280,7 @@ set(TARGETS
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
+    libtensor_block_sparse_tests
 )
 
 add_executable(libtensor_core_tests ${SRC_CORE})
@@ -271,6 +292,7 @@ add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
+add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -288,4 +310,14 @@ foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
+
+# Want custom address sanitizer flags so add later
+target_link_libraries(libtensor_block_sparse_tests tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
+# Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
+# Want optimization but also debug symbols for profiling
+add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
+set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
+target_link_libraries(libtensor_block_sparse_benchmark tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
 

@@ -201,6 +201,17 @@ set(SRC_BTOD
     block_tensor/impl/btod_vmpriority.C
 )
 
+set(SRC_BLOCK_SPARSE
+    block_sparse/sparse_block_tree_any_order.C
+    block_sparse/block_loop.C
+    block_sparse/sparse_loop_iterator.C
+    block_sparse/sparse_loop_list.C
+    block_sparse/sparsity_fuser.C
+    block_sparse/sparse_loop_grouper.C
+    block_sparse/range.C
+    block_sparse/get_batches.C
+)
+
 set(SRC_DIAG_TENSOR
     diag_block_tensor/impl/diag_block_tensor.C
     diag_block_tensor/impl/diag_btod_addition_schedule.C
@@ -219,7 +230,7 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_to_add_space.C
     diag_tensor/impl/diag_to_contract2_space.C
     diag_tensor/impl/diag_tod_adjust_space.C
-    diag_tensor/impl/diag_tod_aux_constr_add.C
+   diag_tensor/impl/diag_tod_aux_constr_add.C
     diag_tensor/impl/diag_tod_aux_constr_base.C
     diag_tensor/impl/diag_tod_aux_dotprod.C
     diag_tensor/impl/diag_tod_contract2.C
@@ -293,7 +304,8 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR} ${SRC_ARMA})
+    ${SRC_BTOD} ${SRC_BLOCK_SPARSE} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR}
+    ${SRC_ARMA})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
