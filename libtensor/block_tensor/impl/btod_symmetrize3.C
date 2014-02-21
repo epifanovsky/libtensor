@@ -8,11 +8,15 @@ template class gen_bto_symmetrize3< 3, btod_traits, btod_symmetrize3<3> >;
 template class gen_bto_symmetrize3< 4, btod_traits, btod_symmetrize3<4> >;
 template class gen_bto_symmetrize3< 5, btod_traits, btod_symmetrize3<5> >;
 template class gen_bto_symmetrize3< 6, btod_traits, btod_symmetrize3<6> >;
+template class gen_bto_symmetrize3< 7, btod_traits, btod_symmetrize3<7> >;
+template class gen_bto_symmetrize3< 8, btod_traits, btod_symmetrize3<8> >;
 
 template class btod_symmetrize3<3>;
 template class btod_symmetrize3<4>;
 template class btod_symmetrize3<5>;
 template class btod_symmetrize3<6>;
+template class btod_symmetrize3<7>;
+template class btod_symmetrize3<8>;
 
 
 } // namespace libtensor

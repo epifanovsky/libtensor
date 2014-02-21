@@ -15,9 +15,9 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
 
     typedef symmetry_element_set_adapter<N, T, element_t> adapter_t;
 
-    params.grp2.clear();
+    params.g2.clear();
 
-    adapter_t adapter1(params.grp1);
+    adapter_t adapter1(params.g1);
 
     for (typename adapter_t::iterator it1 = adapter1.begin();
             it1 != adapter1.end(); it1++) {
@@ -52,7 +52,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_part<N, T> >::do_perform(
         } while (ai.inc());
 
         se2.permute(params.perm1);
-        params.grp2.insert(se2);
+        params.g2.insert(se2);
     }
 }
 

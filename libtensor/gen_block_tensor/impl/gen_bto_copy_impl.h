@@ -39,6 +39,7 @@ public:
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_full_copy_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -68,6 +69,7 @@ public:
         gen_block_stream_i<N, bti_traits> &out);
 
     virtual ~gen_bto_part_copy_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };

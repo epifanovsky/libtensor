@@ -15,25 +15,29 @@ template<size_t N>
 class compare_ref {
 public:
     static void compare(const char *test, dense_tensor_i<N, double> &t,
-            dense_tensor_i<N, double> &t_ref, double thresh)
-    throw(exception, libtest::test_exception);
-    static void compare(const char *test, block_tensor_i<N, double> &t,
-            block_tensor_i<N, double> &t_ref, double thresh)
-    throw(exception, libtest::test_exception);
+        dense_tensor_i<N, double> &t_ref, double thresh)
+        throw(exception, libtest::test_exception);
+
+    static void compare(const char *test, block_tensor_rd_i<N, double> &t,
+        block_tensor_rd_i<N, double> &t_ref, double thresh)
+        throw(exception, libtest::test_exception);
+
     static void compare(const char *test, const symmetry<N, double> &s,
-            const symmetry<N, double> &s_ref)
-    throw(exception, libtest::test_exception);
+        const symmetry<N, double> &s_ref)
+        throw(exception, libtest::test_exception);
+
     static void compare(const char *test, const block_index_space<N> &bis,
-            const symmetry_element_set<N, double> &s,
-            const symmetry_element_set<N, double> &s_ref)
-    throw(exception, libtest::test_exception);
+        const symmetry_element_set<N, double> &s,
+        const symmetry_element_set<N, double> &s_ref)
+        throw(exception, libtest::test_exception);
+
 };
 
 
 template<size_t N>
 void compare_ref<N>::compare(const char *test, dense_tensor_i<N, double> &t,
-        dense_tensor_i<N, double> &t_ref, double thresh)
-        throw(exception, libtest::test_exception) {
+    dense_tensor_i<N, double> &t_ref, double thresh)
+    throw(exception, libtest::test_exception) {
 
     tod_compare<N> cmp(t, t_ref, thresh);
     if(!cmp.compare()) {
@@ -52,9 +56,9 @@ void compare_ref<N>::compare(const char *test, dense_tensor_i<N, double> &t,
 
 
 template<size_t N>
-void compare_ref<N>::compare(const char *test, block_tensor_i<N, double> &t,
-        block_tensor_i<N, double> &t_ref, double thresh)
-        throw(exception, libtest::test_exception) {
+void compare_ref<N>::compare(const char *test, block_tensor_rd_i<N, double> &t,
+    block_tensor_rd_i<N, double> &t_ref, double thresh)
+    throw(exception, libtest::test_exception) {
 
     btod_compare<N> cmp(t, t_ref, thresh);
     if(!cmp.compare()) {

@@ -4,6 +4,7 @@
 #include "kern_dmul2_x_p_p.h"
 #include "kern_dmul2_i_ip_p.h"
 #include "kern_dmul2_i_p_ip.h"
+#include "kern_dmul2_x_pq_pq.h"
 #include "kern_dmul2_x_pq_qp.h"
 
 namespace libtensor {
@@ -29,19 +30,19 @@ kernel_base<LA, 2, 1> *kern_dmul2_x_p_p<LA>::match(const kern_dmul2<LA> &z,
 
     if(in.empty()) return 0;
 
-    //    1. Minimize k1 > 0:
+    //    1. Minimize spa > 0:
     //    ------------
     //    w   a   b  c
-    //    np  k1  1  0  -->  c_# = a_p# b_p
-    //    ------------       sz(p) = np, sz(#) = k1
+    //    np  spa 1  0  -->  c_# = a_p# b_p
+    //    ------------       sz(p) = np, sz(#) = spa
     //                       [mul2_x_p_p]
 
     iterator_t ip = in.end();
-    size_t k1_min = 0;
+    size_t spa_min = 0;
     for(iterator_t i = in.begin(); i != in.end(); i++) {
         if(i->stepa(0) > 0 && i->stepa(1) == 1 && i->stepb(0) == 0) {
-            if(k1_min == 0 || k1_min > i->stepa(0)) {
-                ip = i; k1_min = i->stepa(0);
+            if(spa_min == 0 || spa_min > i->stepa(0)) {
+                ip = i; spa_min = i->stepa(0);
             }
         }
     }
@@ -58,6 +59,7 @@ kernel_base<LA, 2, 1> *kern_dmul2_x_p_p<LA>::match(const kern_dmul2<LA> &z,
 
     if((kern = kern_dmul2_i_ip_p<LA>::match(zz, in, out))) return kern;
     if((kern = kern_dmul2_i_p_ip<LA>::match(zz, in, out))) return kern;
+    if((kern = kern_dmul2_x_pq_pq<LA>::match(zz, in, out))) return kern;
     if((kern = kern_dmul2_x_pq_qp<LA>::match(zz, in, out))) return kern;
 
     return new kern_dmul2_x_p_p(zz);

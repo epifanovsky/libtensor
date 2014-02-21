@@ -76,7 +76,14 @@ set(SRC_INST
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
     dense_tensor/impl/tod_compare.C
-    dense_tensor/impl/tod_contract2.C
+    dense_tensor/impl/tod_contract2_1.C
+    dense_tensor/impl/tod_contract2_2.C
+    dense_tensor/impl/tod_contract2_3.C
+    dense_tensor/impl/tod_contract2_4.C
+    dense_tensor/impl/tod_contract2_5.C
+    dense_tensor/impl/tod_contract2_6.C
+    dense_tensor/impl/tod_contract2_7.C
+    dense_tensor/impl/tod_contract2_8.C
     dense_tensor/impl/tod_copy.C
     dense_tensor/impl/tod_copy_wnd.C
     dense_tensor/impl/tod_diag.C
@@ -179,6 +186,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_mult1.C
     block_tensor/impl/btod_random.C
+    block_tensor/impl/btod_scale.C
     block_tensor/impl/btod_set_diag.C
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
@@ -191,6 +199,17 @@ set(SRC_BTOD
     block_tensor/impl/btod_unfold_block_list.C
     block_tensor/impl/btod_unfold_symmetry.C
     block_tensor/impl/btod_vmpriority.C
+)
+
+set(SRC_BLOCK_SPARSE
+    block_sparse/sparse_block_tree_any_order.C
+    block_sparse/block_loop.C
+    block_sparse/sparse_loop_iterator.C
+    block_sparse/sparse_loop_list.C
+    block_sparse/sparsity_fuser.C
+    block_sparse/sparse_loop_grouper.C
+    block_sparse/range.C
+    block_sparse/get_batches.C
 )
 
 set(SRC_DIAG_TENSOR
@@ -223,15 +242,45 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_tod_set.C
 )
 
-set(SRC_BLOCK_SPARSE
-    block_sparse/sparse_block_tree_any_order.C
-    block_sparse/block_loop.C
-    block_sparse/sparse_loop_iterator.C
-    block_sparse/sparse_loop_list.C
-    block_sparse/sparsity_fuser.C
-    block_sparse/sparse_loop_grouper.C
-    block_sparse/range.C
-    block_sparse/get_batches.C
+set(SRC_EXPR
+    expr/btensor/impl/eval_btensor_double.C
+    expr/btensor/impl/eval_btensor_double_add.C
+    expr/btensor/impl/eval_btensor_double_autoselect.C
+    expr/btensor/impl/eval_btensor_double_contract.C
+    expr/btensor/impl/eval_btensor_double_copy.C
+    expr/btensor/impl/eval_btensor_double_diag.C
+    expr/btensor/impl/eval_btensor_double_dirsum.C
+    expr/btensor/impl/eval_btensor_double_div.C
+    expr/btensor/impl/eval_btensor_double_dot_product.C
+    expr/btensor/impl/eval_btensor_double_symm.C
+    expr/btensor/impl/eval_btensor_double_trace.C
+    expr/btensor/impl/eval_tree_builder_btensor.C
+    expr/btensor/impl/node_interm.C
+    expr/dag/expr_tree.C
+    expr/dag/graph.C
+    expr/dag/node_add.C
+    expr/dag/node_assign.C
+    expr/dag/node_contract.C
+    expr/dag/node_diag.C
+    expr/dag/node_dirsum.C
+    expr/dag/node_div.C
+    expr/dag/node_dot_product.C
+    expr/dag/node_ident.C
+    expr/dag/node_null.C
+    expr/dag/node_product.C
+    expr/dag/node_scalar.C
+    expr/dag/node_symm.C
+    expr/dag/node_trace.C
+    expr/dag/node_transform.C
+    expr/dag/print_node.C
+    expr/dag/print_tree.C
+    expr/eval/default_eval_selector.C
+    expr/eval/eval.C
+    expr/eval/eval_register.C
+    expr/opt/opt_add_before_transf.C
+    expr/opt/opt_merge_adjacent_add.C
+    expr/opt/opt_merge_adjacent_transf.C
+    expr/opt/opt_merge_equiv_ident.C
 )
 
 if(WITH_ARMADILLO)
@@ -255,16 +304,14 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP} ${SRC_ARMA})
-add_library(block_sparse ${SRC_BLOCK_SPARSE})
+    ${SRC_BTOD} ${SRC_BLOCK_SPARSE} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR}
+    ${SRC_ARMA})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
 endif(QCHEM_SOURCE_DIR)
 
 set_property(TARGET tensor APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
-set_property(TARGET block_sparse APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
     set_property(TARGET tensor APPEND PROPERTY

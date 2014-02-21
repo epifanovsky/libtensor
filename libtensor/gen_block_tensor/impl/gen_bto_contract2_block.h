@@ -134,6 +134,11 @@ public:
         const block_index_space<NC> &bisc,
         const scalar_transf<element_type> &kc);
 
+    unsigned long get_cost(
+        const contr_list_type &clst,
+        const block_index_space<NC> &bisc,
+        const index<NC> &idxc);
+
     void compute_block(
         const contr_list_type &clst,
         bool zero,

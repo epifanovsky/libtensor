@@ -38,6 +38,7 @@ public:
     { }
 
     virtual ~gen_bto_unfold_block_list_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };

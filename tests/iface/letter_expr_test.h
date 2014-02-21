@@ -5,6 +5,7 @@
 
 namespace libtensor {
 
+
 /** \brief Tests the libtensor::letter_expr class
 
     \ingroup libtensor_tests_iface
@@ -14,9 +15,11 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
-    void test_contains() throw(libtest::test_exception);
-    void test_permutation() throw(libtest::test_exception);
+    void test_contains();
+    void test_permutation();
+
 };
+
 
 } // namespace libtensor
 

@@ -43,6 +43,7 @@ public:
         const scalar_transf<element_type> &c);
 
     virtual ~gen_bto_mult1_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };

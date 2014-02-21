@@ -21,9 +21,9 @@ symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
-    adapter_t adapter1(params.grp1);
+    adapter_t adapter1(params.g1);
 
-    params.grp2.clear();
+    params.g2.clear();
 
     for (typename adapter_t::iterator it1 = adapter1.begin();
             it1 != adapter1.end(); it1++) {
@@ -31,7 +31,7 @@ symmetry_operation_impl< so_permute<N, T>, se_label<N, T> >::do_perform(
         se_label<N, T> se2(adapter1.get_elem(it1));
         se2.permute(params.perm);
 
-        params.grp2.insert(se2);
+        params.g2.insert(se2);
     }
 }
 

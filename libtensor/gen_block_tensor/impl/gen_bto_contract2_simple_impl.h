@@ -4,7 +4,6 @@
 #include <iterator>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/so_permute.h>
-#include "gen_bto_contract2_align.h"
 #include "gen_bto_contract2_batch_impl.h"
 #include "gen_bto_contract2_batching_policy.h"
 #include "gen_bto_contract2_clst_builder.h"

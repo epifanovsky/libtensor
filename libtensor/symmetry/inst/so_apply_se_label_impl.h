@@ -12,8 +12,8 @@ void symmetry_operation_impl< so_apply<N, T>, se_label<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
     typedef symmetry_element_set_adapter< N, T, se_label<N, T> > adapter_t;
-    adapter_t g1(params.grp1);
-    params.grp2.clear();
+    adapter_t g1(params.g1);
+    params.g2.clear();
 
     for (typename adapter_t::iterator it1 = g1.begin();
             it1 != g1.end(); it1++) {
@@ -29,7 +29,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_label<N, T> >::do_perform(
             e2.set_rule(r2);
         }
 
-        params.grp2.insert(e2);
+        params.g2.insert(e2);
     }
 }
 

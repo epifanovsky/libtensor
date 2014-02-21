@@ -64,14 +64,14 @@ block_index_space_product_builder<N, M>::block_index_space_product_builder(
     i = 0;
     done = false;
     while(!done) {
-        while(i < N && mska[i]) i++;
+        while(i != N && mska[i]) i++;
         if(i == N) {
             done = true;
             continue;
         }
 
         size_t typ = bisa.get_type(i);
-        for(size_t j = 0; j < N; j++) {
+        for(size_t j = 0; j != N; j++) {
             mskx[j] = mska1[j] = bisa.get_type(j) == typ;
         }
         const split_points &pts = bisa.get_splits(typ);
@@ -80,19 +80,19 @@ block_index_space_product_builder<N, M>::block_index_space_product_builder(
 
         mska |= mska1;
     }
-    for(size_t j = 0; j < N; j++) mskx[j] = false;
+    for(size_t j = 0; j != N; j++) mskx[j] = false;
 
     i = 0;
     done = false;
     while(!done) {
-        while(i < M && mskb[i]) i++;
+        while(i != M && mskb[i]) i++;
         if(i == M) {
             done = true;
             continue;
         }
 
         size_t typ = bisb.get_type(i);
-        for(size_t j = 0; j < M; j++) {
+        for(size_t j = 0; j != M; j++) {
             mskx[N + j] = mskb1[j] =
                 bisb.get_type(j) == typ;
         }
@@ -117,10 +117,10 @@ dimensions<N + M> block_index_space_product_builder<N, M>::make_dims(
     const dimensions<N> &dimsa = bisa.get_dims();
     const dimensions<M> &dimsb = bisb.get_dims();
 
-    for(size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i != N; i++) {
         i2[i] = dimsa[i] - 1;
     }
-    for(size_t i = 0; i < M; i++) {
+    for(size_t i = 0; i != M; i++) {
         i2[i + N] = dimsb[i] - 1;
     }
 

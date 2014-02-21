@@ -96,14 +96,16 @@ endif(NOT ACML_FIND_QUIETLY)
 #   Check that versions of ACML and compiler are compatible
 #   ACML 5 requires GCC 4.6 or higher
 
-set(CMAKE_REQUIRED_LIBRARIES ${ACML_A_PATH})
-check_fortran_source_compiles("
+if(CMAKE_Fortran_COMPILER_WORKS)
+    set(CMAKE_REQUIRED_LIBRARIES ${ACML_A_PATH})
+    check_fortran_source_compiles("
       call xerbla(\"0\",0)
       end
-" ACML_COMPILES)
-if(NOT ACML_COMPILES)
-    message(FATAL_ERROR "Compiler and ACML are not compatible")
-endif(NOT ACML_COMPILES)
+    " ACML_COMPILES)
+    if(NOT ACML_COMPILES)
+        message(FATAL_ERROR "Compiler and ACML are not compatible")
+    endif(NOT ACML_COMPILES)
+endif(CMAKE_Fortran_COMPILER_WORKS)
 
 #   Set USE_ACML definition
 

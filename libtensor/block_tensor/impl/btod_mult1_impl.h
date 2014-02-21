@@ -11,7 +11,7 @@ const char *btod_mult1<N>::k_clazz = "btod_mult1<N>";
 
 
 template<size_t N>
-btod_mult1<N>::btod_mult1(block_tensor_i<N, double> &btb,
+btod_mult1<N>::btod_mult1(block_tensor_rd_i<N, double> &btb,
         const tensor_transf<N, double> &trb,
         bool recip, const scalar_transf<double> &c) :
 
@@ -20,7 +20,7 @@ btod_mult1<N>::btod_mult1(block_tensor_i<N, double> &btb,
 
 
 template<size_t N>
-btod_mult1<N>::btod_mult1(block_tensor_i<N, double> &btb,
+btod_mult1<N>::btod_mult1(block_tensor_rd_i<N, double> &btb,
         bool recip, double c) :
 
     m_gbto(btb, tensor_transf<N, double>(),
@@ -29,7 +29,7 @@ btod_mult1<N>::btod_mult1(block_tensor_i<N, double> &btb,
 
 
 template<size_t N>
-btod_mult1<N>::btod_mult1(block_tensor_i<N, double> &btb,
+btod_mult1<N>::btod_mult1(block_tensor_rd_i<N, double> &btb,
         const permutation<N> &pb, bool recip, double c) :
 
     m_gbto(btb, tensor_transf<N, double>(pb),

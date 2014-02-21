@@ -16,25 +16,25 @@ namespace libtensor {
 //@{
 
 struct compare4max {
-    bool operator()(double a, double b) {
+    bool operator()(double a, double b) const {
         return a > b;
     }
 };
 
 struct compare4absmax {
-    bool operator()(double a, double b) {
+    bool operator()(double a, double b) const {
         return fabs(a) > fabs(b);
     }
 };
 
 struct compare4min {
-    bool operator()(double a, double b) {
+    bool operator()(double a, double b) const {
         return a < b;
     }
 };
 
 struct compare4absmin {
-    bool operator()(double a, double b) {
+    bool operator()(double a, double b) const {
         return fabs(a) < fabs(b);
     }
 };

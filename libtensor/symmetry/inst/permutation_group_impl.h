@@ -498,7 +498,7 @@ void permutation_group<N, T>::make_setstabilizer(const branching &br,
         perm_vec_t pu(N - i); // vector u with u_i \in U_i
         std::vector<size_t> ui(N - i);
         // initialize ui and pu
-        for (size_t k = ii; k < N - 1; k++) ui[k - ii] = k;
+        for (size_t k = ii; k != N - 1; k++) ui[k - ii] = k;
         ui[0]++;
 
         for (; ui[0] < N; ui[0]++) {

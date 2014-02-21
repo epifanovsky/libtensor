@@ -1,8 +1,10 @@
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_set.h>
-#include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "dirsum_test.h"
 

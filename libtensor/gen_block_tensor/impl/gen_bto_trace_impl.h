@@ -42,6 +42,7 @@ public:
         m_tr(Traits::zero()) { }
 
     virtual ~gen_bto_trace_in_orbit_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
     element_type get_trace() const { return m_tr; }

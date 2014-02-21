@@ -10,6 +10,7 @@
 #include "kern_dmul2_i_pi_p_impl.h"
 #include "kern_dmul2_ij_i_j_impl.h"
 #include "kern_dmul2_ij_j_i_impl.h"
+#include "kern_dmul2_x_pq_pq_impl.h"
 #include "kern_dmul2_x_pq_qp_impl.h"
 #include "kern_dmul2_ij_ip_jp_impl.h"
 #include "kern_dmul2_ij_ip_pj_impl.h"

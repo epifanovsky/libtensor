@@ -198,6 +198,7 @@ set(SRC_LINALG
     linalg/linalg_mul2_x_p_p_test.C
     linalg/linalg_mul2_i_i_i_x_test.C
     linalg/linalg_mul2_i_i_x_test.C
+    linalg/linalg_mul2_x_pq_pq_test.C
     linalg/linalg_mul2_x_pq_qp_test.C
     linalg/linalg_mul2_i_ip_p_x_test.C
     linalg/linalg_mul2_i_pi_p_x_test.C
@@ -209,23 +210,39 @@ set(SRC_LINALG
     linalg/linalg_mul2_ij_pi_pj_x_test.C
 )
 
+set(SRC_EXPR
+    expr/libtensor_expr_tests.C
+    expr/libtensor_expr_suite.C
+    expr/expr_tree_test.C
+    expr/graph_test.C
+    expr/node_add_test.C
+    expr/node_contract_test.C
+    expr/node_diag_test.C
+    expr/node_dot_product_test.C
+    expr/node_ident_any_tensor_test.C
+    expr/node_product_test.C
+    expr/node_scalar_test.C
+    expr/node_trace_test.C
+    expr/node_transform_test.C
+)
+
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
-    iface/anon_eval_test.C
+    iface/any_tensor_test.C
     iface/bispace_expr_test.C
     iface/bispace_test.C
     iface/btensor_test.C
     iface/contract_test.C
     iface/diag_test.C
-    iface/direct_btensor_test.C
-    iface/direct_eval_test.C
     iface/direct_product_test.C
     iface/dirsum_test.C
     iface/dot_product_test.C
+    iface/eval_btensor_double_test.C
+    iface/eval_register_test.C
     iface/ewmult_test.C
     iface/expr_test.C
-    iface/labeled_btensor_test.C
+    iface/expr_tensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
     iface/mult_test.C
@@ -259,6 +276,7 @@ set(TARGETS
     libtensor_diag_tensor_tests
     libtensor_diag_block_tensor_tests
     libtensor_btod_tests
+    libtensor_expr_tests
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
@@ -267,6 +285,7 @@ set(TARGETS
 
 add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_btod_tests ${SRC_BTOD})
+add_executable(libtensor_expr_tests ${SRC_EXPR})
 add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})

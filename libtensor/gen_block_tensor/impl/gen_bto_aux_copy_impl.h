@@ -59,9 +59,9 @@ void gen_bto_aux_copy<N, Traits>::close() {
     }
 
     m_open = false;
-    for(typename std::map<size_t, libutil::mutex*>::iterator imtx =
-        m_blkmtx.begin(); imtx != m_blkmtx.end(); ++imtx) delete imtx->second;
-    m_blkmtx.clear();
+    for(typename std::map<size_t, block_status>::iterator i = m_blkstat.begin();
+        i != m_blkstat.end(); ++i) delete i->second.mtx;
+    m_blkstat.clear();
 }
 
 
@@ -79,39 +79,38 @@ void gen_bto_aux_copy<N, Traits>::put(
     }
 
     size_t aidx = abs_index<N>::get_abs_index(idx, m_bidims);
-    bool touched = false;
-    libutil::mutex *blkmtx = 0;
+    typename std::map<size_t, block_status>::iterator ibs = m_blkstat.end();
 
     if(m_sync) {
         libutil::auto_lock<libutil::mutex> lock(m_mtx);
-        typename std::map<size_t, libutil::mutex*>::iterator imtx =
-            m_blkmtx.find(aidx);
-        if(imtx == m_blkmtx.end()) {
-            blkmtx = new libutil::mutex;
-            m_blkmtx.insert(std::make_pair(aidx, blkmtx));
-        } else {
-            touched = true;
-            blkmtx = imtx->second;
+        ibs = m_blkstat.find(aidx);
+        if(ibs == m_blkstat.end()) {
+            block_status bs;
+            bs.mtx = new libutil::mutex;
+            bs.touched = false;
+            ibs = m_blkstat.insert(std::make_pair(aidx, bs)).first;
         }
     } else {
-        typename std::map<size_t, libutil::mutex*>::iterator imtx =
-            m_blkmtx.find(aidx);
-        if(imtx == m_blkmtx.end()) {
-            m_blkmtx.insert(std::make_pair(aidx, (libutil::mutex*)0));
-        } else {
-            touched = true;
+        ibs = m_blkstat.find(aidx);
+        if(ibs == m_blkstat.end()) {
+            block_status bs;
+            bs.mtx = 0;
+            bs.touched = false;
+            ibs = m_blkstat.insert(std::make_pair(aidx, bs)).first;
         }
     }
 
     if(m_sync) {
-        libutil::auto_lock<libutil::mutex> lock(*blkmtx);
+        libutil::auto_lock<libutil::mutex> lock(*ibs->second.mtx);
         wr_block_type &blk_tgt = m_ctrl.req_block(idx);
-        to_copy_type(blk, tr).perform(!touched, blk_tgt);
+        to_copy_type(blk, tr).perform(!ibs->second.touched, blk_tgt);
         m_ctrl.ret_block(idx);
+        ibs->second.touched = true;
     } else {
         wr_block_type &blk_tgt = m_ctrl.req_block(idx);
-        to_copy_type(blk, tr).perform(!touched, blk_tgt);
+        to_copy_type(blk, tr).perform(!ibs->second.touched, blk_tgt);
         m_ctrl.ret_block(idx);
+        ibs->second.touched = true;
     }
 }
 

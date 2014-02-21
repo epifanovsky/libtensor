@@ -194,8 +194,8 @@ void gen_bto_contract2_block_list<N, M, K>::build_list(
         ia != blsta.end(); ++ia) {
 
         abs_index<NA>::get_index(blsta.get_abs_index(ia), bidimsa, bidxa);
-        for(size_t i = 0; i < N; i++) idxi[i] = bidxa[mapai[i]];
-        for(size_t i = 0; i < K; i++) idxk[i] = bidxa[mapak[i]];
+        for(size_t i = 0; i != N; i++) idxi[i] = bidxa[mapai[i]];
+        for(size_t i = 0; i != K; i++) idxk[i] = bidxa[mapak[i]];
         idx2[0] = abs_index<K>::get_abs_index(idxk, dimsk);
         idx2[1] = abs_index<N>::get_abs_index(idxi, dimsi);
         m_blsta_1.push_back(idx2);
@@ -205,8 +205,8 @@ void gen_bto_contract2_block_list<N, M, K>::build_list(
         ib != blstb.end(); ++ib) {
 
         abs_index<NB>::get_index(blstb.get_abs_index(ib), bidimsb, bidxb);
-        for(size_t i = 0; i < M; i++) idxj[i] = bidxb[mapbj[i]];
-        for(size_t i = 0; i < K; i++) idxk[i] = bidxb[mapbk[i]];
+        for(size_t i = 0; i != M; i++) idxj[i] = bidxb[mapbj[i]];
+        for(size_t i = 0; i != K; i++) idxk[i] = bidxb[mapbk[i]];
         idx2[0] = abs_index<K>::get_abs_index(idxk, dimsk);
         idx2[1] = abs_index<M>::get_abs_index(idxj, dimsj);
         m_blstb_1.push_back(idx2);
