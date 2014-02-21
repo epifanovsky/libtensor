@@ -34,8 +34,8 @@ public:
         std::vector< sparse_bispace_any_order > bispaces(1,lhs.get_bispace());
         bispaces.push_back(rhs.get_bispace());
 
-        letter_expr<N> lhs_le = lhs.get_letter_expr();
-        letter_expr<N> rhs_le = rhs.get_letter_expr();
+        expr::label<N> lhs_le = lhs.get_letter_expr();
+        expr::label<N> rhs_le = rhs.get_letter_expr();
         for(size_t i = 0; i < N; ++i)
         {
             const letter& a = lhs_le.letter_at(i);

@@ -18,14 +18,14 @@ class labeled_sparse_btensor : public gen_labeled_btensor<N,T>
 {
 private:
     sparse_btensor<N,T>& m_tensor; 
-    letter_expr<N> m_le;
+    expr::label<N> m_le;
 
     void run_permutation(const gen_labeled_btensor<N,T>& rhs);
 public:
 
-    labeled_sparse_btensor(sparse_btensor<N,T>& tensor,const letter_expr<N>& le) : m_tensor(tensor),m_le(le) { };
+    labeled_sparse_btensor(sparse_btensor<N,T>& tensor,const expr::label<N>& le) : m_tensor(tensor),m_le(le) { };
 
-    letter_expr<N> get_letter_expr() const { return m_le; }
+    expr::label<N> get_letter_expr() const { return m_le; }
     virtual const T* get_data_ptr() const { return m_tensor.get_data_ptr(); }
     virtual batch_provider<T>* get_batch_provider() const { return NULL; } 
 

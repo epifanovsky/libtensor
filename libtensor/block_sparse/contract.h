@@ -51,9 +51,9 @@ class contract2_batch_provider_factory : public batch_provider_factory<M+N-(2*K)
 public:
     static const char *k_clazz; //!< Class name
 private:
-    const letter_expr<K> m_le;
-    const letter_expr<M> m_A_letter_expr;
-    const letter_expr<N> m_B_letter_expr;
+    const expr::label<K> m_le;
+    const expr::label<M> m_A_letter_expr;
+    const expr::label<N> m_B_letter_expr;
     sparse_bispace<M> m_A_bispace;
     sparse_bispace<N> m_B_bispace;
     T* m_A_data_ptr;
@@ -63,7 +63,7 @@ private:
     size_t m_mem_avail;
 public:
     //Constructor
-    contract2_batch_provider_factory(const letter_expr<K>& le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail) : m_le(le),
+    contract2_batch_provider_factory(const expr::label<K>& le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail) : m_le(le),
                                                                                                                                                       m_A_letter_expr(A.get_letter_expr()),m_B_letter_expr(B.get_letter_expr()),
                                                                                                                                                       m_A_bispace(A.get_bispace()),m_B_bispace(B.get_bispace()),
                                                                                                                                                       m_mem_avail(mem_avail)
@@ -78,7 +78,7 @@ public:
     //Creates a batch provider that will produce a given batch of C 
     virtual batch_provider<T>* get_batch_provider(gen_labeled_btensor<M+N-(2*K),T>& C) const 
     {
-        letter_expr<M+N-(2*K)> C_le(C.get_letter_expr());
+        expr::label<M+N-(2*K)> C_le(C.get_letter_expr());
         //Build the loops for the contraction
         //First do the uncontracted indices
         std::vector< sparse_bispace_any_order > bispaces(1,C.get_bispace());
@@ -210,7 +210,7 @@ template<size_t K,size_t M, size_t N,typename T>
 const char* contract2_batch_provider_factory<K,M,N,T>::k_clazz = "contract2_batch_provider_factory<K,M,N,T>";
 
 template<size_t K,size_t M,size_t N,typename T>
-contract2_batch_provider_factory<K,M,N,T> contract(letter_expr<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
+contract2_batch_provider_factory<K,M,N,T> contract(expr::label<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
 {
     return contract2_batch_provider_factory<K,M,N,T>(le,A,B,mem_avail);
 }
@@ -219,7 +219,7 @@ contract2_batch_provider_factory<K,M,N,T> contract(letter_expr<K> le,const gen_l
 template<size_t M,size_t N,typename T>
 contract2_batch_provider_factory<1,M,N,T> contract(const letter& a,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
 {
-    return contract2_batch_provider_factory<1,M,N,T>(letter_expr<1>(a),A,B,mem_avail);
+    return contract2_batch_provider_factory<1,M,N,T>(expr::label<1>(a),A,B,mem_avail);
 }
 
 } // namespace libtensor

@@ -2,9 +2,8 @@
 #define SPARSE_BTENSOR_H
 
 #include <sstream>
+#include <libtensor/expr/iface/label.h>
 #include "sparse_bispace.h"
-#include "../iface/letter_expr.h"
-#include "../iface/letter.h"
 #include "sparse_loop_list.h"
 #include "block_load_kernel.h"
 #include "block_print_kernel.h"
@@ -48,7 +47,7 @@ public:
     /** \brief Returns a labeled_sparse_btensor object for use in expressions
      *
      */
-    labeled_sparse_btensor<N,T> operator()(const letter_expr<N>& le);
+    labeled_sparse_btensor<N,T> operator()(const expr::label<N>& le);
 
     /** \brief Returns a string representation of the tensor in row-major order 
      **/
@@ -140,7 +139,7 @@ bool sparse_btensor<N,T>::operator!=(const sparse_btensor<N,T>& rhs) const
 
 
 template<size_t N,typename T>
-labeled_sparse_btensor<N,T> sparse_btensor<N,T>::operator()(const letter_expr<N>& le)
+labeled_sparse_btensor<N,T> sparse_btensor<N,T>::operator()(const expr::label<N>& le)
 {
     return labeled_sparse_btensor<N,T>(*this,le);
 }

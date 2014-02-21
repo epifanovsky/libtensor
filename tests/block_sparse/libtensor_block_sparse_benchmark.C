@@ -9,7 +9,7 @@
 #include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include <libtensor/block_sparse/contract.h>
 #include <libtensor/core/sequence.h>
-#include <libtensor/iface/letter.h>
+#include <libtensor/expr/iface/letter.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>

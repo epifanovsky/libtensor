@@ -14,14 +14,14 @@ private:
     batch_provider<T>* m_batch_provider;
 public:
     direct_sparse_btensor(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL) {}
-    labeled_direct_sparse_btensor<N,T> operator()(const letter_expr<N>& le);
+    labeled_direct_sparse_btensor<N,T> operator()(const expr::label<N>& le);
 
     void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail = 0);
     ~direct_sparse_btensor() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
 };
 
 template<size_t N,typename T>
-labeled_direct_sparse_btensor<N,T> direct_sparse_btensor<N,T>::operator()(const letter_expr<N>& le)
+labeled_direct_sparse_btensor<N,T> direct_sparse_btensor<N,T>::operator()(const expr::label<N>& le)
 {
     return labeled_direct_sparse_btensor<N,T>(m_bispace,le,&m_batch_provider);
 }

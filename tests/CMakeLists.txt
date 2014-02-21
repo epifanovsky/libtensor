@@ -312,12 +312,12 @@ target_link_libraries(${TARGET}
 endforeach(TARGET)
 
 # Want custom address sanitizer flags so add later
-target_link_libraries(libtensor_block_sparse_tests tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+target_link_libraries(libtensor_block_sparse_tests tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
 add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
-target_link_libraries(libtensor_block_sparse_benchmark tensor block_sparse ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+target_link_libraries(libtensor_block_sparse_benchmark tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 
 
