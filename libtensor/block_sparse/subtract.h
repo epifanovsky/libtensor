@@ -1,11 +1,11 @@
 #ifndef SUBTRACT_H
 #define SUBTRACT_H
 
+#include <libtensor/expr/expr_exception.h>
 #include "gen_labeled_btensor.h" 
 #include "batch_provider_factory.h"
 #include "block_subtract2_kernel.h"
 #include "block_add2_kernel.h"
-#include "../iface/expr_exception.h"
 
 namespace libtensor {
 
@@ -106,8 +106,8 @@ public:
 private:
     sparse_bispace<N> m_A_bispace;
     sparse_bispace<N> m_B_bispace;
-    const letter_expr<N> m_A_letter_expr;
-    const letter_expr<N> m_B_letter_expr;
+    const expr::label<N> m_A_letter_expr;
+    const expr::label<N> m_B_letter_expr;
     T* m_A_data_ptr;
     T* m_B_data_ptr;
     batch_provider<T>* m_A_batch_provider;
@@ -126,7 +126,7 @@ public:
     //Creates a batch provider that will produce a given batch of C 
     virtual batch_provider<T>* get_batch_provider(gen_labeled_btensor<N,T>& C) const 
     {
-        letter_expr<N> C_le(C.get_letter_expr());
+        expr::label<N> C_le(C.get_letter_expr());
         sparse_bispace_any_order C_bispace = C.get_bispace();
 
         //To obtain correct results 
@@ -143,12 +143,12 @@ public:
             const letter& a = C_le.letter_at(i);
             if(!m_A_letter_expr.contains(a) || !m_B_letter_expr.contains(a))
             {
-                throw expr_exception(g_ns, k_clazz,"get_batch_provider()(...)",__FILE__, __LINE__,
+                throw expr::expr_exception(g_ns, k_clazz,"get_batch_provider()(...)",__FILE__, __LINE__,
                         "Any letter in a subtraction expression must appear in all tensors!");
             }
             if(m_A_letter_expr.index_of(a) != i || m_B_letter_expr.index_of(a) != i)
             {
-                throw expr_exception(g_ns, k_clazz,"get_batch_provider()(...)",__FILE__, __LINE__,
+                throw expr::expr_exception(g_ns, k_clazz,"get_batch_provider()(...)",__FILE__, __LINE__,
                         "Permutations are not supported for subtraction at this time");
             }
 

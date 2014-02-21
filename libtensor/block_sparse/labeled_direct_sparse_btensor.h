@@ -12,13 +12,13 @@ class labeled_direct_sparse_btensor : public gen_labeled_btensor<N,T>
 {
 private:
     sparse_bispace<N> m_bispace; 
-    letter_expr<N> m_le;
+    expr::label<N> m_le;
     batch_provider<T>** m_batch_provider_ptr_ptr;
     void run_permutation(const gen_labeled_btensor<N,T>& rhs);
 public:
-    labeled_direct_sparse_btensor(const sparse_bispace<N>& bispace,const letter_expr<N>& le,batch_provider<T>** batch_provider_ptr_ptr) : 
+    labeled_direct_sparse_btensor(const sparse_bispace<N>& bispace,const expr::label<N>& le,batch_provider<T>** batch_provider_ptr_ptr) : 
         m_bispace(bispace),m_le(le),m_batch_provider_ptr_ptr(batch_provider_ptr_ptr) {}
-    letter_expr<N> get_letter_expr() const { return m_le; }
+    expr::label<N> get_letter_expr() const { return m_le; }
 
     const T* get_data_ptr() const { return NULL; }
     virtual batch_provider<T>* get_batch_provider() const { return *m_batch_provider_ptr_ptr; }

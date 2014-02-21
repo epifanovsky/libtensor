@@ -1,7 +1,7 @@
 #ifndef GEN_LABELED_BTENSOR_H
 #define GEN_LABELED_BTENSOR_H
 
-#include "../iface/letter_expr.h"
+#include <libtensor/expr/iface/label.h>
 #include "batch_provider.h"
 
 namespace libtensor { 
@@ -9,7 +9,7 @@ namespace libtensor {
 template<size_t N,typename T = double>
 class gen_labeled_btensor {
 public:
-    virtual letter_expr<N> get_letter_expr() const = 0;
+    virtual expr::label<N> get_letter_expr() const = 0;
 
     virtual sparse_bispace<N> get_bispace() const = 0;
 

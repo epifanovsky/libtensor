@@ -3,7 +3,7 @@
 #include <libtensor/block_sparse/block_permute_kernel.h>
 #include <libtensor/block_sparse/block_contract2_kernel.h>
 #include <libtensor/block_sparse/block_subtract2_kernel.h>
-#include <libtensor/iface/letter.h>
+#include <libtensor/expr/iface/letter.h>
 #include <sstream>
 #include "block_kernels_test.h" 
 
