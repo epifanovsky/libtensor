@@ -83,6 +83,7 @@ div<N>::~div() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates div<N>
 namespace aux {
 template<size_t N>
@@ -100,6 +101,15 @@ struct aux_div {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_div>;
+#endif
+template class div<1>;
+template class div<2>;
+template class div<3>;
+template class div<4>;
+template class div<5>;
+template class div<6>;
+template class div<7>;
+template class div<8>;
 
 
 } // namespace eval_btensor_double

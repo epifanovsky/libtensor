@@ -212,6 +212,7 @@ symm<N>::~symm() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -229,6 +230,15 @@ struct aux_symm {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_symm>;
+#endif
+template class symm<1>;
+template class symm<2>;
+template class symm<3>;
+template class symm<4>;
+template class symm<5>;
+template class symm<6>;
+template class symm<7>;
+template class symm<8>;
 
 
 } // namespace eval_btensor_double

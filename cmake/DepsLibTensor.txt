@@ -23,6 +23,20 @@ if(HAVE_DRAND48)
     add_definitions(-DHAVE_DRAND48)
 endif(HAVE_DRAND48)
 
+#   Bug in gcc prior to 4.8 (http://gcc.gnu.org/bugzilla/show_bug.cgi?id=50080)
+#
+check_cxx_source_compiles("
+template<typename T> struct A { template<typename P> void f() { } };
+int main() {
+  A<int> a;
+  a.template f<int>();
+  return 0;
+}
+" GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE)
+if(NOT GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE)
+    add_definitions(-DLIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE)
+endif(NOT GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE)
+
 #   Detect the linear algebra library
 #
 if(WITH_BLAS STREQUAL "mkl")

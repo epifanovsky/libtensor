@@ -129,6 +129,7 @@ diag<N>::~diag() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -146,6 +147,15 @@ struct aux_diag {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_diag>;
+#endif
+template class diag<1>;
+template class diag<2>;
+template class diag<3>;
+template class diag<4>;
+template class diag<5>;
+template class diag<6>;
+template class diag<7>;
+template class diag<8>;
 
 
 } // namespace eval_btensor_double

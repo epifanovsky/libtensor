@@ -329,6 +329,7 @@ contract<NC>::~contract() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates contract<NC>
 namespace aux {
 template<size_t NC>
@@ -346,6 +347,15 @@ struct aux_contract {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_contract>;
+#endif
+template class contract<1>;
+template class contract<2>;
+template class contract<3>;
+template class contract<4>;
+template class contract<5>;
+template class contract<6>;
+template class contract<7>;
+template class contract<8>;
 
 
 } // namespace eval_btensor_double

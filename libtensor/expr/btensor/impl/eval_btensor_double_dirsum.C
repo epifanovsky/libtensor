@@ -134,6 +134,7 @@ dirsum<NC>::~dirsum() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t NC>
@@ -151,6 +152,15 @@ struct aux_dirsum {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_dirsum>;
+#endif
+template class dirsum<1>;
+template class dirsum<2>;
+template class dirsum<3>;
+template class dirsum<4>;
+template class dirsum<5>;
+template class dirsum<6>;
+template class dirsum<7>;
+template class dirsum<8>;
 
 
 } // namespace eval_btensor_double

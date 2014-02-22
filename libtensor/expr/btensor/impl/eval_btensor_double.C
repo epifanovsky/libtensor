@@ -175,7 +175,11 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 void eval_btensor_double_impl::verify_scalar(const node &t) {
 
     if(t.check_type<node_scalar_base>()) {
+#ifdef LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
+        const node_scalar_base &ti = t.recast_as<node_scalar_base>();
+#else // proper C++
         const node_scalar_base &ti = t.template recast_as<node_scalar_base>();
+#endif // LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
         if(ti.get_type() != typeid(double)) {
             throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
                 "verify_scalar()", __FILE__, __LINE__);
@@ -192,7 +196,11 @@ void eval_btensor_double_impl::verify_scalar(const node &t) {
 void eval_btensor_double_impl::verify_tensor(const node &t) {
 
     if(t.check_type<node_ident>()) {
+#ifdef LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
+        const node_ident &ti = t.recast_as<node_ident>();
+#else // proper C++
         const node_ident &ti = t.template recast_as<node_ident>();
+#endif // LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
         if(ti.get_type() != typeid(double)) {
             throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
                 "verify_tensor()", __FILE__, __LINE__);
@@ -200,7 +208,11 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
         return;
     }
     if(t.check_type<node_interm_base>()) {
+#ifdef LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
+        const node_interm_base &ti = t.recast_as<node_interm_base>();
+#else // proper C++
         const node_interm_base &ti = t.template recast_as<node_interm_base>();
+#endif // LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
         if(ti.get_t() != typeid(double)) {
             throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
                 "verify_tensor()", __FILE__, __LINE__);

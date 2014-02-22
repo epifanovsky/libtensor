@@ -55,7 +55,11 @@ void eval_dot_product_impl::evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
+#ifdef LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
+    const node_dot_product &nd = n.recast_as<node_dot_product>();
+#else // proper C++
     const node_dot_product &nd = n.template recast_as<node_dot_product>();
+#endif // LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
 
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
@@ -97,7 +101,7 @@ void eval_dot_product_impl::do_evaluate(expr_tree::node_id_t lhs) {
     d *= btb.get_transf().get_scalar_tr().get_coeff();
 
     const node_scalar<double> &ns =
-    		m_tree.get_vertex(lhs).template recast_as< node_scalar<double> >();
+        m_tree.get_vertex(lhs).template recast_as< node_scalar<double> >();
     ns.get_scalar() = d;
 }
 
@@ -116,22 +120,6 @@ void dot_product::evaluate(node_id_t lhs) {
 
     eval_dot_product_impl(m_tree, m_id).evaluate(lhs);
 }
-
-
-//  The code here explicitly instantiates dot_product::evaluate
-namespace aux {
-template<size_t N>
-struct aux_dot_product {
-    dot_product *e;
-    expr_tree::node_id_t lhs;
-    aux_dot_product() {
-#pragma noinline
-        { e->evaluate(lhs); }
-    }
-};
-} // namespace aux
-template class instantiate_template_1<1, dot_product::Nmax,
-    aux::aux_dot_product>;
 
 
 } // namespace eval_btensor_double

@@ -94,6 +94,7 @@ add<N>::~add() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -109,6 +110,15 @@ struct aux_add {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_add>;
+#endif
+template class add<1>;
+template class add<2>;
+template class add<3>;
+template class add<4>;
+template class add<5>;
+template class add<6>;
+template class add<7>;
+template class add<8>;
 
 
 } // namespace eval_btensor_double

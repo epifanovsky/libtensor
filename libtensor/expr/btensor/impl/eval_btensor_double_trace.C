@@ -55,7 +55,11 @@ void eval_trace_impl::evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
+#ifdef LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
+    const node_trace &nt = n.recast_as<node_trace>();
+#else // proper C++
     const node_trace &nt = n.template recast_as<node_trace>();
+#endif // LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
 
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
@@ -115,21 +119,6 @@ void trace::evaluate(node_id_t lhs) {
 
     eval_trace_impl(m_tree, m_id).evaluate(lhs);
 }
-
-
-//  The code here explicitly instantiates dot_product::evaluate
-namespace aux {
-template<size_t N>
-struct aux_trace {
-    trace *e;
-    expr_tree::node_id_t lhs;
-    aux_trace() {
-#pragma noinline
-        { e->evaluate(lhs); }
-    }
-};
-} // namespace aux
-template class instantiate_template_1<2, trace::Nmax, aux::aux_trace>;
 
 
 } // namespace eval_btensor_double
