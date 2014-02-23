@@ -55,11 +55,7 @@ void eval_dot_product_impl::evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
-#ifdef LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
     const node_dot_product &nd = n.recast_as<node_dot_product>();
-#else // proper C++
-    const node_dot_product &nd = n.template recast_as<node_dot_product>();
-#endif // LIBTENSOR_GCC_BUG_REJECTS_TEMPLATE_OUTSIDE_TEMPLATE
 
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
