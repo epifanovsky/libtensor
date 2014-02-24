@@ -6,6 +6,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_symmetrize2.h>
+#include <libtensor/block_tensor/btod_symmetrize3.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/so_copy.h>
@@ -46,6 +47,7 @@ void symm_test::perform() throw(libtest::test_exception) {
         test_asymm22_e_2();
 
         test_symm3_t_1();
+        test_asymm3_e_1();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -984,6 +986,43 @@ void symm_test::test_symm3_t_1() throw(libtest::test_exception) {
     tod_btconv<3>(t2_ref).perform(tt2_ref);
 
     compare_ref<3>::compare(testname, tt2, tt2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void symm_test::test_asymm3_e_1() throw(libtest::test_exception) {
+
+    const char *testname = "symm_test::test_asymm3_e_1()";
+
+    try {
+
+    bispace<1> sp_i(10), sp_a(20);
+    bispace<2> sp_ij(sp_i&sp_i);
+    bispace<4> sp_ijka((sp_i&sp_i&sp_i)|sp_a);
+
+    btensor<2> t1(sp_ij);
+    btensor<4> t2(sp_ijka), t3(sp_ijka), t3_ref(sp_ijka), t3_ref_tmp(sp_ijka);
+
+    btod_random<2>().perform(t1);
+    btod_random<4>().perform(t2);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    permutation<4> perm; // ijak->ijka
+    perm.permute(2, 3);
+    contraction2<3, 1, 1> contr(perm);
+    contr.contract(2, 1);
+    btod_contract2<3, 1, 1>(contr, t2, t1).perform(t3_ref_tmp);
+    btod_copy<4> op(t3_ref_tmp, -0.5);
+    btod_symmetrize3<4>(op, 0, 1, 2, false).perform(t3_ref);
+
+    letter i, j, k, l, a;
+    t3(i|j|k|a) = -0.5 * asymm(k, i, j, contract(l, t2(i|j|l|a), t1(k|l)));
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

@@ -126,18 +126,15 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
         symperm.permute(nn.get_sym()[2*i], nn.get_sym()[2*i+1]);
     }
 
-    tensor_transf<N, double> tr2(tr), tr2inv(tr2, true);
+    tensor_transf<N, double> trinv(tr, true);
     tensor_transf<N, double> trs(symperm, nn.get_pair_tr());
-    tensor_transf<N, double> tspr(tr2inv);
-    tspr.transform(trs);
-    tspr.transform(tr2);
+    tensor_transf<N, double> tspr(trinv);
+    tspr.transform(trs).transform(tr);
 
-        tensor_transf<N, double> trsub;
-    {
-        expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
-        trsub.transform(tr2);
-        m_sub = new autoselect<N>(m_tree, rhs, trsub);
-    }
+    tensor_transf<N, double> trsub;
+    expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
+    trsub.transform(tr);
+    m_sub = new autoselect<N>(m_tree, rhs, trsub);
 
     m_op = new btod_symmetrize2<N>(m_sub->get_bto(), tspr.get_perm(),
         tspr.get_scalar_tr().get_coeff() == 1.0);
@@ -158,22 +155,32 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     const node &n = m_tree.get_vertex(m_id);
     const node_symm<double> &nn = n.template recast_as< node_symm<double> >();
 
-    if(nn.get_sym().size() != 3) {
+    if(nn.get_sym().size() % 3 != 0) {
         throw eval_exception(__FILE__, __LINE__,
             "libtensor::expr::eval_btensor_double", "eval_symm_impl<N>",
             "init()", "Malformed expression (bad symm sequence).");
     }
-
-    {
-        tensor_transf<N, double> trsub;
-        expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
-        trsub.transform(tr);
-        m_sub = new autoselect<N>(m_tree, rhs, trsub);
+    size_t nsymidx = nn.get_sym().size() / 3;
+    permutation<N> symperm1, symperm2;
+    for(size_t i = 0; i < nsymidx; i++) {
+        symperm1.permute(nn.get_sym()[3*i], nn.get_sym()[3*i+1]);
+        symperm2.permute(nn.get_sym()[3*i], nn.get_sym()[3*i+2]);
     }
 
-    m_op = new btod_symmetrize3<N>(m_sub->get_bto(), nn.get_sym().at(0),
-        nn.get_sym().at(1), nn.get_sym().at(2),
-        nn.get_pair_tr().get_coeff() == 1.0);
+    tensor_transf<N, double> trinv(tr, true);
+    tensor_transf<N, double> trs1(symperm1, nn.get_pair_tr()),
+        trs2(symperm2, nn.get_pair_tr());
+    tensor_transf<N, double> tspr1(trinv), tspr2(trinv);
+    tspr1.transform(trs1).transform(tr);
+    tspr2.transform(trs2).transform(tr);
+
+    tensor_transf<N, double> trsub;
+    expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
+    trsub.transform(tr);
+    m_sub = new autoselect<N>(m_tree, rhs, trsub);
+
+    m_op = new btod_symmetrize3<N>(m_sub->get_bto(), tspr1.get_perm(),
+        tspr2.get_perm(), nn.get_pair_tr().get_coeff() == 1.0);
 }
 
 
