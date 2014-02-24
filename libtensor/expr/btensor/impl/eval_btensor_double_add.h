@@ -25,7 +25,8 @@ private:
 public:
     /** \brief Initializes the evaluator
      **/
-    add(const expr_tree &tree, node_id_t id);
+    add(const expr_tree &tree, node_id_t id,
+        const tensor_transf<N, double> &tr);
 
     /** \brief Virtual destructor
      **/

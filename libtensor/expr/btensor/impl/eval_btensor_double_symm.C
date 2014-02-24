@@ -132,8 +132,8 @@ void eval_symm_impl<N>::init(const tensor_transf<N, double> &tr,
     tspr.transform(trs);
     tspr.transform(tr2);
 
-    {
         tensor_transf<N, double> trsub;
+    {
         expr_tree::node_id_t rhs = transf_from_node(m_tree, e[0], trsub);
         trsub.transform(tr2);
         m_sub = new autoselect<N>(m_tree, rhs, trsub);

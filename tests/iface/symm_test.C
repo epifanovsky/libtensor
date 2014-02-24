@@ -31,6 +31,7 @@ void symm_test::perform() throw(libtest::test_exception) {
         test_asymm2_contr_tt_4();
         test_asymm2_contr_tt_5();
         test_asymm2_contr_tt_6();
+        test_asymm2_contr_et_1();
         test_asymm2_contr_ee_1();
         test_asymm2_contr_ee_2();
 
@@ -343,7 +344,7 @@ void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
     t3(i|j|a|b) = 1.5 * asymm(a, b,
         contract(c, t1(i|j|a|c), t2(b|c))) * 2.0;
 
-    compare_ref<4>::compare(testname, t3, t3_ref, 2e-14);
+    compare_ref<4>::compare(testname, t3, t3_ref, 5e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -484,6 +485,51 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
     t3(i|j|a|b) = t2(i|j|a|b) + asymm(i, j, t1(i|a) * t1(j|b));
 
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void symm_test::test_asymm2_contr_et_1() throw(libtest::test_exception) {
+
+    const char *testname = "symm_test::test_asymm2_contr_et_1()";
+
+    try {
+
+    bispace<1> sp_i(10), sp_a(20);
+    bispace<2> sp_ia(sp_i|sp_a);
+    bispace<4> sp_iaia(sp_ia&sp_ia), sp_iaii(sp_ia|sp_i&sp_i),
+        sp_iiia(sp_i&sp_i&sp_i|sp_a);
+
+    btensor<4> t1a(sp_iaii), t1b(sp_iaia);
+    btensor<2> t2(sp_ia);
+    btensor<4> t3(sp_iiia), t3_ref(sp_iiia), t3_ref_tmp(sp_iiia);
+
+    btod_random<4>().perform(t1a);
+    btod_random<4>().perform(t1b);
+    btod_random<2>().perform(t2);
+    t1a.set_immutable();
+    t1b.set_immutable();
+    t2.set_immutable();
+
+    permutation<4> perm_c; // kaji -> ijka
+    perm_c.permute(2, 3).permute(0, 2).permute(1, 3);
+    btod_copy<4>(t1a, perm_c).perform(t3_ref_tmp);
+    contraction2<3, 1, 1> contr(perm_c);
+    contr.contract(3, 1);
+    btod_contract2<3, 1, 1>(contr, t1b, t2).perform(t3_ref_tmp, 1.0);
+
+    btod_copy<4> cp(t3_ref_tmp, -1.0);
+    btod_symmetrize2<4>(cp, permutation<4>().permute(0, 1), false).
+        perform(t3_ref);
+
+    letter a, b, i, j, k;
+    t3(i|j|k|a) = -asymm(i, j,
+        t1a(k|a|j|i) + contract(b, t1b(k|a|j|b), t2(i|b)));
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 1e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
