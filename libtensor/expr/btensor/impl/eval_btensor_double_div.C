@@ -48,9 +48,8 @@ eval_div_impl<N>::eval_div_impl(const expr_tree &tree,
     btensor_from_node<N, double> btb(tree, e[1]);
 
     tensor_transf<N, double> tra(bta.get_transf()), trb(btb.get_transf());
-    permutation<N> pinvc(tr.get_perm(), true);
-    tra.permute(pinvc);
-    trb.permute(pinvc);
+    tra.permute(tr.get_perm());
+    trb.permute(tr.get_perm());
 
     m_op = new btod_mult<N>(bta.get_btensor(), tra, btb.get_btensor(), trb,
         true, tr.get_scalar_tr());

@@ -36,6 +36,7 @@ void expr_test::perform() throw(libtest::test_exception) {
         test_8();
         test_9();
         test_10();
+        test_11();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -731,6 +732,44 @@ void expr_test::test_10() throw(libtest::test_exception) {
         if(need_erase) {
             product_table_container::get_instance().erase(pgtid);
         }
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_test::test_11() throw(libtest::test_exception) {
+
+    static const char *testname = "expr_test::test_11()";
+
+    try {
+
+    bispace<1> so(10); so.split(2).split(5).split(7);
+    bispace<1> sv(16); sv.split(8);
+    bispace<2> sov(so|sv);
+    bispace<4> soooo(so&so&so&so), soovv(so&so|sv&sv), sovov(sov&sov),
+        svvvv(sv&sv&sv&sv);
+
+    btensor<2, double> df_ov(sov);
+    btensor<4, double> i_oooo(soooo), i_ovov(sovov), i_vvvv(svvvv);
+    btensor<4, double> t_oovv(soovv), td2(soovv);
+
+    btod_random<2>().perform(df_ov);
+    btod_random<4>().perform(i_oooo);
+    btod_random<4>().perform(i_ovov);
+    btod_random<4>().perform(i_vvvv);
+    btod_random<4>().perform(t_oovv);
+
+    letter i, j, k, l, a, b, c, d;
+
+    td2(i|j|a|b) = 2.0 * div(
+          asymm(i, j, asymm(a, b,
+              contract(k|c, t_oovv(i|k|a|c), i_ovov(k|b|j|c))))
+        - 0.5 * (contract(c|d, t_oovv(i|j|c|d), i_vvvv(a|b|c|d))
+                + contract(k|l, i_oooo(i|j|k|l), t_oovv(k|l|a|b))),
+          symm(i, j, dirsum(df_ov(i|a), df_ov(j|b))));
+
+
+    } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
