@@ -514,7 +514,7 @@ void run_benchmark_mo(const char* file_name)
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i));
+    M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i),4e8);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -533,7 +533,7 @@ void run_benchmark_mo(const char* file_name)
     }
 
     sparse_btensor<3> H_abs(spb_H);
-    H_abs(nu|Q|i) = contract(sigma,G_perm_direct(nu|Q|sigma),C_mo(sigma|i));
+    H_abs(nu|Q|i) = contract(sigma,G_perm_abs(nu|Q|sigma),C_mo(sigma|i));
     //Scale H by the error factor corresponding to doing the multiplation dense as a little hedge
     for(size_t i = 0; i < spb_H.get_nnz(); ++i)
     {

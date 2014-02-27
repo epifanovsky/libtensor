@@ -3,6 +3,7 @@
 
 #include <map>
 #include "block_loop.h"
+#include "get_batches.h"
 
 namespace libtensor {
 
@@ -162,12 +163,18 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
                         "all subspaces are fully batched and tensor still does not fit in memory");
                         
             }
-            const block_loop& batched_loop = m_loops[batched_loop_idx];
 
-            //TODO: must consider ALL bispaces
-            //Break the bispace down into batches
-            size_t batched_subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
-            batches = bispace.get_batches(batched_subspace_idx,mem_per_tensor/sizeof(T));
+            //Determine a batch structure that will make ALL batched tensors fit in memory
+            const block_loop& batched_loop = m_loops[batched_loop_idx];
+            std::vector<idx_pair> batched_bispaces_subspaces;
+            for(size_t batched_bispace_idx = 0; batched_bispace_idx < bispaces.size(); ++batched_bispace_idx)
+            {
+                if(!batched_loop.is_bispace_ignored(batched_bispace_idx))
+                {
+                    batched_bispaces_subspaces.push_back(idx_pair(batched_bispace_idx,batched_loop.get_subspace_looped(batched_bispace_idx)));
+                }
+            }
+            batches = get_batches(bispaces,batched_bispaces_subspaces,mem_per_tensor/sizeof(T));
 
             //We will allocate memory large enough to hold the biggest batch for each bispace
             std::vector<size_t> max_batch_sizes(bispaces.size(),0);
