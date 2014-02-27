@@ -6,6 +6,7 @@
 #include "batch_provider_factory.h"
 #include "block_subtract2_kernel.h"
 #include "block_add2_kernel.h"
+#include <string.h>
 
 namespace libtensor {
 

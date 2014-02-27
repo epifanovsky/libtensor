@@ -148,7 +148,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
                                 ++n_direct_tensors_touched;
                             }
                         }
-                        if(n_direct_tensors_touched >= max_n_direct_tensors_touched)
+                        if(n_direct_tensors_touched > max_n_direct_tensors_touched)
                         {
                             batched_loop_idx = loop_idx;
                             max_n_direct_tensors_touched = n_direct_tensors_touched;

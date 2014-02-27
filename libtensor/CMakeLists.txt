@@ -304,7 +304,7 @@ else(USE_ACML)
 endif(USE_ACML)
 
 add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_BLOCK_SPARSE} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR}
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR}
     ${SRC_ARMA})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
@@ -320,4 +320,8 @@ else(HAVE_LIBVMM)
     set_property(TARGET tensor APPEND PROPERTY
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
+
+add_library(block_sparse ${SRC_BLOCK_SPARSE})
+set_property(TARGET block_sparse APPEND PROPERTY
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 

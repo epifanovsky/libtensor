@@ -4,6 +4,8 @@
 #include <vector>
 #include "sparse_bispace_test.h"
 
+using namespace std;
+
 namespace libtensor {
 
 void sparse_bispace_test::perform() throw(libtest::test_exception) {
@@ -60,6 +62,7 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_batches_dense();
         test_get_batches_sparse();
         test_get_batches_dense_dense();
+        test_get_batches_sparse_sparse();
         test_get_batch_size();
 
         test_get_nnz_2d_sparsity();
@@ -1493,6 +1496,62 @@ void sparse_bispace_test::test_get_batches_dense_dense() throw(libtest::test_exc
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::get_batches(...) did not return correct value for multiple dense bispaces");
+    }
+}
+
+//Show that batching can correctly reconcile different sparsity patterns
+void sparse_bispace_test::test_get_batches_sparse_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_batches_sparse_sparse()";
+
+    index_groups_test_f tf = index_groups_test_f();
+    sparse_bispace<1> spb_0(12);
+    vector<size_t> split_points_0;
+    for(size_t i = 2; i < spb_0.get_dim(); i += 2)
+    {
+        split_points_0.push_back(i);
+    }
+    spb_0.split(split_points_0);
+
+    //Make A - we will force to be permuted for batch for extra complexity
+    size_t key_0_arr_A[2] = {0,2};
+    size_t key_1_arr_A[2] = {0,3};
+    size_t key_2_arr_A[2] = {0,4};
+    vector< sequence<2,size_t> > sig_blocks_A(3);
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[0][i] = key_0_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[1][i] = key_1_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[2][i] = key_2_arr_A[i];
+
+    sparse_bispace<2> spb_A = spb_0 % spb_0 << sig_blocks_A;
+
+    //Make B 
+    size_t key_0_arr_B[2] = {1,0};
+    size_t key_1_arr_B[2] = {2,0};
+    size_t key_2_arr_B[2] = {5,0};
+    vector< sequence<2,size_t> > sig_blocks_B(3);
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[0][i] = key_0_arr_B[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[1][i] = key_1_arr_B[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_B[2][i] = key_2_arr_B[i];
+
+    sparse_bispace<2> spb_B = spb_0 % spb_0 << sig_blocks_B;
+
+    std::vector<sparse_bispace_any_order> bispaces(1,spb_A);
+    bispaces.push_back(spb_B);
+
+    size_t max_n_elem = 4;
+    std::vector<idx_pair> batched_bispaces_subspaces(1,idx_pair(0,1));
+    batched_bispaces_subspaces.push_back(idx_pair(1,0));
+    std::vector<idx_pair> batches = get_batches(bispaces,batched_bispaces_subspaces,max_n_elem);
+
+    std::vector<idx_pair> correct_batches(1,idx_pair(0,2));
+    correct_batches.push_back(idx_pair(2,3));
+    correct_batches.push_back(idx_pair(3,4));
+    correct_batches.push_back(idx_pair(4,6));
+
+    if(batches != correct_batches)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_batches(...) did not return correct value for multiple sparse bispaces");
     }
 }
 

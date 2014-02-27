@@ -129,6 +129,7 @@ private:
     void test_get_batches_dense() throw(libtest::test_exception);
     void test_get_batches_sparse() throw(libtest::test_exception);
     void test_get_batches_dense_dense() throw(libtest::test_exception);
+    void test_get_batches_sparse_sparse() throw(libtest::test_exception);
     void test_get_batch_size() throw(libtest::test_exception);
 
     /*  ALL TESTS INVOLVING SPARSITY!!
