@@ -17,6 +17,7 @@ void so_reduce_se_part_test::perform() throw(libtest::test_exception) {
     test_nm1_4(true); test_nm1_4(false);
     test_nm1_5(true); test_nm1_5(false);
     test_nm1_6(true); test_nm1_6(false);
+    test_nm1_7(true); test_nm1_7(false);
     test_nmk_1(true); test_nmk_1(false);
     test_nmk_2( true, true); test_nmk_2( true, false);
     test_nmk_2(false, true); test_nmk_2(false, false);
@@ -573,10 +574,18 @@ void so_reduce_se_part_test::test_nm1_6(
         ela.add_map(i00a, i03a, sign ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
+        dimensions<2> pdimsb(index_range<2>(i2a, i2a));
+        se2_t elb(bisb, pdimsb);
+        if (! sign) {
+            elb.mark_forbidden(i2a);
+        }
+
         symmetry_element_set<4, double> seta(se4_t::k_sym_type);
         symmetry_element_set<2, double> setb(se2_t::k_sym_type);
+        symmetry_element_set<2, double> setb_ref(se2_t::k_sym_type);
 
         seta.insert(ela);
+        setb_ref.insert(elb);
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
@@ -588,15 +597,108 @@ void so_reduce_se_part_test::test_nm1_6(
 
         so_reduce_se_t().perform(params);
 
-        if(! setb.is_empty()) {
-            fail_test(tnss.str().c_str(), __FILE__, __LINE__,
-                    "Expected an empty set.");
+        if (sign) {
+            if(! setb.is_empty()) {
+                fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                        "Expected an empty set.");
+            }
+        }
+        else {
+            if (setb.is_empty()) {
+                fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                        "Expected a non-empty set.");
+            }
+            compare_ref<2>::compare(tnss.str().c_str(), bisb, setb, setb_ref);
         }
 
     } catch(exception &e) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
 }
+
+
+/** \test Projection of a 3-space onto a 2-space in one step with partial
+        partitioning (only projected dims are partitioned)
+ **/
+void so_reduce_se_part_test::test_nm1_7(
+        bool sign) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_reduce_se_part_test::test_nm1_7(" << (sign ? '+' : '-') << ")";
+
+    typedef se_part<1, double> se1_t;
+    typedef se_part<3, double> se3_t;
+    typedef so_reduce<3, 2, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se1_t> so_reduce_se_t;
+
+    try {
+
+        index<3> i1a, i1b;
+        i1b[0] = 5; i1b[1] = 5; i1b[2] = 9;
+        block_index_space<3> bisa(dimensions<3>(index_range<3>(i1a, i1b)));
+        mask<3> m1a, m2a;
+        m1a[0] = true; m1a[1] = true; m2a[2] = true;
+        bisa.split(m1a, 2);
+        bisa.split(m1a, 3);
+        bisa.split(m1a, 5);
+        bisa.split(m2a, 5);
+
+        index<1> i2a, i2b;
+        i2b[0] = 9;
+        block_index_space<1> bisb(dimensions<1>(index_range<1>(i2a, i2b)));
+        mask<1> m1b;
+        m1b[0] = true;
+        bisb.split(m1b, 5);
+
+        se3_t ela(bisa, m1a, 2);
+        index<3> i000, i010, i100, i110;
+        i100[0] = 1; i010[1] = 1;
+        i110[0] = 1; i110[1] = 1;
+        scalar_transf<double> tr0, tr1(-1.);
+        ela.add_map(i000, i010, tr0);
+        ela.add_map(i010, i100, sign ? tr0 : tr1);
+        ela.add_map(i100, i110, tr0);
+
+        dimensions<1> pdimsb(index_range<1>(i2a, i2a));
+        se1_t elb(bisb, pdimsb);
+        elb.mark_forbidden(i2a);
+
+        symmetry_element_set<3, double> seta(se3_t::k_sym_type);
+        symmetry_element_set<1, double> setb(se1_t::k_sym_type);
+        symmetry_element_set<1, double> setb_ref(se1_t::k_sym_type);
+
+        seta.insert(ela);
+        setb_ref.insert(elb);
+
+        mask<3> msk; msk[0] = msk[1] = true;
+        sequence<3, size_t> seq(0);
+        index<3> bia, bib; bib[0] = bib[1] = 3; bib[2] = 1;
+        index<3> ia, ib; ib[0] = ib[1] = 0; ib[2] = 4;
+        index_range<3> bir(bia, bib), ir(ia, ib);
+        symmetry_operation_params<so_reduce_t> params(seta, msk,
+                seq, bir, ir, setb);
+
+        so_reduce_se_t().perform(params);
+
+        if (sign) {
+            if(! setb.is_empty()) {
+                fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                        "Expected an empty set.");
+            }
+        }
+        else {
+            if (setb.is_empty()) {
+                fail_test(tnss.str().c_str(), __FILE__, __LINE__,
+                        "Expected a non-empty set.");
+            }
+            compare_ref<1>::compare(tnss.str().c_str(), bisb, setb, setb_ref);
+        }
+
+    } catch(exception &e) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
 
 /** \test Projection of a 4-space onto a 2-space in two steps.
  **/
