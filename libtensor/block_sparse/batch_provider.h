@@ -48,6 +48,7 @@ public:
     //by specifying what bispace/subspace to truncate .
     void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()),size_t mem_avail = 0);
     virtual ~batch_provider() {}
+    virtual batch_provider<T>* clone() const = 0;
 };
 
 template<typename T>

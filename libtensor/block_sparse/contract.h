@@ -41,6 +41,7 @@ public:
                              const std::vector<T*>& ptrs,
                              size_t mem_avail) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,mem_avail),m_bc2k(sparse_loop_list(loops)) {}
 
+    virtual batch_provider<T>* clone() const { return new contract2_batch_provider(*this); }
 };
 
 template<typename T>

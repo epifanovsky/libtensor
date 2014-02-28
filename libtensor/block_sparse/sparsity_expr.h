@@ -83,7 +83,7 @@ public:
 
     //Chain this expression with another bispace to create a higher order sparsity expr
     //sparsity_expr<M,N+1> operator%(const sparse_bispace<1>& rhs);
-    sparsity_expr<M,N+1> operator%(const sparse_bispace<1>& rhs);
+    sparsity_expr<M,N+1> operator%(const sparse_bispace<1>& rhs) const;
 
     //Friend other orders to allow recursion
     template<size_t P,size_t Q>
@@ -91,7 +91,7 @@ public:
 };
 
 template<size_t M,size_t N>
-sparsity_expr<M,N+1> sparsity_expr<M,N>::operator%(const sparse_bispace<1>& rhs)
+sparsity_expr<M,N+1> sparsity_expr<M,N>::operator%(const sparse_bispace<1>& rhs) const
 {
     return sparsity_expr<M,N+1>(*this,rhs);
 }

@@ -70,6 +70,7 @@ public:
     }
 
     virtual ~permute2_batch_provider() { delete m_bpk_ptr; }
+    virtual batch_provider<T>* clone() const { return new permute2_batch_provider(*this); }
 };
 
 template<typename T>

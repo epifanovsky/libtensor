@@ -98,6 +98,8 @@ public:
                              const std::vector<size_t>& direct_tensors,
                              const std::vector<batch_provider<T>*>& batch_providers,
                              const std::vector<T*>& ptrs) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,0) {}
+
+    virtual batch_provider<T>* clone() const { return new subtract2_batch_provider(*this); }
 };
 
 template<size_t N,typename T>
