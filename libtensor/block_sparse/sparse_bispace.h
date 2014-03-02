@@ -86,7 +86,7 @@ public:
 
     /** \brief Returns a sparsity_expr corresponding to a 2d bispace 
      **/
-    sparsity_expr<1,1> operator%(const sparse_bispace<1>& rhs);
+    sparsity_expr<1,1> operator%(const sparse_bispace<1>& rhs) const;
 
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
@@ -1275,7 +1275,7 @@ inline sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>&
     return sparse_bispace<M+1>(*this,rhs);
 }
 
-inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& rhs)
+inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& rhs) const
 {
     return sparsity_expr<1,1>(*this,rhs);
 }

@@ -6,6 +6,7 @@
 #include "batch_provider_factory.h"
 #include "block_subtract2_kernel.h"
 #include "block_add2_kernel.h"
+#include <string.h>
 
 namespace libtensor {
 
@@ -97,6 +98,8 @@ public:
                              const std::vector<size_t>& direct_tensors,
                              const std::vector<batch_provider<T>*>& batch_providers,
                              const std::vector<T*>& ptrs) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,0) {}
+
+    virtual batch_provider<T>* clone() const { return new subtract2_batch_provider(*this); }
 };
 
 template<size_t N,typename T>
