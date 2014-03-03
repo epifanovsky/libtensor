@@ -45,6 +45,7 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_2d_ki_kj_permuted_loops();
     test_block_contract2_kernel_3d_2d();
     test_block_contract2_kernel_3d_3d_multi_index();
+    test_block_contract2_kernel_matrix_vector_mult();
 
     test_block_subtract2_kernel_not_enough_dims_and_ptrs();
     test_block_subtract2_kernel_invalid_dims();
@@ -297,30 +298,27 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
     }
 }
 
-//Should throw an exception because there are only two loops, whereas the contract requires 3
+//Should throw an exception because there is only one loop, minimum is two loops for matrix-vector multiply
 void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_not_enough_loops()";
+    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops()";
 
-    //C_ij = \sum_k A_ik B_kj
-    //dimensions: i = 2,j = 3,k = 4
+    //C_i = \sum_k A_ij B_j
+    //dimensions: i = 2,j = 3
     //Just need dummy bispaces for this test
     sparse_bispace<1> spb_i(2);
     sparse_bispace<1> spb_j(3);
-    sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
-    bispaces.push_back(spb_i|spb_k);
-    bispaces.push_back(spb_k|spb_j);
+    vector< sparse_bispace_any_order > bispaces(1,spb_i);
+    bispaces.push_back(spb_i|spb_j);
+    bispaces.push_back(spb_j);
 
     //i loop
-    vector<block_loop> loops(2,block_loop(bispaces));
+    vector<block_loop> loops(1,block_loop(bispaces));
     loops[0].set_subspace_looped(0,0);
     loops[0].set_subspace_looped(1,0);
-    //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
-    //k loop - LEFT OUT!!!
+
+    //j loop - left out!
 
     sparse_loop_list sll(loops);
 
@@ -1733,6 +1731,67 @@ void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(l
     bc2k(ptrs,dim_lists);
 
     for(int i = 0; i < 10; ++i)
+    {
+        if(C_arr[i] != C_correct_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_contract2_kernel::operator(...) did not produce correct result");
+        }
+    }
+}
+
+void block_kernels_test::test_block_contract2_kernel_matrix_vector_mult() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_matrix_vector_mult()";
+
+    double x_arr[3] = {1,2,3}; 
+
+    double A_arr[6] = {1,2,3,
+                       4,5,6};
+
+    double C_arr[2] = {0};
+
+    double C_correct_arr[2] = {14,32};
+                                 
+
+    vector<double*> ptrs(1,C_arr);
+    ptrs.push_back(x_arr);
+    ptrs.push_back(A_arr);
+
+    //bispaces
+    sparse_bispace<1> spb_i(2);
+    sparse_bispace<1> spb_j(3);
+
+    vector< sparse_bispace_any_order > bispaces(1,spb_i);
+    bispaces.push_back(spb_j);
+    bispaces.push_back(spb_i|spb_j);
+
+    vector<block_loop> loops(2,block_loop(bispaces));
+    //i loop
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(2,0);
+    //j loop
+    loops[1].set_subspace_looped(1,0);
+    loops[1].set_subspace_looped(2,1);
+
+    sparse_loop_list sll(loops);
+
+    block_contract2_kernel<double> bc2k(sll);
+
+    size_t C_dim_list_arr[1] = {2};
+    size_t x_dim_list_arr[1] = {3};
+    size_t A_dim_list_arr[2] = {2,3};
+
+    vector<dim_list> dim_lists(1,dim_list(1));
+    dim_lists.push_back(dim_list(1));
+    dim_lists.push_back(dim_list(2));
+    for(size_t i = 0; i < 1; ++i) dim_lists[0][i] = C_dim_list_arr[i];
+    for(size_t i = 0; i < 1; ++i) dim_lists[1][i] = x_dim_list_arr[i];
+    for(size_t i = 0; i < 2; ++i) dim_lists[2][i] = A_dim_list_arr[i];
+
+    bc2k(ptrs,dim_lists);
+
+    for(int i = 0; i < 2; ++i)
     {
         if(C_arr[i] != C_correct_arr[i])
         {

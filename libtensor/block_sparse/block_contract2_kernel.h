@@ -35,7 +35,23 @@ private:
     bool m_A_trans;
     bool m_B_trans;
     std::vector<size_t> m_strides; //Must be pre-allocated for speed
+
     void (*m_dgemm_fn)(void*,size_t,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T); //DGEMM function to call to process deepest level
+    void (*m_dgemv_fn)(void*,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T);
+
+    //Sets everything up if we are doing a matrix multiply 
+    void init_matmul(const std::vector< sparse_bispace_any_order >& bispaces,
+                     const std::vector<size_t>& A_contracted_indices,
+                     const std::vector<size_t>& B_contracted_indices);
+
+    //Sets everything up if we are doing a matrix-vector multiply
+    void init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
+                     const std::vector<size_t>& A_contracted_indices,
+                     const std::vector<size_t>& B_contracted_indices);
+
+    //Is the vector the first argument in the matrix vector multiply contraction?
+    size_t m_vec_bispace_idx;
+    size_t m_mat_bispace_idx;
 public:
     block_contract2_kernel(const sparse_loop_list& loop_list);
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
@@ -101,14 +117,14 @@ inline void libtensor::block_contract2_kernel<T>::_contract_internal(
 
 template<typename T>
 libtensor::block_contract2_kernel<T>::block_contract2_kernel(
-		const sparse_loop_list& sll) : m_loops(sll.get_loops()),m_A_trans(false),m_B_trans(false),m_strides(3,1)
+		const sparse_loop_list& sll) : m_loops(sll.get_loops()),m_A_trans(false),m_B_trans(false),m_strides(3,1),m_dgemm_fn(NULL)
 {
-	//Simplest contraction is matrix multiply and requires 3 loops
-	if(m_loops.size() < 3)
-	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-				__FILE__, __LINE__, "sparse_loop_list must contain at least 3 loops");
-	}
+	//Simplest contraction is matrix vector multiply and requires 2 loops
+    if(m_loops.size() < 2)
+    {
+        throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+                __FILE__, __LINE__, "sparse_loop_list must contain at least 2 loops");
+    }
 
 	//Ensure that we have a valid number of bispaces
 	const std::vector< sparse_bispace_any_order >& bispaces = sll.get_bispaces();
@@ -118,19 +134,17 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 				__FILE__, __LINE__, "sparse_loop_list must contain at least 3 bispaces");
 	}
 
-	//Record the orders of the blocks that this contract kernel takes as input when run
+	//Record the orders of the blocks that this contract kernel takes as input when run so that we can check it at
+    //runtime
 	for(size_t block_idx = 0; block_idx < bispaces.size(); ++block_idx)
 	{
 		m_block_orders.push_back(bispaces[block_idx].get_order());
 	}
 
-
 	//Figure out what RHS subspace indices are contracted, based on whether
 	//the loops that traverse them don't touch the output tensor
 	std::vector<size_t> A_contracted_indices;
 	std::vector<size_t> B_contracted_indices;
-	size_t C_last_A_idx;
-	size_t C_last_B_idx;
 	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
 	{
 		//Contracted? It should be if it doesn't appear in the output tensor
@@ -146,7 +160,50 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 			A_contracted_indices.push_back(cur_loop.get_subspace_looped(1));
 			B_contracted_indices.push_back(cur_loop.get_subspace_looped(2));
 		}
-		else
+	}
+	m_n_contracted_inds = A_contracted_indices.size();
+
+    //No dot products
+    if((A_contracted_indices.size() == m_loops.size()) || (B_contracted_indices.size() == m_loops.size()))
+    {
+		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+				__FILE__, __LINE__, "All loops cannot correspond to contracted indices");
+    }
+
+
+    //First out if we are doing a matrix-matrix multiply or a matrix-vector multiply
+	if(A_contracted_indices.size() == 0)
+	{
+		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+				__FILE__, __LINE__, "must have at least one contracted index");
+	}
+    else if((A_contracted_indices.size() == bispaces[1].get_order()) || (B_contracted_indices.size() == bispaces[2].get_order()))
+    {
+        init_matvec(bispaces,A_contracted_indices,B_contracted_indices);
+    }
+    else
+    {
+        init_matmul(bispaces,A_contracted_indices,B_contracted_indices);
+    }
+}
+
+
+template<typename T>
+void libtensor::block_contract2_kernel<T>::init_matmul(const std::vector< sparse_bispace_any_order >& bispaces,
+                                                       const std::vector<size_t>& A_contracted_indices,
+                                                       const std::vector<size_t>& B_contracted_indices)
+{
+	//Determine the type of matmul required to execute the contraction:
+	//	A.B     [ C_ij = A_ik B_kj ]
+	//  A.B^T   [ C_ij = A_ik B_jk ]
+	//	A^T.B   [ C_ij = A_ki B_kj ]
+	//  A^T.B^T [ C_ij = A_ki B_jk ]
+	size_t C_last_A_idx;
+	size_t C_last_B_idx;
+	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+	{
+		const block_loop& cur_loop = m_loops[loop_idx];
+        if(!cur_loop.is_bispace_ignored(0))
 		{
 			//Uncontracted? Then it needs to be present in A or B
 			if(cur_loop.is_bispace_ignored(1) && cur_loop.is_bispace_ignored(2))
@@ -166,19 +223,6 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 			}
 		}
 	}
-
-
-	if(A_contracted_indices.size() == 0)
-	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-				__FILE__, __LINE__, "must have at least one contracted index");
-	}
-
-	//Determine the type of matmul required to execute the contraction:
-	//	A.B     [ C_ij = A_ik B_kj ]
-	//  A.B^T   [ C_ij = A_ik B_jk ]
-	//	A^T.B   [ C_ij = A_ki B_kj ]
-	//  A^T.B^T [ C_ij = A_ki B_jk ]
 
 	//Is A transposed? If so, the contracted indices appear in order at the beginning.
 	//Otherwise, they will appear in order at the end
@@ -301,7 +345,6 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
                 "Strided output is unsupported!");
     }
 
-	m_n_contracted_inds = A_contracted_indices.size();
 	if(m_A_trans)
 	{
 		if(m_B_trans)
@@ -327,6 +370,47 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
             m_dgemm_fn = &linalg::mul2_ij_ip_pj_x;
 		}
 	}
+}
+
+template<typename T>
+void libtensor::block_contract2_kernel<T>::init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
+                                                       const std::vector<size_t>& A_contracted_indices,
+                                                       const std::vector<size_t>& B_contracted_indices)
+{
+	//Determine the type of matvec mul required to execute the contraction:
+	//	A.x
+    //	A^T.x
+    //	x.A
+    //	x.A^T
+    //
+    //Is the vector the first or second argument in the contraction?
+    if(bispaces[1].get_order() == m_n_contracted_inds)
+    {
+        m_vec_bispace_idx = 1;
+        m_mat_bispace_idx = 2;
+    }
+    else
+    {
+        m_vec_bispace_idx = 2;
+        m_mat_bispace_idx = 1;
+    }
+
+	//Is A transposed? If so, the contracted indices appear in order at the beginning.
+	//Otherwise, they will appear in order at the end
+    size_t mat_first_contracted_index = (m_mat_bispace_idx == 1) ? A_contracted_indices[0] : B_contracted_indices[0];
+	if(mat_first_contracted_index == 0)
+	{
+		//Yes
+		m_A_trans = true;
+        m_dgemv_fn = &linalg::mul2_i_pi_p_x;
+	}
+    else
+    {
+        m_dgemv_fn = &linalg::mul2_i_ip_p_x;
+    }
+
+
+    //TODO: Check strided output etc.
 }
 
 template<typename T>
@@ -377,56 +461,95 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 		}
 	}
 #endif
-    //TODO: This will break for tensors that are both permuted and contracted!!!!!!!!!
 
-	size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
-	if(m_A_trans)
-	{
-        for(size_t A_i_idx = m_n_contracted_inds; A_i_idx <  dim_lists[1].size(); ++A_i_idx)
-        {
-            m *= dim_lists[1][A_i_idx];
-        }
-        for(size_t k_idx = 0; k_idx < m_n_contracted_inds; ++k_idx)
-        {
-			k *= dim_lists[1][k_idx];
-        }
-		lda = m;
-	}
-	else
-	{
-        for(size_t A_i_idx = 0; A_i_idx <  m_block_orders[1] - m_n_contracted_inds; ++A_i_idx)
-        {
-            m *= dim_lists[1][A_i_idx];
-        }
-		for(size_t k_idx = m_block_orders[1] - m_n_contracted_inds; k_idx < m_block_orders[1]; ++k_idx)
-		{
-			k *= dim_lists[1][k_idx];
-		}
-		lda = k;
-	}
-
-	if(m_B_trans)
-	{
-        for(size_t B_j_idx = 0; B_j_idx < m_block_orders[2] - m_n_contracted_inds; ++B_j_idx)
-        {
-            n *= dim_lists[2][B_j_idx];
-        }
-		ldb = k;
-	}
-	else
-	{
-        for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
-        {
-            n *= dim_lists[2][B_j_idx];
-        }
-		ldb = n;
-	}
-	ldc = n;
-
-    (*m_dgemm_fn)(NULL,m,n,k,ptrs[1],lda,ptrs[2],ldb,ptrs[0],ldc,1.0);
-    if(count_flops)
+    //TODO: These will break for tensors that are both permuted and contracted!!!!!!!!!
+    if(m_dgemm_fn == NULL)
     {
-        flops += 2*m*n*k;
+        //Matrix-vector mult
+        size_t m=1, n=1,lda;
+
+        const dim_list& mat_dim_list = dim_lists[m_mat_bispace_idx];
+        T* A = ptrs[m_mat_bispace_idx];
+        T* x = ptrs[m_vec_bispace_idx];
+        if(m_A_trans)
+        {
+            for(size_t i = 0; i < m_n_contracted_inds; ++i)
+            {
+                n *= mat_dim_list[i];
+            }
+            for(size_t i = m_n_contracted_inds; i < mat_dim_list.size(); ++i)
+            {
+                m *= mat_dim_list[i];
+            }
+            lda = m;
+        }
+        else
+        {
+            for(size_t i = 0; i < mat_dim_list.size() - m_n_contracted_inds; ++i)
+            {
+                m *= mat_dim_list[i];
+            }
+            for(size_t i = mat_dim_list.size() - m_n_contracted_inds; i < mat_dim_list.size(); ++i)
+            {
+                n *= mat_dim_list[i];
+            }
+            lda = n;
+        }
+
+        (*m_dgemv_fn)(NULL,m,n,A,lda,x,1,ptrs[0],1,1.0);
+    }
+    else
+    {
+        //matrix-matrix mult
+        size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
+        if(m_A_trans)
+        {
+            for(size_t A_i_idx = m_n_contracted_inds; A_i_idx <  dim_lists[1].size(); ++A_i_idx)
+            {
+                m *= dim_lists[1][A_i_idx];
+            }
+            for(size_t k_idx = 0; k_idx < m_n_contracted_inds; ++k_idx)
+            {
+                k *= dim_lists[1][k_idx];
+            }
+            lda = m;
+        }
+        else
+        {
+            for(size_t A_i_idx = 0; A_i_idx <  m_block_orders[1] - m_n_contracted_inds; ++A_i_idx)
+            {
+                m *= dim_lists[1][A_i_idx];
+            }
+            for(size_t k_idx = m_block_orders[1] - m_n_contracted_inds; k_idx < m_block_orders[1]; ++k_idx)
+            {
+                k *= dim_lists[1][k_idx];
+            }
+            lda = k;
+        }
+
+        if(m_B_trans)
+        {
+            for(size_t B_j_idx = 0; B_j_idx < m_block_orders[2] - m_n_contracted_inds; ++B_j_idx)
+            {
+                n *= dim_lists[2][B_j_idx];
+            }
+            ldb = k;
+        }
+        else
+        {
+            for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
+            {
+                n *= dim_lists[2][B_j_idx];
+            }
+            ldb = n;
+        }
+        ldc = n;
+
+        (*m_dgemm_fn)(NULL,m,n,k,ptrs[1],lda,ptrs[2],ldb,ptrs[0],ldc,1.0);
+        if(count_flops)
+        {
+            flops += 2*m*n*k;
+        }
     }
 	//_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
 }

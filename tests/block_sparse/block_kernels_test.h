@@ -51,6 +51,7 @@ private:
     void test_block_contract2_kernel_2d_ki_kj() throw(libtest::test_exception);
     void test_block_contract2_kernel_2d_ki_jk() throw(libtest::test_exception);
     void test_block_contract2_kernel_2d_ki_kj_permuted_loops() throw(libtest::test_exception);
+    void test_block_contract2_kernel_matrix_vector_mult() throw(libtest::test_exception);
 
     void test_block_contract2_kernel_3d_2d() throw(libtest::test_exception);
     void test_block_contract2_kernel_3d_3d_multi_index() throw(libtest::test_exception);
