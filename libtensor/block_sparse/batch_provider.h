@@ -189,7 +189,10 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
             {
                 if(!batched_loop.is_bispace_ignored(batched_bispace_idx))
                 {
-                    batched_bispaces_subspaces.push_back(idx_pair(batched_bispace_idx,batched_loop.get_subspace_looped(batched_bispace_idx)));
+                    if(binary_search(direct_tensors_to_alloc.begin(),direct_tensors_to_alloc.end(),batched_bispace_idx))
+                    {
+                        batched_bispaces_subspaces.push_back(idx_pair(batched_bispace_idx,batched_loop.get_subspace_looped(batched_bispace_idx)));
+                    }
                 }
             }
             batches = get_batches(bispaces,batched_bispaces_subspaces,mem_per_tensor/sizeof(T));

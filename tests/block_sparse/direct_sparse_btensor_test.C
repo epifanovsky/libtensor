@@ -12,7 +12,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_subtract2_nested();
     test_contract2_permute_nested();
     test_custom_batch_provider();
-    //test_force_batch_index();
+    test_force_batch_index();
 }
 
 void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_exception)
@@ -1108,7 +1108,7 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
     static const char *test_name = "direct_sparse_btensor_test::test_force_batch_index()";
 
     //Block major
-    double A_arr[22] = { //i = 0 j = 1 k = 2
+    double A_arr[26] = { //i = 0 j = 1 k = 2
                          1,2,
                          3,4,
 
@@ -1117,24 +1117,26 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
                          6,
 
                          //i = 1 j = 1 k = 1
-                         6,
                          7,
                          8,
                          9,
+                         10,
 
                          //i = 2 j = 0 k = 0
-                         10,11,
-                         12,13,
+                         11,12,
+                         13,14,
 
                          //i = 2 j = 1 k = 1
-                         14,
                          15,
                          16,
                          17,
+                         18,
 
                          //i = 2  j = 1 k = 2
-                         18,19,
-                         20,21};
+                         19,20,
+                         21,22,
+                         23,24,
+                         25,26};
 
     //Bispace for i 
     sparse_bispace<1> spb_i(5);
@@ -1192,7 +1194,7 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
 
     //We just contract with eye again to make things really simple
     sparse_btensor<3> C(spb_A);
-    C(i|j|l) = contract(k,B(i|j|k),eye(k|l),16*sizeof(double),&j);
+    C(i|j|l) = contract(k,B(i|j|k),eye(k|l),20*sizeof(double),&j);
     sparse_btensor<3> C_correct(spb_A,A_arr,true);
     if(C != C_correct)
     {
