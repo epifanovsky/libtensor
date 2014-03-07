@@ -19,6 +19,7 @@ protected:
     std::vector<batch_provider<T>* > m_batch_providers;
     std::vector<size_t> m_direct_tensors;
     size_t m_mem_avail;
+    std::vector<size_t> m_forced_batched_loops; 
 
     //Used - for example, to set the output tensor to zero prior to contraction
     virtual void init(const std::vector<block_loop>& loops,
@@ -37,11 +38,12 @@ public:
                    const std::vector<size_t>& direct_tensors,
                    const std::vector<batch_provider<T>*>& batch_providers,
                    const std::vector<T*>& ptrs,
-                   size_t mem_avail) : m_loops(loops),
+                   size_t mem_avail,
+                   const idx_list& forced_batched_loops = idx_list()) : m_loops(loops),
                                        m_ptrs(ptrs),
                                        m_batch_providers(batch_providers),
                                        m_direct_tensors(direct_tensors),
-                                       m_mem_avail(mem_avail) {}
+                                       m_mem_avail(mem_avail),m_forced_batched_loops(forced_batched_loops) {}
 
     void set_mem_avail(size_t mem_avail) { m_mem_avail = mem_avail; }
     //Client code cannot assume a particular loop ordering, so it must specify the output batch
@@ -54,7 +56,7 @@ public:
 template<typename T>
 void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail)
 {
-    //Hack for subtraction,permutation - need a better way
+    //TODO: Hack for subtraction,permutation - need a better way
     if(mem_avail != 0)
     {
         m_mem_avail = mem_avail;
@@ -68,6 +70,14 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     //Do we need to allocate batch memory for direct tensors that are used as inputs?
     std::vector<idx_pair> batches;
     size_t batched_loop_idx;
+
+    //If we are only allowed to batch over a particular index, can't have anything forced on us by
+    //higher up 
+    if(m_forced_batched_loops.size() != 0 && output_batches.size() > 0)
+    {
+        throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
+                "incompatible to fix batch index but request other batch indices");
+    }
 
     //We now batch the loop that touches this bispace/subspace appropriately
     std::vector<sparse_bispace_any_order> bispaces = m_loops[0].get_bispaces();
@@ -132,37 +142,44 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
 
             //Find another loop accessing this bispace that isn't currently batched
             //Prioritize choosing a loop that accesses the most direct tensors
-            bool found = false;
-            size_t max_n_direct_tensors_touched = 0;
-            for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+            if(m_forced_batched_loops.size() > 0)
             {
-                const block_loop& loop = m_loops[loop_idx];
-                if(!loop.is_bispace_ignored(bispace_idx))
+                batched_loop_idx = m_forced_batched_loops[0];
+            }
+            else
+            {
+                bool found = false;
+                size_t max_n_direct_tensors_touched = 0;
+                for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
                 {
-                    if(loop_batches.find(batched_loop_idx) == loop_batches.end())
+                    const block_loop& loop = m_loops[loop_idx];
+                    if(!loop.is_bispace_ignored(bispace_idx))
                     {
-                        found = true;
-                        size_t n_direct_tensors_touched = 0;    
-                        for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
+                        if(loop_batches.find(batched_loop_idx) == loop_batches.end())
                         {
-                            if(!loop.is_bispace_ignored(direct_tensors_to_alloc[direct_tensor_rel_idx]))
+                            found = true;
+                            size_t n_direct_tensors_touched = 0;    
+                            for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
                             {
-                                ++n_direct_tensors_touched;
+                                if(!loop.is_bispace_ignored(direct_tensors_to_alloc[direct_tensor_rel_idx]))
+                                {
+                                    ++n_direct_tensors_touched;
+                                }
                             }
-                        }
-                        if(n_direct_tensors_touched > max_n_direct_tensors_touched)
-                        {
-                            batched_loop_idx = loop_idx;
-                            max_n_direct_tensors_touched = n_direct_tensors_touched;
+                            if(n_direct_tensors_touched > max_n_direct_tensors_touched)
+                            {
+                                batched_loop_idx = loop_idx;
+                                max_n_direct_tensors_touched = n_direct_tensors_touched;
+                            }
                         }
                     }
                 }
-            }
-            if(!found)
-            {
-                throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
-                        "all subspaces are fully batched and tensor still does not fit in memory");
-                        
+                if(!found)
+                {
+                    throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
+                            "all subspaces are fully batched and tensor still does not fit in memory");
+                            
+                }
             }
 
             //Determine a batch structure that will make ALL batched tensors fit in memory

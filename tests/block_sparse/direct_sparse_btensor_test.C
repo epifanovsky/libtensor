@@ -12,6 +12,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_subtract2_nested();
     test_contract2_permute_nested();
     test_custom_batch_provider();
+    //test_force_batch_index();
 }
 
 void direct_sparse_btensor_test::test_get_batch_contract2() throw(libtest::test_exception)
@@ -1100,5 +1101,104 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
     }
 }
 
+//Due to constraints of external code that may be providing us with some batches
+//we may need to force the choice of a particular index to batch over.
+void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_exception)
+{
+    static const char *test_name = "direct_sparse_btensor_test::test_force_batch_index()";
+
+    //Block major
+    double A_arr[22] = { //i = 0 j = 1 k = 2
+                         1,2,
+                         3,4,
+
+                         //i = 1 j = 0 k = 1
+                         5,
+                         6,
+
+                         //i = 1 j = 1 k = 1
+                         6,
+                         7,
+                         8,
+                         9,
+
+                         //i = 2 j = 0 k = 0
+                         10,11,
+                         12,13,
+
+                         //i = 2 j = 1 k = 1
+                         14,
+                         15,
+                         16,
+                         17,
+
+                         //i = 2  j = 1 k = 2
+                         18,19,
+                         20,21};
+
+    //Bispace for i 
+    sparse_bispace<1> spb_i(5);
+    std::vector<size_t> split_points_i;
+    split_points_i.push_back(1);
+    split_points_i.push_back(3);
+    spb_i.split(split_points_i);
+
+    //Bispace for j 
+    sparse_bispace<1> spb_j(4);
+    std::vector<size_t> split_points_j;
+    split_points_j.push_back(1);
+    split_points_j.push_back(3);
+    spb_j.split(split_points_j);
+
+    //Bispace for k 
+    sparse_bispace<1> spb_k(5);
+    std::vector<size_t> split_points_k;
+    split_points_k.push_back(2);
+    split_points_k.push_back(3);
+    spb_k.split(split_points_k);
+
+    size_t seq_0_arr_1[3] = {0,1,2};
+    size_t seq_1_arr_1[3] = {1,0,1};
+    size_t seq_2_arr_1[3] = {1,1,1};
+    size_t seq_3_arr_1[3] = {2,0,0};
+    size_t seq_4_arr_1[3] = {2,1,1};
+    size_t seq_5_arr_1[3] = {2,1,2};
+
+    std::vector< sequence<3,size_t> > ij_sig_blocks(6);
+    for(size_t i = 0; i < 3; ++i) ij_sig_blocks[0][i] = seq_0_arr_1[i];
+    for(size_t i = 0; i < 3; ++i) ij_sig_blocks[1][i] = seq_1_arr_1[i];
+    for(size_t i = 0; i < 3; ++i) ij_sig_blocks[2][i] = seq_2_arr_1[i];
+    for(size_t i = 0; i < 3; ++i) ij_sig_blocks[3][i] = seq_3_arr_1[i];
+    for(size_t i = 0; i < 3; ++i) ij_sig_blocks[4][i] = seq_4_arr_1[i];
+    for(size_t i = 0; i < 3; ++i) ij_sig_blocks[5][i] = seq_5_arr_1[i];
+
+    sparse_bispace<3> spb_A  = spb_i % spb_j % spb_k << ij_sig_blocks;
+    sparse_btensor<3> A(spb_A,A_arr,true);
+
+    //Use identity matrix to simplify test
+    sparse_bispace<2> spb_eye = spb_k|spb_k;
+    double* eye_arr = new double[spb_eye.get_nnz()];
+    memset(eye_arr,0,spb_eye.get_nnz()*sizeof(double));
+    for(size_t i = 0; i < spb_k.get_dim(); ++i)
+    {
+        eye_arr[i*spb_k.get_dim()+i] = 1;
+    }
+    sparse_btensor<2> eye(spb_eye,eye_arr,false);
+    delete [] eye_arr;
+
+    direct_sparse_btensor<3> B(spb_A);
+    letter i,j,k,l;
+    B(i|j|l) = contract(k,A(i|j|k),eye(k|l));
+
+    //We just contract with eye again to make things really simple
+    sparse_btensor<3> C(spb_A);
+    C(i|j|l) = contract(k,B(i|j|k),eye(k|l),16*sizeof(double),&j);
+    sparse_btensor<3> C_correct(spb_A,A_arr,true);
+    if(C != C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "contract did not return correct value when batch index explicitly specified");
+    }
+}
 
 } // namespace libtensor
