@@ -75,12 +75,6 @@ public:
      **/
     void perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb);
 
-private:
-    /** \brief Forms the %dimensions of the output or throws an
-        exception if the input is incorrect
-     **/
-    static dimensions<N - M + 1> mk_dims(
-        const dimensions<N> &dims, const mask<N> &msk);
 };
 
 
