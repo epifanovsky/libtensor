@@ -144,11 +144,11 @@ vector<idx_pair> get_batches(const vector<sparse_bispace_any_order>& bispaces,
                 {
                     sparse_iter_pairs[sparse_iter_idx].first = sparse_block_iters[sparse_iter_idx].lower_bound(batch_start_idx)->second;
                     cur_block_inds[sparse_bispace_offsets[sparse_iter_idx]] = sparse_iter_pairs[sparse_iter_idx].first.key()[0];
-                    cur_block_subtotals[sparse_iter_idx] = 0;
                 }
 
                 //All batches start fresh now
                 n_elems.assign(n_elems.size(),0);
+                cur_block_subtotals.assign(cur_block_subtotals.size(),0);
                 halted_stat.assign(halted_stat.size(),false);
             }
             else if(halted_stat[bs_idx])
@@ -177,10 +177,9 @@ vector<idx_pair> get_batches(const vector<sparse_bispace_any_order>& bispaces,
                         n_elems[bs_idx] += cur_block_subtotals[bs_idx];
                         cur_block_subtotals[bs_idx] = 0;
                         cur_block_idx = block_idx;
-                        sparse_block_iters[bs_idx].insert(make_pair(block_idx,s_it.first));
+                        sparse_block_iters[sparse_bispace_offsets[bs_idx]].insert(make_pair(block_idx,s_it.first));
                     }
 
-                    cur_block_subtotals[bs_idx] += this_block_contrib;
                     ++s_it.first;
                 }
             }
@@ -194,11 +193,12 @@ vector<idx_pair> get_batches(const vector<sparse_bispace_any_order>& bispaces,
                 {
                     cur_block_idx = d_it.first;
                     this_block_contrib = subspace.get_block_size(cur_block_idx)*scale_fac;
-                    n_elems[bs_idx] += this_block_contrib;
+                    n_elems[bs_idx] += cur_block_subtotals[bs_idx];
+                    cur_block_subtotals[bs_idx] = 0;
                     ++d_it.first;
                 }
-
             }
+            cur_block_subtotals[bs_idx] += this_block_contrib;
 
             if(at_end)
             {
@@ -207,13 +207,12 @@ vector<idx_pair> get_batches(const vector<sparse_bispace_any_order>& bispaces,
             }
             else
             {
-                if(this_block_contrib > max_n_elem)
+                if(cur_block_subtotals[bs_idx] > max_n_elem)
                 {
                     throw bad_parameter(g_ns,"sparse_bispace<N>","get_batches(...)",__FILE__,__LINE__,
                             "single block does not fit in batch"); 
                 }
 
-                //cur_block_subtotals is always zero for dense
                 if(n_elems[bs_idx] + cur_block_subtotals[bs_idx] > max_n_elem)
                 {
                     halted_stat[bs_idx] = true;

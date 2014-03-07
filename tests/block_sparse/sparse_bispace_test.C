@@ -59,10 +59,13 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_index_group_dim();
         test_get_index_group_containing_subspace();
 
+        //TODO: These should get their own file
         test_get_batches_dense();
         test_get_batches_sparse();
         test_get_batches_dense_dense();
         test_get_batches_sparse_sparse();
+        test_get_batches_not_enough_mem_sparse();
+
         test_get_batch_size();
 
         test_get_nnz_2d_sparsity();
@@ -1552,6 +1555,56 @@ void sparse_bispace_test::test_get_batches_sparse_sparse() throw(libtest::test_e
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::get_batches(...) did not return correct value for multiple sparse bispaces");
+    }
+}
+
+//We alloc enough batch space for any single block, but not for any single sparse block group
+void sparse_bispace_test::test_get_batches_not_enough_mem_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_get_not_enough_mem_sparse()";
+
+    index_groups_test_f tf = index_groups_test_f();
+    sparse_bispace<1> spb_0(9);
+    vector<size_t> split_points_0(1,1);
+    split_points_0.push_back(4);
+    spb_0.split(split_points_0);
+
+    //Make the '2' block group too large for the batch
+    size_t key_0_arr_A[2] = {0,0};
+    size_t key_1_arr_A[2] = {0,1};
+    size_t key_2_arr_A[2] = {1,2};
+    size_t key_3_arr_A[2] = {2,0};
+    size_t key_4_arr_A[2] = {2,1};
+    size_t key_5_arr_A[2] = {2,2};
+
+    vector< sequence<2,size_t> > sig_blocks_A(6);
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[0][i] = key_0_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[1][i] = key_1_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[2][i] = key_2_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[3][i] = key_3_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[4][i] = key_4_arr_A[i];
+    for(size_t i = 0; i < 2; ++i) sig_blocks_A[5][i] = key_5_arr_A[i];
+
+    sparse_bispace<3> spb_A = spb_0 % spb_0 << sig_blocks_A | spb_0;
+
+    std::vector<sparse_bispace_any_order> bispaces(1,spb_A);
+
+    size_t max_n_elem = 40*spb_0.get_dim();
+    std::vector<idx_pair> batched_bispaces_subspaces(1,idx_pair(0,0));
+    bool threw_exception = false;
+    try
+    {
+        std::vector<idx_pair> batches = get_batches(bispaces,batched_bispaces_subspaces,max_n_elem);
+    }
+    catch(bad_parameter&)
+    {
+        threw_exception = true;
+    }
+
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::get_batches(...) did not throw exception when insufficient memory provided");
     }
 }
 
