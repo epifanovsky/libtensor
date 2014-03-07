@@ -2,7 +2,6 @@
 #define LIBTENSOR_CTF_TOD_DOTPROD_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
-#include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_dotprod.h"
@@ -72,14 +71,14 @@ double ctf_tod_dotprod<N>::calculate() {
     static const char method[] = "calculate()";
 
     ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb);
-    int taid = ca.req_tensor_id(), tbid = cb.req_tensor_id();
+    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
 
     const permutation<N> &perma = m_tra.get_perm();
     const permutation<N> &permb = m_trb.get_perm();
 
     double c = m_tra.get_scalar_tr().get_coeff() *
         m_trb.get_scalar_tr().get_coeff();
-    double d = 0.0;
 
     permutation<N> perm(perma);
     perm.permute(permutation<N>(permb, true));
@@ -87,44 +86,14 @@ double ctf_tod_dotprod<N>::calculate() {
     sequence<N, size_t> seq(0);
     for(size_t i = 0; i < N; i++) seq[i] = N - i - 1;
     perm.apply(seq);
-    int idxmapa[N], idxmapb[N], idxmapd[N];
-    for(size_t i = 0; i < N; i++) idxmapa[i] = i;
-    for(size_t i = 0; i < N; i++) idxmapb[i] = seq[N - i - 1];
-    for(size_t i = 0; i < N; i++) idxmapd[i] = N;
+    char idxmapa[N], idxmapb[N], idxmapd[N];
+    for(size_t i = 0; i < N; i++) idxmapa[i] = i + 1;
+    for(size_t i = 0; i < N; i++) idxmapb[i] = seq[N - i - 1] + 1;
+    for(size_t i = 0; i < N; i++) idxmapd[i] = N + 1;
 
-    int tdid, dimsd = 1, symd = NS;
-
-    if(ctf::get().define_tensor(1, &dimsd, &symd, &tdid) !=
-        DIST_TENSOR_SUCCESS) {
-        throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "define_tensor");
-    }
-
-    CTF_ctr_type_t contr;
-    contr.tid_A = taid;
-    contr.tid_B = tbid;
-    contr.tid_C = tdid;
-    contr.idx_map_A = idxmapa;
-    contr.idx_map_B = idxmapb;
-    contr.idx_map_C = idxmapd;
-
-    if(ctf::get().contract(&contr, 1.0, 1.0) != DIST_TENSOR_SUCCESS) {
-        throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__, "contract");
-    }
-
-    int64_t len;
-    double *data;
-
-    if(ctf::get().allread_tensor(tdid, &len, &data) != DIST_TENSOR_SUCCESS) {
-        throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "allread_tensor");
-    }
-
-    d = data[0];
-
-    ctf::get().clean_tensor(tdid);
-
-    return c * d;
+    tCTF_Scalar<double> dtd(0.0, ctf::get_world());
+    dtd.contract(1.0, dta, idxmapa, dtb, idxmapb, 0.0, idxmapd);
+    return c * dtd.get_val();
 }
 
 

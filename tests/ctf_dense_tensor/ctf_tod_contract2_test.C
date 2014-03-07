@@ -1,4 +1,3 @@
-#include <mpi.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/tod_random.h>
 #include <libtensor/ctf_dense_tensor/ctf.h>
@@ -14,10 +13,7 @@ namespace libtensor {
 
 void ctf_tod_contract2_test::perform() throw(libtest::test_exception) {
 
-    int nproc, rank;
-    MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    ctf::get().init(MPI_COMM_WORLD, rank, nproc);
+    ctf::init();
 
     try {
 
@@ -27,11 +23,11 @@ void ctf_tod_contract2_test::perform() throw(libtest::test_exception) {
         test_2b();
 
     } catch(...) {
-        ctf::get().exit();
+        ctf::exit();
         throw;
     }
 
-    ctf::get().exit();
+    ctf::exit();
 }
 
 

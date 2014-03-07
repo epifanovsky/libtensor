@@ -5,7 +5,6 @@
 #include <vector>
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_collect.h"
 
@@ -30,8 +29,8 @@ void ctf_tod_collect<N>::perform(dense_tensor_wr_i<N, double> &t) {
     int64_t n;
 
     ctf_dense_tensor_ctrl<N, double> dctrl(m_dt);
-    int tid = dctrl.req_tensor_id();
-    ctf::get().allread_tensor(tid, &n, &data);
+    tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
+    dt.get_all_data(&n, &data);
 
     if(n != sz) {
         //free_buffer_space(data);

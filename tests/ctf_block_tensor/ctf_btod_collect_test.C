@@ -17,10 +17,7 @@ namespace libtensor {
 
 void ctf_btod_collect_test::perform() throw(libtest::test_exception) {
 
-    int nproc, rank;
-    MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    ctf::get().init(MPI_COMM_WORLD, rank, nproc);
+    ctf::init();
 
     try {
 
@@ -28,11 +25,11 @@ void ctf_btod_collect_test::perform() throw(libtest::test_exception) {
         test_2();
 
     } catch(...) {
-        ctf::get().exit();
+        ctf::exit();
         throw;
     }
 
-    ctf::get().exit();
+    ctf::exit();
 }
 
 

@@ -2,7 +2,6 @@
 #define LIBTENSOR_CTF_TOD_COPY_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
-#include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_copy.h"
@@ -55,35 +54,21 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     }
 
     ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(tb);
-    int taid = ca.req_tensor_id(), tbid = cb.req_tensor_id();
+    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
 
     double c = m_tra.get_scalar_tr().get_coeff();
 
     sequence<N, int> seqa(0), seqb(0);
-    int mapa[N], mapb[N];
+    char mapa[N], mapb[N];
     for(size_t i = 0; i < N; i++) seqa[i] = seqb[i] = N - i - 1;
     m_tra.get_perm().apply(seqb);
     for(size_t i = 0; i < N; i++) {
-        mapa[i] = seqa[N - i - 1];
-        mapb[i] = seqb[N - i - 1];
+        mapa[i] = seqa[N - i - 1] + 1;
+        mapb[i] = seqb[N - i - 1] + 1;
     }
 
-    if(zero) {
-        if(ctf::get().set_zero_tensor(tbid) != DIST_TENSOR_SUCCESS) {
-            throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "set_zero_tensor");
-        }
-    }
-
-    CTF_sum_type_t sumtyp;
-    sumtyp.tid_A = taid;
-    sumtyp.tid_B = tbid;
-    sumtyp.idx_map_A = mapa;
-    sumtyp.idx_map_B = mapb;
-    if(ctf::get().sum_tensors(&sumtyp, c, 1.0) != DIST_TENSOR_SUCCESS) {
-        throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__,
-            "sum_tensors");
-    }
+    dtb.sum(c, dta, mapa, zero ? 0.0 : 1.0, mapb);
 }
 
 

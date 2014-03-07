@@ -2,7 +2,6 @@
 #define LIBTENSOR_CTF_TOD_CONTRACT2_IMPL
 
 #include <libtensor/core/bad_dimensions.h>
-#include "../ctf.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_contract2.h"
@@ -42,20 +41,21 @@ void ctf_tod_contract2<N, M, K>::perform(
     ctf_dense_tensor_ctrl<NA, double> ca(m_ta);
     ctf_dense_tensor_ctrl<NB, double> cb(m_tb);
     ctf_dense_tensor_ctrl<NC, double> cc(tc);
-    int taid = ca.req_tensor_id(), tbid = cb.req_tensor_id(),
-        tcid = cc.req_tensor_id();
+    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
+    tCTF_Tensor<double> &dtc = cc.req_ctf_tensor();
 
-    int map[NC + NA + NB];
+    char map[NC + NA + NB];
     const sequence<NA + NB + NC, size_t> &conn = m_contr.get_conn();
     for(size_t i = 0; i < NC; i++) {
-        map[i] = i;
+        map[i] = i + 1;
         size_t ii = conn[NC - i - 1] - NC;
         if(ii < NA) {
             ii = NA - ii - 1;
-            map[NC + ii] = i;
+            map[NC + ii] = i + 1;
         } else {
             ii = NB + NA - ii - 1;
-            map[NC + NA + ii] = i;
+            map[NC + NA + ii] = i + 1;
         }
     }
     for(size_t i = 0, j = NC; i < NA; i++) {
@@ -63,23 +63,14 @@ void ctf_tod_contract2<N, M, K>::perform(
         if(conn[ii] >= NC + NA) {
             size_t ia = NA - i - 1;
             size_t ib = NC + NA + NB - conn[ii] - 1;
-            map[NC + ia] = j;
-            map[NC + NA + ib] = j;
+            map[NC + ia] = j + 1;
+            map[NC + NA + ib] = j + 1;
             j++;
         }
     }
 
-    CTF_ctr_type_t ctrtyp;
-    ctrtyp.tid_A = taid;
-    ctrtyp.tid_B = tbid;
-    ctrtyp.tid_C = tcid;
-    ctrtyp.idx_map_A = &map[NC];
-    ctrtyp.idx_map_B = &map[NC + NA];
-    ctrtyp.idx_map_C = &map[0];
-    double z = zero ? 0.0 : 1.0;
-    if(ctf::get().contract(&ctrtyp, m_d, z) != DIST_TENSOR_SUCCESS) {
-        throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__, "contract");
-    }
+    dtc.contract(m_d, dta, &map[NC], dtb, &map[NC + NA], zero ? 0.0 : 1.0,
+        &map[0]);
 }
 
 

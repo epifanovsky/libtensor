@@ -2,6 +2,7 @@
 #define LIBTENSOR_CTF_DENSE_TENSOR_I_H
 
 #include <libtensor/core/dimensions.h>
+#include "ctf.h"
 
 namespace libtensor {
 
@@ -36,10 +37,10 @@ protected:
     //! \name Tensor events
     //@{
 
-    /** \brief Handles requests for the tensor ID
-        \return Tensor ID in CTF
+    /** \brief Handles requests for the CTF tensor object
+        \return CTF tensor object
      **/
-    virtual int on_req_tensor_id() = 0;
+    virtual tCTF_Tensor<T> &on_req_ctf_tensor() = 0;
 
 };
 

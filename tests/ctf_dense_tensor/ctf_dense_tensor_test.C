@@ -1,4 +1,3 @@
-#include <mpi.h>
 #include <libtensor/ctf_dense_tensor/ctf.h>
 #include <libtensor/ctf_dense_tensor/ctf_dense_tensor.h>
 #include <libtensor/ctf_dense_tensor/ctf_dense_tensor_ctrl.h>
@@ -9,14 +8,11 @@ namespace libtensor {
 
 void ctf_dense_tensor_test::perform() throw(libtest::test_exception) {
 
-    int nproc, rank;
-    MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    ctf::get().init(MPI_COMM_WORLD, rank, nproc);
+    ctf::init();
 
     test_1();
 
-    ctf::get().exit();
+    ctf::exit();
 }
 
 

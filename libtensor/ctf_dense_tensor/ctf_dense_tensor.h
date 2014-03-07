@@ -30,7 +30,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Tensor dimensions
-    int m_tid; //!< Tensor ID in CTF
+    tCTF_Tensor<double> *m_tens; //!< CTF tensor
 
 public:
     /** \brief Creates a new tensor
@@ -47,9 +47,9 @@ public:
     virtual const dimensions<N> &get_dims() const;
 
 protected:
-    /** \brief Returns tensor ID in CTF
+    /** \brief Returns the CTF tensor object
      **/
-    virtual int on_req_tensor_id();
+    virtual tCTF_Tensor<T> &on_req_ctf_tensor();
 
     /** \brief Called when state changes to immutable
      **/

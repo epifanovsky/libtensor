@@ -2,7 +2,6 @@
 #define LIBTENSOR_CTF_DENSE_TENSOR_IMPL_H
 
 #include <libtensor/exception.h>
-#include "../ctf.h"
 #include "../ctf_error.h"
 #include "../ctf_dense_tensor.h"
 
@@ -16,7 +15,7 @@ const char ctf_dense_tensor<N, T>::k_clazz[] = "ctf_dense_tensor<N, T>";
 template<size_t N, typename T>
 ctf_dense_tensor<N, T>::ctf_dense_tensor(const dimensions<N> &dims) :
 
-    m_dims(dims), m_tid(0) {
+    m_dims(dims), m_tens(0) {
 
     static const char method[] = "ctf_dense_tensor(const dimensions<N>&)";
 
@@ -34,20 +33,14 @@ ctf_dense_tensor<N, T>::ctf_dense_tensor(const dimensions<N> &dims) :
         edge_len[i] = m_dims[N - i - 1];
         sym[i] = NS;
     }
-    int res = ctf::get().define_tensor(N, edge_len, sym, &m_tid);
-    if(res != DIST_TENSOR_SUCCESS) {
-        throw ctf_error(g_ns, k_clazz, method, __FILE__, __LINE__, "");
-    }
+    m_tens = new tCTF_Tensor<T>(N, edge_len, sym, ctf::get_world());
 }
 
 
 template<size_t N, typename T>
 ctf_dense_tensor<N, T>::~ctf_dense_tensor() {
 
-    try {
-        ctf::get().clean_tensor(m_tid);
-    } catch(...) {
-    }
+    delete m_tens;
 }
 
 
@@ -59,15 +52,9 @@ const dimensions<N> &ctf_dense_tensor<N, T>::get_dims() const {
 
 
 template<size_t N, typename T>
-int ctf_dense_tensor<N, T>::on_req_tensor_id() {
+tCTF_Tensor<T> &ctf_dense_tensor<N, T>::on_req_ctf_tensor() {
 
-    static const char method[] = "on_req_tensor_id()";
-
-    if(is_immutable()) {
-        throw immut_violation(g_ns, k_clazz, method, __FILE__, __LINE__, "");
-    }
-
-    return m_tid;
+    return *m_tens;
 }
 
 

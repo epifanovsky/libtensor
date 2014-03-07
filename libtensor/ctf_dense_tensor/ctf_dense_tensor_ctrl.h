@@ -27,10 +27,10 @@ public:
      **/
     virtual ~ctf_dense_tensor_ctrl() { }
 
-    /** \brief Requests tensor ID in CTF
+    /** \brief Requests the CTF tensor object
      **/
-    int req_tensor_id() {
-        return m_t.on_req_tensor_id();
+    tCTF_Tensor<T> &req_ctf_tensor() {
+        return m_t.on_req_ctf_tensor();
     }
 
 };
