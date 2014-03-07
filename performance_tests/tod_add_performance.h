@@ -5,6 +5,8 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/libtensor.h>
 #include <libtensor/linalg/linalg.h>
+#include <libtensor/dense_tensor/tod_add.h>
+#include <libtensor/dense_tensor/tod_dotprod.h>
 #include "performance_test.h"
 
 using libtest::unit_test_factory;

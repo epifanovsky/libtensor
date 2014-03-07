@@ -33,6 +33,23 @@ btod_contract2<N, M, K>::btod_contract2(
 
 
 template<size_t N, size_t M, size_t K>
+btod_contract2<N, M, K>::btod_contract2(
+    const contraction2<N, M, K> &contr,
+    block_tensor_rd_i<NA, double> &bta,
+    double ka,
+    block_tensor_rd_i<NB, double> &btb,
+    double kb,
+    double kc) :
+
+    m_gbto(contr,
+        bta, scalar_transf<double>(ka),
+        btb, scalar_transf<double>(kb),
+        scalar_transf<double>(kc)) {
+
+}
+
+
+template<size_t N, size_t M, size_t K>
 void btod_contract2<N, M, K>::perform(
     gen_block_stream_i<NC, bti_traits> &out) {
 

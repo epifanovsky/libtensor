@@ -19,16 +19,19 @@ namespace libtensor {
 template<size_t N, size_t M, typename T>
 class symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> > :
 public symmetry_operation_impl_base< so_reduce<N, M, T>, se_part<N - M, T> > {
-
 public:
     static const char *k_clazz; //!< Class name
-    static const size_t k_order1 = N; //!< Dimension of input
-    static const size_t k_order2 = N - M; //!< Dimension of result
+
+    enum {
+        NA = N,     //!< Dimension of input symmetry
+        NB = N - M, //!< Dimension of result symmetry
+        NR = M      //!< Dimension of reduction
+    };
 
 public:
     typedef so_reduce<N, M, T> op_t;
-    typedef se_part<k_order1, T> el1_t;
-    typedef se_part<k_order2, T> el2_t;
+    typedef se_part<NA, T> ela_t;
+    typedef se_part<NB, T> elb_t;
     typedef symmetry_operation_params<op_t> symmetry_operation_params_t;
 
 public:
@@ -38,10 +41,10 @@ protected:
     virtual void do_perform(symmetry_operation_params_t &params) const;
 
 private:
-    static bool is_forbidden(const el1_t &el,
-            const index<k_order1> &idx, const dimensions<k_order1> &subdims);
-    static bool map_exists(const el1_t &el, const index<k_order1> &ia,
-            const index<k_order1> &ib, const dimensions<k_order1> &subdims);
+    static bool is_forbidden(const ela_t &el,
+            const index<NA> &idx, const dimensions<NA> &subdims);
+    static bool map_exists(const ela_t &el, const index<NA> &ia,
+            const index<NA> &ib, const dimensions<NA> &subdims);
 };
 
 } // namespace libtensor

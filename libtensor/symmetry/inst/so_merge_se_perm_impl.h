@@ -26,8 +26,8 @@ symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::do_perform(
 
     // Special case for N - M == 1
     if (k_order2 == 1) {
-        adapter1_t g1(params.grp1);
-        params.grp2.clear();
+        adapter1_t g1(params.g1);
+        params.g2.clear();
         for (typename adapter1_t::iterator it = g1.begin();
                 it != g1.end(); it++) {
 
@@ -54,14 +54,14 @@ symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::do_perform(
         sseq[i] = params.mseq[i] + 1;
     }
 
-    params.grp2.clear();
-    adapter1_t g1(params.grp1);
-    permutation_group<k_order1, T> grp1(g1);
-    permutation_group<k_order1, T> grp2;
-    grp1.stabilize(sseq, grp2);
+    params.g2.clear();
+    adapter1_t g1(params.g1);
+    permutation_group<k_order1, T> group1(g1);
+    permutation_group<k_order1, T> group2;
+    group1.stabilize(sseq, group2);
 
     symmetry_element_set<k_order1, T> set(el1_t::k_sym_type);
-    grp2.convert(set);
+    group2.convert(set);
 
     adapter1_t g2(set);
     for (typename adapter1_t::iterator it = g2.begin(); it != g2.end(); it++) {
@@ -101,7 +101,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::do_perform(
                     "perm + transf.");
         }
 
-        params.grp2.insert(el2_t(pb.get_perm(), e2.get_transf()));
+        params.g2.insert(el2_t(pb.get_perm(), e2.get_transf()));
     }
 }
 

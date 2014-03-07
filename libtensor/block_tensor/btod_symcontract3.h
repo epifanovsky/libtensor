@@ -49,11 +49,11 @@ public:
     btod_symcontract3(
         const contraction2<N1, N2 + K2, K1> &contr1,
         const contraction2<N1 + N2, N3, K2> &contr2,
-        block_tensor_i<N1 + K1, double> &bta,
-        block_tensor_i<N2 + K1 + K2, double> &btb,
+        block_tensor_rd_i<N1 + K1, double> &bta,
+        block_tensor_rd_i<N2 + K1 + K2, double> &btb,
         const permutation<N1 + N2 + K2> &permab,
         bool symmab,
-        block_tensor_i<N3 + K2, double> &btc);
+        block_tensor_rd_i<N3 + K2, double> &btc);
 
     /** \brief Initializes the contraction
         \param contr1 First contraction (A with B).
@@ -68,11 +68,11 @@ public:
     btod_symcontract3(
         const contraction2<N1, N2 + K2, K1> &contr1,
         const contraction2<N1 + N2, N3, K2> &contr2,
-        block_tensor_i<N1 + K1, double> &bta,
-        block_tensor_i<N2 + K1 + K2, double> &btb,
+        block_tensor_rd_i<N1 + K1, double> &bta,
+        block_tensor_rd_i<N2 + K1 + K2, double> &btb,
         const permutation<N1 + N2 + K2> &permab,
         bool symmab,
-        block_tensor_i<N3 + K2, double> &btc,
+        block_tensor_rd_i<N3 + K2, double> &btc,
         double kd);
 
     /** \brief Virtual destructor

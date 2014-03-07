@@ -240,6 +240,8 @@ public:
 
     virtual ~gen_bto_symmetrize3_sch_task() { }
 
+    virtual unsigned long get_cost() const { return 0; }
+
     virtual void perform() {
 
         std::set<size_t> sch;

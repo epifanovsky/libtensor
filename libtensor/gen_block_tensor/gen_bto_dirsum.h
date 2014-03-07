@@ -4,8 +4,6 @@
 #include <map>
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/core/orbit.h>
-#include <libtensor/core/orbit_list.h>
 #include <libtensor/core/tensor_transf.h>
 #include "assignment_schedule.h"
 #include "gen_block_stream_i.h"
@@ -165,10 +163,7 @@ public:
 
 private:
     void make_schedule();
-    void make_schedule(
-            const orbit<NA, element_type> &oa, bool zeroa,
-            const orbit<NB, element_type> &ob, bool zerob,
-            const orbit_list<NC, element_type> &olc);
+
 };
 
 

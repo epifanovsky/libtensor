@@ -19,180 +19,261 @@ void
 symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
+    typedef std::pair< index<NA>, scalar_transf<T> > part_type;
+    typedef std::list<part_type> plist_type;
+
     // Create the inverse of the mask
-    mask<k_order1> invmsk;
-    for (register size_t i = 0; i < k_order1; i++)
+    mask<NA> invmsk;
+    for (register size_t i = 0; i < NA; i++)
         invmsk[i] = !params.msk[i];
 
-    params.grp2.clear();
-    if (params.grp1.is_empty()) return;
+    params.g2.clear();
+    if (params.g1.is_empty()) return;
 
     // Create a map of indexes and a mask of reduction steps
-    sequence<k_order1, size_t> map(0);
-    mask<k_order1> rsteps;
-    for (register size_t i = 0, j = 0; i < k_order1; i++) {
+    sequence<NA, size_t> map(0);
+    mask<NR> rsteps;
+    for (register size_t i = 0, j = 0; i < NA; i++) {
         if (params.msk[i]) {
             rsteps[params.rseq[i]] = true;
-            map[i] = k_order2 + params.rseq[i];
+            map[i] = NB + params.rseq[i];
         }
         else {
             map[i] = j++;
         }
     }
 
-    combine_part<k_order1, T> cp(params.grp1);
-    el1_t el1(cp.get_bis(), cp.get_pdims());
-    cp.perform(el1);
+    combine_part<NA, T> cp(params.g1);
+    ela_t ela(cp.get_bis(), cp.get_pdims());
+    cp.perform(ela);
 
-    dimensions<k_order1> bidims = el1.get_bis().get_block_index_dims();
-    const dimensions<k_order1> &pdims1 = el1.get_pdims();
+    dimensions<NA> bidimsa = ela.get_bis().get_block_index_dims();
+    const dimensions<NA> &pdimsa = ela.get_pdims();
 
-    // Determine the sizes of the reduced dimensions per reduction step
-    // and the reduction length
-    index<k_order1> ixa, ixb, nix;
-    for (register size_t i = 0; i < k_order1 && rsteps[i]; i++) {
+    // For each reduction step determine
+    // - partition size (rpsz == nix)
+    // - partitions in reduction range (irpa == ixa, irpb, ixb)
+    index<NR> rpsz, i1rp, i2rp;
+    for (register size_t i = 0; i < NR && rsteps[i]; i++) {
+
         register size_t j = 0;
-        for (; j < k_order1; j++) {
+        for (; j < NA; j++) {
             if (params.msk[j] && params.rseq[j] == i) break;
         }
-        size_t j1 = j;
-        nix[i] = pdims1[j1];
 
-        for (; j < k_order1; j++) {
+        size_t j1 = j++;
+        size_t p1 = pdimsa[j1];
+        for (; j < NA; j++) {
             if ((! params.msk[j]) || (params.rseq[j] != i)) continue;
-            if (nix[i] == pdims1[j]) continue;
+            if (p1 == pdimsa[j]) continue;
 
-            size_t d1 = nix[i], d2 = pdims1[j];
-            if (d1 < d2) std::swap(d1, d2);
+            size_t p2 = pdimsa[j];
+            if (p2 < p1) std::swap(p1, p2);
 
-            nix[i] = (d1 % d2 == 0) ? d2 : 1;
+            p1 = (p2 % p1 == 0) ? p1 : 1;
         }
 
-        size_t nbpp = bidims[j1] / nix[i];
-        ixa[i] = params.rblrange.get_begin()[j1] / nbpp;
-        ixb[i] = params.rblrange.get_end()[j1] / nbpp;
+        size_t nbpp = bidimsa[j1] / p1;
+        rpsz[i] = p1;
+        i1rp[i] = params.rblrange.get_begin()[j1] / nbpp;
+        i2rp[i] = params.rblrange.get_end()[j1] / nbpp;
     }
+    dimensions<NR> rpdims(index_range<NR>(i1rp, i2rp));
 
     // Determine the sizes of the remaining dimensions
-    index<k_order2> ia, ib;
-    index<k_order1> ja, jb;
-    for (register size_t i = 0; i < k_order1; i++) {
-        if (params.msk[i])
-            jb[i] = pdims1[i] / nix[params.rseq[i]] - 1;
-        else
-            ib[map[i]] = pdims1[i] - 1;
+    index<NB> i1, i2;
+    index<NA> j1, j2;
+    for (register size_t i = 0; i < NA; i++) {
+        if (params.msk[i]) {
+            j2[i] = pdimsa[i] / rpsz[params.rseq[i]] - 1;
+        }
+        else {
+            i2[map[i]] = pdimsa[i] - 1;
+        }
     }
 
-    dimensions<k_order2> pdims2(index_range<k_order2>(ia, ib));
-    dimensions<k_order1> pdims1r(index_range<k_order1>(ixa, ixb));
-    dimensions<k_order1> pdims1ir(index_range<k_order1>(ja, jb));
+    dimensions<NB> pdimsb(index_range<NB>(i1, i2));
+    dimensions<NA> pdimsr(index_range<NA>(j1, j2));
 
-    block_index_subspace_builder<k_order2, M> bb(el1.get_bis(), invmsk);
-    el2_t el2(bb.get_bis(), pdims2);
+    block_index_subspace_builder<NB, M> bb(ela.get_bis(), invmsk);
+    elb_t elb(bb.get_bis(), pdimsb);
 
     bool empty = true;
-    abs_index<k_order2> ai2a(pdims2);
+
+    std::vector<bool> done(pdimsb.get_size(), false);
+    // Loop over all partitions in result
+    abs_index<NB> aib1(pdimsb);
     do {
-        const index<k_order2> &i2a = ai2a.get_index();
+        if (done[aib1.get_abs_index()]) continue;
 
-        // Create a list of all possible indexes from the input
-        std::list< index<k_order1> > la;
-        abs_index<k_order1> ai3a(pdims1r);
+        const index<NB> &ib1 = aib1.get_index();
+
+        // Create a list of all unique, non-forbidden partitions from the
+        // input which map on ib1
+        plist_type l1;
+
+        abs_index<NR> ai1(rpdims);
         do {
-            const index<k_order1> &i3a = ai3a.get_index();
+            const index<NR> &idx = ai1.get_index();
 
-            index<k_order1> i1a;
-            for (register size_t i = 0, j = 0; i < k_order1; i++) {
-                if (params.msk[i])
-                    i1a[i] = (ixa[params.rseq[i]]
-                                  + i3a[params.rseq[i]]) * pdims1ir[i];
-                else
-                    i1a[i] = i2a[j++];
+            index<NA> ia;
+            for (register size_t i = 0, j = 0; i < NA; i++) {
+                if (params.msk[i]) {
+                    size_t ir = params.rseq[i];
+                    ia[i] = (i1rp[ir] + idx[ir]) * pdimsr[i];
+                }
+                else {
+                    ia[i] = ib1[j++];
+                }
             }
 
-            if (! is_forbidden(el1, i1a, pdims1ir)) la.push_back(i1a);
+            // Do not add to list if forbidden
+            if (is_forbidden(ela, ia, pdimsr)) continue;
 
-        } while (ai3a.inc());
+            // See if there already exist a partition in list which maps onto
+            // the current
+            typename plist_type::iterator il1 = l1.begin();
+            for (; il1 != l1.end(); il1++) {
+                if (map_exists(ela, il1->first, ia, pdimsr)) break;
+            }
+            // If not, just add the partition
+            if (il1 == l1.end()) {
+                l1.push_back(part_type(ia, scalar_transf<T>()));
+            }
+            // If so, add the transformation
+            else {
+                scalar_transf_sum<T> sum;
+                sum.add(il1->second);
+                sum.add(ela.get_transf(il1->first, ia));
+                il1->second = sum.get_transf();
+            }
+        } while (ai1.inc());
 
-        if (la.empty()) {
+        // Remove all partitions with zero transformation from list
+        typename plist_type::iterator il1 = l1.begin();
+        while (il1 != l1.end()) {
 
-            el2.mark_forbidden(i2a);
+            if (il1->second.is_zero()) il1 = l1.erase(il1);
+            else il1++;
+        }
+
+        done[aib1.get_abs_index()] = true;
+
+        // If the list is empty the partition is automatically forbidden
+        if (l1.empty()) {
+            elb.mark_forbidden(ib1);
             empty = false;
             continue;
         }
 
-        abs_index<k_order2> ai2b(i2a, pdims2);
-        while (ai2b.inc()) {
+        // Search maps from current index ib1
+        abs_index<NB> aib2(ib1, pdimsb);
+        while (aib2.inc()) {
 
-            const index<k_order2> &i2b = ai2b.get_index();
+            const index<NB> &ib2 = aib2.get_index();
 
-            std::list< index<k_order1> > lb;
+            // Create a second list of partitions for ib2
+            plist_type l2;
 
-            abs_index<k_order1> ai3b(pdims1r);
+            abs_index<NR> ai2(rpdims);
             do {
-                const index<k_order1> &i3b = ai3b.get_index();
+                const index<NR> &idx = ai2.get_index();
 
-                index<k_order1> i1b;
-                for (register size_t i = 0, j = 0; i < k_order1; i++) {
-                    if (params.msk[i])
-                        i1b[i] = (ixa[params.rseq[i]]
-                                      + i3b[params.rseq[i]]) * pdims1ir[i];
-                    else
-                        i1b[i] = i2b[j++];
+                index<NA> ia;
+                for (register size_t i = 0, j = 0; i < NA; i++) {
+                    if (params.msk[i]) {
+                        size_t ir = params.rseq[i];
+                        ia[i] = (i1rp[ir] + idx[ir]) * pdimsr[i];
+                    }
+                    else {
+                        ia[i] = ib2[j++];
+                    }
                 }
 
-                if (! is_forbidden(el1, i1b, pdims1ir)) lb.push_back(i1b);
+                // Do not add to list if forbidden
+                if (is_forbidden(ela, ia, pdimsr)) continue;
 
-            } while (ai3b.inc());
+                // See if there already exist a partition in list which maps onto
+                // the current
+                typename plist_type::iterator il2 = l2.begin();
+                for (; il2 != l2.end(); il2++) {
+                    if (map_exists(ela, il2->first, ia, pdimsr)) break;
+                }
+                // If not, just add the partition
+                if (il2 == l2.end()) {
+                    l2.push_back(part_type(ia, scalar_transf<T>()));
+                }
+                // If so, add the transformation
+                else {
+                    scalar_transf_sum<T> sum;
+                    sum.add(il2->second);
+                    sum.add(ela.get_transf(il2->first, ia));
+                    il2->second = sum.get_transf();
+                }
+            } while (ai2.inc());
 
-            if (lb.empty()) continue;
+            // Remove all partitions with zero transformation from list
+            typename plist_type::iterator il2 = l2.begin();
+            while (il2 != l2.end()) {
 
+                if (il2->second.is_zero()) il2 = l2.erase(il2);
+                else il2++;
+            }
+
+            // If the list is empty the partition is automatically forbidden
+            if (l2.empty()) {
+                elb.mark_forbidden(ib2);
+                done[aib2.get_abs_index()] = true;
+                empty = false;
+                continue;
+            }
+
+            // Check there is a map from l1 to l2
             bool found = false;
-            scalar_transf<T> tr;
-            typename std::list< index<k_order1> >::iterator ila = la.begin();
-            for ( ; ila != la.end(); ila++) {
+            scalar_transf<T> trb;
+            il1 = l1.begin();
+            for ( ; il1 != l1.end(); il1++) {
 
-                typename std::list< index<k_order1> >::iterator ilb =
-                        lb.begin();
-                for ( ; ilb != lb.end(); ilb++) {
-                    if (map_exists(el1, *ila, *ilb, pdims1ir)) break;
-                } // for lb
+                il2 = l2.begin();
+                for ( ; il2 != l2.end(); il2++) {
+                    if (map_exists(ela, il1->first, il2->first, pdimsr)
+                            && (il1->second == il2->second)) break;
+                } // for l2
 
-                if (ilb == lb.end()) break;
+                if (il2 == l2.end()) break;
 
-                scalar_transf<T> trx = el1.get_transf(*ila, *ilb);
-                if (found && tr != trx) break;
+                scalar_transf<T> tr = ela.get_transf(il1->first, il2->first);
+                if (found && trb != tr) break;
 
-                tr = trx;
+                trb = tr;
                 found = true;
-                lb.erase(ilb);
-            } // for la
+                l2.erase(il2);
+            } // for l1
 
-            if (ila == la.end()) {
-                el2.add_map(i2a, i2b, tr);
+            if (il1 == l1.end()) {
+                elb.add_map(ib1, ib2, trb);
                 empty = false;
                 break;
             }
+        } // while aib2
+    } while (aib1.inc());
 
-        } // while ai2b
-    } while (ai2a.inc());
-
-    if (! empty) params.grp2.insert(el2);
+    if (! empty) params.g2.insert(elb);
 }
 
 template<size_t N, size_t M, typename T>
-bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
-is_forbidden(const el1_t &el, const index<k_order1> &idx,
-        const dimensions<k_order1> &subdims) {
+bool
+symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::is_forbidden(
+    const ela_t &el, const index<NA> &idx, const dimensions<NA> &subdims) {
 
     if (! el.is_forbidden(idx)) return false;
 
     bool forbidden = true;
-    abs_index<k_order1> aix(subdims);
-    while (aix.inc()) {
-        const index<k_order1> &ix = aix.get_index();
-        index<k_order1> ia;
-        for (register size_t i = 0; i < k_order1; i++) ia[i] = idx[i] + ix[i];
+    abs_index<NA> ai(subdims);
+    while (ai.inc()) {
+        const index<NA> &ix = ai.get_index();
+        index<NA> ia;
+        for (register size_t i = 0; i < NA; i++) ia[i] = idx[i] + ix[i];
 
         if (! el.is_forbidden(ia)) { forbidden = false; break; }
     }
@@ -201,25 +282,26 @@ is_forbidden(const el1_t &el, const index<k_order1> &idx,
 }
 
 template<size_t N, size_t M, typename T>
-bool symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::
-map_exists(const el1_t &el, const index<k_order1> &ia,
-        const index<k_order1> &ib, const dimensions<k_order1> &subdims) {
+bool
+symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::map_exists(
+    const ela_t &el, const index<NA> &i1, const index<NA> &i2,
+    const dimensions<NA> &subdims) {
 
-    if (! el.map_exists(ia, ib)) return false;
+    if (! el.map_exists(i1, i2)) return false;
 
     bool exists = true;
-    scalar_transf<T> tr = el.get_transf(ia, ib);
+    scalar_transf<T> tr = el.get_transf(i1, i2);
 
-    abs_index<k_order1> aix(subdims);
-    while (aix.inc() && exists) {
-        const index<k_order1> &ix = aix.get_index();
-        index<k_order1> i1a, i1b;
-        for (register size_t i = 0; i < k_order1; i++) {
-            i1a[i] = ia[i] + ix[i];
-            i1b[i] = ib[i] + ix[i];
+    abs_index<NA> ai(subdims);
+    while (ai.inc() && exists) {
+        const index<NA> &ix = ai.get_index();
+        index<NA> ia1, ia2;
+        for (register size_t i = 0; i < NA; i++) {
+            ia1[i] = i1[i] + ix[i];
+            ia2[i] = i2[i] + ix[i];
         }
 
-        if ((! el.map_exists(i1a, i1b)) || (tr != el.get_transf(i1a, i1b))) {
+        if ((! el.map_exists(ia1, ia2)) || (tr != el.get_transf(ia1, ia2))) {
             exists = false;
         }
     }
@@ -229,4 +311,4 @@ map_exists(const el1_t &el, const index<k_order1> &ia,
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SO_REDUCE_IMPL_PART_H
+#endif // LIBTENSOR_SO_REDUCE_SE_PART_IMPL_H

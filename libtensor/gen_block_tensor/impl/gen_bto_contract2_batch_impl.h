@@ -36,6 +36,7 @@ public:
     { }
 
     virtual ~gen_bto_contract2_prepare_clst_task() { }
+    virtual unsigned long get_cost() const { return 0; }
     virtual void perform();
 
 };
@@ -85,6 +86,7 @@ private:
     temp_block_tensor_c_type &m_btc;
     index<N + M> m_idxc;
     gen_block_stream_i<N + M, bti_traits> &m_out;
+    unsigned long m_cost;
 
 public:
     gen_bto_contract2_task(
@@ -95,6 +97,7 @@ public:
         gen_block_stream_i<N + M, bti_traits> &out);
 
     virtual ~gen_bto_contract2_task() { }
+    virtual unsigned long get_cost() const { return m_cost; }
     virtual void perform();
 
 };
@@ -328,6 +331,7 @@ gen_bto_contract2_task<N, M, K, Traits, Timed>::gen_bto_contract2_task(
 
     m_bto(bto), m_clst(clst), m_btc(btc), m_idxc(idxc), m_out(out) {
 
+    m_cost = m_bto.get_cost(m_clst, m_btc.get_bis(), m_idxc);
 }
 
 

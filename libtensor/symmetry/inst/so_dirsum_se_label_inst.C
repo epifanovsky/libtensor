@@ -18,6 +18,8 @@ class symmetry_operation_impl< so_dirsum<1, 5, double>, se_label<6, double> >;
 template
 class symmetry_operation_impl< so_dirsum<1, 6, double>, se_label<7, double> >;
 template
+class symmetry_operation_impl< so_dirsum<1, 7, double>, se_label<8, double> >;
+template
 class symmetry_operation_impl< so_dirsum<2, 1, double>, se_label<3, double> >;
 template
 class symmetry_operation_impl< so_dirsum<2, 2, double>, se_label<4, double> >;
@@ -77,6 +79,8 @@ template
 class symmetry_operation_impl< so_dirsum<6, 5, double>, se_label<11, double> >;
 template
 class symmetry_operation_impl< so_dirsum<6, 6, double>, se_label<12, double> >;
+template
+class symmetry_operation_impl< so_dirsum<7, 1, double>, se_label<8, double> >;
 template
 class symmetry_operation_impl< so_dirsum<7, 7, double>, se_label<14, double> >;
 template

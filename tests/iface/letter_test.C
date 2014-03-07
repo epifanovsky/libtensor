@@ -1,4 +1,4 @@
-#include <libtensor/iface/letter.h>
+#include <libtensor/expr/iface/letter.h>
 #include "letter_test.h"
 
 namespace libtensor {

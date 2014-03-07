@@ -214,6 +214,7 @@ set(SRC_LINALG
     linalg/linalg_mul2_x_p_p_test.C
     linalg/linalg_mul2_i_i_i_x_test.C
     linalg/linalg_mul2_i_i_x_test.C
+    linalg/linalg_mul2_x_pq_pq_test.C
     linalg/linalg_mul2_x_pq_qp_test.C
     linalg/linalg_mul2_i_ip_p_x_test.C
     linalg/linalg_mul2_i_pi_p_x_test.C
@@ -225,28 +226,64 @@ set(SRC_LINALG
     linalg/linalg_mul2_ij_pi_pj_x_test.C
 )
 
+set(SRC_EXPR
+    expr/libtensor_expr_tests.C
+    expr/libtensor_expr_suite.C
+    expr/expr_tree_test.C
+    expr/graph_test.C
+    expr/node_add_test.C
+    expr/node_contract_test.C
+    expr/node_diag_test.C
+    expr/node_dot_product_test.C
+    expr/node_ident_any_tensor_test.C
+    expr/node_product_test.C
+    expr/node_scalar_test.C
+    expr/node_trace_test.C
+    expr/node_transform_test.C
+)
+
 set(SRC_IFACE
     iface/libtensor_iface_tests.C
     iface/libtensor_iface_suite.C
-    iface/anon_eval_test.C
+    iface/any_tensor_test.C
     iface/bispace_expr_test.C
     iface/bispace_test.C
     iface/btensor_test.C
     iface/contract_test.C
     iface/diag_test.C
-    iface/direct_btensor_test.C
-    iface/direct_eval_test.C
     iface/direct_product_test.C
     iface/dirsum_test.C
     iface/dot_product_test.C
+    iface/eval_btensor_double_test.C
+    iface/eval_register_test.C
     iface/ewmult_test.C
     iface/expr_test.C
-    iface/labeled_btensor_test.C
+    iface/expr_tensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
     iface/mult_test.C
     iface/symm_test.C
     iface/trace_test.C
+)
+
+set(SRC_BLOCK_SPARSE
+    block_sparse/libtensor_block_sparse_tests.C
+    block_sparse/libtensor_block_sparse_suite.C
+    block_sparse/sparse_bispace_test.C
+    block_sparse/sparse_btensor_test.C
+    block_sparse/block_kernels_test.C
+    block_sparse/block_loop_test.C
+    block_sparse/sparse_loop_iterator_test.C
+    block_sparse/sparse_loop_list_test.C
+    block_sparse/sparsity_fuser_test.C
+    block_sparse/sparse_loop_grouper_test.C
+    block_sparse/sparse_block_tree_iterator_test.C
+    block_sparse/sparse_block_tree_test.C
+    block_sparse/direct_sparse_btensor_test.C
+)
+
+set(SRC_BLOCK_SPARSE_BENCHMARK
+	block_sparse/libtensor_block_sparse_benchmark.C
 )
 
 set(TARGETS
@@ -257,19 +294,23 @@ set(TARGETS
     libtensor_ctf_dense_tensor_tests
     libtensor_ctf_block_tensor_tests
     libtensor_btod_tests
+    libtensor_expr_tests
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
+    libtensor_block_sparse_tests
 )
 
 add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_btod_tests ${SRC_BTOD})
+add_executable(libtensor_expr_tests ${SRC_EXPR})
 add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
+add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
 add_executable(libtensor_ctf_block_tensor_tests ${SRC_CTF_BLOCK_TENSOR})
 
@@ -294,4 +335,14 @@ foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor ctf ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
+
+# Want custom address sanitizer flags so add later
+target_link_libraries(libtensor_block_sparse_tests tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
+# Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
+# Want optimization but also debug symbols for profiling
+add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
+set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
+target_link_libraries(libtensor_block_sparse_benchmark tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
 

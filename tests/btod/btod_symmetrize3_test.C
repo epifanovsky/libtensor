@@ -33,6 +33,8 @@ void btod_symmetrize3_test::perform() throw(libtest::test_exception) {
         test_7();
         test_8a();
         test_8b();
+        test_9();
+        test_10();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -941,6 +943,80 @@ void btod_symmetrize3_test::test_9() throw(libtest::test_exception) {
     compare_ref<4>::compare(testname, symb, symb_ref);
 
     compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+}
+
+
+/** \test Symmetrization of a non-symmetric 3-index block %tensor
+        over three indexes specified using permutations
+ **/
+void btod_symmetrize3_test::test_10() throw(libtest::test_exception) {
+
+    static const char *testname = "btod_symmetrize3_test::test_10()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<3> i1, i2;
+    i2[0] = 10; i2[1] = 10; i2[2] = 10;
+    dimensions<3> dims(index_range<3>(i1, i2));
+    block_index_space<3> bis(dims);
+    mask<3> m;
+    m[0] = true; m[1] = true; m[2] = true;
+    bis.split(m, 2);
+    bis.split(m, 5);
+
+    block_tensor<3, double, allocator_t> bta(bis), btb(bis), btb_ref(bis);
+
+    //  Fill in random input
+
+    btod_random<3>().perform(bta);
+    bta.set_immutable();
+
+    //  Prepare reference data
+
+    dense_tensor<3, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+    tod_btconv<3>(bta).perform(ta);
+    tod_add<3> refop(ta);
+    refop.add_op(ta, permutation<3>().permute(0, 1), 1.0);
+    refop.add_op(ta, permutation<3>().permute(0, 2), 1.0);
+    refop.add_op(ta, permutation<3>().permute(1, 2), 1.0);
+    refop.add_op(ta, permutation<3>().permute(0, 1).permute(0, 2), 1.0);
+    refop.add_op(ta, permutation<3>().permute(0, 1).permute(1, 2), 1.0);
+    refop.perform(true, tb_ref);
+
+    symmetry<3, double> symb(bis), symb_ref(bis);
+    scalar_transf<double> tr0, tr1(-1.);
+    symb_ref.insert(se_perm<3, double>(
+        permutation<3>().permute(0, 1), tr0));
+    symb_ref.insert(se_perm<3, double>(
+        permutation<3>().permute(0, 2), tr0));
+
+    //  Run the symmetrization operation
+
+    btod_copy<3> op_copy(bta);
+    btod_symmetrize3<3> op_sym(op_copy, permutation<3>().permute(0, 1),
+        permutation<3>().permute(0, 2), true);
+
+    compare_ref<3>::compare(testname, op_sym.get_symmetry(), symb_ref);
+
+    op_sym.perform(btb);
+    tod_btconv<3>(btb).perform(tb);
+
+    //  Compare against the reference: symmetry and data
+
+    {
+        block_tensor_ctrl<3, double> ctrlb(btb);
+        so_copy<3, double>(ctrlb.req_const_symmetry()).perform(symb);
+    }
+
+    compare_ref<3>::compare(testname, symb, symb_ref);
+    compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

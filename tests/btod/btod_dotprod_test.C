@@ -38,6 +38,8 @@ void btod_dotprod_test::perform() throw(libtest::test_exception) {
     test_10c(false);
     test_11();
     test_12();
+    test_13a();
+    test_13b();
 
     }
     catch (...) {
@@ -1030,6 +1032,150 @@ void btod_dotprod_test::test_12() throw(libtest::test_exception) {
     //  Compare
 
     if(fabs(d - d_ref) > 1e-13) {
+        std::ostringstream ss;
+        ss << "Result does not match reference: " << d << " vs. "
+            << d_ref << " (ref), " << d - d_ref << " (diff).";
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_dotprod_test::test_13a() throw(libtest::test_exception) {
+
+    //  3-dim tensor, four blocks in each dimension,
+    //  permutational anti-symmetry
+
+    static const char testname[] = "btod_dotprod_test::test_13a()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<3> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9;
+    dimensions<3> dims(index_range<3>(i1, i2));
+    block_index_space<3> bis(dims);
+    mask<3> m;
+    m[0] = true; m[1] = true; m[2] = true;
+    bis.split(m, 2);
+    bis.split(m, 5);
+    bis.split(m, 7);
+    block_tensor<3, double, allocator_t> bt1(bis), bt2(bis);
+
+    //  Set up symmetry
+
+    {
+        block_tensor_ctrl<3, double> ctrl1(bt1), ctrl2(bt2);
+
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<3, double> elem1(permutation<3>().permute(0, 1), tr1);
+        se_perm<3, double> elem2(permutation<3>().permute(1, 2), tr1);
+
+        ctrl1.req_symmetry().insert(elem1);
+        ctrl1.req_symmetry().insert(elem2);
+        ctrl2.req_symmetry().insert(elem2);
+    }
+
+    //  Fill in random data
+
+    btod_random<3>().perform(bt1);
+    btod_random<3>().perform(bt2);
+    bt1.set_immutable();
+    bt2.set_immutable();
+
+    //  Compute the dot product
+
+    permutation<3> perm1, perm2;
+    perm1.permute(0, 1).permute(1, 2);
+    perm2.permute(1, 2).permute(0, 1);
+    double d = btod_dotprod<3>(bt1, perm1, bt2, perm2).calculate();
+
+    //  Compute the reference
+
+    dense_tensor<3, double, allocator_t> t1(dims), t2(dims);
+    tod_btconv<3>(bt1).perform(t1);
+    tod_btconv<3>(bt2).perform(t2);
+    double d_ref = tod_dotprod<3>(t1, perm1, t2, perm2).calculate();
+
+    //  Compare
+
+    if(fabs(d - d_ref) > fabs(d_ref) * 1e-14) {
+        std::ostringstream ss;
+        ss << "Result does not match reference: " << d << " vs. "
+            << d_ref << " (ref), " << d - d_ref << " (diff).";
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_dotprod_test::test_13b() throw(libtest::test_exception) {
+
+    //  3-dim tensor, four blocks in each dimension,
+    //  permutational anti-symmetry
+
+    static const char testname[] = "btod_dotprod_test::test_13b()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<3> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9;
+    dimensions<3> dims(index_range<3>(i1, i2));
+    block_index_space<3> bis(dims);
+    mask<3> m;
+    m[0] = true; m[1] = true; m[2] = true;
+    bis.split(m, 2);
+    bis.split(m, 5);
+    bis.split(m, 7);
+    block_tensor<3, double, allocator_t> bt1(bis), bt2(bis);
+
+    //  Set up symmetry
+
+    {
+        block_tensor_ctrl<3, double> ctrl1(bt1), ctrl2(bt2);
+
+        scalar_transf<double> tr0, tr1(-1.);
+        se_perm<3, double> elem1(permutation<3>().permute(0, 1), tr1);
+        se_perm<3, double> elem2(permutation<3>().permute(1, 2), tr1);
+
+        ctrl1.req_symmetry().insert(elem1);
+        ctrl1.req_symmetry().insert(elem2);
+        ctrl2.req_symmetry().insert(elem2);
+    }
+
+    //  Fill in random data
+
+    btod_random<3>().perform(bt1);
+    btod_random<3>().perform(bt2);
+    bt1.set_immutable();
+    bt2.set_immutable();
+
+    //  Compute the dot product
+
+    permutation<3> perm1, perm2;
+    perm1.permute(0, 1).permute(1, 2);
+    perm2.permute(1, 2).permute(0, 1);
+    double d = btod_dotprod<3>(bt2, perm2, bt1, perm1).calculate();
+
+    //  Compute the reference
+
+    dense_tensor<3, double, allocator_t> t1(dims), t2(dims);
+    tod_btconv<3>(bt1).perform(t1);
+    tod_btconv<3>(bt2).perform(t2);
+    double d_ref = tod_dotprod<3>(t1, perm1, t2, perm2).calculate();
+
+    //  Compare
+
+    if(fabs(d - d_ref) > fabs(d_ref) * 1e-14) {
         std::ostringstream ss;
         ss << "Result does not match reference: " << d << " vs. "
             << d_ref << " (ref), " << d - d_ref << " (diff).";

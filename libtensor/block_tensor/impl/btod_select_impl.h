@@ -14,13 +14,13 @@ const char *btod_select<N, ComparePolicy>::k_clazz =
 
 template<size_t N, typename ComparePolicy>
 btod_select<N, ComparePolicy>::btod_select(
-        block_tensor_i<N, double> &bt, compare_type cmp) :
+        block_tensor_rd_i<N, double> &bt, compare_type cmp) :
     m_gbto(bt, cmp) {
 
 }
 
 template<size_t N, typename ComparePolicy>
-btod_select<N, ComparePolicy>::btod_select(block_tensor_i<N, double> &bt,
+btod_select<N, ComparePolicy>::btod_select(block_tensor_rd_i<N, double> &bt,
         const symmetry<N, double> &sym, compare_type cmp) :
     m_gbto(bt, sym, cmp) {
 

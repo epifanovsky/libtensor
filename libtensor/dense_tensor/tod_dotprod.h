@@ -51,7 +51,7 @@ namespace libtensor {
 template<size_t N>
 class tod_dotprod : public timings< tod_dotprod<N> >, public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     dense_tensor_rd_i<N,double> &m_ta; //!< First tensor (A)

@@ -28,6 +28,8 @@ private:
     void test_10c(bool both) throw(libtest::test_exception);
     void test_11() throw(libtest::test_exception);
     void test_12() throw(libtest::test_exception);
+    void test_13a() throw(libtest::test_exception);
+    void test_13b() throw(libtest::test_exception);
 
 };
 

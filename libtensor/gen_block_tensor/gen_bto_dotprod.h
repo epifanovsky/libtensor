@@ -47,7 +47,7 @@ public:
     typedef tensor_transf<N, element_type> tensor_transf_type;
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     struct arg {
@@ -56,13 +56,13 @@ private:
         tensor_transf_type tr1;
         tensor_transf_type tr2;
 
-        arg(gen_block_tensor_rd_i<N, bti_traits> &bt1_,
+        arg(
+            gen_block_tensor_rd_i<N, bti_traits> &bt1_,
             const tensor_transf_type &tr1_,
             gen_block_tensor_rd_i<N, bti_traits> &bt2_,
             const tensor_transf_type &tr2_) :
-            bt1(bt1_), bt2(bt2_), tr1(tr1_), tr2(tr2_) {
-
-        }
+            bt1(bt1_), bt2(bt2_), tr1(tr1_), tr2(tr2_)
+        { }
     };
 
 private:
@@ -73,26 +73,26 @@ public:
     /** \brief Initializes the first argument pair
      **/
     gen_bto_dotprod(
-            gen_block_tensor_rd_i<N, bti_traits> &bt1,
-            const tensor_transf_type &tr1,
-            gen_block_tensor_rd_i<N, bti_traits> &bt2,
-            const tensor_transf_type &tr2);
+        gen_block_tensor_rd_i<N, bti_traits> &bt1,
+        const tensor_transf_type &tr1,
+        gen_block_tensor_rd_i<N, bti_traits> &bt2,
+        const tensor_transf_type &tr2);
 
     /** \brief Adds a pair of arguments
      **/
     void add_arg(
-            gen_block_tensor_rd_i<N, bti_traits> &bt1,
-            const tensor_transf_type &tr1,
-            gen_block_tensor_rd_i<N, bti_traits> &bt2,
-            const tensor_transf_type &tr2);
+        gen_block_tensor_rd_i<N, bti_traits> &bt1,
+        const tensor_transf_type &tr1,
+        gen_block_tensor_rd_i<N, bti_traits> &bt2,
+        const tensor_transf_type &tr2);
 
     /** \brief Computes the dot product for all argument pairs
      **/
     void calculate(std::vector<element_type> &v);
+
 };
 
 
 } // namespace libtensor
-
 
 #endif // LIBTENSOR_GEN_BTO_DOTPROD_H

@@ -6,6 +6,7 @@
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_add.h>
 #include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include "btod_add_test.h"
 #include "../compare_ref.h"
@@ -45,6 +46,8 @@ void btod_add_test::perform() throw(libtest::test_exception) {
     test_10(0.0);
     test_10(0.5);
     test_10(-1.0);
+    test_11(true);
+    test_11(false);
 
     test_exc();
 
@@ -712,6 +715,85 @@ void btod_add_test::test_10(double d) throw(libtest::test_exception) {
     tod_btconv<4>(btc).perform(tc);
 
     compare_ref<4>::compare(tnss.str().c_str(), tc, tc_ref, 1e-14);
+
+    } catch(exception &e) {
+        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "btod_add_test::test_11(" << (sign ? '+' : '-') << ")";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 6; i2[1] = 12;
+    dimensions<2> dims(index_range<2>(i1, i2));
+    block_index_space<2> bis(dims);
+    mask<2> m1, m2;
+    m1[0] = true; m2[1] = true;
+    bis.split(m1, 2);
+    bis.split(m1, 3);
+    bis.split(m1, 5);
+    bis.split(m2, 3);
+    bis.split(m2, 7);
+    bis.split(m2, 10);
+
+    block_tensor<2, double, allocator_t> bta(bis), btb(bis), btc(bis);
+
+    {
+    block_tensor_wr_ctrl<2, double> ca(bta), cb(btb);
+    mask<2> m; m[0] = m[1] = true;
+    se_part<2, double> sp1(bis, m, 2), sp2(bis, m, 2);
+    index<2> i00, i01, i10, i11;
+    i10[0] = 1; i01[1] = 1; i11[0] = 1; i11[1] = 1;
+    scalar_transf<double> tr(sign ? 1. : -1.);
+    sp1.add_map(i00, i11, tr);
+    sp1.mark_forbidden(i01);
+    sp1.mark_forbidden(i10);
+    sp2.mark_forbidden(i00);
+    sp2.mark_forbidden(i01);
+    sp2.mark_forbidden(i10);
+    sp2.mark_forbidden(i11);
+    ca.req_symmetry().insert(sp1);
+    cb.req_symmetry().insert(sp2);
+    }
+
+    //  Load random data for input
+
+    btod_random<2>().perform(bta);
+    btod_random<2>().perform(btb);
+    bta.set_immutable();
+    btb.set_immutable();
+
+    //  Prepare reference
+
+    dense_tensor<2, double, allocator_t> ta(dims), tb(dims),
+        tc(dims), tc_ref(dims);
+    tod_btconv<2>(bta).perform(ta);
+    tod_btconv<2>(btb).perform(tb);
+
+    tod_copy<2>(ta, 1.).perform(true, tc_ref);
+    tod_copy<2>(tb, 1.).perform(false, tc_ref);
+
+    //  Run addition operation
+
+    btod_add<2> op(bta);
+    op.add_op(btb);
+    op.perform(btc);
+    tod_btconv<2>(btc).perform(tc);
+
+    compare_ref<2>::compare(tnss.str().c_str(), tc, tc_ref, 1e-14);
+    {
+    block_tensor_rd_ctrl<2, double> ca(bta), cc(btc);
+    compare_ref<2>::compare(tnss.str().c_str(),
+            cc.req_const_symmetry(), ca.req_const_symmetry());
+    }
 
     } catch(exception &e) {
         fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
