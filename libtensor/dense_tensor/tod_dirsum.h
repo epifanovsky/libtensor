@@ -80,9 +80,6 @@ public:
      **/
     void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
 
-private:
-    static dimensions<N + M> mk_dimsc(dense_tensor_rd_i<k_ordera, double> &ta,
-        dense_tensor_rd_i<k_orderb, double> &tb);
 };
 
 

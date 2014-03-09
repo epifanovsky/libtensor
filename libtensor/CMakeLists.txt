@@ -74,6 +74,7 @@ set(SRC_INST
     dense_tensor/impl/dense_tensor.C
     dense_tensor/impl/to_contract2_dims.C
     dense_tensor/impl/to_diag_dims.C
+    dense_tensor/impl/to_dirsum_dims.C
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
     dense_tensor/impl/tod_compare.C
@@ -292,6 +293,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_contract2.C
     ctf_dense_tensor/impl/ctf_tod_copy.C
     ctf_dense_tensor/impl/ctf_tod_diag.C
+    ctf_dense_tensor/impl/ctf_tod_dirsum.C
     ctf_dense_tensor/impl/ctf_tod_dotprod.C
     ctf_dense_tensor/impl/ctf_tod_distribute.C
 )
