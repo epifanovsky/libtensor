@@ -40,7 +40,7 @@ public:
                              const std::vector<batch_provider<T>*>& batch_providers,
                              const std::vector<T*>& ptrs,
                              size_t mem_avail,
-                             const idx_list& forced_batched_loops) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,mem_avail,forced_batched_loops),m_bc2k(sparse_loop_list(loops)) {}
+                             const idx_pair_list& forced_batched_bs) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,mem_avail,forced_batched_bs),m_bc2k(sparse_loop_list(loops)) {}
 
     virtual batch_provider<T>* clone() const { return new contract2_batch_provider(*this); }
 };
@@ -202,7 +202,7 @@ public:
         }
 
         //Are we forcing batching over a specific index?
-        std::vector<size_t> forced_batched_loops;
+        idx_pair_list forced_batched_bs;
         if(m_batch_idx != NULL)
         {
             bool found = false;
@@ -213,8 +213,7 @@ public:
                 const letter& a = C_le.letter_at(i);
                 if(a == *m_batch_idx) 
                 {
-                    bispace_idx = 0;
-                    subspace_idx = i;
+                    forced_batched_bs.push_back(idx_pair(0,i));
                     found = true;
                 }
             }
@@ -223,8 +222,7 @@ public:
                 const letter& a = m_A_letter_expr.letter_at(i);
                 if(a == *m_batch_idx) 
                 {
-                    bispace_idx = 1;
-                    subspace_idx = i;
+                    forced_batched_bs.push_back(idx_pair(1,i));
                     found = true;
                 }
             }
@@ -233,8 +231,7 @@ public:
                 const letter& a = m_B_letter_expr.letter_at(i);
                 if(a == *m_batch_idx) 
                 {
-                    bispace_idx = 2;
-                    subspace_idx = i;
+                    forced_batched_bs.push_back(idx_pair(2,i));
                     found = true;
                 }
             }
@@ -243,25 +240,13 @@ public:
                 throw bad_parameter(g_ns, k_clazz,"get_batch_provider()(...)",
                         __FILE__, __LINE__, "Specified batch idx not found");
             }
-
-            for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
-            {
-                const block_loop& loop = loops[loop_idx];
-                if(!loop.is_bispace_ignored(bispace_idx))
-                {
-                    if(loop.get_subspace_looped(bispace_idx) == subspace_idx)
-                    {
-                        forced_batched_loops.push_back(loop_idx);
-                    }
-                }
-            }
         }
 
         //Empty entry will be filled in by output batch
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
-        return new contract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,m_mem_avail,forced_batched_loops);
+        return new contract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,m_mem_avail,forced_batched_bs);
     };
 };
 
