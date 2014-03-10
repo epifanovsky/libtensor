@@ -275,9 +275,9 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
                 std::map<idx_pair,idx_pair> this_bispace_batch;
                 this_bispace_batch[idx_pair(0,subspace_idx)] = batches[batch_idx];
                 m_batch_providers[direct_tensor_rel_idx]->set_mem_avail(m_mem_avail);
-                if(m_forced_batched_bs.size() > 0)
+                if(!batched_loop.is_bispace_ignored(bispace_idx))
                 {
-                    m_batch_providers[direct_tensor_rel_idx]->set_forced_batched_bs(idx_pair_list(1,idx_pair(bispace_idx,subspace_idx)));
+                    m_batch_providers[direct_tensor_rel_idx]->set_forced_batched_bs(idx_pair_list(1,idx_pair(0,subspace_idx)));
                 }
                 m_batch_providers[direct_tensor_rel_idx]->get_batch(m_ptrs[bispace_idx],this_bispace_batch);
             }
@@ -293,9 +293,9 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
             size_t subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
 
             m_batch_providers[direct_tensor_rel_idx]->set_mem_avail(m_mem_avail);
-            if(m_forced_batched_bs.size() > 0)
+            if(!batched_loop.is_bispace_ignored(bispace_idx))
             {
-                m_batch_providers[direct_tensor_rel_idx]->set_forced_batched_bs(idx_pair_list(1,idx_pair(bispace_idx,subspace_idx)));
+                m_batch_providers[direct_tensor_rel_idx]->set_forced_batched_bs(idx_pair_list(1,idx_pair(0,subspace_idx)));
             }
             m_batch_providers[direct_tensor_rel_idx]->get_batch(m_ptrs[bispace_idx]);
         }
