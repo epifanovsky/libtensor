@@ -298,6 +298,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_dotprod.C
     ctf_dense_tensor/impl/ctf_tod_distribute.C
     ctf_dense_tensor/impl/ctf_tod_ewmult2.C
+    ctf_dense_tensor/impl/ctf_tod_scale.C
 )
 
 if(WITH_ARMADILLO)

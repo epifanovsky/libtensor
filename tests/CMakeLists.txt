@@ -105,6 +105,7 @@ set(SRC_CTF_DENSE_TENSOR
     ctf_dense_tensor/ctf_tod_distribute_test.C
     ctf_dense_tensor/ctf_tod_dotprod_test.C
     ctf_dense_tensor/ctf_tod_ewmult2_test.C
+    ctf_dense_tensor/ctf_tod_scale_test.C
 )
 
 set(SRC_CTF_BLOCK_TENSOR
