@@ -119,16 +119,6 @@ public:
      **/
     void perform(bool zero, dense_tensor_wr_i<k_orderc, double> &tc);
 
-private:
-    /**    \brief Computes the dimensions of the result tensor
-     **/
-    static dimensions<N + M + K> make_dimsc(
-        const dimensions<k_ordera> &dimsa,
-        const permutation<k_ordera> &perma,
-        const dimensions<k_orderb> &dimsb,
-        const permutation<k_orderb> &permb,
-        const permutation<k_orderc> &permc);
-
 };
 
 

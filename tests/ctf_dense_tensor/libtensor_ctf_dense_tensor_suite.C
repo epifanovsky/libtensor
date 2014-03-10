@@ -13,6 +13,7 @@ libtensor_ctf_dense_tensor_suite::libtensor_ctf_dense_tensor_suite() :
     add_test("ctf_tod_dirsum", m_utf_ctf_tod_dirsum);
     add_test("ctf_tod_distribute", m_utf_ctf_tod_distribute);
     add_test("ctf_tod_dotprod", m_utf_ctf_tod_dotprod);
+    add_test("ctf_tod_ewmult2", m_utf_ctf_tod_ewmult2);
 }
 
 
