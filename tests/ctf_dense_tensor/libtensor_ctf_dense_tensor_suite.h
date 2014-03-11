@@ -11,6 +11,7 @@
 #include "ctf_tod_dotprod_test.h"
 #include "ctf_tod_ewmult2_test.h"
 #include "ctf_tod_scale_test.h"
+#include "ctf_tod_trace_test.h"
 
 using libtest::unit_test_factory;
 
@@ -35,6 +36,7 @@ namespace libtensor {
      - libtensor::ctf_tod_dotprod_test
      - libtensor::ctf_tod_ewmult2_test
      - libtensor::ctf_tod_scale_test
+     - libtensor::ctf_tod_trace_test
 
     \ingroup libtensor_ctf_dense_tensor_tests
  **/
@@ -49,6 +51,7 @@ private:
     unit_test_factory<ctf_tod_dotprod_test> m_utf_ctf_tod_dotprod;
     unit_test_factory<ctf_tod_ewmult2_test> m_utf_ctf_tod_ewmult2;
     unit_test_factory<ctf_tod_scale_test> m_utf_ctf_tod_scale;
+    unit_test_factory<ctf_tod_trace_test> m_utf_ctf_tod_trace;
 
 public:
     //! Creates the suite
