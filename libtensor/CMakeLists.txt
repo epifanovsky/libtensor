@@ -300,6 +300,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_ewmult2.C
     ctf_dense_tensor/impl/ctf_tod_scale.C
     ctf_dense_tensor/impl/ctf_tod_set.C
+    ctf_dense_tensor/impl/ctf_tod_set_diag.C
     ctf_dense_tensor/impl/ctf_tod_trace.C
 )
 

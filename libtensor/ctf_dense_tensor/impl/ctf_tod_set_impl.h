@@ -31,7 +31,6 @@ void ctf_tod_set<N>::perform(ctf_dense_tensor_i<N, double> &ta) {
             dta.write(0, 0, 0);
         }
     }
-
 }
 
 
