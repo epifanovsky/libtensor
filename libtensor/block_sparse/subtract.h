@@ -20,8 +20,7 @@ private:
     virtual void init(const std::vector<block_loop>& loops,
                       const idx_list& direct_tensors,
                       const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                      const std::vector<T*>& ptrs,
-                      const std::map<size_t,idx_pair>& loop_batches) 
+                      const std::vector<T*>& ptrs)
     { 
         //TODO: This will break for a '-=' type operation
         //Need to make sure C is zeroed out before contraction

@@ -25,8 +25,7 @@ protected:
     virtual void init(const std::vector<block_loop>& loops,
                       const idx_list& direct_tensors,
                       const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                      const std::vector<T*>& ptrs,
-                      const std::map<size_t,idx_pair>& loop_batches) {};
+                      const std::vector<T*>& ptrs) {};
 
     virtual void run_impl(const std::vector<block_loop>& loops,
                           const idx_list& direct_tensors,
@@ -273,7 +272,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     //Place output in the provided batch memory
     m_ptrs[0] = output_batch_ptr;
 
-    init(m_loops,m_direct_tensors,truncated_bispaces,m_ptrs,loop_batches);
+    init(m_loops,m_direct_tensors,truncated_bispaces,m_ptrs);
 
     //Transmit batch forcing information to all children 
     const block_loop& batched_loop = m_loops[batched_loop_idx];
