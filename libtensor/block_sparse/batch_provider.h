@@ -67,43 +67,13 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
         throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
                 "Can only batch over one subspace at a time at this time.");
     }
-    //Do we need to allocate batch memory for direct tensors that are used as inputs?
+
     std::vector<idx_pair> batches;
     size_t batched_loop_idx = 0;
-
-    //We now batch the loop that touches this bispace/subspace appropriately
     std::vector<sparse_bispace_any_order> bispaces = m_loops[0].get_bispaces();
-    std::map<size_t,idx_pair> loop_batches;
     std::vector<sparse_bispace_any_order> truncated_bispaces(bispaces);
-    for(std::map<idx_pair,idx_pair>::const_iterator it = output_batches.begin(); it != output_batches.end(); ++it)
-    {
-        size_t bispace_idx = it->first.first;
-        size_t subspace_idx = it->first.second;
-        idx_pair bounds = it->second;
-        for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-        {
-            const block_loop& loop = m_loops[loop_idx];
-            if(!loop.is_bispace_ignored(bispace_idx))
-            {
-                if(subspace_idx == loop.get_subspace_looped(bispace_idx))
-                {
-                    loop_batches[loop_idx] = bounds;
+    std::map<size_t,idx_pair> loop_batches;
 
-                    //Batch the whole loop
-                    for(size_t cur_bispace_idx = 0; cur_bispace_idx < bispaces.size(); ++cur_bispace_idx)
-                    {
-                        if(!loop.is_bispace_ignored(cur_bispace_idx))
-                        {
-                            truncated_bispaces[cur_bispace_idx].truncate_subspace(loop.get_subspace_looped(cur_bispace_idx),bounds);
-                        }
-                    }
-                    batched_loop_idx = loop_idx; 
-                    batches.push_back(bounds);
-                    break;
-                }
-            }
-        }
-    }
 
     //Find the direct tensors that don't already have memory allocated for them
     //TODO: Need some recursive implementation of this to be truly rigorous
@@ -119,7 +89,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     }
 
     //See if we need to deal with forced batching considerations
-    if(loop_batches.size() == 0)
+    if(output_batches.size() == 0)
     {
         for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
         {
@@ -142,15 +112,14 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     }
 
 
-    std::vector<size_t> direct_tensors_to_free;
-    if(direct_tensors_to_alloc.size() > 0)
+    //Do we need to compute batch information?
+    if(output_batches.size() == 0)
     {
-        //We will partition our available memory equally among them - it's a hack but whatever
-        size_t mem_per_tensor = m_mem_avail/direct_tensors_to_alloc.size();
-
-        //Are we alloed to determine our own batching?
-        if(output_batches.size() == 0)
+        if(direct_tensors_to_alloc.size() > 0)
         {
+            //We will partition our available memory equally among them - it's a hack but whatever
+            size_t mem_per_tensor = m_mem_avail/direct_tensors_to_alloc.size();
+
             //Do we need to batch beyond what is enforced by the output tensor batching? 
             bool need_to_batch = false;
             for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
@@ -243,26 +212,61 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
                     {
                         size_t subspace_idx = batched_loop.get_subspace_looped(cur_bispace_idx);
                         truncated_bispaces[cur_bispace_idx].truncate_subspace(subspace_idx,batches[max_batch_inds[cur_bispace_idx]]);
+                        if(truncated_bispaces[cur_bispace_idx].get_nnz()*sizeof(T) > mem_per_tensor)
+                        {
+                            throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__, 
+                                "after batching one loop a tensor still does not fit in memory");
+                                    
+                        }
                     }
                 }
             }
         }
+    }
+    else
+    {
+        //Use the batch information enforced by higher-level  
+        for(std::map<idx_pair,idx_pair>::const_iterator it = output_batches.begin(); it != output_batches.end(); ++it)
+        {
+            size_t bispace_idx = it->first.first;
+            size_t subspace_idx = it->first.second;
+            idx_pair bounds = it->second;
+            for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
+            {
+                const block_loop& loop = m_loops[loop_idx];
+                if(!loop.is_bispace_ignored(bispace_idx))
+                {
+                    if(subspace_idx == loop.get_subspace_looped(bispace_idx))
+                    {
+                        loop_batches[loop_idx] = bounds;
 
+                        //Batch the whole loop
+                        for(size_t cur_bispace_idx = 0; cur_bispace_idx < bispaces.size(); ++cur_bispace_idx)
+                        {
+                            if(!loop.is_bispace_ignored(cur_bispace_idx))
+                            {
+                                truncated_bispaces[cur_bispace_idx].truncate_subspace(loop.get_subspace_looped(cur_bispace_idx),bounds);
+                            }
+                        }
+                        batched_loop_idx = loop_idx; 
+                        batches.push_back(bounds);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    //Do we need to allocate storage for our input tensors? 
+    std::vector<size_t> direct_tensors_to_free;
+    if(direct_tensors_to_alloc.size() > 0)
+    {
         //Alloc the memory for input direct tensors
         for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx) 
         {
             size_t cur_bispace_idx = direct_tensors_to_alloc[direct_tensor_rel_idx];
-            if(truncated_bispaces[cur_bispace_idx].get_nnz()*sizeof(T) > mem_per_tensor)
-            {
-                throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__, 
-                    "after batching one loop a tensor still does not fit in memory");
-                        
-            }
-            else
-            {
-                m_ptrs[cur_bispace_idx] = new T[truncated_bispaces[cur_bispace_idx].get_nnz()];
-                direct_tensors_to_free.push_back(cur_bispace_idx);
-            }
+            m_ptrs[cur_bispace_idx] = new T[truncated_bispaces[cur_bispace_idx].get_nnz()];
+            direct_tensors_to_free.push_back(cur_bispace_idx);
         }
     }
 
