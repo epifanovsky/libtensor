@@ -338,7 +338,8 @@ set_property(TARGET libtensor_ctf_block_tensor_tests APPEND PROPERTY
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
-    tensor ctf ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+    tensor tensor_libctf ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS}
+    test)
 endforeach(TARGET)
 
 # Want custom address sanitizer flags so add later

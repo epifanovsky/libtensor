@@ -6,6 +6,7 @@
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../ctf_dense_tensor_ctrl.h"
+#include "../ctf_error.h"
 #include "../ctf_tod_collect.h"
 
 namespace libtensor {
@@ -25,26 +26,24 @@ void ctf_tod_collect<N>::perform(dense_tensor_wr_i<N, double> &t) {
     }
 
     size_t sz = m_dt.get_dims().get_size();
-    double *data;
-    int64_t n;
 
     ctf_dense_tensor_ctrl<N, double> dctrl(m_dt);
-    tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
-    dt.get_all_data(&n, &data);
+    dense_tensor_wr_ctrl<N, double> ctrl(t);
 
-    if(n != sz) {
-        //free_buffer_space(data);
-        free(data);
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "dt");
+    tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
+    double *p = ctrl.req_dataptr();
+
+    ::memset(p, 0, sizeof(double) * sz);
+
+    const size_t bufsz = 1024 * 1024;
+    std::vector<long_int> idx(bufsz);
+    for(size_t i = 0; i < sz; i += bufsz) {
+        size_t n = std::min(sz - i, bufsz);
+        for(size_t j = 0; j < n; j++) idx[j] = long_int(i + j);
+        dt.read(n, &idx[0], p + i);
     }
 
-    dense_tensor_wr_ctrl<N, double> ctrl(t);
-    double *p = ctrl.req_dataptr();
-    ::memcpy(p, data, sz * sizeof(double));
     ctrl.ret_dataptr(p);
-
-    //free_buffer_space(data);
-    free(data);
 }
 
 

@@ -42,13 +42,13 @@ void ctf_tod_distribute<N>::perform(ctf_dense_tensor_i<N, double> &dt) {
 
         ctf_dense_tensor_ctrl<N, double> dctrl(dt);
         tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
-        dt.write_remote_data(sz, &keys[0], &data[0]);
+        dt.write(sz, &keys[0], &data[0]);
 
     } else {
 
         ctf_dense_tensor_ctrl<N, double> dctrl(dt);
         tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
-        dt.write_remote_data(0, 0, 0);
+        dt.write(0, 0, 0);
 
     }
 }

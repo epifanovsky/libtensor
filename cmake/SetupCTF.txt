@@ -1,0 +1,45 @@
+if(NOT DIR_CTF)
+    set(DIR_CTF "$ENV{CTF_SRC}")
+endif(NOT DIR_CTF)
+
+if(DIR_CTF)
+
+set(WITH_CTF TRUE)
+set(CTF_INCLUDE_DIR "${DIR_CTF}/include")
+
+set(SRC_CTF
+    interface/ctf_world.cxx
+    interface/ctf_tensor.cxx
+    interface/ctf_matrix.cxx
+    interface/ctf_scalar.cxx
+    #interface/ctf_schedule.cxx
+    interface/ctf_vector.cxx
+    interface/ctf_term.cxx
+    interface/ctf_idx_tensor.cxx
+    interface/ctf_sparse_tensor.cxx
+    interface/ctf_flop_counter.cxx
+    #ctr_seq/seq_tsr.cxx
+    #ctr_comm/ctr_2d_general.cxx
+    #ctr_comm/ctr_simple.cxx
+    #ctr_comm/ctr_tsr.cxx
+    #ctr_comm/ctr_offload.cxx
+    #ctr_comm/strp_tsr.cxx
+    shared/util.cxx
+    shared/timer.cxx
+    shared/memcontrol.cxx
+    #dist_tensor/dist_tensor_internal.cxx
+    #dist_tensor/distribution.cxx
+    dist_tensor/cyclopstf.cxx
+)
+foreach(SRC ${SRC_CTF})
+    list(APPEND SRC_CTF_FULL "${DIR_CTF}/src/${SRC}")
+endforeach()
+
+set_property(SOURCE ${SRC_CTF_FULL} APPEND PROPERTY
+    COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+set_property(SOURCE ${SRC_CTF_FULL} APPEND PROPERTY COMPILE_DEFINITIONS
+    INT64_MAX=9223372036854775807L;UINT64_MAX=18446744073709551615UL)
+
+add_library(tensor_libctf ${SRC_CTF_FULL})
+
+endif(DIR_CTF)

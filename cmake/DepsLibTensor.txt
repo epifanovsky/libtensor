@@ -100,10 +100,6 @@ elseif(MPI_FOUND)
     include_directories(${MPI_INCLUDE_PATH})
 endif(MPI_CXX_FOUND)
 
-#   CTF directory
-#
-set(CTF_INCLUDE_DIR "${LIBTENSOR_DIR}/ctf/include")
-
 #   Libtensor dependencies (libraries)
 #
 include_directories(${BLAS_LAPACK_INCLUDE})
