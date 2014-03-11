@@ -115,6 +115,7 @@ set(SRC_CTF_BLOCK_TENSOR
     ctf_block_tensor/libtensor_ctf_block_tensor_tests.C
     ctf_block_tensor/libtensor_ctf_block_tensor_suite.C
     ctf_block_tensor/ctf_btod_collect_test.C
+    ctf_block_tensor/ctf_btod_set_test.C
 )
 
 set(SRC_SYMMETRY
