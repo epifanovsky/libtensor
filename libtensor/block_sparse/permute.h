@@ -24,9 +24,24 @@ private:
         sll.run(*m_bpk_ptr,ptrs,loop_batches);
     }
 
+    template<size_t N>
+    static idx_list init_direct_tensors(const gen_labeled_btensor<N>& lhs,const gen_labeled_btensor<N>& rhs)
+    {
+        idx_list direct_tensors;
+        if(lhs.get_data_ptr() == NULL)
+        {
+            direct_tensors.push_back(0);
+        }
+        if(rhs.get_data_ptr() == NULL)
+        {
+            direct_tensors.push_back(1);
+        }
+        return direct_tensors;
+    }
+
 public:
     template<size_t N>
-    permute2_batch_provider(const gen_labeled_btensor<N>& lhs,const gen_labeled_btensor<N>& rhs) : batch_provider<T>(std::vector<block_loop>(),std::vector<size_t>(),std::vector<batch_provider<T>*>(),std::vector<T*>(),0)
+    permute2_batch_provider(const gen_labeled_btensor<N>& lhs,const gen_labeled_btensor<N>& rhs) : batch_provider<T>(std::vector<block_loop>(),init_direct_tensors(lhs,rhs),std::vector<batch_provider<T>*>(),std::vector<T*>(),0)
     {
         //Determine the permutation of indices between the two tensors
         //We also populate the loops necessary to execute the transformation
@@ -52,13 +67,8 @@ public:
         runtime_permutation perm(permutation_entries);
         m_bpk_ptr = new block_permute_kernel<T>(perm);
 
-        if(lhs.get_data_ptr() == NULL)
-        {
-            this->m_direct_tensors.push_back(0);
-        }
         if(rhs.get_data_ptr() == NULL)
         {
-            this->m_direct_tensors.push_back(1);
             this->m_batch_providers.push_back(rhs.get_batch_provider());
         }
 
