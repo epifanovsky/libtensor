@@ -8,7 +8,7 @@ namespace libtensor {
 
 /** \brief Tests the libtensor::ctf_btod_set class
 
-    \ingroup libtensor_ctf_dense_tensor_tests
+    \ingroup libtensor_ctf_block_tensor_tests
  **/
 class ctf_btod_set_test : public libtest::unit_test {
 public:

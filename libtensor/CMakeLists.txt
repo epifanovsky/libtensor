@@ -288,7 +288,11 @@ set(SRC_EXPR
 
 set(SRC_CTF
     ctf_block_tensor/impl/ctf_block_tensor.C
+    ctf_block_tensor/impl/ctf_btod_addition_schedule.C
+    ctf_block_tensor/impl/ctf_btod_aux_add.C
+    ctf_block_tensor/impl/ctf_btod_aux_copy.C
     ctf_block_tensor/impl/ctf_btod_collect.C
+    ctf_block_tensor/impl/ctf_btod_copy.C
     ctf_block_tensor/impl/ctf_btod_distribute.C
     ctf_block_tensor/impl/ctf_btod_set.C
     ctf_dense_tensor/impl/ctf_dense_tensor.C

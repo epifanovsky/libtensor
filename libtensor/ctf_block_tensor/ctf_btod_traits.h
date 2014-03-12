@@ -9,6 +9,7 @@
 namespace libtensor {
 
 
+template<size_t N> class ctf_tod_copy;
 template<size_t N> class ctf_tod_set;
 
 
@@ -61,12 +62,10 @@ struct ctf_btod_traits {
     };
  */
 
-/*
     template<size_t N>
     struct to_copy_type {
-        typedef tod_copy<N> type;
+        typedef ctf_tod_copy<N> type;
     };
- */
 
 /*
     template<size_t N, size_t M>
