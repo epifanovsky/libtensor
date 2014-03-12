@@ -303,6 +303,7 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_contract2_clst_builder.C
     ctf_block_tensor/impl/ctf_btod_contract2_nzorb.C
     ctf_block_tensor/impl/ctf_btod_copy.C
+    ctf_block_tensor/impl/ctf_btod_diag.C
     ctf_block_tensor/impl/ctf_btod_distribute.C
     ctf_block_tensor/impl/ctf_btod_set.C
     ctf_block_tensor/impl/ctf_btod_unfold_block_list.C

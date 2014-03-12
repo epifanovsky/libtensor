@@ -5,6 +5,7 @@
 #include "ctf_btod_collect_test.h"
 #include "ctf_btod_contract2_test.h"
 #include "ctf_btod_copy_test.h"
+#include "ctf_btod_diag_test.h"
 #include "ctf_btod_set_test.h"
 
 using libtest::unit_test_factory;
@@ -24,6 +25,7 @@ namespace libtensor {
      - libtensor::ctf_btod_collect_test
      - libtensor::ctf_btod_contract2_test
      - libtensor::ctf_btod_copy_test
+     - libtensor::ctf_btod_diag_test
      - libtensor::ctf_btod_set_test
 
     \ingroup libtensor_ctf_block_tensor_tests
@@ -33,6 +35,7 @@ private:
     unit_test_factory<ctf_btod_collect_test> m_utf_ctf_btod_collect;
     unit_test_factory<ctf_btod_contract2_test> m_utf_ctf_btod_contract2;
     unit_test_factory<ctf_btod_copy_test> m_utf_ctf_btod_copy;
+    unit_test_factory<ctf_btod_diag_test> m_utf_ctf_btod_diag;
     unit_test_factory<ctf_btod_set_test> m_utf_ctf_btod_set;
 
 public:
