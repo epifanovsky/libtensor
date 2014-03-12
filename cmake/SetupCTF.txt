@@ -1,40 +1,73 @@
 if(NOT DIR_CTF)
     set(DIR_CTF "$ENV{CTF_SRC}")
 endif(NOT DIR_CTF)
+if(EXISTS "${DIR_CTF}/include/ctf.hpp")
+    set(WITH_CTF TRUE)
+endif()
 
-if(DIR_CTF)
+if(WITH_CTF)
 
-set(WITH_CTF TRUE)
 set(CTF_INCLUDE_DIR "${DIR_CTF}/include")
 
-set(SRC_CTF
+#   Check the version of CTF
+#
+file(STRINGS "${CTF_INCLUDE_DIR}/ctf.hpp" CTF_HPP_LINES REGEX "^#define")
+foreach(LINE ${CTF_HPP_LINES})
+    string(REGEX MATCH "^#define +CTF_VERSION" LINE_1 ${LINE})
+    if(LINE_1)
+        string(REGEX REPLACE "^#define +CTF_VERSION +([0-9]+)" "\\1" LINE_VER
+            ${LINE})
+    endif(LINE_1)
+endforeach()
+if(LINE_VER)
+    string(REGEX REPLACE "^([0-9]+)([0-9][0-9])$" "\\1.\\2" CTF_VERSION
+        ${LINE_VER})
+    if(CTF_VERSION STREQUAL "1.00")
+        set(CTF_VERSION "1.01")
+    endif()
+else(LINE_VER)
+    set(CTF_VERSION "1.00")
+endif(LINE_VER)
+
+#   Build a list of CTF source files
+#
+set(SRC_CTF_100
     interface/ctf_world.cxx
     interface/ctf_tensor.cxx
     interface/ctf_matrix.cxx
     interface/ctf_scalar.cxx
-    #interface/ctf_schedule.cxx
     interface/ctf_vector.cxx
     interface/ctf_term.cxx
     interface/ctf_idx_tensor.cxx
     interface/ctf_sparse_tensor.cxx
     interface/ctf_flop_counter.cxx
-    #ctr_seq/seq_tsr.cxx
-    #ctr_comm/ctr_2d_general.cxx
-    #ctr_comm/ctr_simple.cxx
-    #ctr_comm/ctr_tsr.cxx
-    #ctr_comm/ctr_offload.cxx
-    #ctr_comm/strp_tsr.cxx
     shared/util.cxx
     shared/timer.cxx
     shared/memcontrol.cxx
-    #dist_tensor/dist_tensor_internal.cxx
-    #dist_tensor/distribution.cxx
     dist_tensor/cyclopstf.cxx
 )
+set(SRC_CTF_101
+    interface/ctf_schedule.cxx
+    ctr_seq/seq_tsr.cxx
+    ctr_comm/ctr_2d_general.cxx
+    ctr_comm/ctr_simple.cxx
+    ctr_comm/ctr_tsr.cxx
+    ctr_comm/ctr_offload.cxx
+    ctr_comm/strp_tsr.cxx
+    dist_tensor/dist_tensor_internal.cxx
+    dist_tensor/distribution.cxx
+)
+set(SRC_CTF ${SRC_CTF_100})
+if(CTF_VERSION VERSION_GREATER "1.00")
+    set(SRC_CTF ${SRC_CTF} ${SRC_CTF_101})
+endif()
+
 foreach(SRC ${SRC_CTF})
     list(APPEND SRC_CTF_FULL "${DIR_CTF}/src/${SRC}")
 endforeach()
 
+#   CTF compilation options
+#
 set_property(SOURCE ${SRC_CTF_FULL} APPEND PROPERTY
     COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
 set_property(SOURCE ${SRC_CTF_FULL} APPEND PROPERTY COMPILE_DEFINITIONS
@@ -42,4 +75,6 @@ set_property(SOURCE ${SRC_CTF_FULL} APPEND PROPERTY COMPILE_DEFINITIONS
 
 add_library(tensor_libctf ${SRC_CTF_FULL})
 
-endif(DIR_CTF)
+message(STATUS "Found CTF ${CTF_VERSION}: ${DIR_CTF}")
+
+endif(WITH_CTF)
