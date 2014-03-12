@@ -11,6 +11,8 @@ namespace libtensor {
 /** \brief Copies a distributed CTF block tensor to a local block tensor
     \tparam N Tensor order.
 
+    \sa ctf_btod_distribute
+
     \ingroup libtensor_ctf_block_tensor
  **/
 template<size_t N>

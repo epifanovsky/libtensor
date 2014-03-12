@@ -292,12 +292,38 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_aux_add.C
     ctf_block_tensor/impl/ctf_btod_aux_copy.C
     ctf_block_tensor/impl/ctf_btod_collect.C
+    ctf_block_tensor/impl/ctf_btod_contract2_1.C
+    ctf_block_tensor/impl/ctf_btod_contract2_2.C
+    ctf_block_tensor/impl/ctf_btod_contract2_3.C
+    ctf_block_tensor/impl/ctf_btod_contract2_4.C
+    ctf_block_tensor/impl/ctf_btod_contract2_5.C
+    ctf_block_tensor/impl/ctf_btod_contract2_6.C
+    ctf_block_tensor/impl/ctf_btod_contract2_7.C
+    ctf_block_tensor/impl/ctf_btod_contract2_8.C
+    ctf_block_tensor/impl/ctf_btod_contract2_clst_builder.C
+    ctf_block_tensor/impl/ctf_btod_contract2_nzorb.C
     ctf_block_tensor/impl/ctf_btod_copy.C
     ctf_block_tensor/impl/ctf_btod_distribute.C
     ctf_block_tensor/impl/ctf_btod_set.C
+    ctf_block_tensor/impl/ctf_btod_unfold_block_list.C
     ctf_dense_tensor/impl/ctf_dense_tensor.C
     ctf_dense_tensor/impl/ctf_tod_collect.C
-    ctf_dense_tensor/impl/ctf_tod_contract2.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_1.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_2.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_3.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_4.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_5.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_6.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_7.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_8.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_1.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_2.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_3.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_4.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_5.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_6.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_7.C
+    ctf_dense_tensor/impl/ctf_tod_contract2_streamed_8.C
     ctf_dense_tensor/impl/ctf_tod_copy.C
     ctf_dense_tensor/impl/ctf_tod_diag.C
     ctf_dense_tensor/impl/ctf_tod_dirsum.C

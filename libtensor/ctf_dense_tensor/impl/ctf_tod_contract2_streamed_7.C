@@ -1,0 +1,34 @@
+#include "ctf_tod_contract2_streamed_impl.h"
+
+namespace libtensor {
+
+
+template class ctf_tod_contract2_streamed<0, 7, 1>;
+template class ctf_tod_contract2_streamed<1, 6, 0>;
+template class ctf_tod_contract2_streamed<1, 6, 1>;
+template class ctf_tod_contract2_streamed<1, 6, 2>;
+template class ctf_tod_contract2_streamed<2, 5, 0>;
+template class ctf_tod_contract2_streamed<2, 5, 1>;
+template class ctf_tod_contract2_streamed<2, 5, 2>;
+template class ctf_tod_contract2_streamed<2, 5, 3>;
+template class ctf_tod_contract2_streamed<3, 4, 0>;
+template class ctf_tod_contract2_streamed<3, 4, 1>;
+template class ctf_tod_contract2_streamed<3, 4, 2>;
+template class ctf_tod_contract2_streamed<3, 4, 3>;
+template class ctf_tod_contract2_streamed<3, 4, 4>;
+template class ctf_tod_contract2_streamed<4, 3, 0>;
+template class ctf_tod_contract2_streamed<4, 3, 1>;
+template class ctf_tod_contract2_streamed<4, 3, 2>;
+template class ctf_tod_contract2_streamed<4, 3, 3>;
+template class ctf_tod_contract2_streamed<4, 3, 4>;
+template class ctf_tod_contract2_streamed<5, 2, 0>;
+template class ctf_tod_contract2_streamed<5, 2, 1>;
+template class ctf_tod_contract2_streamed<5, 2, 2>;
+template class ctf_tod_contract2_streamed<5, 2, 3>;
+template class ctf_tod_contract2_streamed<6, 1, 0>;
+template class ctf_tod_contract2_streamed<6, 1, 1>;
+template class ctf_tod_contract2_streamed<6, 1, 2>;
+template class ctf_tod_contract2_streamed<7, 0, 1>;
+
+
+} // namespace libtensor

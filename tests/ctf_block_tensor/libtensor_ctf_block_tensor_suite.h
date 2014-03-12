@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "ctf_btod_collect_test.h"
+#include "ctf_btod_contract2_test.h"
 #include "ctf_btod_copy_test.h"
 #include "ctf_btod_set_test.h"
 
@@ -21,6 +22,7 @@ namespace libtensor {
 
     This suite runs the following tests:
      - libtensor::ctf_btod_collect_test
+     - libtensor::ctf_btod_contract2_test
      - libtensor::ctf_btod_copy_test
      - libtensor::ctf_btod_set_test
 
@@ -29,6 +31,7 @@ namespace libtensor {
 class libtensor_ctf_block_tensor_suite : public libtest::test_suite {
 private:
     unit_test_factory<ctf_btod_collect_test> m_utf_ctf_btod_collect;
+    unit_test_factory<ctf_btod_contract2_test> m_utf_ctf_btod_contract2;
     unit_test_factory<ctf_btod_copy_test> m_utf_ctf_btod_copy;
     unit_test_factory<ctf_btod_set_test> m_utf_ctf_btod_set;
 

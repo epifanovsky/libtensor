@@ -9,6 +9,7 @@
 namespace libtensor {
 
 
+template<size_t N, size_t M, size_t K> class ctf_tod_contract2_streamed;
 template<size_t N> class ctf_tod_copy;
 template<size_t N> class ctf_tod_set;
 
@@ -54,13 +55,11 @@ struct ctf_btod_traits {
     };
  */
 
-/*
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
-        typedef tod_contract2<N, M, K> type;
+        typedef ctf_tod_contract2_streamed<N, M, K> type;
         typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
     };
- */
 
     template<size_t N>
     struct to_copy_type {
