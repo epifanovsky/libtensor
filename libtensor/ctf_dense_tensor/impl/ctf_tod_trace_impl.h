@@ -43,24 +43,12 @@ double ctf_tod_trace<N>::calculate() {
     for(size_t i = 0; i < N; i++) seqb[i] = seqa[N + i] = seqa[i] = int(i);
     permutation<NA>(m_perma, true).apply(seqa);
 
-    char mapa[NA], mapb[N];
+    char mapa[NA];
     for(size_t i = 0; i < NA; i++) mapa[i] = seqa[NA - i - 1] + 1;
-    for(size_t i = 0; i < N; i++) mapb[i] = seqb[N - i - 1] + 1;
 
-    int dimsb[N], symb[N];
-    dimensions<NA> dimsa1(m_ta.get_dims());
-    dimsa1.permute(m_perma);
-    for(size_t i = 0; i < N; i++) {
-        dimsb[i] = int(dimsa1[N - i - 1]);
-        symb[i] = 0;
-    }
-    tCTF_Tensor<double> dtb(N, dimsb, symb, ctf::get_world());
-std::cout << "A ["; for(int i = 0; i < NA; i++) std::cout << dta.len[i] << " "; std::cout << "]; ";
-std::cout << "B ["; for(int i = 0; i < N; i++) std::cout << dtb.len[i] << " "; std::cout << "]" << std::endl;
-std::cout << "("; for(int i = 0; i < N; i++) std::cout << int(mapb[i]); std::cout << ") <- "; 
-std::cout << "("; for(int i = 0; i < NA; i++) std::cout << int(mapa[i]); std::cout << ")" << std::endl;
-    dtb.sum(1.0, dta, mapa, 0.0, mapb);
-    return dtb.reduce(CTF_OP_SUM);
+    tCTF_Scalar<double> dtb(0.0, ctf::get_world());
+    dtb.sum(1.0, dta, mapa, 0.0, 0);
+    return dtb.get_val();
 }
 
 
