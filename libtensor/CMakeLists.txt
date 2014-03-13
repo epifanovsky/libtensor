@@ -304,6 +304,7 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_contract2_nzorb.C
     ctf_block_tensor/impl/ctf_btod_copy.C
     ctf_block_tensor/impl/ctf_btod_diag.C
+    ctf_block_tensor/impl/ctf_btod_dirsum.C
     ctf_block_tensor/impl/ctf_btod_distribute.C
     ctf_block_tensor/impl/ctf_btod_set.C
     ctf_block_tensor/impl/ctf_btod_unfold_block_list.C
@@ -332,6 +333,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_distribute.C
     ctf_dense_tensor/impl/ctf_tod_ewmult2.C
     ctf_dense_tensor/impl/ctf_tod_scale.C
+    ctf_dense_tensor/impl/ctf_tod_scatter.C
     ctf_dense_tensor/impl/ctf_tod_set.C
     ctf_dense_tensor/impl/ctf_tod_set_diag.C
     ctf_dense_tensor/impl/ctf_tod_trace.C

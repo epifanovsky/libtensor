@@ -1,4 +1,3 @@
-#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_diag_impl.h>
 #include "ctf_btod_diag_impl.h"
 

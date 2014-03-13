@@ -12,6 +12,8 @@ namespace libtensor {
 template<size_t N, size_t M, size_t K> class ctf_tod_contract2_streamed;
 template<size_t N> class ctf_tod_copy;
 template<size_t N, size_t M> class ctf_tod_diag;
+template<size_t N, size_t M> class ctf_tod_dirsum;
+template<size_t N, size_t M> class ctf_tod_scatter;
 template<size_t N> class ctf_tod_set;
 
 
@@ -72,12 +74,10 @@ struct ctf_btod_traits {
         typedef ctf_tod_diag<N, M> type;
     };
 
-/*
     template<size_t N, size_t M>
     struct to_dirsum_type {
-        typedef tod_dirsum<N, M> type;
+        typedef ctf_tod_dirsum<N, M> type;
     };
- */
 
 /*
     template<size_t N>
@@ -128,12 +128,10 @@ struct ctf_btod_traits {
     };
  */
 
-/*
     template<size_t N, size_t M>
     struct to_scatter_type {
-        typedef tod_scatter<N, M> type;
+        typedef ctf_tod_scatter<N, M> type;
     };
- */
 
 /*
     template<size_t N, typename ComparePolicy>
