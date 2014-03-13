@@ -120,6 +120,7 @@ set(SRC_CTF_BLOCK_TENSOR
     ctf_block_tensor/ctf_btod_copy_test.C
     ctf_block_tensor/ctf_btod_diag_test.C
     ctf_block_tensor/ctf_btod_dirsum_test.C
+    ctf_block_tensor/ctf_btod_ewmult2_test.C
     ctf_block_tensor/ctf_btod_set_test.C
 )
 
