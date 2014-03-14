@@ -24,7 +24,7 @@ public:
         return m_tr;
     }
 
-    btensor<N, T> &get_btensor() const;
+    btensor_i<N, T> &get_btensor() const;
     btensor<N, T> &get_or_create_btensor(const block_index_space<N> &bis);
 
 };
@@ -44,7 +44,7 @@ btensor_from_node<N, T>::btensor_from_node(const expr_tree &tree,
 
 
 template<size_t N, typename T>
-btensor<N, T> &btensor_from_node<N, T>::get_btensor() const {
+btensor_i<N, T> &btensor_from_node<N, T>::get_btensor() const {
 
     const node &n = m_tree.get_vertex(m_leaf);
 
@@ -52,7 +52,8 @@ btensor<N, T> &btensor_from_node<N, T>::get_btensor() const {
 
         const node_ident_any_tensor<N, T> &ni =
             n.template recast_as< node_ident_any_tensor<N, T> >();
-        return btensor<N, T>::from_any_tensor(ni.get_tensor());
+        any_tensor<N, T> &t = ni.get_tensor();
+        return t.template get_tensor< btensor_i<N, T> >();
 
     } else if(n.check_type<node_interm_base>()) {
 
