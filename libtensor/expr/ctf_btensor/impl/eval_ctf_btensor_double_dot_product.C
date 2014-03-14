@@ -1,15 +1,16 @@
-#include <libtensor/block_tensor/btod_dotprod.h>
+#include <libtensor/ctf_block_tensor/ctf_btod_dotprod.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
-#include "tensor_from_node.h"
-#include "eval_btensor_double_dot_product.h"
+#include "ctf_btensor_from_node.h"
+#include "eval_ctf_btensor_double_dot_product.h"
 
 namespace libtensor {
 namespace expr {
-namespace eval_btensor_double {
+namespace eval_ctf_btensor_double {
 
 namespace {
+using eval_btensor_double::dispatch_1;
 
 
 class eval_dot_product_impl {
@@ -78,8 +79,8 @@ void eval_dot_product_impl::do_evaluate(expr_tree::node_id_t lhs) {
     const node &n = m_tree.get_vertex(m_id);
     const node_dot_product &nd = n.template recast_as<node_dot_product>();
 
-    btensor_from_node<NA, double> bta(m_tree, e[0]);
-    btensor_from_node<NA, double> btb(m_tree, e[1]);
+    ctf_btensor_from_node<NA, double> bta(m_tree, e[0]);
+    ctf_btensor_from_node<NA, double> btb(m_tree, e[1]);
 
     permutation<NA> perma(bta.get_transf().get_perm()),
         permb(btb.get_transf().get_perm());
@@ -91,7 +92,7 @@ void eval_dot_product_impl::do_evaluate(expr_tree::node_id_t lhs) {
     permutation_builder<NA> pb(seqa, seqb);
     permb.permute(pb.get_perm());
 
-    double d = btod_dotprod<NA>(bta.get_btensor(), perma, btb.get_btensor(),
+    double d = ctf_btod_dotprod<NA>(bta.get_btensor(), perma, btb.get_btensor(),
         permb).calculate();
     d *= bta.get_transf().get_scalar_tr().get_coeff();
     d *= btb.get_transf().get_scalar_tr().get_coeff();
@@ -118,6 +119,6 @@ void dot_product::evaluate(node_id_t lhs) {
 }
 
 
-} // namespace eval_btensor_double
+} // namespace eval_ctf_btensor_double
 } // namespace expr
 } // namespace libtensor

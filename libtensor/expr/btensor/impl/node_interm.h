@@ -47,7 +47,7 @@ public:
         if (m_cnt->cnt == 0) delete m_cnt;
     }
 
-    virtual node_interm *clone() const {
+    virtual node *clone() const {
         return new node_interm(*this);
     }
 

@@ -1,40 +1,41 @@
 #include <libtensor/core/tensor_transf_double.h>
-#include <libtensor/expr/btensor/btensor.h>
+#include <libtensor/expr/ctf_btensor/ctf_btensor.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include "../eval_btensor.h"
-#include "eval_btensor_double_autoselect.h"
-#include "eval_btensor_double_dot_product.h"
-#include "eval_btensor_double_trace.h"
-#include "eval_tree_builder_btensor.h"
-#include "node_interm.h"
-#include "tensor_from_node.h"
+#include "../eval_ctf_btensor.h"
+#include "eval_ctf_btensor_double_autoselect.h"
+#include "eval_ctf_btensor_double_dot_product.h"
+#include "eval_ctf_btensor_double_trace.h"
+#include "eval_tree_builder_ctf_btensor.h"
+#include "ctf_btensor_from_node.h"
+#include "node_ctf_btensor_interm.h"
 
 namespace libtensor {
 namespace expr {
-using namespace eval_btensor_double;
+using namespace eval_ctf_btensor_double;
+using eval_btensor_double::dispatch_1;
 
 
 namespace {
 
-class eval_btensor_double_impl {
+class eval_ctf_btensor_double_impl {
 public:
     enum {
-        Nmax = eval_btensor<double>::Nmax
+        Nmax = eval_ctf_btensor<double>::Nmax
     };
 
-    typedef eval_tree_builder_btensor::eval_order_t eval_order_t;
+    typedef eval_tree_builder_ctf_btensor::eval_order_t eval_order_t;
 
 private:
     expr_tree &m_tree;
     const eval_order_t &m_order;
 
 public:
-    eval_btensor_double_impl(expr_tree &tr, const eval_order_t &order) :
+    eval_ctf_btensor_double_impl(expr_tree &tr, const eval_order_t &order) :
         m_tree(tr), m_order(order)
     { }
 
@@ -80,9 +81,9 @@ void eval_node::evaluate_scalar(expr_tree::node_id_t lhs) {
     const node &n = m_tree.get_vertex(m_rhs);
 
     if(n.get_op().compare(node_dot_product::k_op_type) == 0) {
-        eval_btensor_double::dot_product(m_tree, m_rhs).evaluate(lhs);
+        eval_ctf_btensor_double::dot_product(m_tree, m_rhs).evaluate(lhs);
     } else if(n.get_op().compare(node_trace::k_op_type) == 0) {
-        eval_btensor_double::trace(m_tree, m_rhs).evaluate(lhs);
+        eval_ctf_btensor_double::trace(m_tree, m_rhs).evaluate(lhs);
     }
 }
 
@@ -94,7 +95,7 @@ void eval_node::evaluate(expr_tree::node_id_t lhs) {
     expr_tree::node_id_t rhs = transf_from_node(m_tree, m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    eval_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs);
+    eval_ctf_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs);
 }
 
 
@@ -118,7 +119,7 @@ public:
 };
 
 
-void eval_btensor_double_impl::evaluate() {
+void eval_ctf_btensor_double_impl::evaluate() {
 
     for (eval_order_t::const_iterator i = m_order.begin();
             i != m_order.end(); i++) {
@@ -126,7 +127,7 @@ void eval_btensor_double_impl::evaluate() {
         const node &n = m_tree.get_vertex(*i);
         if(!n.check_type<node_assign>()) {
             throw eval_exception(__FILE__, __LINE__, "libtensor::expr",
-                "eval_btensor_double_impl", "evaluate()",
+                "eval_ctf_btensor_double_impl", "evaluate()",
                 "Evaluator expects an assignment node.");
         }
 
@@ -135,13 +136,13 @@ void eval_btensor_double_impl::evaluate() {
 }
 
 
-void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
+void eval_ctf_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 
     const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
 
     if(out.size() != 2) {
         throw eval_exception(__FILE__, __LINE__, "libtensor::expr",
-            "eval_btensor_double_impl", "handle_assign()",
+            "eval_ctf_btensor_double_impl", "handle_assign()",
             "Malformed expression (assignment must have two children).");
     }
 
@@ -172,7 +173,7 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 }
 
 
-void eval_btensor_double_impl::verify_scalar(const node &t) {
+void eval_ctf_btensor_double_impl::verify_scalar(const node &t) {
 
     if(t.check_type<node_scalar_base>()) {
         const node_scalar_base &ti = t.recast_as<node_scalar_base>();
@@ -189,27 +190,30 @@ void eval_btensor_double_impl::verify_scalar(const node &t) {
 }
 
 
-void eval_btensor_double_impl::verify_tensor(const node &t) {
+void eval_ctf_btensor_double_impl::verify_tensor(const node &t) {
 
     if(t.check_type<node_ident>()) {
         const node_ident &ti = t.recast_as<node_ident>();
         if(ti.get_type() != typeid(double)) {
-            throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
-                "verify_tensor()", __FILE__, __LINE__);
+            throw not_implemented("libtensor::expr",
+                "eval_ctf_btensor_double_impl", "verify_tensor()",
+                __FILE__, __LINE__);
         }
         return;
     }
-    if(t.check_type<node_interm_base>()) {
-        const node_interm_base &ti = t.recast_as<node_interm_base>();
+    if(t.check_type<node_ctf_btensor_interm_base>()) {
+        const node_ctf_btensor_interm_base &ti =
+            t.recast_as<node_ctf_btensor_interm_base>();
         if(ti.get_t() != typeid(double)) {
-            throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
-                "verify_tensor()", __FILE__, __LINE__);
+            throw not_implemented("libtensor::expr",
+                "eval_ctf_btensor_double_impl", "verify_tensor()",
+                 __FILE__, __LINE__);
         }
         return;
     }
 
     throw eval_exception(__FILE__, __LINE__,
-        "libtensor::expr", "eval_btensor_double_impl", "verify_tensor()",
+        "libtensor::expr", "eval_ctf_btensor_double_impl", "verify_tensor()",
         "Expect LHS to be a tensor.");
 }
 
@@ -217,23 +221,23 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
 } // unnamed namespace
 
 
-eval_btensor<double>::~eval_btensor<double>() {
+eval_ctf_btensor<double>::~eval_ctf_btensor<double>() {
 
 }
 
 
-bool eval_btensor<double>::can_evaluate(const expr_tree &e) const {
+bool eval_ctf_btensor<double>::can_evaluate(const expr_tree &e) const {
 
     return true;
 }
 
 
-void eval_btensor<double>::evaluate(const expr_tree &tree) const {
+void eval_ctf_btensor<double>::evaluate(const expr_tree &tree) const {
 
-    eval_tree_builder_btensor bld(tree);
+    eval_tree_builder_ctf_btensor bld(tree);
     bld.build();
 
-    eval_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
+    eval_ctf_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
 }
 
 

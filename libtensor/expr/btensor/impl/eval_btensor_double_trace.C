@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_trace.h>
+#include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_scalar.h>
-#include "metaprog.h"
 #include "tensor_from_node.h"
 #include "eval_btensor_double_trace.h"
 

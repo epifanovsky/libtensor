@@ -11,15 +11,16 @@
 #include <libtensor/expr/opt/opt_merge_adjacent_add.h>
 #include <libtensor/expr/opt/opt_merge_adjacent_transf.h>
 #include <libtensor/expr/opt/opt_merge_equiv_ident.h>
-#include "node_interm.h"
-#include "eval_tree_builder_btensor.h"
+#include "node_ctf_btensor_interm.h"
+#include "eval_tree_builder_ctf_btensor.h"
 
 namespace libtensor {
 namespace expr {
-using namespace eval_btensor_double; // for dispatch_1
+using eval_btensor_double::dispatch_1;
 
 
-const char eval_tree_builder_btensor::k_clazz[] = "eval_tree_builder_btensor";
+const char eval_tree_builder_ctf_btensor::k_clazz[] =
+    "eval_tree_builder_ctf_btensor";
 
 
 namespace {
@@ -31,7 +32,7 @@ typedef graph::node_id_t node_id_t;
 class interm_inserter {
 public:
     enum {
-        Nmax = eval_tree_builder_btensor::Nmax
+        Nmax = eval_tree_builder_ctf_btensor::Nmax
     };
 
 private:
@@ -57,7 +58,7 @@ private:
     void add() {
 
         node_id_t id0 = m_g.add(node_assign(m_g.get_vertex(m_nid).get_n()));
-        node_id_t id1 = m_g.add(node_interm<N, double>());
+        node_id_t id1 = m_g.add(node_ctf_btensor_interm<N, double>());
 
         graph::edge_list_t ei = m_g.get_edges_in(m_nid);
         for(size_t i = 0; i < ei.size(); i++) m_g.replace(ei[i], m_nid, id0);
@@ -68,51 +69,11 @@ private:
 
 };
 
-void assume_adds(graph &g) {
-
-    std::vector<node_id_t> replace, erase;
-
-    //  Find all nodes to replace
-    //  ( assign X ( + E1 E2 ... ) )
-    //  with
-    //  ( assign X E1 E2 ... )
-
-    for(graph::iterator i = g.begin(); i != g.end(); ++i) {
-        if(!g.get_vertex(i).check_type<node_assign>()) continue;
-        const graph::edge_list_t &eo = g.get_edges_out(i);
-        if(eo.size() <= 1) continue;
-        bool all_adds = true;
-        for(size_t j = 1; j < eo.size(); j++) {
-            if(!g.get_vertex(eo[j]).check_type<node_add>()) all_adds = false;
-        }
-        if(all_adds) replace.push_back(g.get_id(i));
-    }
-
-    //  Perform replacement
-
-    for(size_t i = 0; i < replace.size(); i++) {
-        graph::edge_list_t eo1 = g.get_edges_out(replace[i]);
-        for(size_t j = 1; j < eo1.size(); j++) {
-            g.erase(replace[i], eo1[j]);
-            erase.push_back(eo1[j]);
-        }
-        for(size_t j = 1; j < eo1.size(); j++) {
-            graph::edge_list_t eo2 = g.get_edges_out(eo1[j]);
-            for(size_t k = 0; k < eo2.size(); k++) {
-                g.erase(eo1[j], eo2[k]);
-                g.add(replace[i], eo2[k]);
-            }
-        }
-    }
-
-    for(size_t i = 0; i < erase.size(); i++) g.erase(erase[i]);
-}
-
 void insert_intermediates(graph &g, graph::node_id_t n0) {
 
     if(!g.get_vertex(n0).check_type<node_assign>()) {
         throw eval_exception(__FILE__, __LINE__, "eval",
-            "eval_tree_builder_btensor", "insert_intermediates()",
+            "eval_tree_builder_ctf_btensor", "insert_intermediates()",
             "Expected an assignment node");
     }
 
@@ -178,7 +139,7 @@ void make_eval_order_depth_first(graph &g, node_id_t n,
 } // unnamed namespace
 
 
-void eval_tree_builder_btensor::build() {
+void eval_tree_builder_ctf_btensor::build() {
 
     static const char method[] = "build()";
 

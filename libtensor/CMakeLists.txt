@@ -287,29 +287,6 @@ set(SRC_EXPR
 )
 
 set(SRC_CTF
-    ctf_block_tensor/impl/ctf_block_tensor.C
-    ctf_block_tensor/impl/ctf_btod_addition_schedule.C
-    ctf_block_tensor/impl/ctf_btod_aux_add.C
-    ctf_block_tensor/impl/ctf_btod_aux_copy.C
-    ctf_block_tensor/impl/ctf_btod_collect.C
-    ctf_block_tensor/impl/ctf_btod_contract2_1.C
-    ctf_block_tensor/impl/ctf_btod_contract2_2.C
-    ctf_block_tensor/impl/ctf_btod_contract2_3.C
-    ctf_block_tensor/impl/ctf_btod_contract2_4.C
-    ctf_block_tensor/impl/ctf_btod_contract2_5.C
-    ctf_block_tensor/impl/ctf_btod_contract2_6.C
-    ctf_block_tensor/impl/ctf_btod_contract2_7.C
-    ctf_block_tensor/impl/ctf_btod_contract2_8.C
-    ctf_block_tensor/impl/ctf_btod_contract2_clst_builder.C
-    ctf_block_tensor/impl/ctf_btod_contract2_nzorb.C
-    ctf_block_tensor/impl/ctf_btod_copy.C
-    ctf_block_tensor/impl/ctf_btod_diag.C
-    ctf_block_tensor/impl/ctf_btod_dirsum.C
-    ctf_block_tensor/impl/ctf_btod_distribute.C
-    ctf_block_tensor/impl/ctf_btod_dotprod.C
-    ctf_block_tensor/impl/ctf_btod_ewmult2.C
-    ctf_block_tensor/impl/ctf_btod_set.C
-    ctf_block_tensor/impl/ctf_btod_unfold_block_list.C
     ctf_dense_tensor/impl/ctf_dense_tensor.C
     ctf_dense_tensor/impl/ctf_tod_collect.C
     ctf_dense_tensor/impl/ctf_tod_contract2_1.C
@@ -339,6 +316,33 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_set.C
     ctf_dense_tensor/impl/ctf_tod_set_diag.C
     ctf_dense_tensor/impl/ctf_tod_trace.C
+    ctf_block_tensor/impl/ctf_block_tensor.C
+    ctf_block_tensor/impl/ctf_btod_addition_schedule.C
+    ctf_block_tensor/impl/ctf_btod_aux_add.C
+    ctf_block_tensor/impl/ctf_btod_aux_copy.C
+    ctf_block_tensor/impl/ctf_btod_collect.C
+    ctf_block_tensor/impl/ctf_btod_contract2_1.C
+    ctf_block_tensor/impl/ctf_btod_contract2_2.C
+    ctf_block_tensor/impl/ctf_btod_contract2_3.C
+    ctf_block_tensor/impl/ctf_btod_contract2_4.C
+    ctf_block_tensor/impl/ctf_btod_contract2_5.C
+    ctf_block_tensor/impl/ctf_btod_contract2_6.C
+    ctf_block_tensor/impl/ctf_btod_contract2_7.C
+    ctf_block_tensor/impl/ctf_btod_contract2_8.C
+    ctf_block_tensor/impl/ctf_btod_contract2_clst_builder.C
+    ctf_block_tensor/impl/ctf_btod_contract2_nzorb.C
+    ctf_block_tensor/impl/ctf_btod_copy.C
+    ctf_block_tensor/impl/ctf_btod_diag.C
+    ctf_block_tensor/impl/ctf_btod_dirsum.C
+    ctf_block_tensor/impl/ctf_btod_distribute.C
+    ctf_block_tensor/impl/ctf_btod_dotprod.C
+    ctf_block_tensor/impl/ctf_btod_ewmult2.C
+    ctf_block_tensor/impl/ctf_btod_set.C
+    ctf_block_tensor/impl/ctf_btod_unfold_block_list.C
+    expr/ctf_btensor/impl/eval_ctf_btensor_double.C
+    expr/ctf_btensor/impl/eval_ctf_btensor_double_autoselect.C
+    expr/ctf_btensor/impl/eval_ctf_btensor_double_dot_product.C
+    expr/ctf_btensor/impl/eval_tree_builder_ctf_btensor.C
 )
 
 if(WITH_ARMADILLO)

@@ -1,5 +1,5 @@
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
-#include <libtensor/block_tensor/btod_traits.h>
+#include <libtensor/ctf_block_tensor/ctf_btod_traits.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_contract.h>
@@ -9,20 +9,20 @@
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include "eval_btensor_double_add.h"
-#include "eval_btensor_double_autoselect.h"
-#include "eval_btensor_double_contract.h"
-#include "eval_btensor_double_copy.h"
-#include "eval_btensor_double_diag.h"
-#include "eval_btensor_double_dirsum.h"
-#include "eval_btensor_double_div.h"
-#include "eval_btensor_double_symm.h"
-#include "node_interm.h"
-#include "tensor_from_node.h"
+#include "eval_ctf_btensor_double_add.h"
+#include "eval_ctf_btensor_double_autoselect.h"
+#include "eval_ctf_btensor_double_contract.h"
+#include "eval_ctf_btensor_double_copy.h"
+#include "eval_ctf_btensor_double_diag.h"
+#include "eval_ctf_btensor_double_dirsum.h"
+#include "eval_ctf_btensor_double_div.h"
+#include "eval_ctf_btensor_double_symm.h"
+#include "ctf_btensor_from_node.h"
+#include "node_ctf_btensor_interm.h"
 
 namespace libtensor {
 namespace expr {
-namespace eval_btensor_double {
+namespace eval_ctf_btensor_double {
 
 
 template<size_t N>
@@ -33,7 +33,8 @@ autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
 
     const node &n = m_tree.get_vertex(id);
 
-    if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
+    if(n.check_type<node_ident>() ||
+        n.check_type<node_ctf_btensor_interm_base>()) {
         m_impl = new copy<N>(m_tree, id, tr);
     } else if(n.check_type<node_add>()) {
         m_impl = new add<N>(m_tree, id, tr);
@@ -49,7 +50,7 @@ autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
         m_impl = new symm<N>(m_tree, id, tr);
     } else {
         throw eval_exception(__FILE__, __LINE__,
-            "libtensor::expr::eval_btensor_double", "autoselect<N>",
+            "libtensor::expr::eval_ctf_btensor_double", "autoselect<N>",
             "autoselect()", "Unsupported operation.");
     }
 }
@@ -69,14 +70,14 @@ void autoselect<N>::evaluate(node_id_t nid_lhs) {
 
     if(N != lhs.get_n()) {
         throw eval_exception(__FILE__, __LINE__,
-            "libtensor::expr::eval_btensor_double", "autoselect<N>",
+            "libtensor::expr::eval_ctf_btensor_double", "autoselect<N>",
             "evaluate()", "Inconsistent tensor order.");
     }
 
     additive_gen_bto<N, bti_traits> &op = m_impl->get_bto();
-    btensor_from_node<N, double> bt(m_tree, nid_lhs);
+    ctf_btensor_from_node<N, double> bt(m_tree, nid_lhs);
 
-    gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(),
+    gen_bto_aux_copy<N, ctf_btod_traits> out(op.get_symmetry(),
         bt.get_or_create_btensor(op.get_bis()));
     out.open();
     op.perform(out);
@@ -113,6 +114,6 @@ template class autoselect<7>;
 template class autoselect<8>;
 
 
-} // namespace eval_btensor_double
+} // namespace eval_ctf_btensor_double
 } // namespace expr
 } // namespace libtensor
