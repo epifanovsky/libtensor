@@ -10,6 +10,7 @@
 #include "ctf_tod_distribute_test.h"
 #include "ctf_tod_dotprod_test.h"
 #include "ctf_tod_ewmult2_test.h"
+#include "ctf_tod_mult_test.h"
 #include "ctf_tod_scale_test.h"
 #include "ctf_tod_scatter_test.h"
 #include "ctf_tod_set_test.h"
@@ -38,6 +39,7 @@ namespace libtensor {
      - libtensor::ctf_tod_distribute_test
      - libtensor::ctf_tod_dotprod_test
      - libtensor::ctf_tod_ewmult2_test
+     - libtensor::ctf_tod_mult_test
      - libtensor::ctf_tod_scale_test
      - libtensor::ctf_tod_scatter_test
      - libtensor::ctf_tod_set_test
@@ -56,6 +58,7 @@ private:
     unit_test_factory<ctf_tod_distribute_test> m_utf_ctf_tod_distribute;
     unit_test_factory<ctf_tod_dotprod_test> m_utf_ctf_tod_dotprod;
     unit_test_factory<ctf_tod_ewmult2_test> m_utf_ctf_tod_ewmult2;
+    unit_test_factory<ctf_tod_mult_test> m_utf_ctf_tod_mult;
     unit_test_factory<ctf_tod_scale_test> m_utf_ctf_tod_scale;
     unit_test_factory<ctf_tod_scatter_test> m_utf_ctf_tod_scatter;
     unit_test_factory<ctf_tod_set_test> m_utf_ctf_tod_set;

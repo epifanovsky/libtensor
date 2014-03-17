@@ -288,6 +288,7 @@ set(SRC_EXPR
 
 set(SRC_CTF
     ctf_dense_tensor/impl/ctf_dense_tensor.C
+    ctf_dense_tensor/impl/ctf_fctr.C
     ctf_dense_tensor/impl/ctf_tod_collect.C
     ctf_dense_tensor/impl/ctf_tod_contract2_1.C
     ctf_dense_tensor/impl/ctf_tod_contract2_2.C
@@ -311,6 +312,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_dotprod.C
     ctf_dense_tensor/impl/ctf_tod_distribute.C
     ctf_dense_tensor/impl/ctf_tod_ewmult2.C
+    ctf_dense_tensor/impl/ctf_tod_mult.C
     ctf_dense_tensor/impl/ctf_tod_scale.C
     ctf_dense_tensor/impl/ctf_tod_scatter.C
     ctf_dense_tensor/impl/ctf_tod_set.C
