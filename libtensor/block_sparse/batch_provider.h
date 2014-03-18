@@ -192,14 +192,11 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
     if(batches.size() == 0 && m_forced_batched_bs.size() > 0)
     {
         const block_loop& batched_loop = m_loops[batched_loop_idx];
-        std::cout << "--------------------------\n";
-        std::cout << "RECURSING!\n";
         for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
         {
             size_t bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
             if(!batched_loop.is_bispace_ignored(bispace_idx))
             {
-                std::cout << "...on child " << direct_tensor_rel_idx << "\n";
                 size_t subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
                 m_batch_providers[direct_tensor_rel_idx]->set_mem_avail(m_mem_avail);
                 idx_pair_list this_tensor_batches = m_batch_providers[direct_tensor_rel_idx]->compute_batches().second;
@@ -210,24 +207,6 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
                 }
             }
         }
-        std::cout << "DONE RECURSING\n";
-        std::cout << "batches:\n";
-        for(int i = 0; i < batches.size(); ++i)
-        {
-            std::cout << batches[i].first << "," << batches[i].second << "\n";
-        }
-        std::cout << "--------------------------\n";
-    }
-    else
-    {
-        std::cout << "#########################\n";
-        std::cout << "HALTED RECURSION\n";
-        std::cout << "batches:\n";
-        for(int i = 0; i < batches.size(); ++i)
-        {
-            std::cout << batches[i].first << "," << batches[i].second << "\n";
-        }
-        std::cout << "#########################\n";
     }
     return std::make_pair(batched_loop_idx,batches);
 }
@@ -360,10 +339,8 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
 
     init(m_loops,m_direct_tensors,truncated_bispaces,m_ptrs);
 
-
     if(batches.size() > 0)
     {
-        std::cout << "BATCHING CHILDREN!\n";
         //Generate the necessary input batches
         const block_loop& batched_loop = m_loops[batched_loop_idx];
         for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
@@ -384,7 +361,6 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     }
     else
     {
-        std::cout << "FORMING CHILDREN AS ONE BATCH!\n";
         //The input direct tensors can be formed as one batch
         for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
         {
