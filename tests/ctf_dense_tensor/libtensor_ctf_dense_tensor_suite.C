@@ -15,6 +15,7 @@ libtensor_ctf_dense_tensor_suite::libtensor_ctf_dense_tensor_suite() :
     add_test("ctf_tod_dotprod", m_utf_ctf_tod_dotprod);
     add_test("ctf_tod_ewmult2", m_utf_ctf_tod_ewmult2);
     add_test("ctf_tod_mult", m_utf_ctf_tod_mult);
+    add_test("ctf_tod_mult1", m_utf_ctf_tod_mult1);
     add_test("ctf_tod_scale", m_utf_ctf_tod_scale);
     add_test("ctf_tod_scatter", m_utf_ctf_tod_scatter);
     add_test("ctf_tod_set", m_utf_ctf_tod_set);

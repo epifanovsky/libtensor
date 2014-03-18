@@ -9,8 +9,7 @@
 namespace libtensor {
 
 
-/** \brief Copies the contents of a distributed tensor, permutes and scales
-        the entries if necessary
+/** \brief Element-wise multiplication or division of a CTF distributed tensor
     \tparam N Tensor order.
 
     \sa tod_mult
@@ -84,7 +83,7 @@ public:
 
     /** \brief Runs the operation
         \param zero Overwrite/add to flag.
-        \param tb Output tensor.
+        \param tc Output tensor.
      **/
     void perform(bool zero, ctf_dense_tensor_i<N, double> &tc);
 
