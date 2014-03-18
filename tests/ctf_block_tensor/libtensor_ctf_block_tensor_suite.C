@@ -13,6 +13,7 @@ libtensor_ctf_block_tensor_suite::libtensor_ctf_block_tensor_suite() :
     add_test("ctf_btod_dirsum", m_utf_ctf_btod_dirsum);
     add_test("ctf_btod_dotprod", m_utf_ctf_btod_dotprod);
     add_test("ctf_btod_ewmult2", m_utf_ctf_btod_ewmult2);
+    add_test("ctf_btod_mult", m_utf_ctf_btod_mult);
     add_test("ctf_btod_set", m_utf_ctf_btod_set);
 }
 

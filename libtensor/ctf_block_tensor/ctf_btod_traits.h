@@ -15,6 +15,8 @@ template<size_t N, size_t M> class ctf_tod_diag;
 template<size_t N, size_t M> class ctf_tod_dirsum;
 template<size_t N> class ctf_tod_dotprod;
 template<size_t N, size_t M, size_t K> class ctf_tod_ewmult2;
+template<size_t N> class ctf_tod_mult;
+template<size_t N> class ctf_tod_mult1;
 template<size_t N, size_t M> class ctf_tod_scatter;
 template<size_t N> class ctf_tod_set;
 
@@ -98,19 +100,15 @@ struct ctf_btod_traits {
     };
  */
 
-/*
     template<size_t N>
     struct to_mult_type {
-        typedef tod_mult<N> type;
+        typedef ctf_tod_mult<N> type;
     };
- */
 
-/*
     template<size_t N>
     struct to_mult1_type {
-        typedef tod_mult1<N> type;
+        typedef ctf_tod_mult1<N> type;
     };
- */
 
 /*
     template<size_t N>
