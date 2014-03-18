@@ -115,7 +115,9 @@ void gen_bto_mult1<N, Traits, Timed>::perform(
     static const char method[] =
         "perform(bool, gen_block_tensor_i<N, bti_traits>&)";
 
-    if(!bta.get_bis().equals(m_btb.get_bis())) {
+    block_index_space<N> bisb(m_btb.get_bis());
+    bisb.permute(m_trb.get_perm());
+    if(!bta.get_bis().equals(bisb)) {
         throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
             "bta");
     }

@@ -341,6 +341,7 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_dotprod.C
     ctf_block_tensor/impl/ctf_btod_ewmult2.C
     ctf_block_tensor/impl/ctf_btod_mult.C
+    ctf_block_tensor/impl/ctf_btod_mult1.C
     ctf_block_tensor/impl/ctf_btod_set.C
     ctf_block_tensor/impl/ctf_btod_unfold_block_list.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double.C

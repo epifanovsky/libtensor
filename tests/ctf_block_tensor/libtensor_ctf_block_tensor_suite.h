@@ -10,6 +10,7 @@
 #include "ctf_btod_dotprod_test.h"
 #include "ctf_btod_ewmult2_test.h"
 #include "ctf_btod_mult_test.h"
+#include "ctf_btod_mult1_test.h"
 #include "ctf_btod_set_test.h"
 
 using libtest::unit_test_factory;
@@ -34,6 +35,7 @@ namespace libtensor {
      - libtensor::ctf_btod_dotprod_test
      - libtensor::ctf_btod_ewmult2_test
      - libtensor::ctf_btod_mult_test
+     - libtensor::ctf_btod_mult1_test
      - libtensor::ctf_btod_set_test
 
     \ingroup libtensor_ctf_block_tensor_tests
@@ -48,6 +50,7 @@ private:
     unit_test_factory<ctf_btod_dotprod_test> m_utf_ctf_btod_dotprod;
     unit_test_factory<ctf_btod_ewmult2_test> m_utf_ctf_btod_ewmult2;
     unit_test_factory<ctf_btod_mult_test> m_utf_ctf_btod_mult;
+    unit_test_factory<ctf_btod_mult1_test> m_utf_ctf_btod_mult1;
     unit_test_factory<ctf_btod_set_test> m_utf_ctf_btod_set;
 
 public:
