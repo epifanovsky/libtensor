@@ -2,6 +2,7 @@
 #define LIBTENSOR_CTF_BTOD_TRAITS_H
 
 #include <libtensor/core/allocator.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/ctf_dense_tensor/ctf_dense_tensor.h>
 #include <libtensor/block_tensor/btod_contract2_clst_optimize.h>
 #include "ctf_block_tensor.h"
@@ -176,6 +177,10 @@ struct ctf_btod_traits {
 
     static bool is_zero(double d) {
         return d == 0.0;
+    }
+
+    static bool is_zero(const scalar_transf<double> &d) {
+        return is_zero(d.get_coeff());
     }
 
     static double zero() {

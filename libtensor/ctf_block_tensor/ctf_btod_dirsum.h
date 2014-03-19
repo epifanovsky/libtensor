@@ -3,7 +3,7 @@
 
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/additive_gen_bto.h>
-#include <libtensor/gen_block_tensor/gen_bto_diag.h>
+#include <libtensor/gen_block_tensor/gen_bto_dirsum.h>
 #include "ctf_btod_traits.h"
 
 namespace libtensor {
