@@ -1,6 +1,6 @@
 #include <memory>
 #include <vector>
-#include <libtensor/block_tensor/btod/btod_sum.h>
+#include <libtensor/block_tensor/btod_sum.h>
 #include <libtensor/expr/common/metaprog.h> // for instantiate_template_1
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_transform.h>
