@@ -19,6 +19,7 @@ template<size_t N> class ctf_tod_mult;
 template<size_t N> class ctf_tod_mult1;
 template<size_t N, size_t M> class ctf_tod_scatter;
 template<size_t N> class ctf_tod_set;
+template<size_t N> class ctf_tod_trace;
 
 
 struct ctf_btod_traits {
@@ -162,12 +163,10 @@ struct ctf_btod_traits {
     };
  */
 
-/*
     template<size_t N>
     struct to_trace_type {
-        typedef tod_trace<N> type;
+        typedef ctf_tod_trace<N> type;
     };
- */
 
 /*
     template<size_t N>
