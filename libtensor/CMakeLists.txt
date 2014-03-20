@@ -324,4 +324,4 @@ endif(HAVE_LIBVMM)
 add_library(block_sparse ${SRC_BLOCK_SPARSE})
 set_property(TARGET block_sparse APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
-
+set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -g -profile-functions")
