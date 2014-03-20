@@ -363,6 +363,7 @@ void run_benchmark_mo(const char* file_name)
     sparse_bispace<1> spb_o(o);
 
     //Construct C
+    letter mu,nu,lambda,sigma,Q,R,i;
     sparse_bispace<3> spb_C_orig = spb_N % spb_N % spb_X << sig_blocks_NNX;
     permutation<3> perm;
     perm.permute(1,2);
@@ -375,6 +376,8 @@ void run_benchmark_mo(const char* file_name)
     }
     sparse_btensor<3> C(spb_C,C_arr,true);
     delete [] C_arr;
+    sparse_btensor<3> C_aux_fast(spb_C_orig);
+    C_aux_fast(nu|sigma|Q) = C(nu|Q|sigma);
 
     //Construct MO coeffs
     sparse_bispace<2> spb_mo = spb_N|spb_o;
@@ -399,15 +402,34 @@ void run_benchmark_mo(const char* file_name)
     cout << "===========================\n";
     cout << "IN-CORE BENCHMARK:\n";
 
-    //Construct D result
+    //We have to declare all bispaces up here so that we can scope-enclose
+    //everything else to free stack-allocated storage
     sparse_bispace<3> spb_D = spb_C.contract(2) | spb_o;
+    sparse_bispace<3> spb_E =  spb_C_orig.contract(2) | spb_X;
+    sparse_bispace<3> spb_G_perm = spb_E.permute(permutation<3>().permute(1,2));
+    sparse_bispace<3> spb_H = spb_G_perm.contract(2) | spb_o;
+    sparse_bispace<2> spb_M = spb_N|spb_N;
+
+    //These tensors are also used in the direct part and must be stored up here
+    sparse_btensor<2> M(spb_M);
+    //Construct I - mock integral tensor
+    sparse_btensor<3> I(spb_E);
+    for(size_t entry  = 0; entry < spb_E.get_nnz(); ++entry)
+    {
+        //We know what we're doing - cast away const
+        ((double*)I.get_data_ptr())[entry] = double(rand())/RAND_MAX;
+    }
+
+    double seconds;
+#if 0
+    {
+    //Construct D result
     sparse_btensor<3> D(spb_D);
-    letter mu,Q,lambda,i;
     cout << "-----------------------------\n";
     cout << "D(mu|Q|i) = contract(lambda,C(mu|Q|lambda),C_mo(lambda|i))\n";
     flops = 0;
     count_flops = true;
-    double seconds = read_timer();
+    seconds = read_timer();
     D(mu|Q|i) = contract(lambda,C(mu|Q|lambda),C_mo(lambda|i));
     seconds = read_timer() - seconds;
     count_flops = false;
@@ -416,10 +438,6 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
     //Construct E tensor 
-    sparse_btensor<3> C_aux_fast(spb_C_orig);
-    letter nu,R,sigma;
-    C_aux_fast(nu|sigma|Q) = C(nu|Q|sigma);
-    sparse_bispace<3> spb_E =  spb_C_orig.contract(2) | spb_X;
     sparse_btensor<3> E(spb_E);
     cout << "-----------------------------\n";
     cout << "E(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R))\n";
@@ -433,13 +451,6 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
-    //Construct I - mock integral tensor
-    sparse_btensor<3> I(spb_E);
-    for(size_t i = 0; i < spb_E.get_nnz(); ++i)
-    {
-        //We know what we're doing - cast away const
-        ((double*)I.get_data_ptr())[i] = double(rand())/RAND_MAX;
-    }
 
     //Construct the G tensor
     cout << "-----------------------------\n";
@@ -458,7 +469,6 @@ void run_benchmark_mo(const char* file_name)
     //Permute G for MO-transform
     cout << "-----------------------------\n";
     cout << "G_perm(nu|Q|sigma) = G(nu|sigma|Q)\n";
-    sparse_bispace<3> spb_G_perm = spb_E.permute(permutation<3>().permute(1,2));
     sparse_btensor<3> G_perm(spb_G_perm);
     seconds = read_timer();
     G_perm(nu|Q|sigma) = G(nu|sigma|Q);
@@ -468,7 +478,6 @@ void run_benchmark_mo(const char* file_name)
     //Construct the MO-transformed integrals
     cout << "-----------------------------\n";
     cout << "H(nu|Q|i) = contract(sigma,G_perm(nu|Q|sigma),C_mo(sigma|i))\n";
-    sparse_bispace<3> spb_H = spb_G_perm.contract(2) | spb_o;
     sparse_btensor<3> H(spb_H);
     count_flops = true;
     seconds = read_timer();
@@ -480,8 +489,6 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
     //Construct M result
-    sparse_bispace<2> spb_M = spb_N|spb_N;
-    sparse_btensor<2> M(spb_M);
     cout << "-----------------------------\n";
     cout << "M(nu|mu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i))\n";
     flops = 0;
@@ -493,6 +500,8 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+    }
+#endif
 
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
@@ -521,6 +530,7 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
+#if 0
     cout << "===========================\n";
     cout << "Direct and Indirect Results Equal?\n";
     bool M_equal = true;
@@ -559,11 +569,13 @@ void run_benchmark_mo(const char* file_name)
         }
     }
     cout << "M_equal: " << (M_equal ? "YES" : "NO") << "\n";
+#endif
 }
 
 int main(int argc,char *argv[])
 {
-    const char* alkane_file_names[8] = {"../tests/block_sparse/alkane_dz_003_data.txt",
+    const char* alkane_file_names[9] = {"../tests/block_sparse/alkane_dz_003_data.txt",
+                                        "../tests/block_sparse/alkane_tz_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_atom_blocked_020_data.txt",
