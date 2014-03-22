@@ -287,6 +287,12 @@ set(SRC_IFACE
     iface/trace_test.C
 )
 
+set(SRC_CTF_IFACE
+    ctf_iface/libtensor_ctf_iface_tests.C
+    ctf_iface/libtensor_ctf_iface_suite.C
+    ctf_iface/ctf_btensor_test.C
+)
+
 set(SRC_BLOCK_SPARSE
     block_sparse/libtensor_block_sparse_tests.C
     block_sparse/libtensor_block_sparse_suite.C
@@ -317,6 +323,7 @@ set(TARGETS
     libtensor_btod_tests
     libtensor_expr_tests
     libtensor_iface_tests
+    libtensor_ctf_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
     libtensor_block_sparse_tests
@@ -334,6 +341,7 @@ add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
 add_executable(libtensor_ctf_block_tensor_tests ${SRC_CTF_BLOCK_TENSOR})
+add_executable(libtensor_ctf_iface_tests ${SRC_CTF_IFACE})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -350,6 +358,8 @@ endif(HAVE_LIBVMM)
 set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
     LINK_FLAGS ${OpenMP_CXX_FLAGS})
 set_property(TARGET libtensor_ctf_block_tensor_tests APPEND PROPERTY
+    LINK_FLAGS ${OpenMP_CXX_FLAGS})
+set_property(TARGET libtensor_ctf_iface_tests APPEND PROPERTY
     LINK_FLAGS ${OpenMP_CXX_FLAGS})
 
 foreach(TARGET ${TARGETS})
