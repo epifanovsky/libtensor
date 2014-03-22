@@ -100,8 +100,9 @@ void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
     const std::vector<size_t> &idx = nd.get_idx();
     for(size_t i = 0; i < NA; i++) if(idx[i] == nd.get_didx()) m[i] = true;
 
-    m_op = new ctf_btod_diag<NA, M>(bta.get_btensor(), m, trc.get_perm(),
-        trc.get_scalar_tr().get_coeff());
+    double d = bta.get_transf().get_scalar_tr().get_coeff() *
+        trc.get_scalar_tr().get_coeff();
+    m_op = new ctf_btod_diag<NA, M>(bta.get_btensor(), m, trc.get_perm(), d);
 }
 
 
