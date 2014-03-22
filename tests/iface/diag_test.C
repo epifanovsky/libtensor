@@ -20,6 +20,8 @@ void diag_test::perform() throw(libtest::test_exception) {
         test_t_2();
         test_t_3();
         test_t_4();
+        test_t_5();
+        test_t_6();
         test_e_1();
         test_x_1();
 
@@ -34,7 +36,7 @@ void diag_test::perform() throw(libtest::test_exception) {
 
 void diag_test::test_t_1() throw(libtest::test_exception) {
 
-    static const char *testname = "diag_test::test_t_1()";
+    static const char testname[] = "diag_test::test_t_1()";
 
     try {
 
@@ -65,7 +67,7 @@ void diag_test::test_t_1() throw(libtest::test_exception) {
 
 void diag_test::test_t_2() throw(libtest::test_exception) {
 
-    static const char *testname = "diag_test::test_t_2()";
+    static const char testname[] = "diag_test::test_t_2()";
 
     try {
 
@@ -97,7 +99,7 @@ void diag_test::test_t_2() throw(libtest::test_exception) {
 
 void diag_test::test_t_3() throw(libtest::test_exception) {
 
-    static const char *testname = "diag_test::test_t_3()";
+    static const char testname[] = "diag_test::test_t_3()";
 
     try {
 
@@ -130,7 +132,7 @@ void diag_test::test_t_3() throw(libtest::test_exception) {
 
 void diag_test::test_t_4() throw(libtest::test_exception) {
 
-    static const char *testname = "diag_test::test_t_4()";
+    static const char testname[] = "diag_test::test_t_4()";
 
     try {
 
@@ -159,9 +161,77 @@ void diag_test::test_t_4() throw(libtest::test_exception) {
 }
 
 
+void diag_test::test_t_5() throw(libtest::test_exception) {
+
+    static const char testname[] = "diag_test::test_t_5()";
+
+    try {
+
+    bispace<1> sp_i(10);
+    bispace<2> sp_ij(sp_i&sp_i);
+    bispace<3> sp_ijk(sp_i&sp_i&sp_i);
+    bispace<4> sp_ijkl(sp_i&sp_i&sp_i&sp_i);
+
+    btensor<4> t1(sp_ijkl);
+    btensor<3> tt(sp_ijk);
+    btensor<2> t2(sp_ij), t2_ref(sp_ij);
+
+    btod_random<4>().perform(t1);
+    t1.set_immutable();
+
+    mask<4> m0101;
+    m0101[1] = true; m0101[3] = true;
+    mask<3> m110;
+    m110[0] = true; m110[1] = true;
+
+    btod_diag<4, 2>(t1, m0101, permutation<3>().permute(1, 2)).perform(tt);
+    btod_diag<3, 2>(tt, m110, permutation<2>(), 0.5).perform(t2_ref);
+
+    letter i, j, k, l;
+    t2(i|j) = 0.5 * diag(i, i|k, diag(j, j|l, t1(i|j|k|l)));
+
+    compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void diag_test::test_t_6() throw(libtest::test_exception) {
+
+    static const char testname[] = "diag_test::test_t_6()";
+
+    try {
+
+    bispace<1> sp_i(10);
+    bispace<2> sp_ij(sp_i&sp_i);
+
+    btensor<2> t1(sp_ij);
+    btensor<1> t2(sp_i), t2_ref(sp_i);
+
+    btod_random<2>().perform(t1);
+    t1.set_immutable();
+
+    mask<2> m11;
+    m11[0] = true; m11[1] = true;
+
+    btod_diag<2, 2>(t1, m11, permutation<1>(), -1.0).perform(t2_ref);
+
+    letter i, j;
+    t2(i) = diag(i, i|j, -t1(i|j));
+
+    compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
 void diag_test::test_e_1() throw(libtest::test_exception) {
 
-    static const char *testname = "diag_test::test_e_1()";
+    static const char testname[] = "diag_test::test_e_1()";
 
     try {
 
@@ -195,9 +265,10 @@ void diag_test::test_e_1() throw(libtest::test_exception) {
     }
 }
 
+
 void diag_test::test_x_1() throw(libtest::test_exception) {
 
-    static const char *testname = "diag_test::test_x_1()";
+    static const char testname[] = "diag_test::test_x_1()";
 
     try {
 
@@ -238,5 +309,6 @@ void diag_test::test_x_1() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__, e.what());
     }
 }
+
 
 } // namespace libtensor
