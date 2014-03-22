@@ -1,0 +1,149 @@
+#include <libtensor/core/allocator.h>
+#include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/ctf_block_tensor/ctf_btod_collect.h>
+#include <libtensor/ctf_block_tensor/ctf_btod_distribute.h>
+#include <libtensor/symmetry/point_group_table.h>
+#include <libtensor/symmetry/product_table_container.h>
+#include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_perm.h>
+#include <libtensor/symmetry/so_copy.h>
+#include <libtensor/libtensor.h>
+#include <libtensor/expr/ctf_btensor/ctf_btensor.h>
+#include "../compare_ref.h"
+#include "ctf_expr_test.h"
+
+namespace libtensor {
+
+
+void ctf_expr_test::perform() throw(libtest::test_exception) {
+
+    allocator<double>::init(16, 16, 16777216, 16777216);
+    ctf::init();
+
+    try {
+
+        test_1();
+        test_2();
+
+    } catch(...) {
+        ctf::exit();
+        allocator<double>::shutdown();
+        throw;
+    }
+
+    ctf::exit();
+    allocator<double>::shutdown();
+}
+
+
+void ctf_expr_test::test_1() {
+
+    static const char testname[] = "ctf_expr_test::test_1()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2, double> t1(sov), t2(sov), t3(sov), t3_ref(sov);
+    ctf_btensor<2, double> dt1(sov), dt2(sov), dt3(sov);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t2);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    ctf_btod_distribute<2>(t1).perform(dt1);
+    ctf_btod_distribute<2>(t2).perform(dt2);
+
+    letter i, a;
+
+    t3_ref(i|a) = t1(i|a) - t2(i|a);
+    dt3(i|a) = dt1(i|a) - dt2(i|a);
+
+    ctf_btod_collect<2>(dt3).perform(t3);
+
+    compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_2() {
+
+    static const char testname[] = "ctf_expr_test::test_2()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)),
+		sovvv(so|(sv&sv&sv)), svvvv(sv&sv&sv&sv);
+
+    bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
+    bispace<4> sovov(so1|sv1|so2|sv2, (so1&so2)|(sv1&sv2));
+
+    btensor<2, double> t1(sov);
+    btensor<4, double> t2(soovv);
+    btensor<2, double> f_ov(sov);
+    btensor<4, double> i_ooov(sooov), i_oovv(soovv), i_ovov(sovov),
+        i_ovvv(sovvv);
+    btensor<4, double> i3_ovvv(sovvv), i3_ovvv_ref(sovvv);
+    ctf_btensor<2, double> dt1(sov);
+    ctf_btensor<4, double> dt2(soovv);
+    ctf_btensor<2, double> df_ov(sov);
+    ctf_btensor<4, double> di_ooov(sooov), di_oovv(soovv), di_ovov(sovov),
+        di_ovvv(sovvv);
+    ctf_btensor<4, double> di3_ovvv(sovvv);
+
+    btod_random<2>().perform(t1);
+    btod_random<4>().perform(t2);
+    btod_random<2>().perform(f_ov);
+    btod_random<4>().perform(i_ooov);
+    btod_random<4>().perform(i_oovv);
+    btod_random<4>().perform(i_ovov);
+    btod_random<4>().perform(i_ovvv);
+
+    ctf_btod_distribute<2>(t1).perform(dt1);
+    ctf_btod_distribute<4>(t2).perform(dt2);
+    ctf_btod_distribute<2>(f_ov).perform(df_ov);
+    ctf_btod_distribute<4>(i_ooov).perform(di_ooov);
+    ctf_btod_distribute<4>(i_oovv).perform(di_oovv);
+    ctf_btod_distribute<4>(i_ovov).perform(di_ovov);
+    ctf_btod_distribute<4>(i_ovvv).perform(di_ovvv);
+
+    letter i, j, k, a, b, c, d;
+
+    i3_ovvv_ref(i|a|b|c) =
+          i_ovvv(i|a|b|c)
+        + asymm(b, c, contract(j,
+            t1(j|c),
+            i_ovov(j|b|i|a)
+            - contract(k|d, t2(i|k|b|d), i_oovv(j|k|a|d))))
+        - asymm(b, c, contract(k|d, i_ovvv(k|c|a|d), t2(i|k|b|d)));
+
+    di3_ovvv(i|a|b|c) =
+          di_ovvv(i|a|b|c)
+        + asymm(b, c, contract(j,
+            dt1(j|c),
+            di_ovov(j|b|i|a)
+            - contract(k|d, dt2(i|k|b|d), di_oovv(j|k|a|d))))
+        - asymm(b, c, contract(k|d, di_ovvv(k|c|a|d), dt2(i|k|b|d)));
+
+    ctf_btod_collect<4>(di3_ovvv).perform(i3_ovvv);
+
+    compare_ref<4>::compare(testname, i3_ovvv, i3_ovvv_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+} // namespace libtensor
