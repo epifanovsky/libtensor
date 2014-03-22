@@ -13,11 +13,13 @@ class node_ctf_btensor_interm_base : public node {
 public:
     static const char k_op_type[]; //!< Operation type
 
+public:
     node_ctf_btensor_interm_base(size_t n) : node(k_op_type, n) { }
 
     virtual ~node_ctf_btensor_interm_base() { }
 
     virtual const std::type_info &get_t() const = 0;
+
 };
 
 

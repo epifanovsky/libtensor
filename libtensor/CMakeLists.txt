@@ -322,7 +322,10 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_block_tensor.C
     ctf_block_tensor/impl/ctf_btod_addition_schedule.C
     ctf_block_tensor/impl/ctf_btod_aux_add.C
+    ctf_block_tensor/impl/ctf_btod_aux_chsym.C
     ctf_block_tensor/impl/ctf_btod_aux_copy.C
+    ctf_block_tensor/impl/ctf_btod_aux_symmetrize.C
+    ctf_block_tensor/impl/ctf_btod_aux_transform.C
     ctf_block_tensor/impl/ctf_btod_collect.C
     ctf_block_tensor/impl/ctf_btod_contract2_1.C
     ctf_block_tensor/impl/ctf_btod_contract2_2.C
@@ -361,6 +364,7 @@ set(SRC_CTF
     expr/ctf_btensor/impl/eval_ctf_btensor_double_symm.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_trace.C
     expr/ctf_btensor/impl/eval_tree_builder_ctf_btensor.C
+    expr/ctf_btensor/impl/node_ctf_btensor_interm.C
 )
 
 if(WITH_ARMADILLO)
