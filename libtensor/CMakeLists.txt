@@ -314,6 +314,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_ewmult2.C
     ctf_dense_tensor/impl/ctf_tod_mult.C
     ctf_dense_tensor/impl/ctf_tod_mult1.C
+    ctf_dense_tensor/impl/ctf_tod_random.C
     ctf_dense_tensor/impl/ctf_tod_scale.C
     ctf_dense_tensor/impl/ctf_tod_scatter.C
     ctf_dense_tensor/impl/ctf_tod_set.C

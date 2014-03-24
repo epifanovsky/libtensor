@@ -210,6 +210,7 @@ void linalg_mkl_level1::rng_set_i_x(
                 throw 0;
             }
             for(size_t i = 0; i < batsz; i++) a[(off + i) * sia] = buf[i];
+            off += batsz;
             ni1 -= batsz;
         }
     }
@@ -253,6 +254,7 @@ void linalg_mkl_level1::rng_add_i_x(
         } else {
             for(size_t i = 0; i < batsz; i++) a[(off + i) * sia] += buf[i];
         }
+        off += batsz;
         ni1 -= batsz;
     }
 

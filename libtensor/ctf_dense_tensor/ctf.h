@@ -29,10 +29,20 @@ public:
         return *ctf::get_instance().m_world;
     }
 
-    static bool is_master() {
+    static unsigned get_rank() {
         int myid;
         MPI_Comm_rank(ctf::get_instance().m_world->comm, &myid);
-        return myid == 0;
+        return myid;
+    }
+
+    static unsigned get_size() {
+        int size;
+        MPI_Comm_size(ctf::get_instance().m_world->comm, &size);
+        return size;
+    }
+
+    static bool is_master() {
+        return get_rank() == 0;
     }
 
 private:
