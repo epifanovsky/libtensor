@@ -18,6 +18,7 @@ template<size_t N> class ctf_tod_dotprod;
 template<size_t N, size_t M, size_t K> class ctf_tod_ewmult2;
 template<size_t N> class ctf_tod_mult;
 template<size_t N> class ctf_tod_mult1;
+template<size_t N> class ctf_tod_random;
 template<size_t N, size_t M> class ctf_tod_scatter;
 template<size_t N> class ctf_tod_scale;
 template<size_t N> class ctf_tod_set;
@@ -45,23 +46,9 @@ struct ctf_btod_traits {
     };
 
 /*
-    template<size_t N>
-    struct to_add_type {
-        typedef tod_add<N> type;
-    };
- */
-
-/*
     template<size_t N, typename Functor>
     struct to_apply_type {
         typedef tod_apply<N, Functor> type;
-    };
- */
-
-/*
-    template<size_t N>
-    struct to_compare_type {
-        typedef tod_compare<N> type;
     };
  */
 
@@ -113,12 +100,10 @@ struct ctf_btod_traits {
         typedef ctf_tod_mult1<N> type;
     };
 
-/*
     template<size_t N>
     struct to_random_type {
-        typedef tod_random<N> type;
+        typedef ctf_tod_random<N> type;
     };
- */
 
     template<size_t N>
     struct to_scale_type {
@@ -156,24 +141,10 @@ struct ctf_btod_traits {
         typedef ctf_tod_set<N> type;
     };
 
-/*
-    template<size_t N>
-    struct to_size_type {
-        typedef tod_size<N> type;
-    };
- */
-
     template<size_t N>
     struct to_trace_type {
         typedef ctf_tod_trace<N> type;
     };
-
-/*
-    template<size_t N>
-    struct to_vmpriority_type {
-        typedef tod_vmpriority<N> type;
-    };
- */
 
     static bool is_zero(double d) {
         return d == 0.0;

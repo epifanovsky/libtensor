@@ -346,6 +346,7 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_ewmult2.C
     ctf_block_tensor/impl/ctf_btod_mult.C
     ctf_block_tensor/impl/ctf_btod_mult1.C
+    ctf_block_tensor/impl/ctf_btod_random.C
     ctf_block_tensor/impl/ctf_btod_scale.C
     ctf_block_tensor/impl/ctf_btod_set.C
     ctf_block_tensor/impl/ctf_btod_sum.C

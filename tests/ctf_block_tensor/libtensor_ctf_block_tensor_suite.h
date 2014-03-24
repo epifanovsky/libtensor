@@ -11,6 +11,7 @@
 #include "ctf_btod_ewmult2_test.h"
 #include "ctf_btod_mult_test.h"
 #include "ctf_btod_mult1_test.h"
+#include "ctf_btod_random_test.h"
 #include "ctf_btod_scale_test.h"
 #include "ctf_btod_set_test.h"
 #include "ctf_btod_trace_test.h"
@@ -38,6 +39,7 @@ namespace libtensor {
      - libtensor::ctf_btod_ewmult2_test
      - libtensor::ctf_btod_mult_test
      - libtensor::ctf_btod_mult1_test
+     - libtensor::ctf_btod_random_test
      - libtensor::ctf_btod_scale_test
      - libtensor::ctf_btod_set_test
      - libtensor::ctf_btod_trace_test
@@ -55,6 +57,7 @@ private:
     unit_test_factory<ctf_btod_ewmult2_test> m_utf_ctf_btod_ewmult2;
     unit_test_factory<ctf_btod_mult_test> m_utf_ctf_btod_mult;
     unit_test_factory<ctf_btod_mult1_test> m_utf_ctf_btod_mult1;
+    unit_test_factory<ctf_btod_random_test> m_utf_ctf_btod_random;
     unit_test_factory<ctf_btod_scale_test> m_utf_ctf_btod_scale;
     unit_test_factory<ctf_btod_set_test> m_utf_ctf_btod_set;
     unit_test_factory<ctf_btod_trace_test> m_utf_ctf_btod_trace;

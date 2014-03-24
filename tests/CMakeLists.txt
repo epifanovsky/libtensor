@@ -127,6 +127,7 @@ set(SRC_CTF_BLOCK_TENSOR
     ctf_block_tensor/ctf_btod_ewmult2_test.C
     ctf_block_tensor/ctf_btod_mult_test.C
     ctf_block_tensor/ctf_btod_mult1_test.C
+    ctf_block_tensor/ctf_btod_random_test.C
     ctf_block_tensor/ctf_btod_scale_test.C
     ctf_block_tensor/ctf_btod_set_test.C
     ctf_block_tensor/ctf_btod_trace_test.C
