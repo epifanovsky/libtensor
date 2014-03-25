@@ -63,7 +63,11 @@ int main(int argc, char **argv) {
     libtensor_ctf_dense_tensor_suite suite;
     suite.set_handler(&handler);
 
-    suite.run_all_tests();
+    if(argc == 1) {
+        suite.run_all_tests();
+    } else {
+        for(int i = 1; i < argc; i++) suite.run_test(argv[i]);
+    }
 
     MPI_Finalize();
 }
