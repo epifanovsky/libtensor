@@ -369,13 +369,9 @@ set(SRC_CTF
     expr/ctf_btensor/impl/node_ctf_btensor_interm.C
 )
 
-if(WITH_ARMADILLO)
-    set(SRC_ARMA
-        arma/impl/btod_export_arma.C
-    )
-else(WITH_ARMADILLO)
-    set(SRC_ARMA "")
-endif(WITH_ARMADILLO)
+set(SRC_ARMA
+    arma/impl/btod_export_arma.C
+)
 
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
@@ -389,9 +385,16 @@ else(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC})
 endif(USE_ACML)
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_BLOCK_SPARSE} ${SRC_DIAG_TENSOR} ${SRC_CTF} ${SRC_INST}
-    ${SRC_EXPR} ${SRC_ARMA})
+set(SRC ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
+    ${SRC_BLOCK_SPARSE} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR})
+if(WITH_CTF)
+    set(SRC ${SRC} ${SRC_CTF})
+endif(WITH_CTF)
+if(WITH_ARMADILLO)
+    set(SRC ${SRC} ${SRC_ARMA})
+endif(WITH_ARMADILLO)
+
+add_library(tensor ${SRC})
 if(QCHEM_SOURCE_DIR)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     add_dependencies(tensor_qchem tensor)
