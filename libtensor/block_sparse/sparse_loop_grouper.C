@@ -3,14 +3,20 @@
 //TODO REMOVE
 #include <iostream>
 
+//TODO: DEBUG REMOVE for read_timer
+#include "sparse_loop_list.h"
+
 using namespace std;
 
 namespace libtensor {
 
 const char* sparse_loop_grouper::k_clazz = "sparse_loop_grouper";
 
+
+
 sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
 {
+    double seconds = read_timer<double>();
 
     //Check that all loops are fused appropriately for grouping
     vector<block_loop> loops = sf.get_loops();
@@ -22,9 +28,14 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                     "loops not fully fused");
         }
     } 
+    double bispace_tree_seconds = read_timer<double>();
     vector<sparse_bispace_any_order> bispaces = sf.get_bispaces();
     vector<sparse_block_tree_any_order> trees = sf.get_trees(); 
+    std::cout << "tree bispace copy outside time: " << read_timer<double>() - bispace_tree_seconds << "\n";
+
+    double get_batches_seconds = read_timer<double>();
     map<size_t,idx_pair> batches = sf.get_batches();
+    std::cout << "get_batches outside time: " << read_timer<double>() - get_batches_seconds << "\n";
 
     //Group the loops 
     vector<idx_list> trees_for_groups;
@@ -191,6 +202,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
             }
         }
     }
+    std::cout << "GROUPER FUNCTION SCOPE TIME: " << read_timer<double>() - seconds << "\n";
 }
 
 

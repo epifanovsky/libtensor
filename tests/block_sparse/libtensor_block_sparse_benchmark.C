@@ -421,8 +421,34 @@ void run_benchmark_mo(const char* file_name)
     }
 
     double seconds;
-#if 0
+    //TODO: DEBUG REMOVE
+    sparse_block_tree_any_order tree = spb_E.get_sparse_group_tree(0);
+    vector< vector<size_t> > keys;
+    vector< vector<off_dim_pair> > vals;
+    for(sparse_block_tree_any_order::iterator it = tree.begin(); it != tree.end(); ++it)
     {
+        keys.push_back(it.key());
+        vals.push_back(*it);
+    }
+
+    vector< vector<size_t> > new_keys;
+    vector< vector<off_dim_pair> > new_vals;
+    seconds = read_timer();
+    for(size_t i = 0; i < 1000; ++i)
+    {
+        new_keys = keys;
+        new_vals = vals;
+    }
+    cout << "kv_vec copy time: " << read_timer() - seconds << "\n";
+    seconds = read_timer();
+    for(size_t i = 0; i < 1000; ++i)
+    {
+        sparse_block_tree_any_order new_tree = tree; 
+    }
+    cout << "tree copy time: " << read_timer() - seconds << "\n";
+    exit(1);
+/*#if 0*/
+   {
     //Construct D result
     sparse_btensor<3> D(spb_D);
     cout << "-----------------------------\n";
@@ -490,7 +516,7 @@ void run_benchmark_mo(const char* file_name)
 
     //Construct M result
     cout << "-----------------------------\n";
-    cout << "M(nu|mu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i))\n";
+    cout << "M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i))\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
@@ -501,8 +527,9 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
     }
-#endif
+/*#endif*/
 
+#if 0
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
@@ -529,6 +556,7 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+#endif
 
 #if 0
     cout << "===========================\n";

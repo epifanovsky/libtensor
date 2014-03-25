@@ -319,4 +319,3 @@ target_link_libraries(libtensor_block_sparse_tests block_sparse tensor ${LIBTENS
 add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 #set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
 target_link_libraries(libtensor_block_sparse_benchmark block_sparse tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -g -profile-functions")

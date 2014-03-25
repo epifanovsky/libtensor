@@ -7,6 +7,9 @@
 
 namespace libtensor {
 
+template<typename T>
+T read_timer();
+
 //TODO: Should rewrite this using mixins/CRTP so that I don't need to INHERIT from the class too much baggage
 //Constructor is too messy and huge...
 template<typename T>
@@ -214,6 +217,7 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
 template<typename T>
 void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail)
 {
+    double seconds = read_timer<double>();
     //TODO: Hack for subtraction,permutation - need a better way
     if(mem_avail != 0)
     {
@@ -378,6 +382,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     {
         delete [] m_ptrs[direct_tensors_to_free[direct_tensor_rel_idx]];
     }
+    std::cout << "TIME IN get_batch: " << read_timer<double>() - seconds << "\n";
 }
 
 template<typename T>
