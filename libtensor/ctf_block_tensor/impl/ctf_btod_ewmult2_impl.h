@@ -38,7 +38,7 @@ ctf_btod_ewmult2<N, M, K>::ctf_btod_ewmult2(
 
     m_gbto(bta, tensor_transf<NA, double>(perma),
         btb, tensor_transf<NB, double>(permb),
-        tensor_transf_type(permc, scalar_transf<double>(d))) {
+        tensor_transf<NC, double>(permc, scalar_transf<double>(d))) {
 
 }
 

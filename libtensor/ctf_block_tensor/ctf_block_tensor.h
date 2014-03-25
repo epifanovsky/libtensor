@@ -20,8 +20,7 @@ namespace libtensor {
 template<size_t N, typename T>
 class ctf_block_tensor :
     virtual public gen_block_tensor< N, ctf_block_tensor_traits<T> >,
-    virtual public ctf_block_tensor_i<N, T>,
-    public noncopyable {
+    virtual public ctf_block_tensor_i<N, T> {
 
 public:
     ctf_block_tensor(const block_index_space<N> &bis) :
