@@ -101,11 +101,15 @@ elseif(MPI_FOUND)
 endif(MPI_CXX_FOUND)
 
 #   Find CTF library
-include("${LIBTENSOR_DIR}/cmake/SetupCTF.txt")
+#
+set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
+find_package(CTF)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 if(CTF_FOUND)
     set(WITH_CTF TRUE)
-    include_directories(${CTF_INCLUDE_DIR})
-    set(LIBTENSOR_DEP_LIBS tensor_libctf)
+    include_directories(${CTF_INCLUDE_PATH})
+    set(LIBTENSOR_DEP_LIBS ${LIBTENSOR_DEP_LIBS} ctf)
 endif(CTF_FOUND)
 
 #   Libtensor dependencies (libraries)
