@@ -348,14 +348,14 @@ add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 if(WITH_CTF)
     add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
-    set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
-        LINK_FLAGS ${OpenMP_CXX_FLAGS})
+#    set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
+#        LINK_FLAGS ${OpenMP_CXX_FLAGS})
     add_executable(libtensor_ctf_block_tensor_tests ${SRC_CTF_BLOCK_TENSOR})
-    set_property(TARGET libtensor_ctf_block_tensor_tests APPEND PROPERTY
-        LINK_FLAGS ${OpenMP_CXX_FLAGS})
+#    set_property(TARGET libtensor_ctf_block_tensor_tests APPEND PROPERTY
+#        LINK_FLAGS ${OpenMP_CXX_FLAGS})
     add_executable(libtensor_ctf_iface_tests ${SRC_CTF_IFACE})
-    set_property(TARGET libtensor_ctf_iface_tests APPEND PROPERTY
-        LINK_FLAGS ${OpenMP_CXX_FLAGS})
+#    set_property(TARGET libtensor_ctf_iface_tests APPEND PROPERTY
+#        LINK_FLAGS ${OpenMP_CXX_FLAGS})
 endif(WITH_CTF)
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
@@ -373,6 +373,7 @@ endif(HAVE_LIBVMM)
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
 endforeach(TARGET)
 
 # Want custom address sanitizer flags so add later
