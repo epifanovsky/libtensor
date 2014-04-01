@@ -21,6 +21,7 @@
 #include "btod_set_diag.h"
 #include "btod_set_elem.h"
 #include "btod_set.h"
+#include "btod_sum.h"
 #include "btod_symmetrize2.h"
 #include "btod_symmetrize3.h"
 #include "btod_symmetrize4.h"
