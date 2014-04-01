@@ -22,23 +22,25 @@
 namespace libtensor
 {
 
+
 //TODO: DEBUG REMOVE
-template<typename T>
-T read_timer()
-{
-    static bool initialized = false;
-    static struct timeval start;
-    struct timeval end;
-    if( !initialized )
-    {
-        gettimeofday( &start, NULL );
-        initialized = true;
-    }
+//template<typename T>
+//T read_timer()
+//{
+    //static bool initialized = false;
+    //static struct timeval start;
+    //struct timeval end;
+    //if( !initialized )
+    //{
+        //gettimeofday( &start, NULL );
+        //initialized = true;
+    //}
 
-    gettimeofday( &end, NULL );
+    //gettimeofday( &end, NULL );
 
-    return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
-}
+    //return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
+//}
+//extern double contract_seconds;
 
 typedef std::map<size_t, std::vector<size_t> > fixed_block_map;
 typedef std::map<size_t,size_t> loop_fixed_block_map;
@@ -92,12 +94,12 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
 				__FILE__, __LINE__, "no loops in loop list");
 	}
 
-    std::cout << "STARTING SLL:\n";
-    double seconds = read_timer<double>();
+    //std::cout << "STARTING SLL:\n";
+    //double seconds = read_timer<double>();
     //Fuse all coupled sparse trees
-    std::cout << "STARTING FUSION:\n";
+    //std::cout << "STARTING FUSION:\n";
     sparsity_fuser sf(m_loops,m_bispaces,m_direct_tensors,batches);
-    double init = read_timer<double>();
+    //double init = read_timer<double>();
     for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
     {
         idx_list tree_indices = sf.get_trees_for_loop(loop_idx);
@@ -121,10 +123,10 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
             sf.fuse(tree_indices[0],rhs_tree_idx,common_loops);
         }
     }
-    std::cout  << "FUSE DURATION: " << read_timer<double>()  - init << "\n";
+    //std::cout  << "FUSE DURATION: " << read_timer<double>()  - init << "\n";
 
-    std::cout << "STARTING GROUP:\n";
-    init = read_timer<double>();
+    //std::cout << "STARTING GROUP:\n";
+    //init = read_timer<double>();
     //Create block offset and size information for each loop group
     sparse_loop_grouper slg(sf);
     m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
@@ -132,12 +134,12 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
     m_block_dims = slg.get_block_dims();
     m_offsets_and_sizes = slg.get_offsets_and_sizes();
     m_loops_for_groups = slg.get_loops_for_groups();
-    std::cout  << "GROUP DURATION: " << read_timer<double>()  - init << "\n";
+    //std::cout  << "GROUP DURATION: " << read_timer<double>()  - init << "\n";
 
 
 
-    std::cout << "STARTING TRUNCATION:\n";
-    init = read_timer<double>();
+    //std::cout << "STARTING TRUNCATION:\n";
+    //init = read_timer<double>();
     //We will work with a set of bispaces trunctated to match the current batch
     std::vector<sparse_bispace_any_order> saved_bispaces(m_bispaces);
     for(size_t direct_tensor_idx = 0; direct_tensor_idx < m_direct_tensors.size(); ++direct_tensor_idx)
@@ -155,10 +157,10 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
             }
         }
     }
-    std::cout  << "TRUNCATION DURATION: " << read_timer<double>()  - init << "\n";
+    //std::cout  << "TRUNCATION DURATION: " << read_timer<double>()  - init << "\n";
 
-    std::cout << "ALLOCATING OFFSET VECTORS:\n";
-    init = read_timer<double>();
+    //std::cout << "ALLOCATING OFFSET VECTORS:\n";
+    //init = read_timer<double>();
 	//Set up vectors for keeping track of current block indices and dimensions
 	size_t n_bispaces = m_bispaces.size();
 	std::vector<dim_list> bispace_block_dims(n_bispaces);
@@ -180,19 +182,21 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
 	}
     m_cur_bispace_grp_offsets.resize(m_offsets_and_sizes.size(),bispace_grp_offsets);
     std::vector<T*> block_ptrs(ptrs.size());
-    std::cout  << "ALLOCATING OFFSET VECTORS DURATION: " << read_timer<double>()  - init << "\n";
+    //std::cout  << "ALLOCATING OFFSET VECTORS DURATION: " << read_timer<double>()  - init << "\n";
 
-    std::cout << "WORKING:\n";
-    init = read_timer<double>();
+    //std::cout << "WORKING:\n";
+    //init = read_timer<double>();
+    //contract_seconds = 0;
 	_run_internal(kernel,ptrs,block_ptrs,bispace_grp_offsets,bispace_block_dims,0);
-    std::cout  << "WORKING DURATION: " << read_timer<double>()  - init << "\n";
+    //std::cout  << "WORKING DURATION: " << read_timer<double>()  - init << "\n";
 
-    std::cout << "RESTORING BISPACES:\n";
-    init = read_timer<double>();
+    //std::cout << "RESTORING BISPACES:\n";
+    //init = read_timer<double>();
     //Restore bispaces
     m_bispaces = saved_bispaces;
-    std::cout  << "RESTORE DURATION: " << read_timer<double>()  - init << "\n";
-    std::cout << "TOTAL SLL TIME: " << read_timer<double>() - seconds << "\n";
+    //std::cout  << "RESTORE DURATION: " << read_timer<double>()  - init << "\n";
+    //std::cout << "TOTAL SLL TIME: " << read_timer<double>() - seconds << "\n";
+    //std::cout << "Contract seconds: " << contract_seconds << "\n";
 }
 
 template<typename T>

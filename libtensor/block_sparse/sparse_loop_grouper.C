@@ -16,7 +16,7 @@ const char* sparse_loop_grouper::k_clazz = "sparse_loop_grouper";
 
 sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
 {
-    double seconds = read_timer<double>();
+    /*double seconds = read_timer<double>();*/
 
     //Check that all loops are fused appropriately for grouping
     vector<block_loop> loops = sf.get_loops();
@@ -28,14 +28,14 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                     "loops not fully fused");
         }
     } 
-    double bispace_tree_seconds = read_timer<double>();
+    /*double bispace_tree_seconds = read_timer<double>();*/
     vector<sparse_bispace_any_order> bispaces = sf.get_bispaces();
     vector<sparse_block_tree_any_order> trees = sf.get_trees(); 
-    std::cout << "tree bispace copy outside time: " << read_timer<double>() - bispace_tree_seconds << "\n";
+    /*std::cout << "tree bispace copy outside time: " << read_timer<double>() - bispace_tree_seconds << "\n";*/
 
-    double get_batches_seconds = read_timer<double>();
+    /*double get_batches_seconds = read_timer<double>();*/
     map<size_t,idx_pair> batches = sf.get_batches();
-    std::cout << "get_batches outside time: " << read_timer<double>() - get_batches_seconds << "\n";
+    /*std::cout << "get_batches outside time: " << read_timer<double>() - get_batches_seconds << "\n";*/
 
     //Group the loops 
     vector<idx_list> trees_for_groups;
@@ -82,11 +82,14 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
             idx_list loops_for_tree = sf.get_loops_for_tree(tree_idx);
             size_t tree_subspace_idx = distance(loops_for_tree.begin(),find(loops_for_tree.begin(),loops_for_tree.end(),loop_idx));
             tree_baig = sf.get_bispaces_and_index_groups_for_tree(tree_idx);
+
+            /*double iter_sec = read_timer<double>();*/
             for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
             {
                 loop_block_list.push_back(it.key()[tree_subspace_idx]);
                 sparse_offsets_and_sizes.push_back(*it);
             }
+            /*std::cout  << "Offset copy time: " << read_timer<double>() - iter_sec << "\n";*/
         }
         else
         {
@@ -202,7 +205,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
             }
         }
     }
-    std::cout << "GROUPER FUNCTION SCOPE TIME: " << read_timer<double>() - seconds << "\n";
+    /*std::cout << "GROUPER FUNCTION SCOPE TIME: " << read_timer<double>() - seconds << "\n";*/
 }
 
 

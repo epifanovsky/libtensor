@@ -80,6 +80,7 @@ public:
     //Creates a batch provider that will produce a given batch of C 
     virtual batch_provider<T>* get_batch_provider(gen_labeled_btensor<M+N-(2*K),T>& C) const 
     {
+        //double seconds = read_timer<double>();
         expr::label<M+N-(2*K)> C_le(C.get_letter_expr());
         //Build the loops for the contraction
         //First do the uncontracted indices
@@ -245,6 +246,7 @@ public:
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
+        //std::cout << "Total time in get_batch_provider: " << read_timer<double>() - seconds << "\n";
         return new contract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,m_mem_avail,forced_batched_bs);
     };
 };

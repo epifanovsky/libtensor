@@ -422,31 +422,31 @@ void run_benchmark_mo(const char* file_name)
 
     double seconds;
     //TODO: DEBUG REMOVE
-    sparse_block_tree_any_order tree = spb_E.get_sparse_group_tree(0);
-    vector< vector<size_t> > keys;
-    vector< vector<off_dim_pair> > vals;
-    for(sparse_block_tree_any_order::iterator it = tree.begin(); it != tree.end(); ++it)
-    {
-        keys.push_back(it.key());
-        vals.push_back(*it);
-    }
+    /*sparse_block_tree_any_order tree = spb_E.get_sparse_group_tree(0);*/
+    /*vector< vector<size_t> > keys;*/
+    /*vector< vector<off_dim_pair> > vals;*/
+    /*for(sparse_block_tree_any_order::iterator it = tree.begin(); it != tree.end(); ++it)*/
+    /*{*/
+        /*keys.push_back(it.key());*/
+        /*vals.push_back(*it);*/
+    /*}*/
 
-    vector< vector<size_t> > new_keys;
-    vector< vector<off_dim_pair> > new_vals;
-    seconds = read_timer();
-    for(size_t i = 0; i < 1000; ++i)
-    {
-        new_keys = keys;
-        new_vals = vals;
-    }
-    cout << "kv_vec copy time: " << read_timer() - seconds << "\n";
-    seconds = read_timer();
-    for(size_t i = 0; i < 1000; ++i)
-    {
-        sparse_block_tree_any_order new_tree = tree; 
-    }
-    cout << "tree copy time: " << read_timer() - seconds << "\n";
-    exit(1);
+    /*vector< vector<size_t> > new_keys;*/
+    /*vector< vector<off_dim_pair> > new_vals;*/
+    /*seconds = read_timer();*/
+    /*for(size_t i = 0; i < 1000; ++i)*/
+    /*{*/
+        /*new_keys = keys;*/
+        /*new_vals = vals;*/
+    /*}*/
+    /*cout << "kv_vec copy time: " << read_timer() - seconds << "\n";*/
+    /*seconds = read_timer();*/
+    /*for(size_t i = 0; i < 1000; ++i)*/
+    /*{*/
+        /*sparse_block_tree_any_order new_tree = tree; */
+    /*}*/
+    /*cout << "tree copy time: " << read_timer() - seconds << "\n";*/
+    /*exit(1);*/
 /*#if 0*/
    {
     //Construct D result

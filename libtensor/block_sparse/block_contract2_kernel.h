@@ -17,6 +17,7 @@ namespace libtensor
 
 extern size_t flops;
 extern bool count_flops;
+//extern double contract_seconds;
 
 template<typename T>
 class block_contract2_kernel: public libtensor::block_kernel_i<T>
@@ -500,6 +501,7 @@ void libtensor::block_contract2_kernel<T>::operator ()(
     }
     else
     {
+        //double seconds = read_timer<double>();
         //matrix-matrix mult
         size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
         if(m_A_trans)
@@ -550,6 +552,7 @@ void libtensor::block_contract2_kernel<T>::operator ()(
         {
             flops += 2*m*n*k;
         }
+        //contract_seconds += read_timer<double>() - seconds;
     }
 	//_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
 }
