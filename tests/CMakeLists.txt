@@ -266,10 +266,6 @@ set(SRC_BLOCK_SPARSE
     block_sparse/direct_sparse_btensor_test.C
 )
 
-set(SRC_BLOCK_SPARSE_BENCHMARK
-	block_sparse/libtensor_block_sparse_benchmark.C
-)
-
 set(TARGETS
     libtensor_core_tests
     libtensor_tod_tests
@@ -316,6 +312,9 @@ target_link_libraries(libtensor_block_sparse_tests block_sparse tensor ${LIBTENS
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
-add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
+add_executable(libtensor_block_sparse_benchmark block_sparse/libtensor_block_sparse_benchmark.C block_sparse/timer.C)
 #set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
 target_link_libraries(libtensor_block_sparse_benchmark block_sparse tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
+add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
+target_link_libraries(sparse_block_tree_benchmark block_sparse tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)

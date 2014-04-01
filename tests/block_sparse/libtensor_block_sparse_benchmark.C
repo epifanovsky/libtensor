@@ -14,10 +14,10 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <math.h>
 #include <limits>
 #include <string.h>
+#include "timer.h"
 
 using namespace libtensor;
 using namespace std;
@@ -25,21 +25,6 @@ using namespace std;
 extern bool libtensor::count_flops;
 extern size_t libtensor::flops;
 
-double read_timer()
-{
-    static bool initialized = false;
-    static struct timeval start;
-    struct timeval end;
-    if( !initialized )
-    {
-        gettimeofday( &start, NULL );
-        initialized = true;
-    }
-
-    gettimeofday( &end, NULL );
-
-    return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
-}
 
 //Benchmark file format:
 //N
