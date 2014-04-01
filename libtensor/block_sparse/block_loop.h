@@ -30,7 +30,7 @@ public:
 
 	bool is_bispace_ignored(size_t bispace_idx) const;
 
-	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
+    const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
 };
 
 } /* namespace libtensor */
