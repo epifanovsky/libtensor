@@ -39,6 +39,10 @@ public:
     bool operator==(const runtime_permutation& rhs) const;
     bool operator!=(const runtime_permutation& rhs) const;
 
+    typedef std::vector<size_t>::iterator iterator;
+    iterator begin() { return m_idx.begin(); }
+    iterator end() { return m_idx.end(); }
+
     size_t operator[](size_t idx) const { return m_idx[idx]; }
 } ;
 

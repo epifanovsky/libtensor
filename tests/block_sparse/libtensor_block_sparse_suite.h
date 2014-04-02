@@ -14,6 +14,7 @@
 #include "sparse_loop_iterator_test.h"
 #include "sparsity_fuser_test.h"
 #include "sparse_loop_grouper_test.h"
+#include "blas_isomorphism_test.h"
 
 using libtest::unit_test_factory;
 
@@ -44,6 +45,7 @@ private:
     unit_test_factory<direct_sparse_btensor_test> m_utf_direct_sparse_btensor;
     unit_test_factory<sparsity_fuser_test> m_utf_sparsity_fuser;
     unit_test_factory<sparse_loop_grouper_test> m_utf_sparse_loop_grouper;
+    unit_test_factory<blas_isomorphism_test> m_utf_blas_isomorphism;
 public:
     //! Creates the suite
     libtensor_sparse_suite();

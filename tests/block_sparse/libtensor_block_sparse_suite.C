@@ -16,6 +16,7 @@ libtensor_sparse_suite::libtensor_sparse_suite() :
     add_test("sparse_btensor", m_utf_sparse_btensor);
     add_test("direct_sparse_btensor", m_utf_direct_sparse_btensor);
     add_test("sparse_loop_grouper", m_utf_sparse_loop_grouper);
+    add_test("blas_isomorphism", m_utf_blas_isomorphism);
 }
 
 }
