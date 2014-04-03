@@ -55,8 +55,8 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
     //First we find all the contracted indices    
 	//Figure out what RHS subspace indices are contracted, based on whether
 	//the loops that traverse them don't touch the output tensor
-	std::vector<size_t> A_contracted_indices;
-	std::vector<size_t> B_contracted_indices;
+	idx_list A_contracted_indices;
+	idx_list B_contracted_indices;
     std::vector<block_loop> loops = sll.get_loops();
 	for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
 	{
@@ -81,17 +81,55 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
 
     }
     size_t n_contr = A_contracted_indices.size();
-    sort(A_contracted_indices.begin(),A_contracted_indices.end());
-    sort(B_contracted_indices.begin(),B_contracted_indices.end());
 
-    //Figure out the permutation necessary to move A and B to Aik Bjk contraction format
-    bool A_trans = false;
-    bool B_trans = true;
 	size_t A_order = bispaces[1].get_order();
 	size_t B_order = bispaces[2].get_order();
     m_A_perm = runtime_permutation(A_order);
     m_B_perm = runtime_permutation(B_order);
-    for(size_t A_dest_idx = A_order - n_contr; A_dest_idx < A_order; ++A_dest_idx)
+
+    //If we need to permute because the indices of contraction are in different orders, we will choose the smaller tensor to be permuted
+    size_t A_nnz = bispaces[1].get_nnz();
+    size_t B_nnz = bispaces[2].get_nnz();
+    idx_list& primary_ci = A_nnz >= B_nnz ? A_contracted_indices : B_contracted_indices;
+    idx_list& secondary_ci = A_nnz < B_nnz ? A_contracted_indices : B_contracted_indices;
+
+    idx_pair_list ci_pairs;
+    for(size_t i = 0; i < n_contr; ++i)
+    {
+        ci_pairs.push_back(idx_pair(primary_ci[i],secondary_ci[i]));
+    }
+    sort(ci_pairs.begin(),ci_pairs.end());
+    for(size_t i = 0; i < n_contr; ++i)
+    {
+        primary_ci[i] = ci_pairs[i].first; 
+        secondary_ci[i] = ci_pairs[i].second;
+    }
+
+    //Permute block to force the ordering of the contraction indices to match
+    runtime_permutation& secondary_perm = A_nnz < B_nnz ? m_A_perm : m_B_perm;
+    idx_list secondary_perm_entries;
+    size_t cur_contr_idx = 0;
+    for(size_t i = 0; i < secondary_perm.get_order(); ++i)
+    {
+        if(std::find(secondary_ci.begin(),secondary_ci.end(),i) != secondary_ci.end())
+        {
+            secondary_perm_entries.push_back(secondary_ci[cur_contr_idx]);
+            ++cur_contr_idx;
+        }
+        else
+        {
+            secondary_perm_entries.push_back(secondary_perm[i]);
+        }
+    }
+    secondary_perm = runtime_permutation(secondary_perm_entries);
+
+    //Figure out the permutation necessary to move contracted indices
+    //to place A and B in Aik Bjk contraction format
+    //This is our "default" format - if we are permuting, we might as well go here
+    bool A_trans = false;
+    bool B_trans = true;
+
+    for(size_t A_dest_idx = A_order - A_contracted_indices.size(); A_dest_idx < A_order; ++A_dest_idx)
     {
         size_t A_src_idx = A_contracted_indices[A_dest_idx - (A_order - n_contr)];
         m_A_perm.permute(A_src_idx,A_dest_idx);
@@ -102,16 +140,19 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
         m_B_perm.permute(B_src_idx,B_dest_idx);
     }
 
+    //If uncontracted indices have permuted order between A/B and C, then we need to permute an output or input tensor 
+
     //Check if we need to reverse transposition option
     //This is the case if A perm = {...0,1,2,END} and same for B_perm
-    runtime_permutation A_end_entries(std::vector<size_t>(m_A_perm.end() - n_contr,m_A_perm.end()));
-    runtime_permutation B_end_entries(std::vector<size_t>(m_B_perm.end() - n_contr,m_B_perm.end()));
-    if(A_end_entries == runtime_permutation(n_contr))
+    runtime_permutation A_end_entries(idx_list(m_A_perm.end() - n_contr,m_A_perm.end()));
+    runtime_permutation B_end_entries(idx_list(m_B_perm.end() - n_contr,m_B_perm.end()));
+    runtime_permutation start_entries(n_contr);
+    if(A_end_entries == start_entries && runtime_permutation(A_contracted_indices) == start_entries)
     {
         A_trans = !A_trans;
         m_A_perm = runtime_permutation(A_order);
     }
-    if(B_end_entries == runtime_permutation(n_contr))
+    if(B_end_entries == start_entries && runtime_permutation(B_contracted_indices) == start_entries)
     {
         B_trans = !B_trans;
         m_B_perm = runtime_permutation(B_order);

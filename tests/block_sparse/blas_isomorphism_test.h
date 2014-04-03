@@ -15,6 +15,9 @@ private:
     void test_matmul_isomorphism_params_identity_NT() throw(libtest::test_exception);
     void test_matmul_isomorphism_params_identity_TN() throw(libtest::test_exception);
     void test_matmul_isomorphism_params_identity_TT() throw(libtest::test_exception);
+    void test_matmul_isomorphism_params_3d_2d_A_perm() throw(libtest::test_exception);
+    void test_matmul_isomorphism_params_permuted_ioc() throw(libtest::test_exception);
+    void test_matmul_isomorphism_params_3d_3d_A_perm_B_perm() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
