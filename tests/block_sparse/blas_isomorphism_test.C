@@ -183,7 +183,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_TT() throw(l
     }
 }
 
-//Requires A permutation 021
+//Requires A permutation 102 (not 021 bcs that would wreck vectorization)
 //C_ijl = \sum_k A_ikj B_kl
 //dimensions: i = 2,j = 3,k = 4,l = 5
 void blas_isomorphism_test::test_matmul_isomorphism_params_3d_2d_A_perm() throw(libtest::test_exception)
@@ -228,9 +228,9 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_3d_2d_A_perm() throw(
 
 
     runtime_permutation correct_A_perm(3);
-    correct_A_perm.permute(1,2);
+    correct_A_perm.permute(0,1);
     runtime_permutation ident(2);
-    if(perm_A !=  correct_A_perm || perm_B != ident || dgemm_fp != &linalg::mul2_ij_ip_pj_x)
+    if(perm_A !=  correct_A_perm || perm_B != ident || dgemm_fp != &linalg::mul2_ij_pi_pj_x)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "matmul_isomorphism_params returned incorrect value for 3d_2d_A_perm case");
@@ -286,7 +286,6 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_permuted_ioc() throw(
     }
 }
 
-#if 0
 //Requires A permutation 021, B permutation 201
 //Could also permute C additionally, but shouldn't, and therefore should reflect that
 //C_ijml = \sum_k A_ikj B_lkm
@@ -349,6 +348,5 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_3d_3d_A_perm_B_perm()
                 "matmul_isomorphism_params returned incorrect value for 3d_2d_A_perm case");
     }
 }
-#endif
 
 } // namespace libtensor
