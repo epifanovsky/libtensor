@@ -391,8 +391,7 @@ void run_benchmark_mo(const char* file_name)
     //everything else to free stack-allocated storage
     sparse_bispace<3> spb_D = spb_C.contract(2) | spb_o;
     sparse_bispace<3> spb_E =  spb_C_orig.contract(2) | spb_X;
-    sparse_bispace<3> spb_G_perm = spb_E.permute(permutation<3>().permute(1,2));
-    sparse_bispace<3> spb_H = spb_G_perm.contract(2) | spb_o;
+    sparse_bispace<3> spb_H = spb_N | spb_X | spb_o;
     sparse_bispace<2> spb_M = spb_N|spb_N;
 
     //These tensors are also used in the direct part and must be stored up here
@@ -478,22 +477,13 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
 
-    //Permute G for MO-transform
-    cout << "-----------------------------\n";
-    cout << "G_perm(nu|Q|sigma) = G(nu|sigma|Q)\n";
-    sparse_btensor<3> G_perm(spb_G_perm);
-    seconds = read_timer();
-    G_perm(nu|Q|sigma) = G(nu|sigma|Q);
-    seconds = read_timer() - seconds;
-    std::cout << "Time (s): " << seconds << "\n";
-
     //Construct the MO-transformed integrals
     cout << "-----------------------------\n";
-    cout << "H(nu|Q|i) = contract(sigma,G_perm(nu|Q|sigma),C_mo(sigma|i))\n";
+    cout << "H(nu|Q|i) = contract(sigma,G(nu|sigma|Q),C_mo(sigma|i))\n";
     sparse_btensor<3> H(spb_H);
     count_flops = true;
     seconds = read_timer();
-    H(nu|Q|i) = contract(sigma,G_perm(nu|Q|sigma),C_mo(sigma|i));
+    H(nu|Q|i) = contract(sigma,G(nu|sigma|Q),C_mo(sigma|i));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
