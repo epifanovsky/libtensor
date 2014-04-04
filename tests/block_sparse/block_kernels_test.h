@@ -33,14 +33,7 @@ private:
     void test_block_contract2_kernel_2d_C_extra_idx() throw(libtest::test_exception);
     void test_block_contract2_kernel_2d_no_contracted_inds() throw(libtest::test_exception);
     void test_block_contract2_kernel_2d_strided_output() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_A_ikj() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_A_jik() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_A_trans_kjli() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_A_trans_klji() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_B_jlk() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_B_jkml() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_B_trans_kjl() throw(libtest::test_exception);
-    void test_block_contract2_kernel_non_matmul_B_trans_lkj() throw(libtest::test_exception);
+    void test_block_contract2_kernel_perm_A_ikj() throw(libtest::test_exception);
 
     //Running tests
     void test_block_contract2_kernel_2d_not_enough_dims_and_ptrs() throw(libtest::test_exception);
