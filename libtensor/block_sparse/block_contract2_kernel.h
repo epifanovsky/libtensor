@@ -9,6 +9,7 @@
 #define BLOCK_CONTRACT2_KERNEL_H_
 
 #include "block_kernel_i.h"
+#include "block_permute_kernel.h"
 #include "sparse_loop_list.h"
 #include "blas_isomorphism.h"
 #include "../linalg/linalg.h"
@@ -220,6 +221,7 @@ void libtensor::block_contract2_kernel<T>::init_matvec(const std::vector< sparse
 	//Is A transposed? If so, the contracted indices appear in order at the beginning.
 	//Otherwise, they will appear in order at the end
     size_t mat_first_contracted_index = (m_mat_bispace_idx == 1) ? A_contracted_indices[0] : B_contracted_indices[0];
+    m_A_trans = false;
 	if(mat_first_contracted_index == 0)
 	{
 		//Yes
