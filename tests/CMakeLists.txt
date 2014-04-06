@@ -280,6 +280,7 @@ set(TARGETS
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
+    libtensor_block_sparse_benchmark
     libtensor_block_sparse_tests
 )
 
@@ -292,6 +293,7 @@ add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
+add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
@@ -308,16 +310,16 @@ endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
-    tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+    tensor tensor_core tensor_block_sparse
+    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
 
 # Want custom address sanitizer flags so add later
-target_link_libraries(libtensor_block_sparse_tests tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+#target_link_libraries(libtensor_block_sparse_tests tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
-add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
-target_link_libraries(libtensor_block_sparse_benchmark tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+#target_link_libraries(libtensor_block_sparse_benchmark tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 
 
