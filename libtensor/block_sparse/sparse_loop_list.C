@@ -23,16 +23,6 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const vector<
             "Cannot have an empty loop list");
     }
 
-    //Check that all loops have compatible bispaces
-    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-    {
-        if(m_loops[loop_idx].get_bispaces() != m_bispaces)
-        {
-            throw bad_parameter(g_ns, k_clazz,"sparse_loop_list(...)",
-                    __FILE__, __LINE__, "bispaces of loops do not match");
-        }
-    }
-
     for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
     {
         const block_loop& loop = m_loops[loop_idx];

@@ -18,7 +18,6 @@ class sparse_loop_list_test : public libtest::unit_test
 public:
     virtual void perform() throw(libtest::test_exception);
 private:
-    void test_construct_invalid_loop_bispaces() throw(libtest::test_exception);
     void test_construct_all_ignored() throw(libtest::test_exception);
     void test_construct_duplicate_subspaces_looped() throw(libtest::test_exception);
 

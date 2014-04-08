@@ -16,7 +16,6 @@ namespace libtensor
 {
 
 void sparse_loop_list_test::perform() throw(libtest::test_exception) {
-	test_construct_invalid_loop_bispaces();
     test_construct_all_ignored();
     test_construct_duplicate_subspaces_looped();
 
@@ -31,58 +30,6 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_direct_3d_3d();
 }
 
-void sparse_loop_list_test::test_construct_invalid_loop_bispaces() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_loop_list_test::test_construct_invalid_loop_bispaces()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    sparse_bispace<1> spb_3(6);
-    vector<size_t> split_points_3;
-    split_points_3.push_back(2);
-    split_points_3.push_back(4);
-    spb_3.split(split_points_3);
-
-    vector<sparse_bispace_any_order> bispaces_1;
-    bispaces_1.push_back(spb_1|spb_2|spb_3);
-    bispaces_1.push_back(spb_2|spb_3);
-
-    //We alter middle subspace of first bispace to make them not match
-    vector<sparse_bispace_any_order> bispaces_2;
-    bispaces_2.push_back(spb_1|spb_3|spb_3);
-    bispaces_2.push_back(spb_2|spb_3);
-
-    vector<block_loop> loops(1,block_loop(bispaces_1));
-    loops[0].set_subspace_looped(0,1);
-    loops.push_back(block_loop(bispaces_2));
-    loops[1].set_subspace_looped(0,2);
-
-    //Should fail due to incompatible bispaces
-    bool threw_exception = false;
-    try
-    {
-        sparse_loop_list sll(loops,bispaces_1);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_loop_list::sparse_loop_list(...) did not throw exception when adding loop with invalid bispaces");
-    }
-}
 
 void sparse_loop_list_test::test_construct_all_ignored() throw(libtest::test_exception)
 {
