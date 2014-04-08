@@ -68,7 +68,7 @@ private:
     std::vector<std::vector<block_list> > m_tree_keys_for_groups; //The keys of each tree corresponding to a given loop group, for use building offsets for direct code
     const idx_list m_direct_tensors;
 public:
-	sparse_loop_list(const std::vector<block_loop>& loops,const idx_list& direct_tensors = idx_list());
+	sparse_loop_list(const std::vector<block_loop>& loops,const std::vector<sparse_bispace_any_order>& bispaces, const idx_list& direct_tensors = idx_list());
 
 	template<typename T>
 	void run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>()));

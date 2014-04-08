@@ -42,7 +42,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NN() throw(l
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     matmul_isomorphism_params<double> mip(sll);
 
@@ -84,7 +84,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NT() throw(l
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     matmul_isomorphism_params<double> mip(sll);
 
@@ -126,7 +126,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_TN() throw(l
     loops[2].set_subspace_looped(1,0);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     matmul_isomorphism_params<double> mip(sll);
 
@@ -168,7 +168,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_TT() throw(l
     loops[2].set_subspace_looped(1,0);
     loops[2].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 
     matmul_isomorphism_params<double> mip(sll);
@@ -221,7 +221,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_3d_2d_A_perm() throw(
     loops[3].set_subspace_looped(1,1);
     loops[3].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 
     matmul_isomorphism_params<double> mip(sll);
@@ -272,7 +272,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_permuted_ioc() throw(
     loops[3].set_subspace_looped(1,2);
     loops[3].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     matmul_isomorphism_params<double> mip(sll);
 
@@ -333,7 +333,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_3d_3d_A_perm_B_perm()
     loops[4].set_subspace_looped(2,1);
 
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 
     matmul_isomorphism_params<double> mip(sll);

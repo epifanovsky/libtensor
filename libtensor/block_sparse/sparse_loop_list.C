@@ -14,17 +14,17 @@ namespace libtensor
 
 const char* sparse_loop_list::k_clazz = "sparse_loop_list";
 
-sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_list& direct_tensors) : m_loops(loops),m_direct_tensors(direct_tensors)
+sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const vector<sparse_bispace_any_order>& bispaces,const idx_list& direct_tensors) : m_loops(loops),m_bispaces(bispaces),m_direct_tensors(direct_tensors)
 {
+#ifdef LIBTENSOR_DEBUG
     if(m_loops.size() == 0)
     {
         throw bad_parameter(g_ns, k_clazz,"sparse_loop_list(...)",__FILE__, __LINE__,
             "Cannot have an empty loop list");
     }
-    m_bispaces = m_loops[0].get_bispaces();
 
     //Check that all loops have compatible bispaces
-    for(size_t loop_idx = 1; loop_idx < m_loops.size(); ++loop_idx)
+    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
     {
         if(m_loops[loop_idx].get_bispaces() != m_bispaces)
         {
@@ -70,18 +70,20 @@ sparse_loop_list::sparse_loop_list(const vector<block_loop>& loops,const idx_lis
 			}
 		}
     }
-
+#endif
 }
 
 std::vector<size_t> sparse_loop_list::get_loops_that_access_bispace(
 		size_t bispace_idx) const
 {
 	std::vector<size_t> loops_that_access_bispace;
+#ifdef LIBTENSOR_DEBUG
 	if(bispace_idx >= m_bispaces.size())
 	{
 		throw out_of_bounds(g_ns, k_clazz,"get_loops_that_access_bispace(...)",
 				__FILE__, __LINE__, "bispace index out of bounds");
 	}
+#endif
 	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
 	{
 		if(!m_loops[loop_idx].is_bispace_ignored(bispace_idx))

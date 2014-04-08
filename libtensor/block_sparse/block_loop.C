@@ -16,15 +16,18 @@ bool count_flops = false;
 
 const char* block_loop::k_clazz = "block_loop";
 
-block_loop::block_loop(const std::vector< sparse_bispace_any_order >& bispaces) : m_bispaces(bispaces)
+block_loop::block_loop(const std::vector< sparse_bispace_any_order >& bispaces)
     
 {
+#ifdef LIBTENSOR_DEBUG
+    m_bispaces = bispaces;
+#endif
 	if(bispaces.size() == 0)
 	{
 		throw bad_parameter(g_ns, k_clazz,"block_loop_new(...)",
 				__FILE__, __LINE__, "loop must access at least one bispace");
 	}
-    size_t n_bispaces = m_bispaces.size();
+    size_t n_bispaces = bispaces.size();
     m_subspaces_looped.resize(n_bispaces);
     m_bispaces_ignored.resize(n_bispaces);
     for(size_t bispace_idx = 0; bispace_idx  < n_bispaces; ++bispace_idx)
@@ -35,8 +38,9 @@ block_loop::block_loop(const std::vector< sparse_bispace_any_order >& bispaces) 
 
 void block_loop::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
 {
+#ifdef LIBTENSOR_DEBUG
 	//Is bispace_idx/subspace_idx valid?
-	if(bispace_idx >= m_bispaces.size())
+	if(bispace_idx >= m_bispaces_ignored.size())
 	{
 		throw out_of_bounds(g_ns, k_clazz,"set_subspace_looped(...)",
 				__FILE__, __LINE__, "bispace_idx is out of bounds");
@@ -62,6 +66,7 @@ void block_loop::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
             }
         }
 	}
+#endif
 
 	//Finally, record that the loop touches the specified subspace of the given bispace
 	m_subspaces_looped[bispace_idx] = subspace_idx;

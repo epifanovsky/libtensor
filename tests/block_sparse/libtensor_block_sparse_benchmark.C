@@ -431,8 +431,8 @@ void run_benchmark_mo(const char* file_name)
     /*}*/
     /*cout << "tree copy time: " << read_timer() - seconds << "\n";*/
     /*exit(1);*/
-/*#if 0*/
    double start = read_timer();
+#if 0
    {
     //Construct D result
     sparse_btensor<3> D(spb_D);
@@ -504,22 +504,19 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
     }
     cout << "TOTAL TIME: " << read_timer() - start << "\n";
-/*#endif*/
+#endif
 
-#if 0
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
     direct_sparse_btensor<3> E_direct(spb_E);
     direct_sparse_btensor<3> G_direct(spb_E);
-    direct_sparse_btensor<3> G_perm_direct(spb_G_perm);
     direct_sparse_btensor<3> H_direct(spb_H);
 
     D_direct(mu|Q|i) = contract(lambda,C(mu|Q|lambda),C_mo(lambda|i));
     E_direct(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
     G_direct(nu|sigma|Q) = I(nu|sigma|Q) - E_direct(nu|sigma|Q);
-    G_perm_direct(nu|Q|sigma) = G_direct(nu|sigma|Q);
-    H_direct(nu|Q|i) = contract(sigma,G_perm_direct(nu|Q|sigma),C_mo(sigma|i));
+    H_direct(nu|Q|i) = contract(sigma,G_direct(nu|sigma|Q),C_mo(sigma|i));
 
     sparse_btensor<2> M_from_direct(spb_M);
     cout << "-----------------------------\n";
@@ -533,7 +530,6 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
-#endif
 
 #if 0
     cout << "===========================\n";

@@ -313,7 +313,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw
 
     //j loop - left out!
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
@@ -356,7 +356,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_bispaces() th
     //k loop
     loops[2].set_subspace_looped(1,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
@@ -405,7 +405,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_C_missing_idx() throw(li
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
@@ -451,7 +451,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_C_extra_idx() throw(libt
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
@@ -501,7 +501,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_no_contracted_inds() thr
     loops[2].set_subspace_looped(1,2);
     loops[2].set_subspace_looped(2,2);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
@@ -548,7 +548,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(l
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
@@ -634,7 +634,7 @@ void block_kernels_test::test_block_contract2_kernel_perm_A_ikj() throw(libtest:
     loops[3].set_subspace_looped(1,1);
     loops[3].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 
@@ -688,7 +688,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 	block_contract2_kernel<double> bc2k(sll);
 
@@ -762,7 +762,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_invalid_dims() throw(lib
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 	block_contract2_kernel<double> bc2k(sll);
 
@@ -819,7 +819,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_incompatible_dims() thro
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 	block_contract2_kernel<double> bc2k(sll);
 
@@ -893,7 +893,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_kj() throw(libtest::t
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 
@@ -964,7 +964,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_jk() throw(libtest::t
     loops[2].set_subspace_looped(1,1);
     loops[2].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 
@@ -1038,7 +1038,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj() throw(libtest::t
     loops[2].set_subspace_looped(1,0);
     loops[2].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 
     block_contract2_kernel<double> bc2k(sll);
@@ -1111,7 +1111,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::t
     loops[2].set_subspace_looped(1,0);
     loops[2].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 
@@ -1190,7 +1190,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj_permuted_loops() t
     loops[2].set_subspace_looped(0,1);
     loops[2].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
 
     block_contract2_kernel<double> bc2k(sll);
@@ -1283,7 +1283,7 @@ void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test
     loops[3].set_subspace_looped(1,2);
     loops[3].set_subspace_looped(2,0);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 
@@ -1385,7 +1385,7 @@ void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(l
     loops[3].set_subspace_looped(1,2);
     loops[3].set_subspace_looped(2,2);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 
@@ -1446,7 +1446,7 @@ void block_kernels_test::test_block_contract2_kernel_matrix_vector_mult() throw(
     loops[1].set_subspace_looped(1,0);
     loops[1].set_subspace_looped(2,1);
 
-    sparse_loop_list sll(loops);
+    sparse_loop_list sll(loops,bispaces);
 
     block_contract2_kernel<double> bc2k(sll);
 

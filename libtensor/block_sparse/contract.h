@@ -30,16 +30,17 @@ private:
                           const std::map<size_t,idx_pair>& loop_batches)
     {
 
-        sparse_loop_list sll(loops,direct_tensors);
+        sparse_loop_list sll(loops,this->m_bispaces,direct_tensors);
         sll.run(m_bc2k,ptrs,loop_batches);
     }
 public:
     contract2_batch_provider(const std::vector<block_loop>& loops,
+                             const std::vector<sparse_bispace_any_order>& bispaces,
                              const std::vector<size_t>& direct_tensors,
                              const std::vector<batch_provider<T>*>& batch_providers,
                              const std::vector<T*>& ptrs,
                              size_t mem_avail,
-                             const idx_pair_list& forced_batched_bs) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,mem_avail,forced_batched_bs),m_bc2k(sparse_loop_list(loops)) {}
+                             const idx_pair_list& forced_batched_bs) : batch_provider<T>(loops,bispaces,direct_tensors,batch_providers,ptrs,mem_avail,forced_batched_bs),m_bc2k(sparse_loop_list(loops,bispaces)) {}
 
     virtual batch_provider<T>* clone() const { return new contract2_batch_provider(*this); }
 };
@@ -247,7 +248,7 @@ public:
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
         //std::cout << "Total time in get_batch_provider: " << read_timer<double>() - seconds << "\n";
-        return new contract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,m_mem_avail,forced_batched_bs);
+        return new contract2_batch_provider<T>(loops,bispaces,direct_tensors,batch_providers,ptrs,m_mem_avail,forced_batched_bs);
     };
 };
 

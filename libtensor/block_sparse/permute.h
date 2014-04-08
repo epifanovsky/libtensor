@@ -20,7 +20,7 @@ private:
                           const std::vector<T*>& ptrs,
                           const std::map<size_t,idx_pair>& loop_batches)
     {
-        sparse_loop_list sll(loops,direct_tensors);
+        sparse_loop_list sll(loops,this->m_bispaces,direct_tensors);
         sll.run(*m_bpk_ptr,ptrs,loop_batches);
     }
 
@@ -41,13 +41,12 @@ private:
 
 public:
     template<size_t N>
-    permute2_batch_provider(const gen_labeled_btensor<N>& lhs,const gen_labeled_btensor<N>& rhs) : batch_provider<T>(std::vector<block_loop>(),init_direct_tensors(lhs,rhs),std::vector<batch_provider<T>*>(),std::vector<T*>(),0)
+    permute2_batch_provider(const gen_labeled_btensor<N>& lhs,const gen_labeled_btensor<N>& rhs) : batch_provider<T>(std::vector<block_loop>(),std::vector<sparse_bispace_any_order>(1,lhs.get_bispace()),init_direct_tensors(lhs,rhs),std::vector<batch_provider<T>*>(),std::vector<T*>(),0)
     {
+        this->m_bispaces.push_back(rhs.get_bispace());
         //Determine the permutation of indices between the two tensors
         //We also populate the loops necessary to execute the transformation
         std::vector<size_t> permutation_entries(N);
-        std::vector< sparse_bispace_any_order > bispaces(1,lhs.get_bispace());
-        bispaces.push_back(rhs.get_bispace());
 
         expr::label<N> lhs_le = lhs.get_letter_expr();
         expr::label<N> rhs_le = rhs.get_letter_expr();
@@ -58,7 +57,7 @@ public:
             permutation_entries[i] = rhs_idx;
 
             //Populate the loop for this index
-            block_loop bl(bispaces);
+            block_loop bl(this->m_bispaces);
             bl.set_subspace_looped(0,i);
             bl.set_subspace_looped(1,rhs_idx);
             this->m_loops.push_back(bl);

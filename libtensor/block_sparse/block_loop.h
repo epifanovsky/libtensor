@@ -21,7 +21,9 @@ private:
     static const char* k_clazz; //!< Class name
     std::vector<size_t> m_subspaces_looped; //!< What subspaces of what bispaces does this loop span?
     std::vector<bool> m_bispaces_ignored; //!< What bispaces are completely ignored by this loop?
+#ifdef LIBTENSOR_DEBUG
     std::vector< sparse_bispace_any_order > m_bispaces; //!< What bispaces does this loop access
+#endif
 public:
 	block_loop(const std::vector< sparse_bispace_any_order >& bispaces);
 
@@ -30,7 +32,9 @@ public:
 
 	bool is_bispace_ignored(size_t bispace_idx) const;
 
+#ifdef LIBTENSOR_DEBUG
     const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
+#endif
 };
 
 } /* namespace libtensor */

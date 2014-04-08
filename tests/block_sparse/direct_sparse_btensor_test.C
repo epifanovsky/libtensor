@@ -1017,9 +1017,8 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
                               const std::map<size_t,idx_pair>& loop_batches)
         {
             //We explicitly address everything since this is just a stub
-            std::vector<sparse_bispace_any_order> bispaces = loops[0].get_bispaces();
-            sparse_bispace<1> spb_i = bispaces[0][0];
-            sparse_bispace<1> spb_j = bispaces[0][1];
+            sparse_bispace<1> spb_i = this->m_bispaces[0][0];
+            sparse_bispace<1> spb_j = this->m_bispaces[0][1];
             size_t batch_off = 0;
             for(size_t i_block_idx = loop_batches.at(0).first; i_block_idx < loop_batches.at(0).second; ++i_block_idx)
             {
@@ -1045,6 +1044,7 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
 
     public:
         two_n_fibonnaci_batch_provider(const std::vector<sparse_bispace_any_order>& bispaces) : batch_provider(make_loops(bispaces),
+                                                                                                               bispaces,
                                                                                                                   std::vector<size_t>(1,0),
                                                                                                                   std::vector<batch_provider<double>* >(),
                                                                                                                   std::vector<double*>(1,NULL),

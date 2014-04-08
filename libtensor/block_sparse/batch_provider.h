@@ -22,6 +22,7 @@ private:
 protected:
     static const char *k_clazz; //!< Class name
     std::vector<block_loop> m_loops;
+    std::vector<sparse_bispace_any_order> m_bispaces;
     std::vector<T*> m_ptrs;
     std::vector<batch_provider<T>* > m_batch_providers;
     size_t m_mem_avail;
@@ -41,11 +42,12 @@ protected:
                           const std::map<size_t,idx_pair>& loop_batches) = 0;
 public:
     batch_provider(const std::vector<block_loop>& loops,
+                   const std::vector<sparse_bispace_any_order>& bispaces,
                    const std::vector<size_t>& direct_tensors,
                    const std::vector<batch_provider<T>*>& batch_providers,
                    const std::vector<T*>& ptrs,
                    size_t mem_avail,
-                   const idx_pair_list& forced_batched_bs = idx_pair_list()) : m_loops(loops),
+                   const idx_pair_list& forced_batched_bs = idx_pair_list()) : m_loops(loops),m_bispaces(bispaces),
                                        m_ptrs(ptrs),
                                        m_batch_providers(batch_providers),
                                        m_direct_tensors(direct_tensors),
@@ -89,10 +91,9 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
 
     //Do we need to batch beyond what is enforced by the output tensor batching? 
     bool need_to_batch = false;
-    std::vector<sparse_bispace_any_order> bispaces = m_loops[0].get_bispaces();
     for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
     {
-        if(bispaces[m_direct_tensors_to_alloc[direct_tensor_rel_idx]].get_nnz()*sizeof(T) > mem_per_tensor)
+        if(m_bispaces[m_direct_tensors_to_alloc[direct_tensor_rel_idx]].get_nnz()*sizeof(T) > mem_per_tensor)
         {
             need_to_batch = true;
             break;
@@ -107,7 +108,7 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
         for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
         {
             const block_loop& loop = m_loops[loop_idx];
-            for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+            for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
             {
                 if(!loop.is_bispace_ignored(bispace_idx))
                 {
@@ -177,7 +178,7 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
         //Determine a batch structure that will make ALL batched tensors fit in memory
         const block_loop& batched_loop = m_loops[batched_loop_idx];
         std::vector<idx_pair> batched_bispaces_subspaces;
-        for(size_t batched_bispace_idx = 0; batched_bispace_idx < bispaces.size(); ++batched_bispace_idx)
+        for(size_t batched_bispace_idx = 0; batched_bispace_idx < m_bispaces.size(); ++batched_bispace_idx)
         {
             if(!batched_loop.is_bispace_ignored(batched_bispace_idx))
             {
@@ -187,7 +188,7 @@ std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
                 }
             }
         }
-        batches = get_batches(bispaces,batched_bispaces_subspaces,mem_per_tensor/sizeof(T));
+        batches = get_batches(m_bispaces,batched_bispaces_subspaces,mem_per_tensor/sizeof(T));
     }
 
     //Our children may need to batch even if we don't - currently only works for forced batching
@@ -234,8 +235,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
     //Do we need to compute batch information?
     std::vector<idx_pair> batches;
     size_t batched_loop_idx;
-    std::vector<sparse_bispace_any_order> bispaces = m_loops[0].get_bispaces();
-    std::vector<sparse_bispace_any_order> truncated_bispaces(bispaces);
+    std::vector<sparse_bispace_any_order> truncated_bispaces(m_bispaces);
     std::map<size_t,idx_pair> loop_batches;
     if(output_batches.size() == 0 && m_direct_tensors_to_alloc.size() > 0)
     {
@@ -248,16 +248,16 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
         const block_loop& batched_loop = m_loops[batched_loop_idx];
 
         //We will allocate memory large enough to hold the biggest batch for each bispace
-        std::vector<size_t> max_batch_sizes(bispaces.size(),0);
-        std::vector<size_t> max_batch_inds(bispaces.size(),0);
+        std::vector<size_t> max_batch_sizes(m_bispaces.size(),0);
+        std::vector<size_t> max_batch_inds(m_bispaces.size(),0);
         for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
         {
-            for(size_t cur_bispace_idx = 0; cur_bispace_idx < bispaces.size(); ++cur_bispace_idx)
+            for(size_t cur_bispace_idx = 0; cur_bispace_idx < m_bispaces.size(); ++cur_bispace_idx)
             {
                 if(!batched_loop.is_bispace_ignored(cur_bispace_idx))
                 {
                     size_t cur_batched_subspace_idx = batched_loop.get_subspace_looped(cur_bispace_idx);
-                    size_t batch_size = bispaces[cur_bispace_idx].get_batch_size(cur_batched_subspace_idx,batches[batch_idx]);
+                    size_t batch_size = m_bispaces[cur_bispace_idx].get_batch_size(cur_batched_subspace_idx,batches[batch_idx]);
                     if(batch_size > max_batch_sizes[cur_bispace_idx])
                     {
                         max_batch_sizes[cur_bispace_idx] = batch_size;
@@ -306,7 +306,7 @@ void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,id
                         loop_batches[loop_idx] = bounds;
 
                         //Batch the whole loop
-                        for(size_t cur_bispace_idx = 0; cur_bispace_idx < bispaces.size(); ++cur_bispace_idx)
+                        for(size_t cur_bispace_idx = 0; cur_bispace_idx < m_bispaces.size(); ++cur_bispace_idx)
                         {
                             if(!loop.is_bispace_ignored(cur_bispace_idx))
                             {
