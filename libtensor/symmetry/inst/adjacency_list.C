@@ -90,43 +90,41 @@ void adjacency_list::get_neighbours(size_t i, std::vector<size_t> &nlst) const {
 void adjacency_list::get_connected(size_t i, std::vector<size_t> &clst) const {
 
     clst.clear();
-    // Find smallest node index connected to i
-    size_t imin = i;
-    while (true) {
-        node_list_t::const_iterator ii = m_lst.begin();
-        for (; ii != m_lst.end() && ii->first < imin; ii++) {
 
-            if (ii->second.count(imin) != 0) break;
+    std::set<size_t> s1, s2;
+    s1.insert(i);
+
+    while (! s1.empty()) {
+
+        bool found = false;
+        std::set<size_t>::iterator ic = s1.begin();
+
+        node_list_t::const_iterator end = m_lst.find(*ic);
+        for (node_list_t::const_iterator it = m_lst.begin(); it != end; it++) {
+
+            if (it->second.count(*ic) == 0) continue;
+
+            found = true;
+            if (s2.count(it->first) == 0) s1.insert(it->first);
         }
 
-        if (ii == m_lst.end() || ii->first >= imin) break;
-        imin = ii->first;
-    }
+        if (end != m_lst.end()) {
+            const adjacent_list_t &lst = end->second;
+            for (adjacent_list_t::const_iterator it = lst.begin();
+                    it != lst.end(); it++) {
 
-    // Node i does not exist in graph
-    if (m_lst.count(imin) == 0) return;
-
-    std::set<size_t> tmp;
-    tmp.insert(imin);
-
-    std::set<size_t>::iterator it = tmp.begin();
-    while (it != tmp.end()) {
-
-        node_list_t::const_iterator ii = m_lst.find(*it);
-        if (ii != m_lst.end()) {
-            const adjacent_list_t &alst = ii->second;
-            for (adjacent_list_t::const_iterator ij = alst.begin();
-                    ij != alst.end(); ij++) {
-
-                tmp.insert(ij->first);
+                if (s2.count(it->first) == 0) s1.insert(it->first);
             }
-
-            it = tmp.find(ii->first);
+            found = true;
         }
-        it++;
+
+        if (found) {
+            s2.insert(*ic);
+        }
+        s1.erase(ic);
     }
 
-    for (std::set<size_t>::iterator it = tmp.begin(); it != tmp.end(); it++) {
+    for (std::set<size_t>::iterator it = s2.begin(); it != s2.end(); it++) {
         clst.push_back(*it);
     }
 }
