@@ -54,9 +54,13 @@ private:
     std::vector<runtime_permutation> m_ident_perms;
     std::vector<dim_list> m_perm_dim_lists;
     std::vector<T*> m_perm_ptrs;
+    dim_list m_perm_ptr_sizes;
 public:
     block_contract2_kernel(const sparse_loop_list& loop_list);
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
+
+    block_contract2_kernel(const block_contract2_kernel<T>& rhs);
+    block_contract2_kernel<T>& operator=(const block_contract2_kernel<T>& rhs);
     ~block_contract2_kernel();
 };
 
@@ -70,6 +74,57 @@ template<typename T>
 const char* block_contract2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
 
 } /* namespace libtensor */
+
+template<typename T>
+libtensor::block_contract2_kernel<T>::block_contract2_kernel(const block_contract2_kernel<T>& rhs) : m_block_orders(rhs.m_block_orders),
+                                                                                                     m_dgemm_fp(rhs.m_dgemm_fp),
+                                                                                                     m_loops(rhs.m_loops),
+                                                                                                     m_n_contracted_inds(rhs.m_n_contracted_inds),
+                                                                                                     m_vec_bispace_idx(rhs.m_vec_bispace_idx),
+                                                                                                     m_mat_bispace_idx(rhs.m_mat_bispace_idx),
+                                                                                                     m_A_trans(rhs.m_A_trans),
+                                                                                                     m_B_trans(rhs.m_B_trans),
+                                                                                                     m_perms(rhs.m_perms),
+                                                                                                     m_perm_kerns(rhs.m_perm_kerns),
+                                                                                                     m_ident_perms(rhs.m_ident_perms),
+                                                                                                     m_perm_dim_lists(rhs.m_perm_dim_lists),
+                                                                                                     m_perm_ptr_sizes(rhs.m_perm_ptr_sizes),
+                                                                                                     m_perm_ptrs(3)
+{
+    for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
+    {
+        if(m_perms[perm_idx] != m_ident_perms[perm_idx])
+        {
+            m_perm_ptrs[perm_idx] = new T[m_perm_ptr_sizes[perm_idx]];
+        }
+    }
+}
+
+template<typename T>
+libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::operator=(const block_contract2_kernel<T>& rhs)
+{
+    m_block_orders = rhs.m_block_orders;
+    m_dgemm_fp = rhs.m_dgemm_fp;
+    m_loops = rhs.m_loops;
+    m_n_contracted_inds = rhs.m_n_contracted_inds;
+    m_vec_bispace_idx = rhs.m_vec_bispace_idx;
+    m_mat_bispace_idx = rhs.m_mat_bispace_idx;
+    m_A_trans = rhs.m_A_trans;
+    m_B_trans = rhs.m_B_trans;
+    m_perms = rhs.m_perms;
+    m_perm_kerns = rhs.m_perm_kerns;
+    m_ident_perms = rhs.m_ident_perms;
+    m_perm_dim_lists = rhs.m_perm_dim_lists;
+    m_perm_ptr_sizes = rhs.m_perm_ptr_sizes;
+    m_perm_ptrs.resize(3,NULL);
+    for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
+    {
+        if(m_perms[perm_idx] != m_ident_perms[perm_idx])
+        {
+            m_perm_ptrs = new T[m_perm_ptr_sizes[perm_idx]];
+        }
+    }
+}
 
 template<typename T>
 libtensor::block_contract2_kernel<T>::~block_contract2_kernel()
@@ -90,6 +145,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
                                        m_perms(3,runtime_permutation(0)),
                                        m_ident_perms(3,runtime_permutation(0)),
                                        m_perm_ptrs(3),
+                                       m_perm_ptr_sizes(3),
                                        m_perm_kerns(3,block_permute_kernel<T>(runtime_permutation(0)))
 {
 
@@ -189,6 +245,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
                     max_block_size *= max_block_size_this_dim;
                 }
                 m_perm_ptrs[perm_idx] = new T[max_block_size];
+                m_perm_ptr_sizes[perm_idx] = max_block_size;
             }
         }
         m_dgemm_fp = dgemm_fp_arr[(size_t)m_A_trans*2+(size_t)m_B_trans];
