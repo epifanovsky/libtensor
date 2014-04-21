@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <map>
 
 namespace libtensor {
 

@@ -1054,7 +1054,7 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
 
     std::vector<sparse_bispace_any_order> bispaces(1,spb_i|spb_j);
     direct_sparse_btensor<2> A(spb_i|spb_j);
-    A = two_n_fibonnaci_batch_provider(bispaces);
+    A.set_batch_provider(two_n_fibonnaci_batch_provider(bispaces));
 
     double A_batch_0_correct_arr[12] = { //i = 0 j = 0
                                          0,1,1,
