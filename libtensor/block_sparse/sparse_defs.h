@@ -21,6 +21,7 @@ typedef std::pair<size_t,size_t> off_dim_pair;
 typedef std::vector<off_dim_pair> off_dim_pair_list;
 typedef std::pair<size_t,size_t> idx_pair;
 typedef std::vector<idx_pair> idx_pair_list;
+typedef std::map<idx_pair,idx_pair> bispace_batch_map;
 
 } // namespace libtensor
 
