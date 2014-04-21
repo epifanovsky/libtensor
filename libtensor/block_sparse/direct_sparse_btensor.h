@@ -55,6 +55,10 @@ direct_sparse_btensor<N,T>&  direct_sparse_btensor<N,T>::operator=(const direct_
     {
         m_batch_provider = rhs.m_batch_provider->clone();
     }
+    else
+    {
+        m_batch_provider = NULL;
+    }
 }
 
 template<size_t N,typename T>

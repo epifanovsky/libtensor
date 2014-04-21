@@ -68,7 +68,7 @@ public:
 
         if(rhs.get_data_ptr() == NULL)
         {
-            this->m_batch_providers.push_back(rhs.get_batch_provider());
+            this->m_batch_providers.push_back(rhs.get_batch_provider()->clone());
         }
 
         //Batch providers for direct tensors

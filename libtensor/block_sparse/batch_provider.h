@@ -49,10 +49,13 @@ public:
                    size_t mem_avail,
                    const idx_pair_list& forced_batched_bs = idx_pair_list()) : m_loops(loops),m_bispaces(bispaces),
                                        m_ptrs(ptrs),
-                                       m_batch_providers(batch_providers),
                                        m_direct_tensors(direct_tensors),
                                        m_mem_avail(mem_avail),m_forced_batched_bs(forced_batched_bs) 
     {
+        for(size_t bp_idx = 0; bp_idx < batch_providers.size(); ++bp_idx)
+        {
+            m_batch_providers.push_back(batch_providers[bp_idx]->clone());
+        }
         //Find the direct tensors that don't already have memory allocated for them
         //TODO: Need some recursive implementation of this to be truly rigorous
         for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors.size(); ++direct_tensor_rel_idx)
@@ -73,9 +76,43 @@ public:
     //by specifying what bispace/subspace to truncate .
     void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()),size_t mem_avail=0);
     void set_forced_batched_bs(const idx_pair_list& forced_batched_bs) { m_forced_batched_bs = forced_batched_bs; }
-    virtual ~batch_provider() {}
     virtual batch_provider<T>* clone() const = 0;
+
+    batch_provider(const batch_provider<T>& rhs);
+    batch_provider<T>& operator=(const batch_provider<T>& rhs);
+    virtual ~batch_provider() { for(size_t bp_idx = 0; bp_idx < m_batch_providers.size(); ++bp_idx) delete m_batch_providers[bp_idx]; }
 };
+
+template<typename T>
+batch_provider<T>::batch_provider(const batch_provider<T>& rhs) :   m_direct_tensors(rhs.m_direct_tensors),
+                                                                    m_direct_tensors_to_alloc(rhs.m_direct_tensors_to_alloc), 
+                                                                    m_loops(rhs.m_loops),m_bispaces(rhs.m_bispaces),m_ptrs(rhs.m_ptrs),m_mem_avail(rhs.m_mem_avail),m_forced_batched_bs(rhs.m_forced_batched_bs)
+{
+    for(size_t bp_idx = 0; bp_idx < rhs.m_batch_providers.size(); ++bp_idx)
+    {
+        m_batch_providers.push_back(rhs.m_batch_providers[bp_idx]->clone());
+    }
+}
+
+template<typename T>
+batch_provider<T>& batch_provider<T>::operator=(const batch_provider<T>& rhs) 
+{ 
+    m_direct_tensors = rhs.m_direct_tensors;
+    m_direct_tensors_to_alloc = rhs.m_direct_tensors_to_alloc;
+    m_loops = rhs.m_loops;
+    m_bispaces = rhs.m_bispaces;
+    m_ptrs = rhs.m_ptrs;
+    m_batch_providers.clear();
+    for(size_t bp_idx = 0; bp_idx < rhs.m_batch_providers.size(); ++bp_idx) 
+    {
+        m_batch_providers.push_back(rhs.m_batch_providers[bp_idx]->clone());
+    }  
+    m_mem_avail = rhs.m_mem_avail;
+    m_forced_batched_bs = rhs.m_forced_batch_bs; 
+
+    return *this;
+}
+
 
 template<typename T>
 std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
