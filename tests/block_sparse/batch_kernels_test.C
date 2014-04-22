@@ -9,7 +9,7 @@ using namespace std;
 namespace libtensor {
 
 void batch_kernels_test::perform() throw(libtest::test_exception) {
-    /*test_batch_kernel_permute_A_direct();*/
+    test_batch_kernel_permute_A_direct();
 }
 
 //A(i|j|k) = B(k|i|j)

@@ -71,10 +71,9 @@ public:
 	sparse_loop_list(const std::vector<block_loop>& loops,const std::vector<sparse_bispace_any_order>& bispaces, const idx_list& direct_tensors = idx_list());
 
 	template<typename T>
-	void run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>()));
-
+	void run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>())); 
 	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
-	std::vector<block_loop> get_loops() const { return m_loops; }
+	const std::vector<block_loop>& get_loops() const { return m_loops; }
 
 	//Returns the indices of the loops that access any subspace of the specified bispace
 	std::vector<size_t> get_loops_that_access_bispace(size_t bispace_idx) const;
@@ -87,13 +86,6 @@ public:
 template<typename T>
 void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches)
 {
-    //TODO REMOVE - constructor should check this
-	if(m_loops.size() == 0)
-	{
-		throw bad_parameter(g_ns, k_clazz,"run(...)",
-				__FILE__, __LINE__, "no loops in loop list");
-	}
-
     //std::cout << "STARTING SLL:\n";
     double seconds = read_timer<double>();
     //Fuse all coupled sparse trees
