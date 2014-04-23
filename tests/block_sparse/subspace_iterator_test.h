@@ -12,6 +12,9 @@ public:
     virtual void perform() throw(libtest::test_exception);
 private:
     void test_get_block_index_dense() throw(libtest::test_exception);
+    void test_incr_dense() throw(libtest::test_exception);
+    void test_get_block_index_sparse() throw(libtest::test_exception);
+    void test_incr_sparse() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
