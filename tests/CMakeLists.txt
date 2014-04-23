@@ -257,7 +257,6 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_btensor_test.C
     block_sparse/block_kernels_test.C
     block_sparse/block_loop_test.C
-    block_sparse/sparse_loop_iterator_test.C
     block_sparse/sparse_loop_list_test.C
     block_sparse/sparsity_fuser_test.C
     block_sparse/sparse_loop_grouper_test.C
@@ -267,6 +266,8 @@ set(SRC_BLOCK_SPARSE
     block_sparse/blas_isomorphism_test.C
     block_sparse/batch_kernels_test.C
     block_sparse/batch_list_builder_test.C
+    block_sparse/sparse_loop_iterator_test.C
+    block_sparse/subspace_iterator_test.C
 
     block_sparse/test_fixtures/permute_3d_sparse_120_test_f.C
 )

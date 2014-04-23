@@ -17,6 +17,7 @@
 #include "blas_isomorphism_test.h"
 #include "batch_kernels_test.h"
 #include "batch_list_builder_test.h"
+#include "subspace_iterator_test.h"
 
 using libtest::unit_test_factory;
 
@@ -50,6 +51,7 @@ private:
     unit_test_factory<blas_isomorphism_test> m_utf_blas_isomorphism;
     unit_test_factory<batch_kernels_test> m_utf_batch_kernels;
     unit_test_factory<batch_list_builder_test> m_utf_batch_list_builder;
+    unit_test_factory<subspace_iterator_test> m_utf_subspace_iterator;
 public:
     //! Creates the suite
     libtensor_sparse_suite();

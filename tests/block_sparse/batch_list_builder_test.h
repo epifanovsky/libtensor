@@ -14,7 +14,7 @@ private:
     void test_get_batch_list_dense() throw(libtest::test_exception);
 };
 
-} /* namespace batch_list_builder */
+} /* namespace libtensor */
 
 
 #endif /* BATCH_LIST_BUILDER_TEST_H */
