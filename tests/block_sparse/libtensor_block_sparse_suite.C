@@ -9,7 +9,6 @@ libtensor_sparse_suite::libtensor_sparse_suite() :
     add_test("block_loop", m_utf_block_loop);
     add_test("sparse_loop_list", m_utf_sparse_loop_list);
     add_test("sparsity_fuser", m_utf_sparsity_fuser);
-    add_test("sparse_loop_iterator", m_utf_sparse_loop_iterator);
     add_test("sparse_block_tree_iterator", m_utf_sparse_block_tree_iterator);
     add_test("sparse_block_tree", m_utf_sparse_block_tree);
     add_test("sparse_bispace", m_utf_sparse_bispace);

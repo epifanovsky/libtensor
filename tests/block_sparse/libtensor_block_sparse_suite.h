@@ -11,7 +11,6 @@
 #include "sparse_btensor_test.h"
 #include "direct_sparse_btensor_test.h"
 #include "sparse_loop_list_test.h"
-#include "sparse_loop_iterator_test.h"
 #include "sparsity_fuser_test.h"
 #include "sparse_loop_grouper_test.h"
 #include "blas_isomorphism_test.h"
@@ -40,7 +39,6 @@ private:
     unit_test_factory<block_kernels_test> m_utf_block_kernels;
     unit_test_factory<block_loop_test> m_utf_block_loop;
     unit_test_factory<sparse_loop_list_test> m_utf_sparse_loop_list;
-    unit_test_factory<sparse_loop_iterator_test> m_utf_sparse_loop_iterator;
     unit_test_factory<sparse_block_tree_iterator_test> m_utf_sparse_block_tree_iterator;
     unit_test_factory<sparse_block_tree_test> m_utf_sparse_block_tree;
     unit_test_factory<sparse_bispace_test> m_utf_sparse_bispace;
