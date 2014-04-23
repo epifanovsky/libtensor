@@ -18,6 +18,7 @@ libtensor_sparse_suite::libtensor_sparse_suite() :
     add_test("sparse_loop_grouper", m_utf_sparse_loop_grouper);
     add_test("blas_isomorphism", m_utf_blas_isomorphism);
     add_test("batch_kernels", m_utf_batch_kernels);
+    add_test("batch_list_builder", m_utf_batch_list_builder);
 }
 
 }
