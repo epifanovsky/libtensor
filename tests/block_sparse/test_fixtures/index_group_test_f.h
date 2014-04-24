@@ -28,6 +28,7 @@ private:
         }
         spb_1.split(split_points_1);
 
+        //idx grp dim 24
         size_t key_0_arr_0[2] = {2,1}; //offset 0
         size_t key_1_arr_0[2] = {3,2}; //offset 6
         size_t key_2_arr_0[2] = {4,3}; //offset 12
@@ -38,6 +39,7 @@ private:
         for(size_t i = 0; i < 2; ++i) sig_blocks_0[2][i] = key_2_arr_0[i];
         for(size_t i = 0; i < 2; ++i) sig_blocks_0[3][i] = key_3_arr_0[i];
 
+        //idx grp dim 27
         size_t key_0_arr_1[2] = {1,4}; //offset 0
         size_t key_1_arr_1[2] = {2,1}; //offset 9
         size_t key_2_arr_1[2] = {3,3}; //offset 18

@@ -15,6 +15,10 @@ private:
     void test_incr_dense() throw(libtest::test_exception);
     void test_get_block_index_sparse() throw(libtest::test_exception);
     void test_incr_sparse() throw(libtest::test_exception);
+    void test_done_dense() throw(libtest::test_exception);
+    void test_done_sparse() throw(libtest::test_exception);
+    void test_get_slice_size_dense() throw(libtest::test_exception);
+    void test_get_slice_size_sparse() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
