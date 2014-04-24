@@ -67,20 +67,34 @@ subspace_iterator::subspace_iterator(const sparse_bispace_any_order& bispace,siz
 
 size_t subspace_iterator::get_block_index() const
 {
+#ifdef LIBTENSOR_DEBUG
+    if(done())
+    {
+        throw out_of_bounds(g_ns,"subspace_iterator","get_slice_size(...)",
+                            __FILE__,__LINE__,"iterator is past end");
+    }
+#endif
     return m_blocks[m_pos]; 
 }
 
 size_t subspace_iterator::get_slice_size() const
 {
+#ifdef LIBTENSOR_DEBUG
+    if(done())
+    {
+        throw out_of_bounds(g_ns,"subspace_iterator","get_slice_size(...)",
+                            __FILE__,__LINE__,"iterator is past end");
+    }
+#endif
     return m_slice_sizes[m_pos]; 
 }
 
 subspace_iterator& subspace_iterator::operator++()
 {
 #ifdef LIBTENSOR_DEBUG
-    if(m_pos == m_blocks.size() - 1)
+    if(done())
     {
-        throw bad_parameter(g_ns,"subspace_iterator","operator++(...)",
+        throw out_of_bounds(g_ns,"subspace_iterator","operator++(...)",
                             __FILE__,__LINE__,"Incremented past end");
     }
 #endif
@@ -90,7 +104,7 @@ subspace_iterator& subspace_iterator::operator++()
 
 bool subspace_iterator::done() const
 {
-    return (m_pos == m_blocks.size() - 1);
+    return (m_pos == m_blocks.size());
 }
 
 } // namespace libtensor

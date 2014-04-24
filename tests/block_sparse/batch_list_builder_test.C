@@ -9,6 +9,7 @@ namespace libtensor {
 void batch_list_builder_test::perform() throw(libtest::test_exception) 
 {
     test_get_batch_list_dense();
+    test_get_batch_list_sparse(); 
 }
 
 void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_exception)
@@ -19,9 +20,7 @@ void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_ex
 
     /*** BATCHING OVER SUBSPACE 1 - DENSE CASE ***/
     size_t max_n_elem = 388800;
-
     letter i,j,k,l,m,n,o;
-
     vector<labeled_bispace> labeled_bispace_group_0(1,labeled_bispace(tf.bispace,i|j|k|l|m|n|o));
     vector< vector<labeled_bispace> > labeled_bispace_groups(1,labeled_bispace_group_0);
 
@@ -32,12 +31,39 @@ void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_ex
     correct_batch_list.push_back(idx_pair(3,5));
     if(batch_list != correct_batch_list)
     {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_list_builder::get_batch_list(...) did not return correct value for batching over subspace 1 for 1 bispace");
+    }
+}
+
+void batch_list_builder_test::test_get_batch_list_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_list_builder_test::test_get_batch_list_sparse()";
+
+    index_groups_test_f tf = index_groups_test_f();
+
+    /*** BATCHING OVER SUBSPACE 2 - SPARSE CASE ***/
+    size_t max_n_elem = 259200;
+    letter i,j,k,l,m,n,o;
+    vector<labeled_bispace> labeled_bispace_group_0(1,labeled_bispace(tf.bispace,i|j|k|l|m|n|o));
+    vector< vector<labeled_bispace> > labeled_bispace_groups(1,labeled_bispace_group_0);
+
+    batch_list_builder blb(labeled_bispace_groups,k);
+    idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
+
+    idx_pair_list correct_batch_list(1,idx_pair(0,3));
+    correct_batch_list.push_back(idx_pair(3,4));
+    correct_batch_list.push_back(idx_pair(4,5));
+    correct_batch_list.push_back(idx_pair(5,6));
+
+    if(batch_list != correct_batch_list)
+    {
         for(size_t i = 0; i < batch_list.size(); ++i)
         {
             cout << batch_list[i].first << "," << batch_list[i].second << "\n";
         }
         fail_test(test_name,__FILE__,__LINE__,
-                "batch_list_builder::get_batch_list(...) did not return correct value for batching over subspace 1 for 1 bispace");
+                "batch_list_builder::get_batch_list(...) did not return correct value for batching over subspace 2 for 1 bispace");
     }
 }
 

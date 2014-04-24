@@ -61,8 +61,6 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_index_group_containing_subspace();
 
         //TODO: These should get their own file
-        test_get_batches_dense();
-        test_get_batches_sparse();
         test_get_batches_dense_dense();
         test_get_batches_sparse_sparse();
         test_get_batches_not_enough_mem_sparse();
@@ -1374,51 +1372,6 @@ void sparse_bispace_test::test_get_index_group_containing_subspace() throw(libte
             fail_test(test_name,__FILE__,__LINE__,
                     "sparse_bispace<N>::get_index_group_containing_subspace(...) did not return correct value");
         }
-    }
-}
-
-void sparse_bispace_test::test_get_batches_dense() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_test::test_get_batches_dense()";
-    
-    index_groups_test_f tf = index_groups_test_f();
-    std::vector<sparse_bispace_any_order>  bispaces(1,tf.bispace);
-
-
-    /*** BATCHING OVER SUBSPACE 1 - DENSE CASE ***/
-    size_t max_n_elem = 0.6*bispaces[0].get_nnz();
-    std::vector<idx_pair> correct_batches(1,idx_pair(0,3));
-    correct_batches.push_back(idx_pair(3,5));
-    std::vector<idx_pair> batched_bispaces_subspaces(1,idx_pair(0,1));
-
-    std::vector<idx_pair> batches = get_batches(bispaces,batched_bispaces_subspaces,max_n_elem);
-
-    if(batches != correct_batches)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_batches(...) did not return correct value for batching over subspace 1");
-    }
-}
-
-void sparse_bispace_test::test_get_batches_sparse() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_test::test_get_batches_sparse()";
-
-    index_groups_test_f tf = index_groups_test_f();
-    std::vector<sparse_bispace_any_order> bispaces(1,tf.bispace);
-
-    /*** BATCHING OVER SUBSPACE 2 - SPARSE CASE ***/
-    size_t max_n_elem = 0.4*bispaces[0].get_nnz();
-    std::vector<idx_pair> correct_batches(1,idx_pair(0,3));
-    correct_batches.push_back(idx_pair(3,4));
-    correct_batches.push_back(idx_pair(4,5));
-    correct_batches.push_back(idx_pair(5,6));
-    std::vector<idx_pair> batches = get_batches(bispaces,std::vector<idx_pair>(1,idx_pair(0,2)),max_n_elem);
-
-    if(batches != correct_batches)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_batches(...) did not return correct value for batching over subspace 2");
     }
 }
 

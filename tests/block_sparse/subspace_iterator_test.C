@@ -90,7 +90,7 @@ void subspace_iterator_test::test_done_dense() throw(libtest::test_exception)
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace_iterator::get_block_index(...) claims done when not done");
     }
-    for(size_t i = 0; i < tf.bispace[0].get_n_blocks() - 2; ++i)
+    for(size_t i = 0; i < tf.bispace[0].get_n_blocks() - 1; ++i)
     {
         ++si;
     }
@@ -114,6 +114,7 @@ void subspace_iterator_test::test_done_sparse() throw(libtest::test_exception)
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace_iterator::get_block_index(...) claims done when not done");
     }
+    ++si;
     ++si;
     if(!si.done())
     {

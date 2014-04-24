@@ -12,6 +12,7 @@ public:
     virtual void perform() throw(libtest::test_exception);
 private:
     void test_get_batch_list_dense() throw(libtest::test_exception);
+    void test_get_batch_list_sparse() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
