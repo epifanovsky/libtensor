@@ -61,7 +61,6 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_index_group_containing_subspace();
 
         //TODO: These should get their own file
-        test_get_batches_dense_dense();
         test_get_batches_sparse_sparse();
         test_get_batches_not_enough_mem_sparse();
 
@@ -1372,34 +1371,6 @@ void sparse_bispace_test::test_get_index_group_containing_subspace() throw(libte
             fail_test(test_name,__FILE__,__LINE__,
                     "sparse_bispace<N>::get_index_group_containing_subspace(...) did not return correct value");
         }
-    }
-}
-
-//Show that batching correctly accounts for different inner sizes of multiple batched bispaces  
-//and chooses that batches such that no batched bispace exceeds the memory limit
-void sparse_bispace_test::test_get_batches_dense_dense() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_test::test_get_batches_dense_dense()";
-
-    index_groups_test_f tf = index_groups_test_f();
-    sparse_bispace<1> spb_0 = tf.bispace[0];
-    sparse_bispace<1> spb_1 = tf.bispace[2];
-    std::vector<sparse_bispace_any_order> bispaces(1,spb_0|spb_0);
-    bispaces.push_back(spb_0|spb_1);
-
-    size_t max_n_elem = 72;
-    std::vector<idx_pair> batched_bispaces_subspaces(1,idx_pair(0,0));
-    batched_bispaces_subspaces.push_back(idx_pair(1,0));
-    std::vector<idx_pair> batches = get_batches(bispaces,batched_bispaces_subspaces,max_n_elem);
-
-    std::vector<idx_pair> correct_batches(1,idx_pair(0,2));
-    correct_batches.push_back(idx_pair(2,4));
-    correct_batches.push_back(idx_pair(4,5));
-
-    if(batches != correct_batches)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_batches(...) did not return correct value for multiple dense bispaces");
     }
 }
 
