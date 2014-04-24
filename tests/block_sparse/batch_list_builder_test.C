@@ -12,6 +12,7 @@ void batch_list_builder_test::perform() throw(libtest::test_exception)
     test_get_batch_list_sparse(); 
     test_get_batch_list_dense_dense(); 
     test_get_batch_list_sparse_sparse();
+    /*test_get_batch_list_2_group_sparse_sparse();*/
 }
 
 //Test fixtures
@@ -165,12 +166,41 @@ void batch_list_builder_test::test_get_batch_list_sparse_sparse() throw(libtest:
 
     if(batch_list != correct_batch_list)
     {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_list_builder::get_batch_list(...) did not return correct value for sparse sparse case");
+    }
+}
+
+//Now we have two groups of tensors, and no one of them may exceed the element count limit for batch
+void batch_list_builder_test::test_get_batch_list_2_group_sparse_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_list_builder_test::test_get_batch_list_2_group_sparse_sparse()";
+
+    multi_group_test_f tf;
+    letter i,j;
+    vector< vector<labeled_bispace> > labeled_bispace_groups(2);
+    labeled_bispace_groups[0].push_back(labeled_bispace(tf.A,j|i));
+    labeled_bispace_groups[0].push_back(labeled_bispace(tf.B,i|j));
+    labeled_bispace_groups[1].push_back(labeled_bispace(tf.C,i|j));
+    labeled_bispace_groups[1].push_back(labeled_bispace(tf.D,i|j));
+
+    batch_list_builder blb(labeled_bispace_groups,i);
+    size_t max_n_elem = 12;
+    idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
+
+    std::vector<idx_pair> correct_batch_list(1,idx_pair(0,2));
+    correct_batch_list.push_back(idx_pair(2,3));
+    correct_batch_list.push_back(idx_pair(3,4));
+    correct_batch_list.push_back(idx_pair(4,6));
+
+    if(batch_list != correct_batch_list)
+    {
         for(size_t i = 0; i < batch_list.size(); ++i)
         {
             cout << batch_list[i].first << "," << batch_list[i].second << "\n";
         }
         fail_test(test_name,__FILE__,__LINE__,
-                "batch_list_builder::get_batch_list(...) did not return correct value for sparse sparse case");
+                "batch_list_builder::get_batch_list(...) did not return correct value for sparse sparse case with two tensor groups");
     }
 }
 

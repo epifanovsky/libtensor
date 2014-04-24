@@ -23,31 +23,36 @@ batch_list_builder::batch_list_builder(const vector< vector<labeled_bispace> >& 
 
 idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
 {
+    dim_list grp_batch_sizes(m_iter_groups.size(),0);
     size_t batch_size = 0;
     size_t batch_start_idx = 0;
     idx_pair_list batch_list;
-    for(size_t grp_idx = 0; grp_idx < m_iter_groups.size(); ++grp_idx)
+
+    //Do this by value so as not to corrupt member var as we incr
+    vector< vector<subspace_iterator> > iter_groups(m_iter_groups);
+    bool done = false; 
+    while(!done)
     {
-        //Do this by value so as not to corrupt member var as we incr
-        vector<subspace_iterator> iter_group = m_iter_groups[grp_idx];
-        while(true)
+        for(size_t grp_idx = 0; grp_idx < m_iter_groups.size(); ++grp_idx)
         {
+            vector<subspace_iterator>& iter_group = iter_groups[grp_idx];
             //Did all of our iterators reach the end?
-            bool all_done = true;
+            bool this_group_all_done = true;
             idx_pair_list block_inds_it_pairs;
             for(size_t iter_idx = 0; iter_idx < iter_group.size(); ++iter_idx)
             {
                 const subspace_iterator& it = iter_group[iter_idx];
                 if(!it.done())
                 {
-                    all_done = false;
+                    this_group_all_done = false;
                     block_inds_it_pairs.push_back(idx_pair(it.get_block_index(),iter_idx));
                 }
             }
 
-            if(all_done)
+            if(this_group_all_done)
             {
                 batch_list.push_back(idx_pair(batch_start_idx,m_end_idx));
+                done = true;
                 break;
             }
 
@@ -74,6 +79,7 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
                 batch_size = most_recent_subtotal;
             }
         }
+        if(done) break;
     }
     return batch_list;
 }
