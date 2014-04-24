@@ -14,6 +14,56 @@ void batch_list_builder_test::perform() throw(libtest::test_exception)
     test_get_batch_list_sparse_sparse();
 }
 
+//Test fixtures
+namespace {
+
+//For testing batching when multiple groups of memory-resident tensors must be considered
+class multi_group_test_f {
+private:
+    sparse_bispace<1> spb_0;
+    static size_t A_arr[3][2];
+    static size_t B_arr[3][2];
+    static size_t C_arr[4][2];
+    static size_t D_arr[6][2];
+    static sparse_bispace<1> get_spb_0()
+    {
+        sparse_bispace<1> bs(12);
+        vector<size_t> split_points_0;
+        for(size_t i = 2; i < bs.get_dim(); i += 2)
+        {
+            split_points_0.push_back(i);
+        }
+        bs.split(split_points_0);
+        return bs;
+    }
+
+    static vector< sequence<2,size_t> > get_sig_blocks(size_t arr[][2],size_t n_entries)
+    {
+        vector< sequence<2,size_t> > sig_blocks(n_entries);
+        for(size_t i = 0; i < n_entries; ++i)
+            for(size_t j = 0; j < 2; ++j) sig_blocks[i][j] = arr[i][j];
+        return sig_blocks;
+    }
+
+public:
+    sparse_bispace<2> A;
+    sparse_bispace<2> B;
+    sparse_bispace<2> C;
+    sparse_bispace<2> D;
+    multi_group_test_f() : spb_0(get_spb_0()),
+                           A(spb_0 % spb_0 << get_sig_blocks(A_arr,sizeof(A_arr)/sizeof(A_arr[0]))),
+                           B(spb_0 % spb_0 << get_sig_blocks(B_arr,sizeof(B_arr)/sizeof(B_arr[0]))),
+                           C(spb_0 % spb_0 << get_sig_blocks(C_arr,sizeof(C_arr)/sizeof(C_arr[0]))),
+                           D(spb_0 % spb_0 << get_sig_blocks(D_arr,sizeof(D_arr)/sizeof(D_arr[0]))) {}
+};
+
+size_t multi_group_test_f::A_arr[3][2] = {{0,2},{0,3},{0,4}};
+size_t multi_group_test_f::B_arr[3][2] = {{1,0},{2,0},{5,0}};
+size_t multi_group_test_f::C_arr[4][2] = {{2,0},{2,1},{3,0},{4,1}};
+size_t multi_group_test_f::D_arr[6][2] = {{1,1},{2,1},{3,1},{3,2},{4,4},{5,5}};
+
+} // namespace unnamed
+
 void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_exception)
 {
     static const char *test_name = "batch_list_builder_test::test_get_batch_list()";
@@ -98,39 +148,10 @@ void batch_list_builder_test::test_get_batch_list_sparse_sparse() throw(libtest:
 {
     static const char *test_name = "batch_list_builder_test::test_get_batch_list_sparse_sparse()";
 
-    sparse_bispace<1> spb_0(12);
-    vector<size_t> split_points_0;
-    for(size_t i = 2; i < spb_0.get_dim(); i += 2)
-    {
-        split_points_0.push_back(i);
-    }
-    spb_0.split(split_points_0);
-
-    //Make A - we will force to be permuted for batch for extra complexity
-    size_t key_0_arr_A[2] = {0,2};
-    size_t key_1_arr_A[2] = {0,3};
-    size_t key_2_arr_A[2] = {0,4};
-    vector< sequence<2,size_t> > sig_blocks_A(3);
-    for(size_t i = 0; i < 2; ++i) sig_blocks_A[0][i] = key_0_arr_A[i];
-    for(size_t i = 0; i < 2; ++i) sig_blocks_A[1][i] = key_1_arr_A[i];
-    for(size_t i = 0; i < 2; ++i) sig_blocks_A[2][i] = key_2_arr_A[i];
-
-    sparse_bispace<2> spb_A = spb_0 % spb_0 << sig_blocks_A;
-
-    //Make B 
-    size_t key_0_arr_B[2] = {1,0};
-    size_t key_1_arr_B[2] = {2,0};
-    size_t key_2_arr_B[2] = {5,0};
-    vector< sequence<2,size_t> > sig_blocks_B(3);
-    for(size_t i = 0; i < 2; ++i) sig_blocks_B[0][i] = key_0_arr_B[i];
-    for(size_t i = 0; i < 2; ++i) sig_blocks_B[1][i] = key_1_arr_B[i];
-    for(size_t i = 0; i < 2; ++i) sig_blocks_B[2][i] = key_2_arr_B[i];
-
-    sparse_bispace<2> spb_B = spb_0 % spb_0 << sig_blocks_B;
-
+    multi_group_test_f tf;
     letter i,j;
-    vector<labeled_bispace> labeled_bispace_group_0(1,labeled_bispace(spb_A,j|i));
-    labeled_bispace_group_0.push_back(labeled_bispace(spb_B,i|j));
+    vector<labeled_bispace> labeled_bispace_group_0(1,labeled_bispace(tf.A,j|i));
+    labeled_bispace_group_0.push_back(labeled_bispace(tf.B,i|j));
     vector< vector<labeled_bispace> > labeled_bispace_groups(1,labeled_bispace_group_0);
 
     batch_list_builder blb(labeled_bispace_groups,i);
