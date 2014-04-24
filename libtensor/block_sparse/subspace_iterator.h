@@ -5,8 +5,6 @@
 
 namespace libtensor {
 
-//We use an 'if' statement instead of runtime polymorphism because 
-//virtual function calls much more expensive than one direct branch
 class subspace_iterator
 {
     size_t m_pos;

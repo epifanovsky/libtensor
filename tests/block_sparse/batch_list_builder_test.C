@@ -18,7 +18,7 @@ void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_ex
     index_groups_test_f tf = index_groups_test_f();
 
     /*** BATCHING OVER SUBSPACE 1 - DENSE CASE ***/
-    size_t max_n_elem = 0.6*tf.bispace.get_nnz();
+    size_t max_n_elem = 388800;
 
     letter i,j,k,l,m,n,o;
 
@@ -32,6 +32,10 @@ void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_ex
     correct_batch_list.push_back(idx_pair(3,5));
     if(batch_list != correct_batch_list)
     {
+        for(size_t i = 0; i < batch_list.size(); ++i)
+        {
+            cout << batch_list[i].first << "," << batch_list[i].second << "\n";
+        }
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_list_builder::get_batch_list(...) did not return correct value for batching over subspace 1 for 1 bispace");
     }
