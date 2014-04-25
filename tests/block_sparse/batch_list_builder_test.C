@@ -12,7 +12,7 @@ void batch_list_builder_test::perform() throw(libtest::test_exception)
     test_get_batch_list_sparse(); 
     test_get_batch_list_dense_dense(); 
     test_get_batch_list_sparse_sparse();
-    /*test_get_batch_list_2_group_sparse_sparse();*/
+    test_get_batch_list_2_group_sparse_sparse();
 }
 
 //Test fixtures

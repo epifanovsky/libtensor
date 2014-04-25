@@ -23,64 +23,75 @@ batch_list_builder::batch_list_builder(const vector< vector<labeled_bispace> >& 
 
 idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
 {
-    dim_list grp_batch_sizes(m_iter_groups.size(),0);
-    size_t batch_size = 0;
-    size_t batch_start_idx = 0;
     idx_pair_list batch_list;
+    dim_list grp_batch_sizes(m_iter_groups.size(),0);
+    dim_list grp_cur_subtotals(m_iter_groups.size(),0);
+    size_t batch_start_idx = 0;
 
     //Do this by value so as not to corrupt member var as we incr
     vector< vector<subspace_iterator> > iter_groups(m_iter_groups);
-    bool done = false; 
-    while(!done)
+    vector< pair<size_t,idx_pair> > cur_block_inds; 
+    while(true)
     {
+        //Figure out what index each iterator is at
+        bool all_done = true;
         for(size_t grp_idx = 0; grp_idx < m_iter_groups.size(); ++grp_idx)
         {
             vector<subspace_iterator>& iter_group = iter_groups[grp_idx];
             //Did all of our iterators reach the end?
-            bool this_group_all_done = true;
-            idx_pair_list block_inds_it_pairs;
             for(size_t iter_idx = 0; iter_idx < iter_group.size(); ++iter_idx)
             {
                 const subspace_iterator& it = iter_group[iter_idx];
                 if(!it.done())
                 {
-                    this_group_all_done = false;
-                    block_inds_it_pairs.push_back(idx_pair(it.get_block_index(),iter_idx));
+                    all_done = false;
+                    cur_block_inds.push_back(pair<size_t,idx_pair>(it.get_block_index(),idx_pair(grp_idx,iter_idx)));
                 }
             }
+        }
+        if(all_done) break;
 
-            if(this_group_all_done)
-            {
-                batch_list.push_back(idx_pair(batch_start_idx,m_end_idx));
-                done = true;
-                break;
-            }
+        //We need to look at the smallest index first to see if the batch can hold it
+        //If other iterators are further advanced, we ignore them for now
+        sort(cur_block_inds.begin(),cur_block_inds.end());
+        size_t least_idx = cur_block_inds[0].first;
+        for(size_t sig_it_idx = 0; sig_it_idx < cur_block_inds.size(); ++sig_it_idx)
+        {
+            size_t block_idx = cur_block_inds[sig_it_idx].first;
+            if(block_idx != least_idx) break;
+            size_t grp_idx = cur_block_inds[sig_it_idx].second.first;
+            size_t iter_idx = cur_block_inds[sig_it_idx].second.second;
+            grp_cur_subtotals[grp_idx] += iter_groups[grp_idx][iter_idx].get_slice_size();
+            ++iter_groups[grp_idx][iter_idx];
+        }
 
-            //We need to look at the smallest index first to see if the batch can hold it
-            //If other iterators are further advanced, we ignore them for now
-            sort(block_inds_it_pairs.begin(),block_inds_it_pairs.end());
-            size_t most_recent_subtotal = 0;
-            for(size_t sig_it_idx = 0; sig_it_idx < block_inds_it_pairs.size(); ++sig_it_idx)
+        //Find groups that have exceeded the memory allowance
+        //If any of them have the current smallest index, that marks the end of the batch
+        for(size_t sig_it_idx = 0; sig_it_idx < cur_block_inds.size(); ++sig_it_idx)
+        {
+            size_t grp_idx = cur_block_inds[sig_it_idx].second.first;
+            if(cur_block_inds[sig_it_idx].first == least_idx)
             {
-                size_t block_idx = block_inds_it_pairs[sig_it_idx].first;
-                if(block_idx!= block_inds_it_pairs[0].first) break;
-                size_t iter_idx = block_inds_it_pairs[sig_it_idx].second;
-                subspace_iterator& it = iter_group[iter_idx];
-                most_recent_subtotal += it.get_slice_size();
-                ++it;
-            }
-            batch_size += most_recent_subtotal;
-
-            if(batch_size > max_n_elem)
-            {
-                size_t batch_end_idx = block_inds_it_pairs[0].first;
-                batch_list.push_back(idx_pair(batch_start_idx,batch_end_idx));
-                batch_start_idx = batch_end_idx;
-                batch_size = most_recent_subtotal;
+                if(grp_batch_sizes[grp_idx] + grp_cur_subtotals[grp_idx] > max_n_elem) 
+                {
+                    grp_batch_sizes[grp_idx] = grp_cur_subtotals[grp_idx];
+                    //To ensure that multiple groups at same index don't duplicate
+                    if(least_idx > batch_start_idx)
+                    {
+                        batch_list.push_back(idx_pair(batch_start_idx,least_idx));
+                        batch_start_idx = least_idx;
+                    }
+                }
+                else
+                {
+                    grp_batch_sizes[grp_idx] += grp_cur_subtotals[grp_idx];
+                }
+                grp_cur_subtotals[grp_idx] = 0;
             }
         }
-        if(done) break;
+        cur_block_inds.resize(0);
     }
+    batch_list.push_back(idx_pair(batch_start_idx,m_end_idx));
     return batch_list;
 }
 
