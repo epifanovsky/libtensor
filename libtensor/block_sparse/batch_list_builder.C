@@ -61,7 +61,13 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
             if(block_idx != least_idx) break;
             size_t grp_idx = cur_block_inds[sig_it_idx].second.first;
             size_t iter_idx = cur_block_inds[sig_it_idx].second.second;
-            grp_cur_subtotals[grp_idx] += iter_groups[grp_idx][iter_idx].get_slice_size();
+            size_t this_block_contrib = iter_groups[grp_idx][iter_idx].get_slice_size();
+            if(this_block_contrib > max_n_elem)
+            {
+                throw out_of_memory(g_ns,"batch_list_builder","get_batch_list(...)",
+                    __FILE__,__LINE__,"Not enough memory provided to compute valid batch list"); 
+            }
+            grp_cur_subtotals[grp_idx] += this_block_contrib;
             ++iter_groups[grp_idx][iter_idx];
         }
 

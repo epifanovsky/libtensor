@@ -13,6 +13,7 @@ void batch_list_builder_test::perform() throw(libtest::test_exception)
     test_get_batch_list_dense_dense(); 
     test_get_batch_list_sparse_sparse();
     test_get_batch_list_2_group_sparse_sparse();
+    test_get_batch_list_not_enough_mem();
 }
 
 //Test fixtures
@@ -195,12 +196,40 @@ void batch_list_builder_test::test_get_batch_list_2_group_sparse_sparse() throw(
 
     if(batch_list != correct_batch_list)
     {
-        for(size_t i = 0; i < batch_list.size(); ++i)
-        {
-            cout << batch_list[i].first << "," << batch_list[i].second << "\n";
-        }
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_list_builder::get_batch_list(...) did not return correct value for sparse sparse case with two tensor groups");
+    }
+}
+
+//Ensure that we get the right exception when we don't have enough memory to batch
+void batch_list_builder_test::test_get_batch_list_not_enough_mem() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_list_builder_test::test_get_batch_list_not_enough_mem()";
+
+    multi_group_test_f tf;
+    letter i,j;
+    vector< vector<labeled_bispace> > labeled_bispace_groups(2);
+    labeled_bispace_groups[0].push_back(labeled_bispace(tf.A,j|i));
+    labeled_bispace_groups[0].push_back(labeled_bispace(tf.B,i|j));
+    labeled_bispace_groups[1].push_back(labeled_bispace(tf.C,i|j));
+    labeled_bispace_groups[1].push_back(labeled_bispace(tf.D,i|j));
+
+    batch_list_builder blb(labeled_bispace_groups,i);
+    size_t max_n_elem = 3; //one short of what is needed
+    bool threw_exception = false;
+    try
+    {
+        blb.get_batch_list(max_n_elem);
+    }
+    catch(out_of_memory&)
+    {
+        threw_exception = true;
+    }
+
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_list_builder::get_batch_list(...) did not throw out_of_memory when not enough memory provided");
     }
 }
 
