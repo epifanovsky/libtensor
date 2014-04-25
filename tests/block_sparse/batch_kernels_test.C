@@ -1,6 +1,6 @@
 #include <libtensor/block_sparse/batch_kernel_permute.h>
-#include <libtensor/block_sparse/sparse_btensor.h>
-#include <libtensor/block_sparse/direct_sparse_btensor.h>
+#include <libtensor/block_sparse/sparse_btensor_new.h>
+#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
 #include "batch_kernels_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 
@@ -20,12 +20,12 @@ void batch_kernels_test::test_batch_kernel_permute_A_direct() throw(libtest::tes
 
 
     permute_3d_sparse_120_test_f tf;
-    direct_sparse_btensor<3> A(tf.output_bispace);
-    sparse_btensor<3> B(tf.input_bispace);
+    direct_sparse_btensor_new<3> A(tf.output_bispace);
+    sparse_btensor_new<3> B(tf.input_bispace);
 
 
     letter i,j,k;
-    batch_kernel_permute<double> bkp(A(i|j|k),B(k|i|j));
+    batch_kernel_permute<double> bkp(A,B,permutation<3>().permute(0,1).permute(1,2));
 
     bispace_batch_map bbm;
     double output_batch_arr[20] = {0};

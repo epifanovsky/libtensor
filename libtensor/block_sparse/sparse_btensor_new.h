@@ -1,5 +1,5 @@
-#ifndef SPARSE_BTENSOR_H
-#define SPARSE_BTENSOR_H
+#ifndef SPARSE_BTENSOR_NEW_H
+#define SPARSE_BTENSOR_NEW_H
 
 #include <sstream>
 #include <libtensor/expr/iface/label.h>
@@ -170,4 +170,4 @@ std::string sparse_btensor_new<N,T>::str() const
 
 } // namespace libtensor
 
-#endif /* SPARSE_BTENSOR_H */
+#endif /* SPARSE_BTENSOR_NEW_H */
