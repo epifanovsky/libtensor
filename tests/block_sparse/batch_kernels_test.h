@@ -12,6 +12,7 @@ public:
     virtual void perform() throw(libtest::test_exception);
 private:
     void test_batch_kernel_permute_A_direct() throw(libtest::test_exception);
+    void test_batch_kernel_contract2() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

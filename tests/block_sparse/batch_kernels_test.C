@@ -1,8 +1,10 @@
 #include <libtensor/block_sparse/batch_kernel_permute.h>
+#include <libtensor/block_sparse/batch_kernel_contract2.h>
 #include <libtensor/block_sparse/sparse_btensor_new.h>
 #include <libtensor/block_sparse/direct_sparse_btensor_new.h>
 #include "batch_kernels_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
+#include "test_fixtures/contract2_test_f.h"
 
 using namespace std;
 
@@ -10,6 +12,7 @@ namespace libtensor {
 
 void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_permute_A_direct();
+    test_batch_kernel_contract2();
 }
 
 //A(i|j|k) = B(k|i|j)
@@ -62,8 +65,39 @@ void batch_kernels_test::test_batch_kernel_permute_A_direct() throw(libtest::tes
         if(output_batch_arr[i]  != correct_output_batch_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_permute_kernel::generate_batch(...) did not produce correct result");
+                    "batch_kernel_permute::generate_batch(...) did not produce correct result");
         }
+    }
+}
+
+//C(i|l) = A(i|j|k) B(j|k|l)
+void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_kernels_test::test_batch_kernel_contract2()";
+
+    contract2_test_f tf;
+
+    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
+    sparse_btensor_new<2> C(tf.spb_C);
+
+    multimap<size_t,size_t> contr_map;
+    contr_map.insert(idx_pair(1,3));
+    contr_map.insert(idx_pair(2,4));
+    batch_kernel_contract2<double> bkc2(C,A,B,contr_map);
+
+    /*double output_batch_arr[20] = {0};*/
+    /*bbm.insert(make_pair(idx_pair(0,1),idx_pair(0,1)));*/
+
+    //Test grabbing entire array
+    bispace_batch_map bbm;
+    vector<double*> ptrs(1,(double*)C.get_data_ptr());
+    bkc2.generate_batch(ptrs,bbm);
+    sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
+    if(C != C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_contract2::generate_batch(...) did not produce correct result");
     }
 }
 
