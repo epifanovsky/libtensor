@@ -40,6 +40,7 @@ void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_excep
     expr_tree::node_id_t perm_node_id = e.add(root_id,perm_node);
     e.add(perm_node_id,node_ident_any_tensor<3,double>(A));
 
+    //Finally, check that we can get the full tensor
     batch_provider_new<double> bp(e);
     bp.get_batch((double*)B.get_data_ptr());
 

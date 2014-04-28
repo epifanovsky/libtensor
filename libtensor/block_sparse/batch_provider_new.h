@@ -1,78 +1,75 @@
 #ifndef BATCH_PROVIDER_NEW_H
 #define BATCH_PROVIDER_NEW_H
 
-#include "batch_kernel.h"
-#include "../core/scalar_transf_double.h"
+#include "gen_sparse_btensor.h"
+#include "batch_kernel_permute.h"
 #include "../expr/dag/node_assign.h"
 #include "../expr/dag/node_transform.h"
 
 namespace libtensor {
 
-#if 0
 namespace expr {
 
-template<size_t M,typename T> 
-class kernel_builder_2
-{
-    any_tensor<M,T> m_at;
-    label<M> m_label;
-public:
-    kernel_builder_2(const node& n)
-    {
-        n.get_
-    }
-    template<size_t N,typename kernel_t>
-    build(const kernel_builder_2<N>& rhs)
-    {
-        return kernel_t(m_at,rhs.get_any_tensor(),m_label,lhs.get_label());
-    }
-    }
-    label<M>& get_any_tensor() { return m_label; } 
-    any_tensor<M,T>& get_any_tensor() { return m_at; } 
-}
-
 template<typename T>
-kernel_builder_2 build_kernel_builder_2(const node& n_one)
+batch_kernel<T>* dispatch_one(const node& n_one,const node& n_two,const node& op_node)
 {
     switch(n_one.get_n())
     {
-        case 1:
-            return kernel_builder_2<1,T>(n_one);
-        case 2:
-            return kernel_builder_2<1>();
         case 3:
-            return kernel_builder_2<1>();
-        case 4:
-            return kernel_builder_2<1>();
-        case 5:
-            return kernel_builder_2<1>();
-        case 6:
-            return kernel_builder_2<1>();
-        case 7:
-            return kernel_builder_2<1>();
-        case 8:
-            return kernel_builder_2<1>();
+            const node_ident_any_tensor<3,T>& n_at = dynamic_cast< const node_ident_any_tensor<3,T>& >(n_one);
+            return dispatch_two(dynamic_cast< const gen_sparse_btensor<3,T>& >(n_at.get_tensor()),n_two,op_node);
     }
 }
 
-template<typename kernel_t>
-dispatch_two(const node& node_two)
+template<size_t M,typename T>
+batch_kernel<T>* dispatch_two(const gen_sparse_btensor<M,T>& input_one,const node& n_two,const node& op_node)
 {
-    return p
+    switch(n_two.get_n())
+    {
+        case 3:
+            const node_ident_any_tensor<3,T>& n_at = dynamic_cast< const node_ident_any_tensor<3,T>& >(n_two);
+            return dispatch_op(input_one,dynamic_cast< const gen_sparse_btensor<3,T>& >(n_at.get_tensor()),op_node);
+    }
+}
+
+template<size_t M,size_t N,typename T>
+batch_kernel<T>* dispatch_op(const gen_sparse_btensor<M,T>& input_one,const gen_sparse_btensor<N,T>& input_two,const node& op_node)
+{
+    if(op_node.check_type<node_transform_base>())
+    {
+        const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(op_node);
+        return new batch_kernel_permute<T>(input_one,input_two,n_tf.get_perm());
+    }
+    else
+    {
+        throw bad_parameter(g_ns,"dispatch_op","",__FILE__, __LINE__,
+            "Unsupported op node type");
+    }
+}
+
+template<typename T>
+T* get_data_ptr_from_node(const node& n_one)
+{
+    switch(n_one.get_n())
+    {
+        case 3:
+            const node_ident_any_tensor<3,T>& n_at = dynamic_cast< const node_ident_any_tensor<3,T>& >(n_one);
+            return (T*)static_cast< gen_sparse_btensor<3,T>& >(n_at.get_tensor()).get_data_ptr();
+    }
 }
 
 } // namespace expr
-#endif
 
 template<typename T>
 class batch_provider_new
 {
 private:
     batch_kernel<T>* m_kern;
+    std::vector<T*> m_ptrs;
 public:
     static const char* k_clazz; //!< Class name
     batch_provider_new(const expr::expr_tree& tree); 
-    void get_batch(T* output_ptr) {}
+    void get_batch(T* output_ptr); 
 };
 
 template<typename T>
@@ -98,22 +95,28 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
             "Root node does not have right number of children");
     }
 
-#if 0
-    const node& kernel_node_id = children[1];
-    const node& kernel_node = tree.get_vertex(kernel_node_id);
-    const expr_tree::edge_list_t& inputs = tree.get_edges_out(kernel_node_id);
-    if(kernel_node.check_type<node_transform>())
+    const node& out_node = tree.get_vertex(children[0]);
+    const node& op_node = tree.get_vertex(children[1]);
+    const expr_tree::edge_list_t& inputs = tree.get_edges_out(children[1]);
+    if(op_node.check_type<node_transform_base>())
     {
-        if(
-        inputs.recast_as
-        m_kernel = new batch_kernel_permute<T>(
+        const node& input_node = tree.get_vertex(inputs[0]);
+        m_ptrs.resize(2);
+        m_kern = dispatch_one<T>(out_node,input_node,op_node);
+        m_ptrs[1] = get_data_ptr_from_node<T>(input_node);
     }
     else
     {
         throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
             "Invalid child node type");
     }
-#endif
+}
+
+template<typename T>
+void batch_provider_new<T>::get_batch(T* output_ptr)
+{ 
+    m_ptrs[0] = output_ptr; 
+    m_kern->generate_batch(m_ptrs,bispace_batch_map()); 
 }
 
 

@@ -15,7 +15,7 @@ public:
     static const char* k_clazz; //!< Class name
 
     template<size_t N>
-    batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<N,T>& rhs,const permutation<N>& perm);
+    batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<N,T>& rhs,const idx_list& perm_entries);
     virtual void generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches);
 
     sparse_loop_list* m_sll_ptr;
@@ -30,19 +30,17 @@ template<typename T>
 const char* batch_kernel_permute<T>::k_clazz = "batch_kernel_permute";
 
 template<typename T> template<size_t N>
-batch_kernel_permute<T>::batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<N,T>& rhs,const permutation<N>& perm)
+batch_kernel_permute<T>::batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<N,T>& rhs,const idx_list& perm_entries)
 {
         std::vector<sparse_bispace_any_order> bispaces(1,lhs.get_bispace());
         bispaces.push_back(rhs.get_bispace());
         std::vector<block_loop> loops;
-        idx_list permutation_entries;
         for(size_t i = 0; i < N; ++i)
         {
             block_loop bl(bispaces);
             bl.set_subspace_looped(0,i);
-            bl.set_subspace_looped(1,perm[i]);
+            bl.set_subspace_looped(1,perm_entries[i]);
             loops.push_back(bl);
-            permutation_entries.push_back(perm[i]);
         }
 
         idx_list direct_tensors;
@@ -55,7 +53,7 @@ batch_kernel_permute<T>::batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs
             direct_tensors.push_back(1);
         }
 
-        runtime_permutation rp(permutation_entries);
+        runtime_permutation rp(perm_entries);
         m_bpk_ptr = new block_permute_kernel<T>(rp);
         m_sll_ptr = new sparse_loop_list(loops,bispaces,direct_tensors);
 }

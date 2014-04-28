@@ -25,7 +25,10 @@ void batch_kernels_test::test_batch_kernel_permute_A_direct() throw(libtest::tes
 
 
     letter i,j,k;
-    batch_kernel_permute<double> bkp(A,B,permutation<3>().permute(0,1).permute(1,2));
+    idx_list perm_entries(1,1);
+    perm_entries.push_back(2);
+    perm_entries.push_back(0);
+    batch_kernel_permute<double> bkp(A,B,perm_entries);
 
     bispace_batch_map bbm;
     double output_batch_arr[20] = {0};
