@@ -92,6 +92,8 @@ void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_excep
     //Test grabbing entire array
     bispace_batch_map bbm;
     vector<double*> ptrs(1,(double*)C.get_data_ptr());
+    ptrs.push_back((double*)A.get_data_ptr());
+    ptrs.push_back((double*)B.get_data_ptr());
     bkc2.generate_batch(ptrs,bbm);
     sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
     if(C != C_correct)
