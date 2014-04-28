@@ -100,21 +100,6 @@ sparse_bispace<3> permute_3d_sparse_120_test_f::init_input_bispace()
             sig_blocks[entry_idx][subspace_idx] = sig_blocks_arr[entry_idx][subspace_idx];
         }
     }
-    /*sig_blocks[0][0] = 0; */
-    /*sig_blocks[0][1] = 0;*/
-    /*sig_blocks[0][2] = 0;*/
-    /*sig_blocks[1][0] = 0; */
-    /*sig_blocks[1][1] = 0;*/
-    /*sig_blocks[1][2] = 1;*/
-    /*sig_blocks[2][0] = 0; */
-    /*sig_blocks[2][1] = 1;*/
-    /*sig_blocks[2][2] = 0;*/
-    /*sig_blocks[3][0] = 1; */
-    /*sig_blocks[3][1] = 0;*/
-    /*sig_blocks[3][2] = 0;*/
-    /*sig_blocks[4][0] = 1; */
-    /*sig_blocks[4][1] = 1;*/
-    /*sig_blocks[4][2] = 1;*/
 
     sparse_bispace<3> three_d_input = spb_1 % spb_2 % spb_3 << sig_blocks;
     return three_d_input;
