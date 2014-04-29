@@ -1,4 +1,4 @@
-set(SRC
+set(SRC_CORE
     defs.C
     exception.C
     version.C
@@ -12,12 +12,6 @@ set(SRC
     core/impl/orbit_list.C
     core/impl/short_orbit.C
     core/impl/subgroup_orbits.C
-    btod/btod_diagonalize.C
-    btod/btod_tridiagonalize.C
-    symmetry/inst/adjacency_list.C
-    symmetry/point_group_table.C
-    symmetry/product_table_container.C
-    symmetry/product_table_i.C
 )
 
 set(SRC_LINALG_ACML
@@ -105,6 +99,10 @@ set(SRC_INST
     dense_tensor/impl/tod_size.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
+    symmetry/point_group_table.C
+    symmetry/product_table_container.C
+    symmetry/product_table_i.C
+    symmetry/inst/adjacency_list.C
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
@@ -147,6 +145,8 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
     block_tensor/btod/impl/btod_sum.C
+    btod/btod_diagonalize.C
+    btod/btod_tridiagonalize.C
 )
 
 set(SRC_GEN_BTOD
@@ -310,21 +310,25 @@ else(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC})
 endif(USE_ACML)
 
-add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR}
-    ${SRC_ARMA})
+set(TARGETS tensor_core tensor tensor_block_sparse)
+
+add_library(tensor_core ${SRC_CORE})
+add_library(tensor ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
+    ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR} ${SRC_ARMA})
+add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
+
 if(QCHEM_SOURCE_DIR)
+    set(TARGETS ${TARGETS} tensor_qchem)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
-    add_dependencies(tensor_qchem tensor)
 endif(QCHEM_SOURCE_DIR)
 
-set_property(TARGET tensor APPEND PROPERTY
+set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 else(HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 

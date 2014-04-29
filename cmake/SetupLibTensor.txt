@@ -1,15 +1,17 @@
 #
-#	Set up libtensor as an external library
+#    Set up libtensor as an external library
 #
 
 include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
-#	Include and library paths
+#    Include and library paths
 #
 include_directories(${LIBTENSOR_DIR})
+add_library(tensor_core STATIC IMPORTED)
+set_target_properties(tensor_core PROPERTIES
+    IMPORTED_LOCATION ${LIBTENSOR_DIR}/build/libtensor/libtensor_core.a)
 add_library(tensor STATIC IMPORTED)
 set_target_properties(tensor PROPERTIES
-	IMPORTED_LOCATION ${LIBTENSOR_DIR}/build/libtensor/libtensor.a
-)
-set(LIBTENSOR_LIBS tensor ${LIBTENSOR_DEP_LIBS})
+    IMPORTED_LOCATION ${LIBTENSOR_DIR}/build/libtensor/libtensor.a)
+set(LIBTENSOR_LIBS tensor tensor_core ${LIBTENSOR_DEP_LIBS})
 

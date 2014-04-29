@@ -24,6 +24,9 @@ template<size_t N, typename T>
 std::ostream &operator<<(std::ostream &os, const symmetry<N, T> &sym);
 
 template<size_t N, typename T>
+std::ostream &operator<<(std::ostream &os, const symmetry_element_set<N, T> &sym);
+
+template<size_t N, typename T>
 std::ostream &operator<<(std::ostream &os, const se_label<N, T> &se);
 
 template<size_t N, typename T>
@@ -51,6 +54,21 @@ std::ostream &operator<<(std::ostream &os, const scalar_transf<T> &tr);
 template<size_t N, typename T>
 std::ostream &operator<<(std::ostream &os, const symmetry<N, T> &sym) {
 
+    size_t i = 1;
+    for (typename symmetry<N, double>::iterator it = sym.begin();
+            it != sym.end(); it++, i++) {
+
+        const symmetry_element_set<N, double> &set = sym.get_subset(it);
+        os << " " << std::setw(2) << i << ". " << set << std::endl;
+    }
+    return os;
+}
+
+
+template<size_t N, typename T>
+std::ostream &operator<<(std::ostream &os,
+        const symmetry_element_set<N, T> &set) {
+
     typedef se_label<N, T> se1_t;
     typedef se_part<N, T> se2_t;
     typedef se_perm<N, T> se3_t;
@@ -58,34 +76,27 @@ std::ostream &operator<<(std::ostream &os, const symmetry<N, T> &sym) {
     typedef symmetry_element_set_adapter<N, T, se2_t> adapter2_t;
     typedef symmetry_element_set_adapter<N, T, se3_t> adapter3_t;
 
-    size_t i = 1;
-    for (typename symmetry<N, double>::iterator it = sym.begin();
-            it != sym.end(); it++, i++) {
-
-        const symmetry_element_set<N, double> &set = sym.get_subset(it);
-        os << " Set " << std::setw(2) << i << ": ";
-        os << set.get_id() << std::endl;
-
-        if (set.get_id().compare(se1_t::k_sym_type) == 0) {
-            adapter1_t g(set);
-            for (typename adapter1_t::iterator its = g.begin();
-                    its != g.end(); its++) {
-                os << g.get_elem(its) << std::endl;
-            }
+    const std::string &id = set.get_id();
+    std::cout << "Set " << id << std::endl;
+    if (id.compare(se1_t::k_sym_type) == 0) {
+        adapter1_t g(set);
+        for (typename adapter1_t::iterator its = g.begin();
+                its != g.end(); its++) {
+            os << g.get_elem(its);
         }
-        else if (set.get_id().compare(se2_t::k_sym_type) == 0) {
-            adapter2_t g(set);
-            for (typename adapter2_t::iterator its = g.begin();
-                    its != g.end(); its++) {
-                os << g.get_elem(its) << std::endl;
-            }
+    }
+    else if (id.compare(se2_t::k_sym_type) == 0) {
+        adapter2_t g(set);
+        for (typename adapter2_t::iterator its = g.begin();
+                its != g.end(); its++) {
+            os << g.get_elem(its);
         }
-        else if (set.get_id().compare(se3_t::k_sym_type) == 0) {
-            adapter3_t g(set);
-            for (typename adapter3_t::iterator its = g.begin();
-                    its != g.end(); its++) {
-                os << g.get_elem(its) << std::endl;
-            }
+    }
+    else if (id.compare(se3_t::k_sym_type) == 0) {
+        adapter3_t g(set);
+        for (typename adapter3_t::iterator its = g.begin();
+                its != g.end(); its++) {
+            os << g.get_elem(its);
         }
     }
     return os;

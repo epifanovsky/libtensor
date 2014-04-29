@@ -74,6 +74,7 @@ copy<N>::~copy() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -91,6 +92,15 @@ struct aux_copy {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_copy>;
+#endif
+template class copy<1>;
+template class copy<2>;
+template class copy<3>;
+template class copy<4>;
+template class copy<5>;
+template class copy<6>;
+template class copy<7>;
+template class copy<8>;
 
 
 } // namespace eval_btensor_double

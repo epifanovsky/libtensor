@@ -93,7 +93,8 @@ template<size_t NC> template<size_t NA, size_t NB>
 void eval_dirsum_impl<NC>::init(const tensor_transf<NC, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_dirsum &nd = m_tree.get_vertex(m_id).recast_as<node_dirsum>();
+    const node_dirsum &nd =
+    		m_tree.get_vertex(m_id).template recast_as<node_dirsum>();
 
     btensor_from_node<NA, double> bta(m_tree, e[0]);
     btensor_from_node<NB, double> btb(m_tree, e[1]);
@@ -133,6 +134,7 @@ dirsum<NC>::~dirsum() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t NC>
@@ -150,6 +152,15 @@ struct aux_dirsum {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_dirsum>;
+#endif
+template class dirsum<1>;
+template class dirsum<2>;
+template class dirsum<3>;
+template class dirsum<4>;
+template class dirsum<5>;
+template class dirsum<6>;
+template class dirsum<7>;
+template class dirsum<8>;
 
 
 } // namespace eval_btensor_double

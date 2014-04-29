@@ -76,7 +76,7 @@ void eval_dot_product_impl::do_evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
-    const node_dot_product &nd = n.recast_as<node_dot_product>();
+    const node_dot_product &nd = n.template recast_as<node_dot_product>();
 
     btensor_from_node<NA, double> bta(m_tree, e[0]);
     btensor_from_node<NA, double> btb(m_tree, e[1]);
@@ -96,7 +96,8 @@ void eval_dot_product_impl::do_evaluate(expr_tree::node_id_t lhs) {
     d *= bta.get_transf().get_scalar_tr().get_coeff();
     d *= btb.get_transf().get_scalar_tr().get_coeff();
 
-    const node_scalar<double> &ns = m_tree.get_vertex(lhs).recast_as< node_scalar<double> >();
+    const node_scalar<double> &ns =
+        m_tree.get_vertex(lhs).template recast_as< node_scalar<double> >();
     ns.get_scalar() = d;
 }
 
@@ -115,22 +116,6 @@ void dot_product::evaluate(node_id_t lhs) {
 
     eval_dot_product_impl(m_tree, m_id).evaluate(lhs);
 }
-
-
-//  The code here explicitly instantiates dot_product::evaluate
-namespace aux {
-template<size_t N>
-struct aux_dot_product {
-    dot_product *e;
-    expr_tree::node_id_t lhs;
-    aux_dot_product() {
-#pragma noinline
-        { e->evaluate(lhs); }
-    }
-};
-} // namespace aux
-template class instantiate_template_1<1, dot_product::Nmax,
-    aux::aux_dot_product>;
 
 
 } // namespace eval_btensor_double

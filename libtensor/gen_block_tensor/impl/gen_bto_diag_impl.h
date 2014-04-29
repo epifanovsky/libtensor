@@ -203,7 +203,7 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
         else { seqb2[i] = seq2[j2++]; }
     }
 
-    permutation_builder<N - M + 1> pb(seqb2, seqb1);
+    permutation_builder<N - M + 1> pb(seqb1, seqb2);
     permutation<N - M + 1> permb(pb.get_perm());
     permb.permute(m_tr.get_perm());
     permb.permute(permutation<N - M + 1>(trb.get_perm(), true));

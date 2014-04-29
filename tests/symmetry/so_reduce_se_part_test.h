@@ -25,6 +25,7 @@ private:
     void test_nm1_4(bool sign) throw(libtest::test_exception);
     void test_nm1_5(bool sign) throw(libtest::test_exception);
     void test_nm1_6(bool sign) throw(libtest::test_exception);
+    void test_nm1_7(bool sign) throw(libtest::test_exception);
     void test_nmk_1(bool sign) throw(libtest::test_exception);
     void test_nmk_2(bool s1, bool s2) throw(libtest::test_exception);
 

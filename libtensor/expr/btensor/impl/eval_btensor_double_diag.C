@@ -66,7 +66,8 @@ eval_diag_impl<N>::eval_diag_impl(const expr_tree &tree,
     m_tree(tree), m_id(id), m_op(0) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_diag &nd = m_tree.get_vertex(m_id).recast_as<node_diag>();
+    const node_diag &nd =
+    		m_tree.get_vertex(m_id).template recast_as<node_diag>();
 
     const node &arga = m_tree.get_vertex(e[0]);
     size_t na = arga.get_n();
@@ -87,7 +88,8 @@ template<size_t N> template<size_t NA, size_t M>
 void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
-    const node_diag &nd = m_tree.get_vertex(m_id).recast_as<node_diag>();
+    const node_diag &nd =
+    		m_tree.get_vertex(m_id).template recast_as<node_diag>();
 
     btensor_from_node<NA, double> bta(m_tree, e[0]);
 
@@ -96,8 +98,9 @@ void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
     const std::vector<size_t> &idx = nd.get_idx();
     for(size_t i = 0; i < NA; i++) if(idx[i] == nd.get_didx()) m[i] = true;
 
-    m_op = new btod_diag<NA, M>(bta.get_btensor(), m, trc.get_perm(),
-        trc.get_scalar_tr().get_coeff());
+    double d = bta.get_transf().get_scalar_tr().get_coeff() *
+        trc.get_scalar_tr().get_coeff();
+    m_op = new btod_diag<NA, M>(bta.get_btensor(), m, trc.get_perm(), d);
 }
 
 
@@ -127,6 +130,7 @@ diag<N>::~diag() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -144,6 +148,15 @@ struct aux_diag {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_diag>;
+#endif
+template class diag<1>;
+template class diag<2>;
+template class diag<3>;
+template class diag<4>;
+template class diag<5>;
+template class diag<6>;
+template class diag<7>;
+template class diag<8>;
 
 
 } // namespace eval_btensor_double

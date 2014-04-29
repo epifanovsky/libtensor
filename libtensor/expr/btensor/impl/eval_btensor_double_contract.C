@@ -172,7 +172,8 @@ template<size_t NC> template<size_t N, size_t M, size_t K>
 void eval_contract_impl<NC>::init_contract(
     const tensor_transf<NC, double> &trc) {
 
-    const node_contract &n = m_tree.get_vertex(m_id).recast_as<node_contract>();
+    const node_contract &n =
+    		m_tree.get_vertex(m_id).template recast_as<node_contract>();
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
 
     btensor_from_node<N + K, double> bta(m_tree, e[0]);
@@ -206,7 +207,7 @@ void eval_contract_impl<NC>::init_ewmult(const tensor_transf<NC, double> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node_contract &nc = m_tree.get_vertex(m_id).
-        recast_as<node_contract>();
+        template recast_as<node_contract>();
 
     btensor_from_node<N + K, double> bta(m_tree, e[0]);
     btensor_from_node<M + K, double> btb(m_tree, e[1]);
@@ -328,6 +329,7 @@ contract<NC>::~contract() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates contract<NC>
 namespace aux {
 template<size_t NC>
@@ -345,6 +347,15 @@ struct aux_contract {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_contract>;
+#endif
+template class contract<1>;
+template class contract<2>;
+template class contract<3>;
+template class contract<4>;
+template class contract<5>;
+template class contract<6>;
+template class contract<7>;
+template class contract<8>;
 
 
 } // namespace eval_btensor_double

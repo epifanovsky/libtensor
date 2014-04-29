@@ -10,7 +10,7 @@
  **/
 
 #include "tod_add.h"
-#include "tod_apply.h"
+#include "impl/tod_apply_impl.h"
 #include "tod_btconv.h"
 #include "tod_compare.h"
 #include "tod_contract2.h"

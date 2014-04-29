@@ -27,6 +27,7 @@ private:
     void test_sym_5(bool add) throw(libtest::test_exception);
     void test_sym_6(bool add) throw(libtest::test_exception);
     void test_sym_7(bool add) throw(libtest::test_exception);
+    void test_sym_8(bool add) throw(libtest::test_exception);
 
 };
 

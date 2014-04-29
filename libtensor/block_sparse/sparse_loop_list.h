@@ -88,6 +88,8 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
 {
     //std::cout << "STARTING SLL:\n";
     double seconds = read_timer<double>();
+    //std::cout << "STARTING SLL:\n";
+    //double seconds = read_timer<double>();
     //Fuse all coupled sparse trees
     //std::cout << "STARTING FUSION:\n";
     double init = read_timer<double>();

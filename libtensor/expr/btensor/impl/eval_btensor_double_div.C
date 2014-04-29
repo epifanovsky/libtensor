@@ -48,9 +48,8 @@ eval_div_impl<N>::eval_div_impl(const expr_tree &tree,
     btensor_from_node<N, double> btb(tree, e[1]);
 
     tensor_transf<N, double> tra(bta.get_transf()), trb(btb.get_transf());
-    permutation<N> pinvc(tr.get_perm(), true);
-    tra.permute(pinvc);
-    trb.permute(pinvc);
+    tra.permute(tr.get_perm());
+    trb.permute(tr.get_perm());
 
     m_op = new btod_mult<N>(bta.get_btensor(), tra, btb.get_btensor(), trb,
         true, tr.get_scalar_tr());
@@ -83,6 +82,7 @@ div<N>::~div() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates div<N>
 namespace aux {
 template<size_t N>
@@ -100,6 +100,15 @@ struct aux_div {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_div>;
+#endif
+template class div<1>;
+template class div<2>;
+template class div<3>;
+template class div<4>;
+template class div<5>;
+template class div<6>;
+template class div<7>;
+template class div<8>;
 
 
 } // namespace eval_btensor_double

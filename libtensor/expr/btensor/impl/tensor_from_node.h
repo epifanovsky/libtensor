@@ -24,7 +24,7 @@ public:
         return m_tr;
     }
 
-    btensor<N, T> &get_btensor() const;
+    btensor_i<N, T> &get_btensor() const;
     btensor<N, T> &get_or_create_btensor(const block_index_space<N> &bis);
 
 };
@@ -44,19 +44,21 @@ btensor_from_node<N, T>::btensor_from_node(const expr_tree &tree,
 
 
 template<size_t N, typename T>
-btensor<N, T> &btensor_from_node<N, T>::get_btensor() const {
+btensor_i<N, T> &btensor_from_node<N, T>::get_btensor() const {
 
     const node &n = m_tree.get_vertex(m_leaf);
 
     if(n.check_type<node_ident>()) {
 
         const node_ident_any_tensor<N, T> &ni =
-            n.recast_as< node_ident_any_tensor<N, T> >();
-        return btensor<N, T>::from_any_tensor(ni.get_tensor());
+            n.template recast_as< node_ident_any_tensor<N, T> >();
+        any_tensor<N, T> &t = ni.get_tensor();
+        return t.template get_tensor< btensor_i<N, T> >();
 
     } else if(n.check_type<node_interm_base>()) {
 
-        const node_interm<N, T> &ni = n.recast_as< node_interm<N, T> >();
+        const node_interm<N, T> &ni =
+        		n.template recast_as< node_interm<N, T> >();
         btensor_placeholder<N, T> &ph =
             btensor_placeholder<N, T>::from_any_tensor(ni.get_tensor());
         if(ph.is_empty()) {
@@ -92,7 +94,8 @@ btensor<N, T> &btensor_from_node<N, T>::get_or_create_btensor(
 
     } else if(n.check_type<node_interm_base>()) {
 
-        const node_interm<N, T> &ni = n.recast_as< node_interm<N, T> >();
+        const node_interm<N, T> &ni =
+        		n.template recast_as< node_interm<N, T> >();
         btensor_placeholder<N, T> &ph =
             btensor_placeholder<N, T>::from_any_tensor(ni.get_tensor());
         if(ph.is_empty()) ph.create_btensor(bis);
@@ -121,7 +124,8 @@ expr_tree::node_id_t transf_from_node(
         return head;
     } else if(n.check_type<node_transform_base>()) {
 
-        const node_transform<T> &nt = n.recast_as< node_transform<T> >();
+        const node_transform<T> &nt =
+        		n.template recast_as< node_transform<T> >();
         if(N != nt.get_perm().size()) {
             throw eval_exception(__FILE__, __LINE__,
                 "libtensor::expr::eval_btensor_double", 0, "transf_from_node()",

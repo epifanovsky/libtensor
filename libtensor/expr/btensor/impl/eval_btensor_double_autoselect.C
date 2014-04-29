@@ -36,7 +36,7 @@ autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
     if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
         m_impl = new copy<N>(m_tree, id, tr);
     } else if(n.check_type<node_add>()) {
-        m_impl = new add<N>(m_tree, id);
+        m_impl = new add<N>(m_tree, id, tr);
     } else if(n.check_type<node_contract>()) {
         m_impl = new contract<N>(m_tree, id, tr);
     } else if(n.check_type<node_diag>()) {
@@ -84,6 +84,7 @@ void autoselect<N>::evaluate(node_id_t nid_lhs) {
 }
 
 
+#if 0
 //  The code here explicitly instantiates autoselect<N>
 namespace aux {
 template<size_t N>
@@ -101,6 +102,15 @@ struct aux_autoselect {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_autoselect>;
+#endif
+template class autoselect<1>;
+template class autoselect<2>;
+template class autoselect<3>;
+template class autoselect<4>;
+template class autoselect<5>;
+template class autoselect<6>;
+template class autoselect<7>;
+template class autoselect<8>;
 
 
 } // namespace eval_btensor_double

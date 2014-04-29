@@ -32,7 +32,8 @@ private:
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
-    eval_add_impl(const expr_tree &tr, expr_tree::node_id_t id);
+    eval_add_impl(const expr_tree &tree, expr_tree::node_id_t id,
+        const tensor_transf<N, double> &tr);
 
     virtual ~eval_add_impl();
 
@@ -45,15 +46,16 @@ public:
 
 template<size_t N>
 eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
-    expr_tree::node_id_t id) {
+    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
 
-    const node_add &n = tree.get_vertex(id).recast_as<node_add>();
+    const node_add &n = tree.get_vertex(id).template recast_as<node_add>();
     const expr_tree::edge_list_t &e = tree.get_edges_out(id);
 
     for(size_t i = 0; i < e.size(); i++) {
-        tensor_transf<N, double> tr;
-        expr_tree::node_id_t rhs = transf_from_node(tree, e[i], tr);
-        m_sub.push_back(new autoselect<N>(tree, rhs, tr));
+        tensor_transf<N, double> trsub;
+        expr_tree::node_id_t rhs = transf_from_node(tree, e[i], trsub);
+        trsub.transform(tr);
+        m_sub.push_back(new autoselect<N>(tree, rhs, trsub));
     }
 
     auto_ptr< btod_sum<N> > op;
@@ -80,9 +82,10 @@ eval_add_impl<N>::~eval_add_impl() {
 
 
 template<size_t N>
-add<N>::add(const expr_tree &tree, node_id_t id) :
+add<N>::add(const expr_tree &tree, node_id_t id,
+    const tensor_transf<N, double> &tr) :
 
-    m_impl(new eval_add_impl<N>(tree, id)) {
+    m_impl(new eval_add_impl<N>(tree, id, tr)) {
 
 }
 
@@ -94,6 +97,7 @@ add<N>::~add() {
 }
 
 
+#if 0
 //  The code here explicitly instantiates copy<N>
 namespace aux {
 template<size_t N>
@@ -109,6 +113,15 @@ struct aux_add {
 } // namespace aux
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_add>;
+#endif
+template class add<1>;
+template class add<2>;
+template class add<3>;
+template class add<4>;
+template class add<5>;
+template class add<6>;
+template class add<7>;
+template class add<8>;
 
 
 } // namespace eval_btensor_double

@@ -7,6 +7,7 @@
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
+#include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_diag.h>
@@ -52,6 +53,9 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 
     test_sym_7(false);
     test_sym_7(true);
+
+    test_sym_8(false);
+    test_sym_8(true);
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -1061,6 +1065,132 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
     }
 
     product_table_container::get_instance().erase(pgtid);
+}
+
+
+/** \test Extract diagonal: \f$ b_ijk = a_{ijkj} \f$, non-zero tensor,
+        multiple blocks, perm and partition symmetry
+ **/
+void btod_diag_test::test_sym_8(bool add) throw(libtest::test_exception) {
+
+    static const char *testname = "btod_diag_test::test_sym_8(bool)";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<3> i1a, i1b;
+    i1b[0] = i1b[1] = i1b[2] = 9;
+    index<4> i2a, i2b;
+    i2b[0] = i2b[1] = i2b[2] = i2b[3] = 9;
+    dimensions<3> dims1(index_range<3>(i1a, i1b));
+    dimensions<4> dims2(index_range<4>(i2a, i2b));
+    block_index_space<3> bis1(dims1);
+    block_index_space<4> bis2(dims2);
+
+    mask<3> msk1;
+    msk1[0] = msk1[1] = msk1[2] = true;
+    mask<4> msk2;
+    msk2[0] = msk2[1] = msk2[2] = msk2[3] = true;
+    bis1.split(msk1, 3);
+    bis1.split(msk1, 5);
+    bis1.split(msk1, 8);
+    bis2.split(msk2, 3);
+    bis2.split(msk2, 5);
+    bis2.split(msk2, 8);
+
+    scalar_transf<double> tr;
+    permutation<4> p1, p2, p3;
+    p1.permute(0, 1);
+    p2.permute(0, 2).permute(1, 3);
+    p3.permute(2, 3);
+    se_perm<4, double> se1a(p1, tr), se1b(p2, tr), se1c(p3, tr);
+    se_part<4, double> se2(bis2, msk2, 2);
+    index<4> i0, i1;
+    i1[2] = i1[3] = 1;
+    se2.add_map(i0, i1, tr);
+    i0[0] = i0[1] = 1;
+    se2.add_map(i1, i0, tr);
+    i1[0] = i1[1] = 1;
+    se2.add_map(i0, i1, tr);
+    i0[2] = 1;
+    se2.mark_forbidden(i0);
+    i0[2] = 0; i0[3] = 1;
+    se2.mark_forbidden(i0);
+    i0[1] = 0; i0[2] = 1;
+    se2.mark_forbidden(i0);
+    i0[0] = 0; i0[1] = 1;
+    se2.mark_forbidden(i0);
+    i0[2] = 0;
+    se2.mark_forbidden(i0);
+    i0[2] = 1; i0[3] = 0;
+    se2.mark_forbidden(i0);
+    i0[0] = 1; i0[1] = 0;
+    se2.mark_forbidden(i0);
+    i0[2] = 0; i0[3] = 1;
+    se2.mark_forbidden(i0);
+    i0[0] = 0;
+    se2.mark_forbidden(i0);
+    i0[2] = 1; i0[3] = 0;
+    se2.mark_forbidden(i0);
+    i0[1] = 1; i0[2] = 0;
+    se2.mark_forbidden(i0);
+    i0[0] = 1; i0[1] = 0;
+    se2.mark_forbidden(i0);
+
+    block_tensor<4, double, allocator_t> bta(bis2);
+    block_tensor<3, double, allocator_t> btb(bis1);
+
+    {
+        block_tensor_ctrl<4, double> ca(bta);
+        symmetry<4, double> &sym = ca.req_symmetry();
+        sym.insert(se1a);
+        sym.insert(se1b);
+        sym.insert(se1c);
+        sym.insert(se2);
+    }
+
+    dense_tensor<4, double, allocator_t> ta(dims2);
+    dense_tensor<3, double, allocator_t> tb(dims1), tb_ref(dims1);
+
+    mask<4> msk;
+    msk[1] = true; msk[3] = true;
+
+    //  Fill in random data
+    btod_random<4>().perform(bta);
+    bta.set_immutable();
+
+    //  Prepare the reference
+    tod_btconv<4>(bta).perform(ta);
+
+    if (add) {
+        //  Fill in random data
+        btod_random<3>().perform(btb);
+
+        //  Prepare the reference
+        tod_btconv<3>(btb).perform(tb_ref);
+
+        tod_diag<4, 2>(ta, msk).perform(false, tb_ref);
+
+        //  Invoke the operation
+        btod_diag<4, 2>(bta, msk).perform(btb, 1.0);
+    }
+    else {
+        tod_diag<4, 2>(ta, msk).perform(true, tb_ref);
+
+        //  Invoke the operation
+        btod_diag<4, 2> diag(bta, msk);
+        diag.perform(btb);
+    }
+
+    tod_btconv<3>(btb).perform(tb);
+
+    //  Compare against the reference
+    compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 
