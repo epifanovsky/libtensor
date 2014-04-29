@@ -5,6 +5,7 @@
 #include "batch_kernel_permute.h"
 #include "../expr/dag/node_assign.h"
 #include "../expr/dag/node_transform.h"
+#include "../expr/dag/node_contract.h"
 
 namespace libtensor {
 
@@ -101,10 +102,21 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
     if(op_node.check_type<node_transform_base>())
     {
         const node& input_node = tree.get_vertex(inputs[0]);
-        m_ptrs.resize(2);
         m_kern = dispatch_one<T>(out_node,input_node,op_node);
+        m_ptrs.resize(2);
         m_ptrs[1] = get_data_ptr_from_node<T>(input_node);
     }
+#if 0
+    else if(op_node.check_type<node_contract>()) 
+    {
+        const node& A_node = tree.get_vertex(inputs[0]);
+        const node& B_node = tree.get_vertex(inputs[1]);
+        m_kern = dispatch_one<T>(out_node,input_node,op_node);
+        m_ptrs.resize(3);
+        m_ptrs[1] = get_data_ptr_from_node<T>(A_node);
+        m_ptrs[2] = get_data_ptr_from_node<T>(B_node);
+    }
+#endif
     else
     {
         throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,

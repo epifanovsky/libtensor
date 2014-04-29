@@ -98,6 +98,10 @@ sparse_btensor_new<N,T>::sparse_btensor_new(const sparse_bispace<N>& the_bispace
             sll.run(blk,ptrs);
         }
     }
+    else
+    {
+        memset(m_data_ptr,0,size*sizeof(T));
+    }
 }
 
 template<size_t N,typename T>
