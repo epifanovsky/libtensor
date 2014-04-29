@@ -81,6 +81,7 @@ public:
     //Creates a batch provider that will produce a given batch of C 
     virtual batch_provider<T>* get_batch_provider(gen_labeled_btensor<M+N-(2*K),T>& C) const 
     {
+        double seconds = read_timer<double>();
         expr::label<M+N-(2*K)> C_le(C.get_letter_expr());
         //Build the loops for the contraction
         //First do the uncontracted indices

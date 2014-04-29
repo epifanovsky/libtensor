@@ -7,7 +7,6 @@ void block_loop_test::perform() throw(libtest::test_exception) {
 
     test_set_subspace_looped_invalid_bispace_idx();
     test_set_subspace_looped_invalid_subspace_idx();
-    test_set_subspace_looped_not_matching_subspaces();
 
     test_get_subspace_looped_invalid_bispace_idx();
     test_get_subspace_looped();
@@ -88,47 +87,6 @@ void block_loop_test::test_set_subspace_looped_invalid_subspace_idx()
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "block_loop::set_subspace_looped(...) did not throw exception when invalid subspace index specified");
-    }
-}
-
-void block_loop_test::test_set_subspace_looped_not_matching_subspaces()
-		throw (libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_set_subspace_looped_not_matching_subspaces()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    std::vector< sparse_bispace_any_order > bispaces(2,spb_1|spb_2);
-
-    block_loop bl(bispaces);
-
-    //Dimension 4
-    bl.set_subspace_looped(0,0);
-    //Fails because loop is accessing incompatible subspaces of the two bispaces
-    bool threw_exception = false;
-    try
-    {
-    	//Dimension 5
-		bl.set_subspace_looped(1,1);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::set_subspace_looped(...) did not throw exception when two incompatible subspace indices specified");
     }
 }
 

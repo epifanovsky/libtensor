@@ -257,17 +257,25 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_btensor_test.C
     block_sparse/block_kernels_test.C
     block_sparse/block_loop_test.C
-    block_sparse/sparse_loop_iterator_test.C
     block_sparse/sparse_loop_list_test.C
     block_sparse/sparsity_fuser_test.C
     block_sparse/sparse_loop_grouper_test.C
     block_sparse/sparse_block_tree_iterator_test.C
     block_sparse/sparse_block_tree_test.C
     block_sparse/direct_sparse_btensor_test.C
+    block_sparse/blas_isomorphism_test.C
+    block_sparse/batch_kernels_test.C
+    block_sparse/batch_list_builder_test.C
+    block_sparse/subspace_iterator_test.C
+    block_sparse/batch_provider_test.C
+
+    block_sparse/test_fixtures/permute_3d_sparse_120_test_f.C
+    block_sparse/test_fixtures/contract2_test_f.C
 )
 
 set(SRC_BLOCK_SPARSE_BENCHMARK
-	block_sparse/libtensor_block_sparse_benchmark.C
+    block_sparse/libtensor_block_sparse_benchmark.C 
+    block_sparse/timer.C
 )
 
 set(TARGETS
@@ -282,6 +290,7 @@ set(TARGETS
     libtensor_symmetry_tests
     libtensor_block_sparse_benchmark
     libtensor_block_sparse_tests
+    sparse_block_tree_benchmark
 )
 
 add_executable(libtensor_core_tests ${SRC_CORE})
@@ -295,6 +304,7 @@ add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
+add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -314,12 +324,7 @@ target_link_libraries(${TARGET}
     ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
 
-# Want custom address sanitizer flags so add later
-#target_link_libraries(libtensor_block_sparse_tests tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
-
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
 set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
-#target_link_libraries(libtensor_block_sparse_benchmark tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
-
-
+set_property(TARGET sparse_block_tree_benchmark  APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)

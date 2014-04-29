@@ -55,7 +55,7 @@ sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
                         if(batches.find(loop_idx) != batches.end())
                         {
                             size_t tree_subspace = subspace_looped - min;
-                            tree = tree.truncate_subspace(tree_subspace,batches.at(loop_idx));
+                            tree = tree.truncate_subspace(tree_subspace,batches.find(loop_idx)->second);
                             
                             //If the tensor is direct, offsets must be recomputed relative to the CURRENT BATCH
                             //rather than the whole tensor

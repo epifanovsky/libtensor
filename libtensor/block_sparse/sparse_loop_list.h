@@ -22,6 +22,24 @@
 namespace libtensor
 {
 
+
+//TODO: DEBUG REMOVE
+template<typename T>
+T read_timer()
+{
+    static bool initialized = false;
+    static struct timeval start;
+    struct timeval end;
+    if( !initialized )
+    {
+        gettimeofday( &start, NULL );
+        initialized = true;
+    }
+
+    gettimeofday( &end, NULL );
+
+    return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
+}
 //extern double contract_seconds;
 
 typedef std::map<size_t, std::vector<size_t> > fixed_block_map;
@@ -53,10 +71,9 @@ public:
 	sparse_loop_list(const std::vector<block_loop>& loops,const std::vector<sparse_bispace_any_order>& bispaces, const idx_list& direct_tensors = idx_list());
 
 	template<typename T>
-	void run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>()));
-
+	void run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>())); 
 	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
-	std::vector<block_loop> get_loops() const { return m_loops; }
+	const std::vector<block_loop>& get_loops() const { return m_loops; }
 
 	//Returns the indices of the loops that access any subspace of the specified bispace
 	std::vector<size_t> get_loops_that_access_bispace(size_t bispace_idx) const;
@@ -69,18 +86,15 @@ public:
 template<typename T>
 void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches)
 {
-    //TODO REMOVE - constructor should check this
-	if(m_loops.size() == 0)
-	{
-		throw bad_parameter(g_ns, k_clazz,"run(...)",
-				__FILE__, __LINE__, "no loops in loop list");
-	}
-
+    //std::cout << "STARTING SLL:\n";
+    double seconds = read_timer<double>();
+    //std::cout << "STARTING SLL:\n";
+    //double seconds = read_timer<double>();
     //std::cout << "STARTING SLL:\n";
     //double seconds = read_timer<double>();
     //Fuse all coupled sparse trees
     //std::cout << "STARTING FUSION:\n";
-    //double init = read_timer<double>();
+    double init = read_timer<double>();
     sparsity_fuser sf(m_loops,m_bispaces,m_direct_tensors,batches);
     for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
     {
@@ -108,7 +122,7 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
     //std::cout  << "FUSE DURATION: " << read_timer<double>()  - init << "\n";
 
     //std::cout << "STARTING GROUP:\n";
-    //init = read_timer<double>();
+    init = read_timer<double>();
     //Create block offset and size information for each loop group
     sparse_loop_grouper slg(sf);
     m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
@@ -167,7 +181,7 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
     //std::cout  << "ALLOCATING OFFSET VECTORS DURATION: " << read_timer<double>()  - init << "\n";
 
     //std::cout << "WORKING:\n";
-    //init = read_timer<double>();
+    init = read_timer<double>();
     //contract_seconds = 0;
 	_run_internal(kernel,ptrs,block_ptrs,bispace_grp_offsets,bispace_block_dims,0);
     //std::cout  << "WORKING DURATION: " << read_timer<double>()  - init << "\n";

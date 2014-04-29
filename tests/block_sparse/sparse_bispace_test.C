@@ -3,6 +3,9 @@
 #include <libtensor/block_sparse/get_batches.h>
 #include <vector>
 #include "sparse_bispace_test.h"
+#include "test_fixtures/index_group_test_f.h"
+
+using namespace std;
 
 namespace libtensor {
 
@@ -57,9 +60,6 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_get_index_group_dim();
         test_get_index_group_containing_subspace();
 
-        test_get_batches_dense();
-        test_get_batches_sparse();
-        test_get_batches_dense_dense();
         test_get_batch_size();
 
         test_get_nnz_2d_sparsity();
@@ -71,59 +71,6 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
         test_equality_true_sparsity_2d();
 
 }
-
-//TEST FIXTURES
-namespace {     
-
-class index_groups_test_f {
-private:
-    static sparse_bispace<7> init_bispace()
-    {
-        //Need 5 blocks of size 2 
-        sparse_bispace<1> spb_0(10);
-        idx_list split_points_0;
-        for(size_t i = 2; i < spb_0.get_dim(); i += 2)
-        {
-            split_points_0.push_back(i);
-        } 
-        spb_0.split(split_points_0);
-
-
-        //Need 6 blocks of size 3
-        sparse_bispace<1> spb_1(18);
-        idx_list split_points_1;
-        for(size_t i = 3; i < spb_1.get_dim(); i += 3)
-        {
-            split_points_1.push_back(i);
-        }
-        spb_1.split(split_points_1);
-
-        size_t key_0_arr_0[2] = {2,1}; //offset 0
-        size_t key_1_arr_0[2] = {3,2}; //offset 6
-        size_t key_2_arr_0[2] = {4,3}; //offset 12
-        size_t key_3_arr_0[2] = {5,4}; //offset 18
-        std::vector< sequence<2,size_t> > sig_blocks_0(4);
-        for(size_t i = 0; i < 2; ++i) sig_blocks_0[0][i] = key_0_arr_0[i];
-        for(size_t i = 0; i < 2; ++i) sig_blocks_0[1][i] = key_1_arr_0[i];
-        for(size_t i = 0; i < 2; ++i) sig_blocks_0[2][i] = key_2_arr_0[i];
-        for(size_t i = 0; i < 2; ++i) sig_blocks_0[3][i] = key_3_arr_0[i];
-
-        size_t key_0_arr_1[2] = {1,4}; //offset 0
-        size_t key_1_arr_1[2] = {2,1}; //offset 9
-        size_t key_2_arr_1[2] = {3,3}; //offset 18
-        std::vector< sequence<2,size_t> > sig_blocks_1(3);
-        for(size_t i = 0; i < 2; ++i) sig_blocks_1[0][i] = key_0_arr_1[i];
-        for(size_t i = 0; i < 2; ++i) sig_blocks_1[1][i] = key_1_arr_1[i];
-        for(size_t i = 0; i < 2; ++i) sig_blocks_1[2][i] = key_2_arr_1[i];
-
-        return spb_0 | spb_0 | spb_1 % spb_0 << sig_blocks_0 | spb_0 | spb_1 % spb_1 << sig_blocks_1;
-    }
-public:
-    sparse_bispace<7> bispace;
-    index_groups_test_f() : bispace(init_bispace()) {}
-};
-
-} // namespace unnamed
 
 /* Return the correct value for the dimension of the sparse_bispace
  *
@@ -1420,79 +1367,6 @@ void sparse_bispace_test::test_get_index_group_containing_subspace() throw(libte
             fail_test(test_name,__FILE__,__LINE__,
                     "sparse_bispace<N>::get_index_group_containing_subspace(...) did not return correct value");
         }
-    }
-}
-
-void sparse_bispace_test::test_get_batches_dense() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_test::test_get_batches_dense()";
-    
-    index_groups_test_f tf = index_groups_test_f();
-    std::vector<sparse_bispace_any_order>  bispaces(1,tf.bispace);
-
-
-    /*** BATCHING OVER SUBSPACE 1 - DENSE CASE ***/
-    size_t max_n_elem = 0.6*bispaces[0].get_nnz();
-    std::vector<idx_pair> correct_batches(1,idx_pair(0,3));
-    correct_batches.push_back(idx_pair(3,5));
-    std::vector<idx_pair> batched_bispaces_subspaces(1,idx_pair(0,1));
-
-    std::vector<idx_pair> batches = get_batches(bispaces,batched_bispaces_subspaces,max_n_elem);
-
-    if(batches != correct_batches)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_batches(...) did not return correct value for batching over subspace 1");
-    }
-}
-
-void sparse_bispace_test::test_get_batches_sparse() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_test::test_get_batches_sparse()";
-
-    index_groups_test_f tf = index_groups_test_f();
-    std::vector<sparse_bispace_any_order> bispaces(1,tf.bispace);
-
-    /*** BATCHING OVER SUBSPACE 2 - SPARSE CASE ***/
-    size_t max_n_elem = 0.4*bispaces[0].get_nnz();
-    std::vector<idx_pair> correct_batches(1,idx_pair(0,3));
-    correct_batches.push_back(idx_pair(3,4));
-    correct_batches.push_back(idx_pair(4,5));
-    correct_batches.push_back(idx_pair(5,6));
-    std::vector<idx_pair> batches = get_batches(bispaces,std::vector<idx_pair>(1,idx_pair(0,2)),max_n_elem);
-
-    if(batches != correct_batches)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_batches(...) did not return correct value for batching over subspace 2");
-    }
-}
-
-//Show that batching correctly accounts for different inner sizes of multiple batched bispaces  
-//and chooses that batches such that no batched bispace exceeds the memory limit
-void sparse_bispace_test::test_get_batches_dense_dense() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_test::test_get_batches_dense_dense()";
-
-    index_groups_test_f tf = index_groups_test_f();
-    sparse_bispace<1> spb_0 = tf.bispace[0];
-    sparse_bispace<1> spb_1 = tf.bispace[2];
-    std::vector<sparse_bispace_any_order> bispaces(1,spb_0|spb_0);
-    bispaces.push_back(spb_0|spb_1);
-
-    size_t max_n_elem = 72;
-    std::vector<idx_pair> batched_bispaces_subspaces(1,idx_pair(0,0));
-    batched_bispaces_subspaces.push_back(idx_pair(1,0));
-    std::vector<idx_pair> batches = get_batches(bispaces,batched_bispaces_subspaces,max_n_elem);
-
-    std::vector<idx_pair> correct_batches(1,idx_pair(0,2));
-    correct_batches.push_back(idx_pair(2,4));
-    correct_batches.push_back(idx_pair(4,5));
-
-    if(batches != correct_batches)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::get_batches(...) did not return correct value for multiple dense bispaces");
     }
 }
 
