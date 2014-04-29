@@ -17,8 +17,7 @@ private:
     virtual void init(const std::vector<block_loop>& loops,
                       const idx_list& direct_tensors,
                       const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                      const std::vector<T*>& ptrs,
-                      const std::map<size_t,idx_pair>& loop_batches) 
+                      const std::vector<T*>& ptrs)
     { 
         //Need to make sure C is zeroed out before contraction
         memset(ptrs[0],0,truncated_bispaces[0].get_nnz()*sizeof(T));
@@ -31,15 +30,17 @@ private:
                           const std::map<size_t,idx_pair>& loop_batches)
     {
 
-        sparse_loop_list sll(loops,direct_tensors);
+        sparse_loop_list sll(loops,this->m_bispaces,direct_tensors);
         sll.run(m_bc2k,ptrs,loop_batches);
     }
 public:
     contract2_batch_provider(const std::vector<block_loop>& loops,
+                             const std::vector<sparse_bispace_any_order>& bispaces,
                              const std::vector<size_t>& direct_tensors,
                              const std::vector<batch_provider<T>*>& batch_providers,
                              const std::vector<T*>& ptrs,
-                             size_t mem_avail) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,mem_avail),m_bc2k(sparse_loop_list(loops)) {}
+                             size_t mem_avail,
+                             const idx_pair_list& forced_batched_bs) : batch_provider<T>(loops,bispaces,direct_tensors,batch_providers,ptrs,mem_avail,forced_batched_bs),m_bc2k(sparse_loop_list(loops,bispaces)) {}
 
     virtual batch_provider<T>* clone() const { return new contract2_batch_provider(*this); }
 };
@@ -62,12 +63,13 @@ private:
     batch_provider<T>* m_A_batch_provider;
     batch_provider<T>* m_B_batch_provider;
     size_t m_mem_avail;
+    const letter* m_batch_idx;
 public:
     //Constructor
-    contract2_batch_provider_factory(const expr::label<K>& le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail) : m_le(le),
+    contract2_batch_provider_factory(const expr::label<K>& le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail,const letter* batch_idx) : m_le(le),
                                                                                                                                                       m_A_letter_expr(A.get_letter_expr()),m_B_letter_expr(B.get_letter_expr()),
                                                                                                                                                       m_A_bispace(A.get_bispace()),m_B_bispace(B.get_bispace()),
-                                                                                                                                                      m_mem_avail(mem_avail)
+                                                                                                                                                      m_mem_avail(mem_avail),m_batch_idx(batch_idx)
 
     {
         m_A_data_ptr = (T*) A.get_data_ptr();
@@ -79,6 +81,7 @@ public:
     //Creates a batch provider that will produce a given batch of C 
     virtual batch_provider<T>* get_batch_provider(gen_labeled_btensor<M+N-(2*K),T>& C) const 
     {
+        double seconds = read_timer<double>();
         expr::label<M+N-(2*K)> C_le(C.get_letter_expr());
         //Build the loops for the contraction
         //First do the uncontracted indices
@@ -199,11 +202,53 @@ public:
             batch_providers.push_back(m_B_batch_provider);
         }
 
+        //Are we forcing batching over a specific index?
+        idx_pair_list forced_batched_bs;
+        if(m_batch_idx != NULL)
+        {
+            bool found = false;
+            size_t bispace_idx;
+            size_t subspace_idx;
+            for(size_t i = 0; i < M+N-(2*K); ++i)
+            {
+                const letter& a = C_le.letter_at(i);
+                if(a == *m_batch_idx) 
+                {
+                    forced_batched_bs.push_back(idx_pair(0,i));
+                    found = true;
+                }
+            }
+            for(size_t i = 0; i < M; ++i)
+            {
+                const letter& a = m_A_letter_expr.letter_at(i);
+                if(a == *m_batch_idx) 
+                {
+                    forced_batched_bs.push_back(idx_pair(1,i));
+                    found = true;
+                }
+            }
+            for(size_t i = 0; i < N; ++i)
+            {
+                const letter& a = m_B_letter_expr.letter_at(i);
+                if(a == *m_batch_idx) 
+                {
+                    forced_batched_bs.push_back(idx_pair(2,i));
+                    found = true;
+                }
+            }
+            if(!found)
+            {
+                throw bad_parameter(g_ns, k_clazz,"get_batch_provider()(...)",
+                        __FILE__, __LINE__, "Specified batch idx not found");
+            }
+        }
+
         //Empty entry will be filled in by output batch
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
-        return new contract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,m_mem_avail);
+        //std::cout << "Total time in get_batch_provider: " << read_timer<double>() - seconds << "\n";
+        return new contract2_batch_provider<T>(loops,bispaces,direct_tensors,batch_providers,ptrs,m_mem_avail,forced_batched_bs);
     };
 };
 
@@ -211,16 +256,16 @@ template<size_t K,size_t M, size_t N,typename T>
 const char* contract2_batch_provider_factory<K,M,N,T>::k_clazz = "contract2_batch_provider_factory<K,M,N,T>";
 
 template<size_t K,size_t M,size_t N,typename T>
-contract2_batch_provider_factory<K,M,N,T> contract(expr::label<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
+contract2_batch_provider_factory<K,M,N,T> contract(expr::label<K> le,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0,const letter* batch_idx = NULL)
 {
-    return contract2_batch_provider_factory<K,M,N,T>(le,A,B,mem_avail);
+    return contract2_batch_provider_factory<K,M,N,T>(le,A,B,mem_avail,batch_idx);
 }
 
 //Special case for one index contractions
 template<size_t M,size_t N,typename T>
-contract2_batch_provider_factory<1,M,N,T> contract(const letter& a,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0)
+contract2_batch_provider_factory<1,M,N,T> contract(const letter& a,const gen_labeled_btensor<M,T>& A,const gen_labeled_btensor<N,T>& B,size_t mem_avail = 0,const letter* batch_idx = NULL)
 {
-    return contract2_batch_provider_factory<1,M,N,T>(expr::label<1>(a),A,B,mem_avail);
+    return contract(expr::label<1>(a),A,B,mem_avail,batch_idx);
 }
 
 } // namespace libtensor

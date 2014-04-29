@@ -204,12 +204,19 @@ set(SRC_BTOD
 set(SRC_BLOCK_SPARSE
     block_sparse/sparse_block_tree_any_order.C
     block_sparse/block_loop.C
-    block_sparse/sparse_loop_iterator.C
     block_sparse/sparse_loop_list.C
     block_sparse/sparsity_fuser.C
     block_sparse/sparse_loop_grouper.C
     block_sparse/range.C
     block_sparse/get_batches.C
+    block_sparse/batch_list_builder.C
+    block_sparse/subspace_iterator.C
+)
+
+set(SRC_DIAG_TENSOR
+    diag_block_tensor/impl/diag_block_tensor.C
+    diag_block_tensor/impl/diag_btod_addition_schedule.C
+    diag_block_tensor/impl/diag_btod_aux_add.C
 )
 
 set(SRC_DIAG_TENSOR
@@ -309,6 +316,7 @@ add_library(tensor_core ${SRC_CORE})
 add_library(tensor ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
     ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR} ${SRC_ARMA})
 add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
+
 if(QCHEM_SOURCE_DIR)
     set(TARGETS ${TARGETS} tensor_qchem)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
@@ -324,3 +332,6 @@ else(HAVE_LIBVMM)
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
+add_library(block_sparse ${SRC_BLOCK_SPARSE})
+set_property(TARGET block_sparse APPEND PROPERTY
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)

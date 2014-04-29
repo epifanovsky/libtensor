@@ -89,7 +89,7 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,
             	loop.set_subspace_looped(0,i);
             	loops.push_back(loop);
             }
-        	sparse_loop_list sll(loops);
+        	sparse_loop_list sll(loops,bispaces);
 
             block_load_kernel<T> blk(m_bispace,mem);
             std::vector<T*> ptrs(1,m_data_ptr);
@@ -158,7 +158,7 @@ std::string sparse_btensor<N,T>::str() const
 		loop.set_subspace_looped(0,i);
 		loops.push_back(loop);
 	}
-	sparse_loop_list sll(loops);
+	sparse_loop_list sll(loops,bispaces);
 
 	block_print_kernel<T> bpk;
 	std::vector<T*> ptrs(1,m_data_ptr);
