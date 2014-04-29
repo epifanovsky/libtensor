@@ -667,8 +667,8 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
                 {
                     copy.m_sparse_block_trees[cur_tree_idx] = copy.m_sparse_block_trees[cur_tree_idx].permute(tree_perm);
                     copy.m_sparse_block_trees[cur_tree_idx].set_offsets_sizes_nnz(cur_tree_subspaces);
-                    copy.m_sparse_indices_sets_offsets.push_back(cur_tree_start_dest_sub_idx);
                 }
+                copy.m_sparse_indices_sets_offsets.push_back(cur_tree_start_dest_sub_idx);
 
                 cur_dense_subspaces.clear();
                 cur_perm_entries.clear();

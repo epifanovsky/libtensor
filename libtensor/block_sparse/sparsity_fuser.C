@@ -4,6 +4,10 @@ using namespace std;
 
 namespace libtensor {
 
+//TODO: DEBUG REMOVE
+/*template<typename T>*/
+/*T read_timer();*/
+
 sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
                                const vector< sparse_bispace_any_order >& bispaces,
                                const idx_list& direct_tensors,
@@ -197,8 +201,12 @@ void sparsity_fuser::fuse(size_t lhs_tree_idx,size_t rhs_tree_idx,const idx_list
     }
 
     //Fuse the trees, delete the rhs tree 
+    /*double seconds = read_timer<double>();*/
     m_trees[lhs_tree_idx] = m_trees[lhs_tree_idx].fuse(m_trees[rhs_tree_idx],lhs_subspaces,rhs_subspaces);
+    /*cout << "Tree copy time " << read_timer<double>() - seconds << "\n";*/
+    /*seconds = read_timer<double>();*/
     m_trees.erase(m_trees.begin()+rhs_tree_idx);
+    /*cout << "Tree erase time " << read_timer<double>() - seconds << "\n";*/
 
     //Remove metadata associated with the rhs tree
     m_sub_key_offsets_for_trees.erase(m_sub_key_offsets_for_trees.begin()+rhs_tree_idx);

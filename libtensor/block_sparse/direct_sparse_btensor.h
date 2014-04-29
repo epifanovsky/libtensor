@@ -17,9 +17,12 @@ public:
     labeled_direct_sparse_btensor<N,T> operator()(const expr::label<N>& le);
 
     void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail = 0);
-    ~direct_sparse_btensor() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
 
-    direct_sparse_btensor<N,T>&  operator=(const batch_provider<T>& rhs);
+    void set_batch_provider(const batch_provider<T>& bp);
+
+    direct_sparse_btensor(const direct_sparse_btensor<N,T>& rhs);
+    direct_sparse_btensor<N,T>&  operator=(const direct_sparse_btensor<N,T>& rhs);
+    ~direct_sparse_btensor() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
 };
 
 template<size_t N,typename T>
@@ -30,9 +33,32 @@ labeled_direct_sparse_btensor<N,T> direct_sparse_btensor<N,T>::operator()(const 
 
 //For custom batch providers such as molecular integral interfaces
 template<size_t N,typename T>
-direct_sparse_btensor<N,T>&  direct_sparse_btensor<N,T>::operator=(const batch_provider<T>& rhs)
+void direct_sparse_btensor<N,T>::set_batch_provider(const batch_provider<T>& bp)
 {
-    m_batch_provider = rhs.clone();
+    m_batch_provider = bp.clone();
+}
+
+template<size_t N,typename T>
+direct_sparse_btensor<N,T>::direct_sparse_btensor(const direct_sparse_btensor<N,T>& rhs) : m_bispace(rhs.m_bispace),m_batch_provider(NULL)
+{
+    if(rhs.m_batch_provider != NULL)
+    {
+        m_batch_provider = rhs.m_batch_provider->clone();
+    }
+}
+
+template<size_t N,typename T>
+direct_sparse_btensor<N,T>&  direct_sparse_btensor<N,T>::operator=(const direct_sparse_btensor<N,T>& rhs)
+{
+    m_bispace = rhs.m_bispace;
+    if(rhs.m_batch_provider != NULL)
+    {
+        m_batch_provider = rhs.m_batch_provider->clone();
+    }
+    else
+    {
+        m_batch_provider = NULL;
+    }
 }
 
 template<size_t N,typename T>

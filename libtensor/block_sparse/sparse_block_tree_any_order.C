@@ -7,6 +7,11 @@ using namespace std;
 
 namespace libtensor {
 
+//TODO: DEBUG REMOVE
+/*template<typename T>*/
+/*T read_timer();*/
+
+
 //Used to return empty trees by sub_tree
 static const sparse_block_tree_any_order empty = sparse_block_tree<1>(vector< sequence<1,size_t> >(),vector< sparse_bispace<1> >(1,sparse_bispace<1>(1)));
 
@@ -230,6 +235,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contrac
 
 sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs,const vector<size_t>& lhs_indices,const vector<size_t>& rhs_indices) const
 {
+    /*double seconds = read_timer<double>();*/
 
     //Sanitize input
     if(lhs_indices.size() != rhs_indices.size())
@@ -361,6 +367,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
         *it = new_values[m];
         ++m;
     }
+    /*std::cout << "Time inside fuse: " << read_timer<double>() - seconds << "\n";*/
     return new_tree;
 }
 
