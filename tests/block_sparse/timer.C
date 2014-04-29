@@ -7,11 +7,11 @@ double read_timer()
     struct timeval end;
     if( !initialized )
     {
-        gettimeofday( &start, NULL );
+        gettimeofday( &start, 0 );
         initialized = true;
     }
 
-    gettimeofday( &end, NULL );
+    gettimeofday( &end, 0 );
 
     return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
 }
