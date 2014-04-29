@@ -3,7 +3,7 @@
 
 namespace libtensor {
 
-const char version::k_status[] = "beta";
+const char version::k_status[] = "release";
 const char *version::k_authors[] = {
     "Evgeny Epifanovsky",
     "Michael Wormit",
