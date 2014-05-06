@@ -121,7 +121,7 @@ libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::oper
     {
         if(m_perms[perm_idx] != m_ident_perms[perm_idx])
         {
-            m_perm_ptrs = new T[m_perm_ptr_sizes[perm_idx]];
+            m_perm_ptrs[perm_idx] = new T[m_perm_ptr_sizes[perm_idx]];
         }
     }
 }
@@ -435,7 +435,7 @@ void libtensor::block_contract2_kernel<T>::operator ()(
         {
             for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
             {
-                n *= dim_lists[2][B_j_idx];
+                n *= m_perm_dim_lists[2][B_j_idx];
             }
             ldb = n;
         }
