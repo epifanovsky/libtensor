@@ -24,21 +24,21 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
     //  Adapter type for the input group
     typedef symmetry_element_set_adapter<k_order1, T, el1_t> adapter_t;
 
-    adapter_t adapter1(params.grp1);
-    permutation_group<k_order1, T> grp1(adapter1);
-    permutation_group<k_order1, T> grp2;
+    adapter_t adapter1(params.g1);
+    permutation_group<k_order1, T> group1(adapter1);
+    permutation_group<k_order1, T> group2;
 
     sequence<k_order1, size_t> seq(0);
     for (register size_t i = 0; i < k_order1; i++) {
         if (params.msk[i]) seq[i] = params.rseq[i] + 1;
     }
-    grp1.stabilize(seq, grp2);
+    group1.stabilize(seq, group2);
 
     symmetry_element_set<k_order1, T> set(el1_t::k_sym_type);
-    grp2.convert(set);
+    group2.convert(set);
 
     adapter_t g2(set);
-    params.grp2.clear();
+    params.g2.clear();
 
     const index<k_order1> &bia = params.rblrange.get_begin();
     const index<k_order1> &bib = params.rblrange.get_end();
@@ -87,7 +87,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
                     "Anti-symmetric identity permutation.");
         }
 
-        params.grp2.insert(el2_t(pb.get_perm(), e2.get_transf()));
+        params.g2.insert(el2_t(pb.get_perm(), e2.get_transf()));
     }
 }
 

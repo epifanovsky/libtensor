@@ -1,5 +1,5 @@
 #include <sstream>
-#include <libtensor/iface/bispace.h>
+#include <libtensor/expr/bispace/bispace.h>
 #include "bispace_expr_test.h"
 
 namespace libtensor {
@@ -38,6 +38,7 @@ void bispace_expr_test::perform() throw(libtest::test_exception) {
     test_exc_1();
 }
 
+using namespace expr;
 
 void bispace_expr_test::test_sym_1() throw(libtest::test_exception) {
 
@@ -960,7 +961,7 @@ void bispace_expr_test::test_exc_1() throw(libtest::test_exception) {
     bool ok = false;
     try {
         (a&b);
-    } catch(expr_exception &e) {
+    } catch(bispace_exception &e) {
         ok = true;
     }
     if(!ok) {

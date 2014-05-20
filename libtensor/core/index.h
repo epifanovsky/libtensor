@@ -222,7 +222,7 @@ template<size_t N>
 std::ostream &operator<<(std::ostream &os, const index<N> &i) {
 
     os << "[";
-    for(size_t j = 0; j < N - 1; j++)
+    for(size_t j = 0; j != N - 1; j++)
         os << i.sequence<N, size_t>::at_nothrow(j) << ",";
     os << i.sequence<N, size_t>::at_nothrow(N - 1);
     os << "]";

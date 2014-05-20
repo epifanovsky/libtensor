@@ -100,7 +100,7 @@ mask<N> &mask<N>::permute(const permutation<N> &perm) {
 template<size_t N>
 mask<N> &mask<N>::operator|=(const mask<N> &other) {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(register size_t i = 0; i != N; i++) {
         sequence<N, bool>::at_nothrow(i) =
             sequence<N, bool>::at_nothrow(i) ||
                 other.sequence<N, bool>::at_nothrow(i);
@@ -113,7 +113,7 @@ template<size_t N>
 mask<N> mask<N>::operator|(const mask<N> &other) const {
 
     mask<N> m;
-    for(register size_t i = 0; i < N; i++) {
+    for(register size_t i = 0; i != N; i++) {
         m.sequence<N, bool>::at_nothrow(i) =
             sequence<N, bool>::at_nothrow(i) ||
             other.sequence<N, bool>::at_nothrow(i);
@@ -155,7 +155,7 @@ template<size_t N>
 std::ostream &operator<<(std::ostream &os, const mask<N> &m) {
     os << "[";
     for(size_t j = 0; j < N; j++)
-        os << m.sequence<N, bool>::at_nothrow(j) ? '1' : '0';
+        os << (m.sequence<N, bool>::at_nothrow(j) ? '1' : '0');
     os << "]";
     return os;
 }

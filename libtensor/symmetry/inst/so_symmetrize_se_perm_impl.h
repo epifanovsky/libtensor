@@ -58,15 +58,15 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
         }
     }
 
-    if (params.grp1.is_empty()) {
-        params.grp2.clear();
-        if (ngrp > 2) params.grp2.insert(se_perm<N, T>(cp, params.trc));
-        params.grp2.insert(se_perm<N, T>(pp, params.trp));
+    if (params.g1.is_empty()) {
+        params.g2.clear();
+        if (ngrp > 2) params.g2.insert(se_perm<N, T>(cp, params.trc));
+        params.g2.insert(se_perm<N, T>(pp, params.trp));
         return;
     }
 
     // Create a list of all permutations in the group
-    adapter_t ad(params.grp1);
+    adapter_t ad(params.g1);
     perm_list_t l0, l1, l2;
     std::set<size_t> done;
     done.insert(0);
@@ -153,18 +153,18 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
         }
     }
 
-    // At last, add all elements remaining in the list to grp2
-    permutation_group<N, T> grp2;
+    // At last, add all elements remaining in the list to group2
+    permutation_group<N, T> group2;
     for (typename perm_list_t::iterator it = l2.begin();
             it != l2.end(); it++) {
-        grp2.add_orbit(it->second, it->first);
+        group2.add_orbit(it->second, it->first);
     }
 
-    if (ngrp > 2) grp2.add_orbit(params.trc, cp);
-    grp2.add_orbit(params.trp, pp);
+    if (ngrp > 2) group2.add_orbit(params.trc, cp);
+    group2.add_orbit(params.trp, pp);
 
-    params.grp2.clear();
-    grp2.convert(params.grp2);
+    params.g2.clear();
+    group2.convert(params.g2);
 }
 
 
@@ -174,7 +174,7 @@ size_t symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::encode(
 
     permutation<N> pinv(p, true);
     size_t idx = 0;
-    for (register size_t i = 0, j = N; i < N - 1; i++, j--) {
+    for (register size_t i = 0, j = N; i != N - 1; i++, j--) {
         size_t ii = 0;
         for (register size_t k = 0; k < pinv[i]; k++) {
             if (p[k] > i) ii++;

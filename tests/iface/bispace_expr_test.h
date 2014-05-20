@@ -5,7 +5,7 @@
 
 namespace libtensor {
 
-/** \brief Tests the libtensor::bispace_expr::expr class
+/** \brief Tests the libtensor::bispace_expr::expr_rhs class
 
     \ingroup libtensor_tests_iface
  **/

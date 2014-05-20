@@ -83,7 +83,12 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
     dimensions<N> bidimsb = m_symb.get_bis().get_block_index_dims();
 
     orbit<N, element_type> oa(m_syma, idxa, false);
-    tensor_transf_type tra0inv(oa.get_transf(idxa), true);
+#ifdef LIBTENSOR_DEBUG
+    if(!oa.get_cindex().equals(idxa)) {
+        throw symmetry_violation(g_ns, k_clazz, "put()", __FILE__, __LINE__,
+            "Expected canonical index idxa");
+    }
+#endif // LIBTENSOR_DEBUG
 
     std::multimap<size_t, tensor_transf_type> symap;
 
@@ -100,8 +105,14 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
             size_t aidxb = abs_index<N>::get_abs_index(idxb, bidimsb);
 
             tensor_transf<N, double> trb(tr);
-            trb.transform(tra0inv).transform(tra1).transform(*j);
-            symap.insert(std::make_pair(aidxb, trb));
+            trb.transform(tra1).transform(*j);
+            // There is a bug with icc 13 and -O3, need to break it down
+            //symap.insert(std::make_pair(aidxb, trb));
+            std::pair<size_t, tensor_transf_type> p;
+            p.first = aidxb;
+            typename std::multimap<size_t, tensor_transf_type>::iterator jjj =
+                symap.insert(p);
+            jjj->second.transform(trb);
         }
     }
 

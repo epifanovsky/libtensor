@@ -16,7 +16,7 @@ class linalg_mkl_level2 :
     public linalg_timings<linalg_mkl_level2> {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     typedef linalg_timings<linalg_mkl_level2> timings_base;
@@ -79,6 +79,12 @@ public:
         const double *b, size_t sjb,
         double *c, size_t sic,
         double d);
+
+    static double mul2_x_pq_pq(
+        void *ctx,
+        size_t np, size_t nq,
+        const double *a, size_t spa,
+        const double *b, size_t spb);
 
 };
 

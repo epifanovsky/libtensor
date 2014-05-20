@@ -59,6 +59,18 @@ public:
             permutation<N>().permute(i1, i3), symm)
     { }
 
+    /** \brief Initializes the operation
+        \param op Operation to be symmetrized.
+        \param perm1 First generating permutation.
+        \param perm2 Second generating permutation.
+        \param symm True for symmetrization, false for anti-symmetrization.
+     **/
+    btod_symmetrize3(additive_gen_bto<N, bti_traits> &op,
+        const permutation<N> &perm1, const permutation<N> &perm2, bool symm) :
+
+        m_gbto(op, perm1, perm2, symm)
+    { }
+
     /** \brief Virtual destructor
      **/
     virtual ~btod_symmetrize3() { }

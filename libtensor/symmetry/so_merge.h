@@ -90,19 +90,19 @@ template<size_t N, size_t M, typename T>
 class symmetry_operation_params< so_merge<N, M, T> > :
 public symmetry_operation_params_i {
 public:
-    const symmetry_element_set<N, T> &grp1; //!< Symmetry group (input)
+    const symmetry_element_set<N, T> &g1; //!< Symmetry group (input)
     mask<N> msk; //!< Mask
     sequence<N, size_t> mseq; //!< Merging sequence
-    symmetry_element_set<N - M, T> &grp2; //!< Symmetry group (output)
+    symmetry_element_set<N - M, T> &g2; //!< Symmetry group (output)
 
 public:
     symmetry_operation_params(
-            const symmetry_element_set<N, T> &grp1_,
+            const symmetry_element_set<N, T> &g1_,
             const mask<N> &msk_,
             const sequence<N, size_t> &mseq_,
-            symmetry_element_set<N - M, T> &grp2_) :
+            symmetry_element_set<N - M, T> &g2_) :
 
-                grp1(grp1_), msk(msk_), mseq(mseq_), grp2(grp2_) {
+                g1(g1_), msk(msk_), mseq(mseq_), g2(g2_) {
     }
 
     virtual ~symmetry_operation_params() { }

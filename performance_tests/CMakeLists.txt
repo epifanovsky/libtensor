@@ -19,5 +19,6 @@ else(HAVE_LIBVMM)
 endif(HAVE_LIBVMM)
 
 target_link_libraries(libtensor_performance_tests
-    tensor ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+    tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS}
+    test)
 

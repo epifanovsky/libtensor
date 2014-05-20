@@ -13,6 +13,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
     add_test("linalg_mul2_i_i_i_x", m_utf_linalg_mul2_i_i_i_x);
     add_test("linalg_mul2_i_i_x", m_utf_linalg_mul2_i_i_x);
 
+    add_test("linalg_mul2_x_pq_pq", m_utf_linalg_mul2_x_pq_pq);
     add_test("linalg_mul2_x_pq_qp", m_utf_linalg_mul2_x_pq_qp);
     add_test("linalg_mul2_i_ip_p_x", m_utf_linalg_mul2_i_ip_p_x);
     add_test("linalg_mul2_i_pi_p_x", m_utf_linalg_mul2_i_pi_p_x);

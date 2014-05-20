@@ -11,6 +11,7 @@ template class so_dirsum<1, 3, double>;
 template class so_dirsum<1, 4, double>;
 template class so_dirsum<1, 5, double>;
 template class so_dirsum<1, 6, double>;
+template class so_dirsum<1, 7, double>;
 template class so_dirsum<2, 1, double>;
 template class so_dirsum<2, 2, double>;
 template class so_dirsum<2, 3, double>;
@@ -41,6 +42,7 @@ template class so_dirsum<6, 3, double>;
 template class so_dirsum<6, 4, double>;
 template class so_dirsum<6, 5, double>;
 template class so_dirsum<6, 6, double>;
+template class so_dirsum<7, 1, double>;
 template class so_dirsum<7, 7, double>;
 template class so_dirsum<8, 8, double>;
 

@@ -3,7 +3,7 @@
 namespace libtensor {
 
 
-const char *linalg_generic_level2::k_clazz = "generic";
+const char linalg_generic_level2::k_clazz[] = "generic";
 
 
 void linalg_generic_level2::add1_ij_ij_x(
@@ -136,6 +136,25 @@ void linalg_generic_level2::mul2_ij_i_j_x(
         c[i * sic + j] += d * a[i * sia] * b[j * sjb];
     }
     timings_base::stop_timer("mul2_ij_i_j_x");
+}
+
+
+double linalg_generic_level2::mul2_x_pq_pq(
+    void*,
+    size_t np, size_t nq,
+    const double *a, size_t spa,
+    const double *b, size_t spb) {
+
+    timings_base::start_timer("mul2_x_pq_pq");
+    double c = 0.0;
+    for(size_t p = 0; p < np; p++) {
+        const double *a1 = a + p * spa, *b1 = b + p * spb;
+        for(size_t q = 0; q < nq; q++) {
+            c += a1[q] * b1[q];
+        }
+    }
+    timings_base::stop_timer("mul2_x_pq_pq");
+    return c;
 }
 
 

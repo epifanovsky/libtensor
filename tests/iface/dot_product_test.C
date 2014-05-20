@@ -3,8 +3,11 @@
 #include <ctime>
 #include <sstream>
 #include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/btod_dotprod.h>
 #include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/libtensor.h>
 #include "dot_product_test.h"
 
 namespace libtensor {

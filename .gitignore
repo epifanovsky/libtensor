@@ -2,6 +2,7 @@
 .cproject
 .settings
 .svn
+.DS_Store
 build
 tests/libtensor_tests
 docs

@@ -57,6 +57,22 @@ public:
         block_tensor_rd_i<NA, double> &bta,
         block_tensor_rd_i<NB, double> &btb);
 
+    /** \brief Initializes the contraction operation with scaling coefficients
+        \param contr Contraction.
+        \param bta Block tensor A (first argument).
+        \param ka Scalar for A.
+        \param btb Block tensor B (second argument).
+        \param kb Scalar for B.
+        \param kc Scalar for result.
+    **/
+    btod_contract2(
+        const contraction2<N, M, K> &contr,
+        block_tensor_rd_i<NA, double> &bta,
+        double ka,
+        block_tensor_rd_i<NB, double> &btb,
+        double kb,
+        double kc);
+
     /** \brief Virtual destructor
      **/
     virtual ~btod_contract2() { }

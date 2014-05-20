@@ -8,6 +8,7 @@ namespace libtensor {
 
 template<typename LA> class kern_dmul2_i_ip_p;
 template<typename LA> class kern_dmul2_i_p_ip;
+template<typename LA> class kern_dmul2_x_pq_pq;
 template<typename LA> class kern_dmul2_x_pq_qp;
 
 
@@ -20,6 +21,7 @@ template<typename LA>
 class kern_dmul2_x_p_p : public kernel_base<LA, 2, 1> {
     friend class kern_dmul2_i_ip_p<LA>;
     friend class kern_dmul2_i_p_ip<LA>;
+    friend class kern_dmul2_x_pq_pq<LA>;
     friend class kern_dmul2_x_pq_qp<LA>;
 
 public:

@@ -28,6 +28,7 @@ private:
     void test_tt_7();
     void test_tt_8();
     void test_tt_9();
+    void test_tt_10();
     void test_te_1();
     void test_te_2();
     void test_te_3();

@@ -18,10 +18,10 @@ template<size_t N, typename T>
 void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
         symmetry_operation_params_t &params) const {
 
-    params.grp2.clear();
-    if (params.grp1.is_empty()) return;
+    params.g2.clear();
+    if (params.g1.is_empty()) return;
 
-    combine_part<N, T> cp(params.grp1);
+    combine_part<N, T> cp(params.g1);
     const dimensions<N> &pdims = cp.get_pdims();
 
     size_t ngrp = 0, nidx = 0;
@@ -79,7 +79,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
 
     } while (ai.inc());
 
-    params.grp2.insert(sp2);
+    params.g2.insert(sp2);
 }
 
 template<size_t N, typename T>

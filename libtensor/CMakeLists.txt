@@ -1,4 +1,4 @@
-set(SRC
+set(SRC_CORE
     defs.C
     exception.C
     version.C
@@ -12,12 +12,6 @@ set(SRC
     core/impl/orbit_list.C
     core/impl/short_orbit.C
     core/impl/subgroup_orbits.C
-    btod/btod_diagonalize.C
-    btod/btod_tridiagonalize.C
-    symmetry/inst/adjacency_list.C
-    symmetry/point_group_table.C
-    symmetry/product_table_container.C
-    symmetry/product_table_i.C
 )
 
 set(SRC_CUDA
@@ -132,7 +126,14 @@ set(SRC_INST
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
     dense_tensor/impl/tod_compare.C
-    dense_tensor/impl/tod_contract2.C
+    dense_tensor/impl/tod_contract2_1.C
+    dense_tensor/impl/tod_contract2_2.C
+    dense_tensor/impl/tod_contract2_3.C
+    dense_tensor/impl/tod_contract2_4.C
+    dense_tensor/impl/tod_contract2_5.C
+    dense_tensor/impl/tod_contract2_6.C
+    dense_tensor/impl/tod_contract2_7.C
+    dense_tensor/impl/tod_contract2_8.C
     dense_tensor/impl/tod_copy.C
     dense_tensor/impl/tod_copy_wnd.C
     dense_tensor/impl/tod_diag.C
@@ -154,6 +155,10 @@ set(SRC_INST
     dense_tensor/impl/tod_size.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
+    symmetry/point_group_table.C
+    symmetry/product_table_container.C
+    symmetry/product_table_i.C
+    symmetry/inst/adjacency_list.C
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
@@ -196,6 +201,8 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
     block_tensor/btod/impl/btod_sum.C
+    btod/btod_diagonalize.C
+    btod/btod_tridiagonalize.C
 )
 
 set(SRC_GEN_BTOD
@@ -250,6 +257,24 @@ set(SRC_BTOD
     block_tensor/impl/btod_vmpriority.C
 )
 
+set(SRC_BLOCK_SPARSE
+    block_sparse/sparse_block_tree_any_order.C
+    block_sparse/block_loop.C
+    block_sparse/sparse_loop_list.C
+    block_sparse/sparsity_fuser.C
+    block_sparse/sparse_loop_grouper.C
+    block_sparse/range.C
+    block_sparse/get_batches.C
+    block_sparse/batch_list_builder.C
+    block_sparse/subspace_iterator.C
+)
+
+set(SRC_DIAG_TENSOR
+    diag_block_tensor/impl/diag_block_tensor.C
+    diag_block_tensor/impl/diag_btod_addition_schedule.C
+    diag_block_tensor/impl/diag_btod_aux_add.C
+)
+
 set(SRC_DIAG_TENSOR
     diag_block_tensor/impl/diag_block_tensor.C
     diag_block_tensor/impl/diag_btod_addition_schedule.C
@@ -268,7 +293,7 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_to_add_space.C
     diag_tensor/impl/diag_to_contract2_space.C
     diag_tensor/impl/diag_tod_adjust_space.C
-    diag_tensor/impl/diag_tod_aux_constr_add.C
+   diag_tensor/impl/diag_tod_aux_constr_add.C
     diag_tensor/impl/diag_tod_aux_constr_base.C
     diag_tensor/impl/diag_tod_aux_dotprod.C
     diag_tensor/impl/diag_tod_contract2.C
@@ -278,6 +303,47 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_tod_mult1.C
     diag_tensor/impl/diag_tod_random.C
     diag_tensor/impl/diag_tod_set.C
+)
+
+set(SRC_EXPR
+    expr/btensor/impl/eval_btensor_double.C
+    expr/btensor/impl/eval_btensor_double_add.C
+    expr/btensor/impl/eval_btensor_double_autoselect.C
+    expr/btensor/impl/eval_btensor_double_contract.C
+    expr/btensor/impl/eval_btensor_double_copy.C
+    expr/btensor/impl/eval_btensor_double_diag.C
+    expr/btensor/impl/eval_btensor_double_dirsum.C
+    expr/btensor/impl/eval_btensor_double_div.C
+    expr/btensor/impl/eval_btensor_double_dot_product.C
+    expr/btensor/impl/eval_btensor_double_symm.C
+    expr/btensor/impl/eval_btensor_double_trace.C
+    expr/btensor/impl/eval_tree_builder_btensor.C
+    expr/btensor/impl/node_interm.C
+    expr/dag/expr_tree.C
+    expr/dag/graph.C
+    expr/dag/node_add.C
+    expr/dag/node_assign.C
+    expr/dag/node_contract.C
+    expr/dag/node_diag.C
+    expr/dag/node_dirsum.C
+    expr/dag/node_div.C
+    expr/dag/node_dot_product.C
+    expr/dag/node_ident.C
+    expr/dag/node_null.C
+    expr/dag/node_product.C
+    expr/dag/node_scalar.C
+    expr/dag/node_symm.C
+    expr/dag/node_trace.C
+    expr/dag/node_transform.C
+    expr/dag/print_node.C
+    expr/dag/print_tree.C
+    expr/eval/default_eval_selector.C
+    expr/eval/eval.C
+    expr/eval/eval_register.C
+    expr/opt/opt_add_before_transf.C
+    expr/opt/opt_merge_adjacent_add.C
+    expr/opt/opt_merge_adjacent_transf.C
+    expr/opt/opt_merge_equiv_ident.C
 )
 
 if(WITH_ARMADILLO)
@@ -300,27 +366,33 @@ else(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC})
 endif(USE_ACML)
 
+add_library(tensor_core ${SRC_CORE})
+add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
 if(CUDA_FOUND)
-    cuda_add_library(tensor ${SRC_CUDA} ${SRC} ${SRC_LINALG}
-        ${SRC_LINALG_CUBLAS} ${SRC_KERNELS} ${SRC_KERNELS_CUBLAS}
-        ${SRC_GEN_BTOD} ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP}
-        ${SRC_ARMA})
+    cuda_add_library(tensor ${SRC_CUDA} ${SRC_LINALG} ${SRC_LINALG_CUBLAS}
+        ${SRC_KERNELS} ${SRC_KERNELS_CUBLAS} ${SRC_GEN_BTOD} ${SRC_BTOD}
+        ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR} ${SRC_ARMA})
 else(CUDA_FOUND)
-    add_library(tensor ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
-        ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_MP} ${SRC_ARMA})
+    add_library(tensor ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD}
+        ${SRC_BTOD} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR} ${SRC_ARMA})
 endif(CUDA_FOUND)
+set(TARGETS tensor_core tensor tensor_block_sparse)
+
 if(QCHEM_SOURCE_DIR)
+    set(TARGETS ${TARGETS} tensor_qchem)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
-    add_dependencies(tensor_qchem tensor)
 endif(QCHEM_SOURCE_DIR)
 
-set_property(TARGET tensor APPEND PROPERTY
+set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 else(HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
+add_library(block_sparse ${SRC_BLOCK_SPARSE})
+set_property(TARGET block_sparse APPEND PROPERTY
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)

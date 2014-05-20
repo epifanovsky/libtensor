@@ -56,6 +56,7 @@ private:
     void test_contr_25();
     void test_contr_26();
     void test_contr_27();
+    void test_contr_28();
 
     void test_self_1();
     void test_self_2();

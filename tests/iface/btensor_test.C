@@ -1,4 +1,4 @@
-#include <libtensor/iface/btensor.h>
+#include <libtensor/expr/btensor/btensor.h>
 #include "btensor_test.h"
 
 namespace libtensor {
@@ -10,6 +10,7 @@ void btensor_test::perform() throw(libtest::test_exception) {
     test_2();
 }
 
+using expr::label;
 
 /** \test Checks the dimensions of a new btensor
  **/
@@ -56,12 +57,12 @@ void btensor_test::test_2() throw(libtest::test_exception) {
 
     btensor<1> bt1(s);
     bt1(i);
-    letter_expr<1> le_i(i);
+    label<1> le_i(i);
     bt1(le_i);
 
     btensor<2> bt2(ss);
     bt2(i|j);
-    letter_expr<2> le_ij(i|j);
+    label<2> le_ij(i|j);
     bt2(le_ij);
 
     } catch(exception &e) {

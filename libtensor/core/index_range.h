@@ -59,7 +59,7 @@ template<size_t N>
 inline index_range<N>::index_range(const index<N> &begin, const index<N> &end) :
     m_begin(begin), m_end(end) {
 
-    for(register size_t i=0; i<N; i++) if(m_begin[i] > m_end[i]) {
+    for(register size_t i=0; i != N; i++) if(m_begin[i] > m_end[i]) {
         register size_t t = m_end[i];
         m_end[i] = m_begin[i]; m_begin[i] = t;
     }

@@ -31,8 +31,8 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
     typedef product_table_i::label_group_t label_group_t;
     typedef product_table_i::label_set_t label_set_t;
 
-    params.grp2.clear();
-    if (params.grp1.is_empty()) return;
+    params.g2.clear();
+    if (params.g1.is_empty()) return;
 
     // Create a map of remaining indexes
     sequence<k_order1, size_t> map(0), rmap(0);
@@ -49,7 +49,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
     }
     nrsteps++;
 
-    adapter_t g1(params.grp1);
+    adapter_t g1(params.g1);
 
     // Create block index dimensions of result se_label
     typename adapter_t::iterator it1 = g1.begin();
@@ -184,7 +184,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
         er_reduce<N, M>(r1, rmap, blk_labels, cl1.get_table_id()).perform(r2a);
         er_optimize<N - M>(r2a, cl1.get_table_id()).perform(r2b);
         se2.set_rule(r2b);
-        params.grp2.insert(se2);
+        params.g2.insert(se2);
 
     } // Loop it1
 }

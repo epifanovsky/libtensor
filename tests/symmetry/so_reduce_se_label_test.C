@@ -6,8 +6,9 @@ namespace libtensor {
 
 void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
 
-    std::string id1 = "S6";
+    std::string id1 = "S6", id2 = "C2v";
     setup_pg_table(id1);
+    setup_pg_table(id2);
 
     try {
 
@@ -27,12 +28,17 @@ void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
         test_nm1_6();
         test_nm1_7();
 
+        test_nmk_3(id2);
+        test_nmk_4();
+
     } catch (libtest::test_exception &e) {
         clear_pg_table(id1);
+        clear_pg_table(id2);
         throw;
     }
 
     clear_pg_table(id1);
+    clear_pg_table(id2);
 }
 
 
@@ -749,5 +755,157 @@ void so_reduce_se_label_test::test_nmk_2(const std::string &table_id,
     }
     check_allowed(tns.c_str(), "el2", el2, rx);
 }
+
+
+/** \test Triple reduction of 3 dim of a 6-space on a 3-space
+ **/
+void so_reduce_se_label_test::test_nmk_3(
+        const std::string &table_id) throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_reduce_se_label_test::test_nmk_3("
+            << table_id << ")";
+    std::string tns(tnss.str());
+
+    typedef se_label<6, double> se6_t;
+    typedef se_label<3, double> se3_t;
+    typedef so_reduce<6, 3, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se3_t> so_reduce_se_t;
+
+    index<6> i1a, i1b;
+    i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3; i1b[5] = 3;
+    dimensions<6> bidims1(index_range<6>(i1a, i1b));
+
+    se6_t el1(bidims1, table_id);
+    {
+        block_labeling<6> &bl1 = el1.get_labeling();
+        mask<6> m1;
+        m1[0] = m1[1] = m1[2] = m1[3] = m1[4] = m1[5] = true;
+        for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
+        el1.set_rule(1);
+    }
+
+    symmetry_element_set<6, double> set1(se6_t::k_sym_type);
+    symmetry_element_set<3, double> set2(se3_t::k_sym_type);
+
+    set1.insert(el1);
+    mask<6> m; m[1] = m[2] = m[3] = true;
+    sequence<6, size_t> seq(0); seq[2] = 1; seq[3] = 2;
+    index_range<6> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, ir, set2);
+
+    so_reduce_se_t().perform(params);
+
+    if(set2.is_empty()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected a non-empty set.");
+    }
+
+    symmetry_element_set_adapter<3, double, se3_t> adapter(set2);
+    symmetry_element_set_adapter<3, double, se3_t>::iterator it =
+            adapter.begin();
+    const se3_t &el2 = adapter.get_elem(it);
+    it++;
+    if(it != adapter.end()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected only one element.");
+    }
+
+    const dimensions<3> &bidims2 = el2.get_labeling().get_block_index_dims();
+    std::vector<bool> rx(bidims2.get_size(), false);
+
+    rx.assign(bidims2.get_size(), true);
+
+    check_allowed(tns.c_str(), "el2", el2, rx);
+}
+
+
+/** \test Double reduction of 3 dim of a 6-space on a 3-space
+ **/
+void so_reduce_se_label_test::test_nmk_4() throw(libtest::test_exception) {
+
+    std::ostringstream tnss;
+    tnss << "so_reduce_se_label_test::test_nmk_4()";
+    std::string tns(tnss.str());
+
+    typedef se_label<7, double> se7_t;
+    typedef se_label<3, double> se3_t;
+    typedef so_reduce<7, 4, double> so_reduce_t;
+    typedef symmetry_operation_impl<so_reduce_t, se3_t> so_reduce_se_t;
+
+    std::string pg("c2v");
+    setup_pg_table(pg);
+
+    try {
+
+    index<7> i1a, i1b;
+    i1b[0] = i1b[1] = i1b[2] = i1b[3] = i1b[4] = i1b[5] = i1b[6] = 3;
+    dimensions<7> bidims1(index_range<7>(i1a, i1b));
+
+    se7_t el1(bidims1, pg);
+    {
+        block_labeling<7> &bl1 = el1.get_labeling();
+        mask<7> m1;
+        m1[0] = m1[1] = m1[2] = m1[3] = m1[4] = m1[5] = m1[6] = true;
+        for (size_t i = 0; i < 4; i++) bl1.assign(m1, i, i);
+
+        evaluation_rule<7> r1;
+        product_rule<7> &pr = r1.new_product();
+        sequence<7, size_t> seq1(0), seq2(0), seq3(0);
+        seq1[1] = seq1[3] = 1;
+        seq2[0] = seq2[5] = 1;
+        seq3[2] = seq3[4] = seq3[6] = 1;
+        pr.add(seq1, 0);
+        pr.add(seq2, 0);
+        pr.add(seq3, 0);
+
+        el1.set_rule(r1);
+    }
+
+    symmetry_element_set<7, double> set1(se7_t::k_sym_type);
+    symmetry_element_set<3, double> set2(se3_t::k_sym_type);
+
+    set1.insert(el1);
+    mask<7> m; m[3] = m[4] = m[5] = m[6] = true;
+    sequence<7, size_t> seq(0); seq[5] = seq[6] = 1;
+    index_range<7> ir(i1a, i1b);
+    symmetry_operation_params<so_reduce_t> params(set1, m, seq, ir, ir, set2);
+
+    so_reduce_se_t().perform(params);
+
+    if(set2.is_empty()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected a non-empty set.");
+    }
+
+    symmetry_element_set_adapter<3, double, se3_t> adapter(set2);
+    symmetry_element_set_adapter<3, double, se3_t>::iterator it =
+            adapter.begin();
+    const se3_t &el2 = adapter.get_elem(it);
+    it++;
+    if(it != adapter.end()) {
+        fail_test(tns.c_str(), __FILE__, __LINE__,
+                "Expected only one element.");
+    }
+
+    const dimensions<3> &bidims2 = el2.get_labeling().get_block_index_dims();
+    std::vector<bool> rx(bidims2.get_size(), false);
+
+    rx[ 0] = rx[ 5] = rx[10] = rx[15] = true;
+    rx[17] = rx[20] = rx[27] = rx[30] = true;
+    rx[34] = rx[39] = rx[40] = rx[45] = true;
+    rx[51] = rx[54] = rx[57] = rx[60] = true;
+
+    check_allowed(tns.c_str(), "el2", el2, rx);
+
+    }
+    catch (std::exception &e) {
+        clear_pg_table(pg);
+        throw;
+    }
+
+    clear_pg_table(pg);
+}
+
 
 } // namespace libtensor

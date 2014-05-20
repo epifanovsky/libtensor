@@ -1,7 +1,8 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_ewmult2.h>
-#include <libtensor/iface/iface.h>
+#include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/libtensor.h>
 #include "../compare_ref.h"
 #include "ewmult_test.h"
 
@@ -16,6 +17,7 @@ void ewmult_test::perform() throw(libtest::test_exception) {
 
         test_tt_1();
         test_tt_2();
+        test_tt_3();
         test_te_1();
         test_et_1();
         test_ee_1();
@@ -31,7 +33,7 @@ void ewmult_test::perform() throw(libtest::test_exception) {
 
 void ewmult_test::test_tt_1() throw(libtest::test_exception) {
 
-    const char *testname = "ewmult_test::test_tt_1()";
+    const char testname[] = "ewmult_test::test_tt_1()";
 
     try {
 
@@ -68,7 +70,7 @@ void ewmult_test::test_tt_1() throw(libtest::test_exception) {
 
 void ewmult_test::test_tt_2() throw(libtest::test_exception) {
 
-    const char *testname = "ewmult_test::test_tt_2()";
+    const char testname[] = "ewmult_test::test_tt_2()";
 
     try {
 
@@ -104,9 +106,46 @@ void ewmult_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
+void ewmult_test::test_tt_3() throw(libtest::test_exception) {
+
+    const char testname[] = "ewmult_test::test_tt_3()";
+
+    try {
+
+    bispace<1> sp_i(10), sp_a(20);
+    bispace<2> sp_ia(sp_i|sp_a);
+    bispace<3> sp_bci(sp_a|sp_a|sp_i);
+    bispace<4> sp_abci(sp_a|sp_a|sp_a|sp_i);
+
+    btensor<2> t1(sp_ia);
+    btensor<3> t2(sp_bci);
+    btensor<4> t3(sp_abci), t3_ref(sp_abci);
+
+    btod_random<2>().perform(t1);
+    btod_random<3>().perform(t2);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    permutation<2> perm1;
+    perm1.permute(0, 1);
+    permutation<3> perm2;
+    permutation<4> perm3;
+    btod_ewmult2<1, 2, 1>(t1, perm1, t2, perm2, perm3).perform(t3_ref);
+
+    letter a, b, c, i;
+    t3(a|b|c|i) = -ewmult(i, 2.0 * t1(i|a), -0.5 * t2(b|c|i));
+
+    compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
 void ewmult_test::test_te_1() throw(libtest::test_exception) {
 
-    const char *testname = "ewmult_test::test_te_1()";
+    const char testname[] = "ewmult_test::test_te_1()";
 
     try {
 
@@ -147,7 +186,7 @@ void ewmult_test::test_te_1() throw(libtest::test_exception) {
 
 void ewmult_test::test_et_1() throw(libtest::test_exception) {
 
-    const char *testname = "ewmult_test::test_et_1()";
+    const char testname[] = "ewmult_test::test_et_1()";
 
     try {
 
@@ -188,7 +227,7 @@ void ewmult_test::test_et_1() throw(libtest::test_exception) {
 
 void ewmult_test::test_ee_1() throw(libtest::test_exception) {
 
-    const char *testname = "ewmult_test::test_ee_1()";
+    const char testname[] = "ewmult_test::test_ee_1()";
 
     try {
 
