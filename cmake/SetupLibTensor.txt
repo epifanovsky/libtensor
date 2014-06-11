@@ -6,7 +6,7 @@ include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
 #    Include and library paths
 #
-include_directories(${LIBTENSOR_DIR})
+include_directories(${LIBTENSOR_DIR} ${ARMADILLO_INCLUDE_DIRS})
 add_library(tensor_core STATIC IMPORTED)
 set_target_properties(tensor_core PROPERTIES
     IMPORTED_LOCATION ${LIBTENSOR_DIR}/build/libtensor/libtensor_core.a)
