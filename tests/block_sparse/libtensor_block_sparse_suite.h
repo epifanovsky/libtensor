@@ -11,9 +11,13 @@
 #include "sparse_btensor_test.h"
 #include "direct_sparse_btensor_test.h"
 #include "sparse_loop_list_test.h"
-#include "sparse_loop_iterator_test.h"
 #include "sparsity_fuser_test.h"
 #include "sparse_loop_grouper_test.h"
+#include "blas_isomorphism_test.h"
+#include "batch_kernels_test.h"
+#include "batch_list_builder_test.h"
+#include "subspace_iterator_test.h"
+#include "batch_provider_test.h"
 
 using libtest::unit_test_factory;
 
@@ -36,7 +40,6 @@ private:
     unit_test_factory<block_kernels_test> m_utf_block_kernels;
     unit_test_factory<block_loop_test> m_utf_block_loop;
     unit_test_factory<sparse_loop_list_test> m_utf_sparse_loop_list;
-    unit_test_factory<sparse_loop_iterator_test> m_utf_sparse_loop_iterator;
     unit_test_factory<sparse_block_tree_iterator_test> m_utf_sparse_block_tree_iterator;
     unit_test_factory<sparse_block_tree_test> m_utf_sparse_block_tree;
     unit_test_factory<sparse_bispace_test> m_utf_sparse_bispace;
@@ -44,6 +47,11 @@ private:
     unit_test_factory<direct_sparse_btensor_test> m_utf_direct_sparse_btensor;
     unit_test_factory<sparsity_fuser_test> m_utf_sparsity_fuser;
     unit_test_factory<sparse_loop_grouper_test> m_utf_sparse_loop_grouper;
+    unit_test_factory<blas_isomorphism_test> m_utf_blas_isomorphism;
+    unit_test_factory<batch_kernels_test> m_utf_batch_kernels;
+    unit_test_factory<batch_list_builder_test> m_utf_batch_list_builder;
+    unit_test_factory<subspace_iterator_test> m_utf_subspace_iterator;
+    unit_test_factory<batch_provider_test> m_utf_batch_provider;
 public:
     //! Creates the suite
     libtensor_sparse_suite();

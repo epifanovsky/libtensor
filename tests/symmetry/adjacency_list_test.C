@@ -11,6 +11,7 @@ void adjacency_list_test::perform() throw(libtest::test_exception) {
     test_1();
     test_2();
     test_3();
+    test_4();
 }
 
 
@@ -213,6 +214,30 @@ void adjacency_list_test::test_3() throw(libtest::test_exception) {
         alst.get_connected(10, conn10);
         if (conn10.size() != 0) {
             fail_test(testname, __FILE__, __LINE__, "# connected(10)");
+        }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+/** \test Second test retrieving connected nodes
+ **/
+void adjacency_list_test::test_4() throw(libtest::test_exception) {
+
+    static const char *testname = "adjacency_list_test::test_4()";
+
+    try {
+
+        adjacency_list alst;
+        alst.add(0, 2);
+        alst.add(1, 2);
+
+        std::vector<size_t> conn;
+        alst.get_connected(0, conn);
+        if (conn.size() != 3) {
+            fail_test(testname, __FILE__, __LINE__, "# connected(0)");
         }
 
     } catch(exception &e) {

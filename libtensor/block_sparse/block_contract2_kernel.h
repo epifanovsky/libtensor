@@ -9,7 +9,9 @@
 #define BLOCK_CONTRACT2_KERNEL_H_
 
 #include "block_kernel_i.h"
+#include "block_permute_kernel.h"
 #include "sparse_loop_list.h"
+#include "blas_isomorphism.h"
 #include "../linalg/linalg.h"
 
 namespace libtensor
@@ -17,6 +19,7 @@ namespace libtensor
 
 extern size_t flops;
 extern bool count_flops;
+//extern double contract_seconds;
 
 template<typename T>
 class block_contract2_kernel: public libtensor::block_kernel_i<T>
@@ -25,90 +28,133 @@ private:
     static const char* k_clazz; //!< Class name
     std::vector<size_t> m_block_orders; //!< Orders of each of the blocks
 
-    //void _contract_internal(std::vector<T*>& ptrs,
-                            //const std::vector<dim_list>& dim_lists,
-                            //size_t m,size_t n,size_t k,
-                            //size_t lda,size_t ldb,size_t ldc,
-                            //size_t loop_idx = 0);
+    typedef void (*dgemm_fp_t)(void*,size_t,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T); //DGEMM function to call to process deepest level
+    dgemm_fp_t m_dgemm_fp;
+    static const dgemm_fp_t dgemm_fp_arr[4];
+
     std::vector<block_loop> m_loops;
     size_t m_n_contracted_inds;
+
+    void (*m_dgemv_fn)(void*,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T);
+
+    //Sets everything up if we are doing a matrix-vector multiply
+    void init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
+                     const std::vector<size_t>& A_contracted_indices,
+                     const std::vector<size_t>& B_contracted_indices);
+
+    //Is the vector the first argument in the matrix vector multiply contraction?
+    size_t m_vec_bispace_idx;
+    size_t m_mat_bispace_idx;
+
+    //matmul data
     bool m_A_trans;
     bool m_B_trans;
-    std::vector<size_t> m_strides; //Must be pre-allocated for speed
-    void (*m_dgemm_fn)(void*,size_t,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T); //DGEMM function to call to process deepest level
+    std::vector<runtime_permutation> m_perms;
+    std::vector<block_permute_kernel<T> > m_perm_kerns;
+    std::vector<runtime_permutation> m_ident_perms;
+    std::vector<dim_list> m_perm_dim_lists;
+    std::vector<T*> m_perm_ptrs;
+    dim_list m_perm_ptr_sizes;
 public:
     block_contract2_kernel(const sparse_loop_list& loop_list);
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
+
+    block_contract2_kernel(const block_contract2_kernel<T>& rhs);
+    block_contract2_kernel<T>& operator=(const block_contract2_kernel<T>& rhs);
+    ~block_contract2_kernel();
 };
+
+template<typename T>
+const typename block_contract2_kernel<T>::dgemm_fp_t block_contract2_kernel<T>::dgemm_fp_arr[4] = {&linalg::mul2_ij_ip_pj_x,
+                                                                                                   &linalg::mul2_ij_ip_jp_x,
+                                                                                                   &linalg::mul2_ij_pi_pj_x,
+                                                                                                   &linalg::mul2_ij_pi_jp_x};
 
 template<typename T>
 const char* block_contract2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
 
 } /* namespace libtensor */
 
-#if 0
 template<typename T>
-inline void libtensor::block_contract2_kernel<T>::_contract_internal(
-		std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists, size_t m,
-		size_t n, size_t k, size_t lda, size_t ldb, size_t ldc,
-		size_t loop_idx)
+libtensor::block_contract2_kernel<T>::block_contract2_kernel(const block_contract2_kernel<T>& rhs) : m_block_orders(rhs.m_block_orders),
+                                                                                                     m_dgemm_fp(rhs.m_dgemm_fp),
+                                                                                                     m_loops(rhs.m_loops),
+                                                                                                     m_n_contracted_inds(rhs.m_n_contracted_inds),
+                                                                                                     m_vec_bispace_idx(rhs.m_vec_bispace_idx),
+                                                                                                     m_mat_bispace_idx(rhs.m_mat_bispace_idx),
+                                                                                                     m_A_trans(rhs.m_A_trans),
+                                                                                                     m_B_trans(rhs.m_B_trans),
+                                                                                                     m_perms(rhs.m_perms),
+                                                                                                     m_perm_kerns(rhs.m_perm_kerns),
+                                                                                                     m_ident_perms(rhs.m_ident_perms),
+                                                                                                     m_perm_dim_lists(rhs.m_perm_dim_lists),
+                                                                                                     m_perm_ptr_sizes(rhs.m_perm_ptr_sizes),
+                                                                                                     m_perm_ptrs(3)
 {
-    //Base case: call matmul kernel
-    if(loop_idx == m_loops.size() - m_n_contracted_inds - 2)
+    for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
     {
-        (*m_dgemm_fn)(NULL,m,n,k,ptrs[1],lda,ptrs[2],ldb,ptrs[0],ldc,1.0);
-        if(count_flops)
+        if(m_perms[perm_idx] != m_ident_perms[perm_idx])
         {
-        	flops += 2*m*n*k;
+            m_perm_ptrs[perm_idx] = new T[m_perm_ptr_sizes[perm_idx]];
         }
     }
-    else
-    {
-    	const block_loop& cur_loop = m_loops[loop_idx];
-
-        //Compute the stride for each block
-    	for(size_t bispace_idx = 0; bispace_idx < dim_lists.size(); ++bispace_idx)
-    	{
-    		const dim_list& cur_dims = dim_lists[bispace_idx];
-    		if(!cur_loop.is_bispace_ignored(bispace_idx))
-    		{
-				size_t cur_subspace = cur_loop.get_subspace_looped(bispace_idx);
-                m_strides[bispace_idx] = 1;
-				for(size_t stride_idx = cur_subspace+1; stride_idx < cur_dims.size(); ++stride_idx)
-				{
-					m_strides[bispace_idx] *= cur_dims[stride_idx];
-				}
-    		}
-    	}
-
-    	//We are guaranteed not to ignore output subspace because all contracted indices handled by kernel
-    	size_t cur_output_subspace = cur_loop.get_subspace_looped(0);
-    	for(size_t i = 0; i < dim_lists[0][cur_output_subspace]; ++i)
-    	{
-			_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc,loop_idx+1);
-    		for(size_t bispace_idx = 0; bispace_idx < dim_lists.size(); ++bispace_idx)
-    		{
-				//Can do this bcs pass by value
-    			if(!cur_loop.is_bispace_ignored(bispace_idx))
-    			{
-					ptrs[bispace_idx] += m_strides[bispace_idx];
-    			}
-    		}
-    	}
-    }
 }
-#endif
 
 template<typename T>
-libtensor::block_contract2_kernel<T>::block_contract2_kernel(
-		const sparse_loop_list& sll) : m_loops(sll.get_loops()),m_A_trans(false),m_B_trans(false),m_strides(3,1)
+libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::operator=(const block_contract2_kernel<T>& rhs)
 {
-	//Simplest contraction is matrix multiply and requires 3 loops
-	if(m_loops.size() < 3)
-	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-				__FILE__, __LINE__, "sparse_loop_list must contain at least 3 loops");
-	}
+    m_block_orders = rhs.m_block_orders;
+    m_dgemm_fp = rhs.m_dgemm_fp;
+    m_loops = rhs.m_loops;
+    m_n_contracted_inds = rhs.m_n_contracted_inds;
+    m_vec_bispace_idx = rhs.m_vec_bispace_idx;
+    m_mat_bispace_idx = rhs.m_mat_bispace_idx;
+    m_A_trans = rhs.m_A_trans;
+    m_B_trans = rhs.m_B_trans;
+    m_perms = rhs.m_perms;
+    m_perm_kerns = rhs.m_perm_kerns;
+    m_ident_perms = rhs.m_ident_perms;
+    m_perm_dim_lists = rhs.m_perm_dim_lists;
+    m_perm_ptr_sizes = rhs.m_perm_ptr_sizes;
+    m_perm_ptrs.resize(3,NULL);
+    for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
+    {
+        if(m_perms[perm_idx] != m_ident_perms[perm_idx])
+        {
+            m_perm_ptrs = new T[m_perm_ptr_sizes[perm_idx]];
+        }
+    }
+}
+
+template<typename T>
+libtensor::block_contract2_kernel<T>::~block_contract2_kernel()
+{
+    for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
+    {
+        if(m_perms[perm_idx] != m_ident_perms[perm_idx])
+        {
+            delete [] m_perm_ptrs[perm_idx];
+        }
+    }
+}
+template<typename T>
+libtensor::block_contract2_kernel<T>::block_contract2_kernel(
+		const sparse_loop_list& sll) : m_loops(sll.get_loops()),
+                                       m_dgemm_fp(NULL),
+                                       m_perm_dim_lists(3),
+                                       m_perms(3,runtime_permutation(0)),
+                                       m_ident_perms(3,runtime_permutation(0)),
+                                       m_perm_ptrs(3),
+                                       m_perm_ptr_sizes(3),
+                                       m_perm_kerns(3,block_permute_kernel<T>(runtime_permutation(0)))
+{
+
+	//Simplest contraction is matrix vector multiply and requires 2 loops
+    if(m_loops.size() < 2)
+    {
+        throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+                __FILE__, __LINE__, "sparse_loop_list must contain at least 2 loops");
+    }
 
 	//Ensure that we have a valid number of bispaces
 	const std::vector< sparse_bispace_any_order >& bispaces = sll.get_bispaces();
@@ -118,19 +164,17 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 				__FILE__, __LINE__, "sparse_loop_list must contain at least 3 bispaces");
 	}
 
-	//Record the orders of the blocks that this contract kernel takes as input when run
+	//Record the orders of the blocks that this contract kernel takes as input when run so that we can check it at
+    //runtime
 	for(size_t block_idx = 0; block_idx < bispaces.size(); ++block_idx)
 	{
 		m_block_orders.push_back(bispaces[block_idx].get_order());
 	}
 
-
 	//Figure out what RHS subspace indices are contracted, based on whether
 	//the loops that traverse them don't touch the output tensor
 	std::vector<size_t> A_contracted_indices;
 	std::vector<size_t> B_contracted_indices;
-	size_t C_last_A_idx;
-	size_t C_last_B_idx;
 	for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
 	{
 		//Contracted? It should be if it doesn't appear in the output tensor
@@ -146,187 +190,108 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 			A_contracted_indices.push_back(cur_loop.get_subspace_looped(1));
 			B_contracted_indices.push_back(cur_loop.get_subspace_looped(2));
 		}
-		else
-		{
-			//Uncontracted? Then it needs to be present in A or B
-			if(cur_loop.is_bispace_ignored(1) && cur_loop.is_bispace_ignored(2))
-			{
-				throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-						__FILE__, __LINE__, "index present in C but not in A or B");
-			}
-
-			//Record these for determining if contraction has valid matmul-isomorphic order later
-			if(!cur_loop.is_bispace_ignored(1))
-			{
-				C_last_A_idx = cur_loop.get_subspace_looped(1);
-			}
-			if(!cur_loop.is_bispace_ignored(2))
-			{
-				C_last_B_idx = cur_loop.get_subspace_looped(2);
-			}
-		}
 	}
+	m_n_contracted_inds = A_contracted_indices.size();
+
+    //No dot products
+    if((A_contracted_indices.size() == m_loops.size()) || (B_contracted_indices.size() == m_loops.size()))
+    {
+		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+				__FILE__, __LINE__, "All loops cannot correspond to contracted indices");
+    }
 
 
+    //First out if we are doing a matrix-matrix multiply or a matrix-vector multiply
 	if(A_contracted_indices.size() == 0)
 	{
 		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
 				__FILE__, __LINE__, "must have at least one contracted index");
 	}
+    else if((A_contracted_indices.size() == bispaces[1].get_order()) || (B_contracted_indices.size() == bispaces[2].get_order()))
+    {
+        init_matvec(bispaces,A_contracted_indices,B_contracted_indices);
+    }
+    else
+    {
+        matmul_isomorphism_params<double> mip(sll);
+        m_A_trans = mip.get_A_trans();
+        m_B_trans = mip.get_B_trans();
+        //Temporary measure for C until we support permuted C
+        m_perms[0] = runtime_permutation(bispaces[0].get_order());
+        m_perms[1] = mip.get_A_perm();
+        m_perms[2] = mip.get_B_perm();
+        m_ident_perms[0] = runtime_permutation(m_perms[0].get_order());
+        m_ident_perms[1] = runtime_permutation(m_perms[1].get_order());
+        m_ident_perms[2] = runtime_permutation(m_perms[2].get_order());
 
-	//Determine the type of matmul required to execute the contraction:
-	//	A.B     [ C_ij = A_ik B_kj ]
-	//  A.B^T   [ C_ij = A_ik B_jk ]
-	//	A^T.B   [ C_ij = A_ki B_kj ]
-	//  A^T.B^T [ C_ij = A_ki B_jk ]
+        //If we are going to be permuting blocks, we'll need to pre-alloc an array to hold the permuted version
+        for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
+        {
+            if(m_perms[perm_idx] != m_ident_perms[perm_idx])
+            {
+                m_perm_kerns[perm_idx] = block_permute_kernel<T>(m_perms[perm_idx]);
+                size_t max_block_size = 1;
+                for(size_t subspace_idx = 0; subspace_idx < bispaces[perm_idx].get_order(); ++subspace_idx)
+                {
+                    const sparse_bispace<1>& subspace = bispaces[perm_idx][subspace_idx];
+                    size_t max_block_size_this_dim = 0;
+                    for(size_t block_idx = 0; block_idx < subspace.get_n_blocks(); ++block_idx)
+                    {
+                        if(subspace.get_block_size(block_idx) > max_block_size_this_dim)
+                        {
+                            max_block_size_this_dim = subspace.get_block_size(block_idx);
+                        }
+                    }
+                    max_block_size *= max_block_size_this_dim;
+                }
+                m_perm_ptrs[perm_idx] = new T[max_block_size];
+                m_perm_ptr_sizes[perm_idx] = max_block_size;
+            }
+        }
+        m_dgemm_fp = dgemm_fp_arr[(size_t)m_A_trans*2+(size_t)m_B_trans];
+    }
+}
+
+template<typename T>
+void libtensor::block_contract2_kernel<T>::init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
+                                                       const std::vector<size_t>& A_contracted_indices,
+                                                       const std::vector<size_t>& B_contracted_indices)
+{
+	//Determine the type of matvec mul required to execute the contraction:
+	//	A.x
+    //	A^T.x
+    //	x.A
+    //	x.A^T
+    //
+    //Is the vector the first or second argument in the contraction?
+    if(bispaces[1].get_order() == m_n_contracted_inds)
+    {
+        m_vec_bispace_idx = 1;
+        m_mat_bispace_idx = 2;
+    }
+    else
+    {
+        m_vec_bispace_idx = 2;
+        m_mat_bispace_idx = 1;
+    }
 
 	//Is A transposed? If so, the contracted indices appear in order at the beginning.
 	//Otherwise, they will appear in order at the end
-	size_t A_order = bispaces[1].get_order();
-	size_t A_first_contr_subspace;
-	size_t C_last_A_idx_correct;
-	if(A_contracted_indices[0] == 0)
+    size_t mat_first_contracted_index = (m_mat_bispace_idx == 1) ? A_contracted_indices[0] : B_contracted_indices[0];
+    m_A_trans = false;
+	if(mat_first_contracted_index == 0)
 	{
 		//Yes
 		m_A_trans = true;
-		A_first_contr_subspace = 0;
-		C_last_A_idx_correct = A_order - 1;
+        m_dgemv_fn = &linalg::mul2_i_pi_p_x;
 	}
-	else
-	{
-		//No
-		A_first_contr_subspace = A_order - A_contracted_indices.size();
-		C_last_A_idx_correct = A_first_contr_subspace - 1;
-	}
-
-	//Check contracted index position and order
-	for(size_t A_contr_idx = 0; A_contr_idx < A_contracted_indices.size(); ++A_contr_idx)
-	{
-		if(A_contracted_indices[A_contr_idx] != A_first_contr_subspace + A_contr_idx)
-		{
-			throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-					__FILE__, __LINE__, "index order of A is not matmul isomorphic");
-		}
-	}
-
-	//Additionally, the LAST uncontracted index present in A and C must immediately preceed/follow the
-	//contracted indices
-	if(C_last_A_idx != C_last_A_idx_correct)
-	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-				__FILE__, __LINE__, "last uncontracted index common to A and C in wrong position");
-	}
-
-
-	//Is B transposed? If so the contracted indices appear in order at the end
-	//Otherwise, they will appear in order at the beginning
-	size_t B_order = bispaces[2].get_order();
-	size_t B_first_contr_subspace;
-	size_t C_last_B_idx_correct;
-	if(B_contracted_indices[0] == 0)
-	{
-		//No
-		B_first_contr_subspace = 0;
-		C_last_B_idx_correct = B_order - 1;
-	}
-	else
-	{
-		//Yes
-		m_B_trans = true;
-		B_first_contr_subspace = B_order - B_contracted_indices.size();
-		C_last_B_idx_correct  = B_first_contr_subspace - 1;
-	}
-
-	for(size_t B_contr_idx = 0; B_contr_idx < B_contracted_indices.size(); ++ B_contr_idx)
-	{
-		if(B_contracted_indices[B_contr_idx] != B_first_contr_subspace + B_contr_idx)
-		{
-			throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-					__FILE__, __LINE__, "index order of B is not matmul isomorphic");
-		}
-	}
-
-	//Additionally, the LAST uncontracted index present in A and C must immediately preceed/follow the
-	//contracted indices
-	if(C_last_B_idx != C_last_B_idx_correct)
-	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-				__FILE__, __LINE__, "last uncontracted index common to B and C in wrong position");
-	}
-
-    //Check for strided output
-    size_t A_i_subspace;
-    if(m_A_trans)
-    {
-        A_i_subspace = A_order - 1;
-    }
     else
     {
-        A_i_subspace = A_order - A_contracted_indices.size() - 1; 
-    }
-    size_t B_j_subspace;
-    if(m_B_trans)
-    {
-        B_j_subspace = 0;
-    }
-    else
-    {
-        B_j_subspace = B_contracted_indices.size();
+        m_dgemv_fn = &linalg::mul2_i_ip_p_x;
     }
 
-    size_t A_i_subspace_loop_idx;
-    size_t B_j_subspace_loop_idx;
-    for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-    {
-        const block_loop& loop = m_loops[loop_idx];
-        if(!loop.is_bispace_ignored(1))
-        {
-            if(loop.get_subspace_looped(1) == A_i_subspace)
-            {
-                A_i_subspace_loop_idx = loop_idx;
-            }
-        }
-        if(!loop.is_bispace_ignored(2))
-        {
-            if(loop.get_subspace_looped(2) == B_j_subspace)
-            {
-                B_j_subspace_loop_idx = loop_idx;
-            }
-        }
-    }
 
-    if(m_loops[A_i_subspace_loop_idx].get_subspace_looped(0) != m_loops[B_j_subspace_loop_idx].get_subspace_looped(0) - 1)
-    {
-        throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",__FILE__, __LINE__, 
-                "Strided output is unsupported!");
-    }
-
-	m_n_contracted_inds = A_contracted_indices.size();
-	if(m_A_trans)
-	{
-		if(m_B_trans)
-		{
-            m_dgemm_fn = &linalg::mul2_ij_pi_jp_x;
-
-		}
-		else
-		{
-            m_dgemm_fn = &linalg::mul2_ij_pi_pj_x;
-
-		}
-	}
-	else
-	{
-		if(m_B_trans)
-		{
-            m_dgemm_fn = &linalg::mul2_ij_ip_jp_x;
-
-		}
-		else
-		{
-            m_dgemm_fn = &linalg::mul2_ij_ip_pj_x;
-		}
-	}
+    //TODO: Check strided output etc.
 }
 
 template<typename T>
@@ -377,58 +342,112 @@ void libtensor::block_contract2_kernel<T>::operator ()(
 		}
 	}
 #endif
-    //TODO: This will break for tensors that are both permuted and contracted!!!!!!!!!
 
-	size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
-	if(m_A_trans)
-	{
-        for(size_t A_i_idx = m_n_contracted_inds; A_i_idx <  dim_lists[1].size(); ++A_i_idx)
-        {
-            m *= dim_lists[1][A_i_idx];
-        }
-        for(size_t k_idx = 0; k_idx < m_n_contracted_inds; ++k_idx)
-        {
-			k *= dim_lists[1][k_idx];
-        }
-		lda = m;
-	}
-	else
-	{
-        for(size_t A_i_idx = 0; A_i_idx <  m_block_orders[1] - m_n_contracted_inds; ++A_i_idx)
-        {
-            m *= dim_lists[1][A_i_idx];
-        }
-		for(size_t k_idx = m_block_orders[1] - m_n_contracted_inds; k_idx < m_block_orders[1]; ++k_idx)
-		{
-			k *= dim_lists[1][k_idx];
-		}
-		lda = k;
-	}
-
-	if(m_B_trans)
-	{
-        for(size_t B_j_idx = 0; B_j_idx < m_block_orders[2] - m_n_contracted_inds; ++B_j_idx)
-        {
-            n *= dim_lists[2][B_j_idx];
-        }
-		ldb = k;
-	}
-	else
-	{
-        for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
-        {
-            n *= dim_lists[2][B_j_idx];
-        }
-		ldb = n;
-	}
-	ldc = n;
-
-    (*m_dgemm_fn)(NULL,m,n,k,ptrs[1],lda,ptrs[2],ldb,ptrs[0],ldc,1.0);
-    if(count_flops)
+    if(m_dgemm_fp == NULL)
     {
-        flops += 2*m*n*k;
+        //Matrix-vector mult
+        size_t m=1, n=1,lda;
+
+        const dim_list& mat_dim_list = dim_lists[m_mat_bispace_idx];
+        T* A = ptrs[m_mat_bispace_idx];
+        T* x = ptrs[m_vec_bispace_idx];
+        if(m_A_trans)
+        {
+            for(size_t i = 0; i < m_n_contracted_inds; ++i)
+            {
+                n *= mat_dim_list[i];
+            }
+            for(size_t i = m_n_contracted_inds; i < mat_dim_list.size(); ++i)
+            {
+                m *= mat_dim_list[i];
+            }
+            lda = m;
+        }
+        else
+        {
+            for(size_t i = 0; i < mat_dim_list.size() - m_n_contracted_inds; ++i)
+            {
+                m *= mat_dim_list[i];
+            }
+            for(size_t i = mat_dim_list.size() - m_n_contracted_inds; i < mat_dim_list.size(); ++i)
+            {
+                n *= mat_dim_list[i];
+            }
+            lda = n;
+        }
+
+        (*m_dgemv_fn)(NULL,m,n,A,lda,x,1,ptrs[0],1,1.0);
     }
-	//_contract_internal(ptrs,dim_lists,m,n,k,lda,ldb,ldc);
+    else
+    {
+        std::copy(dim_lists.begin(),dim_lists.end(),m_perm_dim_lists.begin());
+        //Permute blocks if necessary
+        for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
+        {
+            if(m_perms[perm_idx] != m_ident_perms[perm_idx])
+            {
+                m_perms[perm_idx].apply(m_perm_dim_lists[perm_idx]);
+                m_perm_kerns[perm_idx].permute(m_perm_ptrs[perm_idx],ptrs[perm_idx],m_perm_dim_lists[perm_idx],dim_lists[perm_idx]);
+            }
+            else
+            {
+                m_perm_ptrs[perm_idx] = ptrs[perm_idx];
+            }
+        }
+
+        //double seconds = read_timer<double>();
+        //matrix-matrix mult
+        size_t m = 1,n = 1,k = 1,lda,ldb,ldc;
+        if(m_A_trans)
+        {
+            for(size_t A_i_idx = m_n_contracted_inds; A_i_idx <  m_perm_dim_lists[1].size(); ++A_i_idx)
+            {
+                m *= m_perm_dim_lists[1][A_i_idx];
+            }
+            for(size_t k_idx = 0; k_idx < m_n_contracted_inds; ++k_idx)
+            {
+                k *= m_perm_dim_lists[1][k_idx];
+            }
+            lda = m;
+        }
+        else
+        {
+            for(size_t A_i_idx = 0; A_i_idx <  m_block_orders[1] - m_n_contracted_inds; ++A_i_idx)
+            {
+                m *= m_perm_dim_lists[1][A_i_idx];
+            }
+            for(size_t k_idx = m_block_orders[1] - m_n_contracted_inds; k_idx < m_block_orders[1]; ++k_idx)
+            {
+                k *= m_perm_dim_lists[1][k_idx];
+            }
+            lda = k;
+        }
+
+        if(m_B_trans)
+        {
+            for(size_t B_j_idx = 0; B_j_idx < m_block_orders[2] - m_n_contracted_inds; ++B_j_idx)
+            {
+                n *= m_perm_dim_lists[2][B_j_idx];
+            }
+            ldb = k;
+        }
+        else
+        {
+            for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
+            {
+                n *= dim_lists[2][B_j_idx];
+            }
+            ldb = n;
+        }
+        ldc = n;
+
+        (*m_dgemm_fp)(NULL,m,n,k,m_perm_ptrs[1],lda,m_perm_ptrs[2],ldb,m_perm_ptrs[0],ldc,1.0);
+        if(count_flops)
+        {
+            flops += 2*m*n*k;
+        }
+        //contract_seconds += read_timer<double>() - seconds;
+    }
 }
 
 #endif /* BLOCK_CONTRACT2_KERNEL_H_ */

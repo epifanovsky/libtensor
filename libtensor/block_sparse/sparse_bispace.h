@@ -667,8 +667,8 @@ sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
                 {
                     copy.m_sparse_block_trees[cur_tree_idx] = copy.m_sparse_block_trees[cur_tree_idx].permute(tree_perm);
                     copy.m_sparse_block_trees[cur_tree_idx].set_offsets_sizes_nnz(cur_tree_subspaces);
-                    copy.m_sparse_indices_sets_offsets.push_back(cur_tree_start_dest_sub_idx);
                 }
+                copy.m_sparse_indices_sets_offsets.push_back(cur_tree_start_dest_sub_idx);
 
                 cur_dense_subspaces.clear();
                 cur_perm_entries.clear();
@@ -1325,7 +1325,7 @@ private:
         virtual size_t get_nnz() const = 0; 
         virtual sparse_bispace_generic_i* clone() const = 0;
         virtual size_t get_n_sparse_groups() const  = 0;
-        virtual sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const  = 0;
+        virtual const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const  = 0;
         virtual size_t get_sparse_group_offset(size_t group_idx) const = 0; 
         virtual size_t get_n_index_groups() const = 0;
         virtual size_t get_index_group_offset(size_t grp_idx) const = 0;
@@ -1352,7 +1352,7 @@ private:
         size_t get_order() const { return N; }
         size_t get_nnz() const { return m_bispace.get_nnz(); }
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
-        sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
+        const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
         size_t get_n_index_groups() const { return m_bispace.get_n_index_groups(); }
         size_t get_index_group_offset(size_t grp_idx) const { return m_bispace.get_index_group_offset(grp_idx); }
@@ -1390,7 +1390,7 @@ public:
     size_t get_order() const { return m_spb_ptr->get_order(); }
     size_t get_nnz() const { return m_spb_ptr->get_nnz(); }
     size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }
-    sparse_block_tree_any_order get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
+    const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
     size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 
     size_t get_n_index_groups() const { return m_spb_ptr->get_n_index_groups(); }
     size_t get_index_group_offset(size_t grp_idx) const { return m_spb_ptr->get_index_group_offset(grp_idx); }

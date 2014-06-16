@@ -20,8 +20,7 @@ private:
     virtual void init(const std::vector<block_loop>& loops,
                       const idx_list& direct_tensors,
                       const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                      const std::vector<T*>& ptrs,
-                      const std::map<size_t,idx_pair>& loop_batches) 
+                      const std::vector<T*>& ptrs)
     { 
         //TODO: This will break for a '-=' type operation
         //Need to make sure C is zeroed out before contraction
@@ -39,11 +38,10 @@ private:
         //Due to the fact that sparse_loop_list currently fuses sparsity by default, 
         //we must separate adding the first entry from subtracting the second
         //Add the first operand
-        std::vector<sparse_bispace_any_order> bispaces = loops[0].get_bispaces();  
-        std::vector<sparse_bispace_any_order> add_bispaces(2,bispaces[0]);
-        add_bispaces.push_back(bispaces[1]);
-        std::vector<sparse_bispace_any_order> sub_bispaces(2,bispaces[0]);
-        sub_bispaces.push_back(bispaces[2]);
+        std::vector<sparse_bispace_any_order> add_bispaces(2,this->m_bispaces[0]);
+        add_bispaces.push_back(this->m_bispaces[1]);
+        std::vector<sparse_bispace_any_order> sub_bispaces(2,this->m_bispaces[0]);
+        sub_bispaces.push_back(this->m_bispaces[2]);
         std::vector<block_loop> add_loops;
         std::vector<block_loop> sub_loops;
         for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
@@ -76,7 +74,7 @@ private:
         {
             new_direct_tensors.push_back(2);
         }
-        sparse_loop_list add_sll(add_loops,new_direct_tensors);
+        sparse_loop_list add_sll(add_loops,add_bispaces,new_direct_tensors);
         add_sll.run(ba2k,m_ptrs,loop_batches);
 
         if(new_direct_tensors.size() > 0 && new_direct_tensors.back() == 2)
@@ -89,15 +87,16 @@ private:
         }
         block_subtract2_kernel<T> bs2k;
         m_ptrs[2] = saved_B_ptr; 
-        sparse_loop_list sub_sll(sub_loops,new_direct_tensors);
+        sparse_loop_list sub_sll(sub_loops,sub_bispaces,new_direct_tensors);
         sub_sll.run(bs2k,m_ptrs,loop_batches);
     }
 public:
 
     subtract2_batch_provider(const std::vector<block_loop>& loops,
+                             const std::vector<sparse_bispace_any_order>& bispaces,
                              const std::vector<size_t>& direct_tensors,
                              const std::vector<batch_provider<T>*>& batch_providers,
-                             const std::vector<T*>& ptrs) : batch_provider<T>(loops,direct_tensors,batch_providers,ptrs,0) {}
+                             const std::vector<T*>& ptrs) : batch_provider<T>(loops,bispaces,direct_tensors,batch_providers,ptrs,0) {}
 
     virtual batch_provider<T>* clone() const { return new subtract2_batch_provider(*this); }
 };
@@ -185,7 +184,7 @@ public:
         std::vector<T*> ptrs(1);
         ptrs.push_back(m_A_data_ptr);
         ptrs.push_back(m_B_data_ptr);
-        return new subtract2_batch_provider<T>(loops,direct_tensors,batch_providers,ptrs);
+        return new subtract2_batch_provider<T>(loops,bispaces,direct_tensors,batch_providers,ptrs);
     };
 };
 

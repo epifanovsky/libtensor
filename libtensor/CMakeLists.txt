@@ -1,4 +1,4 @@
-set(SRC
+set(SRC_CORE
     defs.C
     exception.C
     version.C
@@ -12,12 +12,6 @@ set(SRC
     core/impl/orbit_list.C
     core/impl/short_orbit.C
     core/impl/subgroup_orbits.C
-    btod/btod_diagonalize.C
-    btod/btod_tridiagonalize.C
-    symmetry/inst/adjacency_list.C
-    symmetry/point_group_table.C
-    symmetry/product_table_container.C
-    symmetry/product_table_i.C
 )
 
 set(SRC_LINALG_ACML
@@ -108,6 +102,10 @@ set(SRC_INST
     dense_tensor/impl/tod_size.C
     dense_tensor/impl/tod_trace.C
     dense_tensor/impl/tod_vmpriority.C
+    symmetry/point_group_table.C
+    symmetry/product_table_container.C
+    symmetry/product_table_i.C
+    symmetry/inst/adjacency_list.C
     symmetry/inst/block_labeling_inst.C
     symmetry/inst/combine_part_inst.C
     symmetry/inst/combine_label_inst.C
@@ -149,6 +147,8 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
+    btod/btod_diagonalize.C
+    btod/btod_tridiagonalize.C
 )
 
 set(SRC_GEN_BTOD
@@ -207,12 +207,19 @@ set(SRC_BTOD
 set(SRC_BLOCK_SPARSE
     block_sparse/sparse_block_tree_any_order.C
     block_sparse/block_loop.C
-    block_sparse/sparse_loop_iterator.C
     block_sparse/sparse_loop_list.C
     block_sparse/sparsity_fuser.C
     block_sparse/sparse_loop_grouper.C
     block_sparse/range.C
     block_sparse/get_batches.C
+    block_sparse/batch_list_builder.C
+    block_sparse/subspace_iterator.C
+)
+
+set(SRC_DIAG_TENSOR
+    diag_block_tensor/impl/diag_block_tensor.C
+    diag_block_tensor/impl/diag_btod_addition_schedule.C
+    diag_block_tensor/impl/diag_btod_aux_add.C
 )
 
 set(SRC_DIAG_TENSOR
@@ -385,28 +392,36 @@ else(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC})
 endif(USE_ACML)
 
-set(SRC ${SRC} ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
-    ${SRC_BLOCK_SPARSE} ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR})
-if(WITH_CTF)
-    set(SRC ${SRC} ${SRC_CTF})
-endif(WITH_CTF)
+set(TARGETS tensor_core tensor tensor_block_sparse)
+
+set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
+    ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR})
 if(WITH_ARMADILLO)
     set(SRC ${SRC} ${SRC_ARMA})
 endif(WITH_ARMADILLO)
+if(WITH_CTF)
+    set(SRC ${SRC} ${SRC_CTF})
+endif(WITH_CTF)
 
+add_library(tensor_core ${SRC_CORE})
 add_library(tensor ${SRC})
+add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
+
 if(QCHEM_SOURCE_DIR)
+    set(TARGETS ${TARGETS} tensor_qchem)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
-    add_dependencies(tensor_qchem tensor)
 endif(QCHEM_SOURCE_DIR)
 
-set_property(TARGET tensor APPEND PROPERTY
+set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
 if(HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 else(HAVE_LIBVMM)
-    set_property(TARGET tensor APPEND PROPERTY
+    set_property(TARGET ${TARGETS} APPEND PROPERTY
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
+add_library(block_sparse ${SRC_BLOCK_SPARSE})
+set_property(TARGET block_sparse APPEND PROPERTY
+    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
