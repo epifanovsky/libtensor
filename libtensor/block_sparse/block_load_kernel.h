@@ -15,7 +15,7 @@ namespace libtensor
 {
 
 template<typename T>
-class block_load_kernel : public block_kernel_i<T>
+class block_load_kernel : public block_kernel_i<block_load_kernel<T>,T>
 {
 private:
     static const char* k_clazz; //!< Class name

@@ -432,7 +432,6 @@ void run_benchmark_mo(const char* file_name)
     /*cout << "tree copy time: " << read_timer() - seconds << "\n";*/
     /*exit(1);*/
    double start = read_timer();
-#if 0
    {
     //Construct D result
     sparse_btensor<3> D(spb_D);
@@ -504,8 +503,8 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
     }
     cout << "TOTAL TIME: " << read_timer() - start << "\n";
-#endif
 
+#if 0
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
@@ -530,6 +529,7 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
+#endif
 
 #if 0
     cout << "===========================\n";

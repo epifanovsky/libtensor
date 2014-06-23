@@ -14,11 +14,14 @@
 
 namespace libtensor {
 
-template<typename T>
+template<typename kern_t,typename T>
 class block_kernel_i
 {
 public:
-	virtual void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists) = 0;
+	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists)
+    {
+        (*static_cast<kern_t*>(this))(ptrs,dim_lists);
+    }
 	virtual ~block_kernel_i() {}
 };
 } // namespace libtensor

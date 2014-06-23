@@ -16,7 +16,7 @@ namespace libtensor
 {
 
 template<typename T>
-class block_permute_kernel: public libtensor::block_kernel_i<T>
+class block_permute_kernel: public libtensor::block_kernel_i<block_permute_kernel<T>,T>
 {
 private:
     runtime_permutation m_perm;

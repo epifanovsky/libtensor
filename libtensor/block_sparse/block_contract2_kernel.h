@@ -22,7 +22,7 @@ extern bool count_flops;
 //extern double contract_seconds;
 
 template<typename T>
-class block_contract2_kernel: public libtensor::block_kernel_i<T>
+class block_contract2_kernel: public libtensor::block_kernel_i<block_contract2_kernel<T>,T>
 {
 private:
     static const char* k_clazz; //!< Class name

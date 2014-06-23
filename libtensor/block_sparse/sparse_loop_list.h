@@ -52,8 +52,8 @@ private:
     std::vector<block_loop> m_loops;
     std::vector<sparse_bispace_any_order> m_bispaces;
 
-	template<typename T>
-    void _run_internal(block_kernel_i<T>& kernel,
+	template<typename kern_t,typename T>
+    void _run_internal(kern_t& kernel,
     				   const std::vector<T*>& ptrs,
                        std::vector<T*>& block_ptrs,
     				   std::vector<offset_list>& bispace_grp_offsets,
@@ -70,8 +70,8 @@ private:
 public:
 	sparse_loop_list(const std::vector<block_loop>& loops,const std::vector<sparse_bispace_any_order>& bispaces, const idx_list& direct_tensors = idx_list());
 
-	template<typename T>
-	void run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>())); 
+	template<typename kern_t,typename T>
+	void run(kern_t& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches = (std::map<size_t,idx_pair>())); 
 	const std::vector< sparse_bispace_any_order >& get_bispaces() const { return m_bispaces; }
 	const std::vector<block_loop>& get_loops() const { return m_loops; }
 
@@ -83,8 +83,8 @@ public:
 	std::vector<size_t> get_loops_that_access_group(size_t bispace_idx,size_t group_idx) const;
 };
 
-template<typename T>
-void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches)
+template<typename kern_t, typename T>
+void sparse_loop_list::run(kern_t& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches)
 {
     //std::cout << "STARTING SLL:\n";
     double seconds = read_timer<double>();
@@ -195,8 +195,8 @@ void sparse_loop_list::run(block_kernel_i<T>& kernel,const std::vector<T*>& ptrs
     //std::cout << "Contract seconds: " << contract_seconds << "\n";
 }
 
-template<typename T>
-void sparse_loop_list::_run_internal(block_kernel_i<T>& kernel,
+template<typename kern_t,typename T>
+void sparse_loop_list::_run_internal(kern_t& kernel,
                                      const std::vector<T*>& tensor_ptrs,
                                      std::vector<T*>& block_ptrs,
                                      std::vector<offset_list>& bispace_grp_offsets,
