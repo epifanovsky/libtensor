@@ -293,6 +293,7 @@ set(SRC_CTF_IFACE
     ctf_iface/libtensor_ctf_iface_tests.C
     ctf_iface/libtensor_ctf_iface_suite.C
     ctf_iface/ctf_btensor_test.C
+    ctf_iface/ctf_dot_product_test.C
     ctf_iface/ctf_expr_test.C
 )
 

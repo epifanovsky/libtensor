@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_COMPARE_REF_H
 #define LIBTENSOR_COMPARE_REF_H
 
+#include <cmath>
 #include <sstream>
 #include <libtest/test_exception.h>
 #include <libtensor/core/orbit.h>
@@ -14,6 +15,9 @@ namespace libtensor {
 template<size_t N>
 class compare_ref {
 public:
+    static void compare(const char *test, double d, double d_ref)
+        throw(libtest::test_exception);
+
     static void compare(const char *test, dense_tensor_i<N, double> &t,
         dense_tensor_i<N, double> &t_ref, double thresh)
         throw(exception, libtest::test_exception);
@@ -32,6 +36,20 @@ public:
         throw(exception, libtest::test_exception);
 
 };
+
+
+template<size_t N>
+void compare_ref<N>::compare(const char *test, double d, double d_ref)
+    throw(libtest::test_exception) {
+
+    if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: " << d << " (res), "
+            << d_ref << " (ref), " << d - d_ref << " (diff)";
+        throw libtest::test_exception("compare_ref::compare()",
+            __FILE__, __LINE__, ss.str().c_str());
+    }
+}
 
 
 template<size_t N>
