@@ -71,6 +71,13 @@ public:
      **/
     virtual ~any_tensor();
 
+    /** \brief Returns the type of the tensor held inside as a string
+     **/
+    virtual const char *get_tensor_type() const {
+        static const char k_tensor_type[] = "any_tensor";
+        return k_tensor_type;
+    }
+
     /** \brief Returns the tensor object held inside as a concrete tensor type
      **/
     template<typename Tensor>

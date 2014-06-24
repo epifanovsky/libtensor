@@ -22,7 +22,8 @@ template<size_t N,typename T = double>
 class sparse_btensor_new : public gen_sparse_btensor<N,T> 
 {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
+    static const char k_tensor_type[];
 private:
     T* m_data_ptr;
     sparse_bispace<N> m_bispace;
@@ -44,6 +45,8 @@ public:
     bool operator==(const sparse_btensor_new<N,T>& rhs) const;
     bool operator!=(const sparse_btensor_new<N,T>& rhs) const;
 
+    const char *get_tensor_type() const { return k_tensor_type; }
+
     const T* get_data_ptr() const { return m_data_ptr; }
     
     /** \brief Returns a labeled_sparse_btensor object for use in expressions
@@ -57,7 +60,10 @@ public:
 };
 
 template<size_t N,typename T>
-const char *sparse_btensor_new<N,T>::k_clazz = "sparse_btensor_new<N,T>";
+const char sparse_btensor_new<N,T>::k_clazz[] = "sparse_btensor_new<N,T>";
+
+template<size_t N,typename T>
+const char sparse_btensor_new<N,T>::k_tensor_type[] = "sparse_btensor";
 
 template<size_t N,typename T>
 sparse_btensor_new<N,T>::sparse_btensor_new(const sparse_bispace<N>& the_bispace,T* mem,bool already_block_major) : m_bispace(the_bispace)

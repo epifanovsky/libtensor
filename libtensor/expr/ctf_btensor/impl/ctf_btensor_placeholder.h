@@ -18,6 +18,9 @@ template<size_t N, typename T>
 class ctf_btensor_placeholder :
     public ctf_btensor_placeholder_base, public any_tensor<N, T> {
 
+public:
+    static const char k_tensor_type[];
+
 private:
     ctf_btensor<N, T> *m_bt; //!< Pointer to the real tensor
 
@@ -27,6 +30,10 @@ public:
 
     virtual ~ctf_btensor_placeholder() {
         destroy_btensor();
+    }
+
+    virtual const char *get_tensor_type() const {
+        return k_tensor_type;
     }
 
     void create_btensor(const block_index_space<N> &bis) {
@@ -56,6 +63,11 @@ public:
     }
 
 };
+
+
+template<size_t N, typename T>
+const char ctf_btensor_placeholder<N, T>::k_tensor_type[] =
+    "ctf_btensor_placeholder";
 
 
 } // namespace expr

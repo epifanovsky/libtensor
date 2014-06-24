@@ -26,6 +26,9 @@ class ctf_btensor_i :
     virtual public ctf_block_tensor_rd_i<N, T> {
 
 public:
+    static const char k_tensor_type[];
+
+public:
     ctf_btensor_i() : any_tensor<N, T>(*this) {
         eval_ctf_btensor_holder<T>::get_instance().inc_counter();
     }
@@ -34,7 +37,15 @@ public:
         eval_ctf_btensor_holder<T>::get_instance().dec_counter();
     }
 
+    virtual const char *get_tensor_type() const {
+        return k_tensor_type;
+    }
+
 };
+
+
+template<size_t N, typename T>
+const char ctf_btensor_i<N, T>::k_tensor_type[] = "ctf_btensor";
 
 
 } // namespace expr

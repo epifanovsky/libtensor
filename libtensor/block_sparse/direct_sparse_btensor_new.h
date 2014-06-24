@@ -10,12 +10,16 @@ namespace libtensor {
 template<size_t N, typename T=double> 
 class direct_sparse_btensor_new : public gen_sparse_btensor<N,T>
 {
+public:
+    static const char k_tensor_type[];
 private:
     sparse_bispace<N> m_bispace;
     batch_provider<T>* m_batch_provider;
 public:
     direct_sparse_btensor_new(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL) {}
     labeled_direct_sparse_btensor<N,T> operator()(const expr::label<N>& le);
+
+    const char *get_tensor_type() const { return k_tensor_type; }
 
     void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail = 0);
 
@@ -28,6 +32,10 @@ public:
     direct_sparse_btensor_new<N,T>&  operator=(const direct_sparse_btensor_new<N,T>& rhs);
     ~direct_sparse_btensor_new() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
 };
+
+template<size_t N,typename T>
+const char direct_sparse_btensor_new<N,T>::k_tensor_type[] =
+    "direct_sparse_btensor";
 
 template<size_t N,typename T>
 labeled_direct_sparse_btensor<N,T> direct_sparse_btensor_new<N,T>::operator()(const expr::label<N>& le)

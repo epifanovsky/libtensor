@@ -19,11 +19,14 @@ namespace expr {
     \tparam T Block tensor element type.
 
     \ingroup libtensor_expr_btensor
-**/
+ **/
 template<size_t N, typename T>
 class btensor_i :
     public any_tensor<N, T>,
     virtual public block_tensor_rd_i<N, T> {
+
+public:
+    static const char k_tensor_type[];
 
 public:
     btensor_i() : any_tensor<N, T>(*this) {
@@ -34,7 +37,15 @@ public:
         eval_btensor_holder<T>::get_instance().dec_counter();
     }
 
+    virtual const char *get_tensor_type() const {
+        return k_tensor_type;
+    }
+
 };
+
+
+template<size_t N, typename T>
+const char btensor_i<N, T>::k_tensor_type[] = "btensor";
 
 
 } // namespace expr
