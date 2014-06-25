@@ -6,6 +6,7 @@
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
+#include <libtensor/expr/eval/tensor_type_check.h>
 #include "../eval_btensor.h"
 #include "eval_btensor_double_autoselect.h"
 #include "eval_btensor_double_dot_product.h"
@@ -224,7 +225,7 @@ eval_btensor<double>::~eval_btensor<double>() {
 
 bool eval_btensor<double>::can_evaluate(const expr_tree &e) const {
 
-    return true;
+    return tensor_type_check<Nmax, double, btensor_i>(e);
 }
 
 
