@@ -432,6 +432,7 @@ void run_benchmark_mo(const char* file_name)
     /*cout << "tree copy time: " << read_timer() - seconds << "\n";*/
     /*exit(1);*/
    double start = read_timer();
+#if 0
    {
     //Construct D result
     sparse_btensor<3> D(spb_D);
@@ -503,8 +504,8 @@ void run_benchmark_mo(const char* file_name)
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
     }
     cout << "TOTAL TIME: " << read_timer() - start << "\n";
+#endif
 
-#if 0
     cout << "===========================\n";
     cout << "DIRECT BENCHMARK:\n";
     direct_sparse_btensor<3> D_direct(spb_D);
@@ -512,24 +513,22 @@ void run_benchmark_mo(const char* file_name)
     direct_sparse_btensor<3> G_direct(spb_E);
     direct_sparse_btensor<3> H_direct(spb_H);
 
-    D_direct(mu|Q|i) = contract(lambda,C(mu|Q|lambda),C_mo(lambda|i));
-    E_direct(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
-    G_direct(nu|sigma|Q) = I(nu|sigma|Q) - E_direct(nu|sigma|Q);
-    H_direct(nu|Q|i) = contract(sigma,G_direct(nu|sigma|Q),C_mo(sigma|i));
-
     sparse_btensor<2> M_from_direct(spb_M);
     cout << "-----------------------------\n";
     cout << "M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),4e8)\n";
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i),4e8);
+    D_direct(mu|Q|i) = contract(lambda,C(mu|Q|lambda),C_mo(lambda|i));
+    E_direct(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
+    G_direct(nu|sigma|Q) = I(nu|sigma|Q) - E_direct(nu|sigma|Q);
+    H_direct(nu|Q|i) = contract(sigma,G_direct(nu|sigma|Q),C_mo(sigma|i));
+    M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i),4e8,&Q);
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
     std::cout << "Time (s): " << seconds << "\n";
     std::cout << "MFLOPS/S: " << flops/(1e6*seconds) << "\n";
-#endif
 
 #if 0
     cout << "===========================\n";

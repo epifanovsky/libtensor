@@ -251,6 +251,8 @@ void sparse_loop_list::_run_internal(kern_t& kernel,
             }
 
             //Call kernel
+            //__asm__ __volatile__("int $3"); 
+            //#pragma forceinline recursive
             kernel(block_ptrs,bispace_block_dims);
         }
         else

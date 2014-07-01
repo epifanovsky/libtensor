@@ -81,6 +81,7 @@ template<typename T>
 void libtensor::block_permute_kernel<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
+#ifdef LIBTENSOR_DEBUG 
 	//One input one output?
 	if(ptrs.size() != dim_lists.size() || ptrs.size() != 2)
 	{
@@ -111,6 +112,7 @@ void libtensor::block_permute_kernel<T>::operator()(
 					__FILE__, __LINE__, "invalid output dimensions requested");
     	}
     }
+#endif
 
     permute(ptrs[0],ptrs[1],dim_lists[0],dim_lists[1]);
 }

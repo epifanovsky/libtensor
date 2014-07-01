@@ -38,6 +38,7 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_2d_ki_kj_permuted_loops();
     test_block_contract2_kernel_3d_2d();
     test_block_contract2_kernel_3d_3d_multi_index();
+    /*test_block_contract2_kernel_2d_3d_permute_output();*/
     test_block_contract2_kernel_matrix_vector_mult();
 
     test_block_subtract2_kernel_not_enough_dims_and_ptrs();
@@ -1403,6 +1404,127 @@ void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(l
     bc2k(ptrs,dim_lists);
 
     for(int i = 0; i < 10; ++i)
+    {
+        if(C_arr[i] != C_correct_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "block_contract2_kernel::operator(...) did not produce correct result");
+        }
+    }
+}
+
+void block_kernels_test::test_block_contract2_kernel_2d_3d_permute_output() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_3d_permute_output()";
+
+    //Cijl = Akj Bikl
+    //5x2x4  3x2  5x3x4
+    
+    double A_arr[6] =  { //k = 0
+                         1,2,
+                         //k = 1
+                         3,4,
+                         //k = 2
+                         5,6};
+    
+
+    double B_arr[60] = { //i = 0
+                         1,2,3,4,
+                         5,6,7,8,
+                         9,10,11,12,
+
+                         //i = 1
+                         13,14,15,16,
+                         17,18,19,20,
+                         21,22,23,24,
+
+                         //i = 2
+                         25,26,27,28,
+                         29,30,31,32,
+                         33,34,35,36,
+
+                         //i = 3
+                         37,38,39,40,
+                         41,42,43,44,
+                         45,46,47,48,
+
+                         //i = 4
+                         49,50,51,52,
+                         53,54,55,56,
+                         57,58,59,60};
+
+
+    double C_arr[40] = {0};
+
+    double C_correct_arr[40] = { //i = 0
+                                 61,70,79,88,
+                                 76,88,100,112,
+
+                                 //i = 1
+                                 169,178,187,196,
+                                 220,232,244,256,
+
+                                 
+                                 //i = 2
+                                 277,286,295,304,
+                                 364,376,388,400,
+
+                                 
+                                 //i = 3
+                                 385,394,403,412,
+                                 508,520,532,544,
+                                 
+                                 //i = 4
+                                 493,502,511,520,
+                                 652,664,676,688};
+
+
+    vector<double*> ptrs(1,C_arr);
+    ptrs.push_back(A_arr);
+    ptrs.push_back(B_arr);
+
+    //bispaces
+    sparse_bispace<1> spb_i(5);
+    sparse_bispace<1> spb_j(2);
+    sparse_bispace<1> spb_k(3);
+    sparse_bispace<1> spb_l(4);
+
+    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
+    bispaces.push_back(spb_k|spb_j);
+    bispaces.push_back(spb_i|spb_k|spb_l);
+
+    vector<block_loop> loops(4,block_loop(bispaces));
+    //i loop
+    loops[0].set_subspace_looped(0,0);
+    loops[0].set_subspace_looped(2,0);
+    //j loop
+    loops[1].set_subspace_looped(0,1);
+    loops[1].set_subspace_looped(1,1);
+    //l loop
+    loops[2].set_subspace_looped(0,2);
+    loops[2].set_subspace_looped(2,2);
+    //k loop
+    loops[3].set_subspace_looped(1,0);
+    loops[3].set_subspace_looped(2,1);
+
+    sparse_loop_list sll(loops,bispaces);
+
+    block_contract2_kernel<double> bc2k(sll);
+
+    size_t C_dim_list_arr[3] = {5,2,4};
+    size_t A_dim_list_arr[2] = {3,2};
+    size_t B_dim_list_arr[3] = {5,3,4};
+
+    vector<dim_list> dim_lists(1,dim_list(3));
+    dim_lists.push_back(dim_list(2));
+    dim_lists.push_back(dim_list(3));
+    for(size_t i = 0; i < 3; ++i) dim_lists[0][i] = C_dim_list_arr[i];
+    for(size_t i = 0; i < 2; ++i) dim_lists[1][i] = A_dim_list_arr[i];
+    for(size_t i = 0; i < 3; ++i) dim_lists[2][i] = B_dim_list_arr[i];
+
+    bc2k(ptrs,dim_lists);
+
+    for(int i = 0; i < 40; ++i)
     {
         if(C_arr[i] != C_correct_arr[i])
         {
