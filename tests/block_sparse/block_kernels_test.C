@@ -38,7 +38,7 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_2d_ki_kj_permuted_loops();
     test_block_contract2_kernel_3d_2d();
     test_block_contract2_kernel_3d_3d_multi_index();
-    /*test_block_contract2_kernel_2d_3d_permute_output();*/
+    test_block_contract2_kernel_2d_3d_permute_output();
     test_block_contract2_kernel_matrix_vector_mult();
 
     test_block_subtract2_kernel_not_enough_dims_and_ptrs();
