@@ -221,12 +221,12 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
         m_A_trans = mip.get_A_trans();
         m_B_trans = mip.get_B_trans();
 
-        //C permutation is the perm to get back CORRECT output. We need the reverse
-        runtime_permutation C_perm = mip.get_C_perm();
-        m_perms[0] = runtime_permutation(C_perm.get_order());
+        //We need the REVERSE permutation of C to get back the correct output
+        m_perms[0] = mip.get_C_perm();
+        runtime_permutation C_perm(m_perms[0].get_order());
         for(size_t i = 0; i < C_perm.get_order(); ++i)
         {
-            m_perms[0][C_perm[i]] = i;
+            C_perm[m_perms[0][i]] = i;
         }
         m_C_perm_kern = block_permute_kernel<T>(C_perm);
 
