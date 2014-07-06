@@ -20,7 +20,10 @@ void ctf_btod_distribute<N>::perform(ctf_block_tensor_wr_i<N, double> &dbt) {
 
     static const char method[] = "perform(ctf_block_tensor_wr_i<N, double>&)";
 
-    if(!m_bt.get_bis().equals(dbt.get_bis())) {
+    block_index_space<N> bis1(m_bt.get_bis()), bis2(dbt.get_bis());
+    bis1.match_splits();
+    bis2.match_splits();
+    if(!bis1.equals(bis2)) {
         throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
             "dbt");
     }
