@@ -22,7 +22,7 @@ extern bool count_flops;
 //extern double contract_seconds;
 
 template<typename T>
-class block_contract2_kernel: public libtensor::block_kernel_i<T>
+class block_contract2_kernel: public libtensor::block_kernel_i<block_contract2_kernel<T>,T>
 {
 private:
     static const char* k_clazz; //!< Class name
@@ -50,6 +50,7 @@ private:
     bool m_A_trans;
     bool m_B_trans;
     std::vector<runtime_permutation> m_perms;
+    block_permute_kernel<T> m_C_perm_kern;
     std::vector<block_permute_kernel<T> > m_perm_kerns;
     std::vector<runtime_permutation> m_ident_perms;
     std::vector<dim_list> m_perm_dim_lists;
@@ -85,6 +86,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(const block_contrac
                                                                                                      m_A_trans(rhs.m_A_trans),
                                                                                                      m_B_trans(rhs.m_B_trans),
                                                                                                      m_perms(rhs.m_perms),
+                                                                                                     m_C_perm_kern(rhs.m_C_perm_kern),
                                                                                                      m_perm_kerns(rhs.m_perm_kerns),
                                                                                                      m_ident_perms(rhs.m_ident_perms),
                                                                                                      m_perm_dim_lists(rhs.m_perm_dim_lists),
@@ -112,6 +114,7 @@ libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::oper
     m_A_trans = rhs.m_A_trans;
     m_B_trans = rhs.m_B_trans;
     m_perms = rhs.m_perms;
+    m_C_perm_kern = rhs.m_C_perm_kern;
     m_perm_kerns = rhs.m_perm_kerns;
     m_ident_perms = rhs.m_ident_perms;
     m_perm_dim_lists = rhs.m_perm_dim_lists;
@@ -121,7 +124,7 @@ libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::oper
     {
         if(m_perms[perm_idx] != m_ident_perms[perm_idx])
         {
-            m_perm_ptrs = new T[m_perm_ptr_sizes[perm_idx]];
+            m_perm_ptrs[perm_idx] = new T[m_perm_ptr_sizes[perm_idx]];
         }
     }
 }
@@ -143,6 +146,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
                                        m_dgemm_fp(NULL),
                                        m_perm_dim_lists(3),
                                        m_perms(3,runtime_permutation(0)),
+                                       m_C_perm_kern(runtime_permutation(0)),
                                        m_ident_perms(3,runtime_permutation(0)),
                                        m_perm_ptrs(3),
                                        m_perm_ptr_sizes(3),
@@ -216,8 +220,17 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
         matmul_isomorphism_params<double> mip(sll);
         m_A_trans = mip.get_A_trans();
         m_B_trans = mip.get_B_trans();
-        //Temporary measure for C until we support permuted C
-        m_perms[0] = runtime_permutation(bispaces[0].get_order());
+
+        //We need the REVERSE permutation of C to get back the correct output
+        m_perms[0] = mip.get_C_perm();
+        runtime_permutation C_perm(m_perms[0].get_order());
+        for(size_t i = 0; i < C_perm.get_order(); ++i)
+        {
+            C_perm[m_perms[0][i]] = i;
+        }
+        m_C_perm_kern = block_permute_kernel<T>(C_perm);
+
+
         m_perms[1] = mip.get_A_perm();
         m_perms[2] = mip.get_B_perm();
         m_ident_perms[0] = runtime_permutation(m_perms[0].get_order());
@@ -435,13 +448,18 @@ void libtensor::block_contract2_kernel<T>::operator ()(
         {
             for(size_t B_j_idx = m_n_contracted_inds; B_j_idx < m_block_orders[2]; ++B_j_idx)
             {
-                n *= dim_lists[2][B_j_idx];
+                n *= m_perm_dim_lists[2][B_j_idx];
             }
             ldb = n;
         }
         ldc = n;
 
         (*m_dgemm_fp)(NULL,m,n,k,m_perm_ptrs[1],lda,m_perm_ptrs[2],ldb,m_perm_ptrs[0],ldc,1.0);
+
+        if(m_perms[0] != m_ident_perms[0])
+        {
+            m_C_perm_kern.permute(ptrs[0],m_perm_ptrs[0],dim_lists[0],m_perm_dim_lists[0]);
+        }
         if(count_flops)
         {
             flops += 2*m*n*k;

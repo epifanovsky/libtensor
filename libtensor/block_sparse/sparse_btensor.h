@@ -60,15 +60,8 @@ const char *sparse_btensor<N,T>::k_clazz = "sparse_btensor<N,T>";
 template<size_t N,typename T>
 sparse_btensor<N,T>::sparse_btensor(const sparse_bispace<N>& the_bispace,T* mem,bool already_block_major) : m_bispace(the_bispace)
 {
-    //Determine size
-    size_t size = 1;
-    for(size_t i = 0; i < N; ++i)
-    {
-        size *= the_bispace[i].get_dim();
-    }
-
     //Alloc storage
-    m_data_ptr = new T[size];
+    m_data_ptr = new T[the_bispace.get_nnz()];
 
     //Create loops
 

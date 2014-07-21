@@ -13,7 +13,7 @@
 namespace libtensor {
 
 template<typename T>
-class block_add2_kernel: public libtensor::block_kernel_i<T>
+class block_add2_kernel: public libtensor::block_kernel_i<block_add2_kernel<T>,T>
 {
 private:
     static const char* k_clazz; //!< Class name
