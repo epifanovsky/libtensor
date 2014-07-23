@@ -2,7 +2,7 @@
 #include <libtensor/block_tensor/btod_dirsum.h>
 #include <libtensor/expr/dag/node_dirsum.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include "metaprog.h"
+#include <libtensor/expr/metaprog.h>
 #include "tensor_from_node.h"
 #include "eval_btensor_double_dirsum.h"
 

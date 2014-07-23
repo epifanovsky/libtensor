@@ -4,7 +4,7 @@
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include "metaprog.h" // for instantiate_template_1
+#include <libtensor/expr/metaprog.h> // for instantiate_template_1
 #include "tensor_from_node.h"
 #include "eval_btensor_double_add.h"
 #include "eval_btensor_double_autoselect.h"

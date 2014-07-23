@@ -6,7 +6,7 @@
 #include <libtensor/expr/eval/eval_exception.h>
 #include "eval_btensor_double_autoselect.h"
 #include "eval_btensor_double_symm.h"
-#include "metaprog.h"
+#include <libtensor/expr/metaprog.h>
 #include "tensor_from_node.h"
 
 namespace libtensor {

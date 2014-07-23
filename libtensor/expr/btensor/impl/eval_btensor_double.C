@@ -10,7 +10,7 @@
 #include "eval_btensor_double_dot_product.h"
 #include "eval_btensor_double_trace.h"
 #include "eval_tree_builder_btensor.h"
-#include "metaprog.h"
+#include <libtensor/expr/metaprog.h>
 #include "node_interm.h"
 #include "tensor_from_node.h"
 
