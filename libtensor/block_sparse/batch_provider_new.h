@@ -3,6 +3,7 @@
 
 #include "gen_sparse_btensor.h"
 #include "batch_kernel_permute.h"
+#include "batch_kernel_contract2.h"
 #include "../expr/dag/node_assign.h"
 #include "../expr/dag/node_transform.h"
 #include "../expr/dag/node_contract.h"
@@ -29,19 +30,46 @@ public:
         size_t n_tensors_processed = (NC == 0 ? 0 : (NA == 0 ? 1 : (NB == 0 ? 2 : 3)));
         if(n_tensors_processed == m_edges.size() - 1)
         {
-            const node& n_0 = m_tree.get_vertex(m_edges[0]);
             const node& op_node = m_tree.get_vertex(m_edges.back());
-            if(op_node.check_type<node_transform_base>())
+            const node& n_0 = m_tree.get_vertex(m_edges[0]);
+            const node_ident_any_tensor<NC,T>& n_0_concrete = dynamic_cast< const node_ident_any_tensor<NC,T>& >(n_0);
+            gen_sparse_btensor<NC,T>& C = dynamic_cast< gen_sparse_btensor<NC,T>& >(n_0_concrete.get_tensor());
+            if(n_tensors_processed > 1)
             {
                 const node& n_1 = m_tree.get_vertex(m_edges[1]);
-                const node_ident_any_tensor<NC,T>& n_0_concrete = dynamic_cast< const node_ident_any_tensor<NC,T>& >(n_0);
                 const node_ident_any_tensor<NA,T>& n_1_concrete = dynamic_cast< const node_ident_any_tensor<NA,T>& >(n_1);
-                gen_sparse_btensor<NC,T>& C = dynamic_cast< gen_sparse_btensor<NC,T>& >(n_0_concrete.get_tensor());
                 gen_sparse_btensor<NA,T>& A = dynamic_cast< gen_sparse_btensor<NA,T>& >(n_1_concrete.get_tensor());
                 m_ptrs[1] = (T*)A.get_data_ptr();
 
-                const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(op_node);
-                kern = new batch_kernel_permute<T>(C,A,n_tf.get_perm());
+                if(n_tensors_processed > 2)
+                {
+                    const node& n_2 = m_tree.get_vertex(m_edges[2]);
+                    const node_ident_any_tensor<NB,T>& n_2_concrete = dynamic_cast< const node_ident_any_tensor<NB,T>& >(n_2);
+                    gen_sparse_btensor<NB,T>& B = dynamic_cast< gen_sparse_btensor<NB,T>& >(n_2_concrete.get_tensor());
+                    m_ptrs[2] = (T*)B.get_data_ptr();
+                    if(op_node.check_type<node_contract>())
+                    {
+                        const node_contract& n_c = dynamic_cast< const node_contract& >(op_node);
+                        kern = new batch_kernel_contract2<T>(C,A,B,n_c.get_map());
+                    }
+                    else
+                    {
+                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                                __FILE__, __LINE__, "Invalid node type");
+                    }
+                }
+                else if(op_node.check_type<node_transform_base>())
+                {
+                    {
+                        const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(op_node);
+                        kern = new batch_kernel_permute<T>(C,A,n_tf.get_perm());
+                    }
+                }
+                else
+                {
+                    throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                            __FILE__, __LINE__, "Invalid node type");
+                }
             }
         }
         else
@@ -80,58 +108,6 @@ public:
         }
     }
 };
-
-
-
-
-
-template<typename T>
-batch_kernel<T>* dispatch_one(const node& n_one,const node& n_two,const node& op_node)
-{
-    switch(n_one.get_n())
-    {
-        case 3:
-            const node_ident_any_tensor<3,T>& n_at = dynamic_cast< const node_ident_any_tensor<3,T>& >(n_one);
-            return dispatch_two(dynamic_cast< const gen_sparse_btensor<3,T>& >(n_at.get_tensor()),n_two,op_node);
-    }
-}
-
-template<size_t M,typename T>
-batch_kernel<T>* dispatch_two(const gen_sparse_btensor<M,T>& input_one,const node& n_two,const node& op_node)
-{
-    switch(n_two.get_n())
-    {
-        case 3:
-            const node_ident_any_tensor<3,T>& n_at = dynamic_cast< const node_ident_any_tensor<3,T>& >(n_two);
-            return dispatch_op(input_one,dynamic_cast< const gen_sparse_btensor<3,T>& >(n_at.get_tensor()),op_node);
-    }
-}
-
-template<size_t M,size_t N,typename T>
-batch_kernel<T>* dispatch_op(const gen_sparse_btensor<M,T>& input_one,const gen_sparse_btensor<N,T>& input_two,const node& op_node)
-{
-    if(op_node.check_type<node_transform_base>())
-    {
-        const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(op_node);
-        return new batch_kernel_permute<T>(input_one,input_two,n_tf.get_perm());
-    }
-    else
-    {
-        throw bad_parameter(g_ns,"dispatch_op","",__FILE__, __LINE__,
-            "Unsupported op node type");
-    }
-}
-
-template<typename T>
-T* get_data_ptr_from_node(const node& n_one)
-{
-    switch(n_one.get_n())
-    {
-        case 3:
-            const node_ident_any_tensor<3,T>& n_at = dynamic_cast< const node_ident_any_tensor<3,T>& >(n_one);
-            return (T*)static_cast< gen_sparse_btensor<3,T>& >(n_at.get_tensor()).get_data_ptr();
-    }
-}
 
 } // namespace expr
 

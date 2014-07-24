@@ -19,7 +19,7 @@ using namespace expr;
 void batch_provider_test::perform() throw(libtest::test_exception) 
 {
     test_permute_3d_sparse_120();
-    /*test_contract2();*/
+    test_contract2();
 }
 
 void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_exception)
