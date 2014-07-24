@@ -14,8 +14,9 @@ class batch_kernel_permute : public batch_kernel<T>
 public:
     static const char* k_clazz; //!< Class name
 
-    template<size_t N>
-    batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<N,T>& rhs,const idx_list& perm_entries);
+    //Need to allow different orders in order to dispatch correctly
+    template<size_t N,size_t M>
+    batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<M,T>& rhs,const idx_list& perm_entries);
     virtual void generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches);
 
     sparse_loop_list* m_sll_ptr;
@@ -29,9 +30,12 @@ public:
 template<typename T>
 const char* batch_kernel_permute<T>::k_clazz = "batch_kernel_permute";
 
-template<typename T> template<size_t N>
-batch_kernel_permute<T>::batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<N,T>& rhs,const idx_list& perm_entries)
+template<typename T> template<size_t N,size_t M>
+batch_kernel_permute<T>::batch_kernel_permute(const gen_sparse_btensor<N,T>& lhs,const gen_sparse_btensor<M,T>& rhs,const idx_list& perm_entries)
 {
+        if(N != M) 
+            throw bad_parameter(g_ns, k_clazz,"generate_batch(...)",__FILE__, __LINE__,
+                "Order of tensors in permutation must match");
         std::vector<sparse_bispace_any_order> bispaces(1,lhs.get_bispace());
         bispaces.push_back(rhs.get_bispace());
         std::vector<block_loop> loops;
