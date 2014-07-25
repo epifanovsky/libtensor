@@ -22,8 +22,10 @@ private:
     const expr_tree::edge_list_t& m_edges;
     batch_kernel<T>** m_kern; //Have to cache in a member var to pass through dispatch_1
     std::vector<T*> m_ptrs;
+    std::vector<sparse_bispace_any_order> m_bispaces;
 public:
     std::vector<T*> get_ptrs() { return m_ptrs; }
+    std::vector<sparse_bispace_any_order> get_bispaces() { return m_bispaces; }
     void build_kernel(batch_kernel<T>*& kern)
     {
         m_kern = &kern;
@@ -34,12 +36,14 @@ public:
             const node& n_0 = m_tree.get_vertex(m_edges[0]);
             const node_ident_any_tensor<NC,T>& n_0_concrete = dynamic_cast< const node_ident_any_tensor<NC,T>& >(n_0);
             gen_sparse_btensor<NC,T>& C = dynamic_cast< gen_sparse_btensor<NC,T>& >(n_0_concrete.get_tensor());
+            m_bispaces.push_back(C.get_bispace());
             if(n_tensors_processed > 1)
             {
                 const node& n_1 = m_tree.get_vertex(m_edges[1]);
                 const node_ident_any_tensor<NA,T>& n_1_concrete = dynamic_cast< const node_ident_any_tensor<NA,T>& >(n_1);
                 gen_sparse_btensor<NA,T>& A = dynamic_cast< gen_sparse_btensor<NA,T>& >(n_1_concrete.get_tensor());
                 m_ptrs[1] = (T*)A.get_data_ptr();
+                m_bispaces.push_back(A.get_bispace());
 
                 if(n_tensors_processed > 2)
                 {
@@ -47,6 +51,8 @@ public:
                     const node_ident_any_tensor<NB,T>& n_2_concrete = dynamic_cast< const node_ident_any_tensor<NB,T>& >(n_2);
                     gen_sparse_btensor<NB,T>& B = dynamic_cast< gen_sparse_btensor<NB,T>& >(n_2_concrete.get_tensor());
                     m_ptrs[2] = (T*)B.get_data_ptr();
+                    m_bispaces.push_back(B.get_bispace());
+
                     if(op_node.check_type<node_contract>())
                     {
                         const node_contract& n_c = dynamic_cast< const node_contract& >(op_node);
@@ -82,7 +88,7 @@ public:
 
     kernel_builder(const expr_tree& tree,const expr_tree::edge_list_t& edges) : m_tree(tree),m_edges(edges),m_kern(NULL) 
     {
-        m_ptrs.resize(m_edges.size() - 1);
+        m_ptrs.resize(m_edges.size() - 1,NULL);
     }
 
     template<size_t M>
@@ -93,18 +99,21 @@ public:
             kernel_builder<T,M,0,0> kb(m_tree,m_edges);
             kb.build_kernel(*m_kern);
             m_ptrs = kb.get_ptrs();
+            m_bispaces = kb.get_bispaces();
         }
         else if(NA == 0)
         {
             kernel_builder<T,NC,M,0> kb(m_tree,m_edges);
             kb.build_kernel(*m_kern);
             m_ptrs = kb.get_ptrs();
+            m_bispaces = kb.get_bispaces();
         }
         else if(NB == 0)
         {
             kernel_builder<T,NC,NA,M> kb(m_tree,m_edges);
             kb.build_kernel(*m_kern);
             m_ptrs = kb.get_ptrs();
+            m_bispaces = kb.get_bispaces();
         }
     }
 };
@@ -117,10 +126,13 @@ class batch_provider_new
 private:
     batch_kernel<T>* m_kern;
     std::vector<T*> m_ptrs;
+    std::vector<sparse_bispace_any_order> m_bispaces;
+    std::vector<batch_provider_new<T>*> m_suppliers;
 public:
     static const char* k_clazz; //!< Class name
     batch_provider_new(const expr::expr_tree& tree); 
     void get_batch(T* output_ptr); 
+    ~batch_provider_new();
 };
 
 template<typename T>
@@ -173,12 +185,45 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
     kernel_builder<T> kb(tree,edges);
     kb.build_kernel(m_kern);
     m_ptrs = kb.get_ptrs();
+    m_bispaces = kb.get_bispaces();
+
+    m_suppliers.resize(m_ptrs.size(),NULL);
+    //Create child batch providers for direct tensors used as inputs to this one 
+    for(size_t i = 0; i < input_edges.size(); ++i)
+    {
+        if(m_ptrs[i+1] == NULL)
+        {
+            m_suppliers[i+1] = new batch_provider_new<T>(tree.get_subtree(input_edges[i]));
+            m_ptrs[i+1] = new T[m_bispaces[i+1].get_nnz()];
+        }
+    }
 }
+
+template<typename T>
+batch_provider_new<T>::~batch_provider_new()
+{
+    for(size_t i = 0; i < m_suppliers.size(); ++i)
+    {
+        if(m_suppliers[i] != NULL)
+        {
+            delete m_suppliers[i];
+            delete m_ptrs[i];
+        }
+    }
+}
+
 
 template<typename T>
 void batch_provider_new<T>::get_batch(T* output_ptr)
 { 
     m_ptrs[0] = output_ptr; 
+    for(size_t i = 1; i < m_ptrs.size(); ++i)
+    {
+        if(m_suppliers[i] != NULL)
+        {
+            m_suppliers[i]->get_batch(m_ptrs[i]);
+        }
+    }
     m_kern->generate_batch(m_ptrs,bispace_batch_map()); 
 }
 

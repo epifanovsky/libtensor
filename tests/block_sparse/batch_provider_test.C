@@ -10,6 +10,7 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/block_sparse/sparse_btensor_new.h>
+#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
 #include <libtensor/block_sparse/batch_provider_new.h>
 
 using namespace std;
@@ -103,7 +104,7 @@ void batch_provider_test::test_contract2_permute_nested() throw(libtest::test_ex
 
     sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
     sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_btensor_new<2> C(tf.spb_C,tf.C_arr,true);
+    direct_sparse_btensor_new<2> C(tf.spb_C);
     sparse_btensor_new<2> D(tf.spb_D);
 
     node_assign root(2);
@@ -139,7 +140,7 @@ void batch_provider_test::test_contract2_permute_nested() throw(libtest::test_ex
     if(D != D_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "batch_provider::get_batch(...) did not return correct value fo contract2_permute_nested test case");
+                "batch_provider::get_batch(...) did not return correct value for contract2_permute_nested test case");
     }
 }
 
