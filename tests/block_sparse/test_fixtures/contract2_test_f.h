@@ -13,13 +13,15 @@ private:
     static sparse_bispace<1> init_j(void);
     static sparse_bispace<1> init_k(void);
     static sparse_bispace<1> init_l(void);
-public:
+
     static const size_t ij_sparsity[4][2];
     static const size_t kl_sparsity[4][2];
 
     static const double s_A_arr[45];
     static const double s_B_arr[60];
     static const double s_C_arr[18];
+public:
+
 
     double A_arr[45];
     double B_arr[60];
