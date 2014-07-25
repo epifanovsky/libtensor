@@ -148,7 +148,27 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
 
     expr_tree::edge_list_t edges = expr_tree::edge_list_t(1,children[0]);
     expr_tree::edge_list_t input_edges = tree.get_edges_out(children[1]);
-    edges.insert(edges.end(),input_edges.begin(),input_edges.end());
+
+    //Figure out which inputs correspond to tensors and which are nested expressions
+    for(size_t i = 0; i < input_edges.size(); ++i)
+    {
+        const node& cur_node = tree.get_vertex(input_edges[i]);
+        //Right now we add spurious assign nodes for direct tensors
+        if(cur_node.check_type<node_ident>())
+        {
+           edges.push_back(input_edges[i]);
+        }
+        else
+        {
+           if(!cur_node.check_type<node_assign>())
+           {
+               throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                       "Unsupported node type");
+           }
+           //Save the tensor output from this assignment
+           edges.push_back(tree.get_edges_out(input_edges[i])[0]);
+        }
+    }
     edges.push_back(children[1]);
     kernel_builder<T> kb(tree,edges);
     kb.build_kernel(m_kern);
