@@ -224,6 +224,8 @@ void batch_provider_new<T>::get_batch(T* output_ptr)
             m_suppliers[i]->get_batch(m_ptrs[i]);
         }
     }
+    //TODO: REMOVE HACK TO MAKE CONTRACTION WORK!!!
+    memset(output_ptr,0,m_bispaces[0].get_nnz()*sizeof(T));
     m_kern->generate_batch(m_ptrs,bispace_batch_map()); 
 }
 
