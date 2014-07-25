@@ -66,7 +66,7 @@ private:
             new_direct_tensors.push_back(0);
             new_direct_tensors.push_back(1);
         }
-        block_add2_kernel<T> ba2k;
+        block_add2_kernel<T> ba2k(1,1);
         T* saved_B_ptr = m_ptrs[2];
         m_ptrs[2] = m_ptrs[1];
         m_ptrs[1] = m_ptrs[0];

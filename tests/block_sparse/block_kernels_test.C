@@ -3,9 +3,11 @@
 #include <libtensor/block_sparse/block_permute_kernel.h>
 #include <libtensor/block_sparse/block_contract2_kernel.h>
 #include <libtensor/block_sparse/block_subtract2_kernel.h>
+#include <libtensor/block_sparse/block_add2_kernel.h>
 #include <libtensor/expr/iface/letter.h>
 #include <sstream>
 #include "block_kernels_test.h" 
+#include "test_fixtures/permute_3d_sparse_120_test_f.h"
 
 using namespace std;
 
@@ -44,6 +46,8 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_subtract2_kernel_not_enough_dims_and_ptrs();
     test_block_subtract2_kernel_invalid_dims();
     test_block_subtract2_kernel_2d();
+
+    test_block_add2_kernel_3d();
 }
 
 
@@ -1726,6 +1730,42 @@ void block_kernels_test::test_block_subtract2_kernel_2d() throw(libtest::test_ex
 					"block_subtract2_kernel::operator(...) returned incorrect output");
 		}
 	}
+}
+
+void block_kernels_test::test_block_add2_kernel_3d() throw(libtest::test_exception)
+{
+    static const char *test_name = "block_kernels_test::test_block_add2_kernel_3d()";
+
+    permute_3d_sparse_120_test_f tf;
+
+    double C_arr[6] = {0};
+    vector<double*> ptrs(1,C_arr);
+    ptrs.push_back(tf.input_arr+29);
+    ptrs.push_back(tf.input_arr);
+
+    dim_list C_dims(1,2);
+    C_dims.push_back(3);
+    dim_list A_dims(1,2);
+    A_dims.push_back(3);
+    dim_list B_dims(1,2);
+    B_dims.push_back(3);
+
+    vector<dim_list> dim_lists(1,C_dims);
+    dim_lists.push_back(A_dims);
+    dim_lists.push_back(B_dims);
+
+    block_add2_kernel<double> ba2k(1,-0.5);
+    ba2k(ptrs,dim_lists);
+
+    double C_correct_arr[6] = {54.5,55,55.5,56,56.5,57};
+    for(size_t i = 0; i < 6 ; ++i)
+    {
+        if(C_arr[i] != C_correct_arr[i])
+        {
+			fail_test(test_name,__FILE__,__LINE__,
+					"block_add2_kernel::operator(...) returned incorrect output");
+        }
+    }
 }
 
 } // namespace libtensor

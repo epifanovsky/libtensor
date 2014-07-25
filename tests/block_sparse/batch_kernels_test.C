@@ -13,7 +13,7 @@ namespace libtensor {
 void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_permute_A_direct();
     test_batch_kernel_contract2();
-    test_batch_kernel_subtract2();
+    test_batch_kernel_add2();
 }
 
 //A(i|j|k) = B(k|i|j)
@@ -104,7 +104,7 @@ void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_excep
     }
 }
 
-void batch_kernels_test::test_batch_kernel_subtract2() throw(libtest::test_exception)
+void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
 {
     static const char *test_name = "batch_kernels_test::test_batch_kernel_contract2()";
 }

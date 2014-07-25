@@ -17,7 +17,10 @@ class block_add2_kernel: public libtensor::block_kernel_i<block_add2_kernel<T>,T
 {
 private:
     static const char* k_clazz; //!< Class name
+    T m_lhs_scalar;
+    T m_rhs_scalar;
 public:
+    block_add2_kernel(T lhs_scalar,T rhs_scalar) : m_lhs_scalar(lhs_scalar),m_rhs_scalar(rhs_scalar) {}
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
@@ -30,6 +33,7 @@ template<typename T>
 void libtensor::block_add2_kernel<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
+#ifdef LIBTENSOR_DEBUG
 	if(dim_lists.size() != 3 || ptrs.size() != dim_lists.size())
 	{
 		throw bad_parameter(g_ns, k_clazz,"operator()(...)",
@@ -53,10 +57,11 @@ void libtensor::block_add2_kernel<T>::operator()(
 			if(cur_dims[j] != first_dims[j])
 			{
 				throw bad_parameter(g_ns, k_clazz,"operator()(...)",
-						__FILE__, __LINE__, "dimensions do not match. Permuted subtraction is not currently supported.");
+						__FILE__, __LINE__, "dimensions do not match. Permuted addition is not currently supported.");
 			}
 		}
 	}
+#endif
 
 	//Just do the add
 	size_t n_elements = 1;
@@ -67,7 +72,7 @@ void libtensor::block_add2_kernel<T>::operator()(
 
 	for(size_t i = 0; i < n_elements; ++i)
 	{
-		ptrs[0][i] = ptrs[1][i] + ptrs[2][i];
+		ptrs[0][i] = m_lhs_scalar*ptrs[1][i] + m_rhs_scalar*ptrs[2][i];
 	}
 }
 
