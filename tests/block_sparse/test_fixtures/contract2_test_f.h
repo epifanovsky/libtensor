@@ -6,6 +6,7 @@
 
 namespace libtensor {
 
+//C(i|l) = A(i|j|k) B(j|k|l) 
 class contract2_test_f 
 {
 private:

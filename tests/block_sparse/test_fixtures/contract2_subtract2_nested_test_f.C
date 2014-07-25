@@ -13,6 +13,7 @@ sparse_bispace<1> contract2_subtract2_nested_test_f::init_m()
     std::vector<size_t> split_points_m;
     split_points_m.push_back(3);
     spb_m.split(split_points_m);
+    return spb_m;
 }
 
 

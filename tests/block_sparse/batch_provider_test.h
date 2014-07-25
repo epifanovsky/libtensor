@@ -14,6 +14,7 @@ private:
     void test_permute_3d_sparse_120() throw(libtest::test_exception);
     void test_contract2() throw(libtest::test_exception);
     void test_contract2_permute_nested() throw(libtest::test_exception);
+    void test_contract2_subtract2_nested() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
