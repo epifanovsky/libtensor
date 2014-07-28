@@ -29,7 +29,7 @@ private:
 public:
     /** \brief Constructs a sparse block tensor object and populates it with the entries from mem if specified
      **/
-    sparse_btensor_new(const sparse_bispace<N>& the_bispace,T* mem = NULL,bool already_block_major = false);
+    sparse_btensor_new(const sparse_bispace<N>& the_bispace,const T* mem = NULL,bool already_block_major = false);
     virtual ~sparse_btensor_new();
 
     //Copy constructor
@@ -60,7 +60,7 @@ template<size_t N,typename T>
 const char *sparse_btensor_new<N,T>::k_clazz = "sparse_btensor_new<N,T>";
 
 template<size_t N,typename T>
-sparse_btensor_new<N,T>::sparse_btensor_new(const sparse_bispace<N>& the_bispace,T* mem,bool already_block_major) : m_bispace(the_bispace)
+sparse_btensor_new<N,T>::sparse_btensor_new(const sparse_bispace<N>& the_bispace,const T* mem,bool already_block_major) : m_bispace(the_bispace)
 {
     //Determine size
     size_t size = 1;

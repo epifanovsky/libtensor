@@ -24,7 +24,7 @@ private:
     std::vector<size_t> cur_block_indices;
     void _load(T* output_ptr,const T* input_ptr,const dim_list& output_dims,size_t level=0);
 public:
-    block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr);
+    block_load_kernel(const sparse_bispace_any_order& bispace,const T* data_ptr);
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
@@ -32,7 +32,7 @@ template<typename T>
 const char* block_load_kernel<T>::k_clazz = "block_load_kernel<T>";
 
 template<typename T>
-block_load_kernel<T>::block_load_kernel(const sparse_bispace_any_order& bispace,T* data_ptr) : m_data_ptr(data_ptr), m_bispace(bispace)
+block_load_kernel<T>::block_load_kernel(const sparse_bispace_any_order& bispace,const T* data_ptr) : m_data_ptr(data_ptr), m_bispace(bispace)
 {
 	//Sparsity is unsupported for row major loading
     if(m_bispace.get_n_sparse_groups() > 0)

@@ -9,7 +9,7 @@ namespace libtensor {
 //C(i|l) = A(i|j|k) B(j|k|l) 
 class contract2_test_f 
 {
-private:
+protected:
     static sparse_bispace<1> init_i(void);
     static sparse_bispace<1> init_j(void);
     static sparse_bispace<1> init_k(void);

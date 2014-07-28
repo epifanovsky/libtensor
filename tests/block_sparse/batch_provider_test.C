@@ -151,62 +151,10 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
     static const char *test_name = "batch_provider_test::test_contract2_subtract2_nested()";
     contract2_subtract2_nested_test_f tf; 
 
-    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    direct_sparse_btensor_new<2> C(tf.spb_C);
-    sparse_btensor_new<2> F(tf.spb_C,tf.F_arr,true);
-    direct_sparse_btensor_new<2> G(tf.spb_C);
-    sparse_btensor_new<2> D(tf.spb_D,tf.D_arr,true);
-    sparse_btensor_new<2> E(tf.spb_E);
+    batch_provider_new<double> bp(tf.tree);
+    bp.get_batch((double*)tf.E.get_data_ptr());
 
-    node_assign root(2);
-    expr_tree e(root);
-    expr_tree::node_id_t root_id = e.get_root();
-    e.add(root_id, node_ident_any_tensor<2,double>(E));
-
-    //The numbers UP toward the  leaves fo the tree (the earliest steps)
-    //Confusing I know
-    multimap<size_t,size_t> contr_map_0;
-    contr_map_0.insert(idx_pair(1,3));
-    node_contract contr_node_0(2,contr_map_0,true);
-    expr_tree::node_id_t contr_node_id_0 = e.add(root_id,contr_node_0);
-    e.add(contr_node_id_0,node_ident_any_tensor<2,double>(D));
-
-
-    node_assign interm_assign_node_0(2);
-    expr_tree::node_id_t interm_assign_node_id_0 = e.add(contr_node_id_0,interm_assign_node_0);
-    e.add(interm_assign_node_id_0,node_ident_any_tensor<2,double>(G));
-
-    //Subtraction node LHS
-    node_add n_add(2); 
-    expr_tree::node_id_t n_add_id = e.add(interm_assign_node_id_0,n_add);
-
-    node_assign interm_assign_node_1(2);
-    expr_tree::node_id_t interm_assign_node_id_1 = e.add(n_add_id,interm_assign_node_1);
-    e.add(interm_assign_node_id_1,node_ident_any_tensor<2,double>(C));
-
-    multimap<size_t,size_t> contr_map_1;
-    contr_map_1.insert(idx_pair(1,3));
-    contr_map_1.insert(idx_pair(2,4));
-    node_contract contr_node_1(2,contr_map_1,true);
-    expr_tree::node_id_t contr_node_id_1 = e.add(interm_assign_node_id_1,contr_node_1);
-    e.add(contr_node_id_1,node_ident_any_tensor<3,double>(A));
-    e.add(contr_node_id_1,node_ident_any_tensor<3,double>(B));
-
-    //Subtraction node RHS
-    idx_list perm_entries(1,0);
-    perm_entries.push_back(1);
-    node_transform<double> transf_node(perm_entries,scalar_transf<double>(-1));
-    expr_tree::node_id_t n_transf_id = e.add(n_add_id,transf_node);
-
-    e.add(n_transf_id,node_ident_any_tensor<2,double>(F));
-
-    batch_provider_new<double> bp(e);
-    bp.get_batch((double*)E.get_data_ptr());
-
-
-    sparse_btensor_new<2> E_correct(tf.spb_E,tf.E_arr,true);
-    if(E != E_correct)
+    if(tf.E != tf.E_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batch(...) did not return correct value for contract2_subtract2_nested test case");
