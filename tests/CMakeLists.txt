@@ -268,6 +268,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/batch_list_builder_test.C
     block_sparse/subspace_iterator_test.C
     block_sparse/batch_provider_test.C
+    block_sparse/connectivity_test.C
 
     block_sparse/test_fixtures/permute_3d_sparse_120_test_f.C
     block_sparse/test_fixtures/contract2_test_f.C

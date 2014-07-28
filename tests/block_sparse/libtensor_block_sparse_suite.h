@@ -18,6 +18,7 @@
 #include "batch_list_builder_test.h"
 #include "subspace_iterator_test.h"
 #include "batch_provider_test.h"
+#include "connectivity_test.h"
 
 using libtest::unit_test_factory;
 
@@ -52,6 +53,7 @@ private:
     unit_test_factory<batch_list_builder_test> m_utf_batch_list_builder;
     unit_test_factory<subspace_iterator_test> m_utf_subspace_iterator;
     unit_test_factory<batch_provider_test> m_utf_batch_provider;
+    unit_test_factory<connectivity_test> m_utf_connectivity;
 public:
     //! Creates the suite
     libtensor_sparse_suite();
