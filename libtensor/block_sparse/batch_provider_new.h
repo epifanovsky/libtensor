@@ -70,6 +70,7 @@ public:
                             const node& cur_node = m_tree.get_vertex(add_children[i]);
                             if(cur_node.check_type<node_transform<T> >())
                             {
+                                //TODO: NEED TO CONSIDER PERMUTATION HERE!
                                 const node_transform<T>& n_tf = dynamic_cast< const node_transform<T>& >(cur_node);
                                 T cur_scalar = n_tf.get_coeff().get_coeff(); 
                                 if(i == 0) lhs_scalar = cur_scalar;
