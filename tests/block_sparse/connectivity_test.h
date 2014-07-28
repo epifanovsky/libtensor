@@ -13,6 +13,7 @@ public:
 private:
     void test_addition() throw(libtest::test_exception);
     void test_contract2() throw(libtest::test_exception);
+    void test_permute() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

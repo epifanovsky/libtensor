@@ -1,5 +1,6 @@
 #include "connectivity_test.h"
 #include "test_fixtures/contract2_subtract2_nested_test_f.h"
+#include "test_fixtures/contract2_permute_nested_test_f.h"
 #include <libtensor/block_sparse/connectivity.h>
 
 
@@ -43,6 +44,7 @@ void connectivity_test::perform() throw(libtest::test_exception)
 {
     test_addition();
     test_contract2();
+    test_permute();
 }
 
 void connectivity_test::test_addition() throw(libtest::test_exception)
@@ -156,7 +158,35 @@ void connectivity_test::test_contract2() throw(libtest::test_exception)
     if(!verify_conn(conn_contr_1,conn_contr_1_correct_arr))
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "connectivity::operator(...) did not return correct value for contract test case 0");
+                "connectivity::operator(...) did not return correct value for contract test case 1");
+    }
+}
+
+void connectivity_test::test_permute() throw(libtest::test_exception)
+{
+    static const char *test_name = "connectivity_test::test_permute()";
+
+    contract2_permute_nested_test_f tf;
+    connectivity conn_perm(tf.tree);
+
+    size_t conn_perm_correct_arr[8] = { //tensor 0 subspace 0
+                                        1,1,
+
+                                        //tensor 0 subspace 1
+                                        1,0,
+
+                                        //tensor 1 subspace 0
+                                        0,1,
+
+                                        //tensor 1 subspace 1
+                                        0,0};
+
+                                         
+
+    if(!verify_conn(conn_perm,conn_perm_correct_arr))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "connectivity::operator(...) did not return correct value for permutation test case");
     }
 }
 

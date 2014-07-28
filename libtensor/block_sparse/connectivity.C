@@ -80,6 +80,17 @@ connectivity::connectivity(const expr_tree& tree)
             }
         }
     }
+    else if(n_op.check_type<node_transform_base>())
+    {
+        const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(n_op);
+        m_conn.resize(1+op_children.size(),std::vector<idx_pair_list>(NC));
+        vector<size_t> perm_entries = n_tf.get_perm();
+        for(size_t i = 0; i < NC; ++i)
+        {
+            m_conn[0][i].push_back(idx_pair(1,perm_entries[i]));
+            m_conn[1][perm_entries[i]].push_back(idx_pair(0,i));
+        }
+    }
     else
     {
         throw bad_parameter(g_ns,k_clazz,"connectivity(...)",__FILE__, __LINE__,
