@@ -1,10 +1,12 @@
 #include <libtensor/block_sparse/batch_kernel_permute.h>
 #include <libtensor/block_sparse/batch_kernel_contract2.h>
+#include <libtensor/block_sparse/batch_kernel_add2.h>
 #include <libtensor/block_sparse/sparse_btensor_new.h>
 #include <libtensor/block_sparse/direct_sparse_btensor_new.h>
 #include "batch_kernels_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/contract2_test_f.h"
+#include "test_fixtures/subtract2_test_f.h"
 
 using namespace std;
 
@@ -106,7 +108,29 @@ void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_excep
 
 void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
 {
-    static const char *test_name = "batch_kernels_test::test_batch_kernel_contract2()";
+    static const char *test_name = "batch_kernels_test::test_batch_kernel_add2()";
+
+    subtract2_test_f tf;
+
+    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
+    sparse_btensor_new<3> C(tf.spb_C);
+
+    batch_kernel_add2<double> bka2(C,A,B,1,-1);
+
+    //Test grabbing entire array
+    bispace_batch_map bbm;
+    vector<double*> ptrs(1,(double*)C.get_data_ptr());
+    ptrs.push_back((double*)A.get_data_ptr());
+    ptrs.push_back((double*)B.get_data_ptr());
+    bka2.generate_batch(ptrs,bbm);
+    sparse_btensor_new<3> C_correct(tf.spb_C,tf.C_arr,true);
+
+    if(C != C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_contract2::generate_batch(...) did not produce correct result");
+    }
 }
 
 } // namespace libtensor
