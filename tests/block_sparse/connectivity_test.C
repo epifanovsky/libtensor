@@ -42,6 +42,7 @@ bool verify_conn(const connectivity& conn,size_t (&correct_arr)[N])
 void connectivity_test::perform() throw(libtest::test_exception)
 {
     test_addition();
+    test_contract2();
 }
 
 void connectivity_test::test_addition() throw(libtest::test_exception)
@@ -86,6 +87,76 @@ void connectivity_test::test_addition() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "connectivity::operator(...) did not return correct value for addition test case");
+    }
+}
+
+void connectivity_test::test_contract2() throw(libtest::test_exception)
+{
+    static const char *test_name = "connectivity_test::test_contract2()";
+
+    contract2_subtract2_nested_test_f tf;
+    expr_tree& tree = tf.tree;
+    connectivity conn_contr_0(tree);
+
+    size_t conn_contr_0_correct_arr[12] = { //tensor 0 subspace 0
+                                            1,0,
+
+                                            //tensor 0 subspace 1
+                                            2,0,
+
+                                            //tensor 1 subspace 0
+                                            0,0,
+
+                                            //tensor 1 subspace 1
+                                            2,1,
+
+                                            //tensor 2 subspace 0
+                                            0,1,
+
+                                            //tensor 2 subspace 1
+                                            1,1};
+
+    if(!verify_conn(conn_contr_0,conn_contr_0_correct_arr))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "connectivity::operator(...) did not return correct value for contract test case 0");
+    }
+
+
+    expr_tree::edge_list_t assign_0_children = tree.get_edges_out(tree.get_root());
+    expr_tree::edge_list_t contract_0_children = tree.get_edges_out(assign_0_children[1]);
+    expr_tree::edge_list_t interm_assign_0_children = tree.get_edges_out(contract_0_children[1]);
+    expr_tree::edge_list_t addition_children = tree.get_edges_out(interm_assign_0_children[1]);
+    connectivity conn_contr_1(tree.get_subtree(addition_children[0]));
+
+    size_t conn_contr_1_correct_arr[16] = { //tensor 0 subspace 0
+                                            1,0,
+
+                                            //tensor 0 subspace 1
+                                            2,2,
+
+                                            //tensor 1 subspace 0
+                                            0,0,
+
+                                            //tensor 1 subspace 1
+                                            2,0,
+
+                                            //tensor 1 subspace 2
+                                            2,1,
+
+                                            //tensor 2 subspace 0 
+                                            1,1,
+
+                                            //tensor 2 subspace 1
+                                            1,2,
+
+                                            //tensor 2 subspace 2
+                                            0,1};
+
+    if(!verify_conn(conn_contr_1,conn_contr_1_correct_arr))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "connectivity::operator(...) did not return correct value for contract test case 0");
     }
 }
 
