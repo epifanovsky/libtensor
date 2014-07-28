@@ -211,6 +211,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/get_batches.C
     block_sparse/batch_list_builder.C
     block_sparse/subspace_iterator.C
+    block_sparse/connectivity.C
 )
 
 set(SRC_DIAG_TENSOR

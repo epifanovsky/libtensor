@@ -11,6 +11,7 @@ class connectivity_test: public libtest::unit_test
 public:
     virtual void perform() throw(libtest::test_exception);
 private:
+    void test_addition() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
