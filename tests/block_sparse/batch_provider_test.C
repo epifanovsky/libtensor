@@ -26,7 +26,7 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_permute_3d_sparse_120();
     test_contract2();
     test_contract2_permute_nested(); 
-    /*test_contract2_subtract2_nested();*/
+    test_contract2_subtract2_nested();
 }
 
 void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_exception)
@@ -183,6 +183,7 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
 
     node_assign interm_assign_node_1(2);
     expr_tree::node_id_t interm_assign_node_id_1 = e.add(n_add_id,interm_assign_node_1);
+    e.add(interm_assign_node_id_1,node_ident_any_tensor<2,double>(C));
 
     multimap<size_t,size_t> contr_map_1;
     contr_map_1.insert(idx_pair(1,3));

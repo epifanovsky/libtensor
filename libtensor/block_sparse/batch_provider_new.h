@@ -4,6 +4,7 @@
 #include "gen_sparse_btensor.h"
 #include "batch_kernel_permute.h"
 #include "batch_kernel_contract2.h"
+#include "batch_kernel_add2.h"
 #include "../expr/dag/node_assign.h"
 #include "../expr/dag/node_transform.h"
 #include "../expr/dag/node_contract.h"
@@ -57,6 +58,25 @@ public:
                     {
                         const node_contract& n_c = dynamic_cast< const node_contract& >(op_node);
                         kern = new batch_kernel_contract2<T>(C,A,B,n_c.get_map());
+                    }
+                    else if(op_node.check_type<node_add>())
+                    {
+                        const node_add& n_a = dynamic_cast< const node_add& >(op_node);
+                        expr_tree::edge_list_t add_children = m_tree.get_edges_out(m_edges.back());
+                        T lhs_scalar = 1;
+                        T rhs_scalar = 1;
+                        for(size_t i = 0; i < 2; ++i)
+                        {
+                            const node& cur_node = m_tree.get_vertex(add_children[i]);
+                            if(cur_node.check_type<node_transform<T> >())
+                            {
+                                const node_transform<T>& n_tf = dynamic_cast< const node_transform<T>& >(cur_node);
+                                T cur_scalar = n_tf.get_coeff().get_coeff(); 
+                                if(i == 0) lhs_scalar = cur_scalar;
+                                if(i == 1) rhs_scalar = cur_scalar;
+                            }
+                        }
+                        kern = new batch_kernel_add2<T>(C,A,B,lhs_scalar,rhs_scalar);
                     }
                     else
                     {
@@ -172,15 +192,39 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
         }
         else
         {
-           if(!cur_node.check_type<node_assign>())
-           {
-               throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
-                       "Unsupported node type");
-           }
-           //Save the tensor output from this assignment
-           edges.push_back(tree.get_edges_out(input_edges[i])[0]);
+            //If one of our inputs is scalar transformed, we ignore it for now
+            //Will deal with it when building kernel
+            if(cur_node.check_type<node_transform_base>())
+            {
+                expr_tree::node_id_t next_inter_node_id = tree.get_edges_out(input_edges[i])[0];
+                const node& next_inter_node = tree.get_vertex(next_inter_node_id);
+                if(next_inter_node.check_type<node_ident>())
+                {
+                    edges.push_back(next_inter_node_id);
+                }
+                else if(next_inter_node.check_type<node_assign>())
+                {
+                    edges.push_back(tree.get_edges_out(next_inter_node_id)[0]);
+                }
+                else
+                {
+                    throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                            "Unsupported node type");
+                }
+            }
+            else if(cur_node.check_type<node_assign>())
+            {
+                //Save the tensor output from this assignment
+                edges.push_back(tree.get_edges_out(input_edges[i])[0]);
+            }
+            else
+            {
+                throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                        "Unsupported node type");
+            }
         }
     }
+    //Operation node goes at the end
     edges.push_back(children[1]);
     kernel_builder<T> kb(tree,edges);
     kb.build_kernel(m_kern);
