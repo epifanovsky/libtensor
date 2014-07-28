@@ -104,42 +104,11 @@ void batch_provider_test::test_contract2_permute_nested() throw(libtest::test_ex
     static const char *test_name = "batch_provider_test::test_contract2_permute_nested()";
     contract2_permute_nested_test_f tf; 
 
-    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    direct_sparse_btensor_new<2> C(tf.spb_C);
-    sparse_btensor_new<2> D(tf.spb_D);
-
-    node_assign root(2);
-    expr_tree e(root);
-    expr_tree::node_id_t root_id = e.get_root();
-    e.add(root_id, node_ident_any_tensor<2,double>(D));
-
-    idx_list perm_entries(1,1);
-    perm_entries.push_back(0);
-    node_transform<double> perm_node(perm_entries, scalar_transf<double>());
-    expr_tree::node_id_t perm_node_id = e.add(root_id,perm_node);
+    batch_provider_new<double> bp(tf.tree);
+    bp.get_batch((double*)tf.D.get_data_ptr());
 
 
-    node_assign interm_assign_node(2);
-    expr_tree::node_id_t interm_assign_node_id = e.add(perm_node_id,interm_assign_node);
-    e.add(interm_assign_node_id,node_ident_any_tensor<2,double>(C));
-
-
-    multimap<size_t,size_t> contr_map;
-    contr_map.insert(idx_pair(1,3));
-    contr_map.insert(idx_pair(2,4));
-    node_contract contr_node(2,contr_map,true);
-    expr_tree::node_id_t contr_node_id = e.add(interm_assign_node_id,contr_node);
-
-    e.add(contr_node_id,node_ident_any_tensor<3,double>(A));
-    e.add(contr_node_id,node_ident_any_tensor<3,double>(B));
-
-    batch_provider_new<double> bp(e);
-    bp.get_batch((double*)D.get_data_ptr());
-
-
-    sparse_btensor_new<2> D_correct(tf.spb_D,tf.D_arr,true);
-    if(D != D_correct)
+    if(tf.D != tf.D_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batch(...) did not return correct value for contract2_permute_nested test case");
