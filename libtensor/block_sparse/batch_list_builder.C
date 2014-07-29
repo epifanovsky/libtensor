@@ -25,25 +25,6 @@ batch_list_builder::batch_list_builder(const vector< vector<sparse_bispace_any_o
     }
 }
 
-#if 0
-batch_list_builder::batch_list_builder(const vector< vector<labeled_bispace> >& labeled_bispace_groups,const letter& batched_index)
-{
-    for(size_t grp_idx = 0; grp_idx  < labeled_bispace_groups.size(); ++grp_idx)
-    {
-        const vector<labeled_bispace>& lbs = labeled_bispace_groups[grp_idx];
-        vector<subspace_iterator> iter_group;
-        for(size_t bispace_idx = 0; bispace_idx < lbs.size(); ++bispace_idx)
-        {
-            sparse_bispace_any_order bispace = lbs[bispace_idx].get_bispace();
-            size_t subspace_idx = lbs[bispace_idx].index_of(batched_index);
-            iter_group.push_back(subspace_iterator(bispace,subspace_idx));
-            m_end_idx = bispace[subspace_idx].get_n_blocks(); 
-        }
-        m_iter_groups.push_back(iter_group);
-    }
-}
-#endif
-
 idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
 {
     idx_pair_list batch_list;
