@@ -27,7 +27,8 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_contract2();
     test_contract2_permute_nested(); 
     test_contract2_subtract2_nested();
-    test_batchable_subspaces_recursion();
+    test_batchable_subspaces_recursion_addition();
+    test_batchable_subspaces_recursion_permutation();
 }
 
 void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_exception)
@@ -131,9 +132,9 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
     }
 }
 
-void batch_provider_test::test_batchable_subspaces_recursion() throw(libtest::test_exception)
+void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(libtest::test_exception)
 {
-    static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion()";
+    static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_addition()";
     class fake_batch_provider : public batch_provider_i<double>
     {
     public:
@@ -162,7 +163,43 @@ void batch_provider_test::test_batchable_subspaces_recursion() throw(libtest::te
     if(bp.get_batchable_subspaces() != idx_list(1,2))
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "batch_provider::get_batchable_subspaces(...) did not return correct value for basic recursion case");
+                "batch_provider::get_batchable_subspaces(...) did not return correct value for recursion case with addition");
+    }
+}
+
+void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_permutation()";
+    class fake_batch_provider : public batch_provider_i<double>
+    {
+    public:
+        virtual idx_list get_batchable_subspaces() const { return idx_list(1,2); }
+        virtual void get_batch(double* output_ptr) {}
+    };
+    sparse_bispace<1> spb_i(5);
+    direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
+    fake_batch_provider fbp;
+    A.set_batch_provider(fbp);
+    sparse_btensor_new<3> B(A.get_bispace());
+
+    node_assign root(3);
+    expr_tree tree(root);
+    expr_tree::node_id_t root_id = tree.get_root();
+    tree.add(root_id,node_ident_any_tensor<3,double>(B));
+    idx_list perm_entries(1,2);
+    perm_entries.push_back(1);
+    perm_entries.push_back(0);
+    node_transform<double> n_tf(perm_entries,scalar_transf<double>());
+    expr_tree::node_id_t n_tf_id = tree.add(root_id,n_tf);
+    tree.add(n_tf_id,node_ident_any_tensor<3,double>(A));
+    
+    batch_provider_new<double> bp(tree);
+
+
+    if(bp.get_batchable_subspaces() != idx_list(1,0))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batchable_subspaces(...) did not return correct value for recursion case with permutation");
     }
 }
 

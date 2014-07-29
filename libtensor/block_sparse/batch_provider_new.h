@@ -5,6 +5,7 @@
 #include "batch_kernel_permute.h"
 #include "batch_kernel_contract2.h"
 #include "batch_kernel_add2.h"
+#include "connectivity.h"
 #include "../expr/dag/expr_tree.h"
 #include "../expr/dag/node_ident.h"
 #include "../expr/iface/node_ident_any_tensor.h"
@@ -175,6 +176,7 @@ private:
     std::vector<batch_provider_i<T>*> m_suppliers;
     idx_list m_suppliers_allocd;
     idx_list m_batchable_subspaces;
+    expr::connectivity m_conn;
 public:
     static const char* k_clazz; //!< Class name
     batch_provider_new(const expr::expr_tree& tree); 
@@ -187,7 +189,7 @@ template<typename T>
 const char* batch_provider_new<T>::k_clazz = "batch_provider<T>";
 
 template<typename T>
-batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
+batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree) : m_conn(tree)
 {
     using namespace expr;
     expr_tree::node_id_t root_id = tree.get_root();
@@ -263,16 +265,28 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
     //Create child batch providers for direct tensors used as inputs to this one 
     for(size_t i = 0; i < input_edges.size(); ++i)
     {
-        if(m_ptrs[i+1] == NULL)
+        size_t tensor_idx = i+1;
+        if(m_ptrs[tensor_idx] == NULL)
         {
-            if(m_suppliers[i+1] == NULL)
+            if(m_suppliers[tensor_idx] == NULL)
             {
-                m_suppliers[i+1] = new batch_provider_new<T>(tree.get_subtree(input_edges[i]));
-                m_suppliers_allocd.push_back(i+1);
+                m_suppliers[tensor_idx] = new batch_provider_new<T>(tree.get_subtree(input_edges[i]));
+                m_suppliers_allocd.push_back(tensor_idx);
             }
-            idx_list child_bs(m_suppliers[i+1]->get_batchable_subspaces());
-            m_batchable_subspaces.insert(m_batchable_subspaces.end(),child_bs.begin(),child_bs.end());
-            m_ptrs[i+1] = new T[m_bispaces[i+1].get_nnz()];
+            idx_list child_bs(m_suppliers[tensor_idx]->get_batchable_subspaces());
+            for(size_t child_bs_idx = 0; child_bs_idx < child_bs.size(); ++child_bs_idx)
+            {
+                size_t bs = child_bs[child_bs_idx];
+                for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(tensor_idx,bs); ++conn_subspace_idx)
+                {
+                    idx_pair conn_tensor_subspace = m_conn(tensor_idx,bs,conn_subspace_idx);
+                    if(conn_tensor_subspace.first == 0)
+                    {
+                        m_batchable_subspaces.push_back(conn_tensor_subspace.second);
+                    }
+                }
+            }
+            m_ptrs[tensor_idx] = new T[m_bispaces[tensor_idx].get_nnz()];
         }
     }
     sort(m_batchable_subspaces.begin(),m_batchable_subspaces.end());
