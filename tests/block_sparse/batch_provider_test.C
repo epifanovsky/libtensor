@@ -27,6 +27,7 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_contract2();
     test_contract2_permute_nested(); 
     test_contract2_subtract2_nested();
+    test_batchable_subspaces_recursion();
 }
 
 void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_exception)
@@ -127,6 +128,41 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batch(...) did not return correct value for contract2_subtract2_nested test case");
+    }
+}
+
+void batch_provider_test::test_batchable_subspaces_recursion() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion()";
+    class fake_batch_provider : public batch_provider_i<double>
+    {
+    public:
+        virtual idx_list get_batchable_subspaces() const { return idx_list(1,2); }
+        virtual void get_batch(double* output_ptr) {}
+    };
+    sparse_bispace<1> spb_i(5);
+    direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
+    fake_batch_provider fbp;
+    A.set_batch_provider(fbp);
+    sparse_btensor_new<3> B(A.get_bispace());
+    sparse_btensor_new<3> C(A.get_bispace());
+
+    node_assign root(3);
+    expr_tree tree(root);
+    expr_tree::node_id_t root_id = tree.get_root();
+    tree.add(root_id,node_ident_any_tensor<3,double>(C));
+    node_add n_add(3);
+    expr_tree::node_id_t n_add_id = tree.add(root_id,n_add);
+    tree.add(n_add_id,node_ident_any_tensor<3,double>(A));
+    tree.add(n_add_id,node_ident_any_tensor<3,double>(B));
+    
+    batch_provider_new<double> bp(tree);
+
+
+    if(bp.get_batchable_subspaces() != idx_list(1,2))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batchable_subspaces(...) did not return correct value for basic recursion case");
     }
 }
 

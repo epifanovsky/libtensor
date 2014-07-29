@@ -5,14 +5,29 @@
 #include "batch_kernel_permute.h"
 #include "batch_kernel_contract2.h"
 #include "batch_kernel_add2.h"
+#include "../expr/dag/expr_tree.h"
+#include "../expr/dag/node_ident.h"
+#include "../expr/iface/node_ident_any_tensor.h"
 #include "../expr/dag/node_assign.h"
 #include "../expr/dag/node_transform.h"
 #include "../expr/dag/node_contract.h"
+#include "../expr/dag/node_contract.h"
+#include "../expr/dag/node_add.h"
 #include "../expr/metaprog.h"
 
 namespace libtensor {
 
+template<typename T>
+class batch_provider_i
+{
+public:
+    virtual idx_list get_batchable_subspaces() const { return idx_list(); } 
+    virtual void get_batch(T* output_ptr) = 0; 
+    virtual ~batch_provider_i() {}; 
+};
+
 namespace expr {
+
 
 //Can't do this with a function because C++03 won't let function templates have default template args
 template<typename T,size_t NC=0,size_t NA=0,size_t NB=0>
@@ -23,9 +38,11 @@ private:
     const expr_tree::edge_list_t& m_edges;
     batch_kernel<T>** m_kern; //Have to cache in a member var to pass through dispatch_1
     std::vector<T*> m_ptrs;
+    std::vector<batch_provider_i<T>*> m_suppliers;
     std::vector<sparse_bispace_any_order> m_bispaces;
 public:
     std::vector<T*> get_ptrs() { return m_ptrs; }
+    std::vector<batch_provider_i<T>*> get_suppliers() { return m_suppliers; }
     std::vector<sparse_bispace_any_order> get_bispaces() { return m_bispaces; }
     void build_kernel(batch_kernel<T>*& kern)
     {
@@ -44,6 +61,7 @@ public:
                 const node_ident_any_tensor<NA,T>& n_1_concrete = dynamic_cast< const node_ident_any_tensor<NA,T>& >(n_1);
                 gen_sparse_btensor<NA,T>& A = dynamic_cast< gen_sparse_btensor<NA,T>& >(n_1_concrete.get_tensor());
                 m_ptrs[1] = (T*)A.get_data_ptr();
+                m_suppliers[1] = A.get_batch_provider();
                 m_bispaces.push_back(A.get_bispace());
 
                 if(n_tensors_processed > 2)
@@ -52,6 +70,7 @@ public:
                     const node_ident_any_tensor<NB,T>& n_2_concrete = dynamic_cast< const node_ident_any_tensor<NB,T>& >(n_2);
                     gen_sparse_btensor<NB,T>& B = dynamic_cast< gen_sparse_btensor<NB,T>& >(n_2_concrete.get_tensor());
                     m_ptrs[2] = (T*)B.get_data_ptr();
+                    m_suppliers[2] = B.get_batch_provider();
                     m_bispaces.push_back(B.get_bispace());
 
                     if(op_node.check_type<node_contract>())
@@ -110,6 +129,7 @@ public:
     kernel_builder(const expr_tree& tree,const expr_tree::edge_list_t& edges) : m_tree(tree),m_edges(edges),m_kern(NULL) 
     {
         m_ptrs.resize(m_edges.size() - 1,NULL);
+        m_suppliers.resize(m_edges.size() - 1,NULL);
     }
 
     template<size_t M>
@@ -120,6 +140,7 @@ public:
             kernel_builder<T,M,0,0> kb(m_tree,m_edges);
             kb.build_kernel(*m_kern);
             m_ptrs = kb.get_ptrs();
+            m_suppliers = kb.get_suppliers();
             m_bispaces = kb.get_bispaces();
         }
         else if(NA == 0)
@@ -127,6 +148,7 @@ public:
             kernel_builder<T,NC,M,0> kb(m_tree,m_edges);
             kb.build_kernel(*m_kern);
             m_ptrs = kb.get_ptrs();
+            m_suppliers = kb.get_suppliers();
             m_bispaces = kb.get_bispaces();
         }
         else if(NB == 0)
@@ -134,6 +156,7 @@ public:
             kernel_builder<T,NC,NA,M> kb(m_tree,m_edges);
             kb.build_kernel(*m_kern);
             m_ptrs = kb.get_ptrs();
+            m_suppliers = kb.get_suppliers();
             m_bispaces = kb.get_bispaces();
         }
     }
@@ -141,18 +164,22 @@ public:
 
 } // namespace expr
 
+
 template<typename T>
-class batch_provider_new
+class batch_provider_new : public batch_provider_i<T>
 {
 private:
     batch_kernel<T>* m_kern;
     std::vector<T*> m_ptrs;
     std::vector<sparse_bispace_any_order> m_bispaces;
-    std::vector<batch_provider_new<T>*> m_suppliers;
+    std::vector<batch_provider_i<T>*> m_suppliers;
+    idx_list m_suppliers_allocd;
+    idx_list m_batchable_subspaces;
 public:
     static const char* k_clazz; //!< Class name
     batch_provider_new(const expr::expr_tree& tree); 
-    void get_batch(T* output_ptr); 
+    virtual void get_batch(T* output_ptr); 
+    virtual idx_list get_batchable_subspaces() const;
     ~batch_provider_new();
 };
 
@@ -231,17 +258,25 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree)
     kb.build_kernel(m_kern);
     m_ptrs = kb.get_ptrs();
     m_bispaces = kb.get_bispaces();
+    m_suppliers = kb.get_suppliers();
 
-    m_suppliers.resize(m_ptrs.size(),NULL);
     //Create child batch providers for direct tensors used as inputs to this one 
     for(size_t i = 0; i < input_edges.size(); ++i)
     {
         if(m_ptrs[i+1] == NULL)
         {
-            m_suppliers[i+1] = new batch_provider_new<T>(tree.get_subtree(input_edges[i]));
+            if(m_suppliers[i+1] == NULL)
+            {
+                m_suppliers[i+1] = new batch_provider_new<T>(tree.get_subtree(input_edges[i]));
+                m_suppliers_allocd.push_back(i+1);
+            }
+            idx_list child_bs(m_suppliers[i+1]->get_batchable_subspaces());
+            m_batchable_subspaces.insert(m_batchable_subspaces.end(),child_bs.begin(),child_bs.end());
             m_ptrs[i+1] = new T[m_bispaces[i+1].get_nnz()];
         }
     }
+    sort(m_batchable_subspaces.begin(),m_batchable_subspaces.end());
+    unique(m_batchable_subspaces.begin(),m_batchable_subspaces.end());
 }
 
 template<typename T>
@@ -251,8 +286,11 @@ batch_provider_new<T>::~batch_provider_new()
     {
         if(m_suppliers[i] != NULL)
         {
-            delete m_suppliers[i];
             delete m_ptrs[i];
+            if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),i) != m_suppliers_allocd.end())
+            {
+                delete m_suppliers[i];
+            }
         }
     }
 }
@@ -273,6 +311,13 @@ void batch_provider_new<T>::get_batch(T* output_ptr)
     memset(output_ptr,0,m_bispaces[0].get_nnz()*sizeof(T));
     m_kern->generate_batch(m_ptrs,bispace_batch_map()); 
 }
+
+template<typename T>
+idx_list batch_provider_new<T>::get_batchable_subspaces() const
+{ 
+    return m_batchable_subspaces;
+}
+
 
 
 } // namespace libtensor

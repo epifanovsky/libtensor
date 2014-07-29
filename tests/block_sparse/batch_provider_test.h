@@ -15,6 +15,7 @@ private:
     void test_contract2() throw(libtest::test_exception);
     void test_contract2_permute_nested() throw(libtest::test_exception);
     void test_contract2_subtract2_nested() throw(libtest::test_exception);
+    void test_batchable_subspaces_recursion() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

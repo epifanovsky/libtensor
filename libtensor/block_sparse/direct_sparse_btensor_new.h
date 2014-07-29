@@ -12,21 +12,23 @@ class direct_sparse_btensor_new : public gen_sparse_btensor<N,T>
 {
 private:
     sparse_bispace<N> m_bispace;
-    batch_provider<T>* m_batch_provider;
+    batch_provider_i<T>* m_batch_provider;
 public:
     direct_sparse_btensor_new(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL) {}
+    void set_batch_provider(batch_provider_i<T>& bp) { m_batch_provider = &bp; }
     labeled_direct_sparse_btensor<N,T> operator()(const expr::label<N>& le);
 
-    void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail = 0);
+    //void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail = 0);
 
     void set_batch_provider(const batch_provider<T>& bp);
+    batch_provider_i<T>* get_batch_provider() const { return m_batch_provider; }
 
     const sparse_bispace<N>& get_bispace() const { return m_bispace; }
     const T* get_data_ptr() const { return NULL; }
 
-    direct_sparse_btensor_new(const direct_sparse_btensor_new<N,T>& rhs);
-    direct_sparse_btensor_new<N,T>&  operator=(const direct_sparse_btensor_new<N,T>& rhs);
-    ~direct_sparse_btensor_new() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
+    //direct_sparse_btensor_new(const direct_sparse_btensor_new<N,T>& rhs);
+    //direct_sparse_btensor_new<N,T>&  operator=(const direct_sparse_btensor_new<N,T>& rhs);
+    //~direct_sparse_btensor_new() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
 };
 
 template<size_t N,typename T>
@@ -42,6 +44,8 @@ void direct_sparse_btensor_new<N,T>::set_batch_provider(const batch_provider<T>&
     m_batch_provider = bp.clone();
 }
 
+
+#if 0
 template<size_t N,typename T>
 direct_sparse_btensor_new<N,T>::direct_sparse_btensor_new(const direct_sparse_btensor_new<N,T>& rhs) : m_bispace(rhs.m_bispace),m_batch_provider(NULL)
 {
@@ -64,7 +68,9 @@ direct_sparse_btensor_new<N,T>&  direct_sparse_btensor_new<N,T>::operator=(const
         m_batch_provider = NULL;
     }
 }
+#endif
 
+#if 0
 template<size_t N,typename T>
 void direct_sparse_btensor_new<N,T>::get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& batches,size_t mem_avail)
 {
@@ -75,6 +81,7 @@ void direct_sparse_btensor_new<N,T>::get_batch(T* batch_mem,const std::map<idx_p
     }
     m_batch_provider->get_batch(batch_mem,batches,mem_avail);
 }
+#endif
 
 
 } // namespace libtensor

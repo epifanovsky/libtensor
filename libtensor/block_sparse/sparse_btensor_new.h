@@ -45,6 +45,7 @@ public:
     bool operator!=(const sparse_btensor_new<N,T>& rhs) const;
 
     const T* get_data_ptr() const { return m_data_ptr; }
+    virtual batch_provider_i<T>* get_batch_provider() const { return NULL; }
     
     /** \brief Returns a labeled_sparse_btensor object for use in expressions
      *
