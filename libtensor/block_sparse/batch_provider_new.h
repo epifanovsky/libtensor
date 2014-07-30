@@ -23,7 +23,7 @@ class batch_provider_i
 {
 public:
     virtual idx_list get_batchable_subspaces() const { return idx_list(); } 
-    virtual void get_batch(T* output_ptr) = 0; 
+    virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()) = 0; 
     virtual ~batch_provider_i() {}; 
 };
 
@@ -180,7 +180,7 @@ private:
 public:
     static const char* k_clazz; //!< Class name
     batch_provider_new(const expr::expr_tree& tree); 
-    virtual void get_batch(T* output_ptr); 
+    virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()); 
     virtual idx_list get_batchable_subspaces() const;
     ~batch_provider_new();
 };
@@ -311,19 +311,50 @@ batch_provider_new<T>::~batch_provider_new()
 
 
 template<typename T>
-void batch_provider_new<T>::get_batch(T* output_ptr)
+void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
 { 
-    m_ptrs[0] = output_ptr; 
-    for(size_t i = 1; i < m_ptrs.size(); ++i)
-    {
-        if(m_suppliers[i] != NULL)
-        {
-            m_suppliers[i]->get_batch(m_ptrs[i]);
-        }
-    }
     //TODO: REMOVE HACK TO MAKE CONTRACTION WORK!!!
+    //Put in contract batch kernel - also for subtract
     memset(output_ptr,0,m_bispaces[0].get_nnz()*sizeof(T));
-    m_kern->generate_batch(m_ptrs,bispace_batch_map()); 
+
+    m_ptrs[0] = output_ptr; 
+    idx_pair_list batch_list;
+    if(bbm.size() > 0) 
+    {
+        batch_list.push_back(bbm.find(idx_pair(0,0))->second);
+    }
+    else
+    {
+        batch_list.push_back(idx_pair(0,0));
+    }
+    for(size_t batch_idx = 0; batch_idx < batch_list.size(); ++batch_idx)
+    {
+        idx_pair batch_from_supplier = batch_list[batch_idx];
+
+        for(size_t supplier_idx = 1; supplier_idx < m_ptrs.size(); ++supplier_idx)
+        {
+            if(m_suppliers[supplier_idx] != NULL)
+            {
+                bispace_batch_map supplier_bbm;
+                if(batch_list[0] != idx_pair(0,0))
+                {
+                    //Figure out what subspace our batched index corresponds to in the supplier
+                    size_t n_conn_subspaces = m_conn.get_n_conn_subspaces(0,0);
+                    size_t supplier_subspace;
+                    for(size_t conn_subspace_idx = 0; conn_subspace_idx < n_conn_subspaces; ++conn_subspace_idx)
+                    {
+                        if(m_conn(0,0,conn_subspace_idx).first == supplier_idx)
+                        {
+                            supplier_subspace = m_conn(0,0,conn_subspace_idx).second;
+                        }
+                    }
+                    supplier_bbm[idx_pair(0,supplier_subspace)] = batch_from_supplier;
+                }
+                m_suppliers[supplier_idx]->get_batch(m_ptrs[supplier_idx],supplier_bbm);
+            }
+        }
+        m_kern->generate_batch(m_ptrs,bbm); 
+    }
 }
 
 template<typename T>

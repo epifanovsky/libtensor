@@ -31,6 +31,18 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_batchable_subspaces_recursion_permutation();
 }
 
+namespace
+{
+
+class fake_batch_provider : public batch_provider_i<double>
+{
+public:
+    virtual idx_list get_batchable_subspaces() const { return idx_list(1,2); }
+    virtual void get_batch(double* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()) {}
+};
+
+}
+
 void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_exception)
 {
     static const char *test_name = "batch_provider_test::test_permute_3d_sparse_120()";
@@ -88,8 +100,38 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
     e.add(contr_node_id,node_ident_any_tensor<3,double>(A));
     e.add(contr_node_id,node_ident_any_tensor<3,double>(B));
 
-    //Finally, check that we can get the full tensor
+    double C_batch_arr[12] = {0};
+
     batch_provider_new<double> bp(e);
+
+#if 0
+    //Check batch 0
+    bispace_batch_map bbm; 
+    bbm[idx_pair(0,0)] = idx_pair(0,1);
+    bp.get_batch(C_batch_arr,bbm);
+    for(size_t i =0 ; i < 6; ++i)
+    {
+        if(C_batch_arr[i] != tf.C_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "batch_provider::get_batch(...) did not return correct batch 0 for contract2 test case");
+        }
+    }
+
+    //Check batch 1
+    bbm[idx_pair(0,0)] = idx_pair(1,2);
+    bp.get_batch(C_batch_arr,bbm);
+    for(size_t i = 6 ; i < sizeof(tf.C_arr)/sizeof(tf.C_arr[0]); ++i)
+    {
+        if(C_batch_arr[i - 6] != tf.C_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "batch_provider::get_batch(...) did not return correct batch 1 for contract2 test case");
+        }
+    }
+#endif
+
+    //Finally, check that we can get the full tensor
     bp.get_batch((double*)C.get_data_ptr());
 
     sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
@@ -135,12 +177,6 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
 void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(libtest::test_exception)
 {
     static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_addition()";
-    class fake_batch_provider : public batch_provider_i<double>
-    {
-    public:
-        virtual idx_list get_batchable_subspaces() const { return idx_list(1,2); }
-        virtual void get_batch(double* output_ptr) {}
-    };
     sparse_bispace<1> spb_i(5);
     direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
     fake_batch_provider fbp;
@@ -170,12 +206,6 @@ void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(li
 void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw(libtest::test_exception)
 {
     static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_permutation()";
-    class fake_batch_provider : public batch_provider_i<double>
-    {
-    public:
-        virtual idx_list get_batchable_subspaces() const { return idx_list(1,2); }
-        virtual void get_batch(double* output_ptr) {}
-    };
     sparse_bispace<1> spb_i(5);
     direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
     fake_batch_provider fbp;
