@@ -12,6 +12,7 @@ template<typename T>
 class batch_kernel_add2 : public batch_kernel<T>
 {
 private:
+    std::vector<sparse_bispace_any_order> m_bispaces;
     sparse_loop_list* m_sll_add_ptr;
     sparse_loop_list* m_sll_sub_ptr;
     block_add2_kernel<T> m_ba2k_add;
@@ -23,6 +24,7 @@ public:
     batch_kernel_add2(const gen_sparse_btensor<NC,T>& C,const gen_sparse_btensor<NA,T>& A,const gen_sparse_btensor<NB,T>& B,double lhs_scalar,double rhs_scalar);
 
     virtual void generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches);
+    virtual void init(const std::vector<T*>& ptrs,const bispace_batch_map& bbm);
 
     ~batch_kernel_add2();
     batch_kernel_add2(const batch_kernel_add2<T>& rhs);
@@ -63,9 +65,9 @@ batch_kernel_add2<T>::batch_kernel_add2(const gen_sparse_btensor<NC,T>& C,const 
                 __FILE__, __LINE__, "Invalid tensor orders");
     }
 
-    std::vector<sparse_bispace_any_order> bispaces(1,C.get_bispace());
-    bispaces.push_back(A.get_bispace());
-    bispaces.push_back(B.get_bispace());
+    m_bispaces.push_back(C.get_bispace());
+    m_bispaces.push_back(A.get_bispace());
+    m_bispaces.push_back(B.get_bispace());
 
     //To obtain correct results 
     //We must use separate loops so that sparse fusion does not occur when subtracting
@@ -73,7 +75,7 @@ batch_kernel_add2<T>::batch_kernel_add2(const gen_sparse_btensor<NC,T>& C,const 
     std::vector<block_loop> loops;
     for(size_t i = 0; i < NC; ++i)
     {
-        block_loop bl(bispaces);
+        block_loop bl(m_bispaces);
         bl.set_subspace_looped(0,i);
         bl.set_subspace_looped(1,i);
         bl.set_subspace_looped(2,i);
@@ -98,10 +100,10 @@ batch_kernel_add2<T>::batch_kernel_add2(const gen_sparse_btensor<NC,T>& C,const 
     //Due to the fact that sparse_loop_list currently fuses sparsity by default, 
     //we must separate adding the first entry from subtracting the second
     //Add the first operand
-    std::vector<sparse_bispace_any_order> add_bispaces(2,bispaces[0]);
-    add_bispaces.push_back(bispaces[1]);
-    std::vector<sparse_bispace_any_order> sub_bispaces(2,bispaces[0]);
-    sub_bispaces.push_back(bispaces[2]);
+    std::vector<sparse_bispace_any_order> add_bispaces(2,m_bispaces[0]);
+    add_bispaces.push_back(m_bispaces[1]);
+    std::vector<sparse_bispace_any_order> sub_bispaces(2,m_bispaces[0]);
+    sub_bispaces.push_back(m_bispaces[2]);
     std::vector<block_loop> add_loops;
     std::vector<block_loop> sub_loops;
     for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
@@ -141,6 +143,21 @@ batch_kernel_add2<T>::batch_kernel_add2(const gen_sparse_btensor<NC,T>& C,const 
         new_direct_tensors.push_back(2);
     }
     m_sll_sub_ptr = new sparse_loop_list(sub_loops,sub_bispaces,new_direct_tensors);
+}
+
+template<typename T>
+void batch_kernel_add2<T>::init(const std::vector<T*>& ptrs,const bispace_batch_map& bbm)
+{
+    size_t output_batch_size = m_bispaces[0].get_nnz();
+    for(bispace_batch_map::const_iterator it = bbm.begin(); it != bbm.end(); ++it)
+    {
+        if(it->first.first == 0)
+        {
+            output_batch_size = m_bispaces[0].get_batch_size(it->first.second,it->second);
+            break;
+        }
+    }
+    memset(ptrs[0],0,output_batch_size*sizeof(T));
 }
     
 template<typename T>

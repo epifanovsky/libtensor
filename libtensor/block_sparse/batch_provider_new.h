@@ -313,11 +313,8 @@ batch_provider_new<T>::~batch_provider_new()
 template<typename T>
 void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
 { 
-    //TODO: REMOVE HACK TO MAKE CONTRACTION WORK!!!
-    //Put in contract batch kernel - also for subtract
-    memset(output_ptr,0,m_bispaces[0].get_nnz()*sizeof(T));
-
     m_ptrs[0] = output_ptr; 
+    m_kern->init(m_ptrs,bbm);
     idx_pair_list batch_list;
     if(bbm.size() > 0) 
     {
@@ -327,6 +324,7 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
     {
         batch_list.push_back(idx_pair(0,0));
     }
+
     for(size_t batch_idx = 0; batch_idx < batch_list.size(); ++batch_idx)
     {
         idx_pair batch_from_supplier = batch_list[batch_idx];
