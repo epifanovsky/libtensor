@@ -128,16 +128,19 @@ void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
 
     sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
     sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_btensor_new<3> C(tf.spb_C);
+    direct_sparse_btensor_new<3> C_direct(tf.spb_C);
 
-    batch_kernel_add2<double> bka2(C,A,B,1,-1);
+    batch_kernel_add2<double> bka2(C_direct,A,B,1,-1);
 
     //Test grabbing entire array
+    double C_arr[60];
     bispace_batch_map bbm;
-    vector<double*> ptrs(1,(double*)C.get_data_ptr());
+    vector<double*> ptrs(1,C_arr);
     ptrs.push_back((double*)A.get_data_ptr());
     ptrs.push_back((double*)B.get_data_ptr());
+    bka2.init(ptrs,bbm);
     bka2.generate_batch(ptrs,bbm);
+    sparse_btensor_new<3> C(tf.spb_C,C_arr,true);
     sparse_btensor_new<3> C_correct(tf.spb_C,tf.C_arr,true);
 
     if(C != C_correct)
@@ -145,6 +148,19 @@ void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_kernel_contract2::generate_batch(...) did not produce correct result");
     }
+
+    bbm[idx_pair(0,0)] = idx_pair(1,2);
+    bka2.init(ptrs,bbm);
+    bka2.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < 40; ++i)
+    {
+        if(C_arr[i] != tf.C_arr[20+i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_contract2::generate_batch(...) did not produce correct result for batch 1");
+        }
+    } 
+
 }
 
 } // namespace libtensor
