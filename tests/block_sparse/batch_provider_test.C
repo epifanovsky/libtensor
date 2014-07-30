@@ -170,6 +170,23 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batch(...) did not return correct value for contract2_subtract2_nested test case");
     }
+
+    //Now we see if it can work when we force one of the intermediates (D) to be batched, though the result is not
+    idx_pair_list batch_list(1,idx_pair(0,2));
+    batch_list.push_back(idx_pair(2,3));
+    vector<idx_pair_list> batched_bispace_subspace_grps(1,idx_pair_list(1,idx_pair(2,1)));
+    batched_bispace_subspace_grps.push_back(idx_pair_list(1,idx_pair(0,1)));
+    batched_bispace_subspace_grps[1].push_back(idx_pair(0,1));
+    batched_bispace_subspace_grps.push_back(idx_pair_list(1,idx_pair(0,1)));
+
+    bp.set_batch_info(batched_bispace_subspace_grps,batch_list);
+    bp.get_batch((double*)tf.E.get_data_ptr());
+
+    if(tf.E != tf.E_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batch(...) did not return correct value for contract2_subtract2_nested test case");
+    }
 }
 
 void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(libtest::test_exception)
