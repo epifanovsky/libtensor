@@ -82,22 +82,36 @@ void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_excep
 
     sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
     sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_btensor_new<2> C(tf.spb_C);
+    direct_sparse_btensor_new<2> C_direct(tf.spb_C);
 
     multimap<size_t,size_t> contr_map;
     contr_map.insert(idx_pair(1,3));
     contr_map.insert(idx_pair(2,4));
-    batch_kernel_contract2<double> bkc2(C,A,B,contr_map);
+    batch_kernel_contract2<double> bkc2(C_direct,A,B,contr_map);
 
-    /*double output_batch_arr[20] = {0};*/
-    /*bbm.insert(make_pair(idx_pair(0,1),idx_pair(0,1)));*/
-
-    //Test grabbing entire array
+    //Check generating batch 1
+    double C_arr[18];
     bispace_batch_map bbm;
-    vector<double*> ptrs(1,(double*)C.get_data_ptr());
+    bbm[idx_pair(0,0)] = idx_pair(1,2);
+    vector<double*> ptrs(1,C_arr);
     ptrs.push_back((double*)A.get_data_ptr());
     ptrs.push_back((double*)B.get_data_ptr());
+    bkc2.init(ptrs,bbm);
     bkc2.generate_batch(ptrs,bbm);
+
+    for(size_t i = 6 ; i < sizeof(tf.C_arr)/sizeof(tf.C_arr[0]); ++i)
+    {
+        if(C_arr[i - 6] != tf.C_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "batch_kernel_contract2::generate_batch(...) did not return correct batch 1");
+        }
+    }
+
+    //Test grabbing entire array
+    bkc2.init(ptrs,bispace_batch_map());
+    bkc2.generate_batch(ptrs,bispace_batch_map());
+    sparse_btensor_new<2> C(tf.spb_C,C_arr,true);
     sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
     if(C != C_correct)
     {

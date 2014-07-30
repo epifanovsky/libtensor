@@ -85,12 +85,12 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
 
     sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
     sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_btensor_new<2> C(tf.spb_C);
+    direct_sparse_btensor_new<2> C(tf.spb_C);
 
     node_assign root(2);
     expr_tree e(root);
     expr_tree::node_id_t root_id = e.get_root();
-    e.add(root_id, node_ident_any_tensor<2,double>(C));
+    expr_tree::node_id_t C_ident_id = e.add(root_id, node_ident_any_tensor<2,double>(C));
 
     multimap<size_t,size_t> contr_map;
     contr_map.insert(idx_pair(1,3));
@@ -100,12 +100,22 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
     e.add(contr_node_id,node_ident_any_tensor<3,double>(A));
     e.add(contr_node_id,node_ident_any_tensor<3,double>(B));
 
-    double C_batch_arr[12] = {0};
 
     batch_provider_new<double> bp(e);
 
-#if 0
+    //First test that we can grab whole tensor
+    sparse_btensor_new<2> my_C(tf.spb_C);
+    bp.get_batch((double*)my_C.get_data_ptr());
+    sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
+
+    if(my_C != C_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batch(...) did not return correct value contract2 test case");
+    }
+
     //Check batch 0
+    double C_batch_arr[12];
     bispace_batch_map bbm; 
     bbm[idx_pair(0,0)] = idx_pair(0,1);
     bp.get_batch(C_batch_arr,bbm);
@@ -128,18 +138,6 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
             fail_test(test_name,__FILE__,__LINE__,
                     "batch_provider::get_batch(...) did not return correct batch 1 for contract2 test case");
         }
-    }
-#endif
-
-    //Finally, check that we can get the full tensor
-    bp.get_batch((double*)C.get_data_ptr());
-
-    sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
-
-    if(C != C_correct)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "batch_provider::get_batch(...) did not return correct value contract2 test case");
     }
 }
 
