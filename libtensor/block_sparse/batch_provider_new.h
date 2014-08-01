@@ -331,6 +331,7 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
     for(size_t batch_idx = 0; batch_idx < m_batch_list.size(); ++batch_idx)
     {
         idx_pair batch_from_supplier = m_batch_list[batch_idx];
+        bispace_batch_map augmented_bbm(bbm);
         for(size_t supplier_idx = 1; supplier_idx < m_ptrs.size(); ++supplier_idx)
         {
             if(m_suppliers[supplier_idx] != NULL)
@@ -357,6 +358,7 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
                         if(is_batched || connected_to_batched_subspace)
                         {
                             supplier_bbm[idx_pair(0,supplier_subspace_idx)] = batch_from_supplier;
+                            augmented_bbm[idx_pair(supplier_idx,supplier_subspace_idx)] = batch_from_supplier;
                             break;
                         }
                     }
@@ -364,7 +366,7 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
                 m_suppliers[supplier_idx]->get_batch(m_ptrs[supplier_idx],supplier_bbm);
             }
         }
-        m_kern->generate_batch(m_ptrs,bbm); 
+        m_kern->generate_batch(m_ptrs,augmented_bbm); 
     }
 }
 
