@@ -171,7 +171,6 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
                 "batch_provider::get_batch(...) did not return correct value for contract2_subtract2_nested test case");
     }
 
-#if 0
     //Now we see if it can work when we force one of the intermediates (D) to be batched, though the result is not
     idx_pair_list batch_list(1,idx_pair(0,2));
     batch_list.push_back(idx_pair(2,3));
@@ -188,7 +187,6 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batch(...) did not return correct value for contract2_subtract2_nested test case");
     }
-#endif
 }
 
 void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(libtest::test_exception)

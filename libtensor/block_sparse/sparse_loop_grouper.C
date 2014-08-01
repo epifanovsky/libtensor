@@ -186,7 +186,8 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                             }
                             else
                             {
-                                base_offset = subspace.get_block_abs_index(loop_block_list[0]);
+                                size_t min_idx = *(min_element(loop_block_list.begin(),loop_block_list.end()));
+                                base_offset = subspace.get_block_abs_index(min_idx);
                             }
                         }
                         else
