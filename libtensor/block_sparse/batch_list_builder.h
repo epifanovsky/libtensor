@@ -13,7 +13,7 @@ private:
     size_t m_end_idx;
 public:
     batch_list_builder(const std::vector< std::vector<sparse_bispace_any_order> >& bispace_grps,
-                       const std::vector<idx_list>& batched_subspace_grps);
+                       const std::vector<idx_pair_list>& batched_subspace_grps);
 
     idx_pair_list get_batch_list(size_t max_n_elem);
 };

@@ -80,7 +80,8 @@ void batch_list_builder_test::test_get_batch_list_dense() throw(libtest::test_ex
     size_t max_n_elem = 388800;
 
     vector< vector<sparse_bispace_any_order> > bispace_groups(1,vector<sparse_bispace_any_order>(1,tf.bispace));
-    batch_list_builder blb(bispace_groups,vector<idx_list>(1,idx_list(1,1)));
+    idx_pair_list batched_bispace_subspace_grp_0(1,idx_pair(0,1));
+    batch_list_builder blb(bispace_groups,vector<idx_pair_list>(1,batched_bispace_subspace_grp_0));
     idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
 
     idx_pair_list correct_batch_list(1,idx_pair(0,3));
@@ -102,7 +103,8 @@ void batch_list_builder_test::test_get_batch_list_sparse() throw(libtest::test_e
     size_t max_n_elem = 259200;
     vector< vector<sparse_bispace_any_order> > bispace_groups(1,vector<sparse_bispace_any_order>(1,tf.bispace));
 
-    batch_list_builder blb(bispace_groups,vector<idx_list>(1,idx_list(1,2)));
+    idx_pair_list batched_bispace_subspace_grp_0(1,idx_pair(0,2));
+    batch_list_builder blb(bispace_groups,vector<idx_pair_list>(1,batched_bispace_subspace_grp_0));
     idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
 
     idx_pair_list correct_batch_list(1,idx_pair(0,3));
@@ -129,7 +131,9 @@ void batch_list_builder_test::test_get_batch_list_dense_dense() throw(libtest::t
     bispace_group_0.push_back(spb_0|spb_1);
     vector< vector<sparse_bispace_any_order> > bispace_groups(1,bispace_group_0);
 
-    batch_list_builder blb(bispace_groups,vector<idx_list>(1,idx_list(2,0)));
+    idx_pair_list batched_bispace_subspace_grp_0(1,idx_pair(0,0));
+    batched_bispace_subspace_grp_0.push_back(idx_pair(1,0));
+    batch_list_builder blb(bispace_groups,vector<idx_pair_list>(1,batched_bispace_subspace_grp_0));
     size_t max_n_elem = 112;
     idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
 
@@ -154,9 +158,9 @@ void batch_list_builder_test::test_get_batch_list_sparse_sparse() throw(libtest:
     bispace_group_0.push_back(tf.B);
     vector< vector<sparse_bispace_any_order> > bispace_groups(1,bispace_group_0);
 
-    idx_list batched_subspace_grp_0(1,1);
-    batched_subspace_grp_0.push_back(0);
-    batch_list_builder blb(bispace_groups,vector<idx_list>(1,batched_subspace_grp_0));
+    idx_pair_list batched_bispace_subspace_grp_0(1,idx_pair(0,1));
+    batched_bispace_subspace_grp_0.push_back(idx_pair(1,0));
+    batch_list_builder blb(bispace_groups,vector<idx_pair_list>(1,batched_bispace_subspace_grp_0));
     size_t max_n_elem = 8;
     idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
 
@@ -184,14 +188,14 @@ void batch_list_builder_test::test_get_batch_list_2_group_sparse_sparse() throw(
     bispace_grps[1].push_back(tf.C);
     bispace_grps[1].push_back(tf.D);
 
-    idx_list batched_subspace_grp_0(1,1);
-    batched_subspace_grp_0.push_back(0);
-    idx_list batched_subspace_grp_1(1,0);
-    batched_subspace_grp_1.push_back(0);
-    vector<idx_list> batched_subspace_grps(1,batched_subspace_grp_0);
-    batched_subspace_grps.push_back(batched_subspace_grp_1);
+    idx_pair_list batched_bispace_subspace_grp_0(1,idx_pair(0,1));
+    batched_bispace_subspace_grp_0.push_back(idx_pair(1,0));
+    idx_pair_list batched_bispace_subspace_grp_1(1,idx_pair(0,0));
+    batched_bispace_subspace_grp_1.push_back(idx_pair(1,0));
+    vector<idx_pair_list> batched_bispace_subspace_grps(1,batched_bispace_subspace_grp_0);
+    batched_bispace_subspace_grps.push_back(batched_bispace_subspace_grp_1);
 
-    batch_list_builder blb(bispace_grps,batched_subspace_grps);
+    batch_list_builder blb(bispace_grps,batched_bispace_subspace_grps);
     size_t max_n_elem = 12;
     idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
 
@@ -219,14 +223,14 @@ void batch_list_builder_test::test_get_batch_list_not_enough_mem() throw(libtest
     bispace_grps[1].push_back(tf.C);
     bispace_grps[1].push_back(tf.D);
 
-    idx_list batched_subspace_grp_0(1,1);
-    batched_subspace_grp_0.push_back(0);
-    idx_list batched_subspace_grp_1(1,0);
-    batched_subspace_grp_1.push_back(0);
-    vector<idx_list> batched_subspace_grps(1,batched_subspace_grp_0);
-    batched_subspace_grps.push_back(batched_subspace_grp_1);
+    idx_pair_list batched_bispace_subspace_grp_0(1,idx_pair(0,1));
+    batched_bispace_subspace_grp_0.push_back(idx_pair(1,0));
+    idx_pair_list batched_bispace_subspace_grp_1(1,idx_pair(0,0));
+    batched_bispace_subspace_grp_1.push_back(idx_pair(1,0));
+    vector<idx_pair_list> batched_bispace_subspace_grps(1,batched_bispace_subspace_grp_0);
+    batched_bispace_subspace_grps.push_back(batched_bispace_subspace_grp_1);
 
-    batch_list_builder blb(bispace_grps,batched_subspace_grps);
+    batch_list_builder blb(bispace_grps,batched_bispace_subspace_grps);
     size_t max_n_elem = 3; //one short of what is needed
     bool threw_exception = false;
     try
