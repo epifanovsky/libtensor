@@ -10,7 +10,7 @@
 namespace libtensor {
 
 void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
-    /*test_contract2_direct_rhs();*/
+    test_contract2_direct_rhs();
     /*test_contract2_subtract2_nested();*/
     /*test_contract2_permute_nested();*/
     /*test_custom_batch_provider();*/
@@ -21,6 +21,10 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
 void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test_exception)
 {
     static const char *test_name = "direct_sparse_btensor_test::test_contract2_direct_rhs()";
+    //Make batch memory just big enough to fit i = 1 batch of C 
+    //in addition to existing tensors held in core
+    //This will force partitioning into i = 0 and i = 1
+    memory_reserve mr(408);
     contract2_test_f tf;
 
     /*** FIRST STEP - SET UP DIRECT TENSOR ***/
@@ -82,9 +86,6 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     sparse_btensor_new<2> E(spb_E);
     letter m;
 
-    //Make batch memory just big enough to fit i = 1 batch of C 
-    //This will force partitioning into i = 0 and i = 1
-    /*E(m|i) = contract(l,D(m|l),C(i|l),96);*/
     E(m|i) = contract(l,D(m|l),C(i|l));
 
     double E_correct_arr[18] = { //m = 0 i = 0

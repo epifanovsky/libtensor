@@ -115,7 +115,7 @@ template<size_t N,typename T>
 sparse_btensor_new<N,T>::~sparse_btensor_new()
 {
     delete [] m_data_ptr;
-    if(m_mr != NULL) m_mr->remove_tensor(this->m_bispace.get_nnz());
+    if(m_mr != NULL) m_mr->remove_tensor(this->m_bispace.get_nnz()*sizeof(T));
 }
 
 template<size_t N,typename T>
@@ -184,9 +184,9 @@ std::string sparse_btensor_new<N,T>::str() const
 template<size_t N,typename T>
 void sparse_btensor_new<N,T>::set_memory_reserve(memory_reserve& mr)
 { 
-    if(this->m_mr != NULL) this->m_mr->remove_tensor(this->m_bispace.get_nnz());
+    if(this->m_mr != NULL) this->m_mr->remove_tensor(this->m_bispace.get_nnz()*sizeof(T));
     this->m_mr = &mr;
-    m_mr->add_tensor(this->m_bispace.get_nnz());
+    m_mr->add_tensor(this->m_bispace.get_nnz()*sizeof(T));
 }
 
 template<size_t N,typename T>

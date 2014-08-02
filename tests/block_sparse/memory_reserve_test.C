@@ -49,19 +49,19 @@ void memory_reserve_test::test_tensor_destructor() throw(libtest::test_exception
 {
     static const char *test_name = "memory_reserve_test::test_tensor_destructor()";
 
-    memory_reserve mr(102);
+    memory_reserve mr(402);
     //Scope here to force destructor call
     {
         sparse_bispace<1> foo_bispace(50);
         sparse_btensor_new<1> foo_tensor(foo_bispace);
         foo_tensor.set_memory_reserve(mr);
-        if(mr.get_mem_avail() != 52 || mr.get_n_tensors() != 1)
+        if(mr.get_mem_avail() != 2 || mr.get_n_tensors() != 1)
         {
             fail_test(test_name,__FILE__,__LINE__,
                 "sparse_btensor did not add self to memory reserve correctly");
         }
     }
-    if(mr.get_mem_avail() != 102 || mr.get_n_tensors() != 0)
+    if(mr.get_mem_avail() != 402 || mr.get_n_tensors() != 0)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_btensor did not delete self from memory reserve correctly");
@@ -77,7 +77,7 @@ void memory_reserve_test::test_memory_reserve_destructor() throw(libtest::test_e
     bool threw_exception = false;
     try
     {
-        memory_reserve mr(102);
+        memory_reserve mr(402);
         foo_tensor.set_memory_reserve(mr);
     }
     catch(generic_exception&)
@@ -96,7 +96,7 @@ void memory_reserve_test::test_tensor_copy_constructor() throw(libtest::test_exc
     static const char *test_name = "memory_reserve_test::test_tensor_copy_constructor()";
 
     sparse_bispace<1> foo_bispace(50);
-    memory_reserve mr(200);
+    memory_reserve mr(900);
     sparse_btensor_new<1> foo_tensor(foo_bispace);
     foo_tensor.set_memory_reserve(mr);
     sparse_btensor_new<1> bar_tensor(foo_tensor);
@@ -118,17 +118,17 @@ void memory_reserve_test::test_reset_tensor_memory_reserve() throw(libtest::test
     static const char *test_name = "memory_reserve_test::test_reset_tensor_memory_reserve()";
 
     sparse_bispace<1> foo_bispace(50);
-    memory_reserve mr_0(200);
-    memory_reserve mr_1(105);
+    memory_reserve mr_0(400);
+    memory_reserve mr_1(405);
     sparse_btensor_new<1> foo_tensor(foo_bispace);
     foo_tensor.set_memory_reserve(mr_0);
     foo_tensor.set_memory_reserve(mr_1);
-    if(mr_0.get_mem_avail() != 200 || mr_0.get_n_tensors() != 0)
+    if(mr_0.get_mem_avail() != 400 || mr_0.get_n_tensors() != 0)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "Tensor did not properly remove from old memory reserve");
     }
-    if(mr_1.get_mem_avail() != 55 || mr_1.get_n_tensors() != 1)
+    if(mr_1.get_mem_avail() != 5 || mr_1.get_n_tensors() != 1)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "Tensor did not properly add to new memory reserve");
