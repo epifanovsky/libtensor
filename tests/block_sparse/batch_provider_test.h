@@ -18,6 +18,7 @@ private:
     void test_batchable_subspaces_recursion_addition() throw(libtest::test_exception);
     void test_batchable_subspaces_recursion_permutation() throw(libtest::test_exception);
     void test_get_batched_bispace_subspace_groups() throw(libtest::test_exception);
+    void test_get_batched_bispace_subspace_groups_batchable_subspaces() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

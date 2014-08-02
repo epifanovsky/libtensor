@@ -402,9 +402,16 @@ void batch_provider_new<T>::get_batched_bispace_subspace_groups(std::vector<idx_
     {
         for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
         {
-            for(size_t subspace_idx = 0; subspace_idx < m_bispaces[supplier_idx].get_order(); ++subspace_idx)
+            if(m_suppliers[supplier_idx] != NULL)
             {
-                if(m_suppliers[supplier_idx] != NULL)
+                if(m_suppliers[supplier_idx]->get_batchable_subspaces().size() > 0)
+                {
+                    fixed_supplier_idx = supplier_idx;
+                    fixed_subspace_idx = m_suppliers[supplier_idx]->get_batchable_subspaces()[0];
+                    max_direct_tensors_touched = 1;
+                    break;
+                }
+                for(size_t subspace_idx = 0; subspace_idx < m_bispaces[supplier_idx].get_order(); ++subspace_idx)
                 {
                     //TODO Haxx - just take the index touching the most direct tensors 
                     size_t n_direct_tensors_touched = 1;
@@ -454,6 +461,18 @@ void batch_provider_new<T>::get_batched_bispace_subspace_groups(std::vector<idx_
             {
                 if(cur_grp[cur_grp_idx].first == supplier_idx)
                 {
+                    if(m_suppliers[supplier_idx] != NULL)
+                    {
+                        idx_list batchable_subspaces = m_suppliers[supplier_idx]->get_batchable_subspaces();
+                        if(batchable_subspaces.size() > 0)
+                        {
+                            if(find(batchable_subspaces.begin(),batchable_subspaces.end(),cur_grp[cur_grp_idx].second) == batchable_subspaces.end())
+                            {
+                                throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                                        "Incompatible batchable subspaces!");
+                            }
+                        }
+                    }
                     found = true;
                     break;
                 }

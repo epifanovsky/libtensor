@@ -30,6 +30,7 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_batchable_subspaces_recursion_addition();
     test_batchable_subspaces_recursion_permutation();
     test_get_batched_bispace_subspace_groups();
+    test_get_batched_bispace_subspace_groups_batchable_subspaces();
 }
 
 namespace
@@ -37,8 +38,12 @@ namespace
 
 class fake_batch_provider : public batch_provider_i<double>
 {
+private:
+    size_t m_batchable_subspace;
+
 public:
-    virtual idx_list get_batchable_subspaces() const { return idx_list(1,2); }
+    fake_batch_provider(size_t batchable_subspace) : m_batchable_subspace(batchable_subspace) {}
+    virtual idx_list get_batchable_subspaces() const { return idx_list(1,m_batchable_subspace); }
     virtual void get_batch(double* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()) {}
 };
 
@@ -195,7 +200,7 @@ void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(li
     static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_addition()";
     sparse_bispace<1> spb_i(5);
     direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
-    fake_batch_provider fbp;
+    fake_batch_provider fbp(2);
     A.set_batch_provider(fbp);
     sparse_btensor_new<3> B(A.get_bispace());
     sparse_btensor_new<3> C(A.get_bispace());
@@ -224,7 +229,7 @@ void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw
     static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_permutation()";
     sparse_bispace<1> spb_i(5);
     direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
-    fake_batch_provider fbp;
+    fake_batch_provider fbp(2);
     A.set_batch_provider(fbp);
     sparse_btensor_new<3> B(A.get_bispace());
 
@@ -253,7 +258,6 @@ void batch_provider_test::test_get_batched_bispace_subspace_groups() throw(libte
 {
     static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_groups()";
     
-    //Until real algorithm added just return the first index common to all direct tensors in the tree
     contract2_subtract2_nested_test_f tf;
     batch_provider_new<double> bp(tf.tree);
     vector<idx_pair_list> batched_bispace_subspace_grps;
@@ -270,6 +274,58 @@ void batch_provider_test::test_get_batched_bispace_subspace_groups() throw(libte
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batched_bispace_subspace_grps(...) did not return correct value");
     }
+}
+
+void batch_provider_test::test_get_batched_bispace_subspace_groups_batchable_subspaces() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_groups_batchable_subspaces()";
+
+    sparse_bispace<1> spb_i(5);
+    direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
+    fake_batch_provider fbp(0);
+    A.set_batch_provider(fbp);
+    direct_sparse_btensor_new<3> B(A.get_bispace());
+    sparse_btensor_new<3> C(A.get_bispace());
+
+    node_assign root(3);
+    expr_tree tree(root);
+    expr_tree::node_id_t root_id = tree.get_root();
+    tree.add(root_id,node_ident_any_tensor<3,double>(C));
+    idx_list perm_entries(1,2);
+    perm_entries.push_back(1);
+    perm_entries.push_back(0);
+    node_transform<double> n_tf_0(perm_entries,scalar_transf<double>());
+    expr_tree::node_id_t n_tf_0_id = tree.add(root_id,n_tf_0);
+    node_assign n_a_0(3);
+    expr_tree::node_id_t  n_a_0_id = tree.add(n_tf_0_id,n_a_0);
+    tree.add(n_a_0_id,node_ident_any_tensor<3,double>(B));
+
+    node_transform<double> n_tf_1(perm_entries,scalar_transf<double>());
+    expr_tree::node_id_t n_tf_1_id = tree.add(n_a_0_id,n_tf_1);
+    tree.add(n_tf_1_id,node_ident_any_tensor<3,double>(A));
+
+    batch_provider_new<double> bp(tree);
+    if(bp.get_batchable_subspaces() != idx_list(1,0))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batchable_subspaces(...) did not return correct value");
+    }
+
+    vector<idx_pair_list> batched_bispace_subspace_grps;
+    bp.get_batched_bispace_subspace_groups(batched_bispace_subspace_grps);
+    idx_pair_list bbs_grp_0(1,idx_pair(1,2));
+    idx_pair_list bbs_grp_1(1,idx_pair(0,2));
+    bbs_grp_1.push_back(idx_pair(1,0));
+    vector<idx_pair_list> correct_batched_bispace_subspace_grps(1,bbs_grp_0);
+    correct_batched_bispace_subspace_grps.push_back(bbs_grp_1);
+    if(batched_bispace_subspace_grps != correct_batched_bispace_subspace_grps)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batched_bispace_subspace_grps(...) did not return correct value");
+    }
+
+
+    
 }
 
 } // namespace libtensor
