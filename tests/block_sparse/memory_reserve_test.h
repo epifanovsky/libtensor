@@ -11,6 +11,11 @@ class memory_reserve_test: public libtest::unit_test
 public:
     virtual void perform() throw(libtest::test_exception);
 private:
+    void test_add_remove() throw(libtest::test_exception);
+    void test_tensor_destructor() throw(libtest::test_exception);
+    void test_memory_reserve_destructor() throw(libtest::test_exception);
+    void test_tensor_copy_constructor() throw(libtest::test_exception);
+    void test_reset_tensor_memory_reserve() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
