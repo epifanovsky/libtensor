@@ -186,6 +186,7 @@ public:
     virtual idx_list get_batchable_subspaces() const;
     ~batch_provider_new();
     void set_batch_info(const std::vector<idx_pair_list>& batched_bispace_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos = 0);
+    void get_batched_bispace_subspace_groups(std::vector<idx_pair_list>& bbs_grps,size_t output_subspace_batched=0) const;
 };
 
 template<typename T>
@@ -391,7 +392,91 @@ void batch_provider_new<T>::set_batch_info(const std::vector<idx_pair_list>& bat
     }
 }
 
+template<typename T>
+void batch_provider_new<T>::get_batched_bispace_subspace_groups(std::vector<idx_pair_list>& bbs_grps,size_t output_subspace_batched) const
+{
+    size_t fixed_supplier_idx;
+    size_t fixed_subspace_idx;
+    size_t max_direct_tensors_touched = 0;
+    if(bbs_grps.size() == 0)
+    {
+        for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+        {
+            for(size_t subspace_idx = 0; subspace_idx < m_bispaces[supplier_idx].get_order(); ++subspace_idx)
+            {
+                if(m_suppliers[supplier_idx] != NULL)
+                {
+                    //TODO Haxx - just take the index touching the most direct tensors 
+                    size_t n_direct_tensors_touched = 1;
+                    for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(supplier_idx,subspace_idx); ++conn_subspace_idx)
+                    {
+                        idx_pair conn_bas = m_conn(supplier_idx,subspace_idx,conn_subspace_idx);
+                        if(m_suppliers[conn_bas.first] != NULL)
+                        {
+                            ++n_direct_tensors_touched;
+                        }
+                    }
+                    if(n_direct_tensors_touched > max_direct_tensors_touched)
+                    {
+                        max_direct_tensors_touched = n_direct_tensors_touched;
+                        fixed_supplier_idx = supplier_idx;
+                        fixed_subspace_idx = subspace_idx;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        fixed_supplier_idx = 0;
+        fixed_subspace_idx = output_subspace_batched;
+    }
 
+    idx_pair_list cur_grp;
+    if(bbs_grps.size() > 0 || max_direct_tensors_touched > 0)
+    {
+        cur_grp.push_back(idx_pair(fixed_supplier_idx,fixed_subspace_idx));
+        for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(fixed_supplier_idx,fixed_subspace_idx); ++conn_subspace_idx)
+        {
+            idx_pair conn_bas = m_conn(fixed_supplier_idx,fixed_subspace_idx,conn_subspace_idx);
+            if(m_suppliers[conn_bas.first] != NULL) cur_grp.push_back(conn_bas);
+        }
+    }
+
+    //TODO: Avoid multibatching with this check
+    for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+    {
+        //We have to batch the output if this isn't the top-level provider
+        if(m_suppliers[supplier_idx] != NULL || (supplier_idx == 0 && bbs_grps.size() > 0))
+        {
+            bool found = false;
+            for(size_t cur_grp_idx = 0; cur_grp_idx < cur_grp.size(); ++cur_grp_idx)
+            {
+                if(cur_grp[cur_grp_idx].first == supplier_idx)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+            {
+                throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                        "Operation requires batching over multiple indices");
+            }
+        }
+    }
+    bbs_grps.push_back(cur_grp);
+
+
+    for(size_t bas_idx = 0; bas_idx < bbs_grps.size(); ++bas_idx)
+    {
+        idx_pair bas = cur_grp[bas_idx];
+        if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),bas.first) != m_suppliers_allocd.end())
+        {
+            static_cast<batch_provider_new<T>*>(m_suppliers[bas.first])->get_batched_bispace_subspace_groups(bbs_grps,bas.second);
+        }
+    }
+}
 
 } // namespace libtensor
 

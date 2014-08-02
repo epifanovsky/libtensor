@@ -29,6 +29,7 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_contract2_subtract2_nested();
     test_batchable_subspaces_recursion_addition();
     test_batchable_subspaces_recursion_permutation();
+    test_get_batched_bispace_subspace_groups();
 }
 
 namespace
@@ -245,6 +246,29 @@ void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batchable_subspaces(...) did not return correct value for recursion case with permutation");
+    }
+}
+
+void batch_provider_test::test_get_batched_bispace_subspace_groups() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_groups()";
+    
+    //Until real algorithm added just return the first index common to all direct tensors in the tree
+    contract2_subtract2_nested_test_f tf;
+    batch_provider_new<double> bp(tf.tree);
+    vector<idx_pair_list> batched_bispace_subspace_grps;
+    bp.get_batched_bispace_subspace_groups(batched_bispace_subspace_grps);
+    idx_pair_list bbs_grp_0(1,idx_pair(2,0)); //Last contraction, G
+    idx_pair_list bbs_grp_1(1,idx_pair(0,0)); //Subtraction, G and C
+    bbs_grp_1.push_back(idx_pair(1,0));
+    idx_pair_list bbs_grp_2(1,idx_pair(0,0)); //First contraction, C
+    vector<idx_pair_list> correct_batched_bispace_subspace_grps(1,bbs_grp_0);
+    correct_batched_bispace_subspace_grps.push_back(bbs_grp_1);
+    correct_batched_bispace_subspace_grps.push_back(bbs_grp_2);
+    if(batched_bispace_subspace_grps != correct_batched_bispace_subspace_grps)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_provider::get_batched_bispace_subspace_grps(...) did not return correct value");
     }
 }
 
