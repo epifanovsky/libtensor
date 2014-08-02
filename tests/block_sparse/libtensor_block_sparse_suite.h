@@ -19,6 +19,7 @@
 #include "subspace_iterator_test.h"
 #include "batch_provider_test.h"
 #include "connectivity_test.h"
+#include "memory_reserve_test.h"
 
 using libtest::unit_test_factory;
 
@@ -54,6 +55,7 @@ private:
     unit_test_factory<subspace_iterator_test> m_utf_subspace_iterator;
     unit_test_factory<batch_provider_test> m_utf_batch_provider;
     unit_test_factory<connectivity_test> m_utf_connectivity;
+    unit_test_factory<memory_reserve_test> m_utf_memory_reserve;
 public:
     //! Creates the suite
     libtensor_sparse_suite();

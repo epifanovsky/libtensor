@@ -21,6 +21,7 @@ libtensor_sparse_suite::libtensor_sparse_suite() :
     add_test("subspace_iterator", m_utf_subspace_iterator);
     add_test("batch_provider", m_utf_batch_provider);
     add_test("connectivity", m_utf_connectivity);
+    add_test("memory_reserve", m_utf_memory_reserve);
 }
 
 }
