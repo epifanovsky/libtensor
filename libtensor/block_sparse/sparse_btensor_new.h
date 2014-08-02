@@ -2,25 +2,23 @@
 #define SPARSE_BTENSOR_NEW_H
 
 #include <sstream>
-#include <libtensor/expr/iface/label.h>
 #include "sparse_bispace.h"
 #include "sparse_loop_list.h"
 #include "block_load_kernel.h"
 #include "block_print_kernel.h"
-#include "labeled_sparse_btensor.h"
 #include "subtract.h"
 #include "gen_sparse_btensor.h"
 #include "memory_reserve.h"
+#include "batch_provider_new.h"
+#include <libtensor/expr/iface/expr_lhs.h>
+#include <libtensor/expr/iface/labeled_lhs_rhs.h>
+#include <libtensor/expr/operators/contract.h>
+#include <libtensor/expr/operators/plus_minus.h>
 
 namespace libtensor {
 
-
-//Forward declaration for operator()(...) 
-template<size_t N,typename T>
-class labeled_sparse_btensor;
-
 template<size_t N,typename T = double>
-class sparse_btensor_new : public gen_sparse_btensor<N,T> 
+class sparse_btensor_new : public gen_sparse_btensor<N,T>,public expr::expr_lhs<N,T>
 {
 public:
     static const char *k_clazz; //!< Class name
@@ -51,16 +49,18 @@ public:
     const T* get_data_ptr() const { return m_data_ptr; }
     virtual batch_provider_i<T>* get_batch_provider() const { return NULL; }
     
-    /** \brief Returns a labeled_sparse_btensor object for use in expressions
-     *
-     */
-    labeled_sparse_btensor<N,T> operator()(const expr::label<N>& le);
-
     /** \brief Returns a string representation of the tensor in row-major order 
      **/
     std::string str() const;
 
     void set_memory_reserve(memory_reserve& mr);
+
+    virtual void assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
+
+    expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &label) {
+        return expr::labeled_lhs_rhs<N, T>(*this, label,
+            any_tensor<N, T>::make_rhs(label));
+    }
 };
 
 template<size_t N,typename T>
@@ -159,13 +159,6 @@ bool sparse_btensor_new<N,T>::operator!=(const sparse_btensor_new<N,T>& rhs) con
     return !(*this == rhs);
 }
 
-
-template<size_t N,typename T>
-labeled_sparse_btensor<N,T> sparse_btensor_new<N,T>::operator()(const expr::label<N>& le)
-{
-    return labeled_sparse_btensor<N,T>(*this,le);
-}
-
 template<size_t N,typename T>
 std::string sparse_btensor_new<N,T>::str() const
 {
@@ -194,6 +187,30 @@ void sparse_btensor_new<N,T>::set_memory_reserve(memory_reserve& mr)
     if(this->m_mr != NULL) this->m_mr->remove_tensor(this->m_bispace.get_nnz());
     this->m_mr = &mr;
     m_mr->add_tensor(this->m_bispace.get_nnz());
+}
+
+template<size_t N,typename T>
+void sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
+{
+    using namespace expr;
+    node_assign root(N);
+    expr_tree e(root);
+    expr_tree::node_id_t root_id = e.get_root();
+    node_ident_any_tensor<N,T> n_tensor(*this);
+    e.add(root_id,n_tensor);
+
+    permutation<N> perm = l.permutation_of(rhs.get_label());
+    if(!perm.is_identity()) 
+    {
+        std::vector<size_t> perm_entries(N);
+        for(size_t i = 0; i < N; i++) perm_entries[i] = perm[i];
+
+        node_transform<T> n_tf(perm_entries, scalar_transf<T>());
+        root_id = e.add(root_id,n_tf);
+    }
+    e.add(root_id, rhs.get_expr());
+    batch_provider_new<T> bp(e);
+    bp.get_batch(this->m_data_ptr);
 }
 
 } // namespace libtensor

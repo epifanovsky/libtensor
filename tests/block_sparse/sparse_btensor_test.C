@@ -1,6 +1,5 @@
 
-#include <libtensor/block_sparse/sparse_btensor.h>
-#include <libtensor/block_sparse/contract.h>
+#include <libtensor/block_sparse/sparse_btensor_new.h>
 #include "sparse_btensor_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/subtract2_test_f.h"
@@ -51,11 +50,11 @@ void sparse_btensor_test::test_get_bispace() throw(libtest::test_exception)
     spb_2.split(split_points_2);
 
     sparse_bispace<2> two_d = spb_1 | spb_2;
-    sparse_btensor<2> sbt(two_d);
+    sparse_btensor_new<2> sbt(two_d);
     if(sbt.get_bispace() != two_d)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::get_bispace(...) did not return two_d");
+                "sparse_btensor_new<N>::get_bispace(...) did not return two_d");
     }
 }
 
@@ -73,13 +72,13 @@ void sparse_btensor_test::test_str_2d_block_major() throw(libtest::test_exceptio
     split_points.push_back(2);
     N.split(split_points);
     sparse_bispace<2> N2 = N|N;
-    sparse_btensor<2> bt(N2,mem_block_major,true);
+    sparse_btensor_new<2> bt(N2,mem_block_major,true);
 
     std::string correct_str("---\n 1 2\n 5 6\n---\n 3 4\n 7 8\n---\n 9 10\n 13 14\n---\n 11 12\n 15 16\n");
     if(bt.str() != correct_str)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::str(...) did not return correct string");
+                "sparse_btensor_new<N>::str(...) did not return correct string");
     }
 }
 
@@ -97,13 +96,13 @@ void sparse_btensor_test::test_str_2d_row_major() throw(libtest::test_exception)
     split_points.push_back(2);
     N.split(split_points);
     sparse_bispace<2> N2 = N|N;
-    sparse_btensor<2> bt(N2,mem_row_major);
+    sparse_btensor_new<2> bt(N2,mem_row_major);
 
     std::string correct_str("---\n 1 2\n 5 6\n---\n 3 4\n 7 8\n---\n 9 10\n 13 14\n---\n 11 12\n 15 16\n");
     if(bt.str() != correct_str)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::str(...) did not return correct string");
+                "sparse_btensor_new<N>::str(...) did not return correct string");
     }
 }
 
@@ -152,7 +151,7 @@ void sparse_btensor_test::test_str_3d_row_major() throw(libtest::test_exception)
 
     sparse_bispace<3> three_d_input = spb_1 | spb_2 | spb_3;
 
-    sparse_btensor<3> bt(three_d_input,mem_row_major);
+    sparse_btensor_new<3> bt(three_d_input,mem_row_major);
 
     std::string correct_str("---\n"
                             " 1 2\n"
@@ -190,7 +189,7 @@ void sparse_btensor_test::test_str_3d_row_major() throw(libtest::test_exception)
     if(bt.str() != correct_str)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::str(...) did not return correct string");
+                "sparse_btensor_new<N>::str(...) did not return correct string");
     }
 }
 
@@ -216,8 +215,8 @@ void sparse_btensor_test::test_equality_different_nnz() throw(libtest::test_exce
     sparse_bispace<2> two_d_1 = spb_1 | spb_2;
     sparse_bispace<2> two_d_2 = spb_1 | spb_3;
 
-    sparse_btensor<2> bt_1(two_d_1);
-    sparse_btensor<2> bt_2(two_d_2);
+    sparse_btensor_new<2> bt_1(two_d_1);
+    sparse_btensor_new<2> bt_2(two_d_2);
 
 
     bool threw_exception = false;
@@ -232,7 +231,7 @@ void sparse_btensor_test::test_equality_different_nnz() throw(libtest::test_exce
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::operator==(...) did not throw exception");
+                "sparse_btensor_new<N>::operator==(...) did not throw exception");
     }
 }
 
@@ -264,13 +263,13 @@ void sparse_btensor_test::test_equality_true() throw(libtest::test_exception)
     N.split(split_points);
     sparse_bispace<2> N2 = N|N;
 
-    sparse_btensor<2> block_major(N2,mem_block_major,true);
-    sparse_btensor<2> row_major(N2,mem_row_major);
+    sparse_btensor_new<2> block_major(N2,mem_block_major,true);
+    sparse_btensor_new<2> row_major(N2,mem_row_major);
 
     if(!(row_major == block_major))
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::operator==(...) did not return true");
+                "sparse_btensor_new<N>::operator==(...) did not return true");
     }
 }
 
@@ -302,13 +301,13 @@ void sparse_btensor_test::test_equality_false() throw(libtest::test_exception)
     N.split(split_points);
     sparse_bispace<2> N2 = N|N;
 
-    sparse_btensor<2> block_major(N2,mem_block_major,true);
-    sparse_btensor<2> row_major(N2,mem_row_major);
+    sparse_btensor_new<2> block_major(N2,mem_block_major,true);
+    sparse_btensor_new<2> row_major(N2,mem_row_major);
 
     if(row_major == block_major)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_btensor<N>::operator==(...) did not return false");
+                "sparse_btensor_new<N>::operator==(...) did not return false");
     }
 }
 
@@ -352,13 +351,13 @@ void sparse_btensor_test::test_permute_2d_row_major() throw(libtest::test_except
 
     sparse_bispace<2> two_d_input = spb_1 | spb_2;
     sparse_bispace<2> two_d_output = spb_2 | spb_1;
-    sparse_btensor<2> bt(two_d_input,mem_row_major);
+    sparse_btensor_new<2> bt(two_d_input,mem_row_major);
 
-    sparse_btensor<2> bt_trans(two_d_output);
+    sparse_btensor_new<2> bt_trans(two_d_output);
     letter i,j;
     bt_trans(i|j) = bt(j|i);
 
-    sparse_btensor<2> correct(two_d_output,correct_mem_block_major,true);
+    sparse_btensor_new<2> correct(two_d_output,correct_mem_block_major,true);
     if(bt_trans != correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -441,13 +440,13 @@ void sparse_btensor_test::test_permute_3d_row_major_210() throw(libtest::test_ex
 
     sparse_bispace<3> three_d_input = spb_1 | spb_2 | spb_3;
     sparse_bispace<3> three_d_output = spb_3 | spb_2 | spb_1;
-    sparse_btensor<3> bt(three_d_input,mem_row_major);
+    sparse_btensor_new<3> bt(three_d_input,mem_row_major);
 
-    sparse_btensor<3> bt_210(three_d_output);
+    sparse_btensor_new<3> bt_210(three_d_output);
     letter i,j,k;
     bt_210(k|j|i) = bt(i|j|k);
 
-    sparse_btensor<3> correct(three_d_output,correct_row_major);
+    sparse_btensor_new<3> correct(three_d_output,correct_row_major);
     if(bt_210 != correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -461,12 +460,12 @@ void sparse_btensor_test::test_permute_3d_block_major_120_sparse() throw(libtest
     
     permute_3d_sparse_120_test_f  tf;
 
-    sparse_btensor<3> bt(tf.input_bispace,tf.input_arr,true);
-    sparse_btensor<3> bt_120(tf.output_bispace);
+    sparse_btensor_new<3> bt(tf.input_bispace,tf.input_arr,true);
+    sparse_btensor_new<3> bt_120(tf.output_bispace);
     letter i,j,k;
     bt_120(i|j|k) = bt(k|i|j);
 
-    sparse_btensor<3> correct(tf.output_bispace,tf.output_arr,true);
+    sparse_btensor_new<3> correct(tf.output_bispace,tf.output_arr,true);
     if(bt_120 != correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -510,15 +509,15 @@ void sparse_btensor_test::test_contract2_2d_2d() throw(libtest::test_exception)
     spb_j.split(split_points_j);
 
 
-    sparse_btensor<2> bt_1(spb_i | spb_k,test_input_arr_1);
-    sparse_btensor<2> bt_2(spb_j | spb_k,test_input_arr_2);
+    sparse_btensor_new<2> bt_1(spb_i | spb_k,test_input_arr_1);
+    sparse_btensor_new<2> bt_2(spb_j | spb_k,test_input_arr_2);
 
     sparse_bispace<2> spb_ij = spb_i | spb_j;
-    sparse_btensor<2> result(spb_ij);
+    sparse_btensor_new<2> result(spb_ij);
     letter i,j,k;
     result(i|j) = contract(k,bt_1(i|k),bt_2(j|k));
 
-    sparse_btensor<2> correct_result(spb_ij,correct_output_arr);
+    sparse_btensor_new<2> correct_result(spb_ij,correct_output_arr);
     if(result != correct_result)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -577,14 +576,14 @@ void sparse_btensor_test::test_contract2_2d_2d_sparse_dense() throw(libtest::tes
     sig_blocks_A[1][0] = 1;
     sig_blocks_A[1][1] = 0;
 
-    sparse_btensor<2> A(spb_i % spb_k << sig_blocks_A,A_arr,true);
-    sparse_btensor<2> B(spb_j | spb_k,B_arr);
-    sparse_btensor<2> C(spb_i | spb_j);
+    sparse_btensor_new<2> A(spb_i % spb_k << sig_blocks_A,A_arr,true);
+    sparse_btensor_new<2> B(spb_j | spb_k,B_arr);
+    sparse_btensor_new<2> C(spb_i | spb_j);
 
     letter i,j,k;
     C(i|j) = contract(k,A(i|k),B(j|k));
 
-    sparse_btensor<2> C_correct(spb_i | spb_j,C_correct_arr);
+    sparse_btensor_new<2> C_correct(spb_i | spb_j,C_correct_arr);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -728,14 +727,14 @@ void sparse_btensor_test::test_contract2_3d_2d() throw(libtest::test_exception)
     sparse_bispace<3> C_spb = spb_i | spb_j | spb_l;
 
 
-    sparse_btensor<3> A(A_spb,test_input_arr_1,true);
-    sparse_btensor<2> B(B_spb,test_input_arr_2,true);
-    sparse_btensor<3> C(C_spb);
+    sparse_btensor_new<3> A(A_spb,test_input_arr_1,true);
+    sparse_btensor_new<2> B(B_spb,test_input_arr_2,true);
+    sparse_btensor_new<3> C(C_spb);
 
     letter i,j,k,l;
     C(i|j|l) = contract(k,A(i|j|k),B(k|l));
 
-    sparse_btensor<3> C_correct(C_spb,correct_output_arr,true);
+    sparse_btensor_new<3> C_correct(C_spb,correct_output_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -831,7 +830,7 @@ void sparse_btensor_test::test_contract2_3d_sparse_eye() throw(libtest::test_exc
     for(size_t i = 0; i < 2; ++i) ij_sig_blocks[3][i] = seq_03_arr_1[i];
 
     sparse_bispace<3> spb_A = spb_i % spb_j << ij_sig_blocks | spb_k;
-    sparse_btensor<3> A(spb_A,A_arr,true);
+    sparse_btensor_new<3> A(spb_A,A_arr,true);
 
     //Construct identity matrix
     sparse_bispace<2> spb_eye = spb_k|spb_k;
@@ -841,10 +840,10 @@ void sparse_btensor_test::test_contract2_3d_sparse_eye() throw(libtest::test_exc
     {
         eye_arr[i*spb_k.get_dim()+i] = 1;
     }
-    sparse_btensor<2> eye(spb_eye,eye_arr,false);
+    sparse_btensor_new<2> eye(spb_eye,eye_arr,false);
     delete [] eye_arr;
 
-    sparse_btensor<3> A_from_contract(spb_A);
+    sparse_btensor_new<3> A_from_contract(spb_A);
     letter i,j,k,l;
     A_from_contract(i|j|l) = contract(k,A(i|j|k),eye(k|l));
 
@@ -856,9 +855,9 @@ void sparse_btensor_test::test_contract2_3d_sparse_eye() throw(libtest::test_exc
 
     //Test contracting from the lhs with eye
     sparse_bispace<3> spb_B = spb_k | spb_A.contract(2);
-    sparse_btensor<3> B(spb_B);
+    sparse_btensor_new<3> B(spb_B);
     B(k|i|j) = A(i|j|k);
-    sparse_btensor<3> B_from_contract(spb_B);
+    sparse_btensor_new<3> B_from_contract(spb_B);
     B_from_contract(l|i|j) = contract(k,eye(l|k),B(k|i|j));
 
     if(B_from_contract != B)
@@ -995,15 +994,15 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_dense() throw(libtest::tes
     sig_blocks_A[5][2] = 2;
 
     sparse_bispace<3> spb_A = spb_i % spb_j % spb_k << sig_blocks_A;
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<2> B(spb_l | spb_k,B_arr);
+    sparse_btensor_new<3> A(spb_A,A_arr,true);
+    sparse_btensor_new<2> B(spb_l | spb_k,B_arr);
     sparse_bispace<3> spb_C = spb_i | spb_j | spb_l;
-    sparse_btensor<3> C(spb_C);
+    sparse_btensor_new<3> C(spb_C);
 
     letter i,j,k,l;
     C(i|j|l) = contract(k,A(i|j|k),B(l|k));
 
-    sparse_btensor<3> C_correct(spb_C,C_correct_arr);
+    sparse_btensor_new<3> C_correct(spb_C,C_correct_arr);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -1174,15 +1173,15 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_sparse() throw(libtest::te
     sparse_bispace<3> spb_A = spb_i % spb_j % spb_k << sig_blocks_A;
     sparse_bispace<2> spb_B = spb_k % spb_l << sig_blocks_B;
 
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<2> B(spb_B,B_arr,true);
+    sparse_btensor_new<3> A(spb_A,A_arr,true);
+    sparse_btensor_new<2> B(spb_B,B_arr,true);
     sparse_bispace<3> spb_C = spb_A.fuse(spb_B).contract(2);
-    sparse_btensor<3> C(spb_C);
+    sparse_btensor_new<3> C(spb_C);
 
     letter i,j,k,l;
     C(i|j|l) = contract(k,A(i|j|k),B(k|l));
 
-    sparse_btensor<3> C_correct(spb_C,C_correct_arr,true);
+    sparse_btensor_new<3> C_correct(spb_C,C_correct_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -1291,15 +1290,15 @@ void sparse_btensor_test::test_contract2_two_indices_3d_3d_dense_dense() throw(l
     sparse_bispace<3> spb_A = spb_i | spb_j | spb_k;
     sparse_bispace<3> spb_B = spb_l | spb_j | spb_k ;
 
-    sparse_btensor<3> A(spb_A,A_arr);
-    sparse_btensor<3> B(spb_B,B_arr);
+    sparse_btensor_new<3> A(spb_A,A_arr);
+    sparse_btensor_new<3> B(spb_B,B_arr);
     sparse_bispace<2> spb_C = spb_i | spb_l;
-    sparse_btensor<2> C(spb_C);
+    sparse_btensor_new<2> C(spb_C);
 
     letter i,j,k,l;
     C(i|l) = contract(j|k,A(i|j|k),B(l|j|k));
 
-    sparse_btensor<2> C_correct(spb_C,C_correct_arr);
+    sparse_btensor_new<2> C_correct(spb_C,C_correct_arr);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -1470,15 +1469,15 @@ void sparse_btensor_test::test_contract2_two_indices_3d_3d_sparse_sparse() throw
 
     sparse_bispace<3> spb_B = spb_j | spb_k % spb_l << kl_sig_blocks;
 
-    sparse_btensor<3> A(spb_A,A_arr,true);
-    sparse_btensor<3> B(spb_B,B_arr,true);
+    sparse_btensor_new<3> A(spb_A,A_arr,true);
+    sparse_btensor_new<3> B(spb_B,B_arr,true);
     sparse_bispace<2> spb_C = spb_i | spb_l;
-    sparse_btensor<2> C(spb_C);
+    sparse_btensor_new<2> C(spb_C);
 
     letter i,j,k,l;
     C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
 
-    sparse_btensor<2> C_correct(spb_C,C_correct_arr);
+    sparse_btensor_new<2> C_correct(spb_C,C_correct_arr);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -1491,14 +1490,14 @@ void sparse_btensor_test::test_subtract2_3d_dense_from_sparse() throw(libtest::t
 {
     static const char *test_name = "sparse_btensor_test::test_subtract2_3d_dense_from_sparse()";
     subtract2_test_f tf;
-    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_btensor<3> C(tf.spb_C);
+    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
+    sparse_btensor_new<3> C(tf.spb_C);
 
     letter i,j,k;
     C(i|j|k) = A(i|j|k) - B(i|j|k);
 
-    sparse_btensor<3> C_correct(tf.spb_C,tf.C_arr,true);
+    sparse_btensor_new<3> C_correct(tf.spb_C,tf.C_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
