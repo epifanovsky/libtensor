@@ -17,6 +17,11 @@ size_t memory_reserve::get_n_tensors() const
 
 void memory_reserve::add_tensor(size_t mem)
 {
+    if(mem > m_mem_avail)
+    {
+        throw out_of_memory(g_ns,"memory_reserve","add_tensor(...)",__FILE__,__LINE__,
+                "Memory reserve exceeded"); 
+    }
     m_mem_avail -= mem;
     m_n_tensors += 1;
 }

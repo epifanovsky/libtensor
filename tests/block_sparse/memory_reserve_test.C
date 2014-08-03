@@ -8,6 +8,7 @@ namespace libtensor {
 void memory_reserve_test::perform() throw(libtest::test_exception)
 {
     test_add_remove();
+    test_add_not_enough_mem();
     test_tensor_destructor();
     test_memory_reserve_destructor();
     test_tensor_copy_constructor();
@@ -42,6 +43,28 @@ void memory_reserve_test::test_add_remove() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "memory_reserve::get_n_tensors(...) did not return correct value");
+    }
+}
+
+void memory_reserve_test::test_add_not_enough_mem() throw(libtest::test_exception)
+{
+    static const char *test_name = "memory_reserve_test::test_add_not_enough_mem()";
+
+    memory_reserve mr(50);
+    bool threw_exception = false;
+    try
+    {
+        mr.add_tensor(51);
+        mr.remove_tensor(51);
+    }
+    catch(out_of_memory&)
+    {
+        threw_exception = true;
+    }
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "memory_reserve::add_tensor(...) did not throw out of memory when tensor too large");
     }
 }
 
