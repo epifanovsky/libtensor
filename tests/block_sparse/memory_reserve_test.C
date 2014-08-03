@@ -9,6 +9,7 @@ void memory_reserve_test::perform() throw(libtest::test_exception)
 {
     test_add_remove();
     test_add_not_enough_mem();
+    test_remove_not_enough_tensors();
     test_tensor_destructor();
     test_memory_reserve_destructor();
     test_tensor_copy_constructor();
@@ -65,6 +66,28 @@ void memory_reserve_test::test_add_not_enough_mem() throw(libtest::test_exceptio
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "memory_reserve::add_tensor(...) did not throw out of memory when tensor too large");
+    }
+}
+
+void memory_reserve_test::test_remove_not_enough_tensors() throw(libtest::test_exception)
+{
+    static const char *test_name = "memory_reserve_test::test_remove_not_enough_tensors()";
+
+    memory_reserve mr(50);
+    bool threw_exception = false;
+    try
+    {
+        mr.remove_tensor(18);
+    }
+    catch(generic_exception&)
+    {
+        threw_exception = true;
+    }
+
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "memory_reserve::remove_tensor(...) did not throw exception when no tensors present");
     }
 }
 

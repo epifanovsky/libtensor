@@ -13,6 +13,7 @@ public:
 private:
     void test_add_remove() throw(libtest::test_exception);
     void test_add_not_enough_mem() throw(libtest::test_exception);
+    void test_remove_not_enough_tensors() throw(libtest::test_exception);
     void test_tensor_destructor() throw(libtest::test_exception);
     void test_memory_reserve_destructor() throw(libtest::test_exception);
     void test_tensor_copy_constructor() throw(libtest::test_exception);
