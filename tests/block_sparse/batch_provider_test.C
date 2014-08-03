@@ -29,8 +29,8 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_contract2_subtract2_nested();
     test_batchable_subspaces_recursion_addition();
     test_batchable_subspaces_recursion_permutation();
-    test_get_batched_bispace_subspace_groups();
-    test_get_batched_bispace_subspace_groups_batchable_subspaces();
+    test_get_batched_subspace_grps();
+    test_get_batched_subspace_grps_batchable_subspaces();
 }
 
 namespace
@@ -180,12 +180,11 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
     //Now we see if it can work when we force one of the intermediates (D) to be batched, though the result is not
     idx_pair_list batch_list(1,idx_pair(0,2));
     batch_list.push_back(idx_pair(2,3));
-    vector<idx_pair_list> batched_bispace_subspace_grps(1,idx_pair_list(1,idx_pair(2,1)));
-    batched_bispace_subspace_grps.push_back(idx_pair_list(1,idx_pair(0,1)));
-    batched_bispace_subspace_grps[1].push_back(idx_pair(0,1));
-    batched_bispace_subspace_grps.push_back(idx_pair_list(1,idx_pair(0,1)));
+    vector<idx_list> batched_subspace_grps(1,idx_list(1,1));
+    batched_subspace_grps.push_back(idx_list(2,1));
+    batched_subspace_grps.push_back(idx_list(1,1));
 
-    bp.set_batch_info(batched_bispace_subspace_grps,batch_list);
+    bp.set_batch_info(batched_subspace_grps,batch_list);
     bp.get_batch((double*)tf.E.get_data_ptr());
 
     if(tf.E != tf.E_correct)
@@ -254,31 +253,27 @@ void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw
     }
 }
 
-void batch_provider_test::test_get_batched_bispace_subspace_groups() throw(libtest::test_exception)
+void batch_provider_test::test_get_batched_subspace_grps() throw(libtest::test_exception)
 {
-    static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_groups()";
+    static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_grps()";
     
     contract2_subtract2_nested_test_f tf;
     batch_provider_new<double> bp(tf.tree);
-    vector<idx_pair_list> batched_bispace_subspace_grps;
-    bp.get_batched_bispace_subspace_groups(batched_bispace_subspace_grps);
-    idx_pair_list bbs_grp_0(1,idx_pair(2,0)); //Last contraction, G
-    idx_pair_list bbs_grp_1(1,idx_pair(0,0)); //Subtraction, G and C
-    bbs_grp_1.push_back(idx_pair(1,0));
-    idx_pair_list bbs_grp_2(1,idx_pair(0,0)); //First contraction, C
-    vector<idx_pair_list> correct_batched_bispace_subspace_grps(1,bbs_grp_0);
-    correct_batched_bispace_subspace_grps.push_back(bbs_grp_1);
-    correct_batched_bispace_subspace_grps.push_back(bbs_grp_2);
-    if(batched_bispace_subspace_grps != correct_batched_bispace_subspace_grps)
+    vector<idx_list> batched_subspace_grps;
+    bp.get_batched_subspace_grps(batched_subspace_grps);
+    vector<idx_list> correct_batched_subspace_grps(1,idx_list(1,0)); //Last contraction, G
+    correct_batched_subspace_grps.push_back(idx_list(2,0)); //Subtraction, G and C
+    correct_batched_subspace_grps.push_back(idx_list(1,0)); //First contraction, C
+    if(batched_subspace_grps != correct_batched_subspace_grps)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_provider::get_batched_bispace_subspace_grps(...) did not return correct value");
     }
 }
 
-void batch_provider_test::test_get_batched_bispace_subspace_groups_batchable_subspaces() throw(libtest::test_exception)
+void batch_provider_test::test_get_batched_subspace_grps_batchable_subspaces() throw(libtest::test_exception)
 {
-    static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_groups_batchable_subspaces()";
+    static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_grps_batchable_subspaces()";
 
     sparse_bispace<1> spb_i(5);
     direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
@@ -311,21 +306,16 @@ void batch_provider_test::test_get_batched_bispace_subspace_groups_batchable_sub
                 "batch_provider::get_batchable_subspaces(...) did not return correct value");
     }
 
-    vector<idx_pair_list> batched_bispace_subspace_grps;
-    bp.get_batched_bispace_subspace_groups(batched_bispace_subspace_grps);
-    idx_pair_list bbs_grp_0(1,idx_pair(1,2));
-    idx_pair_list bbs_grp_1(1,idx_pair(0,2));
-    bbs_grp_1.push_back(idx_pair(1,0));
-    vector<idx_pair_list> correct_batched_bispace_subspace_grps(1,bbs_grp_0);
-    correct_batched_bispace_subspace_grps.push_back(bbs_grp_1);
-    if(batched_bispace_subspace_grps != correct_batched_bispace_subspace_grps)
+    vector<idx_list> batched_subspace_grps;
+    bp.get_batched_subspace_grps(batched_subspace_grps);
+    vector<idx_list> correct_batched_subspace_grps(1,idx_list(1,2));
+    correct_batched_subspace_grps.push_back(idx_list(1,2));
+    correct_batched_subspace_grps.back().push_back(0);
+    if(batched_subspace_grps != correct_batched_subspace_grps)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "batch_provider::get_batched_bispace_subspace_grps(...) did not return correct value");
+                "batch_provider::get_batched_subspace_grps(...) did not return correct value");
     }
-
-
-    
 }
 
 } // namespace libtensor

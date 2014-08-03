@@ -10,7 +10,7 @@
 namespace libtensor {
 
 void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
-    test_contract2_direct_rhs();
+    /*test_contract2_direct_rhs();*/
     /*test_contract2_subtract2_nested();*/
     /*test_contract2_permute_nested();*/
     /*test_custom_batch_provider();*/
@@ -86,6 +86,10 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     sparse_btensor_new<2> E(spb_E);
     letter m;
 
+    A.set_memory_reserve(mr);
+    B.set_memory_reserve(mr);
+    D.set_memory_reserve(mr);
+    E.set_memory_reserve(mr);
     E(m|i) = contract(l,D(m|l),C(i|l));
 
     double E_correct_arr[18] = { //m = 0 i = 0

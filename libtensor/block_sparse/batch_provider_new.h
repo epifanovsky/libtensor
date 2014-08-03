@@ -176,7 +176,7 @@ private:
     std::vector<batch_provider_i<T>*> m_suppliers;
     idx_list m_suppliers_allocd;
     idx_list m_batchable_subspaces;
-    idx_pair_list m_batched_bispace_subspaces;
+    idx_list m_batched_subspaces;
     idx_pair_list m_batch_list;
     expr::connectivity m_conn;
 public:
@@ -185,8 +185,9 @@ public:
     virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()); 
     virtual idx_list get_batchable_subspaces() const;
     ~batch_provider_new();
-    void set_batch_info(const std::vector<idx_pair_list>& batched_bispace_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos = 0);
-    void get_batched_bispace_subspace_groups(std::vector<idx_pair_list>& bbs_grps,size_t output_subspace_batched=0) const;
+    void set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos = 0);
+    void get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched=0) const;
+    void get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const;
 };
 
 template<typename T>
@@ -333,6 +334,7 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
     {
         idx_pair batch_from_supplier = m_batch_list[batch_idx];
         bispace_batch_map augmented_bbm(bbm);
+        idx_list::iterator batched_subspace_it = m_batched_subspaces.begin(); 
         for(size_t supplier_idx = 1; supplier_idx < m_ptrs.size(); ++supplier_idx)
         {
             if(m_suppliers[supplier_idx] != NULL)
@@ -340,29 +342,10 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
                 bispace_batch_map supplier_bbm;
                 if(m_batch_list[0] != idx_pair(0,0))
                 {
-                    //Figure out what subspace our batched index corresponds to in the supplier
-                    for(size_t supplier_subspace_idx = 0; supplier_subspace_idx < m_bispaces[supplier_idx].get_order(); ++supplier_subspace_idx)
-                    {
-                        bool is_batched = (find(m_batched_bispace_subspaces.begin(),m_batched_bispace_subspaces.end(),idx_pair(supplier_idx,supplier_subspace_idx)) != m_batched_bispace_subspaces.end());
-                        size_t n_conn_subspaces = m_conn.get_n_conn_subspaces(supplier_idx,supplier_subspace_idx);
-                        bool connected_to_batched_subspace = false;
-                        for(size_t conn_subspace_idx = 0; conn_subspace_idx < n_conn_subspaces; ++conn_subspace_idx)
-                        {
-                            idx_pair connected_bs = m_conn(supplier_idx,supplier_subspace_idx,conn_subspace_idx);
-
-                            if(find(m_batched_bispace_subspaces.begin(),m_batched_bispace_subspaces.end(),connected_bs) != m_batched_bispace_subspaces.end())
-                            {
-                                connected_to_batched_subspace = true;
-                                break;
-                            }
-                        }
-                        if(is_batched || connected_to_batched_subspace)
-                        {
-                            supplier_bbm[idx_pair(0,supplier_subspace_idx)] = batch_from_supplier;
-                            augmented_bbm[idx_pair(supplier_idx,supplier_subspace_idx)] = batch_from_supplier;
-                            break;
-                        }
-                    }
+                    size_t supplier_subspace_idx = *batched_subspace_it;
+                    ++batched_subspace_it;
+                    supplier_bbm[idx_pair(0,supplier_subspace_idx)] = batch_from_supplier;
+                    augmented_bbm[idx_pair(supplier_idx,supplier_subspace_idx)] = batch_from_supplier;
                 }
                 m_suppliers[supplier_idx]->get_batch(m_ptrs[supplier_idx],supplier_bbm);
             }
@@ -378,27 +361,50 @@ idx_list batch_provider_new<T>::get_batchable_subspaces() const
 }
 
 template<typename T>
-void batch_provider_new<T>::set_batch_info(const std::vector<idx_pair_list>& batched_bispace_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos)
+void batch_provider_new<T>::set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos)
 {
-    if(batched_bispace_subspace_grps[cur_pos].size() > 0)
+    if(batched_subspace_grps[cur_pos].size() > 0)
     {
-        m_batched_bispace_subspaces = batched_bispace_subspace_grps[cur_pos];
+        m_batched_subspaces = batched_subspace_grps[cur_pos];
         m_batch_list = batch_list;
     }
 
     for(size_t i = 0; i < m_suppliers_allocd.size(); ++i)
     {
-        static_cast<batch_provider_new<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info(batched_bispace_subspace_grps,batch_list,cur_pos+1);
+        static_cast<batch_provider_new<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info(batched_subspace_grps,batch_list,cur_pos+1);
     }
 }
 
 template<typename T>
-void batch_provider_new<T>::get_batched_bispace_subspace_groups(std::vector<idx_pair_list>& bbs_grps,size_t output_subspace_batched) const
+void batch_provider_new<T>::get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const
+{
+    std::vector<sparse_bispace_any_order> grp;
+    if(direct_bispace_grps.size() != 0)
+    {
+        grp.push_back(m_bispaces[0]);
+    }
+    for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+    {
+        if(m_suppliers[supplier_idx] != NULL)
+        {
+            grp.push_back(m_bispaces[supplier_idx]);
+        }
+    }
+    direct_bispace_grps.push_back(grp);
+    for(size_t supplier_allocd_idx = 0; supplier_allocd_idx < m_suppliers_allocd.size(); ++supplier_allocd_idx)
+    {
+        size_t supplier_idx = m_suppliers_allocd[supplier_allocd_idx];
+        static_cast<batch_provider_new<T>*>(m_suppliers[supplier_idx])->get_direct_bispace_grps(direct_bispace_grps);
+    }
+}
+
+template<typename T>
+void batch_provider_new<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched) const
 {
     size_t fixed_supplier_idx;
     size_t fixed_subspace_idx;
     size_t max_direct_tensors_touched = 0;
-    if(bbs_grps.size() == 0)
+    if(bs_grps.size() == 0)
     {
         for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
         {
@@ -439,60 +445,42 @@ void batch_provider_new<T>::get_batched_bispace_subspace_groups(std::vector<idx_
         fixed_subspace_idx = output_subspace_batched;
     }
 
-    idx_pair_list cur_grp;
-    if(bbs_grps.size() > 0 || max_direct_tensors_touched > 0)
+    idx_list cur_grp;
+    idx_list bispace_list;
+    if(bs_grps.size() > 0 || max_direct_tensors_touched > 0)
     {
-        cur_grp.push_back(idx_pair(fixed_supplier_idx,fixed_subspace_idx));
+        bispace_list.push_back(fixed_supplier_idx);
+        cur_grp.push_back(fixed_subspace_idx);
         for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(fixed_supplier_idx,fixed_subspace_idx); ++conn_subspace_idx)
         {
             idx_pair conn_bas = m_conn(fixed_supplier_idx,fixed_subspace_idx,conn_subspace_idx);
-            if(m_suppliers[conn_bas.first] != NULL) cur_grp.push_back(conn_bas);
+            if(m_suppliers[conn_bas.first] != NULL)
+            {
+                bispace_list.push_back(conn_bas.first);
+                cur_grp.push_back(conn_bas.second);
+            }
         }
     }
 
+    size_t n_subspaces_should_be_batched = (bs_grps.size() == 0) ? 0 : 1;
     //TODO: Avoid multibatching with this check
     for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+        if(m_suppliers[supplier_idx] != NULL)
+            ++n_subspaces_should_be_batched;
+
+    if(n_subspaces_should_be_batched != cur_grp.size())
     {
-        //We have to batch the output if this isn't the top-level provider
-        if(m_suppliers[supplier_idx] != NULL || (supplier_idx == 0 && bbs_grps.size() > 0))
-        {
-            bool found = false;
-            for(size_t cur_grp_idx = 0; cur_grp_idx < cur_grp.size(); ++cur_grp_idx)
-            {
-                if(cur_grp[cur_grp_idx].first == supplier_idx)
-                {
-                    if(m_suppliers[supplier_idx] != NULL)
-                    {
-                        idx_list batchable_subspaces = m_suppliers[supplier_idx]->get_batchable_subspaces();
-                        if(batchable_subspaces.size() > 0)
-                        {
-                            if(find(batchable_subspaces.begin(),batchable_subspaces.end(),cur_grp[cur_grp_idx].second) == batchable_subspaces.end())
-                            {
-                                throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
-                                        "Incompatible batchable subspaces!");
-                            }
-                        }
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if(!found)
-            {
-                throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
-                        "Operation requires batching over multiple indices");
-            }
-        }
+        throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                "Operation requires batching over multiple indices");
     }
-    bbs_grps.push_back(cur_grp);
+    bs_grps.push_back(cur_grp);
 
-
-    for(size_t bas_idx = 0; bas_idx < bbs_grps.size(); ++bas_idx)
+    for(size_t i = 0; i < bispace_list.size(); ++i)
     {
-        idx_pair bas = cur_grp[bas_idx];
-        if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),bas.first) != m_suppliers_allocd.end())
+        size_t bispace_idx  = bispace_list[i];
+        if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),bispace_idx) != m_suppliers_allocd.end())
         {
-            static_cast<batch_provider_new<T>*>(m_suppliers[bas.first])->get_batched_bispace_subspace_groups(bbs_grps,bas.second);
+            static_cast<batch_provider_new<T>*>(m_suppliers[bispace_idx])->get_batched_subspace_grps(bs_grps,cur_grp[i]);
         }
     }
 }

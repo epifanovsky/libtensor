@@ -6,23 +6,18 @@ namespace libtensor {
 
 using namespace expr;
 
-//TODO: This does not correctly solve complicated trees!!!!!
-//If I have: C = contract(A,B), F = contract(D,E) and G = contract(C,F)
-//Then C,F,D,E must all be resident simultaneously in memory...but this considers only
-//F,D,E and C,A,B.
 batch_list_builder::batch_list_builder(const vector< vector<sparse_bispace_any_order> >& bispace_grps,
-                                       const vector<idx_pair_list>& batched_bispace_subspace_grps)
+                                       const vector<idx_list>& batched_subspace_grps)
 {
     for(size_t grp_idx = 0; grp_idx  < bispace_grps.size(); ++grp_idx)
     {
         const vector<sparse_bispace_any_order>& bispace_grp = bispace_grps[grp_idx];
-        const idx_pair_list& batched_bispace_subspaces = batched_bispace_subspace_grps[grp_idx];
+        const idx_list& batched_subspace_grp = batched_subspace_grps[grp_idx];
         vector<subspace_iterator> iter_grp;
-        for(size_t bas_idx = 0; bas_idx < bispace_grp.size(); ++bas_idx)
+        for(size_t bispace_idx = 0; bispace_idx < bispace_grp.size(); ++bispace_idx)
         {
-            size_t bispace_idx = batched_bispace_subspaces[bas_idx].first;
-            size_t subspace_idx = batched_bispace_subspaces[bas_idx].second;
             const sparse_bispace_any_order& bispace = bispace_grp[bispace_idx];
+            size_t subspace_idx = batched_subspace_grp[bispace_idx];
             iter_grp.push_back(subspace_iterator(bispace,subspace_idx));
             m_end_idx = bispace[subspace_idx].get_n_blocks(); 
         }
@@ -73,8 +68,8 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
             size_t this_block_contrib = iter_grps[grp_idx][iter_idx].get_slice_size();
             if(this_block_contrib > max_n_elem)
             {
-                throw out_of_memory(g_ns,"batch_list_builder","get_batch_list(...)",
-                    __FILE__,__LINE__,"Not enough memory provided to compute valid batch list"); 
+                throw out_of_memory(g_ns,"batch_list_builder","get_batch_list(...)",__FILE__,__LINE__,
+                    "Not enough memory provided to compute valid batch list"); 
             }
             grp_cur_subtotals[grp_idx] += this_block_contrib;
             ++iter_grps[grp_idx][iter_idx];

@@ -2,12 +2,13 @@
 #define SPARSE_BTENSOR_NEW_H
 
 #include <sstream>
+#include <limits>
 #include "sparse_bispace.h"
 #include "sparse_loop_list.h"
 #include "block_load_kernel.h"
 #include "block_print_kernel.h"
-#include "subtract.h"
 #include "gen_sparse_btensor.h"
+#include "batch_list_builder.h"
 #include "memory_reserve.h"
 #include "batch_provider_new.h"
 #include <libtensor/expr/iface/expr_lhs.h>
@@ -55,7 +56,7 @@ public:
 
     void set_memory_reserve(memory_reserve& mr);
 
-    virtual void assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
+    virtual void assign(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l);
 
     expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &label) {
         return expr::labeled_lhs_rhs<N, T>(*this, label,
@@ -190,7 +191,7 @@ void sparse_btensor_new<N,T>::set_memory_reserve(memory_reserve& mr)
 }
 
 template<size_t N,typename T>
-void sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
+void sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l)
 {
     using namespace expr;
     node_assign root(N);
@@ -210,6 +211,16 @@ void sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const expr
     }
     e.add(root_id, rhs.get_expr());
     batch_provider_new<T> bp(e);
+
+    std::vector< std::vector<sparse_bispace_any_order> > direct_bispace_grps;
+    std::vector<idx_list> batched_subspace_grps;
+    bp.get_direct_bispace_grps(direct_bispace_grps);
+    bp.get_batched_subspace_grps(batched_subspace_grps);
+    batch_list_builder blb(direct_bispace_grps,batched_subspace_grps);
+    size_t mem_avail = (m_mr != NULL) ? m_mr->get_mem_avail() : std::numeric_limits<double>::max();
+    idx_pair_list batch_list = blb.get_batch_list(mem_avail);
+    bp.set_batch_info(batched_subspace_grps,batch_list);
+
     bp.get_batch(this->m_data_ptr);
 }
 
