@@ -187,7 +187,14 @@ void sparse_btensor_new<N,T>::set_memory_reserve(memory_reserve& mr)
 { 
     if(this->m_mr != NULL) this->m_mr->remove_tensor(this->m_bispace.get_nnz()*sizeof(T));
     this->m_mr = &mr;
-    m_mr->add_tensor(this->m_bispace.get_nnz()*sizeof(T));
+    try
+    {
+        m_mr->add_tensor(this->m_bispace.get_nnz()*sizeof(T));
+    }
+    catch(out_of_memory&)
+    {
+        m_mr = NULL;
+    }
 }
 
 template<size_t N,typename T>

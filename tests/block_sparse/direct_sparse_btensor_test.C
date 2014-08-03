@@ -10,7 +10,7 @@
 namespace libtensor {
 
 void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
-    /*test_contract2_direct_rhs();*/
+    test_contract2_direct_rhs();
     /*test_contract2_subtract2_nested();*/
     /*test_contract2_permute_nested();*/
     /*test_custom_batch_provider();*/
@@ -24,7 +24,7 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     //Make batch memory just big enough to fit i = 1 batch of C 
     //in addition to existing tensors held in core
     //This will force partitioning into i = 0 and i = 1
-    memory_reserve mr(408);
+    memory_reserve mr(360+480+144+168+96);
     contract2_test_f tf;
 
     /*** FIRST STEP - SET UP DIRECT TENSOR ***/

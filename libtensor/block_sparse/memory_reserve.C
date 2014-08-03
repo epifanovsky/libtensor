@@ -31,12 +31,13 @@ void memory_reserve::remove_tensor(size_t mem)
     if(m_n_tensors == 0)
     {
         throw generic_exception(g_ns,k_clazz,"remove_tensor(...)",
-                __FILE__, __LINE__, "memory reserve destroyed with tensors still active - declare after tensors that use it in an object and declare it before stack allocated tensors");
+                __FILE__, __LINE__, "Attempted to remove tensor from empty memory reserve");
     }
     m_mem_avail += mem;
     m_n_tensors -= 1;
 }
 
+//TODO: Throwing exception out of destructor is bad news  
 memory_reserve::~memory_reserve()
 {
     if(m_n_tensors != 0)
