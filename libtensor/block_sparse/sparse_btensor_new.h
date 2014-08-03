@@ -225,7 +225,7 @@ void sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr
     bp.get_batched_subspace_grps(batched_subspace_grps);
     batch_list_builder blb(direct_bispace_grps,batched_subspace_grps);
     size_t mem_avail = (m_mr != NULL) ? m_mr->get_mem_avail() : std::numeric_limits<double>::max();
-    idx_pair_list batch_list = blb.get_batch_list(mem_avail);
+    idx_pair_list batch_list = blb.get_batch_list(mem_avail/sizeof(T));
     bp.set_batch_info(batched_subspace_grps,batch_list);
 
     bp.get_batch(this->m_data_ptr);

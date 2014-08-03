@@ -24,7 +24,8 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     //Make batch memory just big enough to fit i = 1 batch of C 
     //in addition to existing tensors held in core
     //This will force partitioning into i = 0 and i = 1
-    memory_reserve mr(360+480+144+168+96);
+    memory_reserve mr_0(360+480+144+168+96);
+    memory_reserve mr_1(360+480+144+168+96-1);
     contract2_test_f tf;
 
     /*** FIRST STEP - SET UP DIRECT TENSOR ***/
@@ -86,10 +87,10 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     sparse_btensor_new<2> E(spb_E);
     letter m;
 
-    A.set_memory_reserve(mr);
-    B.set_memory_reserve(mr);
-    D.set_memory_reserve(mr);
-    E.set_memory_reserve(mr);
+    A.set_memory_reserve(mr_0);
+    B.set_memory_reserve(mr_0);
+    D.set_memory_reserve(mr_0);
+    E.set_memory_reserve(mr_0);
     E(m|i) = contract(l,D(m|l),C(i|l));
 
     double E_correct_arr[18] = { //m = 0 i = 0
@@ -119,6 +120,27 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
+    }
+
+    //Now make sure we run out of memory with 1 less byte than minimal necessary
+    A.set_memory_reserve(mr_1);
+    B.set_memory_reserve(mr_1);
+    D.set_memory_reserve(mr_1);
+    E.set_memory_reserve(mr_1);
+
+    bool threw_exception = false;
+    try
+    {
+        E(m|i) = contract(l,D(m|l),C(i|l));
+    }
+    catch(out_of_memory&)
+    {
+        threw_exception = true;
+    }
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "contract(...) did not fail with insufficient memory");
     }
 }
 
