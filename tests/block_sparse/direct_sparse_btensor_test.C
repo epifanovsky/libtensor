@@ -15,7 +15,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_subtract2_nested();
     test_custom_batch_provider();
     test_assignment_chain();
-    /*test_force_batch_index();*/
+    test_force_batch_index();
 }
 
 //TODO: group with other test in test fixture
@@ -327,43 +327,49 @@ void direct_sparse_btensor_test::test_assignment_chain() throw(libtest::test_exc
     }
 }
 
-#if 0
 //Due to constraints of external code that may be providing us with some batches
 //we may need to force the choice of a particular index to batch over.
 void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_exception)
 {
     static const char *test_name = "direct_sparse_btensor_test::test_force_batch_index()";
 
-    //Block major
-    double A_arr[26] = { //i = 0 j = 1 k = 2
-                         1,2,
-                         3,4,
 
-                         //i = 1 j = 0 k = 1
-                         5,
-                         6,
+    class A_mock : public batch_provider_i<double>
+    {
+    public:
+        sparse_bispace<3> m_A_bispace;
+        //Block major
+        double A_arr[26];
 
-                         //i = 1 j = 1 k = 1
-                         7,
-                         8,
-                         9,
-                         10,
+        //Force batching over J
+        virtual idx_list get_batchable_subspaces() const { return idx_list(1,1); }
+        virtual void get_batch(double* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()) 
+        {
+            bispace_batch_map correct_bbm;
+            if(bbm.size() != 1 || (bbm.find(idx_pair(0,1)) == bbm.end()))
+            {
+                throw bad_parameter(g_ns, "A_mock","get_batch",__FILE__, __LINE__, "Invalid batching!");
+            }
+            idx_pair batch = bbm.find(idx_pair(0,1))->second;
+            sparse_block_tree_any_order A_tree = m_A_bispace.get_sparse_group_tree(0);
+            A_tree = A_tree.truncate_subspace(1,batch);
+            for(sparse_block_tree_any_order::iterator it = A_tree.begin(); it != A_tree.end(); ++it)
+            {
+                for(size_t i = 0; i < (*it)[0].second; ++i)
+                {
+                    *(output_ptr++) = A_arr[(*it)[0].first+i];
+                }
+            }
+        }
 
-                         //i = 2 j = 0 k = 0
-                         11,12,
-                         13,14,
-
-                         //i = 2 j = 1 k = 1
-                         15,
-                         16,
-                         17,
-                         18,
-
-                         //i = 2  j = 1 k = 2
-                         19,20,
-                         21,22,
-                         23,24,
-                         25,26};
+        A_mock(const sparse_bispace<3>& spb_A) : m_A_bispace(spb_A)
+        {
+            for(size_t i = 0; i < sizeof(A_arr)/sizeof(A_arr[0]); ++i)
+            {
+                A_arr[i] = i+1;
+            }
+        }
+    };
 
     //Bispace for i 
     sparse_bispace<1> spb_i(5);
@@ -402,7 +408,9 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
     for(size_t i = 0; i < 3; ++i) ij_sig_blocks[5][i] = seq_5_arr_1[i];
 
     sparse_bispace<3> spb_A  = spb_i % spb_j % spb_k << ij_sig_blocks;
-    sparse_btensor<3> A(spb_A,A_arr,true);
+    A_mock am(spb_A);
+    direct_sparse_btensor_new<3> A(spb_A);
+    A.set_batch_provider(am);
 
     //Use identity matrix to simplify test
     sparse_bispace<2> spb_eye = spb_k|spb_k;
@@ -412,23 +420,24 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
     {
         eye_arr[i*spb_k.get_dim()+i] = 1;
     }
-    sparse_btensor<2> eye(spb_eye,eye_arr,false);
+    sparse_btensor_new<2> eye(spb_eye,eye_arr,false);
     delete [] eye_arr;
 
-    direct_sparse_btensor<3> B(spb_A);
+    direct_sparse_btensor_new<3> B(spb_A);
     letter i,j,k,l;
     B(i|j|l) = contract(k,A(i|j|k),eye(k|l));
 
     //We just contract with eye again to make things really simple
-    sparse_btensor<3> C(spb_A);
-    C(i|j|l) = contract(k,B(i|j|k),eye(k|l),20*sizeof(double),&j);
-    sparse_btensor<3> C_correct(spb_A,A_arr,true);
+    memory_reserve mr_0((26+2*20)*sizeof(double));
+    sparse_btensor_new<3> C(spb_A);
+    C.set_memory_reserve(mr_0);
+    C(i|j|l) = contract(k,B(i|j|k),eye(k|l));
+    sparse_btensor_new<3> C_correct(spb_A,am.A_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "contract did not return correct value when batch index explicitly specified");
     }
 }
-#endif
 
 } // namespace libtensor
