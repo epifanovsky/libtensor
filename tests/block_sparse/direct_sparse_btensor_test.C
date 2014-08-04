@@ -5,13 +5,14 @@
 #include <libtensor/expr/operators/contract.h>
 #include "direct_sparse_btensor_test.h"
 #include "test_fixtures/contract2_test_f.h"
+#include "test_fixtures/contract2_subtract2_nested_test_f.h"
 #include <math.h>
 
 namespace libtensor {
 
 void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_direct_rhs();
-    /*test_contract2_subtract2_nested();*/
+    test_contract2_subtract2_nested();
     /*test_contract2_permute_nested();*/
     /*test_custom_batch_provider();*/
     /*test_force_batch_index();*/
@@ -31,9 +32,7 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     /*** FIRST STEP - SET UP DIRECT TENSOR ***/
     sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
     sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_bispace<2> spb_C = tf.spb_i | tf.spb_l;
-
-    direct_sparse_btensor_new<2> C(spb_C);
+    direct_sparse_btensor_new<2> C(tf.spb_C);
 
     letter i,j,k,l;
     C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
@@ -144,133 +143,56 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     }
 }
 
-#if 0
 void direct_sparse_btensor_test::test_contract2_subtract2_nested() throw(libtest::test_exception)
 {
     static const char *test_name = "direct_sparse_btensor_test::test_contract2_subtract2_nested()";
+    //Make batch memory just big enough to fit i = 1 batch of G and C simultaneously
+    //This will force partitioning into i = 0 and i = 1
+    memory_reserve mr_0(360+480+144+168+144+2*96); 
+    memory_reserve mr_1(360+480+144+168+144+2*96-1); 
 
-    contract2_test_f tf;
-
-    /*** FIRST STEP - SET UP DIRECT TENSOR ***/
-    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_bispace<2> spb_C = tf.spb_i | tf.spb_l;
-
-    direct_sparse_btensor<2> C(spb_C);
+    contract2_subtract2_nested_test_f tf;
+    tf.A.set_memory_reserve(mr_0);
+    tf.B.set_memory_reserve(mr_0);
+    tf.F.set_memory_reserve(mr_0);
+    tf.D.set_memory_reserve(mr_0);
+    tf.E.set_memory_reserve(mr_0);
 
     letter i,j,k,l;
-    C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
-
-    /*** SECOND STEP - SUBTRACTION OF DIRECT TENSOR ***/
-    double F_arr[18] = { //i = 0 l = 0
-                         1,2,
-                         
-                         //i = 0 l = 1
-                         3,4,5,
-
-                         //i = 0 l = 2
-                         6,
-
-                         //i = 1 l = 0
-                         7,8,
-                         9,10,
-                         
-                         //i = 1 l = 1
-                         11,12,13,
-                         14,15,16,
-                         
-                         //i = 1 l = 2
-                         17,
-                         18
-                        };
-
-    sparse_btensor<2> F(spb_C,F_arr,true);
-    direct_sparse_btensor<2> G(spb_C);
-
-    G(i|l) = C(i|l) - F(i|l);
-
-
-    /*** SECOND STEP - USE DIRECT TENSOR ***/
-
-    //(ml) sparsity
-    size_t seq_0_arr_ml[2] = {0,1};
-    size_t seq_1_arr_ml[2] = {0,2};
-    size_t seq_2_arr_ml[2] = {1,0};
-    size_t seq_3_arr_ml[2] = {1,2};
-
-    std::vector< sequence<2,size_t> > ml_sig_blocks(4);
-    for(size_t i = 0; i < 2; ++i) ml_sig_blocks[0][i] = seq_0_arr_ml[i];
-    for(size_t i = 0; i < 2; ++i) ml_sig_blocks[1][i] = seq_1_arr_ml[i];
-    for(size_t i = 0; i < 2; ++i) ml_sig_blocks[2][i] = seq_2_arr_ml[i];
-    for(size_t i = 0; i < 2; ++i) ml_sig_blocks[3][i] = seq_3_arr_ml[i];
-
-    //Bispace for m
-    sparse_bispace<1> spb_m(6);
-    std::vector<size_t> split_points_m;
-    split_points_m.push_back(3);
-    spb_m.split(split_points_m);
-
-
-    sparse_bispace<2> spb_D = spb_m % tf.spb_l << ml_sig_blocks;
-    double D_arr[21] = {  //m = 0 l = 1
-                          1,2,3,
-                          4,5,6,
-                          7,8,9,
-
-                          //m = 0 l = 2
-                          10,
-                          11,
-                          12,
-
-                          //m = 1 l = 0
-                          13,14,
-                          15,16,
-                          17,18,
-
-                          //m = 1 l = 2
-                          19,
-                          20,
-                          21
-                          };
-
-    sparse_btensor<2> D(spb_D,D_arr,true);
-
-    sparse_bispace<2> spb_E = spb_m | tf.spb_i;
-    sparse_btensor<2> E(spb_E);
+    tf.C(i|l) = contract(j|k,tf.A(i|j|k),tf.B(j|k|l));
+    tf.G(i|l) = tf.C(i|l) - tf.F(i|l);
     letter m;
+    tf.E(m|i) = contract(l,tf.D(m|l),tf.G(i|l));
 
-    //Make batch memory just big enough to fit i = 1 batch of C 
-    //This will force partitioning into i = 0 and i = 1
-    E(m|i) = contract(l,D(m|l),G(i|l),96);
-
-    double E_correct_arr[18] = { //m = 0 i = 0
-                                 21926,47151,72376,
-
-                                 //m = 0 i = 1
-                                 122364,133052, 
-                                 240525,260660,
-                                 358686,388268,
-
-                                 //m = 1 i = 0
-                                 55172,
-                                 62381,
-                                 69590,
-
-                                 //m = 1 i = 1
-                                 302222,329427,
-                                 338618,369008,
-                                 375014,408589
-                               };
-
-
-    sparse_btensor<2> E_correct(spb_E,E_correct_arr,true);
-    if(E != E_correct)
+    if(tf.E != tf.E_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "contract(...) did not produce correct result");
     }
+
+    tf.A.set_memory_reserve(mr_1);
+    tf.B.set_memory_reserve(mr_1);
+    tf.F.set_memory_reserve(mr_1);
+    tf.D.set_memory_reserve(mr_1);
+    tf.E.set_memory_reserve(mr_1);
+
+    bool threw_exception = false;
+    try
+    {
+        tf.E(m|i) = contract(l,tf.D(m|l),tf.G(i|l));
+    }
+    catch(out_of_memory&)
+    {
+        threw_exception = true;
+    }
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "out_of_memory not thrown when not enough memory given");
+    }
 }
 
+#if 0
 void direct_sparse_btensor_test::test_contract2_permute_nested() throw(libtest::test_exception)
 {
     static const char *test_name = "direct_sparse_btensor_test::test_contract2_permute_nested()";
