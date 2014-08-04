@@ -11,9 +11,9 @@
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/expr/dag/node_transform.h>
-#include <libtensor/block_sparse/sparse_btensor_new.h>
-#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
-#include <libtensor/block_sparse/batch_provider_new.h>
+#include <libtensor/block_sparse/sparse_btensor.h>
+#include <libtensor/block_sparse/direct_sparse_btensor.h>
+#include <libtensor/block_sparse/batch_provider.h>
 
 using namespace std;
 

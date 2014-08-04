@@ -10,7 +10,7 @@
 #include "gen_sparse_btensor.h"
 #include "batch_list_builder.h"
 #include "memory_reserve.h"
-#include "batch_provider_new.h"
+#include "batch_provider.h"
 #include <libtensor/expr/iface/expr_lhs.h>
 #include <libtensor/expr/iface/labeled_lhs_rhs.h>
 #include <libtensor/expr/operators/contract.h>

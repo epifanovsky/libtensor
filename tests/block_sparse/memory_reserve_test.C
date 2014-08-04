@@ -1,5 +1,5 @@
 #include "memory_reserve_test.h"
-#include <libtensor/block_sparse/sparse_btensor_new.h>
+#include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/block_sparse/memory_reserve.h>
 #include "test_fixtures/contract2_subtract2_nested_test_f.h"
 

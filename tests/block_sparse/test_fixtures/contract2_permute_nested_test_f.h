@@ -1,8 +1,8 @@
 #ifndef CONTRACT2_PERMUTE_NESTED_TEST_F_H
 #define CONTRACT2_PERMUTE_NESTED_TEST_F_H
 
-#include <libtensor/block_sparse/sparse_btensor_new.h>
-#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
+#include <libtensor/block_sparse/sparse_btensor.h>
+#include <libtensor/block_sparse/direct_sparse_btensor.h>
 
 #include <libtensor/expr/dag/expr_tree.h>
 #include <libtensor/expr/dag/node_add.h>

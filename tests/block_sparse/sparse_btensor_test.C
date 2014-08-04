@@ -1,5 +1,5 @@
 
-#include <libtensor/block_sparse/sparse_btensor_new.h>
+#include <libtensor/block_sparse/sparse_btensor.h>
 #include "sparse_btensor_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/subtract2_test_f.h"

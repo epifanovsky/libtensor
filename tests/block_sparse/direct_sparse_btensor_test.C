@@ -1,5 +1,5 @@
-#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
-#include <libtensor/block_sparse/sparse_btensor_new.h>
+#include <libtensor/block_sparse/direct_sparse_btensor.h>
+#include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/expr/operators/contract.h>
 #include "direct_sparse_btensor_test.h"
 #include "test_fixtures/contract2_test_f.h"

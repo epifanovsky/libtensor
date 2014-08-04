@@ -1,8 +1,8 @@
 #include <libtensor/block_sparse/batch_kernel_permute.h>
 #include <libtensor/block_sparse/batch_kernel_contract2.h>
 #include <libtensor/block_sparse/batch_kernel_add2.h>
-#include <libtensor/block_sparse/sparse_btensor_new.h>
-#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
+#include <libtensor/block_sparse/sparse_btensor.h>
+#include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include "batch_kernels_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/contract2_test_f.h"
