@@ -175,7 +175,7 @@ public:
 
 
 template<typename T>
-class batch_provider_new : public batch_provider_i<T>
+class batch_provider : public batch_provider_i<T>
 {
 private:
     batch_kernel<T>* m_kern;
@@ -189,20 +189,20 @@ private:
     expr::connectivity m_conn;
 public:
     static const char* k_clazz; //!< Class name
-    batch_provider_new(const expr::expr_tree& tree); 
+    batch_provider(const expr::expr_tree& tree); 
     virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()); 
     virtual idx_list get_batchable_subspaces() const;
-    ~batch_provider_new();
+    ~batch_provider();
     void set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos = 0);
     void get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched=0) const;
     void get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const;
 };
 
 template<typename T>
-const char* batch_provider_new<T>::k_clazz = "batch_provider<T>";
+const char* batch_provider<T>::k_clazz = "batch_provider<T>";
 
 template<typename T>
-batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree) : m_conn(tree),m_batch_list(1,idx_pair(0,0))
+batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_batch_list(1,idx_pair(0,0))
 {
     using namespace expr;
     expr_tree::node_id_t root_id = tree.get_root();
@@ -283,7 +283,7 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree) : m_conn(
         {
             if(m_suppliers[tensor_idx] == NULL)
             {
-                m_suppliers[tensor_idx] = new batch_provider_new<T>(tree.get_subtree(input_edges[i]));
+                m_suppliers[tensor_idx] = new batch_provider<T>(tree.get_subtree(input_edges[i]));
                 m_suppliers_allocd.push_back(tensor_idx);
             }
             idx_list child_bs(m_suppliers[tensor_idx]->get_batchable_subspaces());
@@ -307,7 +307,7 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree) : m_conn(
 }
 
 template<typename T>
-batch_provider_new<T>::~batch_provider_new()
+batch_provider<T>::~batch_provider()
 {
     for(size_t i = 0; i < m_suppliers.size(); ++i)
     {
@@ -324,7 +324,7 @@ batch_provider_new<T>::~batch_provider_new()
 
 
 template<typename T>
-void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
+void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
 { 
     m_ptrs[0] = output_ptr; 
     m_kern->init(m_ptrs,bbm);
@@ -363,13 +363,13 @@ void batch_provider_new<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm
 }
 
 template<typename T>
-idx_list batch_provider_new<T>::get_batchable_subspaces() const
+idx_list batch_provider<T>::get_batchable_subspaces() const
 { 
     return m_batchable_subspaces;
 }
 
 template<typename T>
-void batch_provider_new<T>::set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos)
+void batch_provider<T>::set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos)
 {
     if(batched_subspace_grps[cur_pos].size() > 0)
     {
@@ -379,12 +379,12 @@ void batch_provider_new<T>::set_batch_info(const std::vector<idx_list>& batched_
 
     for(size_t i = 0; i < m_suppliers_allocd.size(); ++i)
     {
-        static_cast<batch_provider_new<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info(batched_subspace_grps,batch_list,cur_pos+1);
+        static_cast<batch_provider<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info(batched_subspace_grps,batch_list,cur_pos+1);
     }
 }
 
 template<typename T>
-void batch_provider_new<T>::get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const
+void batch_provider<T>::get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const
 {
     std::vector<sparse_bispace_any_order> grp;
     if(direct_bispace_grps.size() != 0)
@@ -402,12 +402,12 @@ void batch_provider_new<T>::get_direct_bispace_grps(std::vector< std::vector<spa
     for(size_t supplier_allocd_idx = 0; supplier_allocd_idx < m_suppliers_allocd.size(); ++supplier_allocd_idx)
     {
         size_t supplier_idx = m_suppliers_allocd[supplier_allocd_idx];
-        static_cast<batch_provider_new<T>*>(m_suppliers[supplier_idx])->get_direct_bispace_grps(direct_bispace_grps);
+        static_cast<batch_provider<T>*>(m_suppliers[supplier_idx])->get_direct_bispace_grps(direct_bispace_grps);
     }
 }
 
 template<typename T>
-void batch_provider_new<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched) const
+void batch_provider<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched) const
 {
     size_t fixed_supplier_idx;
     size_t fixed_subspace_idx;
@@ -488,11 +488,11 @@ void batch_provider_new<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_
         size_t bispace_idx  = bispace_list[i];
         if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),bispace_idx) != m_suppliers_allocd.end())
         {
-            static_cast<batch_provider_new<T>*>(m_suppliers[bispace_idx])->get_batched_subspace_grps(bs_grps,cur_grp[i]);
+            static_cast<batch_provider<T>*>(m_suppliers[bispace_idx])->get_batched_subspace_grps(bs_grps,cur_grp[i]);
         }
     }
 }
 
 } // namespace libtensor
 
-#endif /* BATCH_PROVIDER_NEW_H */
+#endif /* batch_provider_H */

@@ -1,5 +1,3 @@
-#include <libtensor/block_sparse/direct_sparse_btensor.h>
-#include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/block_sparse/direct_sparse_btensor_new.h>
 #include <libtensor/block_sparse/sparse_btensor_new.h>
 #include <libtensor/expr/operators/contract.h>
@@ -30,9 +28,9 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
     contract2_test_f tf;
 
     /*** FIRST STEP - SET UP DIRECT TENSOR ***/
-    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    direct_sparse_btensor_new<2> C(tf.spb_C);
+    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
+    direct_sparse_btensor<2> C(tf.spb_C);
 
     letter i,j,k,l;
     C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
@@ -80,10 +78,10 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
                           21
                           };
 
-    sparse_btensor_new<2> D(spb_D,D_arr,true);
+    sparse_btensor<2> D(spb_D,D_arr,true);
 
     sparse_bispace<2> spb_E = spb_m | tf.spb_i;
-    sparse_btensor_new<2> E(spb_E);
+    sparse_btensor<2> E(spb_E);
     letter m;
 
     A.set_memory_reserve(mr_0);
@@ -114,7 +112,7 @@ void direct_sparse_btensor_test::test_contract2_direct_rhs() throw(libtest::test
                                };
 
 
-    sparse_btensor_new<2> E_correct(spb_E,E_correct_arr,true);
+    sparse_btensor<2> E_correct(spb_E,E_correct_arr,true);
     if(E != E_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -256,10 +254,10 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
 
     memory_reserve mr_0(240+144);
     memory_reserve mr_1(240+144-1);
-    direct_sparse_btensor_new<2> A(spb_i|spb_j);
+    direct_sparse_btensor<2> A(spb_i|spb_j);
     two_n_fibonnaci_batch_provider bp(spb_i,spb_j);
     A.set_batch_provider(bp);
-    sparse_btensor_new<2> B(spb_i|spb_j);
+    sparse_btensor<2> B(spb_i|spb_j);
     letter i,j;
     B.set_memory_reserve(mr_0);
     B(i|j) = A(i|j);
@@ -283,7 +281,7 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
                                  32,48,80};
                                         
 
-    sparse_btensor_new<2> B_correct(spb_i|spb_j,B_correct_arr,true);
+    sparse_btensor<2> B_correct(spb_i|spb_j,B_correct_arr,true);
     if(B != B_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -315,8 +313,8 @@ void direct_sparse_btensor_test::test_assignment_chain() throw(libtest::test_exc
     static const char *test_name = "direct_sparse_btensor_test::test_assignment_chain()";
 
     contract2_subtract2_nested_test_f tf;
-    direct_sparse_btensor_new<3> A_direct(tf.A.get_bispace());
-    sparse_btensor_new<3> B(tf.A.get_bispace());
+    direct_sparse_btensor<3> A_direct(tf.A.get_bispace());
+    sparse_btensor<3> B(tf.A.get_bispace());
     letter i,j,k;
     A_direct(i|j|k) = tf.A(i|j|k);
     B(i|j|k) = A_direct(i|j|k);
@@ -409,7 +407,7 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
 
     sparse_bispace<3> spb_A  = spb_i % spb_j % spb_k << ij_sig_blocks;
     A_mock am(spb_A);
-    direct_sparse_btensor_new<3> A(spb_A);
+    direct_sparse_btensor<3> A(spb_A);
     A.set_batch_provider(am);
 
     //Use identity matrix to simplify test
@@ -420,19 +418,19 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
     {
         eye_arr[i*spb_k.get_dim()+i] = 1;
     }
-    sparse_btensor_new<2> eye(spb_eye,eye_arr,false);
+    sparse_btensor<2> eye(spb_eye,eye_arr,false);
     delete [] eye_arr;
 
-    direct_sparse_btensor_new<3> B(spb_A);
+    direct_sparse_btensor<3> B(spb_A);
     letter i,j,k,l;
     B(i|j|l) = contract(k,A(i|j|k),eye(k|l));
 
     //We just contract with eye again to make things really simple
     memory_reserve mr_0((26+2*20)*sizeof(double));
-    sparse_btensor_new<3> C(spb_A);
+    sparse_btensor<3> C(spb_A);
     C.set_memory_reserve(mr_0);
     C(i|j|l) = contract(k,B(i|j|k),eye(k|l));
-    sparse_btensor_new<3> C_correct(spb_A,am.A_arr,true);
+    sparse_btensor<3> C_correct(spb_A,am.A_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,

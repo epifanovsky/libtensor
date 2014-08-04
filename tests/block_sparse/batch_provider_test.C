@@ -55,8 +55,8 @@ void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_excep
 
     permute_3d_sparse_120_test_f tf;
 
-    sparse_btensor_new<3> A(tf.input_bispace,tf.input_arr,true);
-    sparse_btensor_new<3> B(tf.output_bispace);
+    sparse_btensor<3> A(tf.input_bispace,tf.input_arr,true);
+    sparse_btensor<3> B(tf.output_bispace);
 
     node_assign root(3);
     expr_tree e(root);
@@ -71,10 +71,10 @@ void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_excep
     e.add(perm_node_id,node_ident_any_tensor<3,double>(A));
 
     //Finally, check that we can get the full tensor
-    batch_provider_new<double> bp(e);
+    batch_provider<double> bp(e);
     bp.get_batch((double*)B.get_data_ptr());
 
-    sparse_btensor_new<3> B_correct(tf.output_bispace,tf.output_arr,true);
+    sparse_btensor<3> B_correct(tf.output_bispace,tf.output_arr,true);
 
     if(B != B_correct)
     {
@@ -89,9 +89,9 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
 
     contract2_test_f tf;
 
-    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    direct_sparse_btensor_new<2> C(tf.spb_C);
+    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
+    direct_sparse_btensor<2> C(tf.spb_C);
 
     node_assign root(2);
     expr_tree e(root);
@@ -107,12 +107,12 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
     e.add(contr_node_id,node_ident_any_tensor<3,double>(B));
 
 
-    batch_provider_new<double> bp(e);
+    batch_provider<double> bp(e);
 
     //First test that we can grab whole tensor
-    sparse_btensor_new<2> my_C(tf.spb_C);
+    sparse_btensor<2> my_C(tf.spb_C);
     bp.get_batch((double*)my_C.get_data_ptr());
-    sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
+    sparse_btensor<2> C_correct(tf.spb_C,tf.C_arr,true);
 
     if(my_C != C_correct)
     {
@@ -152,7 +152,7 @@ void batch_provider_test::test_contract2_permute_nested() throw(libtest::test_ex
     static const char *test_name = "batch_provider_test::test_contract2_permute_nested()";
     contract2_permute_nested_test_f tf; 
 
-    batch_provider_new<double> bp(tf.tree);
+    batch_provider<double> bp(tf.tree);
     bp.get_batch((double*)tf.D.get_data_ptr());
 
 
@@ -168,7 +168,7 @@ void batch_provider_test::test_contract2_subtract2_nested() throw(libtest::test_
     static const char *test_name = "batch_provider_test::test_contract2_subtract2_nested()";
     contract2_subtract2_nested_test_f tf; 
 
-    batch_provider_new<double> bp(tf.tree);
+    batch_provider<double> bp(tf.tree);
     bp.get_batch((double*)tf.E.get_data_ptr());
 
     if(tf.E != tf.E_correct)
@@ -198,11 +198,11 @@ void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(li
 {
     static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_addition()";
     sparse_bispace<1> spb_i(5);
-    direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
+    direct_sparse_btensor<3> A(spb_i|spb_i|spb_i);
     fake_batch_provider fbp(2);
     A.set_batch_provider(fbp);
-    sparse_btensor_new<3> B(A.get_bispace());
-    sparse_btensor_new<3> C(A.get_bispace());
+    sparse_btensor<3> B(A.get_bispace());
+    sparse_btensor<3> C(A.get_bispace());
 
     node_assign root(3);
     expr_tree tree(root);
@@ -213,7 +213,7 @@ void batch_provider_test::test_batchable_subspaces_recursion_addition() throw(li
     tree.add(n_add_id,node_ident_any_tensor<3,double>(A));
     tree.add(n_add_id,node_ident_any_tensor<3,double>(B));
     
-    batch_provider_new<double> bp(tree);
+    batch_provider<double> bp(tree);
 
 
     if(bp.get_batchable_subspaces() != idx_list(1,2))
@@ -227,10 +227,10 @@ void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw
 {
     static const char *test_name = "batch_provider_test::test_batchable_subspace_recursion_permutation()";
     sparse_bispace<1> spb_i(5);
-    direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
+    direct_sparse_btensor<3> A(spb_i|spb_i|spb_i);
     fake_batch_provider fbp(2);
     A.set_batch_provider(fbp);
-    sparse_btensor_new<3> B(A.get_bispace());
+    sparse_btensor<3> B(A.get_bispace());
 
     node_assign root(3);
     expr_tree tree(root);
@@ -243,7 +243,7 @@ void batch_provider_test::test_batchable_subspaces_recursion_permutation() throw
     expr_tree::node_id_t n_tf_id = tree.add(root_id,n_tf);
     tree.add(n_tf_id,node_ident_any_tensor<3,double>(A));
     
-    batch_provider_new<double> bp(tree);
+    batch_provider<double> bp(tree);
 
 
     if(bp.get_batchable_subspaces() != idx_list(1,0))
@@ -258,7 +258,7 @@ void batch_provider_test::test_get_batched_subspace_grps() throw(libtest::test_e
     static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_grps()";
     
     contract2_subtract2_nested_test_f tf;
-    batch_provider_new<double> bp(tf.tree);
+    batch_provider<double> bp(tf.tree);
     vector<idx_list> batched_subspace_grps;
     bp.get_batched_subspace_grps(batched_subspace_grps);
     vector<idx_list> correct_batched_subspace_grps(1,idx_list(1,0)); //Last contraction, G
@@ -276,11 +276,11 @@ void batch_provider_test::test_get_batched_subspace_grps_batchable_subspaces() t
     static const char *test_name = "batch_provider_test::test_get_batched_bispace_subspace_grps_batchable_subspaces()";
 
     sparse_bispace<1> spb_i(5);
-    direct_sparse_btensor_new<3> A(spb_i|spb_i|spb_i);
+    direct_sparse_btensor<3> A(spb_i|spb_i|spb_i);
     fake_batch_provider fbp(0);
     A.set_batch_provider(fbp);
-    direct_sparse_btensor_new<3> B(A.get_bispace());
-    sparse_btensor_new<3> C(A.get_bispace());
+    direct_sparse_btensor<3> B(A.get_bispace());
+    sparse_btensor<3> C(A.get_bispace());
 
     node_assign root(3);
     expr_tree tree(root);
@@ -299,7 +299,7 @@ void batch_provider_test::test_get_batched_subspace_grps_batchable_subspaces() t
     expr_tree::node_id_t n_tf_1_id = tree.add(n_a_0_id,n_tf_1);
     tree.add(n_tf_1_id,node_ident_any_tensor<3,double>(A));
 
-    batch_provider_new<double> bp(tree);
+    batch_provider<double> bp(tree);
     if(bp.get_batchable_subspaces() != idx_list(1,0))
     {
         fail_test(test_name,__FILE__,__LINE__,

@@ -1,6 +1,5 @@
 #include <libtensor/block_sparse/sparse_bispace.h> 
 #include <libtensor/core/out_of_bounds.h>
-#include <libtensor/block_sparse/get_batches.h>
 #include <vector>
 #include "sparse_bispace_test.h"
 #include "test_fixtures/index_group_test_f.h"

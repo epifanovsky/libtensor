@@ -11,14 +11,14 @@
 namespace libtensor {
 
 template<size_t N, typename T=double> 
-class direct_sparse_btensor_new : public gen_sparse_btensor<N,T>,public expr::expr_lhs<N,T>
+class direct_sparse_btensor : public gen_sparse_btensor<N,T>,public expr::expr_lhs<N,T>
 {
 private:
     sparse_bispace<N> m_bispace;
     batch_provider_i<T>* m_batch_provider;
     expr::expr_tree* m_expr;
 public:
-    direct_sparse_btensor_new(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL),m_expr(new expr::expr_tree(expr::node_null(N))) {}
+    direct_sparse_btensor(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL),m_expr(new expr::expr_tree(expr::node_null(N))) {}
     void set_batch_provider(batch_provider_i<T>& bp) { m_batch_provider = &bp; }
 
     batch_provider_i<T>* get_batch_provider() const { return m_batch_provider; }
@@ -32,7 +32,7 @@ public:
 };
 
 template<size_t N,typename T>
-void direct_sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
+void direct_sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
 {
     using namespace expr;
     delete m_expr;
@@ -55,7 +55,7 @@ void direct_sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T> &rhs, con
 }
 
 template<size_t N,typename T>
-expr::labeled_lhs_rhs<N, T> direct_sparse_btensor_new<N,T>::operator()(const expr::label<N> &lab)
+expr::labeled_lhs_rhs<N, T> direct_sparse_btensor<N,T>::operator()(const expr::label<N> &lab)
 {
     if(m_batch_provider != NULL)
     {

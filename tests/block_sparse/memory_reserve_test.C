@@ -99,7 +99,7 @@ void memory_reserve_test::test_tensor_destructor() throw(libtest::test_exception
     //Scope here to force destructor call
     {
         sparse_bispace<1> foo_bispace(50);
-        sparse_btensor_new<1> foo_tensor(foo_bispace);
+        sparse_btensor<1> foo_tensor(foo_bispace);
         foo_tensor.set_memory_reserve(mr);
         if(mr.get_mem_avail() != 2 || mr.get_n_tensors() != 1)
         {
@@ -119,7 +119,7 @@ void memory_reserve_test::test_memory_reserve_destructor() throw(libtest::test_e
     static const char *test_name = "memory_reserve_test::test_memory_reserve_destructor()";
 
     sparse_bispace<1> foo_bispace(50);
-    sparse_btensor_new<1> foo_tensor(foo_bispace);
+    sparse_btensor<1> foo_tensor(foo_bispace);
     bool threw_exception = false;
     try
     {
@@ -143,9 +143,9 @@ void memory_reserve_test::test_tensor_copy_constructor() throw(libtest::test_exc
 
     sparse_bispace<1> foo_bispace(50);
     memory_reserve mr(900);
-    sparse_btensor_new<1> foo_tensor(foo_bispace);
+    sparse_btensor<1> foo_tensor(foo_bispace);
     foo_tensor.set_memory_reserve(mr);
-    sparse_btensor_new<1> bar_tensor(foo_tensor);
+    sparse_btensor<1> bar_tensor(foo_tensor);
     if(mr.get_mem_avail() != 100)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -166,7 +166,7 @@ void memory_reserve_test::test_reset_tensor_memory_reserve() throw(libtest::test
     sparse_bispace<1> foo_bispace(50);
     memory_reserve mr_0(400);
     memory_reserve mr_1(405);
-    sparse_btensor_new<1> foo_tensor(foo_bispace);
+    sparse_btensor<1> foo_tensor(foo_bispace);
     foo_tensor.set_memory_reserve(mr_0);
     foo_tensor.set_memory_reserve(mr_1);
     if(mr_0.get_mem_avail() != 400 || mr_0.get_n_tensors() != 0)

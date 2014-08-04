@@ -37,14 +37,14 @@ public:
     sparse_bispace<2> spb_D;
     sparse_bispace<2> spb_E;
 
-    sparse_btensor_new<3> A;
-    sparse_btensor_new<3> B;
-    direct_sparse_btensor_new<2> C;
-    sparse_btensor_new<2> F;
-    direct_sparse_btensor_new<2> G;
-    sparse_btensor_new<2> D;
-    sparse_btensor_new<2> E;
-    sparse_btensor_new<2> E_correct;
+    sparse_btensor<3> A;
+    sparse_btensor<3> B;
+    direct_sparse_btensor<2> C;
+    sparse_btensor<2> F;
+    direct_sparse_btensor<2> G;
+    sparse_btensor<2> D;
+    sparse_btensor<2> E;
+    sparse_btensor<2> E_correct;
 
     expr::expr_tree tree; 
 

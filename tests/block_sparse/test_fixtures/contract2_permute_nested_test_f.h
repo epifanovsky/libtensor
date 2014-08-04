@@ -23,11 +23,11 @@ private:
     static const double s_D_arr[18];
 public:
     sparse_bispace<2> spb_D;
-    sparse_btensor_new<3> A;
-    sparse_btensor_new<3> B;
-    direct_sparse_btensor_new<2> C;
-    sparse_btensor_new<2> D;
-    sparse_btensor_new<2> D_correct;
+    sparse_btensor<3> A;
+    sparse_btensor<3> B;
+    direct_sparse_btensor<2> C;
+    sparse_btensor<2> D;
+    sparse_btensor<2> D_correct;
 
     expr::expr_tree tree;
 

@@ -5,9 +5,9 @@
  *      Author: smanzer
  */
 
-#include <libtensor/block_sparse/sparse_btensor.h>
-#include <libtensor/block_sparse/direct_sparse_btensor.h>
-#include <libtensor/block_sparse/contract.h>
+#include <libtensor/block_sparse/sparse_btensor_new.h>
+#include <libtensor/block_sparse/direct_sparse_btensor_new.h>
+#include <libtensor/expr/operators/contract.h>
 #include <libtensor/core/sequence.h>
 #include <libtensor/expr/iface/letter.h>
 #include <iostream>
@@ -237,7 +237,8 @@ void run_benchmark(const char* file_name)
     flops = 0;
     count_flops = true;
     seconds = read_timer();
-    M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),4e8);
+    /*M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q),4e8);*/
+    M_from_direct(nu|mu) = contract(sigma|Q,L_direct(nu|sigma|Q),D_direct_perm(mu|sigma|Q));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";
@@ -523,7 +524,8 @@ void run_benchmark_mo(const char* file_name)
     E_direct(nu|sigma|Q) = contract(R,C_aux_fast(nu|sigma|R),V(Q|R));
     G_direct(nu|sigma|Q) = I(nu|sigma|Q) - E_direct(nu|sigma|Q);
     H_direct(nu|Q|i) = contract(sigma,G_direct(nu|sigma|Q),C_mo(sigma|i));
-    M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i),4e8,&Q);
+    /*M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i),4e8,&Q);*/
+    M_from_direct(mu|nu) = contract(Q|i,D_direct(mu|Q|i),H_direct(nu|Q|i));
     seconds = read_timer() - seconds;
     count_flops = false;
     std::cout << "FLOPs: " << flops << "\n";

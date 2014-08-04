@@ -26,8 +26,8 @@ void batch_kernels_test::test_batch_kernel_permute_A_direct() throw(libtest::tes
 
 
     permute_3d_sparse_120_test_f tf;
-    direct_sparse_btensor_new<3> A(tf.output_bispace);
-    sparse_btensor_new<3> B(tf.input_bispace);
+    direct_sparse_btensor<3> A(tf.output_bispace);
+    sparse_btensor<3> B(tf.input_bispace);
 
 
     letter i,j,k;
@@ -80,9 +80,9 @@ void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_excep
 
     contract2_test_f tf;
 
-    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    direct_sparse_btensor_new<2> C_direct(tf.spb_C);
+    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
+    direct_sparse_btensor<2> C_direct(tf.spb_C);
 
     multimap<size_t,size_t> contr_map;
     contr_map.insert(idx_pair(1,3));
@@ -111,8 +111,8 @@ void batch_kernels_test::test_batch_kernel_contract2() throw(libtest::test_excep
     //Test grabbing entire array
     bkc2.init(ptrs,bispace_batch_map());
     bkc2.generate_batch(ptrs,bispace_batch_map());
-    sparse_btensor_new<2> C(tf.spb_C,C_arr,true);
-    sparse_btensor_new<2> C_correct(tf.spb_C,tf.C_arr,true);
+    sparse_btensor<2> C(tf.spb_C,C_arr,true);
+    sparse_btensor<2> C_correct(tf.spb_C,tf.C_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -126,9 +126,9 @@ void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
 
     subtract2_test_f tf;
 
-    sparse_btensor_new<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
-    direct_sparse_btensor_new<3> C_direct(tf.spb_C);
+    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
+    direct_sparse_btensor<3> C_direct(tf.spb_C);
 
     batch_kernel_add2<double> bka2(C_direct,A,B,1,-1);
 
@@ -140,8 +140,8 @@ void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
     ptrs.push_back((double*)B.get_data_ptr());
     bka2.init(ptrs,bbm);
     bka2.generate_batch(ptrs,bbm);
-    sparse_btensor_new<3> C(tf.spb_C,C_arr,true);
-    sparse_btensor_new<3> C_correct(tf.spb_C,tf.C_arr,true);
+    sparse_btensor<3> C(tf.spb_C,C_arr,true);
+    sparse_btensor<3> C_correct(tf.spb_C,tf.C_arr,true);
 
     if(C != C_correct)
     {

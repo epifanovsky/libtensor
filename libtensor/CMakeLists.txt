@@ -208,7 +208,6 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparsity_fuser.C
     block_sparse/sparse_loop_grouper.C
     block_sparse/range.C
-    block_sparse/get_batches.C
     block_sparse/batch_list_builder.C
     block_sparse/subspace_iterator.C
     block_sparse/connectivity.C
