@@ -15,6 +15,7 @@
 #include "../expr/dag/node_contract.h"
 #include "../expr/dag/node_add.h"
 #include "../expr/metaprog.h"
+#include <algorithm>
 
 namespace libtensor {
 
@@ -49,7 +50,8 @@ public:
     {
         m_kern = &kern;
         size_t n_tensors_processed = (NC == 0 ? 0 : (NA == 0 ? 1 : (NB == 0 ? 2 : 3)));
-        if(n_tensors_processed == m_edges.size() - 1)
+        size_t n_tensors_to_process = (m_edges.size() == 2) ? 2 : m_edges.size() - 1;
+        if(n_tensors_processed == n_tensors_to_process)
         {
             const node& op_node = m_tree.get_vertex(m_edges.back());
             const node& n_0 = m_tree.get_vertex(m_edges[0]);
@@ -58,14 +60,20 @@ public:
             m_bispaces.push_back(C.get_bispace());
             if(n_tensors_processed > 1)
             {
-                const node& n_1 = m_tree.get_vertex(m_edges[1]);
+                const node& n_1 = (m_edges.size() == 2) ? op_node : m_tree.get_vertex(m_edges[1]);
                 const node_ident_any_tensor<NA,T>& n_1_concrete = dynamic_cast< const node_ident_any_tensor<NA,T>& >(n_1);
                 gen_sparse_btensor<NA,T>& A = dynamic_cast< gen_sparse_btensor<NA,T>& >(n_1_concrete.get_tensor());
                 m_ptrs[1] = (T*)A.get_data_ptr();
                 m_suppliers[1] = A.get_batch_provider();
                 m_bispaces.push_back(A.get_bispace());
-
-                if(n_tensors_processed > 2)
+                if(&n_1 == &op_node)
+                {
+                    //TODO: This is very clunky and requires an extra copy step - should form tensor directly from provider into output pointer
+                    idx_list perm_entries;
+                    for(size_t i = 0; i < NA; ++i) perm_entries.push_back(i);
+                    kern = new batch_kernel_permute<T>(C,A,perm_entries);
+                }
+                else if(n_tensors_processed > 2)
                 {
                     const node& n_2 = m_tree.get_vertex(m_edges[2]);
                     const node_ident_any_tensor<NB,T>& n_2_concrete = dynamic_cast< const node_ident_any_tensor<NB,T>& >(n_2);
@@ -129,8 +137,8 @@ public:
 
     kernel_builder(const expr_tree& tree,const expr_tree::edge_list_t& edges) : m_tree(tree),m_edges(edges),m_kern(NULL) 
     {
-        m_ptrs.resize(m_edges.size() - 1,NULL);
-        m_suppliers.resize(m_edges.size() - 1,NULL);
+        m_ptrs.resize(std::max<size_t>(2,m_edges.size() - 1),NULL);
+        m_suppliers.resize(std::max<size_t>(2,m_edges.size() - 1),NULL);
     }
 
     template<size_t M>
@@ -268,7 +276,7 @@ batch_provider_new<T>::batch_provider_new(const expr::expr_tree& tree) : m_conn(
     m_suppliers = kb.get_suppliers();
 
     //Create child batch providers for direct tensors used as inputs to this one 
-    for(size_t i = 0; i < input_edges.size(); ++i)
+    for(size_t i = 0; i < std::max<size_t>(1,input_edges.size()); ++i)
     {
         size_t tensor_idx = i+1;
         if(m_ptrs[tensor_idx] == NULL)

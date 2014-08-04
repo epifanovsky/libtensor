@@ -28,9 +28,7 @@ public:
 
     virtual void assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
 
-    expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &lab) {
-        return expr::labeled_lhs_rhs<N, T>(*this, lab, expr::expr_rhs<N, T>(*m_expr, lab));
-    }
+    expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &lab);
 };
 
 template<size_t N,typename T>
@@ -54,6 +52,19 @@ void direct_sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T> &rhs, con
         root_id = m_expr->add(root_id,n_tf);
     }
     m_expr->add(root_id, rhs.get_expr());
+}
+
+template<size_t N,typename T>
+expr::labeled_lhs_rhs<N, T> direct_sparse_btensor_new<N,T>::operator()(const expr::label<N> &lab)
+{
+    if(m_batch_provider != NULL)
+    {
+        return expr::labeled_lhs_rhs<N, T>(*this, lab,any_tensor<N, T>::make_rhs(lab));
+    }
+    else
+    {
+        return expr::labeled_lhs_rhs<N, T>(*this, lab, expr::expr_rhs<N, T>(*m_expr, lab));
+    }
 }
 
 } // namespace libtensor

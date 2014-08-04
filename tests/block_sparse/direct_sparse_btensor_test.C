@@ -13,8 +13,7 @@ namespace libtensor {
 void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_direct_rhs();
     test_contract2_subtract2_nested();
-    /*test_contract2_permute_nested();*/
-    /*test_custom_batch_provider();*/
+    test_custom_batch_provider();
     /*test_force_batch_index();*/
 }
 
@@ -192,73 +191,6 @@ void direct_sparse_btensor_test::test_contract2_subtract2_nested() throw(libtest
     }
 }
 
-#if 0
-void direct_sparse_btensor_test::test_contract2_permute_nested() throw(libtest::test_exception)
-{
-    static const char *test_name = "direct_sparse_btensor_test::test_contract2_permute_nested()";
-
-    contract2_test_f tf;
-    /*** FIRST STEP - SET UP DIRECT TENSOR ***/
-    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
-    sparse_btensor<3> B(tf.spb_B,tf.B_arr,true);
-    sparse_bispace<2> spb_C = tf.spb_i | tf.spb_l;
-
-    direct_sparse_btensor<2> C(spb_C);
-
-    letter i,j,k,l;
-    C(i|l) = contract(j|k,A(i|j|k),B(j|k|l));
-
-    direct_sparse_btensor<2> C_perm(spb_C.permute(permutation<2>().permute(0,1)));
-    C_perm(l|i) = C(i|l);
-
-    double C_perm_batch_0_correct_arr[15] = { //l = 0 i = 0
-                                              1640,1703,
-
-                                              //l = 0 i = 1
-                                              7853,8525,
-                                              8056,8748,
-                                         
-                                              //l = 1 i = 0
-                                              2661,2748,2835,
-
-                                              //l = 1 i = 1
-                                              12337,13313,
-                                              12629,13630,
-                                              12921,13947};
-
-    double C_perm_batch_1_correct_arr[3] = { //l = 2 i = 0
-                                             535,
-
-                                             //l = 2 i = 1
-                                             4625,5091};
-
-    double C_perm_batch_arr[15] = {0};
-
-    std::map<idx_pair,idx_pair> batches;
-    batches[idx_pair(0,0)] = idx_pair(0,2);
-    C_perm.get_batch(C_perm_batch_arr,batches,120);
-
-    for(size_t i = 0; i < sizeof(C_perm_batch_0_correct_arr)/sizeof(C_perm_batch_0_correct_arr[0]); ++i)
-    {
-        if(C_perm_batch_arr[i] != C_perm_batch_0_correct_arr[i])
-        {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "contract(...), then permute(...) did not produce correct result for batch 0");
-        }
-    }
-    
-    batches[idx_pair(0,0)] = idx_pair(2,3);
-    C_perm.get_batch(C_perm_batch_arr,batches,24);
-    for(size_t i = 0; i < sizeof(C_perm_batch_1_correct_arr)/sizeof(C_perm_batch_1_correct_arr[0]); ++i)
-    {
-        if(C_perm_batch_arr[i] != C_perm_batch_1_correct_arr[i])
-        {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "contract(...), then permute(...) did not produce correct result for batch 1");
-        }
-    }
-}
-
 //We simulate a custom batch provider, as might occur if we were dynamically generating elements of the tensor through
 //some numerical method 
 void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::test_exception)
@@ -278,118 +210,103 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
 
     //Our contrived batcher computes a matrix where each term is the product of a power of 2 (row) and a fibonacci
     //number (col) 
-    class two_n_fibonnaci_batch_provider : public batch_provider<double>
+    class two_n_fibonnaci_batch_provider : public batch_provider_i<double>
     {
-    private:
-        static std::vector<block_loop> make_loops(const std::vector<sparse_bispace_any_order>& bispaces)
-        {
-            std::vector<block_loop> loops;
-            block_loop bl_0(bispaces);
-            bl_0.set_subspace_looped(0,0);
-            loops.push_back(bl_0);
-            block_loop bl_1(bispaces);
-            bl_1.set_subspace_looped(0,1);
-            loops.push_back(bl_1);
-            return loops;
-        }
+    public:
+        sparse_bispace<1> m_spb_i;
+        sparse_bispace<1> m_spb_j;
         size_t fibonnaci(size_t n)
         { 
             if(n == 0) { return 0; }
             else if(n == 1) { return 1; }
             else { return fibonnaci(n - 1) + fibonnaci(n - 2); }
         }
-    protected:
-        virtual void run_impl(const std::vector<block_loop>& loops,
-                              const idx_list& direct_tensors,
-                              const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                              const std::vector<double*>& ptrs,
-                              const std::map<size_t,idx_pair>& loop_batches)
+
+        virtual void get_batch(double* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()) 
         {
-            //We explicitly address everything since this is just a stub
-            sparse_bispace<1> spb_i = this->m_bispaces[0][0];
-            sparse_bispace<1> spb_j = this->m_bispaces[0][1];
+            idx_pair batch = bbm.begin()->second; 
             size_t batch_off = 0;
-            for(size_t i_block_idx = loop_batches.at(0).first; i_block_idx < loop_batches.at(0).second; ++i_block_idx)
+            for(size_t i_block_idx = batch.first; i_block_idx < batch.second; ++i_block_idx)
             {
-                size_t i_block_off = spb_i.get_block_abs_index(i_block_idx);
-                size_t i_block_sz = spb_i.get_block_size(i_block_idx);
-                for(size_t j_block_idx = 0; j_block_idx < spb_j.get_n_blocks(); ++j_block_idx)
+                size_t i_block_off = m_spb_i.get_block_abs_index(i_block_idx);
+                size_t i_block_sz = m_spb_i.get_block_size(i_block_idx);
+                for(size_t j_block_idx = 0; j_block_idx < m_spb_j.get_n_blocks(); ++j_block_idx)
                 {
-                    size_t j_block_off = spb_j.get_block_abs_index(j_block_idx);
-                    size_t j_block_sz = spb_j.get_block_size(j_block_idx);
+                    size_t j_block_off = m_spb_j.get_block_abs_index(j_block_idx);
+                    size_t j_block_sz = m_spb_j.get_block_size(j_block_idx);
                     for(size_t i_element_idx = 0; i_element_idx < i_block_sz; ++i_element_idx)
                     {
                         for(size_t j_element_idx = 0; j_element_idx < j_block_sz; ++j_element_idx)
                         {
                             size_t two_n = (size_t) pow(2,i_block_off+i_element_idx);
                             size_t fibonnaci_n = fibonnaci(j_block_off+j_element_idx);
-                            ptrs[0][batch_off] = two_n*fibonnaci_n;
+                            output_ptr[batch_off] = two_n*fibonnaci_n;
                             ++batch_off;
                         }
                     }
                 }
             }
         }
-
     public:
-        two_n_fibonnaci_batch_provider(const std::vector<sparse_bispace_any_order>& bispaces) : batch_provider(make_loops(bispaces),
-                                                                                                               bispaces,
-                                                                                                                  std::vector<size_t>(1,0),
-                                                                                                                  std::vector<batch_provider<double>* >(),
-                                                                                                                  std::vector<double*>(1,NULL),
-                                                                                                                  0) {}
-        virtual batch_provider<double>* clone() const { return new two_n_fibonnaci_batch_provider(*this); }
+        two_n_fibonnaci_batch_provider(const sparse_bispace<1>& spb_i,const sparse_bispace<1>& spb_j) : m_spb_i(spb_i),m_spb_j(spb_j) {}
     };
 
     std::vector<sparse_bispace_any_order> bispaces(1,spb_i|spb_j);
-    direct_sparse_btensor<2> A(spb_i|spb_j);
-    A.set_batch_provider(two_n_fibonnaci_batch_provider(bispaces));
 
-    double A_batch_0_correct_arr[12] = { //i = 0 j = 0
-                                         0,1,1,
-                                         0,2,2,
+    memory_reserve mr_0(240+144);
+    memory_reserve mr_1(240+144-1);
+    direct_sparse_btensor_new<2> A(spb_i|spb_j);
+    two_n_fibonnaci_batch_provider bp(spb_i,spb_j);
+    A.set_batch_provider(bp);
+    sparse_btensor_new<2> B(spb_i|spb_j);
+    letter i,j;
+    B.set_memory_reserve(mr_0);
+    B(i|j) = A(i|j);
 
-                                        //i = 0 j = 1
-                                        2,3,5,
-                                        4,6,10};
+    double B_correct_arr[30] = { //i = 0 j = 0
+                                 0,1,1,
+                                 0,2,2,
 
-    double A_batch_1_correct_arr[18] = { //i = 1 j = 0
-                                         0,4,4,
-                                         0,8,8,
-                                         0,16,16,
+                                 //i = 0 j = 1
+                                 2,3,5,
+                                 4,6,10,
 
-                                         //i = 1 j = 1
-                                         8,12,20,
-                                         16,24,40,
-                                         32,48,80};
+                                 //i = 1 j = 0
+                                 0,4,4,
+                                 0,8,8,
+                                 0,16,16,
+
+                                 //i = 1 j = 1
+                                 8,12,20,
+                                 16,24,40,
+                                 32,48,80};
                                         
 
-    double A_batch_arr[18];
-
-    std::map<idx_pair,idx_pair> batches;
-    batches[idx_pair(0,0)] = idx_pair(0,1);
-    A.get_batch(A_batch_arr,batches);
-    for(size_t i = 0; i < sizeof(A_batch_0_correct_arr)/sizeof(A_batch_0_correct_arr[0]); ++i)
+    sparse_btensor_new<2> B_correct(spb_i|spb_j,B_correct_arr,true);
+    if(B != B_correct)
     {
-        if(A_batch_arr[i] != A_batch_0_correct_arr[i])
-        {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "Custom batch provider returned incorrect value for batch 0");
-        }
+        fail_test(test_name,__FILE__,__LINE__,
+                "Custom batch provider returned incorrect tensor");
     }
 
-    batches[idx_pair(0,0)] = idx_pair(1,2);
-    A.get_batch(A_batch_arr,batches);
-    for(size_t i = 0; i < sizeof(A_batch_1_correct_arr)/sizeof(A_batch_1_correct_arr[0]); ++i)
+    B.set_memory_reserve(mr_1);
+    bool threw_exception = false;
+    try
     {
-        if(A_batch_arr[i] != A_batch_1_correct_arr[i])
-        {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "Custom batch provider returned incorrect value for batch 0");
-        }
+        B(i|j) = A(i|j);
+    }
+    catch(out_of_memory&)
+    {
+        threw_exception = true;
+    }
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "out_of_memory not thrown when not enough memory given");
     }
 }
 
+#if 0
 //Due to constraints of external code that may be providing us with some batches
 //we may need to force the choice of a particular index to batch over.
 void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_exception)

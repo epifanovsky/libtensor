@@ -24,9 +24,12 @@ connectivity::connectivity(const expr_tree& tree)
 
     const node& n_op = tree.get_vertex(n_op_id);
     size_t NC = root.get_n();
-    if(n_op.check_type<node_add>())
+    if(n_op.check_type<node_add>() || n_op.check_type<node_ident>())
     {
-        m_conn.resize(1+op_children.size(),std::vector<idx_pair_list>(NC));
+        size_t n_tensors;
+        if(n_op.check_type<node_add>()) n_tensors = 1+op_children.size();
+        if(n_op.check_type<node_ident>()) n_tensors = 2;
+        m_conn.resize(n_tensors,std::vector<idx_pair_list>(NC));
         for(size_t tensor_idx = 0; tensor_idx < m_conn.size(); ++tensor_idx)
         {
             for(size_t subspace_idx = 0; subspace_idx < m_conn[tensor_idx].size(); ++subspace_idx)
