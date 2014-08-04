@@ -122,7 +122,7 @@ sparse_btensor<N,T>::~sparse_btensor()
 template<size_t N,typename T>
 sparse_btensor<N,T>::sparse_btensor(const sparse_btensor<N>& rhs) : m_bispace(rhs.m_bispace),m_mr(NULL)
 {
-    this->set_memory_reserve(*rhs.m_mr);
+    if(rhs.m_mr != NULL) this->set_memory_reserve(*rhs.m_mr);
     m_data_ptr = new T[m_bispace.get_nnz()]; 
     memcpy(m_data_ptr,rhs.m_data_ptr,m_bispace.get_nnz()*sizeof(T)); 
 }
