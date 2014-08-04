@@ -217,6 +217,40 @@ void sparse_btensor_new<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr
         root_id = e.add(root_id,n_tf);
     }
     e.add(root_id, rhs.get_expr());
+
+    //We clean up the tree a little bit to prevent spurious extra assignments
+    std::vector<expr_tree::node_id_t> node_stack(1,e.get_root());
+    std::vector<size_t> pos_stack(1,0);
+    while(node_stack.size() > 0)
+    {
+        expr_tree::node_id_t cur_id = node_stack.back();
+        const node& n = e.get_vertex(cur_id);
+        if(n.check_type<node_assign>())
+        {
+            expr_tree::edge_list_t children = e.get_edges_out(cur_id);
+            expr_tree::node_id_t op_id = children[1];
+            const node& n_op = e.get_vertex(op_id); 
+            if(n_op.check_type<node_assign>())
+            {
+                expr_tree::edge_list_t op_children = e.get_edges_out(op_id);
+                expr_tree sub = e.get_subtree(op_children[1]);
+                e.erase_subtree(op_id);
+                e.add(cur_id,sub);
+            }
+        }
+        expr_tree::edge_list_t children = e.get_edges_out(cur_id);
+        if(children.size() > 0 && pos_stack.back() < children.size())
+        {
+            node_stack.push_back(children[pos_stack.back()]);
+            pos_stack.push_back(0);
+        }
+        else
+        {
+            node_stack.pop_back();
+            pos_stack.pop_back();
+            if(pos_stack.size() > 0) pos_stack.back()++;
+        }
+    }
     batch_provider_new<T> bp(e);
 
     std::vector< std::vector<sparse_bispace_any_order> > direct_bispace_grps;

@@ -14,6 +14,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_contract2_direct_rhs();
     test_contract2_subtract2_nested();
     test_custom_batch_provider();
+    test_assignment_chain();
     /*test_force_batch_index();*/
 }
 
@@ -303,6 +304,26 @@ void direct_sparse_btensor_test::test_custom_batch_provider() throw(libtest::tes
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "out_of_memory not thrown when not enough memory given");
+    }
+
+    //TODO: Test assign away batch provider with normal tensor expr!!!
+}
+
+//Make sure that interconverting between direct and in-core representations of the same tensor is seamless
+void direct_sparse_btensor_test::test_assignment_chain() throw(libtest::test_exception)
+{
+    static const char *test_name = "direct_sparse_btensor_test::test_assignment_chain()";
+
+    contract2_subtract2_nested_test_f tf;
+    direct_sparse_btensor_new<3> A_direct(tf.A.get_bispace());
+    sparse_btensor_new<3> B(tf.A.get_bispace());
+    letter i,j,k;
+    A_direct(i|j|k) = tf.A(i|j|k);
+    B(i|j|k) = A_direct(i|j|k);
+    if(B != tf.A)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "assignment chain resulted in incorrect result");
     }
 }
 
