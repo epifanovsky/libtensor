@@ -33,6 +33,8 @@ template<typename T>
 void libtensor::block_add2_kernel<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
+	size_t first_size = dim_lists[0].size();
+	const dim_list& first_dims = dim_lists[0];
 #ifdef LIBTENSOR_DEBUG
 	if(dim_lists.size() != 3 || ptrs.size() != dim_lists.size())
 	{
@@ -41,8 +43,6 @@ void libtensor::block_add2_kernel<T>::operator()(
 	}
 
 	//Check that dimensions for all blocks are the same
-	size_t first_size = dim_lists[0].size();
-	const dim_list& first_dims = dim_lists[0];
 	for(size_t i = 1; i < dim_lists.size(); ++i)
 	{
 		const dim_list& cur_dims = dim_lists[i];

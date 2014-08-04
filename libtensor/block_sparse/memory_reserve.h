@@ -1,6 +1,7 @@
 #ifndef MEMORY_RESERVE_H
 #define MEMORY_RESERVE_H
 
+#include <stdlib.h>
 #include <vector>
 
 namespace libtensor {
