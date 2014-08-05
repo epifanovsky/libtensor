@@ -487,14 +487,29 @@ void batch_provider<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_grps
         throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
                 "Operation requires batching over multiple indices");
     }
-    bs_grps.push_back(cur_grp);
 
+    //We must ensure that children are visited in-order
+    //batchable_subspaces might make our fixed_supplier_idx 2 even when 1 is also batched
+    idx_pair_list bispace_pos_list; 
+    idx_list sorted_cur_grp(cur_grp.size());
     for(size_t i = 0; i < bispace_list.size(); ++i)
     {
-        size_t bispace_idx  = bispace_list[i];
+        bispace_pos_list.push_back(idx_pair(bispace_list[i],i));
+    }
+    sort(bispace_pos_list.begin(),bispace_pos_list.end());
+    for(size_t i = 0; i < bispace_pos_list.size(); ++i)
+    {
+        sorted_cur_grp[i] = cur_grp[bispace_pos_list[i].second];
+    }
+    bs_grps.push_back(sorted_cur_grp);
+
+
+    for(size_t i = 0; i < bispace_pos_list.size(); ++i)
+    {
+        size_t bispace_idx  = bispace_pos_list[i].first;
         if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),bispace_idx) != m_suppliers_allocd.end())
         {
-            static_cast<batch_provider<T>*>(m_suppliers[bispace_idx])->get_batched_subspace_grps(bs_grps,cur_grp[i]);
+            static_cast<batch_provider<T>*>(m_suppliers[bispace_idx])->get_batched_subspace_grps(bs_grps,sorted_cur_grp[i]);
         }
     }
 }
