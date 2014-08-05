@@ -187,13 +187,14 @@ private:
     idx_list m_batched_subspaces;
     idx_pair_list m_batch_list;
     expr::connectivity m_conn;
+    void set_batch_info_internal(std::vector<idx_list>::const_iterator& batched_subspace_grps_it,const idx_pair_list& batch_list);
 public:
     static const char* k_clazz; //!< Class name
     batch_provider(const expr::expr_tree& tree); 
     virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()); 
     virtual idx_list get_batchable_subspaces() const;
     ~batch_provider();
-    void set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos = 0);
+    void set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list);
     void get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched=0) const;
     void get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const;
 };
@@ -375,17 +376,24 @@ idx_list batch_provider<T>::get_batchable_subspaces() const
 }
 
 template<typename T>
-void batch_provider<T>::set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list,size_t cur_pos)
+void batch_provider<T>::set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list)
 {
-    if(batched_subspace_grps[cur_pos].size() > 0)
+    std::vector<idx_list>::const_iterator batched_subspace_grps_it = batched_subspace_grps.begin();
+    set_batch_info_internal(batched_subspace_grps_it,batch_list);
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_info_internal(std::vector<idx_list>::const_iterator& batched_subspace_grps_it,const idx_pair_list& batch_list)
+{
+    if(batched_subspace_grps_it->size() > 0)
     {
-        m_batched_subspaces = batched_subspace_grps[cur_pos];
+        m_batched_subspaces = *batched_subspace_grps_it;
         m_batch_list = batch_list;
     }
 
     for(size_t i = 0; i < m_suppliers_allocd.size(); ++i)
     {
-        static_cast<batch_provider<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info(batched_subspace_grps,batch_list,cur_pos+1);
+        static_cast<batch_provider<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info_internal(++batched_subspace_grps_it,batch_list);
     }
 }
 
