@@ -223,6 +223,7 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
 
     expr_tree::edge_list_t edges = expr_tree::edge_list_t(1,children[0]);
     expr_tree::edge_list_t input_edges = tree.get_edges_out(children[1]);
+    expr_tree::edge_list_t input_assignment_nodes;
 
     //Figure out which inputs correspond to tensors and which are nested expressions
     for(size_t i = 0; i < input_edges.size(); ++i)
@@ -232,6 +233,8 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
         if(cur_node.check_type<node_ident>())
         {
            edges.push_back(input_edges[i]);
+           //Filler so that we can index directly into this list
+           input_assignment_nodes.push_back(-1);
         }
         else
         {
@@ -244,10 +247,12 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
                 if(next_inter_node.check_type<node_ident>())
                 {
                     edges.push_back(next_inter_node_id);
+                    input_assignment_nodes.push_back(-1);
                 }
                 else if(next_inter_node.check_type<node_assign>())
                 {
                     edges.push_back(tree.get_edges_out(next_inter_node_id)[0]);
+                    input_assignment_nodes.push_back(next_inter_node_id);
                 }
                 else
                 {
@@ -259,6 +264,7 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
             {
                 //Save the tensor output from this assignment
                 edges.push_back(tree.get_edges_out(input_edges[i])[0]);
+                input_assignment_nodes.push_back(input_edges[i]);
             }
             else
             {
@@ -283,7 +289,7 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
         {
             if(m_suppliers[tensor_idx] == NULL)
             {
-                m_suppliers[tensor_idx] = new batch_provider<T>(tree.get_subtree(input_edges[i]));
+                m_suppliers[tensor_idx] = new batch_provider<T>(tree.get_subtree(input_assignment_nodes[i]));
                 m_suppliers_allocd.push_back(tensor_idx);
             }
             idx_list child_bs(m_suppliers[tensor_idx]->get_batchable_subspaces());
