@@ -169,13 +169,17 @@ void batch_kernel_add2<T>::generate_batch(const std::vector<T*>& ptrs,const bisp
     for(bispace_batch_map::const_iterator batch_it = batches.begin(); batch_it != batches.end(); ++batch_it)
     {
         size_t bispace_idx = batch_it->first.first;
-        size_t subspace_idx = batch_it->first.second;
-        for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
+        if(bispace_idx != 2)
         {
-            const block_loop& loop = loops[loop_idx];
-            if(!loop.is_bispace_ignored(bispace_idx) && loop.get_subspace_looped(bispace_idx) == subspace_idx)
+            bispace_idx = (bispace_idx  == 0) ? 0  : 2;
+            size_t subspace_idx = batch_it->first.second;
+            for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
             {
-                loop_batches[loop_idx] = batch_it->second;
+                const block_loop& loop = loops[loop_idx];
+                if(!loop.is_bispace_ignored(bispace_idx) && loop.get_subspace_looped(bispace_idx) == subspace_idx)
+                {
+                    loop_batches[loop_idx] = batch_it->second;
+                }
             }
         }
     }
@@ -183,6 +187,25 @@ void batch_kernel_add2<T>::generate_batch(const std::vector<T*>& ptrs,const bisp
     std::vector<T*> cur_ptrs(ptrs.size(),ptrs[0]);
     cur_ptrs[2] = ptrs[1];
     m_sll_add_ptr->run(m_ba2k_add,cur_ptrs,loop_batches);
+    
+    loop_batches.clear();
+    for(bispace_batch_map::const_iterator batch_it = batches.begin(); batch_it != batches.end(); ++batch_it)
+    {
+        size_t bispace_idx = batch_it->first.first;
+        if(bispace_idx != 1)
+        {
+            bispace_idx = (bispace_idx  == 0) ? 0  : 2;
+            size_t subspace_idx = batch_it->first.second;
+            for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
+            {
+                const block_loop& loop = loops[loop_idx];
+                if(!loop.is_bispace_ignored(bispace_idx) && loop.get_subspace_looped(bispace_idx) == subspace_idx)
+                {
+                    loop_batches[loop_idx] = batch_it->second;
+                }
+            }
+        }
+    }
     cur_ptrs[2] = ptrs[2]; 
     m_sll_sub_ptr->run(m_ba2k_sub,cur_ptrs,loop_batches);
 }

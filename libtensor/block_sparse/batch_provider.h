@@ -335,10 +335,12 @@ void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
 { 
     m_ptrs[0] = output_ptr; 
     m_kern->init(m_ptrs,bbm);
+    bool output_batched  = false;
     for(bispace_batch_map::const_iterator it = bbm.begin(); it != bbm.end(); ++it)
     {
         if(it->first.first == 0)
         {
+            output_batched = true;
             m_batch_list = idx_pair_list(1,it->second);
             break;
         }
@@ -350,6 +352,7 @@ void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
         idx_pair batch_from_supplier = m_batch_list[batch_idx];
         bispace_batch_map augmented_bbm(bbm);
         idx_list::iterator batched_subspace_it = m_batched_subspaces.begin(); 
+        if(output_batched) ++batched_subspace_it; //Advance past the output subspace
         for(size_t supplier_idx = 1; supplier_idx < m_ptrs.size(); ++supplier_idx)
         {
             if(m_suppliers[supplier_idx] != NULL)
