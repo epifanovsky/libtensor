@@ -448,6 +448,10 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
 {
     static const char *test_name = "direct_sparse_btensor_test::test_pari_k()";
 
+    //Enough memory for all full tensors + first block of Q index
+    memory_reserve mr_0((40432+67883)*8);
+    memory_reserve mr_1((40432+67883)*8-1);
+
     size_t N;
     size_t X;
     size_t o;
@@ -573,6 +577,11 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     direct_sparse_btensor<3> H(spb_N|spb_X|spb_o);
     sparse_btensor<2> M(spb_N|spb_N);
                                                                                    
+    C.set_memory_reserve(mr_0);
+    C_perm.set_memory_reserve(mr_0);
+    I.set_memory_reserve(mr_0);
+    M.set_memory_reserve(mr_0);
+
     letter mu,nu,lambda,sigma,Q,R,i;
     C_perm(mu|Q|lambda) = C(mu|lambda|Q);
     D(mu|Q|i) = contract(lambda,C_perm(mu|Q|lambda),C_mo(lambda|i));
@@ -587,6 +596,7 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     M_correct_ifs.open("../tests/block_sparse/test_fixtures/pari_k_M.txt");
     getline(M_correct_ifs,line);
     size_t M_correct_idx = 0;
+
     while(line.length() > 0)
     {
         istringstream(line) >> M_correct_arr[M_correct_idx];
@@ -600,6 +610,25 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "pari_k result incorrect");
+    }
+
+    C.set_memory_reserve(mr_1);
+    C_perm.set_memory_reserve(mr_1);
+    I.set_memory_reserve(mr_1);
+    M.set_memory_reserve(mr_1);
+    bool threw_exception = false;
+    try
+    {
+        M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i));
+    }
+    catch(out_of_memory&)
+    {
+        threw_exception = true;
+    }
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "out_of_memory not thrown when not enough memory given");
     }
 }
 
