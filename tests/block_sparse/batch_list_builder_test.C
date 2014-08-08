@@ -18,6 +18,7 @@ void batch_list_builder_test::perform() throw(libtest::test_exception)
     test_get_batch_list_sparse_sparse();
     test_get_batch_list_2_group_sparse_sparse();
     test_get_batch_list_not_enough_mem();
+    test_get_batch_array_size_grps();
 }
 
 //Test fixtures
@@ -242,6 +243,42 @@ void batch_list_builder_test::test_get_batch_list_not_enough_mem() throw(libtest
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "batch_list_builder::get_batch_list(...) did not throw out_of_memory when not enough memory provided");
+    }
+}
+
+void batch_list_builder_test::test_get_batch_array_size_grps() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_list_builder_test::test_get_batch_array_sizes";
+
+    multi_group_test_f tf;
+    vector< vector<sparse_bispace_any_order> > bispace_grps(2);
+    bispace_grps[0].push_back(tf.A);
+    bispace_grps[0].push_back(tf.B);
+    bispace_grps[1].push_back(tf.C);
+    bispace_grps[1].push_back(tf.D);
+
+    idx_list batched_subspace_grp_0(1,1);
+    batched_subspace_grp_0.push_back(0);
+    idx_list batched_subspace_grp_1(1,0);
+    batched_subspace_grp_1.push_back(0);
+    vector<idx_list> batched_subspace_grps(1,batched_subspace_grp_0);
+    batched_subspace_grps.push_back(batched_subspace_grp_1);
+
+    batch_list_builder blb(bispace_grps,batched_subspace_grps);
+    size_t max_n_elem = 12;
+    idx_pair_list batch_list = blb.get_batch_list(max_n_elem);
+    vector< vector<size_t> > batch_array_size_grps = blb.get_batch_array_size_grps(batch_list);
+
+    vector<size_t> correct_batch_array_size_0(2,4);
+    vector<size_t> correct_batch_array_size_1(2,8);
+    vector< vector<size_t> > correct_batch_array_size_grps;
+    correct_batch_array_size_grps.push_back(correct_batch_array_size_0);
+    correct_batch_array_size_grps.push_back(correct_batch_array_size_1);
+
+    if(batch_array_size_grps != correct_batch_array_size_grps)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "batch_list_builder::get_batch_array_sizes(...) returned incorrect value!");
     }
 }
 

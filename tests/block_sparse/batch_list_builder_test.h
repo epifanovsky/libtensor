@@ -17,6 +17,7 @@ private:
     void test_get_batch_list_sparse_sparse() throw(libtest::test_exception);
     void test_get_batch_list_2_group_sparse_sparse() throw(libtest::test_exception);
     void test_get_batch_list_not_enough_mem() throw(libtest::test_exception);
+    void test_get_batch_array_size_grps() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */

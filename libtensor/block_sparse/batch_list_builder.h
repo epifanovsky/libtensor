@@ -16,6 +16,7 @@ public:
                        const std::vector<idx_list>& batched_subspace_grps);
 
     idx_pair_list get_batch_list(size_t max_n_elem);
+    std::vector< std::vector<size_t> > get_batch_array_size_grps(const idx_pair_list& batch_list);
 };
 
 } // namespace libtensor

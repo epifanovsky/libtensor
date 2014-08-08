@@ -105,4 +105,35 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
     return batch_list;
 }
 
+vector< vector<size_t> > batch_list_builder::get_batch_array_size_grps(const idx_pair_list& batch_list)
+{
+    vector< vector<size_t> > batch_array_size_grps;
+    //Copy to preserve state
+    vector< vector<subspace_iterator> > iter_grps(m_iter_grps);
+    for(size_t grp_idx = 0; grp_idx  < iter_grps.size(); ++grp_idx)
+    {
+        vector<size_t> batch_array_size_grp;
+        vector<subspace_iterator>& iter_grp = iter_grps[grp_idx];
+        for(size_t iter_idx = 0; iter_idx < iter_grp.size(); ++iter_idx)
+        {
+            subspace_iterator& it = iter_grp[iter_idx]; 
+            size_t max_batch_size = 0;
+            for(size_t batch_idx = 0; batch_idx < batch_list.size(); ++batch_idx)  
+            {
+                idx_pair batch = batch_list[batch_idx];
+                size_t cur_batch_size = 0;
+                while((!it.done()) && (it.get_block_index() < batch.second))
+                {
+                    cur_batch_size += it.get_slice_size();
+                    ++it;
+                }
+                if(cur_batch_size > max_batch_size) max_batch_size = cur_batch_size;
+            }
+            batch_array_size_grp.push_back(max_batch_size);
+        }
+        batch_array_size_grps.push_back(batch_array_size_grp);
+    }
+    return batch_array_size_grps;
+}
+
 } // namespace libtensor
