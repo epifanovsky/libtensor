@@ -16,6 +16,7 @@ private:
     void test_custom_batch_provider() throw(libtest::test_exception);
     void test_assignment_chain() throw(libtest::test_exception);
     void test_force_batch_index() throw(libtest::test_exception);
+    void test_pari_k() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

@@ -5,6 +5,10 @@
 #include "test_fixtures/contract2_test_f.h"
 #include "test_fixtures/contract2_subtract2_nested_test_f.h"
 #include <math.h>
+#include <fstream>
+#include <iomanip>
+
+using namespace std;
 
 namespace libtensor {
 
@@ -14,6 +18,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_custom_batch_provider();
     test_assignment_chain();
     test_force_batch_index();
+    test_pari_k();
 }
 
 //TODO: group with other test in test fixture
@@ -435,6 +440,166 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "contract did not return correct value when batch index explicitly specified");
+    }
+}
+
+//This test implements the electronic structure PARI-K algorithm
+void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
+{
+    static const char *test_name = "direct_sparse_btensor_test::test_pari_k()";
+
+    size_t N;
+    size_t X;
+    size_t o;
+    vector<size_t> split_points_N;
+    vector<size_t> split_points_X;
+    vector< sequence<3,size_t> > sig_blocks_NNX;
+
+    ifstream C_ifs;
+    C_ifs.open("../tests/block_sparse/test_fixtures/pari_k_C.txt");
+    string line;
+    getline(C_ifs,line);
+    istringstream(line) >> N;
+    getline(C_ifs,line);
+    istringstream(line) >> X;
+    getline(C_ifs,line);
+    istringstream(line) >> o;
+
+    //Read N splitting information
+    //Skip section header 
+    getline(C_ifs,line);
+    getline(C_ifs,line);
+    while(line.length() > 0)
+    {
+        size_t entry;
+        istringstream(line) >> entry;
+        split_points_N.push_back(entry);
+        getline(C_ifs,line);
+    }
+
+    //Read the X splitting information  
+    getline(C_ifs,line);
+    while(line.length() > 0)
+    {
+        size_t entry;
+        istringstream(line) >> entry;
+        split_points_X.push_back(entry);
+        getline(C_ifs,line);
+    }
+
+    //Get the shell-shell-aux atom sparsity information
+    getline(C_ifs,line);
+    while(line.length() > 0)
+    {
+        sequence<3,size_t> entry;
+        istringstream(line) >> entry[0] >> entry[1] >> entry[2];
+        sig_blocks_NNX.push_back(entry);
+        getline(C_ifs,line);
+    }
+
+    sparse_bispace<1> spb_N(N);
+    spb_N.split(split_points_N);
+    sparse_bispace<1> spb_X(X);
+    spb_X.split(split_points_X);
+    sparse_bispace<1> spb_o(o);
+
+    sparse_bispace<3> spb_C = spb_N % spb_N % spb_X << sig_blocks_NNX;
+
+    //Read C entries
+    double* C_arr = new double[spb_C.get_nnz()];
+    getline(C_ifs,line);
+    size_t C_idx = 0;
+    while(line.length() > 0)
+    {
+        istringstream(line) >> C_arr[C_idx];
+        ++C_idx;
+        getline(C_ifs,line);
+    }
+    sparse_btensor<3> C(spb_C,C_arr,true);
+    delete [] C_arr;
+
+    //Read I entries
+    sparse_bispace<3> spb_I = spb_C.contract(2) | spb_X;
+    double* I_arr = new double[spb_I.get_nnz()];
+    ifstream I_ifs;
+    I_ifs.open("../tests/block_sparse/test_fixtures/pari_k_I.txt");
+    getline(I_ifs,line);
+    size_t I_idx = 0;
+    while(line.length() > 0)
+    {
+        istringstream(line) >> I_arr[I_idx];
+        ++I_idx;
+        getline(I_ifs,line);
+    }
+    sparse_btensor<3> I(spb_I,I_arr,true);
+    delete [] I_arr;
+
+    //Read V_scaled entries
+    sparse_bispace<2> spb_V_scaled = spb_X|spb_X;  
+    double* V_scaled_arr = new double[spb_V_scaled.get_nnz()];
+    ifstream V_scaled_ifs;
+    V_scaled_ifs.open("../tests/block_sparse/test_fixtures/pari_k_V_scaled.txt");
+    getline(V_scaled_ifs,line);
+    size_t V_scaled_idx = 0;
+    while(line.length() > 0)
+    {
+        istringstream(line) >> V_scaled_arr[V_scaled_idx];
+        ++V_scaled_idx;
+        getline(V_scaled_ifs,line);
+    }
+    sparse_btensor<2> V_scaled(spb_V_scaled,V_scaled_arr,true);
+    delete [] V_scaled_arr;
+
+    //Read C_mo entries
+    ifstream C_mo_ifs;
+    C_mo_ifs.open("../tests/block_sparse/test_fixtures/pari_k_C_mo.txt");
+    sparse_bispace<2> spb_C_mo = spb_N|spb_o;
+    double* C_mo_arr = new double[spb_C_mo.get_nnz()];
+    getline(C_mo_ifs,line);
+    size_t C_mo_idx = 0;
+    while(line.length() > 0)
+    {
+        istringstream(line) >> C_mo_arr[C_mo_idx];
+        ++C_mo_idx;
+        getline(C_mo_ifs,line);
+    }
+    sparse_btensor<2> C_mo(spb_C_mo,C_mo_arr,true);
+    delete [] C_mo_arr;
+
+    sparse_btensor<3> C_perm(spb_C.permute(permutation<3>().permute(1,2)));
+    direct_sparse_btensor<3> D(C_perm.get_bispace().contract(2)|spb_o);
+    direct_sparse_btensor<3> E(spb_C.contract(2)|spb_X);
+    direct_sparse_btensor<3> G(E.get_bispace());
+    direct_sparse_btensor<3> H(spb_N|spb_X|spb_o);
+    sparse_btensor<2> M(spb_N|spb_N);
+                                                                                   
+    letter mu,nu,lambda,sigma,Q,R,i;
+    C_perm(mu|Q|lambda) = C(mu|lambda|Q);
+    D(mu|Q|i) = contract(lambda,C_perm(mu|Q|lambda),C_mo(lambda|i));
+    E(nu|sigma|Q) = contract(R,C(nu|sigma|R),V_scaled(Q|R));
+    G(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q);
+    H(nu|Q|i) = contract(sigma,G(nu|sigma|Q),C_mo(sigma|i));
+    M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i));
+
+    sparse_bispace<2> spb_M = spb_N|spb_N;
+    double* M_correct_arr = new double[spb_M.get_nnz()];
+    ifstream M_correct_ifs;
+    M_correct_ifs.open("../tests/block_sparse/test_fixtures/pari_k_M.txt");
+    getline(M_correct_ifs,line);
+    size_t M_correct_idx = 0;
+    while(line.length() > 0)
+    {
+        istringstream(line) >> M_correct_arr[M_correct_idx];
+        ++M_correct_idx;
+        getline(M_correct_ifs,line);
+    }
+    sparse_btensor<2> M_correct(spb_M,M_correct_arr,true);
+    delete [] M_correct_arr;
+
+    if(M != M_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "pari_k result incorrect");
     }
 }
 
