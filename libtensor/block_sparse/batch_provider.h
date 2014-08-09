@@ -180,6 +180,7 @@ class batch_provider : public batch_provider_i<T>
 private:
     batch_kernel<T>* m_kern;
     std::vector<T*> m_ptrs;
+    std::vector<size_t> m_batch_array_sizes;
     std::vector<sparse_bispace_any_order> m_bispaces;
     std::vector<batch_provider_i<T>*> m_suppliers;
     idx_list m_suppliers_allocd;
@@ -188,6 +189,7 @@ private:
     idx_pair_list m_batch_list;
     expr::connectivity m_conn;
     void set_batch_info_internal(std::vector<idx_list>::const_iterator& batched_subspace_grps_it,const idx_pair_list& batch_list);
+    void set_batch_array_sizes_internal(std::vector< std::vector<size_t> >::const_iterator& it,bool output_batched);
 public:
     static const char* k_clazz; //!< Class name
     batch_provider(const expr::expr_tree& tree); 
@@ -195,6 +197,7 @@ public:
     virtual idx_list get_batchable_subspaces() const;
     ~batch_provider();
     void set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list);
+    void set_batch_array_sizes(const std::vector< std::vector<size_t> >& batch_array_size_grps);
     void get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched=0) const;
     void get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const;
 };
@@ -306,7 +309,6 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
                     }
                 }
             }
-            m_ptrs[tensor_idx] = new T[m_bispaces[tensor_idx].get_nnz()];
         }
     }
     sort(m_batchable_subspaces.begin(),m_batchable_subspaces.end());
@@ -320,7 +322,7 @@ batch_provider<T>::~batch_provider()
     {
         if(m_suppliers[i] != NULL)
         {
-            delete m_ptrs[i];
+            if(m_ptrs[i] != NULL) delete m_ptrs[i];
             if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),i) != m_suppliers_allocd.end())
             {
                 delete m_suppliers[i];
@@ -365,6 +367,19 @@ void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
                     supplier_bbm[idx_pair(0,supplier_subspace_idx)] = batch_from_supplier;
                     augmented_bbm[idx_pair(supplier_idx,supplier_subspace_idx)] = batch_from_supplier;
                 }
+                if(m_ptrs[supplier_idx] == NULL)
+                {
+                    size_t batch_array_size;
+                    if(m_batch_array_sizes.size() > 0)
+                    {
+                        batch_array_size = m_batch_array_sizes[supplier_idx];
+                    }
+                    else
+                    {
+                        batch_array_size = m_bispaces[supplier_idx].get_nnz();
+                    }
+                    m_ptrs[supplier_idx] = new T[batch_array_size];
+                }
                 m_suppliers[supplier_idx]->get_batch(m_ptrs[supplier_idx],supplier_bbm);
             }
         }
@@ -383,6 +398,35 @@ void batch_provider<T>::set_batch_info(const std::vector<idx_list>& batched_subs
 {
     std::vector<idx_list>::const_iterator batched_subspace_grps_it = batched_subspace_grps.begin();
     set_batch_info_internal(batched_subspace_grps_it,batch_list);
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_array_sizes(const std::vector< std::vector<size_t> >& batch_array_size_grps)
+{
+    std::vector< std::vector<size_t> >::const_iterator it = batch_array_size_grps.begin();
+    set_batch_array_sizes_internal(it,false);
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_array_sizes_internal(std::vector< std::vector<size_t> >::const_iterator& it,bool output_batched)
+{
+    if(it->size() > 0)
+    {
+        m_batch_array_sizes.resize(m_suppliers.size(),0);
+        size_t m = 0;
+        for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+        {
+            if(m_suppliers[supplier_idx] != NULL || (supplier_idx == 0 && output_batched))
+            {
+                m_batch_array_sizes[supplier_idx] = (*it)[m];
+                ++m;
+            }
+        }
+    }
+    for(size_t i = 0; i < m_suppliers_allocd.size(); ++i)
+    {
+        static_cast<batch_provider<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_array_sizes_internal(++it,output_batched ? output_batched : !output_batched);
+    }
 }
 
 template<typename T>

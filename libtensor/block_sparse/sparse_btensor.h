@@ -260,8 +260,9 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     batch_list_builder blb(direct_bispace_grps,batched_subspace_grps);
     size_t mem_avail = (m_mr != NULL) ? m_mr->get_mem_avail() : std::numeric_limits<size_t>::max();
     idx_pair_list batch_list = blb.get_batch_list(mem_avail/sizeof(T));
+    std::vector< std::vector<size_t> > batch_array_size_grps = blb.get_batch_array_size_grps(batch_list);
     bp.set_batch_info(batched_subspace_grps,batch_list);
-
+    bp.set_batch_array_sizes(batch_array_size_grps);
     bp.get_batch(this->m_data_ptr);
 }
 
