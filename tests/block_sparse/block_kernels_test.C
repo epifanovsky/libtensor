@@ -2,7 +2,6 @@
 #include <libtensor/block_sparse/block_print_kernel.h>
 #include <libtensor/block_sparse/block_permute_kernel.h>
 #include <libtensor/block_sparse/block_contract2_kernel.h>
-#include <libtensor/block_sparse/block_subtract2_kernel.h>
 #include <libtensor/block_sparse/block_add2_kernel.h>
 #include <libtensor/expr/iface/letter.h>
 #include <sstream>
@@ -42,10 +41,6 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_contract2_kernel_3d_3d_multi_index();
     test_block_contract2_kernel_2d_3d_permute_output();
     test_block_contract2_kernel_matrix_vector_mult();
-
-    test_block_subtract2_kernel_not_enough_dims_and_ptrs();
-    test_block_subtract2_kernel_invalid_dims();
-    test_block_subtract2_kernel_2d();
 
     test_block_add2_kernel_3d();
 }
@@ -1597,139 +1592,6 @@ void block_kernels_test::test_block_contract2_kernel_matrix_vector_mult() throw(
                     "block_contract2_kernel::operator(...) did not produce correct result");
         }
     }
-}
-
-void block_kernels_test::test_block_subtract2_kernel_not_enough_dims_and_ptrs() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_kernels_test::test_block_subtract2_kernel_not_enough_dims_and_ptrs()";
-
-    //Just need dummy data for this test
-    vector<double*> ptrs(3);
-
-    dim_list C_dims(1,3);
-    C_dims.push_back(4);
-    dim_list A_dims(1,3);
-    A_dims.push_back(4);
-    //Intentionally leave off B dims
-
-    vector<dim_list> dim_lists(1,C_dims);
-    dim_lists.push_back(A_dims);
-
-    //Should throw exception for not enough dim_lists
-    block_subtract2_kernel<double> bs2k;
-    bool threw_exception = false;
-    try
-    {
-    	bs2k(ptrs,dim_lists);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-    if(!threw_exception)
-    {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "block_subtract2_kernel::operator(...) did not throw exception when not enough dim_lists passed");
-    }
-}
-
-//Should throw exception when dim_lists are not equal in size or values
-void block_kernels_test::test_block_subtract2_kernel_invalid_dims() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_kernels_test::test_block_subtract2_kernel_invalid_dims()";
-
-    //Just need dummy data for this test
-    vector<double*> ptrs(3);
-
-    dim_list C_dims(1,3);
-    C_dims.push_back(4);
-    dim_list A_dims(1,3);
-    A_dims.push_back(4);
-    //Intentionally leave off 2nd dim of B
-    dim_list B_dims(1,3);
-
-    vector<dim_list> dim_lists(1,C_dims);
-    dim_lists.push_back(A_dims);
-    dim_lists.push_back(B_dims);
-
-    //First check incompatible sizes
-    block_subtract2_kernel<double> bs2k;
-    bool threw_exception = false;
-    try
-    {
-    	bs2k(ptrs,dim_lists);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-    if(!threw_exception)
-    {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "block_subtract2_kernel::operator(...) did not throw exception when not enough dimensions for one block passed");
-    }
-
-    //Now check incompatible dimensions
-    threw_exception = false;
-    dim_lists[2].push_back(5);
-    try
-    {
-    	bs2k(ptrs,dim_lists);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-    if(!threw_exception)
-    {
-            fail_test(test_name,__FILE__,__LINE__,
-                    "block_subtract2_kernel::operator(...) did not throw exception when wrong dimensions for one block passed");
-    }
-
-}
-
-void block_kernels_test::test_block_subtract2_kernel_2d() throw(libtest::test_exception)
-{
-    static const char *test_name = "block_kernels_test::test_block_subtract2_kernel_2d()";
-
-    double C[12];
-    double A[12] = {3,7,9,4,
-    				2,8,14,11,
-    				12,20,15,8};
-    double B[12] = {1,2,3,4,
-    				5,6,7,8,
-    				9,10,11,12};
-    double C_correct[12] = {2,5,6,0,
-    						-3,2,7,3,
-    						3,10,4,-4};
-
-    //Just need dummy data for this test
-    vector<double*> ptrs(1,C);
-    ptrs.push_back(A);
-    ptrs.push_back(B);
-
-    dim_list C_dims(1,3);
-    C_dims.push_back(4);
-    dim_list A_dims(1,3);
-    A_dims.push_back(4);
-    dim_list B_dims(1,3);
-    B_dims.push_back(4);
-
-    vector<dim_list> dim_lists(1,C_dims);
-    dim_lists.push_back(A_dims);
-    dim_lists.push_back(B_dims);
-
-    //First check incompatible sizes
-    block_subtract2_kernel<double> bs2k;
-	bs2k(ptrs,dim_lists);
-	for(size_t i = 0; i < 12; ++i)
-	{
-		if(C[i] != C_correct[i])
-		{
-			fail_test(test_name,__FILE__,__LINE__,
-					"block_subtract2_kernel::operator(...) returned incorrect output");
-		}
-	}
 }
 
 void block_kernels_test::test_block_add2_kernel_3d() throw(libtest::test_exception)
