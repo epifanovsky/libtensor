@@ -1,11 +1,13 @@
 #include <libtensor/block_sparse/batch_kernel_permute.h>
 #include <libtensor/block_sparse/batch_kernel_contract2.h>
 #include <libtensor/block_sparse/batch_kernel_add2.h>
+#include <libtensor/block_sparse/batch_kernel_unblock.h>
 #include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include "batch_kernels_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/contract2_test_f.h"
+#include "test_fixtures/contract2_dense_dense_test_f.h"
 #include "test_fixtures/subtract2_test_f.h"
 
 using namespace std;
@@ -16,6 +18,7 @@ void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_permute_A_direct();
     test_batch_kernel_contract2();
     test_batch_kernel_add2();
+    test_batch_kernel_unblock();
 }
 
 //A(i|j|k) = B(k|i|j)
@@ -161,6 +164,77 @@ void batch_kernels_test::test_batch_kernel_add2() throw(libtest::test_exception)
         }
     } 
 
+}
+
+void batch_kernels_test::test_batch_kernel_unblock() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_kernels_test::test_batch_kernel_unblock()";
+
+    contract2_dense_dense_test_f tf;
+
+    double correct_A_unblocked_arr_0[60] = {//i = 0 j = 0 k = 0 (1,2,2)
+                                            1,2,
+                                            3,4,
+
+                                            //i = 0 j = 0 k = 1 (1,2,3)
+                                            5,6,7,
+                                            8,9,10,
+
+                                            //i = 0 j = 1 k = 0 (1,2,2)
+                                            11,12,
+                                            13,14,
+
+                                            //i = 0 j = 1 k = 1 (1,2,3)
+                                            15,16,17,
+                                            18,19,20,
+
+                                            //i = 1 j = 0 k = 0 (1,2,2)
+                                            21,22,
+                                            23,24,
+
+
+                                            //i = 1 j = 0 k = 1 (1,2,3)
+                                            29,30,31,
+                                            32,33,34,
+
+                                            //i = 1 j = 1 k = 0 (1,2,2)
+                                            41,42,
+                                            43,44,
+
+                                            //i = 1 j = 1 k = 1 (1,2,3)
+                                            49,50,51,
+                                            52,53,54,
+
+                                            //i = 2 j = 0 k = 0 (1,2,2)
+                                            25,26,
+                                            27,28,
+
+                                            //i = 2 j = 0 k = 1 (1,2,3)
+                                            35,36,37,
+                                            38,39,40,
+
+                                            //i = 2 j = 1 k = 0 (1,2,2)
+                                            45,46,
+                                            47,48,
+
+                                            //i = 2 j = 1 k = 1 (1,2,3)
+                                            55,56,57,
+                                            58,59,60};
+
+    double A_unblocked_arr_0[60];
+    vector<double*> ptrs(1,A_unblocked_arr_0);
+    ptrs.push_back(tf.A_arr);
+    bispace_batch_map bbm;
+    batch_kernel_unblock<double> k_un(tf.spb_A,0);
+    k_un.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_0)/sizeof(correct_A_unblocked_arr_0[0]); ++i)
+    {
+        if(A_unblocked_arr_0[i] != correct_A_unblocked_arr_0[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched");
+        }
+    }
 }
 
 } // namespace libtensor
