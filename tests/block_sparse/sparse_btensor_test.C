@@ -3,6 +3,7 @@
 #include "sparse_btensor_test.h"
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/subtract2_test_f.h"
+#include "test_fixtures/contract2_dense_dense_test_f.h"
 
 namespace libtensor {
    
@@ -595,146 +596,16 @@ void sparse_btensor_test::test_contract2_3d_2d() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_btensor_test::test_contract2_3d_2d()";
 
-    //Tensors are stored block-major for this test
-    //dimensions: i = 3,j = 4, k = 5,l = 6
-    //Contraction takes the form of A*B
-    double test_input_arr_1[60] = {//i = 0 j = 0 k = 0 (1,2,2)
-                                   1,2,
-                                   3,4,
+    contract2_dense_dense_test_f tf;
 
-                                   //i = 0 j = 0 k = 1 (1,2,3)
-                                   5,6,7,
-                                   8,9,10,
-
-                                   //i = 0 j = 1 k = 0 (1,2,2)
-                                   11,12,
-                                   13,14,
-
-                                   //i = 0 j = 1 k = 1 (1,2,3)
-                                   15,16,17,
-                                   18,19,20,
-
-                                   //i = 1 j = 0 k = 0 (2,2,2)
-                                   21,22,
-                                   23,24,
-                                   25,26,
-                                   27,28,
-
-                                   //i = 1 j = 0 k = 1 (2,2,3)
-                                   29,30,31,
-                                   32,33,34,
-                                   35,36,37,
-                                   38,39,40,
-
-                                   //i = 1 j = 1 k = 0 (2,2,2)
-                                   41,42,
-                                   43,44,
-                                   45,46,
-                                   47,48,
-
-
-                                   //i = 1 j = 1 k = 1 (2,2,3)
-                                   49,50,51,
-                                   52,53,54,
-                                   55,56,57,
-                                   58,59,60};
-
-
-    double test_input_arr_2[30] = {//k = 0  l = 0
-                                   1,2,3,
-                                   4,5,6,
-
-                                   //k = 0 l = 1
-                                   7,8,9,
-                                   10,11,12,
-
-                                   //k = 1 l = 0
-                                   13,14,15,
-                                   16,17,18,
-                                   19,20,21,
-
-                                   //k = 1 l = 1
-                                   22,23,24,
-                                   25,26,27,
-                                   28,29,30};
-
-    double correct_output_arr[72] = {//i = 0 j = 0 l = 0 
-                                     303,324,345,
-                                     457,491,525,
-
-                                     //i = 0 j = 0 l = 1
-                                     483,504,525, 
-                                     742,776,810,
-
-                                     //i = 0 j = 1 l = 0 
-                                     833,904,975,
-                                     987,1071,1155,
-
-                                     //i = 0 j = 1 l = 1
-                                     1403,1474,1545,
-                                     1662,1746,1830,
-
-                                     //i = 1 j = 0 l = 0
-                                     1555,1688,1821,
-                                     1709,1855,2001,
-                                     1863,2022,2181,
-                                     2017,2189,2361,
-
-                                     //i = 1 j = 0 l = 1
-                                     2623,2756,2889,
-                                     2882,3028,3174,
-                                     3141,3300,3459,
-                                     3400,3572,3744,
-
-                                     //i = 1 j = 1 l = 0
-                                     2615,2848,3081, 
-                                     2769,3015,3261,
-                                     2923,3182,3441,
-                                     3077,3349,3621,
-
-                                     //i = 1 j = 1 l = 1
-                                     4463,4696,4929,
-                                     4722,4968,5214, 
-                                     4981,5240,5499,
-                                     5240,5512,5784};
-
-    //Bispace for i 
-    sparse_bispace<1> spb_i(3);
-    std::vector<size_t> split_points_i;
-    split_points_i.push_back(1);
-    spb_i.split(split_points_i);
-
-    //Bispace for j 
-    sparse_bispace<1> spb_j(4);
-    std::vector<size_t> split_points_j;
-    split_points_j.push_back(2);
-    spb_j.split(split_points_j);
-
-    //Bispace for k 
-    sparse_bispace<1> spb_k(5);
-    std::vector<size_t> split_points_k;
-    split_points_k.push_back(2);
-    spb_k.split(split_points_k);
-
-    //Bispace for l 
-    sparse_bispace<1> spb_l(6);
-    std::vector<size_t> split_points_l;
-    split_points_l.push_back(3);
-    spb_l.split(split_points_l);
-
-    sparse_bispace<3> A_spb = spb_i | spb_j | spb_k;
-    sparse_bispace<2> B_spb = spb_k | spb_l;
-    sparse_bispace<3> C_spb = spb_i | spb_j | spb_l;
-
-
-    sparse_btensor<3> A(A_spb,test_input_arr_1,true);
-    sparse_btensor<2> B(B_spb,test_input_arr_2,true);
-    sparse_btensor<3> C(C_spb);
+    sparse_btensor<3> A(tf.spb_A,tf.A_arr,true);
+    sparse_btensor<2> B(tf.spb_B,tf.B_arr,true);
+    sparse_btensor<3> C(tf.spb_C,tf.C_correct_arr,true);
 
     letter i,j,k,l;
     C(i|j|l) = contract(k,A(i|j|k),B(k|l));
 
-    sparse_btensor<3> C_correct(C_spb,correct_output_arr,true);
+    sparse_btensor<3> C_correct(tf.spb_C,tf.C_correct_arr,true);
     if(C != C_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,

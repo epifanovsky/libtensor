@@ -273,6 +273,7 @@ set(SRC_BLOCK_SPARSE
 
     block_sparse/test_fixtures/permute_3d_sparse_120_test_f.C
     block_sparse/test_fixtures/contract2_test_f.C
+    block_sparse/test_fixtures/contract2_dense_dense_test_f.C
     block_sparse/test_fixtures/subtract2_test_f.C
     block_sparse/test_fixtures/contract2_permute_nested_test_f.C
     block_sparse/test_fixtures/contract2_subtract2_nested_test_f.C
