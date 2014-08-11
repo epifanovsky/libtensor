@@ -107,7 +107,7 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                 {
                     if(i < m_subspace_idx)
                     {
-                        dest_off_base += subspace.get_dim()*dest_inner_size;
+                        dest_off_base += outer_size*subspace.get_dim()*dest_inner_size;
                     }
                     dest_off = dest_off_base;
                 }

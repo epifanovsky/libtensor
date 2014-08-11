@@ -306,6 +306,38 @@ void batch_kernels_test::test_batch_kernel_unblock() throw(libtest::test_excepti
                 "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched subspace 1");
         }
     }
+
+    double correct_A_unblocked_arr_2[60] = {//i = 0 j = 0 k
+                                            1,2,5,6,7,
+                                            3,4,8,9,10,
+
+                                            //i = 0 j = 1 k
+                                            11,12,15,16,17,
+                                            13,14,18,19,20,
+
+                                            //i = 1 j = 0 k
+                                            21,22,29,30,31,
+                                            23,24,32,33,34,
+                                            25,26,35,36,37,
+                                            27,28,38,39,40,
+
+                                            //i = 1 j = 1 k
+                                            41,42,49,50,51,
+                                            43,44,52,53,54,
+                                            45,46,55,56,57,
+                                            47,48,58,59,60};
+    double A_unblocked_arr_2[60] = {0};
+    ptrs[0] = A_unblocked_arr_2;
+    batch_kernel_unblock<double> k_un_2(tf.spb_A,2);
+    k_un_2.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_2)/sizeof(correct_A_unblocked_arr_2[0]); ++i)
+    {
+        if(A_unblocked_arr_2[i] != correct_A_unblocked_arr_2[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched subspace 2");
+        }
+    }
 }
 
 } // namespace libtensor
