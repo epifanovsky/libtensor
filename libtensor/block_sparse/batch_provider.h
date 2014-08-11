@@ -1,5 +1,5 @@
-#ifndef BATCH_PROVIDER_NEW_H
-#define BATCH_PROVIDER_NEW_H
+#ifndef BATCH_PROVIDER_H
+#define BATCH_PROVIDER_H
 
 #include "gen_sparse_btensor.h"
 #include "batch_kernel_permute.h"
@@ -571,4 +571,4 @@ void batch_provider<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_grps
 
 } // namespace libtensor
 
-#endif /* batch_provider_H */
+#endif /* BATCH_PROVIDER_H */
