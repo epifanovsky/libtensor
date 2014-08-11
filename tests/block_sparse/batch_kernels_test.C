@@ -221,18 +221,89 @@ void batch_kernels_test::test_batch_kernel_unblock() throw(libtest::test_excepti
                                             55,56,57,
                                             58,59,60};
 
-    double A_unblocked_arr_0[60];
+    double A_unblocked_arr_0[60] = {0};
     vector<double*> ptrs(1,A_unblocked_arr_0);
     ptrs.push_back(tf.A_arr);
     bispace_batch_map bbm;
-    batch_kernel_unblock<double> k_un(tf.spb_A,0);
-    k_un.generate_batch(ptrs,bbm);
+    batch_kernel_unblock<double> k_un_0(tf.spb_A,0);
+    k_un_0.generate_batch(ptrs,bbm);
     for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_0)/sizeof(correct_A_unblocked_arr_0[0]); ++i)
     {
         if(A_unblocked_arr_0[i] != correct_A_unblocked_arr_0[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched");
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched subspace 0");
+        }
+    }
+
+    double correct_A_unblocked_arr_1[60] = {//i = 0 j = 0 k = 0
+                                            1,2,
+
+                                            //i = 0 j = 0 k = 1
+                                            5,6,7,
+
+                                            //i = 0 j = 1 k = 0
+                                            3,4,
+
+                                            //i = 0 j = 1 k = 1
+                                            8,9,10,
+
+                                            //i = 0 j = 2 k = 0
+                                            11,12,
+
+                                            //i = 0 j = 2 k = 1
+                                            15,16,17,
+
+                                            //i = 0 j = 3 k = 0
+                                            13,14,
+
+                                            //i = 0 j = 3 k = 1
+                                            18,19,20,
+
+                                            //i = 1 j = 0 k = 0
+                                            21,22,
+                                            //i = 1 j = 0 k = 1
+                                            29,30,31,
+                                            //i = 1 j = 1 k = 0
+                                            23,24,
+                                            //i = 1 j = 1 k = 1
+                                            32,33,34,
+                                            //i = 1 j = 2 k = 0
+                                            41,42,
+                                            //i = 1 j = 2 k = 1
+                                            49,50,51,
+                                            //i = 1 j = 3 k = 0
+                                            43,44,
+                                            //i = 1 j = 3 k = 1
+                                            52,53,54,
+
+                                            //i = 1 j = 0 k = 0
+                                            25,26,
+                                            //i = 1 j = 0 k = 1
+                                            35,36,37,
+                                            //i = 1 j = 1 k = 0
+                                            27,28,
+                                            //i = 1 j = 1 k = 1
+                                            38,39,40,
+                                            //i = 1 j = 2 k = 0
+                                            45,46,
+                                            //i = 1 j = 2 k = 1
+                                            55,56,57,
+                                            //i = 1 j = 3 k = 0
+                                            47,48,
+                                            //i = 1 j = 3 k = 1
+                                            58,59,60};
+
+    double A_unblocked_arr_1[60] = {0};
+    ptrs[0] = A_unblocked_arr_1;
+    batch_kernel_unblock<double> k_un_1(tf.spb_A,1);
+    k_un_1.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_1)/sizeof(correct_A_unblocked_arr_1[0]); ++i)
+    {
+        if(A_unblocked_arr_1[i] != correct_A_unblocked_arr_1[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched subspace 1");
         }
     }
 }

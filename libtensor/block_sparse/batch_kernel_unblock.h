@@ -42,6 +42,7 @@ batch_kernel_unblock<T>::batch_kernel_unblock(const sparse_bispace_any_order& A,
 template<typename T>
 void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches)
 {
+    size_t dest_off_base = 0;
     size_t dest_off = 0;
     size_t src_off = 0;
     idx_list idx_stack(m_bispace.get_order(),0);
@@ -51,10 +52,10 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
         end_idx_stack.push_back(m_bispace[i].get_n_blocks());
     }
 
-    size_t dest_incr = 1;
+    size_t dest_inner_size = 1;
     for(size_t i = m_subspace_idx+1; i < m_bispace.get_order(); ++i) 
     {
-        dest_incr *= m_bispace[i].get_dim();
+        dest_inner_size *= m_bispace[i].get_dim();
     }
 
     bool all_done = false;
@@ -78,8 +79,8 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
         {
             for(size_t element_idx = 0; element_idx < block_size; ++element_idx)  
             {
-                size_t element_dest_off = dest_off + (outer_idx*subspace.get_dim() + (block_offset+element_idx)) * dest_incr;
-                size_t element_src_off = src_off + outer_idx + element_idx * inner_size;
+                size_t element_dest_off = dest_off + (outer_idx*subspace.get_dim() + (block_offset+element_idx)) * dest_inner_size;
+                size_t element_src_off = src_off + (outer_idx*block_size + element_idx ) * inner_size;
                 memcpy(ptrs[0]+element_dest_off,ptrs[1]+element_src_off,inner_size*sizeof(T));
             }
         }
@@ -102,9 +103,13 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
             }
             else
             {
-                if(i <= m_subspace_idx)
+                if(i <= m_subspace_idx) 
                 {
-                    dest_off = 0;
+                    if(i < m_subspace_idx)
+                    {
+                        dest_off_base += subspace.get_dim()*dest_inner_size;
+                    }
+                    dest_off = dest_off_base;
                 }
                 break;
             }
