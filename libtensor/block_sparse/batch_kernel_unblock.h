@@ -13,35 +13,35 @@ private:
     sparse_bispace_any_order m_bispace;
     size_t m_subspace_idx;
     size_t m_inner_size;
+    bool m_src_direct;
 public:
     static const char* k_clazz; //!< Class name
 
-    batch_kernel_unblock(const sparse_bispace_any_order& A,size_t subspace_idx);
+    batch_kernel_unblock(const sparse_bispace_any_order& A,size_t subspace_idx,bool src_direct=false);
 
     virtual void generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches);
 };
 
 template<typename T>
-batch_kernel_unblock<T>::batch_kernel_unblock(const sparse_bispace_any_order& A,size_t subspace_idx) : m_bispace(A),
-                                                                                                       m_subspace_idx(subspace_idx)
+batch_kernel_unblock<T>::batch_kernel_unblock(const sparse_bispace_any_order& A,size_t subspace_idx,bool src_direct) : m_bispace(A),
+                                                                                                                       m_subspace_idx(subspace_idx),
+                                                                                                                       m_src_direct(src_direct)
 {
     if(m_bispace.get_n_index_groups() != m_bispace.get_order())
     {
         throw bad_parameter(g_ns, k_clazz,"batch_kernel_unblock(...)",__FILE__, __LINE__,
             "Cannot handle sparse bispaces");
     }
-#if 0
-    m_inner_size = 1;
-    for(size_t i = m_bispace.get_index_group_containing_subspace(subspace_idx)+1; i < m_bispace.get_n_index_groups(); ++i)
-    {
-        m_inner_size *= m_bispace.get_index_group_dim(i);
-    }
-#endif
 }
     
 template<typename T>
 void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches)
 {
+#ifdef LIBTENSOR_DEBUG
+    if(batches.size() == 0 && m_src_direct)
+        throw bad_parameter(g_ns, k_clazz,"batch_kernel_unblock::generate_batch(...)",__FILE__, __LINE__,
+                "Invalid batch info");
+#endif
     size_t batched_subspace_idx;
     if(batches.size() > 0)
     {
@@ -97,6 +97,11 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     {
         const sparse_bispace<1>& batched_subspace = m_bispace[batched_subspace_idx];
         batch = batches.begin()->second;
+        if(m_src_direct)
+        {
+            idx_stack[batched_subspace_idx] = batch.first; 
+            end_idx_stack[batched_subspace_idx] = batch.second; 
+        }
         batch_offset = batched_subspace.get_block_abs_index(batch.first);
         if(batched_subspace_idx == m_subspace_idx)
         {
@@ -159,7 +164,7 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                     all_done = true;
                     break;
                 }
-                idx_stack[i] = 0;
+                idx_stack[i] = (m_src_direct && i == batched_subspace_idx) ? batch.first : 0;
             }
             else
             {

@@ -16,6 +16,7 @@ private:
     void test_batch_kernel_add2() throw(libtest::test_exception);
     void test_batch_kernel_unblock() throw(libtest::test_exception);
     void test_batch_kernel_unblock_direct() throw(libtest::test_exception);
+    void test_batch_kernel_unblock_direct_source() throw(libtest::test_exception);
 };
 
 } /* namespace libtensor */
