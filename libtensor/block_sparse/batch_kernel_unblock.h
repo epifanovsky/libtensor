@@ -12,7 +12,6 @@ class batch_kernel_unblock : public batch_kernel<T>
 private:
     sparse_bispace_any_order m_bispace;
     size_t m_subspace_idx;
-    size_t m_inner_size;
     bool m_src_direct;
 public:
     static const char* k_clazz; //!< Class name

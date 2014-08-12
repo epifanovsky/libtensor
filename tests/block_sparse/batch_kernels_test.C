@@ -2,6 +2,7 @@
 #include <libtensor/block_sparse/batch_kernel_contract2.h>
 #include <libtensor/block_sparse/batch_kernel_add2.h>
 #include <libtensor/block_sparse/batch_kernel_unblock.h>
+#include <libtensor/block_sparse/batch_kernel_reblock.h>
 #include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include "batch_kernels_test.h"
@@ -22,6 +23,7 @@ void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_unblock();
     test_batch_kernel_unblock_direct();
     test_batch_kernel_unblock_direct_source();
+    test_batch_kernel_reblock();
 }
 
 //A(i|j|k) = B(k|i|j)
@@ -387,6 +389,54 @@ void batch_kernels_test::test_batch_kernel_unblock_direct_source() throw(libtest
         {
             fail_test(test_name,__FILE__,__LINE__,
                 "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 2 batch 1");
+        }
+    }
+}
+
+void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_kernels_test::test_batch_kernel_reblock()";
+
+    batch_kernel_unblock_test_f tf;
+
+    double A_reblocked_arr_0[60] = {0};
+    vector<double*> ptrs(1,A_reblocked_arr_0);
+    ptrs.push_back(tf.correct_A_unblocked_arr_0);
+    bispace_batch_map bbm;
+    batch_kernel_reblock<double> k_re_0(tf.spb_A,0);
+    k_re_0.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
+    {
+        if(A_reblocked_arr_0[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A unbatched subspace 0");
+        }
+    }
+
+    double A_reblocked_arr_1[60] = {0};
+    ptrs[0] = A_reblocked_arr_1;
+    batch_kernel_reblock<double> k_re_1(tf.spb_A,1);
+    k_re_1.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr); ++i)
+    {
+        if(A_reblocked_arr_1[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A unbatched subspace 1");
+        }
+    }
+
+    double A_reblocked_arr_2[60] = {0};
+    ptrs[0] = A_reblocked_arr_2;
+    batch_kernel_reblock<double> k_re_2(tf.spb_A,2);
+    k_re_2.generate_batch(ptrs,bbm);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr); ++i)
+    {
+        if(A_reblocked_arr_2[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A unbatched subspace 2");
         }
     }
 }
