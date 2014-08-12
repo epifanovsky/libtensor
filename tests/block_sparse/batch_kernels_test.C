@@ -460,9 +460,10 @@ void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_excepti
 
     double A_reblocked_arr_1[60] = {0};
     ptrs[0] = A_reblocked_arr_1;
+    ptrs[1] = tf.correct_A_unblocked_arr_1;
     batch_kernel_reblock<double> k_re_1(tf.spb_A,1);
     k_re_1.generate_batch(ptrs,bbm);
-    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr); ++i)
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
     {
         if(A_reblocked_arr_1[i] != tf.A_arr[i])
         {
@@ -473,9 +474,10 @@ void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_excepti
 
     double A_reblocked_arr_2[60] = {0};
     ptrs[0] = A_reblocked_arr_2;
+    ptrs[1] = tf.correct_A_unblocked_arr_2;
     batch_kernel_reblock<double> k_re_2(tf.spb_A,2);
     k_re_2.generate_batch(ptrs,bbm);
-    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr); ++i)
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
     {
         if(A_reblocked_arr_2[i] != tf.A_arr[i])
         {

@@ -131,7 +131,7 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                 }
             }
             src_off += inner_size;
-            next_outer_inds_off += inner_size;
+            next_outer_inds_off += outer_size*unblocked_block_size*inner_size;
         }
         dest_off += outer_size*unblocked_block_size*inner_size; 
 
