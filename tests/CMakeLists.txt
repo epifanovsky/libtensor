@@ -277,6 +277,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/test_fixtures/subtract2_test_f.C
     block_sparse/test_fixtures/contract2_permute_nested_test_f.C
     block_sparse/test_fixtures/contract2_subtract2_nested_test_f.C
+    block_sparse/test_fixtures/batch_kernel_unblock_test_f.C
 )
 
 set(SRC_BLOCK_SPARSE_BENCHMARK
