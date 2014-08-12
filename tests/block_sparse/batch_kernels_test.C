@@ -228,15 +228,29 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
     batch_kernel_unblock_test_f tf;
 
     /*** First test diagonal - batched index same as unblocked index ***/
+    double A_unblocked_arr_0_0_0[20] = {0};
+    vector<double*> ptrs(1,A_unblocked_arr_0_0_0);
+    ptrs.push_back(tf.A_arr);
+    bispace_batch_map bbm_0_0;
+    bbm_0_0.insert(make_pair(idx_pair(0,0),idx_pair(0,1)));
+    bbm_0_0.insert(make_pair(idx_pair(1,0),idx_pair(0,1)));
+    batch_kernel_unblock<double> k_un_0(tf.spb_A,0);
+    k_un_0.generate_batch(ptrs,bbm_0_0);
+    for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_0_0_0)/sizeof(tf.correct_A_unblocked_arr_0_0_0[0]); ++i)
+    {
+        if(A_unblocked_arr_0_0_0[i] != tf.correct_A_unblocked_arr_0_0_0[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 0 batch 1");
+        }
+    }
 
     double A_unblocked_arr_0_0_1[40] = {0};
-    vector<double*> ptrs(1,A_unblocked_arr_0_0_1);
-    ptrs.push_back(tf.A_arr);
-    bispace_batch_map bbm_0;
-    bbm_0.insert(make_pair(idx_pair(0,0),idx_pair(1,2)));
-    bbm_0.insert(make_pair(idx_pair(1,0),idx_pair(1,2)));
-    batch_kernel_unblock<double> k_un_0(tf.spb_A,0);
-    k_un_0.generate_batch(ptrs,bbm_0);
+    ptrs[0] = A_unblocked_arr_0_0_1;
+    bispace_batch_map bbm_0_1;
+    bbm_0_1.insert(make_pair(idx_pair(0,0),idx_pair(1,2)));
+    bbm_0_1.insert(make_pair(idx_pair(1,0),idx_pair(1,2)));
+    k_un_0.generate_batch(ptrs,bbm_0_1);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_0_0_1)/sizeof(tf.correct_A_unblocked_arr_0_0_1[0]); ++i)
     {
         if(A_unblocked_arr_0_0_1[i] != tf.correct_A_unblocked_arr_0_0_1[i])
@@ -248,11 +262,11 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
 
     double A_unblocked_arr_1_1_0[30] = {0};
     ptrs[0] = A_unblocked_arr_1_1_0;
-    bispace_batch_map bbm_1;
-    bbm_1.insert(make_pair(idx_pair(0,1),idx_pair(0,1)));
-    bbm_1.insert(make_pair(idx_pair(1,1),idx_pair(0,1)));
+    bispace_batch_map bbm_1_0;
+    bbm_1_0.insert(make_pair(idx_pair(0,1),idx_pair(0,1)));
+    bbm_1_0.insert(make_pair(idx_pair(1,1),idx_pair(0,1)));
     batch_kernel_unblock<double> k_un_1(tf.spb_A,1);
-    k_un_1.generate_batch(ptrs,bbm_1);
+    k_un_1.generate_batch(ptrs,bbm_1_0);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_1_1_0)/sizeof(tf.correct_A_unblocked_arr_1_1_0[0]); ++i)
     {
         if(A_unblocked_arr_1_1_0[i] != tf.correct_A_unblocked_arr_1_1_0[i])
@@ -262,13 +276,43 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
         }
     }
 
+    double A_unblocked_arr_1_1_1[30] = {0};
+    ptrs[0] = A_unblocked_arr_1_1_1;
+    bispace_batch_map bbm_1_1;
+    bbm_1_1.insert(make_pair(idx_pair(0,1),idx_pair(1,2)));
+    bbm_1_1.insert(make_pair(idx_pair(1,1),idx_pair(1,2)));
+    k_un_1.generate_batch(ptrs,bbm_1_1);
+    for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_1_1_1)/sizeof(tf.correct_A_unblocked_arr_1_1_1[0]); ++i)
+    {
+        if(A_unblocked_arr_1_1_1[i] != tf.correct_A_unblocked_arr_1_1_1[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 1 batch 0");
+        }
+    }
+
+    double A_unblocked_arr_2_2_0[24] = {0};
+    ptrs[0] = A_unblocked_arr_2_2_0;
+    bispace_batch_map bbm_2_0;
+    bbm_2_0.insert(make_pair(idx_pair(0,2),idx_pair(0,1)));
+    bbm_2_0.insert(make_pair(idx_pair(1,2),idx_pair(0,1)));
+    batch_kernel_unblock<double> k_un_2(tf.spb_A,2);
+    k_un_2.generate_batch(ptrs,bbm_2_0);
+    for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_2_2_0)/sizeof(tf.correct_A_unblocked_arr_2_2_0[0]); ++i)
+    {
+        if(A_unblocked_arr_2_2_0[i] != tf.correct_A_unblocked_arr_2_2_0[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 2 batch 1");
+        }
+    }
+
     double A_unblocked_arr_2_2_1[36] = {0};
     ptrs[0] = A_unblocked_arr_2_2_1;
-    bispace_batch_map bbm_2;
-    bbm_2.insert(make_pair(idx_pair(0,2),idx_pair(1,2)));
-    bbm_2.insert(make_pair(idx_pair(1,2),idx_pair(1,2)));
-    batch_kernel_unblock<double> k_un_2(tf.spb_A,2);
-    k_un_2.generate_batch(ptrs,bbm_2);
+    bispace_batch_map bbm_2_1;
+    bbm_2_1.insert(make_pair(idx_pair(0,2),idx_pair(1,2)));
+    bbm_2_1.insert(make_pair(idx_pair(1,2),idx_pair(1,2)));
+    k_un_2.generate_batch(ptrs,bbm_2_1);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_2_2_1)/sizeof(tf.correct_A_unblocked_arr_2_2_1[0]); ++i)
     {
         if(A_unblocked_arr_2_2_1[i] != tf.correct_A_unblocked_arr_2_2_1[i])
@@ -282,7 +326,7 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
 
     double A_unblocked_arr_0_2_1[40] = {0};
     ptrs[0] = A_unblocked_arr_0_2_1;
-    k_un_2.generate_batch(ptrs,bbm_0);
+    k_un_2.generate_batch(ptrs,bbm_0_1);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_0_2_1)/sizeof(tf.correct_A_unblocked_arr_0_2_1[0]); ++i)
     {
         if(A_unblocked_arr_0_2_1[i] != tf.correct_A_unblocked_arr_0_2_1[i])
@@ -294,7 +338,7 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
 
     double A_unblocked_arr_2_0_1[36] = {0};
     ptrs[0] = A_unblocked_arr_2_0_1;
-    k_un_0.generate_batch(ptrs,bbm_2);
+    k_un_0.generate_batch(ptrs,bbm_2_1);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_2_0_1)/sizeof(tf.correct_A_unblocked_arr_2_0_1[0]); ++i)
     {
         if(A_unblocked_arr_2_0_1[i] != tf.correct_A_unblocked_arr_2_0_1[i])
@@ -316,11 +360,11 @@ void batch_kernels_test::test_batch_kernel_unblock_direct_source() throw(libtest
     double A_unblocked_arr_0_0_1[40] = {0};
     vector<double*> ptrs(1,A_unblocked_arr_0_0_1);
     ptrs.push_back(tf.A_arr_0_1);
-    bispace_batch_map bbm_0;
-    bbm_0.insert(make_pair(idx_pair(0,0),idx_pair(1,2)));
-    bbm_0.insert(make_pair(idx_pair(1,0),idx_pair(1,2)));
+    bispace_batch_map bbm_0_1;
+    bbm_0_1.insert(make_pair(idx_pair(0,0),idx_pair(1,2)));
+    bbm_0_1.insert(make_pair(idx_pair(1,0),idx_pair(1,2)));
     batch_kernel_unblock<double> k_un_0(tf.spb_A,0,true);
-    k_un_0.generate_batch(ptrs,bbm_0);
+    k_un_0.generate_batch(ptrs,bbm_0_1);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_0_0_1)/sizeof(tf.correct_A_unblocked_arr_0_0_1[0]); ++i)
     {
         if(A_unblocked_arr_0_0_1[i] != tf.correct_A_unblocked_arr_0_0_1[i])
@@ -369,7 +413,7 @@ void batch_kernels_test::test_batch_kernel_unblock_direct_source() throw(libtest
     double A_unblocked_arr_0_2_1[40] = {0};
     ptrs[0] = A_unblocked_arr_0_2_1;
     ptrs[1] = tf.A_arr_0_1;
-    k_un_2.generate_batch(ptrs,bbm_0);
+    k_un_2.generate_batch(ptrs,bbm_0_1);
     for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_0_2_1)/sizeof(tf.correct_A_unblocked_arr_0_2_1[0]); ++i)
     {
         if(A_unblocked_arr_0_2_1[i] != tf.correct_A_unblocked_arr_0_2_1[i])
