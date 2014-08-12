@@ -501,6 +501,41 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
         if(A_unblocked_arr_0_2_1[i] != correct_A_unblocked_arr_0_2_1[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 0 batch 1");
+        }
+    }
+
+    double correct_A_unblocked_arr_2_0_1[36] = { //i = 0 j = 0 k = 1 (1,2,3)
+                                                 5,6,7,
+                                                 8,9,10,
+
+                                                 //i = 0 j = 1 k = 1 (1,2,3)
+                                                 15,16,17,
+                                                 18,19,20,
+
+                                                 //i = 1 j = 0 k = 1 (1,2,3)
+                                                 29,30,31,
+                                                 32,33,34,
+
+                                                 //i = 1 j = 1 k = 1 (1,2,3)
+                                                 49,50,51,
+                                                 52,53,54,
+
+                                                 //i = 2 j = 0 k = 1 (1,2,3)
+                                                 35,36,37,
+                                                 38,39,40,
+
+                                                 //i = 2 j = 1 k = 1 (1,2,3)
+                                                 55,56,57,
+                                                 58,59,60};
+    double A_unblocked_arr_2_0_1[36] = {0};
+    ptrs[0] = A_unblocked_arr_2_0_1;
+    k_un_0.generate_batch(ptrs,bbm_2);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_2_0_1)/sizeof(correct_A_unblocked_arr_2_0_1[0]); ++i)
+    {
+        if(A_unblocked_arr_2_0_1[i] != correct_A_unblocked_arr_2_0_1[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
                 "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 2 batch 1");
         }
     }

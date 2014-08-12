@@ -82,10 +82,12 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     }
 
 
+    sparse_bispace_any_order batch_bispace(m_bispace);
+    if(batches.size() > 0) batch_bispace.truncate_subspace(batched_subspace_idx,batches.begin()->second);
     size_t dest_inner_size = 1;
     for(size_t i = m_subspace_idx+1; i < m_bispace.get_order(); ++i) 
     {
-        dest_inner_size *= m_bispace[i].get_dim();
+        dest_inner_size *= batch_bispace[i].get_dim();
     }
     
     //Adjust for batching
