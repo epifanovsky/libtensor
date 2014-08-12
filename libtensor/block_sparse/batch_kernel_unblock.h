@@ -84,7 +84,6 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     size_t dest_off_base = 0;
     size_t dest_off = 0;
     idx_list idx_stack(m_bispace.get_order(),0);
-    if(batches.size() > 0) idx_stack[m_subspace_idx] = batch.first;
     idx_list end_idx_stack;
     for(size_t i = 0; i < m_bispace.get_order(); ++i) 
     {
@@ -92,14 +91,7 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     }
     //if(batches.size() > 0) end_idx_stack[m_subspace_idx] = batch.second;
 
-    //Advance source to point where batch starts 
     size_t src_off = 0;
-    subspace_iterator it(m_bispace,m_subspace_idx);
-    while(it.get_block_index() != idx_stack[m_subspace_idx])
-    {
-        src_off += it.get_slice_size();
-        ++it;
-    }
 
     size_t dest_inner_size = 1;
     for(size_t i = m_subspace_idx+1; i < m_bispace.get_order(); ++i) 
