@@ -483,6 +483,29 @@ void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_excepti
                 "batch_kernel_reblock::generate_batch(...) did not produce correct result for A unbatched subspace 2");
         }
     }
+
+    /*** Diagonal direct tests ***/
+
+    double A_reblocked_from_direct_arr_0[60] = {0};
+    ptrs[0] = A_reblocked_from_direct_arr_0;
+    ptrs[1] = tf.correct_A_unblocked_arr_0_0_0;
+    bispace_batch_map bbm_0_0;
+    bbm_0_0.insert(make_pair(idx_pair(0,0),idx_pair(0,1)));
+    bbm_0_0.insert(make_pair(idx_pair(1,0),idx_pair(0,1)));
+    k_re_0.generate_batch(ptrs,bbm_0_0);
+    ptrs[1] = tf.correct_A_unblocked_arr_0_0_1;
+    bispace_batch_map bbm_0_1;
+    bbm_0_1.insert(make_pair(idx_pair(0,0),idx_pair(1,2)));
+    bbm_0_1.insert(make_pair(idx_pair(1,0),idx_pair(1,2)));
+    k_re_0.generate_batch(ptrs,bbm_0_1);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
+    {
+        if(A_reblocked_from_direct_arr_0[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 0 from direct");
+        }
+    }
 }
 
 } // namespace libtensor

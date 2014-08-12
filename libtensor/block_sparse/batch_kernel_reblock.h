@@ -75,7 +75,6 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     {
         end_idx_stack.push_back(m_bispace[i].get_n_blocks());
     }
-    idx_stack[batched_subspace_idx] = batch.first; 
     end_idx_stack[batched_subspace_idx] = batch.second; 
 
     sparse_bispace_any_order batch_bispace(m_bispace);
@@ -114,23 +113,27 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
             if(subspace_idx > m_subspace_idx) inner_size *= m_bispace[subspace_idx].get_block_size(block_idx);
         }
 
+        size_t batched_block_idx = idx_stack[batched_subspace_idx];
         size_t unblocked_block_idx = idx_stack[m_subspace_idx];
         size_t unblocked_block_offset = unblocked_subspace.get_block_abs_index(unblocked_block_idx);
         size_t unblocked_block_size = unblocked_subspace.get_block_size(unblocked_block_idx);
-        for(size_t outer_idx = 0; outer_idx < outer_size; ++outer_idx)
+        if((batch.first <= batched_block_idx) && (batched_block_idx < batch.second))
         {
-            for(size_t element_idx = 0; element_idx < unblocked_block_size; ++element_idx)
+            for(size_t outer_idx = 0; outer_idx < outer_size; ++outer_idx)
             {
-                size_t offset_in_idx_batch = unblocked_block_offset+ element_idx;
-                if(batched_subspace_idx == m_subspace_idx) offset_in_idx_batch -= batch_offset;
-                size_t element_src_off = src_off + (outer_idx * unblocked_subspace_dim + (offset_in_idx_batch)) * src_inner_size;
-                size_t element_dest_off = dest_off + (outer_idx*unblocked_block_size + element_idx ) * inner_size;
-                memcpy(ptrs[0]+element_dest_off,ptrs[1]+element_src_off,inner_size*sizeof(T));
+                for(size_t element_idx = 0; element_idx < unblocked_block_size; ++element_idx)
+                {
+                    size_t offset_in_idx_batch = unblocked_block_offset+ element_idx;
+                    if(batched_subspace_idx == m_subspace_idx) offset_in_idx_batch -= batch_offset;
+                    size_t element_src_off = src_off + (outer_idx * unblocked_subspace_dim + (offset_in_idx_batch)) * src_inner_size;
+                    size_t element_dest_off = dest_off + (outer_idx*unblocked_block_size + element_idx ) * inner_size;
+                    memcpy(ptrs[0]+element_dest_off,ptrs[1]+element_src_off,inner_size*sizeof(T));
+                }
             }
+            src_off += inner_size;
+            next_outer_inds_off += inner_size;
         }
         dest_off += outer_size*unblocked_block_size*inner_size; 
-        src_off += inner_size;
-        next_outer_inds_off += inner_size;
 
         //Advance iterator stack
         for(size_t j = 1; j <= idx_stack.size(); ++j)
