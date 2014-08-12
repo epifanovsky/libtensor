@@ -19,6 +19,7 @@ void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_contract2();
     test_batch_kernel_add2();
     test_batch_kernel_unblock();
+    test_batch_kernel_unblock_direct();
 }
 
 //A(i|j|k) = B(k|i|j)
@@ -336,6 +337,108 @@ void batch_kernels_test::test_batch_kernel_unblock() throw(libtest::test_excepti
         {
             fail_test(test_name,__FILE__,__LINE__,
                 "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched subspace 2");
+        }
+    }
+
+
+}
+
+void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_exception)
+{
+    static const char *test_name = "batch_kernels_test::test_batch_kernel_unblock_direct()";
+
+    contract2_dense_dense_test_f tf;
+
+    double correct_A_unblocked_arr_0_1[40] = {//i = 1 j = 0 k = 0 (1,2,2)
+                                              21,22,
+                                              23,24,
+
+                                              //i = 1 j = 0 k = 1 (1,2,3)
+                                              29,30,31,
+                                              32,33,34,
+
+                                              //i = 1 j = 1 k = 0 (1,2,2)
+                                              41,42,
+                                              43,44,
+
+                                              //i = 1 j = 1 k = 1 (1,2,3)
+                                              49,50,51,
+                                              52,53,54,
+
+                                              //i = 2 j = 0 k = 0 (1,2,2)
+                                              25,26,
+                                              27,28,
+
+                                              //i = 2 j = 0 k = 1 (1,2,3)
+                                              35,36,37,
+                                              38,39,40,
+
+                                              //i = 2 j = 1 k = 0 (1,2,2)
+                                              45,46,
+                                              47,48,
+
+                                              //i = 2 j = 1 k = 1 (1,2,3)
+                                              55,56,57,
+                                              58,59,60};
+
+    double A_unblocked_arr_0_1[40] = {0};
+    vector<double*> ptrs(1,A_unblocked_arr_0_1);
+    ptrs.push_back(tf.A_arr);
+    bispace_batch_map bbm_0;
+    bbm_0.insert(make_pair(idx_pair(0,0),idx_pair(1,2)));
+    bbm_0.insert(make_pair(idx_pair(1,0),idx_pair(1,2)));
+    batch_kernel_unblock<double> k_un_0(tf.spb_A,0);
+    k_un_0.generate_batch(ptrs,bbm_0);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_0_1)/sizeof(correct_A_unblocked_arr_0_1[0]); ++i)
+    {
+        if(A_unblocked_arr_0_1[i] != correct_A_unblocked_arr_0_1[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 0 batch 1");
+        }
+    }
+
+    double correct_A_unblocked_arr_1_0[30] = {//i = 0 j = 0 k = 0
+                                              1,2,
+
+                                              //i = 0 j = 0 k = 1
+                                              5,6,7,
+
+                                              //i = 0 j = 1 k = 0
+                                              3,4,
+
+                                              //i = 0 j = 1 k = 1
+                                              8,9,10,
+
+                                              //i = 1 j = 0 k = 0
+                                              21,22,
+                                              //i = 1 j = 0 k = 1
+                                              29,30,31,
+                                              //i = 1 j = 1 k = 0
+                                              23,24,
+                                              //i = 1 j = 1 k = 1
+                                              32,33,34,
+                                              //i = 1 j = 0 k = 0
+                                              25,26,
+                                              //i = 1 j = 0 k = 1
+                                              35,36,37,
+                                              //i = 1 j = 1 k = 0
+                                              27,28,
+                                              //i = 1 j = 1 k = 1
+                                              38,39,40};
+    double A_unblocked_arr_1_0[30] = {0};
+    ptrs[0] = A_unblocked_arr_1_0;
+    bispace_batch_map bbm_1;
+    bbm_1.insert(make_pair(idx_pair(0,1),idx_pair(0,1)));
+    bbm_1.insert(make_pair(idx_pair(1,1),idx_pair(0,1)));
+    batch_kernel_unblock<double> k_un_1(tf.spb_A,1);
+    k_un_1.generate_batch(ptrs,bbm_1);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_1_0)/sizeof(correct_A_unblocked_arr_1_0[0]); ++i)
+    {
+        if(A_unblocked_arr_1_0[i] != correct_A_unblocked_arr_1_0[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 1 batch 0");
         }
     }
 }
