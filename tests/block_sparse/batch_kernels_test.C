@@ -481,6 +481,29 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
     }
 
     /*** Now test off-diagonal (unpacked index different than batched index ***/
+
+    double correct_A_unblocked_arr_0_2_1[40] = { //i = 1 j = 0 k
+                                                 21,22,29,30,31,
+                                                 23,24,32,33,34,
+                                                 25,26,35,36,37,
+                                                 27,28,38,39,40,
+
+                                                 //i = 1 j = 1 k
+                                                 41,42,49,50,51,
+                                                 43,44,52,53,54,
+                                                 45,46,55,56,57,
+                                                 47,48,58,59,60};
+    double A_unblocked_arr_0_2_1[40] = {0};
+    ptrs[0] = A_unblocked_arr_0_2_1;
+    k_un_2.generate_batch(ptrs,bbm_0);
+    for(size_t i = 0; i < sizeof(correct_A_unblocked_arr_0_2_1)/sizeof(correct_A_unblocked_arr_0_2_1[0]); ++i)
+    {
+        if(A_unblocked_arr_0_2_1[i] != correct_A_unblocked_arr_0_2_1[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 2 batch 1");
+        }
+    }
 }
 
 } // namespace libtensor
