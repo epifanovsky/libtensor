@@ -336,6 +336,18 @@ void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_
         }
     }
 
+    double A_unblocked_arr_2_0_0[24] = {0};
+    ptrs[0] = A_unblocked_arr_2_0_0;
+    k_un_0.generate_batch(ptrs,bbm_2_0);
+    for(size_t i = 0; i < sizeof(tf.correct_A_unblocked_arr_2_0_0)/sizeof(tf.correct_A_unblocked_arr_2_0_0[0]); ++i)
+    {
+        if(A_unblocked_arr_2_0_0[i] != tf.correct_A_unblocked_arr_2_0_0[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_unblock::generate_batch(...) did not produce correct result for A subspace 2 batch 1");
+        }
+    }
+
     double A_unblocked_arr_2_0_1[36] = {0};
     ptrs[0] = A_unblocked_arr_2_0_1;
     k_un_0.generate_batch(ptrs,bbm_2_1);
@@ -547,7 +559,24 @@ void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_excepti
         if(A_reblocked_from_direct_arr_2[i] != tf.A_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 1 from direct");
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 2 from direct");
+        }
+    }
+
+    /*** Off diagonal test ***/
+
+    double A_reblocked_from_direct_arr_2_0[60] = {0};
+    ptrs[0] = A_reblocked_from_direct_arr_2_0;
+    ptrs[1] = tf.correct_A_unblocked_arr_2_0_0;
+    k_re_0.generate_batch(ptrs,bbm_2_0);
+    ptrs[1] = tf.correct_A_unblocked_arr_2_0_1;
+    k_re_0.generate_batch(ptrs,bbm_2_1);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
+    {
+        if(A_reblocked_from_direct_arr_2_0[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 0 from direct");
         }
     }
 }

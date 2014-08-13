@@ -292,6 +292,30 @@ const double batch_kernel_unblock_test_f::s_correct_A_unblocked_arr_0_2_1[40] = 
                                                                                 45,46,55,56,57,
                                                                                 47,48,58,59,60};
 
+const double batch_kernel_unblock_test_f::s_correct_A_unblocked_arr_2_0_0[24] = { //i = 0 j = 0 k = 0 (1,2,2)
+                                                                                  1,2,
+                                                                                  3,4,
+
+                                                                                  //i = 0 j = 1 k = 0 (1,2,2)
+                                                                                  11,12,
+                                                                                  13,14,
+
+                                                                                  //i = 1 j = 0 k = 0 (1,2,2)
+                                                                                  21,22,
+                                                                                  23,24,
+
+                                                                                  //i = 1 j = 1 k = 0 (1,2,2)
+                                                                                  41,42,
+                                                                                  43,44,
+
+                                                                                  //i = 2 j = 0 k = 0 (1,2,2)
+                                                                                  25,26,
+                                                                                  27,28,
+
+                                                                                  //i = 2 j = 1 k = 0 (1,2,2)
+                                                                                  45,46,
+                                                                                  47,48};
+
 const double batch_kernel_unblock_test_f::s_correct_A_unblocked_arr_2_0_1[36] = { //i = 0 j = 0 k = 1 (1,2,3)
                                                                                 5,6,7,
                                                                                 8,9,10,
