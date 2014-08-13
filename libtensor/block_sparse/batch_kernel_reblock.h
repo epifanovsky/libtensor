@@ -75,7 +75,6 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     {
         end_idx_stack.push_back(m_bispace[i].get_n_blocks());
     }
-    end_idx_stack[batched_subspace_idx] = batch.second; 
 
     sparse_bispace_any_order batch_bispace(m_bispace);
     if(batches.size() > 0) batch_bispace.truncate_subspace(batched_subspace_idx,batches.begin()->second);
@@ -147,7 +146,7 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                     all_done = true;
                     break;
                 }
-                idx_stack[i] = (i == batched_subspace_idx) ? batch.first : 0;
+                idx_stack[i] = 0;
             }
             else
             {

@@ -508,6 +508,48 @@ void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_excepti
                 "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 0 from direct");
         }
     }
+
+    double A_reblocked_from_direct_arr_1[60] = {0};
+    ptrs[0] = A_reblocked_from_direct_arr_1;
+    ptrs[1] = tf.correct_A_unblocked_arr_1_1_0;
+    bispace_batch_map bbm_1_0;
+    bbm_1_0.insert(make_pair(idx_pair(0,1),idx_pair(0,1)));
+    bbm_1_0.insert(make_pair(idx_pair(1,1),idx_pair(0,1)));
+    k_re_1.generate_batch(ptrs,bbm_1_0);
+    ptrs[1] = tf.correct_A_unblocked_arr_1_1_1;
+    bispace_batch_map bbm_1_1;
+    bbm_1_1.insert(make_pair(idx_pair(0,1),idx_pair(1,2)));
+    bbm_1_1.insert(make_pair(idx_pair(1,1),idx_pair(1,2)));
+    k_re_1.generate_batch(ptrs,bbm_1_1);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
+    {
+        if(A_reblocked_from_direct_arr_1[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 1 from direct");
+        }
+    }
+
+    double A_reblocked_from_direct_arr_2[60] = {0};
+    ptrs[0] = A_reblocked_from_direct_arr_2;
+    ptrs[1] = tf.correct_A_unblocked_arr_2_2_0;
+    bispace_batch_map bbm_2_0;
+    bbm_2_0.insert(make_pair(idx_pair(0,2),idx_pair(0,1)));
+    bbm_2_0.insert(make_pair(idx_pair(1,2),idx_pair(0,1)));
+    k_re_2.generate_batch(ptrs,bbm_2_0);
+    ptrs[1] = tf.correct_A_unblocked_arr_2_2_1;
+    bispace_batch_map bbm_2_1;
+    bbm_2_1.insert(make_pair(idx_pair(0,2),idx_pair(1,2)));
+    bbm_2_1.insert(make_pair(idx_pair(1,2),idx_pair(1,2)));
+    k_re_2.generate_batch(ptrs,bbm_2_1);
+    for(size_t i = 0; i < sizeof(tf.A_arr)/sizeof(tf.A_arr[0]); ++i)
+    {
+        if(A_reblocked_from_direct_arr_2[i] != tf.A_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                "batch_kernel_reblock::generate_batch(...) did not produce correct result for A from reblocking subspace 1 from direct");
+        }
+    }
 }
 
 } // namespace libtensor
