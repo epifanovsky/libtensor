@@ -18,7 +18,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_custom_batch_provider();
     test_assignment_chain();
     test_force_batch_index();
-    test_pari_k();
+    /*test_pari_k();*/
 }
 
 //TODO: group with other test in test fixture

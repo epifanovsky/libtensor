@@ -1,5 +1,5 @@
-#ifndef SPARSE_BTENSOR_NEW_H
-#define SPARSE_BTENSOR_NEW_H
+#ifndef SPARSE_BTENSOR_H
+#define SPARSE_BTENSOR_H
 
 #include <sstream>
 #include <limits>
@@ -8,6 +8,7 @@
 #include "block_load_kernel.h"
 #include "block_print_kernel.h"
 #include "gen_sparse_btensor.h"
+#include "direct_sparse_btensor.h"
 #include "batch_list_builder.h"
 #include "memory_reserve.h"
 #include "batch_provider.h"
@@ -208,15 +209,16 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     e.add(root_id,n_tensor);
 
     permutation<N> perm = l.permutation_of(rhs.get_label());
+    expr_tree::node_id_t perm_id = root_id;
     if(!perm.is_identity()) 
     {
         std::vector<size_t> perm_entries(N);
         for(size_t i = 0; i < N; i++) perm_entries[i] = perm[i];
 
         node_transform<T> n_tf(perm_entries, scalar_transf<T>());
-        root_id = e.add(root_id,n_tf);
+        perm_id = e.add(root_id,n_tf);
     }
-    e.add(root_id, rhs.get_expr());
+    e.add(perm_id, rhs.get_expr());
 
     //We clean up the tree a little bit to prevent spurious extra assignments
     std::vector<expr_tree::node_id_t> node_stack(1,e.get_root());
@@ -251,8 +253,62 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
             if(pos_stack.size() > 0) pos_stack.back()++;
         }
     }
-    batch_provider<T> bp(e);
 
+    expr_tree::node_id_t last_op_node_id = e.get_edges_out(root_id)[1];
+    const node& last_op_node = e.get_vertex(last_op_node_id);
+
+    if(N == 2)
+    {
+        if(last_op_node.check_type<node_contract>())
+        {
+            expr_tree::edge_list_t last_op_inputs = e.get_edges_out(last_op_node_id);
+            if(last_op_inputs.size() == 2)
+            {
+                expr_tree::node_id_t op_child_1_id = last_op_inputs[1];
+                const node& op_child_1 = e.get_vertex(op_child_1_id);
+                if(op_child_1.check_type<node_assign>())
+                {
+                    const node& result_tensor_node_abs = e.get_vertex(e.get_edges_out(op_child_1_id)[0]);
+                    if(result_tensor_node_abs.get_n() == 3)
+                    {
+                        const node_ident_any_tensor<3,T>& result_tensor_node = dynamic_cast< const node_ident_any_tensor<3,T>& >(result_tensor_node_abs);
+                        gen_sparse_btensor<3,T>& C = dynamic_cast< gen_sparse_btensor<3,T>& >(result_tensor_node.get_tensor());
+                        sparse_bispace<3> bispace = C.get_bispace();
+                        if(bispace.get_index_group_containing_subspace(0) == 0 && bispace.get_index_group_order(0) == 1)
+                        {
+                            //Add the tree to unblock H
+                            expr_tree ub_subtree(node_assign(3));
+                            sparse_bispace<1> unblocked_subspace(bispace[0].get_dim()); 
+                            sparse_bispace<3> in_unblocked_bispace = unblocked_subspace | bispace.contract(0);
+
+                            expr_tree::node_id_t in_unblocked_assign_id = ub_subtree.get_root();
+                            direct_sparse_btensor<3> in_unblocked_tensor(in_unblocked_bispace);
+                            ub_subtree.add(in_unblocked_assign_id,node_ident_any_tensor<3,T>(in_unblocked_tensor));
+                            expr_tree::node_id_t n_ub_id = ub_subtree.add(in_unblocked_assign_id,node_unblock(3,0));
+                            ub_subtree.add(n_ub_id,e.get_subtree(op_child_1_id));
+
+                            //Tie that tree to the existing tree, replacing the original subtree for H
+                            expr_tree::node_id_t ub_subtree_id = e.add(last_op_node_id,ub_subtree);
+                            e.replace(op_child_1_id,ub_subtree_id);
+
+                            //Add the tree to reblock M
+                            expr_tree rb_subtree(node_reblock(3,0));
+                            expr_tree::node_id_t rb_root_id = rb_subtree.get_root();
+                            expr_tree::node_id_t out_unblocked_assign_id = rb_subtree.add(rb_root_id,node_assign(3));
+                            sparse_bispace<2> out_unblocked_bispace = m_bispace[0] | unblocked_subspace;
+                            direct_sparse_btensor<2> out_unblocked_tensor(out_unblocked_bispace);
+                            rb_subtree.add(out_unblocked_assign_id,node_ident_any_tensor<2,T>(out_unblocked_tensor));
+                            rb_subtree.add(out_unblocked_assign_id,e.get_subtree(last_op_node_id));
+                            e.erase_subtree(last_op_node_id);
+                            e.add(root_id,rb_subtree);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    batch_provider<T> bp(e);
     std::vector< std::vector<sparse_bispace_any_order> > direct_bispace_grps;
     std::vector<idx_list> batched_subspace_grps;
     bp.get_direct_bispace_grps(direct_bispace_grps);
@@ -268,4 +324,4 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
 
 } // namespace libtensor
 
-#endif /* SPARSE_btensor_H */
+#endif /* SPARSE_BTENSOR_H */

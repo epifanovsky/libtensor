@@ -14,6 +14,8 @@
 #include "../expr/dag/node_contract.h"
 #include "../expr/dag/node_contract.h"
 #include "../expr/dag/node_add.h"
+#include "../expr/dag/node_unblock.h"
+#include "../expr/dag/node_reblock.h"
 #include "../expr/metaprog.h"
 #include <algorithm>
 
@@ -113,17 +115,28 @@ public:
                                 __FILE__, __LINE__, "Invalid node type");
                     }
                 }
-                else if(op_node.check_type<node_transform_base>())
+                else
                 {
+                    if(op_node.check_type<node_transform_base>())
                     {
                         const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(op_node);
                         kern = new batch_kernel_permute<T>(C,A,n_tf.get_perm());
                     }
-                }
-                else
-                {
-                    throw bad_parameter(g_ns, "kernel_builder","somemethod",
-                            __FILE__, __LINE__, "Invalid node type");
+                    else if(op_node.check_type<node_unblock>())
+                    {
+                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                                __FILE__, __LINE__, "node_unblock");
+                    }
+                    else if(op_node.check_type<node_reblock>())
+                    {
+                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                                __FILE__, __LINE__, "node_reblock");
+                    }
+                    else
+                    {
+                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                                __FILE__, __LINE__, "Invalid node type");
+                    }
                 }
             }
         }

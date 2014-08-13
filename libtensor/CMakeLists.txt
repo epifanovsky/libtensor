@@ -280,6 +280,8 @@ set(SRC_EXPR
     expr/dag/node_symm.C
     expr/dag/node_trace.C
     expr/dag/node_transform.C
+    expr/dag/node_unblock.C
+    expr/dag/node_reblock.C
     expr/dag/print_node.C
     expr/dag/print_tree.C
     expr/eval/default_eval_selector.C
