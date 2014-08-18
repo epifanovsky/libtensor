@@ -1,4 +1,12 @@
 #include "connectivity.h"
+#include <libtensor/expr/dag/node_add.h>
+#include <libtensor/expr/dag/node_assign.h>
+#include <libtensor/expr/dag/node_contract.h>
+#include <libtensor/expr/iface/node_ident_any_tensor.h>
+#include <libtensor/core/scalar_transf_double.h>
+#include <libtensor/expr/dag/node_transform.h>
+#include <libtensor/expr/dag/node_unblock.h>
+#include <libtensor/expr/dag/node_reblock.h>
 
 using namespace std;
 
@@ -24,11 +32,20 @@ connectivity::connectivity(const expr_tree& tree)
 
     const node& n_op = tree.get_vertex(n_op_id);
     size_t NC = root.get_n();
-    if(n_op.check_type<node_add>() || n_op.check_type<node_ident>())
+    if(n_op.check_type<node_add>() || 
+       n_op.check_type<node_ident>() || 
+       n_op.check_type<node_unblock>() || 
+       n_op.check_type<node_reblock>())
     {
         size_t n_tensors;
-        if(n_op.check_type<node_add>()) n_tensors = 1+op_children.size();
-        if(n_op.check_type<node_ident>()) n_tensors = 2;
+        if(n_op.check_type<node_add>()) 
+        {
+            n_tensors = 1+op_children.size();
+        }
+        else
+        {
+            n_tensors = 2;
+        }
         m_conn.resize(n_tensors,std::vector<idx_pair_list>(NC));
         for(size_t tensor_idx = 0; tensor_idx < m_conn.size(); ++tensor_idx)
         {

@@ -41,23 +41,20 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
         throw bad_parameter(g_ns, k_clazz,"batch_kernel_unblock::generate_batch(...)",__FILE__, __LINE__,
                 "Invalid batch info");
 #endif
-    size_t batched_subspace_idx;
+    size_t batched_subspace_idx = 0;
+    idx_pair batch(0,m_bispace[0].get_n_blocks()); 
     if(batches.size() > 0)
     {
+        batched_subspace_idx = batches.begin()->first.second;
 #ifdef LIBTENSOR_DEBUG
         bool problem = false;
         if(batches.size() != 2)
         {
             problem = true;
         }
-        else
+        else if(batches.find(idx_pair(0,batched_subspace_idx))->second != batches.find(idx_pair(1,batched_subspace_idx))->second)
         {
-            batched_subspace_idx = batches.begin()->first.second;
-            if(batches.find(idx_pair(0,batched_subspace_idx))->second != batches.find(idx_pair(1,batched_subspace_idx))->second)
-            {
-                problem = true;
-
-            }
+            problem = true;
         }
         if(problem) 
         {
@@ -65,7 +62,10 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                         "Invalid batch info");
         }
 #endif
+        batch = batches.begin()->second;
     }
+    const sparse_bispace<1>& batched_subspace = m_bispace[batched_subspace_idx];
+    size_t batch_offset = batched_subspace.get_block_abs_index(batch.first);
 
     const sparse_bispace<1>& unblocked_subspace = m_bispace[m_subspace_idx];
     size_t unblocked_subspace_dim = unblocked_subspace.get_dim();
@@ -90,18 +90,14 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     }
     
     //Adjust for batching
-    idx_pair batch; 
-    size_t batch_offset = 0; 
     if(batches.size() > 0)
     {
-        const sparse_bispace<1>& batched_subspace = m_bispace[batched_subspace_idx];
         batch = batches.begin()->second;
         if(m_src_direct)
         {
             idx_stack[batched_subspace_idx] = batch.first; 
             end_idx_stack[batched_subspace_idx] = batch.second; 
         }
-        batch_offset = batched_subspace.get_block_abs_index(batch.first);
         if(batched_subspace_idx == m_subspace_idx)
         {
             if(batch.second == batched_subspace.get_n_blocks()) 

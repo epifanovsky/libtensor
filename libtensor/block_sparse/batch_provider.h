@@ -5,6 +5,8 @@
 #include "batch_kernel_permute.h"
 #include "batch_kernel_contract2.h"
 #include "batch_kernel_add2.h"
+#include "batch_kernel_unblock.h"
+#include "batch_kernel_reblock.h"
 #include "connectivity.h"
 #include "../expr/dag/expr_tree.h"
 #include "../expr/dag/node_ident.h"
@@ -124,13 +126,13 @@ public:
                     }
                     else if(op_node.check_type<node_unblock>())
                     {
-                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
-                                __FILE__, __LINE__, "node_unblock");
+                        const node_unblock& n_un = dynamic_cast< const node_unblock& >(op_node);
+                        kern = new batch_kernel_unblock<T>(A.get_bispace(),n_un.get_subspace(),A.get_data_ptr() == NULL);
                     }
                     else if(op_node.check_type<node_reblock>())
                     {
-                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
-                                __FILE__, __LINE__, "node_reblock");
+                        const node_reblock& n_re = dynamic_cast< const node_reblock& >(op_node);
+                        kern = new batch_kernel_reblock<T>(C.get_bispace(),n_re.get_subspace(),C.get_data_ptr() == NULL);
                     }
                     else
                     {
@@ -397,6 +399,27 @@ void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
             }
         }
         m_kern->generate_batch(m_ptrs,augmented_bbm); 
+
+        //TODO HAXX print unblocked tensor AND blocked tensor
+#if 0
+        if(m_bispaces[0].get_nnz() == 361 && m_bispaces.size() == 2)
+        {
+            std::cout << "xxx\n"; 
+            //std::cout << m_bispaces[0].get_batch_size(1,bbm.begin()->second) << "\n";
+            // std::cout << m_bispaces[1].get_batch_size(1,bbm.begin()->second) << "\n";
+            std::cout << "xxx\n"; 
+            std::cout << "output\n";
+            for(size_t i = 0; i < m_bispaces[0].get_nnz(); ++i)
+            {
+                std::cout << m_ptrs[0][i] << "\n";
+            }
+            std::cout << "input\n";
+            for(size_t i = 0; i < m_bispaces[1].get_nnz(); ++i)
+            {
+                std::cout << m_ptrs[1][i] << "\n";
+            }
+        }
+#endif
     }
 }
 

@@ -35,6 +35,8 @@ public:
         return new node_reblock(*this);
     }
 
+    size_t get_subspace() const { return m_subspace; }
+
 };
 
 

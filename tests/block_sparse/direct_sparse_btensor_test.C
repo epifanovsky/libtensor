@@ -18,7 +18,7 @@ void direct_sparse_btensor_test::perform() throw(libtest::test_exception) {
     test_custom_batch_provider();
     test_assignment_chain();
     test_force_batch_index();
-    /*test_pari_k();*/
+    test_pari_k();
 }
 
 //TODO: group with other test in test fixture
@@ -449,8 +449,9 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     static const char *test_name = "direct_sparse_btensor_test::test_pari_k()";
 
     //Enough memory for all full tensors + first block of Q index
-    memory_reserve mr_0((40432+67883)*8);
-    memory_reserve mr_1((40432+67883)*8-1);
+    memory_reserve mr_0((40432+67883+20216)*8);
+    memory_reserve mr_1((40432+67883+20216)*8-1);
+    memory_reserve mr_2(1e10);
 
     size_t N;
     size_t X;
@@ -535,7 +536,10 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
         ++I_idx;
         getline(I_ifs,line);
     }
-    sparse_btensor<3> I(spb_I,I_arr,true);
+
+    //We fake 'I' being direct so that we can - only one of the 'I' copies is accounted for in the memory total above
+    sparse_btensor<3> I_fake_0(spb_I,I_arr,true);
+    sparse_btensor<3> I_fake_1(spb_I.permute(permutation<3>().permute(0,1)));
     delete [] I_arr;
 
     //Read V_scaled entries
@@ -573,21 +577,27 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     sparse_btensor<3> C_perm(spb_C.permute(permutation<3>().permute(1,2)));
     direct_sparse_btensor<3> D(C_perm.get_bispace().contract(2)|spb_o);
     direct_sparse_btensor<3> E(spb_C.contract(2)|spb_X);
+    direct_sparse_btensor<3> I(E.get_bispace());
     direct_sparse_btensor<3> G(E.get_bispace());
     direct_sparse_btensor<3> H(spb_N|spb_X|spb_o);
     sparse_btensor<2> M(spb_N|spb_N);
-                                                                                   
+
     C.set_memory_reserve(mr_0);
     C_perm.set_memory_reserve(mr_0);
-    I.set_memory_reserve(mr_0);
+    I_fake_0.set_memory_reserve(mr_0);
     M.set_memory_reserve(mr_0);
+
 
     letter mu,nu,lambda,sigma,Q,R,i;
     C_perm(mu|Q|lambda) = C(mu|lambda|Q);
+    I_fake_1(sigma|nu|Q) = I_fake_0(nu|sigma|Q);
+    I(nu|sigma|Q) = I_fake_1(sigma|nu|Q);
     D(mu|Q|i) = contract(lambda,C_perm(mu|Q|lambda),C_mo(lambda|i));
     E(nu|sigma|Q) = contract(R,C(nu|sigma|R),V_scaled(Q|R));
     G(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q);
+    std::cout << G.get_bispace().get_nnz() << "\n";
     H(nu|Q|i) = contract(sigma,G(nu|sigma|Q),C_mo(sigma|i));
+    std::cout << "############################# THERE #####################\n";
     M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i));
 
     sparse_bispace<2> spb_M = spb_N|spb_N;
@@ -612,9 +622,24 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
                 "pari_k result incorrect");
     }
 
+    //Check with no batching
+    C.set_memory_reserve(mr_2);
+    C_perm.set_memory_reserve(mr_2);
+    I_fake_0.set_memory_reserve(mr_2);
+    std::cout << M.get_bispace().get_nnz() << "\n";
+    M.set_memory_reserve(mr_2);
+    memset((double*)M.get_data_ptr(),0,M.get_bispace().get_nnz()*sizeof(double));
+    std::cout << "############################# HERE #####################\n";
+    M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i));
+    if(M != M_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "pari_k result incorrect when full unbatched");
+    }
+
     C.set_memory_reserve(mr_1);
     C_perm.set_memory_reserve(mr_1);
-    I.set_memory_reserve(mr_1);
+    I_fake_0.set_memory_reserve(mr_1);
     M.set_memory_reserve(mr_1);
     bool threw_exception = false;
     try
@@ -630,6 +655,7 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
         fail_test(test_name,__FILE__,__LINE__,
                 "out_of_memory not thrown when not enough memory given");
     }
+
 }
 
 } // namespace libtensor

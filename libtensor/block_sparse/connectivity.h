@@ -2,12 +2,6 @@
 #define CONNECTIVITY_H
 
 #include <libtensor/expr/dag/expr_tree.h>
-#include <libtensor/expr/dag/node_add.h>
-#include <libtensor/expr/dag/node_assign.h>
-#include <libtensor/expr/dag/node_contract.h>
-#include <libtensor/expr/iface/node_ident_any_tensor.h>
-#include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/expr/dag/node_transform.h>
 #include "sparse_defs.h"
 
 namespace libtensor

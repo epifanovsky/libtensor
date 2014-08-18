@@ -11,17 +11,19 @@ class batch_kernel_reblock : public batch_kernel<T>
 private:
     sparse_bispace_any_order m_bispace;
     size_t m_subspace_idx;
+    bool m_dest_direct;
 public:
     static const char* k_clazz; //!< Class name
 
-    batch_kernel_reblock(const sparse_bispace_any_order& A,size_t subspace_idx);
+    batch_kernel_reblock(const sparse_bispace_any_order& A,size_t subspace_idx,bool dest_direct=false);
 
     virtual void generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches);
 };
 
 template<typename T>
-batch_kernel_reblock<T>::batch_kernel_reblock(const sparse_bispace_any_order& A,size_t subspace_idx) : m_bispace(A),
-                                                                                                                       m_subspace_idx(subspace_idx)
+batch_kernel_reblock<T>::batch_kernel_reblock(const sparse_bispace_any_order& A,size_t subspace_idx,bool dest_direct) : m_bispace(A),
+                                                                                                                        m_subspace_idx(subspace_idx),
+                                                                                                                        m_dest_direct(dest_direct)
 {
     if(m_bispace.get_n_index_groups() != m_bispace.get_order())
     {
@@ -40,6 +42,7 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
     idx_pair batch(0,m_bispace[0].get_n_blocks()); 
     if(batches.size() > 0)
     {
+        batched_subspace_idx = batches.begin()->first.second;
 #ifdef LIBTENSOR_DEBUG
         bool problem = false;
         if(batches.size() != 2)
@@ -48,7 +51,6 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
         }
         else
         {
-            batched_subspace_idx = batches.begin()->first.second;
             if(batches.find(idx_pair(0,batched_subspace_idx))->second != batches.find(idx_pair(1,batched_subspace_idx))->second)
             {
                 problem = true;
@@ -116,7 +118,8 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
         size_t unblocked_block_idx = idx_stack[m_subspace_idx];
         size_t unblocked_block_offset = unblocked_subspace.get_block_abs_index(unblocked_block_idx);
         size_t unblocked_block_size = unblocked_subspace.get_block_size(unblocked_block_idx);
-        if((batch.first <= batched_block_idx) && (batched_block_idx < batch.second))
+        bool in_batch = (batch.first <= batched_block_idx) && (batched_block_idx < batch.second);
+        if(in_batch)
         {
             for(size_t outer_idx = 0; outer_idx < outer_size; ++outer_idx)
             {
@@ -132,7 +135,7 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
             src_off += inner_size;
             next_outer_inds_off += outer_size*unblocked_block_size*inner_size;
         }
-        dest_off += outer_size*unblocked_block_size*inner_size; 
+        if(!m_dest_direct || in_batch) dest_off += outer_size*unblocked_block_size*inner_size; 
 
         //Advance iterator stack
         for(size_t j = 1; j <= idx_stack.size(); ++j)
