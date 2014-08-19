@@ -68,6 +68,4 @@ private:
 
 } // namespace libtensor
 
-
-
 #endif /* SUBSPACE_TEST_H */

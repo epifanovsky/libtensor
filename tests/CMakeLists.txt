@@ -254,6 +254,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/libtensor_block_sparse_tests.C
     block_sparse/libtensor_block_sparse_suite.C
     block_sparse/subspace_test.C
+    block_sparse/sparse_bispace_impl_test.C
     block_sparse/sparse_bispace_test.C
     block_sparse/sparse_btensor_test.C
     block_sparse/block_kernels_test.C

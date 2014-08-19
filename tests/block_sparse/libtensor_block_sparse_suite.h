@@ -6,6 +6,7 @@
 #include "sparse_block_tree_iterator_test.h"
 #include "sparse_block_tree_test.h"
 #include "subspace_test.h"
+#include "sparse_bispace_impl_test.h"
 #include "sparse_bispace_test.h"
 #include "block_kernels_test.h"
 #include "block_loop_test.h"
@@ -46,6 +47,7 @@ private:
     unit_test_factory<sparse_block_tree_iterator_test> m_utf_sparse_block_tree_iterator;
     unit_test_factory<sparse_block_tree_test> m_utf_sparse_block_tree;
     unit_test_factory<subspace_test> m_utf_subspace;
+    unit_test_factory<sparse_bispace_impl_test> m_utf_sparse_bispace_impl;
     unit_test_factory<sparse_bispace_test> m_utf_sparse_bispace;
     unit_test_factory<sparse_btensor_test> m_utf_sparse_btensor;
     unit_test_factory<direct_sparse_btensor_test> m_utf_direct_sparse_btensor;
