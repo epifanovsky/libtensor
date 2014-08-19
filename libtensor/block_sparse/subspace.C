@@ -4,6 +4,13 @@ namespace libtensor {
 
 const char* subspace::k_clazz = "subspace";
 
+
+
+subspace::subspace(size_t dim,const idx_list& split_points) : m_dim(dim),m_abs_indices(1,0)
+{
+    this->split(split_points);
+}
+
 size_t subspace::get_dim() const
 {
     return m_dim;
@@ -16,6 +23,7 @@ size_t subspace::get_n_blocks() const
 
 void subspace::split(const std::vector<size_t>& split_points) throw(out_of_bounds)
 {
+    m_abs_indices.resize(1,0);
     if(split_points.size() < 1 || split_points.size() > (m_dim - 1))
     {
         throw out_of_bounds(g_ns,k_clazz,"split(...)",

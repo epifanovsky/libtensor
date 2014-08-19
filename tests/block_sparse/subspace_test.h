@@ -26,7 +26,8 @@ private:
      */
 
     void test_split_zero_first() throw(libtest::test_exception);
-    //Negative tests (throw correct exception) 
+    void test_split_resplit() throw(libtest::test_exception);
+
     void test_split_not_strictly_increasing() throw(libtest::test_exception);
     void test_split_not_strictly_increasing_two_calls() throw(libtest::test_exception);
     void test_split_gt_upper_bound() throw(libtest::test_exception);

@@ -18,7 +18,8 @@ public:
     /** \brief Creates the subspace with a given dimension
         \param dim Number of elements in this space.
      **/
-    explicit subspace(size_t dim) : m_dim(dim) { m_abs_indices.push_back(0); }
+    explicit subspace(size_t dim,
+                      const idx_list& split_points = idx_list(1,0));
     
     /** \brief Returns the dimension of the block index space 
      **/

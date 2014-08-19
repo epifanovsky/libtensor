@@ -9,8 +9,8 @@ void subspace_test::perform() throw(libtest::test_exception)
     test_get_n_blocks();
 
     test_split_zero_first();
+    test_split_resplit();
     test_split_not_strictly_increasing();
-    test_split_not_strictly_increasing_two_calls();
     test_split_gt_upper_bound();
     test_split_zero_size();
 
@@ -65,6 +65,32 @@ void subspace_test::test_split_zero_first() throw(libtest::test_exception)
     }
 }
 
+void subspace_test::test_split_resplit() throw(libtest::test_exception)
+{
+    static const char *test_name = "subspace_test::test_split_resplit()";
+
+    idx_list split_points(1,2);
+    split_points.push_back(3);
+    subspace sub(5,split_points);
+    if(sub.get_n_blocks() != 3 || 
+       sub.get_block_size(0) != 2 || 
+       sub.get_block_size(1) != 1 || 
+       sub.get_block_size(2) != 2)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "subspace::split(...) did not produce correct result");
+    }
+
+    sub.split(idx_list(1,0));
+    if(sub.get_n_blocks() != 1 || 
+       sub.get_block_size(0) != 5 || 
+       sub.get_block_abs_index(0) != 0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "subspace::split(...) did not produce correct result");
+    }
+}
+
 
 
 /* Should throw out_of_bounds when split points are passed with an order
@@ -80,36 +106,6 @@ void subspace_test::test_split_not_strictly_increasing() throw(libtest::test_exc
     std::vector<size_t> split_points;
     split_points.push_back(3);
     split_points.push_back(1);
-    try
-    {
-        sub.split(split_points);
-    }
-    catch(out_of_bounds&)
-    {
-        threw_exception = true;
-    }
-
-    if(! threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "subspace::split(...) did not throw exception when split points not strictly increasing");
-    }
-}
-
-/* Should throw out_of_bounds when split points are passed with an order
- * that is not strictly increasing, over two consecutive calls
- *
- */
-void subspace_test::test_split_not_strictly_increasing_two_calls() throw(libtest::test_exception) {
-
-    static const char *test_name = "subspace_test::test_split_not_strictly_increasing_two_calls()";
-
-    bool threw_exception = false;
-    subspace sub(5);
-    std::vector<size_t> split_points;
-    split_points.push_back(3);
-    sub.split(split_points);
-    split_points[0] = 1;
     try
     {
         sub.split(split_points);
