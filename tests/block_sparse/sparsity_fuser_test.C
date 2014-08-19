@@ -24,10 +24,10 @@ void sparsity_fuser_test::perform() throw(libtest::test_exception) {
 //Used to check the keys and values of a tree
 //Cleaner for test implementation than using an equality operator because
 //everything can just be set up as vectors instead of constructing a benchmark tree with sequences
-static bool verify_tree(const sparse_block_tree_any_order& tree,const std::vector< std::vector<size_t> >& correct_keys, const std::vector< sparse_block_tree_any_order::value_t >& correct_values)
+static bool verify_tree(const sparse_block_tree& tree,const std::vector< std::vector<size_t> >& correct_keys, const std::vector< sparse_block_tree::value_t >& correct_values)
 {
     size_t m = 0;
-    for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+    for(sparse_block_tree::const_iterator it = tree.begin(); it != tree.end(); ++it)
     {
         if(it.key() != correct_keys[m])
         {
@@ -375,7 +375,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     }
 
     //Check the tree entries
-    sparse_block_tree_any_order sbt_fusion_0 = sf.get_trees()[0];
+    sparse_block_tree sbt_fusion_0 = sf.get_trees()[0];
     vector<off_dim_pair_list> correct_vals_0;
     off_dim_pair correct_0_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(0,8) };   correct_vals_0.push_back(off_dim_pair_list(correct_0_arr_0,correct_0_arr_0+2));
     off_dim_pair correct_1_arr_0[2] = {off_dim_pair(0,8),off_dim_pair(8,8) };   correct_vals_0.push_back(off_dim_pair_list(correct_1_arr_0,correct_1_arr_0+2));
@@ -386,7 +386,7 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     off_dim_pair correct_6_arr_0[2] = {off_dim_pair(40,8),off_dim_pair(16,8) }; correct_vals_0.push_back(off_dim_pair_list(correct_6_arr_0,correct_6_arr_0+2));
 
     size_t m = 0;
-    for(sparse_block_tree_any_order::iterator it = sbt_fusion_0.begin(); it != sbt_fusion_0.end(); ++it)
+    for(sparse_block_tree::iterator it = sbt_fusion_0.begin(); it != sbt_fusion_0.end(); ++it)
     {
         if(*it != correct_vals_0[m])
         {
@@ -462,9 +462,9 @@ void sparsity_fuser_test::test_fuse() throw(libtest::test_exception)
     off_dim_pair correct_1_arr_1[3] = {off_dim_pair(24,8),off_dim_pair(24,8),off_dim_pair(4,4)};   correct_vals_1.push_back(off_dim_pair_list(correct_1_arr_1,correct_1_arr_1+3));
     off_dim_pair correct_2_arr_1[3] = {off_dim_pair(40,8),off_dim_pair(16,8),off_dim_pair(12,4)};  correct_vals_1.push_back(off_dim_pair_list(correct_2_arr_1,correct_2_arr_1+3));
 
-    sparse_block_tree_any_order sbt_fusion_1 = sf.get_trees()[0];
+    sparse_block_tree sbt_fusion_1 = sf.get_trees()[0];
     m = 0;
-    for(sparse_block_tree_any_order::iterator it = sbt_fusion_1.begin(); it != sbt_fusion_1.end(); ++it)
+    for(sparse_block_tree::iterator it = sbt_fusion_1.begin(); it != sbt_fusion_1.end(); ++it)
     {
         if(*it != correct_vals_1[m])
         {
@@ -495,11 +495,11 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
 
     /*** FIRST BATCH ***/
     sparsity_fuser sf_0(tf.loops,tf.bispaces,direct_tensors,batches);
-    std::vector<sparse_block_tree_any_order> trees = sf_0.get_trees();
+    std::vector<sparse_block_tree> trees = sf_0.get_trees();
 
     //The tree for C should be truncated, but the original offsets preserved since it is a standard (not direct tensor)
     //that resides fully in memory
-    const sparse_block_tree_any_order& sbt_C_0 = trees[0]; 
+    const sparse_block_tree& sbt_C_0 = trees[0]; 
 
     //Correct keys C
     std::vector< std::vector<size_t> > correct_keys_C_0;
@@ -508,10 +508,10 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
     size_t correct_key2_arr_C_0[3] = {5,2,1}; correct_keys_C_0.push_back(block_list(correct_key2_arr_C_0,correct_key2_arr_C_0+3));
 
     //Correct values C
-    std::vector< sparse_block_tree<3>::value_t > correct_vals_C_0;
-    off_dim_pair correct_value0_arr_C_0[1] = { off_dim_pair(16,8) };  correct_vals_C_0.push_back(sparse_block_tree<3>::value_t(correct_value0_arr_C_0,correct_value0_arr_C_0+1));
-    off_dim_pair correct_value1_arr_C_0[1] = { off_dim_pair(24,8) };  correct_vals_C_0.push_back(sparse_block_tree<3>::value_t(correct_value1_arr_C_0,correct_value1_arr_C_0+1));
-    off_dim_pair correct_value2_arr_C_0[1] = { off_dim_pair(32,8) };  correct_vals_C_0.push_back(sparse_block_tree<3>::value_t(correct_value2_arr_C_0,correct_value2_arr_C_0+1));
+    std::vector< sparse_block_tree::value_t > correct_vals_C_0;
+    off_dim_pair correct_value0_arr_C_0[1] = { off_dim_pair(16,8) };  correct_vals_C_0.push_back(sparse_block_tree::value_t(correct_value0_arr_C_0,correct_value0_arr_C_0+1));
+    off_dim_pair correct_value1_arr_C_0[1] = { off_dim_pair(24,8) };  correct_vals_C_0.push_back(sparse_block_tree::value_t(correct_value1_arr_C_0,correct_value1_arr_C_0+1));
+    off_dim_pair correct_value2_arr_C_0[1] = { off_dim_pair(32,8) };  correct_vals_C_0.push_back(sparse_block_tree::value_t(correct_value2_arr_C_0,correct_value2_arr_C_0+1));
 
     if(!verify_tree(sbt_C_0,correct_keys_C_0,correct_vals_C_0))
     {
@@ -521,7 +521,7 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
 
     //The offsets of B should be altered to correspond to the current batch
     //However, no alteration is necessary here because the batch takes the first two keys in the tree
-    const sparse_block_tree_any_order& sbt_B_0 = trees[2]; 
+    const sparse_block_tree& sbt_B_0 = trees[2]; 
 
     //Correct keys B
     std::vector< std::vector<size_t> > correct_keys_B_0;
@@ -529,9 +529,9 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
     size_t correct_key1_arr_B_0[2] = {2,3}; correct_keys_B_0.push_back(block_list(correct_key1_arr_B_0,correct_key1_arr_B_0+2));
 
     //Correct values B
-    std::vector< sparse_block_tree<2>::value_t > correct_vals_B_0;
-    off_dim_pair correct_value0_arr_B_0[1] = { off_dim_pair(0,4) };  correct_vals_B_0.push_back(sparse_block_tree<3>::value_t(correct_value0_arr_B_0,correct_value0_arr_B_0+1));
-    off_dim_pair correct_value1_arr_B_0[1] = { off_dim_pair(4,4) };  correct_vals_B_0.push_back(sparse_block_tree<3>::value_t(correct_value1_arr_B_0,correct_value1_arr_B_0+1));
+    std::vector< sparse_block_tree::value_t > correct_vals_B_0;
+    off_dim_pair correct_value0_arr_B_0[1] = { off_dim_pair(0,4) };  correct_vals_B_0.push_back(sparse_block_tree::value_t(correct_value0_arr_B_0,correct_value0_arr_B_0+1));
+    off_dim_pair correct_value1_arr_B_0[1] = { off_dim_pair(4,4) };  correct_vals_B_0.push_back(sparse_block_tree::value_t(correct_value1_arr_B_0,correct_value1_arr_B_0+1));
 
     if(!verify_tree(sbt_B_0,correct_keys_B_0,correct_vals_B_0))
     {
@@ -546,7 +546,7 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
 
     //The tree for C should be truncated, but the original offsets preserved since it is a standard (not direct tensor)
     //that resides fully in memory
-    const sparse_block_tree_any_order& sbt_C_1 = trees[0]; 
+    const sparse_block_tree& sbt_C_1 = trees[0]; 
 
     //Correct keys C
     std::vector< std::vector<size_t> > correct_keys_C_1;
@@ -555,10 +555,10 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
     size_t correct_key2_arr_C_1[3] = {5,2,4}; correct_keys_C_1.push_back(block_list(correct_key2_arr_C_1,correct_key2_arr_C_1+3));
 
     //Correct values C
-    std::vector< sparse_block_tree<3>::value_t > correct_vals_C_1;
-    off_dim_pair correct_value0_arr_C_1[1] = { off_dim_pair(0,8) };  correct_vals_C_1.push_back(sparse_block_tree<3>::value_t(correct_value0_arr_C_1,correct_value0_arr_C_1+1));
-    off_dim_pair correct_value1_arr_C_1[1] = { off_dim_pair(8,8) };  correct_vals_C_1.push_back(sparse_block_tree<3>::value_t(correct_value1_arr_C_1,correct_value1_arr_C_1+1));
-    off_dim_pair correct_value2_arr_C_1[1] = { off_dim_pair(40,8) };  correct_vals_C_1.push_back(sparse_block_tree<3>::value_t(correct_value2_arr_C_1,correct_value2_arr_C_1+1));
+    std::vector< sparse_block_tree::value_t > correct_vals_C_1;
+    off_dim_pair correct_value0_arr_C_1[1] = { off_dim_pair(0,8) };  correct_vals_C_1.push_back(sparse_block_tree::value_t(correct_value0_arr_C_1,correct_value0_arr_C_1+1));
+    off_dim_pair correct_value1_arr_C_1[1] = { off_dim_pair(8,8) };  correct_vals_C_1.push_back(sparse_block_tree::value_t(correct_value1_arr_C_1,correct_value1_arr_C_1+1));
+    off_dim_pair correct_value2_arr_C_1[1] = { off_dim_pair(40,8) };  correct_vals_C_1.push_back(sparse_block_tree::value_t(correct_value2_arr_C_1,correct_value2_arr_C_1+1));
 
     if(!verify_tree(sbt_C_1,correct_keys_C_1,correct_vals_C_1))
     {
@@ -568,7 +568,7 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
 
     //The offsets of B should be altered to correspond to the current batch
     //However, no alteration is necessary here because the batch takes the first two keys in the tree
-    const sparse_block_tree_any_order& sbt_B_1 = trees[2]; 
+    const sparse_block_tree& sbt_B_1 = trees[2]; 
 
     //Correct keys B
     std::vector< std::vector<size_t> > correct_keys_B_1;
@@ -576,9 +576,9 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
     size_t correct_key1_arr_B_1[2] = {5,4}; correct_keys_B_1.push_back(block_list(correct_key1_arr_B_1,correct_key1_arr_B_1+2));
 
     //Correct values B
-    std::vector< sparse_block_tree<2>::value_t > correct_vals_B_1;
-    off_dim_pair correct_value0_arr_B_1[1] = { off_dim_pair(4,4) };  correct_vals_B_1.push_back(sparse_block_tree<3>::value_t(correct_value0_arr_B_1,correct_value0_arr_B_1+1));
-    off_dim_pair correct_value1_arr_B_1[1] = { off_dim_pair(0,4) };  correct_vals_B_1.push_back(sparse_block_tree<3>::value_t(correct_value1_arr_B_1,correct_value1_arr_B_1+1));
+    std::vector< sparse_block_tree::value_t > correct_vals_B_1;
+    off_dim_pair correct_value0_arr_B_1[1] = { off_dim_pair(4,4) };  correct_vals_B_1.push_back(sparse_block_tree::value_t(correct_value0_arr_B_1,correct_value0_arr_B_1+1));
+    off_dim_pair correct_value1_arr_B_1[1] = { off_dim_pair(0,4) };  correct_vals_B_1.push_back(sparse_block_tree::value_t(correct_value1_arr_B_1,correct_value1_arr_B_1+1));
 
     if(!verify_tree(sbt_B_1,correct_keys_B_1,correct_vals_B_1))
     {

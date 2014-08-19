@@ -354,9 +354,9 @@ void direct_sparse_btensor_test::test_force_batch_index() throw(libtest::test_ex
                 throw bad_parameter(g_ns, "A_mock","get_batch",__FILE__, __LINE__, "Invalid batching!");
             }
             idx_pair batch = bbm.find(idx_pair(0,1))->second;
-            sparse_block_tree_any_order A_tree = m_A_bispace.get_sparse_group_tree(0);
+            sparse_block_tree A_tree = m_A_bispace.get_sparse_group_tree(0);
             A_tree = A_tree.truncate_subspace(1,batch);
-            for(sparse_block_tree_any_order::iterator it = A_tree.begin(); it != A_tree.end(); ++it)
+            for(sparse_block_tree::iterator it = A_tree.begin(); it != A_tree.end(); ++it)
             {
                 for(size_t i = 0; i < (*it)[0].second; ++i)
                 {

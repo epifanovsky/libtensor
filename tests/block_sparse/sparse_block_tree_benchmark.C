@@ -110,8 +110,8 @@ void run_benchmark(const char* file_name)
 
     cout << "===========================\n";
     cout << "FUSE BENCHMARK:\n";
-    sparse_block_tree_any_order E_perm_slow_tree = spb_E_perm_slow.get_sparse_group_tree(0);
-    sparse_block_tree_any_order E_tree = spb_E.get_sparse_group_tree(0);
+    sparse_block_tree E_perm_slow_tree = spb_E_perm_slow.get_sparse_group_tree(0);
+    sparse_block_tree E_tree = spb_E.get_sparse_group_tree(0);
 
     // nu Q sigma fused to nu sigma Q, fusing nu and sigma
     idx_list lhs_fused_inds(2);
@@ -122,21 +122,21 @@ void run_benchmark(const char* file_name)
     rhs_fused_inds[1] = 1;
     cout << "\tfully fused: ";
     seconds = read_timer();
-    sparse_block_tree_any_order fused = E_perm_slow_tree.fuse(E_tree,lhs_fused_inds,rhs_fused_inds);
+    sparse_block_tree fused = E_perm_slow_tree.fuse(E_tree,lhs_fused_inds,rhs_fused_inds);
     cout << read_timer() - seconds << " s\n";
 
     cout << "===========================\n";
     cout << "COPY BENCHMARK:\n";
     cout << "\tDirect copy: ";
     seconds = read_timer();
-    sparse_block_tree_any_order copied_tree = E_tree;
+    sparse_block_tree copied_tree = E_tree;
     cout << read_timer() - seconds << " s\n";
     cout << "===========================\n";
     cout << "ITER BENCHMARK:\n";
     cout << "\tfused iter: ";
     seconds = read_timer();
     size_t count = 0;
-    for(sparse_block_tree_any_order::iterator it = fused.begin(); it != fused.end(); ++it)
+    for(sparse_block_tree::iterator it = fused.begin(); it != fused.end(); ++it)
     {
         ++count;
     }
