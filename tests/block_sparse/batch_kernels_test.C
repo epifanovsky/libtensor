@@ -21,9 +21,9 @@ void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_contract2();
     test_batch_kernel_add2();
     test_batch_kernel_unblock();
-    /*test_batch_kernel_unblock_direct();*/
-    /*test_batch_kernel_unblock_direct_source();*/
-    /*test_batch_kernel_reblock();*/
+    test_batch_kernel_unblock_direct();
+    test_batch_kernel_unblock_direct_source();
+    test_batch_kernel_reblock();
 }
 
 //A(i|j|k) = B(k|i|j)
@@ -217,8 +217,6 @@ void batch_kernels_test::test_batch_kernel_unblock() throw(libtest::test_excepti
                 "batch_kernel_unblock::generate_batch(...) did not produce correct result for A unbatched subspace 2");
         }
     }
-
-
 }
 
 void batch_kernels_test::test_batch_kernel_unblock_direct() throw(libtest::test_exception)

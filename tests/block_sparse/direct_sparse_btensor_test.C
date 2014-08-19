@@ -595,9 +595,7 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     D(mu|Q|i) = contract(lambda,C_perm(mu|Q|lambda),C_mo(lambda|i));
     E(nu|sigma|Q) = contract(R,C(nu|sigma|R),V_scaled(Q|R));
     G(nu|sigma|Q) = I(nu|sigma|Q) - E(nu|sigma|Q);
-    std::cout << G.get_bispace().get_nnz() << "\n";
     H(nu|Q|i) = contract(sigma,G(nu|sigma|Q),C_mo(sigma|i));
-    std::cout << "############################# THERE #####################\n";
     M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i));
 
     sparse_bispace<2> spb_M = spb_N|spb_N;
@@ -626,10 +624,8 @@ void direct_sparse_btensor_test::test_pari_k() throw(libtest::test_exception)
     C.set_memory_reserve(mr_2);
     C_perm.set_memory_reserve(mr_2);
     I_fake_0.set_memory_reserve(mr_2);
-    std::cout << M.get_bispace().get_nnz() << "\n";
     M.set_memory_reserve(mr_2);
     memset((double*)M.get_data_ptr(),0,M.get_bispace().get_nnz()*sizeof(double));
-    std::cout << "############################# HERE #####################\n";
     M(mu|nu) = contract(Q|i,D(mu|Q|i),H(nu|Q|i));
     if(M != M_correct)
     {

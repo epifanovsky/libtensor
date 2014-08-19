@@ -400,26 +400,6 @@ void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
         }
         m_kern->generate_batch(m_ptrs,augmented_bbm); 
 
-        //TODO HAXX print unblocked tensor AND blocked tensor
-#if 0
-        if(m_bispaces[0].get_nnz() == 361 && m_bispaces.size() == 2)
-        {
-            std::cout << "xxx\n"; 
-            //std::cout << m_bispaces[0].get_batch_size(1,bbm.begin()->second) << "\n";
-            // std::cout << m_bispaces[1].get_batch_size(1,bbm.begin()->second) << "\n";
-            std::cout << "xxx\n"; 
-            std::cout << "output\n";
-            for(size_t i = 0; i < m_bispaces[0].get_nnz(); ++i)
-            {
-                std::cout << m_ptrs[0][i] << "\n";
-            }
-            std::cout << "input\n";
-            for(size_t i = 0; i < m_bispaces[1].get_nnz(); ++i)
-            {
-                std::cout << m_ptrs[1][i] << "\n";
-            }
-        }
-#endif
     }
 }
 

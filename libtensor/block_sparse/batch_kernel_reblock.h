@@ -127,13 +127,12 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                 {
                     size_t offset_in_idx_batch = unblocked_block_offset+ element_idx;
                     if(batched_subspace_idx == m_subspace_idx) offset_in_idx_batch -= batch_offset;
-                    size_t element_src_off = src_off + (outer_idx * unblocked_subspace_dim + (offset_in_idx_batch)) * src_inner_size;
+                    size_t element_src_off = src_off + (outer_idx * unblocked_subspace_dim + (offset_in_idx_batch)) * inner_size;
                     size_t element_dest_off = dest_off + (outer_idx*unblocked_block_size + element_idx ) * inner_size;
                     memcpy(ptrs[0]+element_dest_off,ptrs[1]+element_src_off,inner_size*sizeof(T));
                 }
             }
-            src_off += inner_size;
-            next_outer_inds_off += outer_size*unblocked_block_size*inner_size;
+            src_off += outer_size*unblocked_subspace_dim*inner_size;
         }
         if(!m_dest_direct || in_batch) dest_off += outer_size*unblocked_block_size*inner_size; 
 
@@ -155,9 +154,9 @@ void batch_kernel_reblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
             {
                 if(i <= m_subspace_idx) 
                 {
-                    if(i < m_subspace_idx)
+                    if(i < m_subspace_idx && (batched_subspace_idx >= m_subspace_idx || in_batch))
                     {
-                        outer_inds_off = next_outer_inds_off;
+                        outer_inds_off += outer_size*unblocked_subspace_dim*src_inner_size;
                     }
                     src_off = outer_inds_off;
                 }

@@ -263,7 +263,6 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     direct_sparse_btensor<3>* reblocked_inter = NULL;
     std::vector<idx_list> batched_subspace_grps;
     bool hack = false;
-#if 0
     if(N == 2)
     {
         if(last_op_node.check_type<node_contract>())
@@ -283,28 +282,6 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                         sparse_bispace<3> bispace = C.get_bispace();
                         if(bispace.get_index_group_containing_subspace(0) == 0 && bispace.get_index_group_order(0) == 1)
                         {
-#if 0
-                            //Add the tree to unblock then reblock H
-                            sparse_bispace<1> unblocked_subspace(bispace[0].get_dim()); 
-                            expr_tree ub_subtree(node_assign(3));
-                            reblocked_inter  = new direct_sparse_btensor<3>(bispace);
-                            expr_tree::node_id_t in_reblocked_assign_id = ub_subtree.get_root();
-                            ub_subtree.add(in_reblocked_assign_id,node_ident_any_tensor<3,T>(*reblocked_inter));
-                            expr_tree::node_id_t n_rb_id = ub_subtree.add(in_reblocked_assign_id,node_reblock(3,0));
-                            expr_tree::node_id_t in_unblocked_assign_id = ub_subtree.add(n_rb_id,node_assign(3));
-
-                            sparse_bispace<3> in_unblocked_bispace = unblocked_subspace | bispace.contract(0);
-
-                            in_unblocked_tensor_ptr = new direct_sparse_btensor<3>(in_unblocked_bispace);
-                            ub_subtree.add(in_unblocked_assign_id,node_ident_any_tensor<3,T>(*in_unblocked_tensor_ptr));
-                            expr_tree::node_id_t n_ub_id = ub_subtree.add(in_unblocked_assign_id,node_unblock(3,0));
-                            ub_subtree.add(n_ub_id,e.get_subtree(op_child_1_id));
-
-                            //Tie that tree to the existing tree, replacing the original subtree for H
-                            expr_tree::node_id_t ub_subtree_id = e.add(last_op_node_id,ub_subtree);
-                            e.erase_subtree(op_child_1_id);
-#endif
- 
                             //Add the tree to unblock H
                             expr_tree ub_subtree(node_assign(3));
                             sparse_bispace<1> unblocked_subspace(bispace[0].get_dim()); 
@@ -348,7 +325,6 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
             }
         }
     }
-#endif
 
     batch_provider<T> bp(e);
     std::vector< std::vector<sparse_bispace_any_order> > direct_bispace_grps;

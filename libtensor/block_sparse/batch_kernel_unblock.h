@@ -129,7 +129,8 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
         size_t unblocked_block_idx = idx_stack[m_subspace_idx];
         size_t unblocked_block_offset = unblocked_subspace.get_block_abs_index(unblocked_block_idx);
         size_t unblocked_block_size = unblocked_subspace.get_block_size(unblocked_block_idx);
-        if(batches.size() == 0 || ((batch.first <= batched_block_idx) && (batched_block_idx < batch.second)))
+        bool in_batch = ((batch.first <= batched_block_idx) && (batched_block_idx < batch.second));
+        if(batches.size() == 0 || in_batch)
         {
             for(size_t outer_idx = 0; outer_idx < outer_size; ++outer_idx)
             {
@@ -137,13 +138,12 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
                 {
                     size_t offset_in_idx_batch = unblocked_block_offset+ element_idx;
                     if(batched_subspace_idx == m_subspace_idx) offset_in_idx_batch -= batch_offset;
-                    size_t element_dest_off = dest_off + (outer_idx * unblocked_subspace_dim + (offset_in_idx_batch)) * dest_inner_size;
+                    size_t element_dest_off = dest_off + (outer_idx * unblocked_subspace_dim + (offset_in_idx_batch)) * inner_size;
                     size_t element_src_off = src_off + (outer_idx*unblocked_block_size + element_idx ) * inner_size;
                     memcpy(ptrs[0]+element_dest_off,ptrs[1]+element_src_off,inner_size*sizeof(T));
                 }
             }
-            dest_off += inner_size;
-            next_outer_inds_off += outer_size*unblocked_block_size*inner_size;
+            dest_off += outer_size*unblocked_subspace_dim*inner_size;
         }
         src_off += outer_size*unblocked_block_size*inner_size; 
 
@@ -165,9 +165,9 @@ void batch_kernel_unblock<T>::generate_batch(const std::vector<T*>& ptrs,const b
             {
                 if(i <= m_subspace_idx) 
                 {
-                    if(i < m_subspace_idx)
+                    if(i < m_subspace_idx && (batched_subspace_idx >= m_subspace_idx || in_batch))
                     {
-                        outer_inds_off = next_outer_inds_off;
+                        outer_inds_off += outer_size*unblocked_subspace_dim*dest_inner_size;
                     }
                     dest_off = outer_inds_off;
                 }
