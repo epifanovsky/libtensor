@@ -67,4 +67,14 @@ size_t subspace::get_block_abs_index(size_t block_idx) const throw(out_of_bounds
     return m_abs_indices[block_idx];
 }
 
+bool subspace::operator==(const subspace& rhs) const
+{
+    return (this->m_dim == rhs.m_dim) && (this->m_abs_indices == rhs.m_abs_indices);
+}
+
+bool subspace::operator!=(const subspace& rhs) const
+{
+    return ! (*this == rhs);
+} 
+
 } // namespace libtensor

@@ -18,7 +18,7 @@ public:
     /** \brief Creates the subspace with a given dimension
         \param dim Number of elements in this space.
      **/
-    explicit subspace(size_t dim);
+    explicit subspace(size_t dim) : m_dim(dim) { m_abs_indices.push_back(0); }
     
     /** \brief Returns the dimension of the block index space 
      **/
@@ -49,6 +49,16 @@ public:
      **/
     size_t get_block_abs_index(size_t block_idx) const 
         throw(out_of_bounds);
+
+    /** \brief Returns whether this object is equal to another. 
+     *         Equality is defined to be the same dimension and block splitting pattern
+     **/
+    bool operator==(const subspace& rhs) const;
+
+    /** \brief Returns whether this object is not equal to another. 
+     *         Equality is defined to be the same dimension and block splitting pattern
+     **/
+    bool operator!=(const subspace& rhs) const;
 };
 
 } // namespace libtensor
