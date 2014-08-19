@@ -203,6 +203,7 @@ set(SRC_BTOD
 
 set(SRC_BLOCK_SPARSE
     block_sparse/sparse_block_tree_any_order.C
+    block_sparse/subspace.C
     block_sparse/block_loop.C
     block_sparse/sparse_loop_list.C
     block_sparse/sparsity_fuser.C

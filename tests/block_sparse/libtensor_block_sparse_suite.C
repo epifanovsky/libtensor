@@ -11,6 +11,7 @@ libtensor_sparse_suite::libtensor_sparse_suite() :
     add_test("sparsity_fuser", m_utf_sparsity_fuser);
     add_test("sparse_block_tree_iterator", m_utf_sparse_block_tree_iterator);
     add_test("sparse_block_tree", m_utf_sparse_block_tree);
+    add_test("subspace", m_utf_subspace);
     add_test("sparse_bispace", m_utf_sparse_bispace);
     add_test("sparse_btensor", m_utf_sparse_btensor);
     add_test("direct_sparse_btensor", m_utf_direct_sparse_btensor);
