@@ -33,6 +33,7 @@ public:
     /** \brief Splits this space into blocks with offsets starting at offsets
                in split_points. First block always starts at zero
         \param split_points Iterable container of absolute indices where each block should start 
+               If split_points begins with zero, that value is ignored
         \throw out_of_bounds If a split_point value exceeds the index limits, or if a zero length vector is passed 
      **/
     void split(const std::vector<size_t>& split_points)

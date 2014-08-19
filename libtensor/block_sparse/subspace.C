@@ -22,8 +22,9 @@ void subspace::split(const std::vector<size_t>& split_points) throw(out_of_bound
                 __FILE__,__LINE__,"Must have 1 <= # of split points <= dim - 1"); 
     }
 
-    for(int i = 0; i < split_points.size(); ++i)
+    for(size_t i = 0; i < split_points.size(); ++i)
     {
+        if(i == 0 && split_points[i] == 0) continue;
         size_t split_point = split_points[i];
         if(split_point > (m_dim - 1))
         {

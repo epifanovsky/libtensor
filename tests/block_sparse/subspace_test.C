@@ -6,7 +6,9 @@ namespace libtensor {
 void subspace_test::perform() throw(libtest::test_exception)
 {
     test_get_dim();
+    test_get_n_blocks();
 
+    test_split_zero_first();
     test_split_not_strictly_increasing();
     test_split_not_strictly_increasing_two_calls();
     test_split_gt_upper_bound();
@@ -24,8 +26,8 @@ void subspace_test::perform() throw(libtest::test_exception)
 void subspace_test::test_get_dim() throw(libtest::test_exception)
 {
     static const char *test_name = "subspace_test::test_get_dim()";
-    subspace spb(5);
-    if(spb.get_dim() != 5)
+    subspace sub(5);
+    if(sub.get_dim() != 5)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::get_dim(...) returned incorrect value");
@@ -35,17 +37,32 @@ void subspace_test::test_get_dim() throw(libtest::test_exception)
 void subspace_test::test_get_n_blocks() throw(libtest::test_exception)
 {
     static const char *test_name = "subspace_test::test_get_n_blocks()";
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points; 
     split_points.push_back(1);
     split_points.push_back(3);
-    spb.split(split_points);
+    sub.split(split_points);
 
-    if(spb.get_n_blocks() != 3)
+    if(sub.get_n_blocks() != 3)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::get_n_blocks(...) returned incorrect value");
     } 
+}
+
+void subspace_test::test_split_zero_first() throw(libtest::test_exception)
+{
+    static const char *test_name = "subspace_test::test_split_zero_first()";
+
+    subspace sub(5);
+    sub.split(idx_list(1,0));
+    if(sub.get_n_blocks() != 1 || 
+       sub.get_block_size(0) != 5 || 
+       sub.get_block_abs_index(0) != 0)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "subspace::split(...) performed incorrectly");
+    }
 }
 
 
@@ -59,13 +76,13 @@ void subspace_test::test_split_not_strictly_increasing() throw(libtest::test_exc
     static const char *test_name = "subspace_test::test_split_not_strictly_increasing()";
 
     bool threw_exception = false;
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points;
     split_points.push_back(3);
     split_points.push_back(1);
     try
     {
-        spb.split(split_points);
+        sub.split(split_points);
     }
     catch(out_of_bounds&)
     {
@@ -88,14 +105,14 @@ void subspace_test::test_split_not_strictly_increasing_two_calls() throw(libtest
     static const char *test_name = "subspace_test::test_split_not_strictly_increasing_two_calls()";
 
     bool threw_exception = false;
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points;
     split_points.push_back(3);
-    spb.split(split_points);
+    sub.split(split_points);
     split_points[0] = 1;
     try
     {
-        spb.split(split_points);
+        sub.split(split_points);
     }
     catch(out_of_bounds&)
     {
@@ -116,12 +133,12 @@ void subspace_test::test_split_gt_upper_bound() throw(libtest::test_exception) {
     static const char *test_name = "subspace_test::test_split_gt_upper_bound()";
 
     bool threw_exception = false;
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points;
     split_points.push_back(5);
     try
     {
-        spb.split(split_points);
+        sub.split(split_points);
     }
     catch(out_of_bounds&)
     {
@@ -142,11 +159,11 @@ void subspace_test::test_split_zero_size() throw(libtest::test_exception) {
     static const char *test_name = "subspace_test::test_split_zero_size()";
 
     bool threw_exception = false;
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points;
     try
     {
-        spb.split(split_points);
+        sub.split(split_points);
     }
     catch(out_of_bounds&)
     {
@@ -164,15 +181,15 @@ void subspace_test::test_equality_true() throw(libtest::test_exception) {
 
     static const char *test_name = "subspace_test::test_equality_true()";
 
-    subspace spb_1(5);
-    subspace spb_2(5);
+    subspace sub_1(5);
+    subspace sub_2(5);
     std::vector<size_t> split_points;
     split_points.push_back(3);
     split_points.push_back(4);
-    spb_1.split(split_points); 
-    spb_2.split(split_points); 
+    sub_1.split(split_points); 
+    sub_2.split(split_points); 
 
-    if(!(spb_1 == spb_2)) 
+    if(!(sub_1 == sub_2)) 
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::operator==(...) returned false");
@@ -184,15 +201,15 @@ void subspace_test::test_equality_false_diff_dims() throw(libtest::test_exceptio
 
     static const char *test_name = "subspace_test::test_equality_false_diff_dims()";
 
-    subspace spb_1(5);
-    subspace spb_2(6);
+    subspace sub_1(5);
+    subspace sub_2(6);
     std::vector<size_t> split_points;
     split_points.push_back(3);
     split_points.push_back(4);
-    spb_1.split(split_points); 
-    spb_2.split(split_points); 
+    sub_1.split(split_points); 
+    sub_2.split(split_points); 
 
-    if(spb_1 == spb_2) 
+    if(sub_1 == sub_2) 
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::operator==(...) returned true");
@@ -203,18 +220,18 @@ void subspace_test::test_equality_false_diff_splits() throw(libtest::test_except
 
     static const char *test_name = "subspace_test::test_equality_false_diff_dims()";
 
-    subspace spb_1(5);
-    subspace spb_2(5);
+    subspace sub_1(5);
+    subspace sub_2(5);
     std::vector<size_t> split_points_1;
     split_points_1.push_back(3);
     split_points_1.push_back(4);
     std::vector<size_t> split_points_2;
     split_points_2.push_back(2);
     split_points_2.push_back(4);
-    spb_1.split(split_points_1); 
-    spb_2.split(split_points_2); 
+    sub_1.split(split_points_1); 
+    sub_2.split(split_points_2); 
 
-    if(spb_1 == spb_2)
+    if(sub_1 == sub_2)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::operator==(...) returned true");
@@ -225,8 +242,8 @@ void subspace_test::test_equality_false_diff_splits() throw(libtest::test_except
  */
 void subspace_test::test_get_block_abs_index_one_block() throw(libtest::test_exception) {
     static const char *test_name = "subspace_test::test_get_block_abs_index_one_block()";
-    subspace spb(5);
-    if(! (spb.get_block_abs_index(0) == 0))
+    subspace sub(5);
+    if(! (sub.get_block_abs_index(0) == 0))
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::get_block_abs_index(0) did not return zero");
@@ -237,11 +254,11 @@ void subspace_test::test_get_block_abs_index_one_block() throw(libtest::test_exc
  */
 void subspace_test::test_get_block_abs_index_two_block() throw(libtest::test_exception) {
     static const char *test_name = "subspace_test::test_get_block_abs_index_one_block()";
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points;
     split_points.push_back(4);
-    spb.split(split_points);
-    if(! (spb.get_block_abs_index(1) == 4))
+    sub.split(split_points);
+    if(! (sub.get_block_abs_index(1) == 4))
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "subspace::get_block_abs_index(1) did not return 4");
@@ -253,13 +270,13 @@ void subspace_test::test_get_block_abs_index_two_block() throw(libtest::test_exc
 void subspace_test::test_get_block_abs_index_gt_upper_bound() throw(libtest::test_exception) {
     static const char *test_name = "subspace_test::test_get_block_abs_index_gt_upper_bound()";
     bool threw_exception = false;
-    subspace spb(5);
+    subspace sub(5);
     std::vector<size_t> split_points;
     split_points.push_back(4);
-    spb.split(split_points);
+    sub.split(split_points);
     try
     {
-        spb.get_block_abs_index(2);
+        sub.get_block_abs_index(2);
     }
     catch(out_of_bounds&)
     {

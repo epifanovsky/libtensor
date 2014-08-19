@@ -13,13 +13,11 @@ private:
     /* 
      * subspace::get_dim(...) tests
      */
-    //Positive tests (produce correct result)
     void test_get_dim() throw(libtest::test_exception);
 
     /* 
      * subspace::get_n_blocks(...) tests
      */
-    //Positive tests (produce correct result)
     void test_get_n_blocks() throw(libtest::test_exception);
 
 
@@ -27,6 +25,7 @@ private:
      * subspace::split(...) tests
      */
 
+    void test_split_zero_first() throw(libtest::test_exception);
     //Negative tests (throw correct exception) 
     void test_split_not_strictly_increasing() throw(libtest::test_exception);
     void test_split_not_strictly_increasing_two_calls() throw(libtest::test_exception);
