@@ -328,9 +328,20 @@ endif(HAVE_LIBVMM)
 
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
-    tensor tensor_core tensor_block_sparse
+    tensor tensor_core 
     ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
 endforeach(TARGET)
+
+target_link_libraries(libtensor_block_sparse_benchmark 
+    tensor tensor_core tensor_block_sparse
+    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+target_link_libraries(libtensor_block_sparse_tests
+    tensor tensor_core tensor_block_sparse
+    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+target_link_libraries(sparse_block_tree_benchmark
+    tensor tensor_core tensor_block_sparse
+    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
