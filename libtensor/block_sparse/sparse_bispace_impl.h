@@ -2,6 +2,7 @@
 #define SPARSE_BISPACE_IMPL_H
 
 #include "subspace.h"
+#include "sparse_block_tree.h"
 
 namespace libtensor {
 
@@ -12,7 +13,9 @@ private:
 public:
     static const char* k_clazz; //!< Class name
 
-    sparse_bispace_impl(const std::vector<subspace>& subspaces) : m_subspaces(subspaces) { }
+    sparse_bispace_impl(const std::vector<subspace>& subspaces,
+                        const std::vector<sparse_block_tree>& trees = std::vector<sparse_block_tree>(),
+                        const idx_list& tree_offsets = idx_list()) : m_subspaces(subspaces) { }
 
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if:

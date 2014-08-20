@@ -43,11 +43,9 @@ void sparse_bispace_impl_test::test_nd_equality_true() throw(libtest::test_excep
 }
 
 #if 0
-void sparse_bispace_test::test_equality_false_sparsity_2d() throw(libtest::test_exception)
+void sparse_bispace_impl_test::test_equality_false_sparsity_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_test::test_equality_false_sparsity_2d()";
-
-    sparse_bispace<1> spb_1(11);
+    static const char *test_name = "sparse_bispace_impl_test::test_equality_false_sparsity_2d()";
 
     /* Splitting pattern results in the following block sizes:
      * 0: 2
@@ -55,35 +53,37 @@ void sparse_bispace_test::test_equality_false_sparsity_2d() throw(libtest::test_
      * 2: 4
      * 3: 2
      */
-    std::vector<size_t> split_points_1; 
-    split_points_1.push_back(2);
-    split_points_1.push_back(5);
-    split_points_1.push_back(9);
-    spb_1.split(split_points_1);
+    size_t split_points_arr[3] = {2,5,9};
+    idx_list split_points(split_points_arr,split_points_arr+3); 
+    subspace sub(11,split_points);
 
     //Specify different sets of significant blocks
+    std::vector< sequence<2,size_t> > sig_blocks_0(4);
+    sig_blocks_0[0][0] = 0; 
+    sig_blocks_0[0][1] = 1;
+    sig_blocks_0[1][0] = 1;
+    sig_blocks_0[1][1] = 2;
+    sig_blocks_0[2][0] = 2;
+    sig_blocks_0[2][1] = 3;
+    sig_blocks_0[3][0] = 3;
+    sig_blocks_0[3][1] = 2;
+
     std::vector< sequence<2,size_t> > sig_blocks_1(4);
     sig_blocks_1[0][0] = 0; 
     sig_blocks_1[0][1] = 1;
     sig_blocks_1[1][0] = 1;
     sig_blocks_1[1][1] = 2;
     sig_blocks_1[2][0] = 2;
-    sig_blocks_1[2][1] = 3;
+    sig_blocks_1[2][1] = 1;//! Changed this one value
     sig_blocks_1[3][0] = 3;
     sig_blocks_1[3][1] = 2;
 
-    std::vector< sequence<2,size_t> > sig_blocks_2(4);
-    sig_blocks_2[0][0] = 0; 
-    sig_blocks_2[0][1] = 1;
-    sig_blocks_2[1][0] = 1;
-    sig_blocks_2[1][1] = 2;
-    sig_blocks_2[2][0] = 2;
-    sig_blocks_2[2][1] = 1;//! Changed this one value
-    sig_blocks_2[3][0] = 3;
-    sig_blocks_2[3][1] = 2;
-
-    sparse_bispace<2> two_d_1 = spb_1 % spb_1 << sig_blocks_1; 
-    sparse_bispace<2> two_d_2 = spb_1 % spb_1 << sig_blocks_2; 
+    vector<subspace> subspaces(2,sub);
+    vector<sparse_block_tree> trees(1,sparse_block_tree(sig_blocks_0,subspaces));
+    idx_list tree_offsets(0);
+    sparse_bispace_impl two_d_0(subspaces,trees,tree_offsets);
+    trees[0] = sparse_block_tree(sig_blocks_1,subspaces);
+    sparse_bispace_impl two_d_1(subspaces,trees,tree_offsets);
 
     if(two_d_1 == two_d_2)
     {
