@@ -251,9 +251,10 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     expr_tree::node_id_t last_op_node_id = e.get_edges_out(root_id)[1];
     const node& last_op_node = e.get_vertex(last_op_node_id);
 
-    direct_sparse_btensor<3>* in_unblocked_tensor_ptr = NULL;
-    direct_sparse_btensor<2>* out_unblocked_tensor_ptr = NULL;
-    direct_sparse_btensor<3>* reblocked_inter = NULL;
+    direct_sparse_btensor<3>* D_unblocked_tensor_ptr = NULL;
+    direct_sparse_btensor<3>* H_unblocked_tensor_ptr = NULL;
+    direct_sparse_btensor<2>* M_unblocked_tensor_ptr = NULL;
+    direct_sparse_btensor<2>* M_reblocked_0_tensor_ptr = NULL;
     std::vector<idx_list> batched_subspace_grps;
     bool hack = false;
     if(N == 2)
@@ -263,48 +264,70 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
             expr_tree::edge_list_t last_op_inputs = e.get_edges_out(last_op_node_id);
             if(last_op_inputs.size() == 2)
             {
+                expr_tree::node_id_t op_child_0_id = last_op_inputs[0];
+                const node& op_child_0 = e.get_vertex(op_child_0_id);
                 expr_tree::node_id_t op_child_1_id = last_op_inputs[1];
                 const node& op_child_1 = e.get_vertex(op_child_1_id);
-                if(op_child_1.check_type<node_assign>())
+                if(op_child_0.check_type<node_assign>() && op_child_1.check_type<node_assign>())
                 {
-                    const node& result_tensor_node_abs = e.get_vertex(e.get_edges_out(op_child_1_id)[0]);
-                    if(result_tensor_node_abs.get_n() == 3)
+                    const node& D_result_tensor_node_abs = e.get_vertex(e.get_edges_out(op_child_0_id)[0]);
+                    const node& H_result_tensor_node_abs = e.get_vertex(e.get_edges_out(op_child_1_id)[0]);
+                    if(D_result_tensor_node_abs.get_n() == 3 && H_result_tensor_node_abs.get_n() == 3)
                     {
-                        const node_ident_any_tensor<3,T>& result_tensor_node = dynamic_cast< const node_ident_any_tensor<3,T>& >(result_tensor_node_abs);
-                        gen_sparse_btensor<3,T>& C = dynamic_cast< gen_sparse_btensor<3,T>& >(result_tensor_node.get_tensor());
-                        sparse_bispace<3> bispace = C.get_bispace();
-                        if(bispace.get_index_group_containing_subspace(0) == 0 && bispace.get_index_group_order(0) == 1)
+                        const node_ident_any_tensor<3,T>& D_result_tensor_node = dynamic_cast< const node_ident_any_tensor<3,T>& >(D_result_tensor_node_abs);
+                        gen_sparse_btensor<3,T>& D = dynamic_cast< gen_sparse_btensor<3,T>& >(D_result_tensor_node.get_tensor());
+                        const node_ident_any_tensor<3,T>& H_result_tensor_node = dynamic_cast< const node_ident_any_tensor<3,T>& >(H_result_tensor_node_abs);
+                        gen_sparse_btensor<3,T>& H = dynamic_cast< gen_sparse_btensor<3,T>& >(H_result_tensor_node.get_tensor());
+                        sparse_bispace<3> D_bispace = D.get_bispace();
+                        sparse_bispace<3> H_bispace = H.get_bispace();
+                        if(D_bispace.get_index_group_containing_subspace(0) == 0 && D_bispace.get_index_group_order(0) == 1)
                         {
-                            //Add the tree to unblock H
-                            expr_tree ub_subtree(node_assign(3));
-                            sparse_bispace<1> unblocked_subspace(bispace[0].get_dim()); 
-                            sparse_bispace<3> in_unblocked_bispace = unblocked_subspace | bispace.contract(0);
+                            //Add the tree to unblock D
+                            expr_tree::node_id_t D_unblocked_assign_id = e.insert(op_child_0_id,node_assign(3));
+                            expr_tree::node_id_t D_ub_subtree_id = e.insert(op_child_0_id,node_unblock(3,0));
+                            sparse_bispace<1> unblocked_subspace(D_bispace[0].get_dim()); 
+                            sparse_bispace<3> D_unblocked_bispace = unblocked_subspace | D_bispace.contract(0);
+                            D_unblocked_tensor_ptr = new direct_sparse_btensor<3>(D_unblocked_bispace);
+                            expr_tree D_ub_subtree = e.get_subtree(D_ub_subtree_id);
+                            e.erase(D_ub_subtree_id);
+                            e.add(D_unblocked_assign_id,node_ident_any_tensor<3,T>(*D_unblocked_tensor_ptr));
+                            e.add(D_unblocked_assign_id,D_ub_subtree);
 
-                            expr_tree::node_id_t in_unblocked_assign_id = ub_subtree.get_root();
-                            in_unblocked_tensor_ptr = new direct_sparse_btensor<3>(in_unblocked_bispace);
-                            ub_subtree.add(in_unblocked_assign_id,node_ident_any_tensor<3,T>(*in_unblocked_tensor_ptr));
-                            expr_tree::node_id_t n_ub_id = ub_subtree.add(in_unblocked_assign_id,node_unblock(3,0));
-                            ub_subtree.add(n_ub_id,e.get_subtree(op_child_1_id));
+                            //Add the tree to unblock H
+                            expr_tree H_ub_subtree(node_assign(3));
+                            sparse_bispace<3> H_unblocked_bispace = unblocked_subspace | H_bispace.contract(0);
+
+                            expr_tree::node_id_t H_unblocked_assign_id = H_ub_subtree.get_root();
+                            H_unblocked_tensor_ptr = new direct_sparse_btensor<3>(H_unblocked_bispace);
+                            H_ub_subtree.add(H_unblocked_assign_id,node_ident_any_tensor<3,T>(*H_unblocked_tensor_ptr));
+                            expr_tree::node_id_t n_ub_id = H_ub_subtree.add(H_unblocked_assign_id,node_unblock(3,0));
+                            H_ub_subtree.add(n_ub_id,e.get_subtree(op_child_1_id));
 
                             //Tie that tree to the existing tree, replacing the original subtree for H
-                            expr_tree::node_id_t ub_subtree_id = e.add(last_op_node_id,ub_subtree);
+                            e.add(last_op_node_id,H_ub_subtree);
                             e.erase_subtree(op_child_1_id);
 
-                            //Add the tree to reblock M
+                            //Add the tree to reblock M idx 0 and 1
                             expr_tree rb_subtree(node_reblock(2,1));
                             expr_tree::node_id_t rb_root_id = rb_subtree.get_root();
-                            expr_tree::node_id_t out_unblocked_assign_id = rb_subtree.add(rb_root_id,node_assign(2));
-                            sparse_bispace<2> out_unblocked_bispace = m_bispace[0] | unblocked_subspace;
-                            out_unblocked_tensor_ptr = new direct_sparse_btensor<2>(out_unblocked_bispace);
-                            rb_subtree.add(out_unblocked_assign_id,node_ident_any_tensor<2,T>(*out_unblocked_tensor_ptr));
-                            rb_subtree.add(out_unblocked_assign_id,e.get_subtree(last_op_node_id));
+                            expr_tree::node_id_t M_reblocked_0_assign_id = rb_subtree.add(rb_root_id,node_assign(2));
+                            M_reblocked_0_tensor_ptr = new direct_sparse_btensor<2>(unblocked_subspace|m_bispace[1]);
+                            rb_subtree.add(M_reblocked_0_assign_id,node_ident_any_tensor<2,T>(*M_reblocked_0_tensor_ptr));
+                            expr_tree::node_id_t reblock_0_id = rb_subtree.add(M_reblocked_0_assign_id,node_reblock(2,0));
+
+                            expr_tree::node_id_t M_unblocked_assign_id = rb_subtree.add(reblock_0_id,node_assign(2));
+                            M_unblocked_tensor_ptr = new direct_sparse_btensor<2>(unblocked_subspace|unblocked_subspace);
+                            rb_subtree.add(M_unblocked_assign_id,node_ident_any_tensor<2,T>(*M_unblocked_tensor_ptr));
+                            rb_subtree.add(M_unblocked_assign_id,e.get_subtree(last_op_node_id));
                             e.erase_subtree(last_op_node_id);
                             e.add(root_id,rb_subtree);
 
-                            batched_subspace_grps.push_back(idx_list()); // M <- M unblocked
-                            batched_subspace_grps.push_back(idx_list(2,1)); // M unblocked <- D,H unblocked
+                            batched_subspace_grps.push_back(idx_list()); // M <- M unblocked 
+                            batched_subspace_grps.push_back(idx_list()); // M unblocked <- M double unblocked 
+                            batched_subspace_grps.push_back(idx_list(2,1)); // M double unblocked <- D unblocked,H unblocked
+                            batched_subspace_grps.push_back(idx_list(2,1)); // D unblocked <- D
                             batched_subspace_grps.push_back(idx_list(1,1)); // D <- C
-                            batched_subspace_grps.push_back(idx_list(2,1)); // H unblocked <- H
+                            batched_subspace_grps.push_back(idx_list(2,1)); // H  unblocked <- H
                             idx_list grp_0(1,1);
                             grp_0.push_back(2);
                             batched_subspace_grps.push_back(grp_0); // H  <- G
@@ -327,7 +350,8 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     {
         M_unblocked_size = direct_bispace_grps[0][0].get_nnz();
         direct_bispace_grps[0] = std::vector<sparse_bispace_any_order>();
-        direct_bispace_grps[1].erase(direct_bispace_grps[1].begin());
+        direct_bispace_grps[1] = std::vector<sparse_bispace_any_order>();
+        direct_bispace_grps[2].erase(direct_bispace_grps[2].begin());
     }
     else
     {
@@ -342,14 +366,17 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     if(hack)
     {
         batch_array_size_grps[0].push_back(M_unblocked_size);
-        batch_array_size_grps[1].insert(batch_array_size_grps[1].begin(),M_unblocked_size);
+        batch_array_size_grps[1].push_back(M_unblocked_size);
+        batch_array_size_grps[1].push_back(M_unblocked_size);
+        batch_array_size_grps[2].insert(batch_array_size_grps[2].begin(),M_unblocked_size);
     }
     bp.set_batch_array_sizes(batch_array_size_grps);
     bp.get_batch(this->m_data_ptr);
 
-    if(in_unblocked_tensor_ptr != NULL) delete in_unblocked_tensor_ptr;
-    if(out_unblocked_tensor_ptr != NULL) delete out_unblocked_tensor_ptr;
-    if(reblocked_inter != NULL) delete reblocked_inter;
+    if(D_unblocked_tensor_ptr == NULL) delete D_unblocked_tensor_ptr;
+    if(H_unblocked_tensor_ptr == NULL) delete H_unblocked_tensor_ptr;
+    if(M_unblocked_tensor_ptr == NULL) delete M_unblocked_tensor_ptr;
+    if(M_reblocked_0_tensor_ptr == NULL) delete M_reblocked_0_tensor_ptr;
 }
 
 } // namespace libtensor
