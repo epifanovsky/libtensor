@@ -96,7 +96,7 @@ std::ostream &operator<<(std::ostream &os,
         adapter3_t g(set);
         for (typename adapter3_t::iterator its = g.begin();
                 its != g.end(); its++) {
-            os << g.get_elem(its);
+            os << g.get_elem(its) << std::endl;
         }
     }
     return os;
@@ -108,7 +108,7 @@ std::ostream &operator<<(std::ostream &os, const se_label<N, T> &se) {
 
     os << "Table ID: " << se.get_table_id() << std::endl;
     os << "Block labels: " << se.get_labeling() << std::endl;
-    os << "Rule: " << std::endl << se.get_rule();
+    os << "Rule: " << se.get_rule();
     return os;
 }
 
@@ -165,7 +165,7 @@ std::ostream &operator<<(std::ostream &os, const evaluation_rule<N> &er) {
 
     for (typename evaluation_rule<N>::iterator it = er.begin();
             it != er.end(); it++) {
-        os << er.get_product(it) << std::endl;
+        os << " " << er.get_product(it);
     }
     return os;
 }
