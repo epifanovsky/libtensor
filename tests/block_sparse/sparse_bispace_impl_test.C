@@ -42,7 +42,6 @@ void sparse_bispace_impl_test::test_nd_equality_true() throw(libtest::test_excep
     }
 }
 
-#if 0
 void sparse_bispace_impl_test::test_equality_false_sparsity_2d() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_bispace_impl_test::test_equality_false_sparsity_2d()";
@@ -79,19 +78,17 @@ void sparse_bispace_impl_test::test_equality_false_sparsity_2d() throw(libtest::
     sig_blocks_1[3][1] = 2;
 
     vector<subspace> subspaces(2,sub);
-    vector<sparse_block_tree> trees(1,sparse_block_tree(sig_blocks_0,subspaces));
-    idx_list tree_offsets(0);
-    sparse_bispace_impl two_d_0(subspaces,trees,tree_offsets);
-    trees[0] = sparse_block_tree(sig_blocks_1,subspaces);
-    sparse_bispace_impl two_d_1(subspaces,trees,tree_offsets);
+    sparse_bispace_impl two_d_0(subspaces,sparse_block_tree(sig_blocks_0,subspaces));
+    sparse_bispace_impl two_d_1(subspaces,sparse_block_tree(sig_blocks_1,subspaces));
 
-    if(two_d_1 == two_d_2)
+    if(two_d_0 == two_d_1)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace<N>::operator==(...) returned incorrect value");
     }
 }
 
+#if 0
 void sparse_bispace_test::test_equality_true_sparsity_2d() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_bispace_test::test_equality_true_sparsity_2d()";

@@ -12,10 +12,15 @@ private:
     std::vector<subspace> m_subspaces;
 public:
     static const char* k_clazz; //!< Class name
+    std::vector<sparse_block_tree> m_trees;
 
+    //Constructor called to create a fully dense composite bispace
+    sparse_bispace_impl(const std::vector<subspace>& subspaces);
+
+    //Constructor called to create a single sparse subspace group
     sparse_bispace_impl(const std::vector<subspace>& subspaces,
-                        const std::vector<sparse_block_tree>& trees = std::vector<sparse_block_tree>(),
-                        const idx_list& tree_offsets = idx_list()) : m_subspaces(subspaces) { }
+                        const sparse_block_tree& tree);
+                        
 
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if:

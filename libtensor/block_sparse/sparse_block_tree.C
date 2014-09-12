@@ -10,7 +10,8 @@ namespace libtensor {
 //Used to return empty trees by sub_tree
 static const sparse_block_tree empty = sparse_block_tree(vector< sequence<1,size_t> >(),vector< sparse_bispace<1> >(1,sparse_bispace<1>(1)));
 
-void sparse_block_tree::set_offsets_sizes_nnz(const vector< sparse_bispace<1> >& subspaces)
+template<>
+void sparse_block_tree::set_offsets_sizes_nnz(const std::vector<subspace>& subspaces)
 {
     if(subspaces.size() != m_order)
     {
@@ -21,18 +22,44 @@ void sparse_block_tree::set_offsets_sizes_nnz(const vector< sparse_bispace<1> >&
     size_t offset = 0;
     for(iterator it = begin(); it != end(); ++it)
     {
-        vector<key_t> key = it.key();
+        std::vector<key_t> key = it.key();
         size_t size = 1;
         for(size_t i = 0; i < m_order; ++i)
         {
             size *= subspaces[i].get_block_size(key[i]);
         }
-        *it = value_t(1,make_pair(offset,size));
+        *it = value_t(1,std::make_pair(offset,size));
         offset += size;
     }
     
     m_nnz = offset;
 }
+
+template<>
+void sparse_block_tree::set_offsets_sizes_nnz(const std::vector< sparse_bispace<1> >& subspaces)
+{
+    if(subspaces.size() != m_order)
+    {
+        throw bad_parameter(g_ns,"sparse_block_tree","set_offsets_sizes_nnz",
+                            __FILE__,__LINE__,"Wrong number of subspaces specified!");
+    }
+
+    size_t offset = 0;
+    for(iterator it = begin(); it != end(); ++it)
+    {
+        std::vector<key_t> key = it.key();
+        size_t size = 1;
+        for(size_t i = 0; i < m_order; ++i)
+        {
+            size *= subspaces[i].get_block_size(key[i]);
+        }
+        *it = value_t(1,std::make_pair(offset,size));
+        offset += size;
+    }
+    
+    m_nnz = offset;
+}
+
 
 //Assignment operator
 sparse_block_tree& sparse_block_tree::operator=(const sparse_block_tree& rhs)

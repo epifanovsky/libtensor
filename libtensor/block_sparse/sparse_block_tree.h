@@ -5,6 +5,7 @@
 #include "../core/sequence.h"
 #include "runtime_permutation.h" 
 #include "sparse_defs.h"
+#include "subspace.h"
 
 namespace libtensor { 
 
@@ -54,7 +55,8 @@ public:
     const_iterator search(const std::vector<size_t>& key) const;
 
     //Used to initialize the values of the tree to the offsets and sizes of the blocks, also sets nnz
-    void set_offsets_sizes_nnz(const std::vector< sparse_bispace<1> >& subspaces);
+    template<typename subspace_t>
+    void set_offsets_sizes_nnz(const std::vector<subspace_t>& subspaces);
 
     //Return the number of nonzero tensor elements corresponding to this tree
     size_t get_nnz() const { return m_nnz; }
@@ -82,8 +84,8 @@ public:
     template<size_t N>
     friend class sparse_bispace;
 
-    template<size_t N>
-    sparse_block_tree(const std::vector< sequence<N,key_t> >& sig_blocks,const std::vector< sparse_bispace<1> >& subspaces);
+    template<size_t N,typename subspace_t>
+    sparse_block_tree(const std::vector< sequence<N,key_t> >& sig_blocks,const std::vector<subspace_t>& subspaces);
 private:
     //Utility struct used to implement permute
     struct kv_pair_compare;
@@ -146,8 +148,8 @@ void sparse_block_tree::push_back(const container& key,size_t key_order)
     ++m_n_entries;
 }
 
-template<size_t N>
-sparse_block_tree::sparse_block_tree(const std::vector< sequence<N,key_t> >& sig_blocks,const std::vector< sparse_bispace<1> >& subspaces)
+template<size_t N,typename subspace_t>
+sparse_block_tree::sparse_block_tree(const std::vector< sequence<N,key_t> >& sig_blocks,const std::vector<subspace_t>& subspaces)
 {
     if(N == 0)
     {

@@ -337,7 +337,7 @@ batch_provider<T>::~batch_provider()
     {
         if(m_suppliers[i] != NULL)
         {
-            if(m_ptrs[i] != NULL) delete m_ptrs[i];
+            if(m_ptrs[i] != NULL) delete [] m_ptrs[i];
             if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),i) != m_suppliers_allocd.end())
             {
                 delete m_suppliers[i];
