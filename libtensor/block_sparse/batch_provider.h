@@ -184,6 +184,10 @@ public:
             m_bispaces = kb.get_bispaces();
         }
     }
+
+    ~kernel_builder()
+    {
+    }
 };
 
 } // namespace expr
@@ -344,6 +348,7 @@ batch_provider<T>::~batch_provider()
             }
         }
     }
+    delete m_kern;
 }
 
 
