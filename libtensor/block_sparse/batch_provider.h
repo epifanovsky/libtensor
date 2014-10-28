@@ -245,7 +245,20 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
     }
 
     expr_tree::edge_list_t edges = expr_tree::edge_list_t(1,children[0]);
-    expr_tree::edge_list_t input_edges = tree.get_edges_out(children[1]);
+
+    //Our contraction kernels handle permutations of the output internally, we can ignore them
+    expr_tree::node_id_t op_node_id = children[1];
+    const node& op_node = tree.get_vertex(op_node_id); 
+    if(op_node.check_type<node_transform_base>())
+    {
+        expr_tree::node_id_t transf_child_id = tree.get_edges_out(op_node_id)[0]; 
+        const node& transf_child = tree.get_vertex(transf_child_id);
+        if(!(transf_child.check_type<node_ident>() || transf_child.check_type<node_assign>()))
+        {
+            op_node_id = transf_child_id;
+        }
+    }
+    expr_tree::edge_list_t input_edges = tree.get_edges_out(op_node_id);
     expr_tree::edge_list_t input_assignment_nodes;
 
     //Figure out which inputs correspond to tensors and which are nested expressions
@@ -297,7 +310,7 @@ batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_
         }
     }
     //Operation node goes at the end
-    edges.push_back(children[1]);
+    edges.push_back(op_node_id);
     kernel_builder<T> kb(tree,edges);
     kb.build_kernel(m_kern);
     m_ptrs = kb.get_ptrs();
