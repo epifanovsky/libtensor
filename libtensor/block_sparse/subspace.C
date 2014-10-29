@@ -36,13 +36,11 @@ void subspace::split(const std::vector<size_t>& split_points) throw(out_of_bound
         size_t split_point = split_points[i];
         if(split_point > (m_dim - 1))
         {
-            throw out_of_bounds(g_ns,k_clazz,"split(...)",
-                    __FILE__,__LINE__,"Split point indices cannot exceed (dim - 1)"); 
+            throw out_of_bounds(g_ns,k_clazz,"split(...)",__FILE__,__LINE__,"Split point indices cannot exceed (dim - 1)"); 
         }
         else if(split_point <= m_abs_indices.back())
         {
-            throw out_of_bounds(g_ns,k_clazz,"split(...)",
-                    __FILE__,__LINE__,"Split point indices must be strictly increasing"); 
+            throw out_of_bounds(g_ns,k_clazz,"split(...)",__FILE__,__LINE__,"Split point indices must be strictly increasing"); 
         }
         m_abs_indices.push_back(split_point);
     }

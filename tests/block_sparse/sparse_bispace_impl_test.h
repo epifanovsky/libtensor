@@ -14,9 +14,8 @@ private:
     /*
      * operator==() tests
      */
-    void test_nd_equality_true() throw(libtest::test_exception);
-    void test_equality_false_sparsity_2d() throw(libtest::test_exception);
-    void test_equality_true_sparsity_2d() throw(libtest::test_exception);
+    void test_equality_2d() throw(libtest::test_exception);
+    void test_equality_2d_sparse() throw(libtest::test_exception);
 
     /*
      * sparse_bispace<N>::operator[](...) tests

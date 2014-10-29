@@ -10,16 +10,20 @@ class sparse_bispace_impl
 {
 private:
     std::vector<subspace> m_subspaces;
+    std::vector<sparse_block_tree> m_trees;
 public:
     static const char* k_clazz; //!< Class name
-    std::vector<sparse_block_tree> m_trees;
 
-    //Constructor called to create a fully dense composite bispace
-    sparse_bispace_impl(const std::vector<subspace>& subspaces);
+    //1D special case
+    sparse_bispace_impl(const subspace& subspace_0) : m_subspaces(1,subspace_0) {};
 
-    //Constructor called to create a single sparse subspace group
+    //Constructor called by '%' operator of sparse_bispace 
     sparse_bispace_impl(const std::vector<subspace>& subspaces,
                         const sparse_block_tree& tree);
+
+    //Constructor called by '|' operator of sparse_bispace
+    sparse_bispace_impl(const sparse_bispace_impl& lhs,
+                        const sparse_bispace_impl& rhs);
                         
 
     /** \brief Returns whether this object is equal to another of the same dimension. 
@@ -28,6 +32,7 @@ public:
      *              2. Their sparsity metadata is equal
      **/
     bool operator==(const sparse_bispace_impl& rhs) const;
+    bool operator!=(const sparse_bispace_impl& rhs) const { return !(*this == rhs); }
 
 };
 

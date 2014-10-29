@@ -7,44 +7,41 @@ namespace libtensor {
 
 void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
 {
-    test_nd_equality_true();
-    /*test_equality_false_sparsity_2d();*/
-    /*test_equality_true_sparsity_2d();*/
+    test_equality_2d();
+    test_equality_2d_sparse();
+
+    /*test_permute_2d_10();*/
+    /*test_permute_3d_dense_sparse_021();*/
+    /*test_permute_3d_non_contiguous_sparsity();*/
+    /*test_permute_3d_fully_sparse_210();*/
 }
 
 /* Tests equality operator for multidimensional block index spaces
  *
  */
-void sparse_bispace_impl_test::test_nd_equality_true() throw(libtest::test_exception) {
+void sparse_bispace_impl_test::test_equality_2d() throw(libtest::test_exception) {
 
-    static const char *test_name = "sparse_bispace_test::test_nd_equality_true()";
+    static const char *test_name = "sparse_bispace_test::test_equality_2d";
 
-    //First two
-    vector<subspace> subspaces(1,subspace(5));
-    vector<size_t> split_points_0; 
-    split_points_0.push_back(1);
-    split_points_0.push_back(3);
-    subspaces[0].split(split_points_0);
+    size_t sp_0[2] = {1,3};  
+    subspace sub_0(5,idx_list(sp_0,sp_0+2));
 
-    subspaces.push_back(subspace(6));
-    vector<size_t> split_points_1; 
-    split_points_1.push_back(2);
-    split_points_1.push_back(5);
-    subspaces[1].split(split_points_1);
+    size_t sp_1[2] = {2,5};  
+    subspace sub_1(6,idx_list(sp_1,sp_1+2));
 
-    sparse_bispace_impl spb_i_0(subspaces);
-    sparse_bispace_impl spb_i_1(subspaces);
+    sparse_bispace_impl spb_0(sub_0,sub_1);
+    sparse_bispace_impl spb_1(sub_0,sub_1);
 
-    if(!(spb_i_0 == spb_i_1))
+    if(!(spb_0 == spb_1))
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::operator==(...) returned false");
     }
 }
 
-void sparse_bispace_impl_test::test_equality_false_sparsity_2d() throw(libtest::test_exception)
+void sparse_bispace_impl_test::test_equality_2d_sparse() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_impl_test::test_equality_false_sparsity_2d()";
+    static const char *test_name = "sparse_bispace_impl_test::test_equality_2d_sparse()";
 
     /* Splitting pattern results in the following block sizes:
      * 0: 2
@@ -52,9 +49,8 @@ void sparse_bispace_impl_test::test_equality_false_sparsity_2d() throw(libtest::
      * 2: 4
      * 3: 2
      */
-    size_t split_points_arr[3] = {2,5,9};
-    idx_list split_points(split_points_arr,split_points_arr+3); 
-    subspace sub(11,split_points);
+    size_t sp_0[3] = {2,5,9};
+    vector<subspace> subspaces(2,subspace(11,idx_list(sp_0,sp_0+3)));
 
     //Specify different sets of significant blocks
     std::vector< sequence<2,size_t> > sig_blocks_0(4);
@@ -77,54 +73,44 @@ void sparse_bispace_impl_test::test_equality_false_sparsity_2d() throw(libtest::
     sig_blocks_1[3][0] = 3;
     sig_blocks_1[3][1] = 2;
 
-    vector<subspace> subspaces(2,sub);
     sparse_bispace_impl two_d_0(subspaces,sparse_block_tree(sig_blocks_0,subspaces));
-    sparse_bispace_impl two_d_1(subspaces,sparse_block_tree(sig_blocks_1,subspaces));
+    sparse_bispace_impl two_d_1(subspaces,sparse_block_tree(sig_blocks_0,subspaces));
+    sparse_bispace_impl two_d_2(subspaces,sparse_block_tree(sig_blocks_1,subspaces));
 
-    if(two_d_0 == two_d_1)
+    if(two_d_0 != two_d_1)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::operator==(...) returned incorrect value");
+                "sparse_bispace_impl::operator==(...) returned incorrect value");
+    }
+
+    if(two_d_0 == two_d_2)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace_impl::operator==(...) returned incorrect value");
     }
 }
 
 #if 0
-void sparse_bispace_test::test_equality_true_sparsity_2d() throw(libtest::test_exception)
+void sparse_bispace_impl_test::test_permute_2d_10() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_test::test_equality_true_sparsity_2d()";
+    static const char *test_name = "sparse_bispace_impl_test::test_permute_2d_10()";
 
-    sparse_bispace<1> spb_1(11);
+    size_t sp_arr_0 = {1,3};
+    subspace sub_0(5,idx_list(sp_arr_0,sp_arr_0+2));
+    size_t sp_arr_1 = {2,5};
+    subspace sub_1(5,idx_list(sp_arr_1,sp_arr_1+2));
 
-    /* Splitting pattern results in the following block sizes:
-     * 0: 2
-     * 1: 3
-     * 2: 4
-     * 3: 2
-     */
-    std::vector<size_t> split_points_1; 
-    split_points_1.push_back(2);
-    split_points_1.push_back(5);
-    split_points_1.push_back(9);
-    spb_1.split(split_points_1);
+    sparse_bispace_impl two_d(subspaces)
+    swap(subspaces.begin(),subspaces.begin()+1);
+    sparse_bispace_impl correct(subspaces)
 
-    //Specify different sets of significant blocks
-    std::vector< sequence<2,size_t> > sig_blocks_1(4);
-    sig_blocks_1[0][0] = 0; 
-    sig_blocks_1[0][1] = 1;
-    sig_blocks_1[1][0] = 1;
-    sig_blocks_1[1][1] = 2;
-    sig_blocks_1[2][0] = 2;
-    sig_blocks_1[2][1] = 3;
-    sig_blocks_1[3][0] = 3;
-    sig_blocks_1[3][1] = 2;
-
-    sparse_bispace<2> two_d_1 = spb_1 % spb_1 << sig_blocks_1; 
-    sparse_bispace<2> two_d_2 = spb_1 % spb_1 << sig_blocks_1; 
-
-    if(two_d_1 != two_d_2)
+    runtime_permutation perm;
+    perm.permute(0,1);
+    if(two_d.permute(perm) != (spb_2 | spb_1))
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace<N>::operator==(...) returned incorrect value");
+                "sparse_bispace_impl::permute(...) returned incorrect value");
+
     }
 }
 #endif
