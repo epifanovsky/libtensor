@@ -3,6 +3,7 @@
 
 #include "subspace.h"
 #include "sparse_block_tree.h"
+#include "runtime_permutation.h"
 
 namespace libtensor {
 
@@ -11,6 +12,7 @@ class sparse_bispace_impl
 private:
     std::vector<subspace> m_subspaces;
     std::vector<sparse_block_tree> m_trees;
+    std::vector<idx_list> m_tree_subspaces;
 public:
     static const char* k_clazz; //!< Class name
 
@@ -25,6 +27,9 @@ public:
     sparse_bispace_impl(const sparse_bispace_impl& lhs,
                         const sparse_bispace_impl& rhs);
                         
+    /** \brief Returns an appropriately permuted copy of this bispace 
+     **/
+    sparse_bispace_impl permute(const runtime_permutation& perm) const;
 
     /** \brief Returns whether this object is equal to another of the same dimension. 
      *         Two N-D spaces are equal if:
@@ -33,7 +38,6 @@ public:
      **/
     bool operator==(const sparse_bispace_impl& rhs) const;
     bool operator!=(const sparse_bispace_impl& rhs) const { return !(*this == rhs); }
-
 };
 
 } // namespace libtensor

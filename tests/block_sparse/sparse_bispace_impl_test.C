@@ -10,7 +10,7 @@ void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
     test_equality_2d();
     test_equality_2d_sparse();
 
-    /*test_permute_2d_10();*/
+    test_permute_2d_10();
     /*test_permute_3d_dense_sparse_021();*/
     /*test_permute_3d_non_contiguous_sparsity();*/
     /*test_permute_3d_fully_sparse_210();*/
@@ -90,29 +90,27 @@ void sparse_bispace_impl_test::test_equality_2d_sparse() throw(libtest::test_exc
     }
 }
 
-#if 0
 void sparse_bispace_impl_test::test_permute_2d_10() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_bispace_impl_test::test_permute_2d_10()";
 
-    size_t sp_arr_0 = {1,3};
-    subspace sub_0(5,idx_list(sp_arr_0,sp_arr_0+2));
-    size_t sp_arr_1 = {2,5};
-    subspace sub_1(5,idx_list(sp_arr_1,sp_arr_1+2));
+    size_t sp_0[2] = {1,3};  
+    subspace sub_0(5,idx_list(sp_0,sp_0+2));
 
-    sparse_bispace_impl two_d(subspaces)
-    swap(subspaces.begin(),subspaces.begin()+1);
-    sparse_bispace_impl correct(subspaces)
+    size_t sp_1[2] = {2,5};  
+    subspace sub_1(6,idx_list(sp_1,sp_1+2));
 
-    runtime_permutation perm;
+    sparse_bispace_impl spb_0(sub_0,sub_1);
+    sparse_bispace_impl spb_1(sub_1,sub_0);
+
+    runtime_permutation perm(2);
     perm.permute(0,1);
-    if(two_d.permute(perm) != (spb_2 | spb_1))
+    if(spb_0.permute(perm) != spb_1)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::permute(...) returned incorrect value");
 
     }
 }
-#endif
 
 } // namespace libtensor
