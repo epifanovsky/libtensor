@@ -76,6 +76,8 @@ public:
     sparse_block_tree truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const;
 
     //Used for discontinuous sparsity (ex ijk, i and k coupled by sparsity)
+    sparse_block_tree insert_subspace(size_t subspace_idx,const subspace& sub) const;
+    //TODO: DELETE THIS DEPRECATED
     sparse_block_tree insert_subspace(size_t subspace_idx,const sparse_bispace<1>& subspace) const;
 
     template<bool is_const>

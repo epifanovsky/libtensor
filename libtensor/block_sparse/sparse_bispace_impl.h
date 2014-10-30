@@ -12,7 +12,7 @@ class sparse_bispace_impl
 private:
     std::vector<subspace> m_subspaces;
     std::vector<sparse_block_tree> m_trees;
-    std::vector<idx_list> m_tree_subspaces;
+    std::vector<size_t> m_tree_offsets;
 public:
     static const char* k_clazz; //!< Class name
 
