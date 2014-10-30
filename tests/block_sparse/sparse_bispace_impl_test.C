@@ -14,6 +14,8 @@ void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
     test_permute_3d_dense_sparse_021();
     test_permute_3d_non_contiguous_sparsity();
     test_permute_3d_fully_sparse_210();
+
+    test_contract_3d_dense();
 }
 
 /* Tests equality operator for multidimensional block index spaces
@@ -267,6 +269,32 @@ void sparse_bispace_impl_test::test_permute_3d_fully_sparse_210() throw(libtest:
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::permute(...) returned incorrect value");
     }
+}
+
+void sparse_bispace_impl_test::test_contract_3d_dense() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_impl_test::test_contract_3d_dense()";
+
+#if 0
+    size_t sp_0[2] = {2,5};
+    subspace sub_0(8,idx_list(sp_0,sp_0+2));
+
+    size_t sp_1[3] = {3,6,8};
+    subspace sub_1(9,idx_list(sp_0,sp_0+3));
+
+    size_t sp_2[2] = {4,7};
+    subspace sub_2(10,idx_list(sp_0,sp_0+2));
+
+    sparse_bispace_impl three_d(sub_0,sparse_bispace_impl(sub_1,sub_2));
+    sparse_bispace_impl two_d = three_d.contract(1);
+    sparse_bispace_impl two_d_correct(sub_0,sub_2);
+
+    if(two_d != two_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace_impl::contract(...) returned incorrect value");
+    }
+#endif
 }
 
 } // namespace libtensor
