@@ -7,6 +7,7 @@ namespace libtensor {
 
 void memory_reserve_test::perform() throw(libtest::test_exception)
 {
+#if 0
     test_add_remove();
     test_add_not_enough_mem();
     test_remove_not_enough_tensors();
@@ -14,8 +15,10 @@ void memory_reserve_test::perform() throw(libtest::test_exception)
     test_memory_reserve_destructor();
     test_tensor_copy_constructor();
     test_reset_tensor_memory_reserve();
+#endif
 }
 
+#if 0
 void memory_reserve_test::test_add_remove() throw(libtest::test_exception)
 {
     static const char *test_name = "memory_reserve_test::test_add_remove()";
@@ -180,5 +183,6 @@ void memory_reserve_test::test_reset_tensor_memory_reserve() throw(libtest::test
                 "Tensor did not properly add to new memory reserve");
     }
 }
+#endif
 
 } // namespace libtensor

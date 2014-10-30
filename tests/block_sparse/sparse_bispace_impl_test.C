@@ -7,6 +7,7 @@ namespace libtensor {
 
 void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
 {
+#if 0
     test_equality_2d();
     test_equality_2d_sparse();
 
@@ -16,8 +17,10 @@ void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
     test_permute_3d_fully_sparse_210();
 
     test_contract_3d_dense();
+#endif
 }
 
+#if 0
 /* Tests equality operator for multidimensional block index spaces
  *
  */
@@ -289,12 +292,13 @@ void sparse_bispace_impl_test::test_contract_3d_dense() throw(libtest::test_exce
     sparse_bispace_impl two_d = three_d.contract(1);
     sparse_bispace_impl two_d_correct(sub_0,sub_2);
 
-    if(two_d != two_d_correct)
+   if(two_d != two_d_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::contract(...) returned incorrect value");
     }
 #endif
 }
+#endif
 
 } // namespace libtensor

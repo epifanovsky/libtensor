@@ -8,6 +8,7 @@ namespace libtensor {
 
 void subspace_iterator_test::perform() throw(libtest::test_exception) 
 {
+#if 0
     test_get_block_index_dense();
     test_incr_dense();
     test_get_block_index_sparse();
@@ -16,8 +17,10 @@ void subspace_iterator_test::perform() throw(libtest::test_exception)
     test_done_sparse();
     test_get_slice_size_dense();
     test_get_slice_size_sparse();
+#endif
 }
 
+#if 0
 void subspace_iterator_test::test_get_block_index_dense() throw(libtest::test_exception)
 {
     static const char *test_name = "subspace_iterator_test::test_get_block_index_dense()";
@@ -161,5 +164,6 @@ void subspace_iterator_test::test_get_slice_size_sparse() throw(libtest::test_ex
                 "subspace_iterator::get_slice_size(...) did not return correct value for subspace 6 (sparse subspace)");
     }
 }
+#endif
 
 } // namespace libtensor

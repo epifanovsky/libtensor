@@ -17,6 +17,7 @@ using namespace std;
 
 void run_benchmark(const char* file_name)
 {
+#if 0
     srand(time(NULL));
     double start_seconds = read_timer();
 
@@ -142,10 +143,12 @@ void run_benchmark(const char* file_name)
     }
     cout << read_timer() - seconds << " s\n";
     cout << "TIME IN FUNCTION SCOPE: " << read_timer() - start_seconds << " s\n";
+#endif
 }
 
 int main(int argc,char *argv[])
 {
+#if 0
     const char* alkane_file_names[9] = {"../tests/block_sparse/alkane_dz_003_data.txt",
                                         "../tests/block_sparse/alkane_tz_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_010_data.txt",
@@ -174,4 +177,5 @@ int main(int argc,char *argv[])
         run_benchmark(alkane_file_names[benchmark_idx]);
         cout << "TOTAL TIME: " << read_timer() - seconds << "\n"; 
     }
+#endif
 }

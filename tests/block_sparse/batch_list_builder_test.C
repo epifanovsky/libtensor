@@ -12,6 +12,7 @@ using namespace expr;
 
 void batch_list_builder_test::perform() throw(libtest::test_exception) 
 {
+#if 0
     test_get_batch_list_dense();
     test_get_batch_list_sparse(); 
     test_get_batch_list_dense_dense(); 
@@ -19,7 +20,10 @@ void batch_list_builder_test::perform() throw(libtest::test_exception)
     test_get_batch_list_2_group_sparse_sparse();
     test_get_batch_list_not_enough_mem();
     test_get_batch_array_size_grps();
+#endif
 }
+
+#if 0
 
 //Test fixtures
 namespace {
@@ -281,5 +285,6 @@ void batch_list_builder_test::test_get_batch_array_size_grps() throw(libtest::te
                 "batch_list_builder::get_batch_array_sizes(...) returned incorrect value!");
     }
 }
+#endif
 
 } // namespace libtensor

@@ -10,6 +10,7 @@ namespace libtensor {
 using namespace expr;
 using namespace std;
 
+#if 0
 template<size_t N>
 bool verify_conn(const connectivity& conn,size_t (&correct_arr)[N])
 {
@@ -39,14 +40,18 @@ bool verify_conn(const connectivity& conn,size_t (&correct_arr)[N])
     }
     return true;
 }
+#endif
 
 void connectivity_test::perform() throw(libtest::test_exception)
 {
+#if 0
     test_addition();
     test_contract2();
     test_permute();
+#endif
 }
 
+#if 0
 void connectivity_test::test_addition() throw(libtest::test_exception)
 {
     static const char *test_name = "connectivity_test::test_addition()";
@@ -189,5 +194,6 @@ void connectivity_test::test_permute() throw(libtest::test_exception)
                 "connectivity::operator(...) did not return correct value for permutation test case");
     }
 }
+#endif
 
 } // namespace libtensor

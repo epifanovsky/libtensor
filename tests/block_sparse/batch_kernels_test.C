@@ -17,6 +17,7 @@ using namespace std;
 namespace libtensor {
 
 void batch_kernels_test::perform() throw(libtest::test_exception) {
+#if 0
     test_batch_kernel_permute_A_direct();
     test_batch_kernel_contract2();
     test_batch_kernel_add2();
@@ -24,8 +25,10 @@ void batch_kernels_test::perform() throw(libtest::test_exception) {
     test_batch_kernel_unblock_direct();
     test_batch_kernel_unblock_direct_source();
     test_batch_kernel_reblock();
+#endif
 }
 
+#if 0
 //A(i|j|k) = B(k|i|j)
 void batch_kernels_test::test_batch_kernel_permute_A_direct() throw(libtest::test_exception)
 {
@@ -612,5 +615,6 @@ void batch_kernels_test::test_batch_kernel_reblock() throw(libtest::test_excepti
         }
     }
 }
+#endif
 
 } // namespace libtensor

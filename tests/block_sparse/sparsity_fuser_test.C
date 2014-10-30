@@ -12,6 +12,7 @@ using namespace std;
 namespace libtensor {
 
 void sparsity_fuser_test::perform() throw(libtest::test_exception) {
+#if 0
     test_get_loops_for_tree();
     test_get_trees_for_loop();
     test_get_bispaces_and_index_groups_for_tree();
@@ -19,8 +20,10 @@ void sparsity_fuser_test::perform() throw(libtest::test_exception) {
     test_fuse();
 
     test_construct_with_B_direct();
+#endif
 }
 
+#if 0
 //Used to check the keys and values of a tree
 //Cleaner for test implementation than using an equality operator because
 //everything can just be set up as vectors instead of constructing a benchmark tree with sequences
@@ -586,5 +589,6 @@ void sparsity_fuser_test::test_construct_with_B_direct() throw(libtest::test_exc
                 "sparsity_fuser::get_trees(...) returned incorrect value for B tree with B specified direct for second batch");
     }
 }
+#endif
 
 } // namespace libtensor

@@ -8,6 +8,7 @@ using namespace std;
 namespace libtensor {
 
 //Test fixtures
+#if 0
 namespace {
 
 class two_d_test_f {
@@ -177,9 +178,11 @@ bool verify_tree(const sparse_block_tree& tree,const std::vector< std::vector<si
 }
 
 } // namespace unnamed
+#endif
 
 void sparse_block_tree_test::perform() throw(libtest::test_exception)
 {
+#if 0
     test_zero_order();
     test_unsorted_input();
 
@@ -210,8 +213,10 @@ void sparse_block_tree_test::perform() throw(libtest::test_exception)
     test_truncate_subspace_3d();
 
     test_insert_subspace_3d();
+#endif
 }
 
+#if 0
 //Cannot have a zero-order tree - throw an exception if this is requested
 void sparse_block_tree_test::test_zero_order() throw(libtest::test_exception)
 {
@@ -998,6 +1003,7 @@ void sparse_block_tree_test::test_insert_subspace_3d() throw(libtest::test_excep
                 "sparse_block_tree::insert_subspace(...) returned incorrect value");
     }
 }
+#endif
 
 } // namespace libtensor
 

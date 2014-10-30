@@ -5,6 +5,7 @@ namespace libtensor {
 
 void block_loop_test::perform() throw(libtest::test_exception) {
 
+#if 0
     test_set_subspace_looped_invalid_bispace_idx();
     test_set_subspace_looped_invalid_subspace_idx();
 
@@ -13,8 +14,10 @@ void block_loop_test::perform() throw(libtest::test_exception) {
 
     test_is_bispace_ignored_invalid_bispace_idx();
     test_is_bispace_ignored();
+#endif
 }
 
+#if 0
 void block_loop_test::test_set_subspace_looped_invalid_bispace_idx()
 		throw (libtest::test_exception)
 {
@@ -290,5 +293,6 @@ void block_loop_test::test_is_bispace_ignored()
                 "block_loop::is_bispace_ignored(...) did returned true for non-ignored bispace");
     }
 }
+#endif
 
 } // namespace libtensor

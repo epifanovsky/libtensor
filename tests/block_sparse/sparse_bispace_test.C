@@ -10,6 +10,7 @@ namespace libtensor {
 
 void sparse_bispace_test::perform() throw(libtest::test_exception) {
 
+#if 0
         test_get_dim();
 
         test_split_not_strictly_increasing();
@@ -68,9 +69,10 @@ void sparse_bispace_test::perform() throw(libtest::test_exception) {
 
         test_equality_false_sparsity_2d();
         test_equality_true_sparsity_2d();
-
+#endif
 }
 
+#if 0
 /* Return the correct value for the dimension of the sparse_bispace
  *
  */
@@ -1712,5 +1714,6 @@ void sparse_bispace_test::test_equality_true_sparsity_2d() throw(libtest::test_e
                 "sparse_bispace<N>::operator==(...) returned incorrect value");
     }
 }
+#endif
 
 } // namespace libtensor

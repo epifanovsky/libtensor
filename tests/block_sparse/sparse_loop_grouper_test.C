@@ -12,6 +12,7 @@ using namespace std;
 namespace libtensor {
 
 void sparse_loop_grouper_test::perform() throw(libtest::test_exception) {
+#if 0
     test_get_n_groups();
     test_get_bispaces_and_index_groups();
     test_get_offsets_and_sizes();
@@ -20,9 +21,11 @@ void sparse_loop_grouper_test::perform() throw(libtest::test_exception) {
     test_get_loops_for_groups();
 
     test_get_offsets_and_sizes_C_direct();
+#endif
 }
 
 //Test fixtures
+#if 0
 namespace {
 
 //This test fixture checks that get_bispaces_and_index_groups and 
@@ -93,7 +96,9 @@ public:
 };
 
 } // namespace unnamed
+#endif
 
+#if 0
 void sparse_loop_grouper_test::test_get_n_groups() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_loop_grouper_test::test_get_n_groups()";
@@ -301,5 +306,6 @@ void sparse_loop_grouper_test::test_get_offsets_and_sizes_C_direct() throw(libte
                 "sparsity_loop_grouper::get_offsets_and_sizes(...) returned incorrect value");
     }
 }
+#endif
 
 } // namespace libtensor

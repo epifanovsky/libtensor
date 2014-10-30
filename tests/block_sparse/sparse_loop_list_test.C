@@ -16,6 +16,7 @@ namespace libtensor
 {
 
 void sparse_loop_list_test::perform() throw(libtest::test_exception) {
+#if 0
     test_construct_all_ignored();
     test_construct_duplicate_subspaces_looped();
 
@@ -28,9 +29,10 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_contract2_kernel_3d_2d();
 
     test_run_direct_3d_3d();
+#endif
 }
 
-
+#if 0
 void sparse_loop_list_test::test_construct_all_ignored() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_loop_list_test::test_construct_all_ignore()";
@@ -1104,6 +1106,6 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
         }
     }
 }
-
+#endif
 
 } /* namespace libtensor */

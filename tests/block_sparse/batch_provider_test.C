@@ -23,6 +23,7 @@ using namespace expr;
 
 void batch_provider_test::perform() throw(libtest::test_exception) 
 {
+#if 0
     test_permute_3d_sparse_120();
     test_contract2();
     test_contract2_permute_nested(); 
@@ -31,8 +32,10 @@ void batch_provider_test::perform() throw(libtest::test_exception)
     test_batchable_subspaces_recursion_permutation();
     test_get_batched_subspace_grps();
     test_get_batched_subspace_grps_batchable_subspaces();
+#endif
 }
 
+#if 0
 namespace
 {
 
@@ -317,5 +320,6 @@ void batch_provider_test::test_get_batched_subspace_grps_batchable_subspaces() t
                 "batch_provider::get_batched_subspace_grps(...) did not return correct value");
     }
 }
+#endif
 
 } // namespace libtensor

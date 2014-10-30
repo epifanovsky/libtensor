@@ -35,6 +35,7 @@ extern size_t libtensor::flops;
 //all shell->aux atom sparsity entries...
 void run_benchmark(const char* file_name)
 {
+#if 0
     srand(time(NULL));
 
     size_t N;
@@ -432,8 +433,8 @@ void run_benchmark_mo(const char* file_name)
     /*}*/
     /*cout << "tree copy time: " << read_timer() - seconds << "\n";*/
     /*exit(1);*/
-   double start = read_timer();
 #if 0
+   double start = read_timer();
    {
     //Construct D result
     sparse_btensor<3> D(spb_D);
@@ -572,10 +573,12 @@ void run_benchmark_mo(const char* file_name)
     }
     cout << "M_equal: " << (M_equal ? "YES" : "NO") << "\n";
 #endif
+#endif
 }
 
 int main(int argc,char *argv[])
 {
+#if 0
     const char* alkane_file_names[9] = {"../tests/block_sparse/alkane_dz_003_data.txt",
                                         "../tests/block_sparse/alkane_tz_010_data.txt",
                                         "../tests/block_sparse/alkane_dz_010_data.txt",
@@ -629,4 +632,5 @@ int main(int argc,char *argv[])
             run_benchmark_mo(alkane_file_names[benchmark_idx]);
         }
     }
+#endif
 }

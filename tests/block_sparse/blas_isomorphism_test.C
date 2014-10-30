@@ -6,6 +6,7 @@ using namespace std;
 namespace libtensor {
 
 void blas_isomorphism_test::perform() throw(libtest::test_exception) {
+#if 0
     test_matmul_isomorphism_params_identity_NN();
     test_matmul_isomorphism_params_identity_NT();
     test_matmul_isomorphism_params_identity_TN();
@@ -14,8 +15,10 @@ void blas_isomorphism_test::perform() throw(libtest::test_exception) {
     test_matmul_isomorphism_params_permuted_ioc();
     /*test_matmul_isomorphism_params_3d_3d_A_perm_B_perm();*/
     /*test_matmul_isomorphism_params_3d_3d_A_perm_B_perm();*/
+#endif
 }
 
+#if 0
 //Give it NN,NT,TN,TT matrix multiply cases, it should return identity permutation for
 //both bispaces for all of them
 void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NN() throw(libtest::test_exception)
@@ -291,7 +294,6 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_permuted_ioc() throw(
     }
 }
 
-#if 0
 //Requires A permutation 021, B permutation 201
 //Could also permute C additionally, but shouldn't, and therefore should reflect that
 //C_ijml = \sum_k A_ikj B_lkm
