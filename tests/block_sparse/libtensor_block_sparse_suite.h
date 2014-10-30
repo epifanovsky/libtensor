@@ -3,8 +3,7 @@
 
 //TODO: REMOVE SPURIOUS HEADERS/fixtures when done
 #include <libtest/test_suite.h>
-#include "sparse_block_tree_iterator_test.h"
-#include "sparse_block_tree_test.h"
+#include "sparsity_data_test.h"
 #include "subspace_test.h"
 #include "sparse_bispace_impl_test.h"
 #include "sparse_bispace_test.h"
@@ -44,8 +43,7 @@ private:
     unit_test_factory<block_kernels_test> m_utf_block_kernels;
     unit_test_factory<block_loop_test> m_utf_block_loop;
     unit_test_factory<sparse_loop_list_test> m_utf_sparse_loop_list;
-    unit_test_factory<sparse_block_tree_iterator_test> m_utf_sparse_block_tree_iterator;
-    unit_test_factory<sparse_block_tree_test> m_utf_sparse_block_tree;
+    unit_test_factory<sparsity_data_test> m_utf_sparsity_data;
     unit_test_factory<subspace_test> m_utf_subspace;
     unit_test_factory<sparse_bispace_impl_test> m_utf_sparse_bispace_impl;
     unit_test_factory<sparse_bispace_test> m_utf_sparse_bispace;

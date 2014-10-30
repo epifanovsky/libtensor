@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <vector>
 #include <map>
+#include "../exception.h"
 
 namespace libtensor {
 
