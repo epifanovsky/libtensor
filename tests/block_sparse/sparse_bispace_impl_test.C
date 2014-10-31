@@ -13,8 +13,8 @@ void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
     test_permute_2d_10();
     test_permute_3d_fully_sparse_210();
     test_permute_3d_non_contiguous_sparsity();
+    test_permute_5d_tree_swap();
 #if 0
-
     test_contract_3d_dense();
 #endif
 }
@@ -209,6 +209,98 @@ void sparse_bispace_impl_test::test_permute_3d_non_contiguous_sparsity() throw(l
     sparse_bispace_impl correct_three_d(p_subspaces,group_sd,idx_list(1,0));
 
     if(three_d.permute(perm) != correct_three_d)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace_impl::permute(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_impl_test::test_permute_5d_tree_swap() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_impl_test::test_permute_5d_tree_swap()";
+
+    size_t sp_0[3] = {2,5,9};
+    subspace sub_0(11,idx_list(sp_0,sp_0+3));
+
+    size_t sp_1[2] = {2,5};
+    subspace sub_1(9,idx_list(sp_1,sp_1+2));
+
+    size_t keys_arr_0[5][2] = {{0,1},
+                               {1,2},
+                               {2,2},
+                               {2,3},
+                               {3,1}};
+
+    vector<idx_list> keys_0;
+    for(size_t key_idx = 0; key_idx < 5; ++key_idx)
+        keys_0.push_back(idx_list(keys_arr_0[key_idx],keys_arr_0[key_idx]+2));
+
+    size_t keys_arr_1[4][2] = {{0,1},
+                               {1,2},
+                               {2,3},
+                               {3,2}};
+
+    vector<idx_list> keys_1;
+    for(size_t key_idx = 0; key_idx < 4; ++key_idx)
+        keys_1.push_back(idx_list(keys_arr_1[key_idx],keys_arr_1[key_idx]+2));
+
+    vector<subspace> subspaces(2,sub_0);
+    subspaces.push_back(sub_1);
+    subspaces.push_back(sub_1);
+    subspaces.push_back(sub_1);
+
+    vector<sparsity_data> group_sd(1,sparsity_data(2,keys_0));
+    group_sd.push_back(sparsity_data(2,keys_1));
+    idx_list group_offsets(1,0);
+    group_offsets.push_back(3);
+    sparse_bispace_impl five_d(subspaces,group_sd,group_offsets);
+    
+    runtime_permutation perm(5);
+    perm.permute(0,4);
+    perm.permute(1,3);
+    perm.permute(2,3);
+
+    //Trees swap order, and dense subspace gets inserted
+    size_t p_keys_arr_0[4][2] = {{1,0},
+                                 {2,1},
+                                 {2,3},
+                                 {3,2}};
+
+    vector<idx_list> p_keys_0;
+    for(size_t key_idx = 0; key_idx < 4; ++key_idx)
+        p_keys_0.push_back(idx_list(p_keys_arr_0[key_idx],p_keys_arr_0[key_idx]+2));
+
+    size_t p_keys_arr_1[15][3] = {{1,0,0}, 
+                                  {1,0,3},
+                                  {1,1,0},
+                                  {1,1,3},
+                                  {1,2,0},
+                                  {1,2,3},
+                                  {2,0,1},
+                                  {2,0,2},
+                                  {2,1,1},
+                                  {2,1,2},
+                                  {2,2,1},
+                                  {2,2,2},
+                                  {3,0,2},
+                                  {3,1,2},
+                                  {3,2,2}};
+
+    vector<idx_list> p_keys_1;
+    for(size_t key_idx = 0; key_idx < 15; ++key_idx)
+        p_keys_1.push_back(idx_list(p_keys_arr_1[key_idx],p_keys_arr_1[key_idx]+3));
+
+    vector<subspace> p_subspaces(subspaces);
+    swap(p_subspaces[0],p_subspaces[4]);
+    swap(p_subspaces[1],p_subspaces[3]);
+    swap(p_subspaces[2],p_subspaces[3]);
+    vector<sparsity_data> p_group_sd(1,sparsity_data(2,p_keys_0));
+    p_group_sd.push_back(sparsity_data(3,p_keys_1));
+    idx_list p_group_offsets(1,0);
+    p_group_offsets.push_back(2);
+    sparse_bispace_impl correct_five_d(p_subspaces,p_group_sd,p_group_offsets);
+
+    if(five_d.permute(perm) != correct_five_d)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::permute(...) returned incorrect value");

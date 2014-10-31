@@ -39,6 +39,7 @@ private:
     void test_permute_2d_10() throw(libtest::test_exception);
     void test_permute_3d_fully_sparse_210() throw(libtest::test_exception);
     void test_permute_3d_non_contiguous_sparsity() throw(libtest::test_exception);
+    void test_permute_5d_tree_swap() throw(libtest::test_exception);
 
     /*
      * sparse_bispace<N>::contract(...) tests
