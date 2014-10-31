@@ -202,19 +202,10 @@ set(SRC_BTOD
 )
 
 set(SRC_BLOCK_SPARSE
+    block_sparse/range.C
     block_sparse/sparsity_data.C
-    block_sparse/sparse_block_tree.C
     block_sparse/subspace.C
     block_sparse/sparse_bispace_impl.C
-    block_sparse/block_loop.C
-    block_sparse/sparse_loop_list.C
-    block_sparse/sparsity_fuser.C
-    block_sparse/sparse_loop_grouper.C
-    block_sparse/range.C
-    block_sparse/batch_list_builder.C
-    block_sparse/subspace_iterator.C
-    block_sparse/connectivity.C
-    block_sparse/memory_reserve.C
 )
 
 set(SRC_DIAG_TENSOR
