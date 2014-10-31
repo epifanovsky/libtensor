@@ -7,20 +7,18 @@ namespace libtensor {
 
 void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
 {
-#if 0
     test_equality_2d();
     test_equality_2d_sparse();
 
     test_permute_2d_10();
-    test_permute_3d_dense_sparse_021();
-    test_permute_3d_non_contiguous_sparsity();
     test_permute_3d_fully_sparse_210();
+    test_permute_3d_non_contiguous_sparsity();
+#if 0
 
     test_contract_3d_dense();
 #endif
 }
 
-#if 0
 /* Tests equality operator for multidimensional block index spaces
  *
  */
@@ -29,13 +27,13 @@ void sparse_bispace_impl_test::test_equality_2d() throw(libtest::test_exception)
     static const char *test_name = "sparse_bispace_test::test_equality_2d";
 
     size_t sp_0[2] = {1,3};  
-    subspace sub_0(5,idx_list(sp_0,sp_0+2));
+    vector<subspace> subspaces(1,subspace(5,idx_list(sp_0,sp_0+2)));
 
     size_t sp_1[2] = {2,5};  
-    subspace sub_1(6,idx_list(sp_1,sp_1+2));
+    subspaces.push_back(subspace(6,idx_list(sp_1,sp_1+2)));
 
-    sparse_bispace_impl spb_0(sub_0,sub_1);
-    sparse_bispace_impl spb_1(sub_0,sub_1);
+    sparse_bispace_impl spb_0(subspaces);
+    sparse_bispace_impl spb_1(subspaces);
 
     if(!(spb_0 == spb_1))
     {
@@ -48,39 +46,20 @@ void sparse_bispace_impl_test::test_equality_2d_sparse() throw(libtest::test_exc
 {
     static const char *test_name = "sparse_bispace_impl_test::test_equality_2d_sparse()";
 
-    /* Splitting pattern results in the following block sizes:
-     * 0: 2
-     * 1: 3
-     * 2: 4
-     * 3: 2
-     */
     size_t sp_0[3] = {2,5,9};
     vector<subspace> subspaces(2,subspace(11,idx_list(sp_0,sp_0+3)));
 
-    //Specify different sets of significant blocks
-    vector< sequence<2,size_t> > sig_blocks_0(4);
-    sig_blocks_0[0][0] = 0; 
-    sig_blocks_0[0][1] = 1;
-    sig_blocks_0[1][0] = 1;
-    sig_blocks_0[1][1] = 2;
-    sig_blocks_0[2][0] = 2;
-    sig_blocks_0[2][1] = 3;
-    sig_blocks_0[3][0] = 3;
-    sig_blocks_0[3][1] = 2;
+    size_t keys_arr_0[4][2] = {{0,1},
+                               {1,2},
+                               {2,3},
+                               {3,2}};
+    vector<idx_list> keys_0;
+    for(size_t key_idx = 0; key_idx < 4; ++key_idx)
+        keys_0.push_back(idx_list(keys_arr_0[key_idx],keys_arr_0[key_idx]+2));
 
-    vector< sequence<2,size_t> > sig_blocks_1(4);
-    sig_blocks_1[0][0] = 0; 
-    sig_blocks_1[0][1] = 1;
-    sig_blocks_1[1][0] = 1;
-    sig_blocks_1[1][1] = 2;
-    sig_blocks_1[2][0] = 2;
-    sig_blocks_1[2][1] = 1;//! Changed this one value
-    sig_blocks_1[3][0] = 3;
-    sig_blocks_1[3][1] = 2;
-
-    sparse_bispace_impl two_d_0(subspaces,sparse_block_tree(sig_blocks_0,subspaces));
-    sparse_bispace_impl two_d_1(subspaces,sparse_block_tree(sig_blocks_0,subspaces));
-    sparse_bispace_impl two_d_2(subspaces,sparse_block_tree(sig_blocks_1,subspaces));
+    vector<sparsity_data> group_sd(1,sparsity_data(2,keys_0));
+    sparse_bispace_impl two_d_0(subspaces,group_sd,idx_list(1,0));
+    sparse_bispace_impl two_d_1(subspaces,group_sd,idx_list(1,0));
 
     if(two_d_0 != two_d_1)
     {
@@ -88,7 +67,11 @@ void sparse_bispace_impl_test::test_equality_2d_sparse() throw(libtest::test_exc
                 "sparse_bispace_impl::operator==(...) returned incorrect value");
     }
 
-    if(two_d_0 == two_d_2)
+    vector<idx_list> keys_1(keys_0);
+    keys_1[2][1] = 1;
+    group_sd[0] = sparsity_data(2,keys_1);
+    sparse_bispace_impl two_d_2(subspaces,group_sd,idx_list(1,0));
+    if((two_d_0 == two_d_2) || (two_d_1 == two_d_2))
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::operator==(...) returned incorrect value");
@@ -100,13 +83,14 @@ void sparse_bispace_impl_test::test_permute_2d_10() throw(libtest::test_exceptio
     static const char *test_name = "sparse_bispace_impl_test::test_permute_2d_10()";
 
     size_t sp_0[2] = {1,3};  
-    subspace sub_0(5,idx_list(sp_0,sp_0+2));
+    vector<subspace> subspaces(1,subspace(5,idx_list(sp_0,sp_0+2)));
 
     size_t sp_1[2] = {2,5};  
-    subspace sub_1(6,idx_list(sp_1,sp_1+2));
+    subspaces.push_back(subspace(6,idx_list(sp_1,sp_1+2)));
 
-    sparse_bispace_impl spb_0(sub_0,sub_1);
-    sparse_bispace_impl spb_1(sub_1,sub_0);
+    sparse_bispace_impl spb_0(subspaces);
+    swap(subspaces[0],subspaces[1]);
+    sparse_bispace_impl spb_1(subspaces);
 
     runtime_permutation perm(2);
     perm.permute(0,1);
@@ -118,9 +102,9 @@ void sparse_bispace_impl_test::test_permute_2d_10() throw(libtest::test_exceptio
     }
 }
 
-void sparse_bispace_impl_test::test_permute_3d_dense_sparse_021() throw(libtest::test_exception)
+void sparse_bispace_impl_test::test_permute_3d_fully_sparse_210() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_impl_test::test_permute_3d_dense_sparse_021()";
+    static const char *test_name = "sparse_bispace_impl_test::test_permute_3d_fully_sparse_210()";
 
     size_t sp_0[3] = {2,5,9};
     subspace sub_0(11,idx_list(sp_0,sp_0+3));
@@ -128,28 +112,39 @@ void sparse_bispace_impl_test::test_permute_3d_dense_sparse_021() throw(libtest:
     size_t sp_1[2] = {2,5};
     subspace sub_1(9,idx_list(sp_1,sp_1+2));
 
-    vector< sequence<2,size_t> > sig_blocks(4);
-    size_t orig_key0_arr[2] = {0,1}; for(size_t i = 0; i < 2; ++i) sig_blocks[0][i] = orig_key0_arr[i];
-    size_t orig_key1_arr[2] = {1,2}; for(size_t i = 0; i < 2; ++i) sig_blocks[1][i] = orig_key1_arr[i];
-    size_t orig_key2_arr[2] = {2,3}; for(size_t i = 0; i < 2; ++i) sig_blocks[2][i] = orig_key2_arr[i];
-    size_t orig_key3_arr[2] = {3,2}; for(size_t i = 0; i < 2; ++i) sig_blocks[3][i] = orig_key3_arr[i];
+    size_t keys_arr[5][3] = {{0,0,2},
+                             {0,0,3},
+                             {1,2,2},
+                             {1,3,1},
+                             {2,0,1}};
 
-    vector<subspace> sparse_subspaces(2,sub_0);
-    sparse_bispace_impl sparse_grp(sparse_subspaces,sparse_block_tree(sig_blocks,sparse_subspaces));
-    sparse_bispace_impl three_d(sub_1,sparse_grp);
-    
-    //Construct the benchmark permuted space
+    vector<idx_list> keys;
+    for(size_t key_idx = 0; key_idx < 5; ++key_idx)
+        keys.push_back(idx_list(keys_arr[key_idx],keys_arr[key_idx]+3));
+
+    vector<subspace> subspaces(1,sub_1);
+    subspaces.push_back(sub_0);
+    subspaces.push_back(sub_0);
+
+    vector<sparsity_data> group_sd(1,sparsity_data(3,keys));
+    sparse_bispace_impl three_d(subspaces,group_sd,idx_list(1,0));
+
+    size_t p_keys_arr[5][3] = {{1,0,2},
+                               {1,3,1},
+                               {2,0,0},
+                               {2,2,1},
+                               {3,0,0}};
+
+    vector<idx_list> p_keys;
+    for(size_t key_idx = 0; key_idx < 5; ++key_idx)
+        p_keys.push_back(idx_list(p_keys_arr[key_idx],p_keys_arr[key_idx]+3));
+
+    swap(subspaces[0],subspaces[2]);
+    group_sd[0] = sparsity_data(3,p_keys);
+    sparse_bispace_impl correct_three_d(subspaces,group_sd,idx_list(1,0)); 
+
     runtime_permutation perm(3);
-    perm.permute(1,2);
-    vector< sequence<2,size_t> > permuted_sig_blocks(4);
-    size_t permuted_key0_arr[2] = {1,0}; for(size_t i = 0; i < 2; ++i) permuted_sig_blocks[0][i] = permuted_key0_arr[i];
-    size_t permuted_key1_arr[2] = {2,1}; for(size_t i = 0; i < 2; ++i) permuted_sig_blocks[1][i] = permuted_key1_arr[i];
-    size_t permuted_key2_arr[2] = {2,3}; for(size_t i = 0; i < 2; ++i) permuted_sig_blocks[2][i] = permuted_key2_arr[i];
-    size_t permuted_key3_arr[2] = {3,2}; for(size_t i = 0; i < 2; ++i) permuted_sig_blocks[3][i] = permuted_key3_arr[i];
-
-    sparse_bispace_impl permuted_sparse_grp(sparse_subspaces,sparse_block_tree(permuted_sig_blocks,sparse_subspaces));
-    sparse_bispace_impl correct_three_d(sub_1,permuted_sparse_grp);
-
+    perm.permute(0,2);
     if(three_d.permute(perm) != correct_three_d)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -167,106 +162,52 @@ void sparse_bispace_impl_test::test_permute_3d_non_contiguous_sparsity() throw(l
     size_t sp_1[2] = {2,5};
     subspace sub_1(9,idx_list(sp_1,sp_1+2));
 
-    std::vector< sequence<2,size_t> > sig_blocks(5);
-    size_t orig_key0_arr[2] = {0,1}; for(size_t i = 0; i < 2; ++i) sig_blocks[0][i] = orig_key0_arr[i];
-    size_t orig_key1_arr[2] = {1,2}; for(size_t i = 0; i < 2; ++i) sig_blocks[1][i] = orig_key1_arr[i];
-    size_t orig_key2_arr[2] = {2,2}; for(size_t i = 0; i < 2; ++i) sig_blocks[2][i] = orig_key2_arr[i];
-    size_t orig_key3_arr[2] = {2,3}; for(size_t i = 0; i < 2; ++i) sig_blocks[3][i] = orig_key3_arr[i];
-    size_t orig_key4_arr[2] = {3,1}; for(size_t i = 0; i < 2; ++i) sig_blocks[4][i] = orig_key4_arr[i];
+    size_t keys_arr[5][2] = {{0,1},
+                             {1,2},
+                             {2,2},
+                             {2,3},
+                             {3,1}};
 
-    vector<subspace> sparse_subspaces(2,sub_0);
-    sparse_bispace_impl sparse_grp(sparse_subspaces,sparse_block_tree(sig_blocks,sparse_subspaces));
-    sparse_bispace_impl three_d(sub_1,sparse_grp);
+    vector<idx_list> keys;
+    for(size_t key_idx = 0; key_idx < 5; ++key_idx)
+        keys.push_back(idx_list(keys_arr[key_idx],keys_arr[key_idx]+2));
+
+    vector<subspace> subspaces(2,sub_0);
+    subspaces.insert(subspaces.begin(),sub_1);
+
+    vector<sparsity_data> group_sd(1,sparsity_data(2,keys));
+    sparse_bispace_impl three_d(subspaces,group_sd,idx_list(1,1));
     
     //Construct the benchmark permuted space
     runtime_permutation perm(3);
     perm.permute(0,2);
     perm.permute(1,2);
-    std::vector< sequence<3,size_t> > permuted_sig_blocks(15);
-    size_t permuted_key00_arr[3] = {1,0,0}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[0][i] =  permuted_key00_arr[i];
-    size_t permuted_key01_arr[3] = {1,0,3}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[1][i] =  permuted_key01_arr[i];
-    size_t permuted_key02_arr[3] = {1,1,0}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[2][i] =  permuted_key02_arr[i];
-    size_t permuted_key03_arr[3] = {1,1,3}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[3][i] =  permuted_key03_arr[i];
-    size_t permuted_key04_arr[3] = {1,2,0}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[4][i] =  permuted_key04_arr[i];
-    size_t permuted_key05_arr[3] = {1,2,3}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[5][i] =  permuted_key05_arr[i];
-    size_t permuted_key06_arr[3] = {2,0,1}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[6][i] =  permuted_key06_arr[i];
-    size_t permuted_key07_arr[3] = {2,0,2}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[7][i] =  permuted_key07_arr[i];
-    size_t permuted_key08_arr[3] = {2,1,1}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[8][i] =  permuted_key08_arr[i];
-    size_t permuted_key09_arr[3] = {2,1,2}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[9][i] =  permuted_key09_arr[i];
-    size_t permuted_key10_arr[3] = {2,2,1}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[10][i] = permuted_key10_arr[i];
-    size_t permuted_key11_arr[3] = {2,2,2}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[11][i] = permuted_key11_arr[i];
-    size_t permuted_key12_arr[3] = {3,0,2}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[12][i] = permuted_key12_arr[i];
-    size_t permuted_key13_arr[3] = {3,1,2}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[13][i] = permuted_key13_arr[i];
-    size_t permuted_key14_arr[3] = {3,2,2}; for(size_t i = 0; i < 3; ++i) permuted_sig_blocks[14][i] = permuted_key14_arr[i];
 
-    vector<subspace> permuted_sparse_subspaces(1,sub_0);
-    permuted_sparse_subspaces.push_back(sub_1);
-    permuted_sparse_subspaces.push_back(sub_0);
-    sparse_bispace_impl correct_three_d(permuted_sparse_subspaces,sparse_block_tree( permuted_sig_blocks,permuted_sparse_subspaces));
+    size_t p_keys_arr[15][3] = {{1,0,0}, 
+                                {1,0,3},
+                                {1,1,0},
+                                {1,1,3},
+                                {1,2,0},
+                                {1,2,3},
+                                {2,0,1},
+                                {2,0,2},
+                                {2,1,1},
+                                {2,1,2},
+                                {2,2,1},
+                                {2,2,2},
+                                {3,0,2},
+                                {3,1,2},
+                                {3,2,2}};
 
-    if(three_d.permute(perm) != correct_three_d)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "sparse_bispace_impl::permute(...) returned incorrect value");
-    }
-}
+    vector<idx_list> p_keys;
+    for(size_t key_idx = 0; key_idx < 15; ++key_idx)
+        p_keys.push_back(idx_list(p_keys_arr[key_idx],p_keys_arr[key_idx]+3));
 
-void sparse_bispace_impl_test::test_permute_3d_fully_sparse_210() throw(libtest::test_exception)
-{
-    static const char *test_name = "sparse_bispace_impl_test::test_permute_3d_fully_sparse_210()";
+    vector<subspace> p_subspaces(subspaces);
+    swap(p_subspaces[0],p_subspaces[1]);
+    group_sd[0] = sparsity_data(3,p_keys);
+    sparse_bispace_impl correct_three_d(p_subspaces,group_sd,idx_list(1,0));
 
-    size_t sp_0[3] = {2,5,9};
-    subspace sub_0(11,idx_list(sp_0,sp_0+3));
-
-    size_t sp_1[2] = {2,5};
-    subspace sub_1(9,idx_list(sp_1,sp_1+2));
-
-    std::vector< sequence<3,size_t> > sig_blocks(5);
-
-    sig_blocks[0][0] = 0; 
-    sig_blocks[0][1] = 0;
-    sig_blocks[0][2] = 2;
-    sig_blocks[1][0] = 0; 
-    sig_blocks[1][1] = 0;
-    sig_blocks[1][2] = 3;
-    sig_blocks[2][0] = 1;
-    sig_blocks[2][1] = 2;
-    sig_blocks[2][2] = 2;
-    sig_blocks[3][0] = 1;
-    sig_blocks[3][1] = 3;
-    sig_blocks[3][2] = 1;
-    sig_blocks[4][0] = 2;
-    sig_blocks[4][1] = 0;
-    sig_blocks[4][2] = 1;
-
-    vector<subspace> subspaces(1,sub_1);
-    subspaces.push_back(sub_0);
-    subspaces.push_back(sub_0);
-
-    sparse_bispace_impl three_d(subspaces,sparse_block_tree(sig_blocks,subspaces));
-
-    //Make the benchmark
-    std::vector< sequence<3,size_t> > permuted_sig_blocks(5);
-    permuted_sig_blocks[0][0] = 1;
-    permuted_sig_blocks[0][1] = 0;
-    permuted_sig_blocks[0][2] = 2;
-    permuted_sig_blocks[1][0] = 1;
-    permuted_sig_blocks[1][1] = 3;
-    permuted_sig_blocks[1][2] = 1;
-    permuted_sig_blocks[2][0] = 2; 
-    permuted_sig_blocks[2][1] = 0;
-    permuted_sig_blocks[2][2] = 0;
-    permuted_sig_blocks[3][0] = 2;
-    permuted_sig_blocks[3][1] = 2;
-    permuted_sig_blocks[3][2] = 1;
-    permuted_sig_blocks[4][0] = 3; 
-    permuted_sig_blocks[4][1] = 0;
-    permuted_sig_blocks[4][2] = 0;
-    swap(subspaces[0],subspaces[2]);
-    sparse_bispace_impl correct_three_d(subspaces,sparse_block_tree(permuted_sig_blocks,subspaces)); 
-
-    runtime_permutation perm(3);
-    perm.permute(0,2);
     if(three_d.permute(perm) != correct_three_d)
     {
         fail_test(test_name,__FILE__,__LINE__,
@@ -299,6 +240,5 @@ void sparse_bispace_impl_test::test_contract_3d_dense() throw(libtest::test_exce
     }
 #endif
 }
-#endif
 
 } // namespace libtensor

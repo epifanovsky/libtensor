@@ -22,8 +22,11 @@ public:
 
 
     static const char *k_clazz; //!< Class name
+
     sparsity_data(size_t order,const std::vector<idx_list>& keys);
 
+
+    size_t get_order() const { return m_order; }
     sparsity_data permute(const runtime_permutation& perm) const;
     sparsity_data contract(size_t contracted_subspace_idx) const;
     sparsity_data fuse(const sparsity_data& rhs,

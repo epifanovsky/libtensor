@@ -1,4 +1,5 @@
 #include "sparse_bispace_impl.h"
+#include "range.h"
 
 using namespace std;
 
@@ -6,134 +7,73 @@ namespace libtensor {
     
 const char* sparse_bispace_impl::k_clazz = "sparse_bispace_impl";
 
+sparse_bispace_impl::sparse_bispace_impl(const vector<subspace>& subspaces,
+                                         const vector<sparsity_data>& group_sd,
+                                         const idx_list& group_offsets) : m_subspaces(subspaces),
+                                                                          m_group_sd(group_sd),
+                                                                          m_group_offsets(group_offsets)
+{
+}
+
 bool sparse_bispace_impl::operator==(const sparse_bispace_impl& rhs) const
 {
     return (m_subspaces == rhs.m_subspaces) && 
-           (m_trees == rhs.m_trees) && 
-           (m_tree_offsets == rhs.m_tree_offsets);
+           (m_group_sd == rhs.m_group_sd) && 
+           (m_group_offsets == rhs.m_group_offsets);
 }
 
-sparse_bispace_impl::sparse_bispace_impl(const sparse_bispace_impl& lhs,
-                                         const sparse_bispace_impl& rhs)
-{
-    m_subspaces.insert(m_subspaces.end(),lhs.m_subspaces.begin(),lhs.m_subspaces.end());
-    m_subspaces.insert(m_subspaces.end(),rhs.m_subspaces.begin(),rhs.m_subspaces.end());
-    m_trees.insert(m_trees.end(),lhs.m_trees.begin(),lhs.m_trees.end());
-    m_trees.insert(m_trees.end(),rhs.m_trees.begin(),rhs.m_trees.end());
-    m_tree_offsets.insert(m_tree_offsets.end(),lhs.m_tree_offsets.begin(),lhs.m_tree_offsets.end());
-
-    //Must redo offsets stemming from the RHS tree
-    m_tree_offsets.insert(m_tree_offsets.end(),rhs.m_tree_offsets.begin(),rhs.m_tree_offsets.end());
-
-    for(size_t i = 0; i < rhs.m_tree_offsets.size(); ++i)
-    {
-        m_tree_offsets[m_tree_offsets.size()-i-1] += lhs.m_subspaces.size();
-    }
-}
-
-sparse_bispace_impl::sparse_bispace_impl(const vector<subspace>& subspaces,
-                                         const sparse_block_tree& tree) : m_subspaces(subspaces),m_trees(1,tree),m_tree_offsets(1,0)
-{
-}
-
-//TODO: This is haxx, needs to be formally verified
-//TODO: This will break if I relocate an entire tree!!!!
 sparse_bispace_impl sparse_bispace_impl::permute(const runtime_permutation& perm) const
 {
-    //Sparse metadata is rebuilt as we go
-    sparse_bispace_impl copy(*this);
-    copy.m_tree_offsets.clear();
-
-    //Permute subspaces
+    vector<subspace> p_subspaces(m_subspaces);
     for(size_t i = 0; i < m_subspaces.size(); ++i)
     {
-        copy.m_subspaces[i] = m_subspaces[perm[i]];
+        p_subspaces[i] = m_subspaces[perm[i]];
     }
+   
+    idx_list inv_p_ent(m_subspaces.size());
+    for(size_t i = 0; i < m_subspaces.size(); ++i) inv_p_ent[perm[i]] = i;
+    runtime_permutation inv_p(inv_p_ent);
 
-    //Permute trees
-    vector<size_t> cur_perm_entries;
-    vector<subspace> cur_tree_subspaces;
-    size_t cur_tree_idx;
-    size_t cur_order;
-    size_t cur_tree_start_dest_sub_idx;
-    map<size_t,size_t> cur_dense_subspaces;
-    for(size_t dest_sub_idx = 0; dest_sub_idx < m_subspaces.size(); ++dest_sub_idx)
+    vector<sparsity_data> p_group_sd;
+    idx_list p_group_offsets;
+    for(size_t i = 0; i < m_group_sd.size(); ++i)
     {
-        size_t src_sub_idx = perm[dest_sub_idx];
+        idx_list o_subs;
+        idx_list n_subs;
+        idx_list rel_n_subs;
+        size_t off = m_group_offsets[i];
+        size_t order = m_group_sd[i].get_order();
+        for(size_t j = off; j < off+order; ++j) o_subs.push_back(j);
+        for(size_t j = 0; j < order; ++j) n_subs.push_back(inv_p[o_subs[j]]);
 
-        //Is this index associated with a sparse group?
-        bool sparse = false;
-        for(size_t tree_idx = 0; tree_idx < m_tree_offsets.size(); ++tree_idx)
+        idx_list abs_to_rel(n_subs);
+        sort(abs_to_rel.begin(),abs_to_rel.end());
+        for(size_t j = 0; j < order; ++j)
         {
-            size_t offset = m_tree_offsets[tree_idx];
-            size_t order = m_trees[tree_idx].get_order();
-            if((offset <= src_sub_idx) && (src_sub_idx < offset+order))
-            {
-                //This index comes from this sparse group in the unpermuted bispace
-                if(cur_perm_entries.size() == 0)
-                {
-                    //This is the first index in our tree in the new,permuted,bispace
-                    cur_tree_idx = tree_idx;
-                    cur_order = order;
-                    cur_tree_start_dest_sub_idx = dest_sub_idx;
-                }
-                else if(tree_idx != cur_tree_idx)
-                {
-                    //This index comes from a different tree, and we haven't filled in our original tree yet
-                    throw bad_parameter(g_ns,"sparse_bispace<N>","permute(...)",
-                        __FILE__,__LINE__,"permuting between different sparse groups is not supported"); 
-                }
-
-                cur_tree_subspaces.push_back(m_subspaces[src_sub_idx]);
-                cur_perm_entries.push_back(src_sub_idx - offset);
-                sparse = true;
-                break;
-            }
+            idx_list::iterator pos = find(abs_to_rel.begin(),abs_to_rel.end(),n_subs[j]);
+            size_t rel = distance(abs_to_rel.begin(),pos);
+            rel_n_subs.push_back(rel);
         }
 
-        if(cur_perm_entries.size() > 0)
+        idx_list rel_p_ent(order);
+        for(size_t j = 0; j < order; ++j) rel_p_ent[rel_n_subs[j]] = j;
+
+        p_group_sd.push_back(m_group_sd[i].permute(runtime_permutation(rel_p_ent)));
+
+        for(size_t j = 0; j < order; ++j)
         {
-            //Did this iteration fill in our tree in the destination bispace?
-            if(cur_perm_entries.size() == cur_order)
+            size_t start = abs_to_rel[j]+1;
+            size_t end = (j == order - 1) ? abs_to_rel[j]+1 : abs_to_rel[j+1];
+            for(size_t k = start; k < end; ++k)
             {
-                //Insert all dense subspaces caught inside this tree
-                for(std::map<size_t,size_t>::iterator it = cur_dense_subspaces.begin(); it != cur_dense_subspaces.end(); ++it)
-                {
-                    size_t cur_dest_sub_idx = it->first;
-                    size_t cur_src_sub_idx = it->second;
-                    for(size_t entry_idx = 0; entry_idx < cur_perm_entries.size(); ++entry_idx)
-                    {
-                        if(cur_perm_entries[entry_idx] >= cur_dest_sub_idx)
-                        {
-                            ++cur_perm_entries[entry_idx];
-                        }
-                    }
-                    cur_perm_entries.insert(cur_perm_entries.begin()+cur_dest_sub_idx,cur_dest_sub_idx);
-                    copy.m_trees[cur_tree_idx] = copy.m_trees[cur_tree_idx].insert_subspace(cur_dest_sub_idx - cur_tree_start_dest_sub_idx,m_subspaces[cur_src_sub_idx]);
-                }
-                runtime_permutation tree_perm(cur_perm_entries);
-
-                //Don't permute if identity
-                if(tree_perm != runtime_permutation(cur_order))
-                {
-                    copy.m_trees[cur_tree_idx] = copy.m_trees[cur_tree_idx].permute(tree_perm);
-                    copy.m_trees[cur_tree_idx].set_offsets_sizes_nnz(cur_tree_subspaces);
-                }
-                copy.m_tree_offsets.push_back(cur_tree_start_dest_sub_idx);
-
-                cur_dense_subspaces.clear();
-                cur_perm_entries.clear();
-                cur_tree_subspaces.clear();
-            }
-            else if(!sparse)
-            {
-                //We don't want to log irrelevant dense bispaces - only ones caught between sparse bispaces
-                cur_dense_subspaces[dest_sub_idx - cur_tree_start_dest_sub_idx] = src_sub_idx;
-                cur_tree_subspaces.push_back(m_subspaces[src_sub_idx]);
+                idx_list ents = range(0,p_subspaces[k].get_n_blocks());
+                p_group_sd.back() = p_group_sd.back().insert_entries(rel_n_subs[j+k-start],ents);
             }
         }
+        p_group_offsets.push_back(abs_to_rel[0]);
     }
-    return copy;
+
+    return sparse_bispace_impl(p_subspaces,p_group_sd,p_group_offsets);
 }
 
 } // namespace libtensor
