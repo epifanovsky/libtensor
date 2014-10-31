@@ -23,6 +23,7 @@ public:
                         const idx_list& group_offsets);
                         
     sparse_bispace_impl permute(const runtime_permutation& perm) const;
+    sparse_bispace_impl contract(size_t contract_idx) const;
 
     bool operator==(const sparse_bispace_impl& rhs) const;
     bool operator!=(const sparse_bispace_impl& rhs) const { return !(*this == rhs); }

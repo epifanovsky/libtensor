@@ -46,9 +46,8 @@ private:
      * sparse_bispace<N>::contract(...) tests
      */
     void test_contract_3d_dense() throw(libtest::test_exception);
-    void test_contract_3d_sparse_2() throw(libtest::test_exception);
-    void test_contract_3d_sparse_2_nnz() throw(libtest::test_exception);
-    void test_contract_3d_sparse_destroy_all_sparsity() throw(libtest::test_exception);
+    void test_contract_3d_sparse() throw(libtest::test_exception);
+    void test_contract_3d_sparsity_destroyed() throw(libtest::test_exception);
 
     void test_truncate_subspace() throw(libtest::test_exception);
 

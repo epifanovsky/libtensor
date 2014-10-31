@@ -15,9 +15,10 @@ void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
     test_permute_3d_non_contiguous_sparsity();
     test_permute_5d_sd_swap();
     test_permute_5d_sd_interleave();
-#if 0
+
     test_contract_3d_dense();
-#endif
+    test_contract_3d_sparse();
+    test_contract_3d_sparsity_destroyed();
 }
 
 /* Tests equality operator for multidimensional block index spaces
@@ -371,26 +372,120 @@ void sparse_bispace_impl_test::test_contract_3d_dense() throw(libtest::test_exce
 {
     static const char *test_name = "sparse_bispace_impl_test::test_contract_3d_dense()";
 
-#if 0
     size_t sp_0[2] = {2,5};
-    subspace sub_0(8,idx_list(sp_0,sp_0+2));
-
+    vector<subspace> subspaces(1,subspace(8,idx_list(sp_0,sp_0+2)));
     size_t sp_1[3] = {3,6,8};
-    subspace sub_1(9,idx_list(sp_0,sp_0+3));
-
+    subspaces.push_back(subspace(9,idx_list(sp_1,sp_1+3)));
     size_t sp_2[2] = {4,7};
-    subspace sub_2(10,idx_list(sp_0,sp_0+2));
+    subspaces.push_back(subspace(10,idx_list(sp_2,sp_2+2)));
 
-    sparse_bispace_impl three_d(sub_0,sparse_bispace_impl(sub_1,sub_2));
+    sparse_bispace_impl three_d(subspaces);
     sparse_bispace_impl two_d = three_d.contract(1);
-    sparse_bispace_impl two_d_correct(sub_0,sub_2);
+    subspaces.erase(subspaces.begin()+1);
+    sparse_bispace_impl two_d_correct(subspaces);
 
    if(two_d != two_d_correct)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::contract(...) returned incorrect value");
     }
-#endif
+}
+
+void sparse_bispace_impl_test::test_contract_3d_sparse() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_impl_test::test_contract_3d_sparse()";
+
+    size_t sp_0[2] = {2,5};
+    vector<subspace> subspaces(1,subspace(8,idx_list(sp_0,sp_0+2)));
+    size_t sp_1[3] = {3,6,8};
+    subspaces.push_back(subspace(9,idx_list(sp_1,sp_1+3)));
+    size_t sp_2[2] = {4,7};
+    subspaces.push_back(subspace(10,idx_list(sp_2,sp_2+2)));
+
+    //Sparsity Info
+    size_t keys_arr[14][3] = {{0,0,0},
+                              {0,0,2},
+                              {0,1,2},
+                              {0,2,1},
+                              {0,2,2},
+                              {0,3,1},
+                              {1,0,1},
+                              {1,0,2},
+                              {1,1,0},
+                              {1,2,0},
+                              {1,3,1},
+                              {2,1,1},
+                              {2,2,2},
+                              {2,3,0}};
+
+    vector<idx_list> keys;
+    for(size_t key_idx = 0; key_idx < 14; ++key_idx)
+        keys.push_back(idx_list(keys_arr[key_idx],keys_arr[key_idx]+3));
+    vector<sparsity_data> group_sd(1,sparsity_data(3,keys));
+
+    sparse_bispace_impl three_d(subspaces,group_sd,idx_list(1,0));
+    sparse_bispace_impl two_d = three_d.contract(2); 
+
+    //Correct result
+    size_t c_keys_arr[11][2] = {{0,0},
+                                {0,1},
+                                {0,2},
+                                {0,3},
+                                {1,0},
+                                {1,1},
+                                {1,2},
+                                {1,3},
+                                {2,1},
+                                {2,2},
+                                {2,3}};
+
+    vector<idx_list> c_keys;
+    for(size_t key_idx = 0; key_idx < 11; ++key_idx)
+        c_keys.push_back(idx_list(c_keys_arr[key_idx],c_keys_arr[key_idx]+2));
+    group_sd[0] = sparsity_data(2,c_keys);
+    subspaces.erase(subspaces.begin()+2);
+    sparse_bispace_impl two_d_correct(subspaces,group_sd,idx_list(1,0));
+
+    if(two_d != two_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::contract(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_impl_test::test_contract_3d_sparsity_destroyed() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_test::test_contract_3d_sparsity_destroyed()";
+
+    size_t sp_0[2] = {2,5};
+    vector<subspace> subspaces(1,subspace(8,idx_list(sp_0,sp_0+2)));
+    size_t sp_1[3] = {3,6,8};
+    subspaces.push_back(subspace(9,idx_list(sp_1,sp_1+3)));
+    size_t sp_2[2] = {4,7};
+    subspaces.push_back(subspace(10,idx_list(sp_2,sp_2+2)));
+
+    //Sparsity
+    size_t keys_arr[5][2] = {{0,1},
+                             {0,3},
+                             {1,0},
+                             {1,2},
+                             {2,1}};
+    vector<idx_list> keys;
+    for(size_t key_idx = 0; key_idx < 5; ++key_idx)
+        keys.push_back(idx_list(keys_arr[key_idx],keys_arr[key_idx]+2));
+    vector<sparsity_data> group_sd(1,sparsity_data(2,keys));
+
+    sparse_bispace_impl three_d(subspaces,group_sd,idx_list(1,0));
+    sparse_bispace_impl two_d = three_d.contract(1); 
+
+    subspaces.erase(subspaces.begin()+1);
+    sparse_bispace_impl two_d_correct(subspaces);
+ 
+    if(two_d != two_d_correct)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace<N>::contract(...) returned incorrect value");
+    }
 }
 
 } // namespace libtensor

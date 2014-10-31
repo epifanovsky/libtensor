@@ -104,4 +104,37 @@ sparse_bispace_impl sparse_bispace_impl::permute(const runtime_permutation& perm
     return sparse_bispace_impl(p_subspaces,p_group_sd,p_group_offsets);
 }
 
+sparse_bispace_impl sparse_bispace_impl::contract(size_t contract_idx) const
+{
+    if(m_subspaces.size() == 1)
+        throw bad_parameter(g_ns,k_clazz,"contract(...)",__FILE__,__LINE__,"cannot contract 1d bispace"); 
+    if(contract_idx >= m_subspaces.size())
+        throw bad_parameter(g_ns,k_clazz,"contract(...)",__FILE__,__LINE__,"contract_idx out of bounds"); 
+
+    vector<subspace> subspaces(m_subspaces);
+    subspaces.erase(subspaces.begin()+contract_idx);
+
+    vector<sparsity_data> group_sd;
+    idx_list group_offsets;
+    for(size_t sd_idx = 0; sd_idx < m_group_sd.size(); ++sd_idx)
+    {
+        size_t order = m_group_sd[sd_idx].get_order();
+        size_t off = m_group_offsets[sd_idx];
+        size_t new_off = off > contract_idx ? off-1 : off;
+        if((off <= contract_idx) && (contract_idx < off+order))
+        {
+            if(order == 2) continue; //sparsity destroyed totally
+            else
+            {
+                size_t rel_idx = contract_idx - off;
+                group_sd.push_back(m_group_sd[sd_idx].contract(rel_idx));
+            }
+        }
+        else 
+            group_sd.push_back(m_group_sd[sd_idx]);
+        group_offsets.push_back(new_off);
+    }
+    return sparse_bispace_impl(subspaces,group_sd,group_offsets);
+}
+
 } // namespace libtensor
