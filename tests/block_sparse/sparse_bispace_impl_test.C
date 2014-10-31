@@ -13,7 +13,8 @@ void sparse_bispace_impl_test::perform() throw(libtest::test_exception)
     test_permute_2d_10();
     test_permute_3d_fully_sparse_210();
     test_permute_3d_non_contiguous_sparsity();
-    test_permute_5d_tree_swap();
+    test_permute_5d_sd_swap();
+    test_permute_5d_sd_interleave();
 #if 0
     test_contract_3d_dense();
 #endif
@@ -215,9 +216,9 @@ void sparse_bispace_impl_test::test_permute_3d_non_contiguous_sparsity() throw(l
     }
 }
 
-void sparse_bispace_impl_test::test_permute_5d_tree_swap() throw(libtest::test_exception)
+void sparse_bispace_impl_test::test_permute_5d_sd_swap() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_bispace_impl_test::test_permute_5d_tree_swap()";
+    static const char *test_name = "sparse_bispace_impl_test::test_permute_5d_sd_swap()";
 
     size_t sp_0[3] = {2,5,9};
     subspace sub_0(11,idx_list(sp_0,sp_0+3));
@@ -304,6 +305,65 @@ void sparse_bispace_impl_test::test_permute_5d_tree_swap() throw(libtest::test_e
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "sparse_bispace_impl::permute(...) returned incorrect value");
+    }
+}
+
+void sparse_bispace_impl_test::test_permute_5d_sd_interleave() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_bispace_impl_test::test_permute_5d_sd_interleave()";
+
+    size_t sp_0[3] = {2,5,9};
+    subspace sub_0(11,idx_list(sp_0,sp_0+3));
+
+    size_t sp_1[2] = {2,5};
+    subspace sub_1(9,idx_list(sp_1,sp_1+2));
+
+    size_t keys_arr_0[5][2] = {{0,1},
+                               {1,2},
+                               {2,2},
+                               {2,3},
+                               {3,1}};
+
+    vector<idx_list> keys_0;
+    for(size_t key_idx = 0; key_idx < 5; ++key_idx)
+        keys_0.push_back(idx_list(keys_arr_0[key_idx],keys_arr_0[key_idx]+2));
+
+    size_t keys_arr_1[4][2] = {{0,1},
+                               {1,2},
+                               {2,3},
+                               {3,2}};
+
+    vector<idx_list> keys_1;
+    for(size_t key_idx = 0; key_idx < 4; ++key_idx)
+        keys_1.push_back(idx_list(keys_arr_1[key_idx],keys_arr_1[key_idx]+2));
+
+    vector<subspace> subspaces(2,sub_0);
+    subspaces.push_back(sub_1);
+    subspaces.push_back(sub_1);
+    subspaces.push_back(sub_1);
+
+    vector<sparsity_data> group_sd(1,sparsity_data(2,keys_0));
+    group_sd.push_back(sparsity_data(2,keys_1));
+    idx_list group_offsets(1,0);
+    group_offsets.push_back(3);
+    sparse_bispace_impl five_d(subspaces,group_sd,group_offsets);
+    
+    runtime_permutation perm(5);
+    perm.permute(1,3);
+
+    bool threw_exception = false;
+    try
+    {
+        five_d.permute(perm);
+    }
+    catch(bad_parameter&)
+    {
+        threw_exception = true;
+    }
+    if(!threw_exception)
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "sparse_bispace_impl::permute(...) did not throw exception when interleaving trees");
     }
 }
 

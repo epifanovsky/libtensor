@@ -62,6 +62,12 @@ sparse_bispace_impl sparse_bispace_impl::permute(const runtime_permutation& perm
     sd_p.apply(n_subs);
     sd_p.apply(a_to_r);
 
+    for(size_t i = 0; i < n_sd; ++i)
+        for(size_t j = i+1; j < n_sd; ++j)
+            for(size_t k = 0; k < a_to_r[j].size(); ++k)
+                if((a_to_r[i][0] < a_to_r[j][k]) && (a_to_r[j][k] < a_to_r[i].back()))
+                    throw bad_parameter(g_ns,k_clazz,"permute(...)",__FILE__,__LINE__,"Permutation interleaves trees"); 
+
     //Now with our repositioned sds in proper order, can proceed
     idx_list p_group_offsets;
     vector<idx_list> r_n_subs(n_sd); //sd-relative new subspaces
