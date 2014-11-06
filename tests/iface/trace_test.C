@@ -2,6 +2,7 @@
 #include <sstream>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/btod_add.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_trace.h>
 #include <libtensor/libtensor.h>
@@ -18,6 +19,7 @@ void trace_test::perform() throw(libtest::test_exception) {
 
         test_t_1();
         test_t_2();
+        test_t_3();
         test_e_1();
         test_e_2();
         test_e_3();
@@ -31,9 +33,9 @@ void trace_test::perform() throw(libtest::test_exception) {
 }
 
 
-void trace_test::test_t_1() throw(libtest::test_exception) {
+void trace_test::test_t_1() {
 
-    static const char *testname = "trace_test::test_t_1()";
+    static const char testname[] = "trace_test::test_t_1()";
 
     try {
 
@@ -56,9 +58,9 @@ void trace_test::test_t_1() throw(libtest::test_exception) {
 }
 
 
-void trace_test::test_t_2() throw(libtest::test_exception) {
+void trace_test::test_t_2() {
 
-    static const char *testname = "trace_test::test_t_2()";
+    static const char testname[] = "trace_test::test_t_2()";
 
     try {
 
@@ -82,9 +84,35 @@ void trace_test::test_t_2() throw(libtest::test_exception) {
 }
 
 
-void trace_test::test_e_1() throw(libtest::test_exception) {
+void trace_test::test_t_3() {
 
-    static const char *testname = "trace_test::test_e_1()";
+    static const char testname[] = "trace_test::test_t_3()";
+
+    try {
+
+    bispace<1> si(10);
+    si.split(5).split(7);
+    bispace<4> sijkl(si&si&si&si);
+    btensor<4> bt(sijkl), bt1(sijkl);
+
+    btod_random<4>().perform(bt);
+    btod_copy<4>(bt, permutation<4>().permute(1, 2)).perform(bt1);
+    double d_ref = btod_trace<2>(bt1).calculate();
+
+    letter i, j, k, l;
+    double d = trace(i|k, j|l, bt(i|j|k|l));
+    check_ref(testname, d, d_ref);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+}
+
+
+void trace_test::test_e_1() {
+
+    static const char testname[] = "trace_test::test_e_1()";
 
     try {
 
@@ -111,9 +139,9 @@ void trace_test::test_e_1() throw(libtest::test_exception) {
 }
 
 
-void trace_test::test_e_2() throw(libtest::test_exception) {
+void trace_test::test_e_2() {
 
-    static const char *testname = "trace_test::test_e_2()";
+    static const char testname[] = "trace_test::test_e_2()";
 
     try {
 
@@ -141,9 +169,9 @@ void trace_test::test_e_2() throw(libtest::test_exception) {
 }
 
 
-void trace_test::test_e_3() throw(libtest::test_exception) {
+void trace_test::test_e_3() {
 
-    static const char *testname = "trace_test::test_e_3()";
+    static const char testname[] = "trace_test::test_e_3()";
 
     try {
 
