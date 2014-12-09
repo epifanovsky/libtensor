@@ -1,5 +1,5 @@
-#include <libtensor/block_sparse/block_loop.h>
 #include "block_loop_test.h" 
+/*#include <libtensor/block_sparse/block_loop.h>*/
 
 namespace libtensor {
 

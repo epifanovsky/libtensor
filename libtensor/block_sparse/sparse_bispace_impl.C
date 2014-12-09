@@ -15,6 +15,18 @@ sparse_bispace_impl::sparse_bispace_impl(const vector<subspace>& subspaces,
 {
 }
 
+sparse_bispace_impl::sparse_bispace_impl(const sparse_bispace_impl& lhs,
+                                         const sparse_bispace_impl& rhs)
+{
+    m_subspaces.insert(m_subspaces.end(),lhs.m_subspaces.begin(),lhs.m_subspaces.end());
+    m_subspaces.insert(m_subspaces.end(),rhs.m_subspaces.begin(),rhs.m_subspaces.end());
+    m_group_sd.insert(m_group_sd.end(),lhs.m_group_sd.begin(),lhs.m_group_sd.end());
+    m_group_sd.insert(m_group_sd.end(),rhs.m_group_sd.begin(),rhs.m_group_sd.end());
+    m_group_offsets.insert(m_group_offsets.end(),lhs.m_group_offsets.begin(),lhs.m_group_offsets.end());
+    for(size_t i = 0; i < rhs.m_group_offsets.size(); ++i)
+        m_group_offsets.push_back(rhs.m_group_offsets[i] + lhs.m_subspaces.size()); 
+}
+
 bool sparse_bispace_impl::operator==(const sparse_bispace_impl& rhs) const
 {
     return (m_subspaces == rhs.m_subspaces) && 

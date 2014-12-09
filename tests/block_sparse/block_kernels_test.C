@@ -1,3 +1,5 @@
+#include "block_kernels_test.h" 
+#if 0
 #include <libtensor/block_sparse/sparse_loop_list.h>
 #include <libtensor/block_sparse/block_print_kernel.h>
 #include <libtensor/block_sparse/block_permute_kernel.h>
@@ -5,8 +7,8 @@
 #include <libtensor/block_sparse/block_add2_kernel.h>
 #include <libtensor/expr/iface/letter.h>
 #include <sstream>
-#include "block_kernels_test.h" 
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
+#endif
 
 using namespace std;
 

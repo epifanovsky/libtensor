@@ -9,7 +9,7 @@ namespace libtensor {
 
 class sparse_bispace_impl
 {
-private:
+protected:
     std::vector<subspace> m_subspaces;
     std::vector<sparsity_data> m_group_sd;
     idx_list m_group_offsets;
@@ -18,9 +18,14 @@ public:
 
     sparse_bispace_impl(const std::vector<subspace>& subspaces) : m_subspaces(subspaces) {};
 
+    //Called by permute, contract
     sparse_bispace_impl(const std::vector<subspace>& subspaces,
                         const std::vector<sparsity_data>& group_sd,
                         const idx_list& group_offsets);
+
+    //Called by symbolic operator|
+    sparse_bispace_impl(const sparse_bispace_impl& lhs,
+                        const sparse_bispace_impl& rhs);
                         
     sparse_bispace_impl permute(const runtime_permutation& perm) const;
     sparse_bispace_impl contract(size_t contract_idx) const;

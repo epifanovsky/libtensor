@@ -8,21 +8,18 @@
 #ifndef SPARSE_LOOP_LIST_H_
 #define SPARSE_LOOP_LIST_H_
 
-#include <vector>
-#include "block_loop.h"
 #include "sparse_bispace.h"
+#if 0
+#include "block_loop.h"
 #include "block_kernel_i.h"
 #include "sparsity_fuser.h"
 #include "sparse_loop_grouper.h"
-
-//TODO REMOVE
-#include <sys/time.h>
-#include <iostream>
+#endif
 
 namespace libtensor
 {
 
-
+#if 0
 //TODO: DEBUG REMOVE
 template<typename T>
 T read_timer()
@@ -262,6 +259,7 @@ void sparse_loop_list::_run_internal(kern_t& kernel,
         }
     }
 }
+#endif
 
 } /* namespace libtensor */
 

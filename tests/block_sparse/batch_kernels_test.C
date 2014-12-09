@@ -1,16 +1,16 @@
-#include <libtensor/block_sparse/batch_kernel_permute.h>
-#include <libtensor/block_sparse/batch_kernel_contract2.h>
-#include <libtensor/block_sparse/batch_kernel_add2.h>
-#include <libtensor/block_sparse/batch_kernel_unblock.h>
-#include <libtensor/block_sparse/batch_kernel_reblock.h>
-#include <libtensor/block_sparse/sparse_btensor.h>
-#include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include "batch_kernels_test.h"
-#include "test_fixtures/permute_3d_sparse_120_test_f.h"
-#include "test_fixtures/contract2_test_f.h"
-#include "test_fixtures/contract2_dense_dense_test_f.h"
-#include "test_fixtures/subtract2_test_f.h"
-#include "test_fixtures/batch_kernel_unblock_test_f.h"
+/*#include <libtensor/block_sparse/batch_kernel_permute.h>*/
+/*#include <libtensor/block_sparse/batch_kernel_contract2.h>*/
+/*#include <libtensor/block_sparse/batch_kernel_add2.h>*/
+/*#include <libtensor/block_sparse/batch_kernel_unblock.h>*/
+/*#include <libtensor/block_sparse/batch_kernel_reblock.h>*/
+/*#include <libtensor/block_sparse/sparse_btensor.h>*/
+/*#include <libtensor/block_sparse/direct_sparse_btensor.h>*/
+/*#include "test_fixtures/permute_3d_sparse_120_test_f.h"*/
+/*#include "test_fixtures/contract2_test_f.h"*/
+/*#include "test_fixtures/contract2_dense_dense_test_f.h"*/
+/*#include "test_fixtures/subtract2_test_f.h"*/
+/*#include "test_fixtures/batch_kernel_unblock_test_f.h"*/
 
 using namespace std;
 

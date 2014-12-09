@@ -1,21 +1,47 @@
 #ifndef SPARSE_BISPACE_H
 #define SPARSE_BISPACE_H
 
-#include <vector>
-#include <map>
-#include "../defs.h"
-#include "../core/sequence.h"
-#include "../core/permutation.h"
-#include "runtime_permutation.h"
-#include "sparse_block_tree_iterator.h"
-#include "sparsity_expr.h"
-#include "range.h"
-
-//TODO REMOVE
-#include <iostream>
+#include "sparse_bispace_impl.h"
 
 namespace libtensor {
 
+
+template<size_t N>
+class sparse_bispace : public sparse_bispace_impl
+{
+public:
+    sparse_bispace(const sparse_bispace_impl& impl) : sparse_bispace_impl(impl) {}
+    template<size_t M>
+    sparse_bispace<N+M> operator|(const sparse_bispace<M>& rhs);
+};
+
+template<size_t N> template<size_t M>
+sparse_bispace<N+M> sparse_bispace<N>::operator|(const sparse_bispace<M>& rhs)
+{
+    return static_cast< sparse_bispace<N+M> >(sparse_bispace_impl(*this,rhs));
+}
+
+template<>
+class sparse_bispace<1> : public sparse_bispace_impl
+{
+public:
+    sparse_bispace(size_t dim,
+                   const idx_list& split_points = idx_list(1,0)) : sparse_bispace_impl(std::vector<subspace>(1,subspace(dim,split_points))) {}
+
+    template<size_t M>
+    sparse_bispace<M+1> operator|(const sparse_bispace<M>& rhs);
+
+};
+
+template<size_t M>
+sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>& rhs)
+{
+    return static_cast< sparse_bispace<M+1> >(sparse_bispace_impl(*this,rhs));
+}
+
+} //namespace libtensor
+
+#if 0
 //Useful types
 typedef std::vector<size_t> block_list;
 
@@ -1289,5 +1315,6 @@ public:
 };
 
 } // namespace libtensor
+#endif
 
 #endif // SPARSE_BISPACE_H

@@ -4,8 +4,8 @@
  *      Author: smanzer
  */
 
-#include <libtensor/block_sparse/sparsity_fuser.h>
 #include "sparsity_fuser_test.h"
+/*#include <libtensor/block_sparse/sparsity_fuser.h>*/
 
 using namespace std;
 

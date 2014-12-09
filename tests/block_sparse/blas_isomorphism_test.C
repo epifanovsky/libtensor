@@ -1,5 +1,5 @@
-#include <libtensor/block_sparse/blas_isomorphism.h>
 #include "blas_isomorphism_test.h"
+/*#include <libtensor/block_sparse/blas_isomorphism.h>*/
 
 using namespace std;
 

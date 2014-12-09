@@ -1,13 +1,13 @@
 #include "connectivity_test.h"
-#include "test_fixtures/contract2_subtract2_nested_test_f.h"
-#include "test_fixtures/contract2_permute_nested_test_f.h"
-#include <libtensor/block_sparse/connectivity.h>
+/*#include "test_fixtures/contract2_subtract2_nested_test_f.h"*/
+/*#include "test_fixtures/contract2_permute_nested_test_f.h"*/
+/*#include <libtensor/block_sparse/connectivity.h>*/
 
 
 
 namespace libtensor {
 
-using namespace expr;
+/*using namespace expr;*/
 using namespace std;
 
 #if 0

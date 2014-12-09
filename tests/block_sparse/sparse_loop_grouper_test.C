@@ -4,8 +4,8 @@
  *      Author: smanzer
  */
 
-#include <libtensor/block_sparse/sparse_loop_grouper.h>
 #include "sparse_loop_grouper_test.h"
+/*#include <libtensor/block_sparse/sparse_loop_grouper.h>*/
 
 using namespace std;
 

@@ -5,6 +5,7 @@
  *      Author: smanzer
  */
 
+#if 0
 #include <libtensor/block_sparse/sparse_btensor.h>
 #include <libtensor/block_sparse/direct_sparse_btensor.h>
 #include <libtensor/expr/operators/contract.h>
@@ -575,6 +576,7 @@ void run_benchmark_mo(const char* file_name)
 #endif
 #endif
 }
+#endif
 
 int main(int argc,char *argv[])
 {

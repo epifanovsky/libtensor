@@ -1,9 +1,11 @@
 
-#include <libtensor/block_sparse/sparse_btensor.h>
 #include "sparse_btensor_test.h"
+#if 0
+#include <libtensor/block_sparse/sparse_btensor.h>
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
 #include "test_fixtures/subtract2_test_f.h"
 #include "test_fixtures/contract2_dense_dense_test_f.h"
+#endif
 
 namespace libtensor {
    

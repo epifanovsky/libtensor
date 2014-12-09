@@ -1,25 +1,25 @@
 #include "batch_provider_test.h"
-#include "test_fixtures/permute_3d_sparse_120_test_f.h"
-#include "test_fixtures/contract2_test_f.h"
-#include "test_fixtures/contract2_permute_nested_test_f.h"
-#include "test_fixtures/contract2_subtract2_nested_test_f.h"
-#include <libtensor/expr/dag/expr_tree.h>
-#include <libtensor/expr/dag/node_add.h>
-#include <libtensor/expr/dag/node_assign.h>
-#include <libtensor/expr/dag/node_contract.h>
+/*#include "test_fixtures/permute_3d_sparse_120_test_f.h"*/
+/*#include "test_fixtures/contract2_test_f.h"*/
+/*#include "test_fixtures/contract2_permute_nested_test_f.h"*/
+/*#include "test_fixtures/contract2_subtract2_nested_test_f.h"*/
+/*#include <libtensor/expr/dag/expr_tree.h>*/
+/*#include <libtensor/expr/dag/node_add.h>*/
+/*#include <libtensor/expr/dag/node_assign.h>*/
+/*#include <libtensor/expr/dag/node_contract.h>*/
 
-#include <libtensor/expr/iface/node_ident_any_tensor.h>
-#include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/expr/dag/node_transform.h>
-#include <libtensor/block_sparse/sparse_btensor.h>
-#include <libtensor/block_sparse/direct_sparse_btensor.h>
-#include <libtensor/block_sparse/batch_provider.h>
+/*#include <libtensor/expr/iface/node_ident_any_tensor.h>*/
+/*#include <libtensor/core/scalar_transf_double.h>*/
+/*#include <libtensor/expr/dag/node_transform.h>*/
+/*#include <libtensor/block_sparse/sparse_btensor.h>*/
+/*#include <libtensor/block_sparse/direct_sparse_btensor.h>*/
+/*#include <libtensor/block_sparse/batch_provider.h>*/
 
 using namespace std;
 
 namespace libtensor {
 
-using namespace expr;
+/*using namespace expr;*/
 
 void batch_provider_test::perform() throw(libtest::test_exception) 
 {

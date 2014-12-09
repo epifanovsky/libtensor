@@ -1,14 +1,14 @@
 #include "batch_list_builder_test.h"
-#include "test_fixtures/index_group_test_f.h"
-#include <libtensor/block_sparse/batch_list_builder.h>
-#include <libtensor/block_sparse/connectivity.h>
-#include <libtensor/block_sparse/direct_sparse_btensor.h>
+/*#include "test_fixtures/index_group_test_f.h"*/
+/*#include <libtensor/block_sparse/batch_list_builder.h>*/
+/*#include <libtensor/block_sparse/connectivity.h>*/
+/*#include <libtensor/block_sparse/direct_sparse_btensor.h>*/
 
 using namespace std;
 
 namespace libtensor {
 
-using namespace expr;
+/*using namespace expr;*/
 
 void batch_list_builder_test::perform() throw(libtest::test_exception) 
 {

@@ -1,6 +1,6 @@
 #include "subspace_iterator_test.h"
-#include "test_fixtures/index_group_test_f.h"
-#include <libtensor/block_sparse/subspace_iterator.h>
+/*#include "test_fixtures/index_group_test_f.h"*/
+/*#include <libtensor/block_sparse/subspace_iterator.h>*/
 
 using namespace std;
 
