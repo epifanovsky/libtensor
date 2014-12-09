@@ -373,10 +373,10 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     bp.set_batch_array_sizes(batch_array_size_grps);
     bp.get_batch(this->m_data_ptr);
 
-    if(D_unblocked_tensor_ptr == NULL) delete D_unblocked_tensor_ptr;
-    if(H_unblocked_tensor_ptr == NULL) delete H_unblocked_tensor_ptr;
-    if(M_unblocked_tensor_ptr == NULL) delete M_unblocked_tensor_ptr;
-    if(M_reblocked_0_tensor_ptr == NULL) delete M_reblocked_0_tensor_ptr;
+    if(D_unblocked_tensor_ptr != NULL) delete D_unblocked_tensor_ptr;
+    if(H_unblocked_tensor_ptr != NULL) delete H_unblocked_tensor_ptr;
+    if(M_unblocked_tensor_ptr != NULL) delete M_unblocked_tensor_ptr;
+    if(M_reblocked_0_tensor_ptr != NULL) delete M_reblocked_0_tensor_ptr;
 }
 
 } // namespace libtensor
