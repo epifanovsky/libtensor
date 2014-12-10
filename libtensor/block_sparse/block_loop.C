@@ -1,89 +1,42 @@
-/*
- * block_loop_new.cpp
- *
- *  Created on: Nov 13, 2013
- *      Author: smanzer
- */
-
 #include "block_loop.h"
+#include "range.h"
+
+using namespace std;
 
 namespace libtensor
 {
 
-size_t flops = 0;
-bool count_flops = false;
-/*double contract_seconds = 0;*/
-
 const char* block_loop::k_clazz = "block_loop";
 
-block_loop::block_loop(const std::vector< sparse_bispace_any_order >& bispaces)
-    
+block_loop::block_loop(const subspace& subspace,
+                       const idx_pair_list& t_igs) : 
+                   m_t_igs(t_igs),
+                   m_block_inds(range(0,subspace.get_n_blocks())),
+                   start_idx(0),
+                   cur_idx(0)
 {
-	if(bispaces.size() == 0)
-	{
-		throw bad_parameter(g_ns, k_clazz,"block_loop_new(...)",
-				__FILE__, __LINE__, "loop must access at least one bispace");
-	}
-    size_t n_bispaces = bispaces.size();
-    m_subspaces_looped.resize(n_bispaces);
-    m_bispaces_ignored.resize(n_bispaces);
-    for(size_t bispace_idx = 0; bispace_idx  < n_bispaces; ++bispace_idx)
+    for(size_t i = 0; i < m_block_inds.size(); ++i)
     {
-        m_bispaces_ignored[bispace_idx] = true;
-        m_bispace_orders.push_back(bispaces[bispace_idx].get_order());
+        m_block_szs.push_back(subspace.get_block_size(i));
+        m_block_offs.push_back(idx_list());
+        for(size_t t = 0; t < m_t_igs.size(); ++t)
+        {
+            m_block_offs.back().push_back(subspace.get_block_abs_index(i));
+        }
     }
 }
-
-void block_loop::set_subspace_looped(size_t bispace_idx, size_t subspace_idx)
+void block_loop::apply(vector<idx_list>& ig_offs) const
 {
-#ifdef LIBTENSOR_DEBUG
-	//Is bispace_idx/subspace_idx valid?
-	if(bispace_idx >= m_bispaces_ignored.size())
-	{
-		throw out_of_bounds(g_ns, k_clazz,"set_subspace_looped(...)",
-				__FILE__, __LINE__, "bispace_idx is out of bounds");
-	}
-	if(subspace_idx >= m_bispace_orders[bispace_idx])
-	{
-		throw out_of_bounds(g_ns, k_clazz,"set_subspace_looped(...)",__FILE__, __LINE__,
-                "subspace_idx is out of bounds");
-	}
-#endif
-
-	//Finally, record that the loop touches the specified subspace of the given bispace
-	m_subspaces_looped[bispace_idx] = subspace_idx;
-    m_bispaces_ignored[bispace_idx] = false;
-}
-
-size_t block_loop::get_subspace_looped(size_t bispace_idx) const
-{
-#ifdef LIBTENSOR_DEBUG
-	if(bispace_idx >= m_bispaces_ignored.size())
-	{
-		throw out_of_bounds(g_ns, k_clazz,"get_subspace_looped(...)",
-				__FILE__, __LINE__, "bispace_idx is out of bounds");
-	}
-	else if(m_bispaces_ignored[bispace_idx] == true)
-	{
-		throw bad_parameter(g_ns, k_clazz,"get_subspace_looped(...)",
-				__FILE__, __LINE__, "bispace_idx is not looped over");
-	}
-#endif
-
-	return m_subspaces_looped[bispace_idx];
-}
-
-bool block_loop::is_bispace_ignored(size_t bispace_idx) const
-{
-#ifdef LIBTENSOR_DEBUG
-	if(bispace_idx >= m_bispaces_ignored.size())
-	{
-		throw out_of_bounds(g_ns, k_clazz,"is_bispace_ignored(...)",
-				__FILE__, __LINE__, "bispace_idx is out of bounds");
-	}
-#endif
-
-	return m_bispaces_ignored[bispace_idx];
+    for(size_t i = 0; i < m_t_igs.size(); ++i)
+    {
+        size_t t_idx = m_t_igs[i].first;
+        size_t ig_idx = m_t_igs[i].second;
+        ig_offs[t_idx][ig_idx] *= m_block_offs[cur_idx][i];
+        for(size_t f_ig_idx = ig_idx+1; f_ig_idx < ig_offs[t_idx].size(); ++f_ig_idx)
+        {
+            ig_offs[t_idx][f_ig_idx] *= m_block_szs[cur_idx];
+        }
+    }
 }
 
 } /* namespace libtensor */

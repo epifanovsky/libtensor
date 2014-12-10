@@ -1,298 +1,54 @@
 #include "block_loop_test.h" 
-/*#include <libtensor/block_sparse/block_loop.h>*/
+#include <libtensor/block_sparse/block_loop.h>
 
+using namespace std; 
 namespace libtensor {
 
 void block_loop_test::perform() throw(libtest::test_exception) {
 
-#if 0
-    test_set_subspace_looped_invalid_bispace_idx();
-    test_set_subspace_looped_invalid_subspace_idx();
-
-    test_get_subspace_looped_invalid_bispace_idx();
-    test_get_subspace_looped();
-
-    test_is_bispace_ignored_invalid_bispace_idx();
-    test_is_bispace_ignored();
-#endif
+    test_apply_contract2();
 }
 
-#if 0
-void block_loop_test::test_set_subspace_looped_invalid_bispace_idx()
-		throw (libtest::test_exception)
+void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_set_subspace_looped_invalid_bispace_idx()";
+    static const char *test_name = "block_loop_test::test_apply_contract2()";
 
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
+    size_t sp_i[3] = {2,5,9};
+    subspace sub_i(11,idx_list(sp_i,sp_i+3));
 
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
+    size_t sp_j[2] = {2,5};
+    subspace sub_j(9,idx_list(sp_j,sp_j+2));
 
-    std::vector< sparse_bispace_any_order > bispaces(2,spb_1|spb_2);
-    block_loop bl(bispaces);
+    size_t sp_k[3] = {1,4,8};
+    subspace sub_k(10,idx_list(sp_k,sp_k+3));
 
-    //Fails because there is no third bispace
-    bool threw_exception = false;
-    try
-    {
-		bl.set_subspace_looped(3,1);
-    }
-    catch(out_of_bounds&)
-    {
-    	threw_exception = true;
-    }
 
-    if(!threw_exception)
+    //Cij = Aik Bkj
+
+    vector<block_loop> loops;
+    idx_pair_list i_t_igs(1,idx_pair(0,0));
+    i_t_igs.push_back(idx_pair(1,0));
+    loops.push_back(block_loop(sub_i,i_t_igs));
+
+    idx_pair_list j_t_igs(1,idx_pair(0,1));
+    j_t_igs.push_back(idx_pair(2,1));
+    loops.push_back(block_loop(sub_j,j_t_igs));
+
+    idx_pair_list k_t_igs(1,idx_pair(1,1));
+    k_t_igs.push_back(idx_pair(2,0));
+    loops.push_back(block_loop(sub_k,k_t_igs));
+
+    vector<idx_list> ig_offs(3,idx_list(2,1));
+    loops[0].apply(ig_offs);
+    loops[1].apply(ig_offs);
+    loops[2].apply(ig_offs);
+
+
+    if(ig_offs != vector<idx_list>(3,idx_list(2,0)))
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::set_subspace_looped(...) did not throw exception when invalid bispace index specified");
+                "block_loop::apply() returned incorrect value");
     }
 }
-
-void block_loop_test::test_set_subspace_looped_invalid_subspace_idx()
-		throw (libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_set_subspace_looped_invalid_bispace_idx()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    std::vector< sparse_bispace_any_order > bispaces(2,spb_1|spb_2);
-
-    block_loop bl(bispaces);
-
-    //Fails because 2nd subspace has no 3rd subspace
-    bool threw_exception = false;
-    try
-    {
-		bl.set_subspace_looped(1,2);
-    }
-    catch(out_of_bounds&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::set_subspace_looped(...) did not throw exception when invalid subspace index specified");
-    }
-}
-
-void block_loop_test::test_get_subspace_looped_invalid_bispace_idx()
-		throw(libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_get_subspace_looped_invalid_bispace_idx()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
-    split_points_3.push_back(2);
-    split_points_3.push_back(4);
-    spb_3.split(split_points_3);
-
-    std::vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_1|spb_2|spb_3);
-    bispaces.push_back(spb_2|spb_3);
-    bispaces.push_back(spb_2);
-
-    //This loop ignores the second bispace
-    block_loop bl(bispaces);
-    bl.set_subspace_looped(0,1);
-    bl.set_subspace_looped(2,0);
-
-    //Out of bounds, only 3 bispaces, should fail
-    bool threw_exception = false;
-    try
-    {
-    	bl.get_subspace_looped(3);
-    }
-    catch(out_of_bounds&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::get_subspace_looped(...) did not throw exception when bispace requested out of bounds");
-    }
-
-    //Second bispace is not looped, should throw exception
-    threw_exception = false;
-    try
-    {
-    	bl.get_subspace_looped(1);
-    }
-    catch(bad_parameter&)
-    {
-    	threw_exception = true;
-    }
-
-    if(!threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::get_subspace_looped(...) did not throw exception when bispace requested not looped over");
-    }
-}
-
-void block_loop_test::test_get_subspace_looped()
-		throw(libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_get_subspace_looped()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
-    split_points_3.push_back(2);
-    split_points_3.push_back(4);
-    spb_3.split(split_points_3);
-
-    std::vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_1|spb_2|spb_3);
-    bispaces.push_back(spb_2|spb_3);
-    bispaces.push_back(spb_2);
-
-    //This loop ignores the second bispace
-    block_loop bl(bispaces);
-    bl.set_subspace_looped(0,1);
-    bl.set_subspace_looped(2,0);
-
-    if(bl.get_subspace_looped(0) != 1)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::get_subspace_looped(...) returned incorrect value");
-    }
-}
-
-void block_loop_test::test_is_bispace_ignored_invalid_bispace_idx()
-		throw(libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_is_bispace_ignored_invalid_bispace_idx()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
-    split_points_3.push_back(2);
-    split_points_3.push_back(4);
-    spb_3.split(split_points_3);
-
-    std::vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_1|spb_2|spb_3);
-    bispaces.push_back(spb_2|spb_3);
-    bispaces.push_back(spb_2);
-
-    //This loop ignores the second bispace
-    block_loop bl(bispaces);
-    bl.set_subspace_looped(0,1);
-    bl.set_subspace_looped(2,0);
-
-    //Only three bispaces should fail
-    bool threw_exception = false;
-    try
-    {
-    	bl.is_bispace_ignored(3);
-    }
-    catch(out_of_bounds)
-    {
-    	threw_exception = true;
-    }
-
-    if(! threw_exception)
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::is_bispace_ignored(...) did not throw exception when bispace index out of bounds");
-    }
-}
-
-void block_loop_test::test_is_bispace_ignored()
-		throw(libtest::test_exception)
-{
-    static const char *test_name = "block_loop_test::test_is_bispace_ignored()";
-
-	//bispaces
-    sparse_bispace<1> spb_1(4);
-    std::vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
-
-    sparse_bispace<1> spb_2(5);
-    std::vector<size_t> split_points_2;
-    split_points_2.push_back(2);
-    spb_2.split(split_points_2);
-
-    sparse_bispace<1> spb_3(6);
-    std::vector<size_t> split_points_3;
-    split_points_3.push_back(2);
-    split_points_3.push_back(4);
-    spb_3.split(split_points_3);
-
-    std::vector< sparse_bispace_any_order > bispaces;
-    bispaces.push_back(spb_1|spb_2|spb_3);
-    bispaces.push_back(spb_2|spb_3);
-    bispaces.push_back(spb_2);
-
-    //This loop ignores the second bispace
-    block_loop bl(bispaces);
-    bl.set_subspace_looped(0,1);
-    bl.set_subspace_looped(2,0);
-
-    if(!bl.is_bispace_ignored(1))
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::is_bispace_ignored(...) did not return true for ignored bispace");
-    }
-
-    if(bl.is_bispace_ignored(0))
-    {
-        fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::is_bispace_ignored(...) did returned true for non-ignored bispace");
-    }
-}
-#endif
 
 } // namespace libtensor
