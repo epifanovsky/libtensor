@@ -22,8 +22,8 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
 #endif
 
     test_run_block_permute_kernel_2d();
+    /*test_run_block_permute_kernel_2d_sparse();*/
 #if 0
-    test_run_block_permute_kernel_2d_sparse();
     test_run_block_permute_kernel_3d_120();
     test_run_block_permute_kernel_3d_120_sparse();
 
@@ -188,13 +188,13 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
     block_permute_kernel<double> bpk(perm);
 
     //We stride the input, not the output
-    vector<idx_pair_list> bs_groups(2);
-    bs_groups[0].push_back(idx_pair(0,0));
-    bs_groups[0].push_back(idx_pair(1,1));
-    bs_groups[1].push_back(idx_pair(0,1));
-    bs_groups[1].push_back(idx_pair(1,0));
+    vector<idx_pair_list> ts_groups(2);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,1));
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,0));
 
-    sparse_loop_list sll(bispaces,bs_groups);
+    sparse_loop_list sll(bispaces,ts_groups);
 
 
     vector<double*> ptrs(1,test_output_arr);
@@ -211,7 +211,6 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
     }
 }
 
-#if 0
 void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse()";
@@ -242,23 +241,19 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
                                       6,9,
                                       7,10};
 
-    double test_output_arr[14];
+    double test_output_arr[14] = {0};
 
     vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
 
     //First bispace (slow index) and splitting
-    sparse_bispace<1> spb_1(4);
-    vector<size_t> split_points_1;
-    split_points_1.push_back(2);
-    spb_1.split(split_points_1);
+    vector<size_t> split_points_1(1,2);
+    sparse_bispace<1> spb_1(4,split_points_1);
 
     //Second bispace (fast index) and splitting
-    sparse_bispace<1> spb_2(7);
-    vector<size_t> split_points_2;
-    split_points_2.push_back(2);
+    vector<size_t> split_points_2(1,2);
     split_points_2.push_back(4);
-    spb_2.split(split_points_2);
+    sparse_bispace<1> spb_2(7,split_points_2);
 
     //Sparsity information
     vector< sequence<2,size_t> > sig_blocks(3);
@@ -273,7 +268,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
     perm.permute(0,1);
     sparse_bispace<2> two_d_input = spb_1 % spb_2 << sig_blocks;
     sparse_bispace<2> two_d_output = two_d_input.permute(perm);
-    vector< sparse_bispace_any_order > bispaces(1,two_d_output);
+    vector<sparse_bispace_impl> bispaces(1,two_d_output);
     bispaces.push_back(two_d_input);
 
     runtime_permutation rperm(2);
@@ -281,13 +276,13 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
     block_permute_kernel<double> bpk(rperm);
 
 
-    vector<block_loop> loops(2,block_loop(bispaces));
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,1);
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,0);
+    vector<idx_pair_list> ts_groups(2);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,1));
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,0));
 
-    sparse_loop_list sll(loops,bispaces);
+    sparse_loop_list sll(bispaces,ts_groups);
     sll.run(bpk,ptrs);
 
     for(int i = 0; i < 14; ++i)
@@ -300,6 +295,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
     }
 }
 
+#if 0
 void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest::test_exception)
 {
     static const char *test_name = "block_loop_test::test_run_block_permute_kernel_3d_120()";

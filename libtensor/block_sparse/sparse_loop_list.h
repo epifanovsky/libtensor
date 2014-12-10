@@ -48,7 +48,8 @@ void sparse_loop_list::run(kern_t& kernel,
 
         if(!c_loop.done())
         {
-            c_loop.apply(ig_off_grps[c_loop_idx],block_dims);
+            c_loop.apply_offsets(ig_off_grps[c_loop_idx]);
+            c_loop.apply_dims(block_dims);
 
             if(c_loop_idx == m_loops.size() - 1)
             {

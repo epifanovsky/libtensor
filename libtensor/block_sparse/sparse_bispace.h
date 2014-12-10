@@ -3,6 +3,7 @@
 
 #include "sparse_bispace_impl.h"
 #include "sparsity_expr.h"
+#include <libtensor/core/permutation.h>
 
 namespace libtensor {
 
@@ -14,12 +15,21 @@ public:
     sparse_bispace(const sparse_bispace_impl& impl) : sparse_bispace_impl(impl) {}
     template<size_t M>
     sparse_bispace<N+M> operator|(const sparse_bispace<M>& rhs);
+    sparse_bispace<N> permute(const permutation<N>& perm) const;
 };
 
 template<size_t N> template<size_t M>
 sparse_bispace<N+M> sparse_bispace<N>::operator|(const sparse_bispace<M>& rhs)
 {
     return static_cast< sparse_bispace<N+M> >(sparse_bispace_impl(*this,rhs));
+}
+
+template<size_t N> 
+sparse_bispace<N> sparse_bispace<N>::permute(const permutation<N>& perm) const
+{
+    runtime_permutation rperm(N);
+    for(size_t i = 0; i < N; ++i) rperm[i] = perm[i]; 
+    return static_cast< sparse_bispace<N> >(sparse_bispace_impl::permute(rperm));
 }
 
 template<>

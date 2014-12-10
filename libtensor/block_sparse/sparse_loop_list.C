@@ -14,7 +14,7 @@ sparse_loop_list::sparse_loop_list(const vector<sparse_bispace_impl>& bispaces,
     {
         const idx_pair_list& grp = ts_groups[g_idx];
         const subspace& sub = bispaces[grp[0].first][grp[0].second];
-        m_loops.push_back(block_loop(sub,grp));
+        m_loops.push_back(block_loop(sub,grp,grp));
     }
     
     for(size_t t_idx = 0; t_idx < bispaces.size(); ++t_idx)

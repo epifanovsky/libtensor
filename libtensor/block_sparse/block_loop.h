@@ -17,14 +17,17 @@ private:
     idx_list m_block_inds;
     std::vector<idx_list> m_block_offs;
     idx_pair_list m_t_igs;
+    idx_pair_list m_t_s;
 public:
     //Dense constructor
 	block_loop(const subspace& subspace,
-               const idx_pair_list& t_igs);
+               const idx_pair_list& t_igs,
+               const idx_pair_list& t_s);
 
-    void apply(std::vector<idx_list>& ig_offs,
-               std::vector<idx_list>& block_szs) const;
-
+    void apply_offsets(std::vector<idx_list>& ig_offs) const;
+                       
+    void apply_dims(std::vector<idx_list>& block_dims) const;
+                    
     block_loop& operator++();
 
     bool done() const;

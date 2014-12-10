@@ -6,12 +6,12 @@ namespace libtensor {
 
 void block_loop_test::perform() throw(libtest::test_exception) {
 
-    test_apply_contract2();
+    test_contract2();
 }
 
-void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
+void block_loop_test::test_contract2() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_apply_contract2()";
+    static const char *test_name = "block_loop_test::test_contract2()";
 
     size_t sp_i[3] = {2,5,9};
     subspace sub_i(11,idx_list(sp_i,sp_i+3));
@@ -28,15 +28,15 @@ void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
     vector<block_loop> loops;
     idx_pair_list i_t_igs(1,idx_pair(0,0));
     i_t_igs.push_back(idx_pair(1,0));
-    loops.push_back(block_loop(sub_i,i_t_igs));
+    loops.push_back(block_loop(sub_i,i_t_igs,i_t_igs));
 
     idx_pair_list j_t_igs(1,idx_pair(0,1));
     j_t_igs.push_back(idx_pair(2,1));
-    loops.push_back(block_loop(sub_j,j_t_igs));
+    loops.push_back(block_loop(sub_j,j_t_igs,j_t_igs));
 
     idx_pair_list k_t_igs(1,idx_pair(1,1));
     k_t_igs.push_back(idx_pair(2,0));
-    loops.push_back(block_loop(sub_k,k_t_igs));
+    loops.push_back(block_loop(sub_k,k_t_igs,k_t_igs));
 
     vector<idx_list> orig_ig_offs(3,idx_list(2));
     orig_ig_offs[0][0] = 9;
@@ -49,30 +49,36 @@ void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
 
 
     vector<idx_list> ig_offs(orig_ig_offs);
-    vector<idx_list> block_szs(3,idx_list(2,0));
-    loops[0].apply(ig_offs,block_szs);
-    loops[1].apply(ig_offs,block_szs);
-    loops[2].apply(ig_offs,block_szs);
+    vector<idx_list> block_dims(3,idx_list(2,0));
+    loops[0].apply_offsets(ig_offs);
+    loops[0].apply_dims(block_dims);
+    loops[1].apply_offsets(ig_offs);
+    loops[1].apply_dims(block_dims);
+    loops[2].apply_offsets(ig_offs);
+    loops[2].apply_dims(block_dims);
 
     vector<idx_list> c_ig_offs(3,idx_list(2,0));
-    vector<idx_list> c_block_szs(3,idx_list(2,2));
-    c_block_szs[1][1] = 1; 
-    c_block_szs[2][0] = 1; 
+    vector<idx_list> c_block_dims(3,idx_list(2,2));
+    c_block_dims[1][1] = 1; 
+    c_block_dims[2][0] = 1; 
 
     if(ig_offs != c_ig_offs)
         fail_test(test_name,__FILE__,__LINE__,
-          "block_loop::apply() returned incorrect ig_offs");
+          "block_loop::apply_offsets() returned incorrect ig_offs");
 
-    if(block_szs != c_block_szs)
+    if(block_dims != c_block_dims)
         fail_test(test_name,__FILE__,__LINE__,
-          "block_loop::apply() returned incorrect ig_offs");
+          "block_loop::apply_dims() returned incorrect ig_offs");
 
     ig_offs = orig_ig_offs;
-    block_szs = vector<idx_list>(3,idx_list(2,0));
+    block_dims = vector<idx_list>(3,idx_list(2,0));
     ++loops[2];
-    loops[0].apply(ig_offs,block_szs);
-    loops[1].apply(ig_offs,block_szs);
-    loops[2].apply(ig_offs,block_szs);
+    loops[0].apply_offsets(ig_offs);
+    loops[0].apply_dims(block_dims);
+    loops[1].apply_offsets(ig_offs);
+    loops[1].apply_dims(block_dims);
+    loops[2].apply_offsets(ig_offs);
+    loops[2].apply_dims(block_dims);
 
     c_ig_offs[0][0] = 0;
     c_ig_offs[0][1] = 0;
@@ -81,16 +87,16 @@ void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
     c_ig_offs[2][0] = 9;
     c_ig_offs[2][1] = 0;
 
-    c_block_szs[1][1] = 3;
-    c_block_szs[2][0] = 3;
+    c_block_dims[1][1] = 3;
+    c_block_dims[2][0] = 3;
 
     if(ig_offs != c_ig_offs)
         fail_test(test_name,__FILE__,__LINE__,
-          "block_loop::apply() returned incorrect ig_offs");
+          "block_loop::apply_offsets() returned incorrect ig_offs");
 
-    if(block_szs != c_block_szs)
+    if(block_dims != c_block_dims)
         fail_test(test_name,__FILE__,__LINE__,
-          "block_loop::apply() returned incorrect ig_offs");
+          "block_loop::apply_dims() returned incorrect ig_offs");
 }
 
 } // namespace libtensor
