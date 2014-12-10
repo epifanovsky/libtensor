@@ -19,7 +19,7 @@ private:
 
     /*
      * sparse_bispace<N>::operator[](...) tests
-     */
+    */
     //Negative tests (throw correct exception)
     void test_nd_subscript_operator_gt_upper_bound() throw(libtest::test_exception);
 
@@ -61,11 +61,11 @@ private:
     /*
      * index_group tests
      */
-    void test_get_n_index_groups() throw(libtest::test_exception);
-    void test_get_index_group_offset() throw(libtest::test_exception);
-    void test_get_index_group_order() throw(libtest::test_exception);
-    void test_get_index_group_dim() throw(libtest::test_exception);
-    void test_get_index_group_containing_subspace() throw(libtest::test_exception);
+    void test_get_n_ig() throw(libtest::test_exception);
+    void test_get_ig_offset() throw(libtest::test_exception);
+    void test_get_ig_order() throw(libtest::test_exception);
+    void test_get_ig_dim() throw(libtest::test_exception);
+    void test_get_ig_containing_subspace() throw(libtest::test_exception);
 
     void test_get_batch_size() throw(libtest::test_exception);
 

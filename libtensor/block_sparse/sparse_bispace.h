@@ -2,6 +2,7 @@
 #define SPARSE_BISPACE_H
 
 #include "sparse_bispace_impl.h"
+#include "sparsity_expr.h"
 
 namespace libtensor {
 
@@ -28,8 +29,13 @@ public:
     sparse_bispace(size_t dim,
                    const idx_list& split_points = idx_list(1,0)) : sparse_bispace_impl(std::vector<subspace>(1,subspace(dim,split_points))) {}
 
+    void split(const idx_list& split_points) { m_subspaces[0].split(split_points); }
+    size_t get_dim() const { return m_subspaces[0].get_dim(); }
+
     template<size_t M>
     sparse_bispace<M+1> operator|(const sparse_bispace<M>& rhs);
+
+    sparsity_expr<1,1> operator%(const sparse_bispace<1>& rhs) const;
 
 };
 
@@ -37,6 +43,69 @@ template<size_t M>
 sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>& rhs)
 {
     return static_cast< sparse_bispace<M+1> >(sparse_bispace_impl(*this,rhs));
+}
+
+inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& rhs) const
+{
+    return sparsity_expr<1,1>(*this,rhs);
+}
+
+//Implementation of methods in sparsity_expr and sparse_block_tree requiring sparse_bispace definition
+    
+//Internal method for recursively constructing a list of all 1d bispaces used to create this expr
+template<size_t M>
+void sparsity_expr<M,1>::retrieve_subspaces(std::deque<subspace>& subspaces) const
+{
+    subspaces.push_front(m_cur_bispace.m_subspaces[0]);
+}
+    
+template<size_t M,size_t N>
+void sparsity_expr<M,N>::retrieve_subspaces(std::deque<subspace>& subspaces) const
+{
+    subspaces.push_front(m_cur_bispace.m_subspaces[0]);
+    m_sub_expr.retrieve_subspaces(subspaces);
+}
+    
+template<size_t M>
+sparse_bispace<2> sparsity_expr<M,1>::operator<<(const std::vector< sequence<2,size_t> >& sig_blocks)
+{
+    std::vector<idx_list> keys;
+    for(size_t i = 0; i < sig_blocks.size(); ++i)
+    {
+        idx_list ent; 
+        ent.push_back(sig_blocks[i][0]);
+        ent.push_back(sig_blocks[i][1]);
+        keys.push_back(ent);
+    }
+    std::vector<subspace> subs(m_parent_bispace.m_subspaces);
+    subs.insert(subs.end(),m_cur_bispace.m_subspaces.begin(),m_cur_bispace.m_subspaces.end());
+    return static_cast< sparse_bispace<2> >(sparse_bispace_impl(
+                                    subs,
+                                    std::vector<sparsity_data>(1,sparsity_data(2,keys)),
+                                    idx_list(1,0)));
+}
+
+template<size_t M,size_t N>
+sparse_bispace<M+N> sparsity_expr<M,N>::operator<<(const std::vector< sequence<N+1,size_t> >& sig_blocks)
+{
+
+    std::deque<subspace> subspaces;
+    retrieve_subspaces(subspaces);
+
+    std::vector<idx_list> keys;
+    for(size_t i = 0; i < sig_blocks.size(); ++i)
+    {
+        idx_list ent; 
+        for(size_t j = 0; j < N+1; ++j)
+            ent.push_back(sig_blocks[i][j]);
+        keys.push_back(ent);
+    }
+    std::vector<subspace> subs(m_parent_bispace.m_subspaces);
+    subs.insert(subs.end(),subspaces.begin(),subspaces.end());
+    return static_cast< sparse_bispace<M+N> >(sparse_bispace_impl(
+                                    subs,
+                                    std::vector<sparsity_data>(1,sparsity_data(N+1,keys)),
+                                    idx_list(1,0)));
 }
 
 } //namespace libtensor
@@ -1178,38 +1247,6 @@ inline sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>&
 inline sparsity_expr<1,1> sparse_bispace<1>::operator%(const sparse_bispace<1>& rhs) const
 {
     return sparsity_expr<1,1>(*this,rhs);
-}
-
-//Implementation of methods in sparsity_expr and sparse_block_tree requiring sparse_bispace definition
-    
-//Internal method for recursively constructing a list of all subspaces
-template<size_t M>
-void sparsity_expr<M,1>::retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const
-{
-    subspaces.push_front(m_cur_subspace);
-}
-    
-template<size_t M,size_t N>
-void sparsity_expr<M,N>::retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const
-{
-    subspaces.push_front(m_cur_subspace);
-    m_sub_expr.retrieve_subspaces(subspaces);
-}
-    
-template<size_t M>
-sparse_bispace<2> sparsity_expr<M,1>::operator<<(const std::vector< sequence<2,size_t> >& sig_blocks)
-{
-    return sparse_bispace<2>(m_parent_bispace,std::vector< sparse_bispace<1> >(1,m_cur_subspace),sig_blocks);
-}
-
-template<size_t M,size_t N>
-sparse_bispace<M+N> sparsity_expr<M,N>::operator<<(const std::vector< sequence<N+1,size_t> >& sig_blocks)
-{
-
-    std::deque< sparse_bispace<1> > subspaces;
-    retrieve_subspaces(subspaces);
-
-    return sparse_bispace<M+N>(m_parent_bispace,std::vector< sparse_bispace<1> >(subspaces.begin(),subspaces.end()),sig_blocks);
 }
 
 //TODO: Make this immutable, etc?? Need to make this class hard to abuse

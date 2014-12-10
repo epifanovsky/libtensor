@@ -206,6 +206,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparsity_data.C
     block_sparse/subspace.C
     block_sparse/block_loop.C
+    block_sparse/sparse_loop_list.C
     block_sparse/sparse_bispace_impl.C
 )
 

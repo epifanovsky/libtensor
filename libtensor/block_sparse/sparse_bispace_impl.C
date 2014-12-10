@@ -7,12 +7,57 @@ namespace libtensor {
     
 const char* sparse_bispace_impl::k_clazz = "sparse_bispace_impl";
 
+void sparse_bispace_impl::init_ig()
+{
+    size_t subspace_idx = 0; 
+    size_t sd_idx = 0;
+    while(subspace_idx < m_subspaces.size())
+    {
+        m_ig_offsets.push_back(subspace_idx);
+
+        //Anything sparse in this bispace?
+        bool treat_as_sparse = false;
+        if(sd_idx < m_group_offsets.size())
+        {
+            //Are we in a sparse group?
+            if(subspace_idx == m_group_offsets[sd_idx])
+            {
+                treat_as_sparse = true;
+            }
+        }
+
+        if(treat_as_sparse)
+        {
+            //We are in a sparse group, use the total group size
+            size_t grp_nnz = 0;
+            const sparsity_data& sd = m_group_sd[sd_idx];
+            for(sparsity_data::const_iterator it = sd.begin(); it != sd.end(); ++it)
+            {
+                size_t sd_off = m_group_offsets[sd_idx];
+                size_t ent_nnz = 1;
+                for(size_t i = sd_off; i < sd_off + sd.get_order(); ++i)
+                    ent_nnz *= m_subspaces[i].get_block_size(it->first[i-sd_off]);
+                grp_nnz += ent_nnz;
+            }
+            m_ig_dims.push_back(grp_nnz);
+            subspace_idx += m_group_sd[sd_idx].get_order();
+            ++sd_idx;
+        }
+        else
+        {
+            m_ig_dims.push_back(m_subspaces[subspace_idx].get_dim());
+            ++subspace_idx;
+        }
+    }
+}
+
 sparse_bispace_impl::sparse_bispace_impl(const vector<subspace>& subspaces,
                                          const vector<sparsity_data>& group_sd,
                                          const idx_list& group_offsets) : m_subspaces(subspaces),
                                                                           m_group_sd(group_sd),
                                                                           m_group_offsets(group_offsets)
 {
+    init_ig();
 }
 
 sparse_bispace_impl::sparse_bispace_impl(const sparse_bispace_impl& lhs,
@@ -25,6 +70,8 @@ sparse_bispace_impl::sparse_bispace_impl(const sparse_bispace_impl& lhs,
     m_group_offsets.insert(m_group_offsets.end(),lhs.m_group_offsets.begin(),lhs.m_group_offsets.end());
     for(size_t i = 0; i < rhs.m_group_offsets.size(); ++i)
         m_group_offsets.push_back(rhs.m_group_offsets[i] + lhs.m_subspaces.size()); 
+
+    init_ig();
 }
 
 bool sparse_bispace_impl::operator==(const sparse_bispace_impl& rhs) const
@@ -147,6 +194,44 @@ sparse_bispace_impl sparse_bispace_impl::contract(size_t contract_idx) const
         group_offsets.push_back(new_off);
     }
     return sparse_bispace_impl(subspaces,group_sd,group_offsets);
+}
+
+size_t sparse_bispace_impl::get_ig_order(size_t grp_idx) const
+{
+    if(grp_idx == m_ig_offsets.size() - 1)
+        return m_subspaces.size() - m_ig_offsets.back();
+    else
+        return m_ig_offsets[grp_idx+1] - m_ig_offsets[grp_idx];
+}
+
+size_t sparse_bispace_impl::get_ig_containing_subspace(size_t subspace_idx) const
+{
+    if(subspace_idx >= m_subspaces.size())
+    {
+        throw bad_parameter(g_ns,k_clazz,"get_ig_containing_subspace()",__FILE__,__LINE__,"subspace idx too large"); 
+    } 
+
+    size_t ig;
+    for(size_t i = 0; i < m_ig_offsets.size(); ++i)
+    {
+        if(m_ig_offsets[i] <= subspace_idx)
+        {
+            if(i == m_ig_offsets.size() - 1)
+            {
+                if(subspace_idx < m_subspaces.size())
+                {
+                    ig = i;
+                    break;
+                }
+            }
+            else if(m_ig_offsets[i+1] > subspace_idx)
+            {
+                ig = i;
+                break;
+            }
+        }
+    }
+    return ig;
 }
 
 } // namespace libtensor

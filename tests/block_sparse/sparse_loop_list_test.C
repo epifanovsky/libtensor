@@ -21,7 +21,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_construct_duplicate_subspaces_looped();
 #endif
 
-    test_run_block_permute_kernel_2d();
+    /*test_run_block_permute_kernel_2d();*/
 #if 0
     test_run_block_permute_kernel_2d_sparse();
     test_run_block_permute_kernel_3d_120();
@@ -187,15 +187,16 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
     perm.permute(0,1);
     block_permute_kernel<double> bpk(perm);
 
-#if 0
     //We stride the input, not the output
-    vector<block_loop> loops(2,block_loop(bispaces));
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,1);
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,0);
+    vector<idx_pair_list> bs_groups(2);
+    bs_groups[0].push_back(idx_pair(0,0));
+    bs_groups[0].push_back(idx_pair(1,1));
+    bs_groups[1].push_back(idx_pair(0,1));
+    bs_groups[1].push_back(idx_pair(1,0));
 
-    sparse_loop_list sll(loops,bispaces);
+    sparse_loop_list sll(bispaces,bs_groups);
+
+
     vector<double*> ptrs(1,test_output_arr);
     ptrs.push_back(test_input_arr);
     sll.run(bpk,ptrs);
@@ -208,7 +209,6 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
                     "sparse_loop_list::run(...) produced incorrect output");
         }
     }
-#endif
 }
 
 #if 0

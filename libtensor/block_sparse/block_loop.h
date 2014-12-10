@@ -22,9 +22,11 @@ public:
 	block_loop(const subspace& subspace,
                const idx_pair_list& t_igs);
 
-    void apply(std::vector<idx_list>& idx_grp_offs) const;
+    void apply(std::vector<idx_list>& ig_offs,
+               std::vector<idx_list>& block_szs) const;
 
     block_loop& operator++();
+    bool done() const;
 };
 
 } /* namespace libtensor */

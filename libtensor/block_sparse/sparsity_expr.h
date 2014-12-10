@@ -1,7 +1,7 @@
 #ifndef SPARSITY_EXPR_H
 #define SPARSITY_EXPR_H
 
-#include <vector>
+#include "subspace.h"
 #include <deque>
 
 namespace libtensor {
@@ -22,17 +22,17 @@ class sparsity_expr<M,1> {
 private:
     //The first bispace that called operator%(...) to instantiate this object
     const sparse_bispace<M>& m_parent_bispace;
-    const sparse_bispace<1>& m_cur_subspace;
+    const sparse_bispace<1>& m_cur_bispace;
     
     //Constructor - private because we only want instances of this class created by sparse_bispace<M>::operator%(...)
-    sparsity_expr(const sparse_bispace<M>& parent_bispace, const sparse_bispace<1>& rhs) : m_parent_bispace(parent_bispace),m_cur_subspace(rhs) {}
+    sparsity_expr(const sparse_bispace<M>& parent_bispace, const sparse_bispace<1>& rhs) : m_parent_bispace(parent_bispace),m_cur_bispace(rhs) {}
 
     //Copy constructor is private, so can ONLY be actually used in code 
     //by calling operator<<(...) to extract a sparse bispace object
-    sparsity_expr(const sparsity_expr<M,1>& rhs) : m_parent_bispace(rhs.m_parent_bispace), m_cur_subspace(rhs.m_cur_subspace) {}
+    sparsity_expr(const sparsity_expr<M,1>& rhs) : m_parent_bispace(rhs.m_parent_bispace), m_cur_bispace(rhs.m_cur_bispace) {}
 
     //Internal method for recursively constructing a list of all subspaces involved in the expression
-    void retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const;
+    void retrieve_subspaces(std::deque<subspace>& subspaces) const;
 public:
     //Resolve this expression into a true sparse_bispace
     //Implemented in sparse_bispace.h
@@ -63,19 +63,19 @@ template<size_t M,size_t N>
 class sparsity_expr {
 private:
     const sparsity_expr<M,N-1>& m_sub_expr;
-    const sparse_bispace<1>& m_cur_subspace;
+    const sparse_bispace<1>& m_cur_bispace;
     const sparse_bispace<M>& m_parent_bispace;
 
     //Constructor - private because we only want instances of this class created by sparse_bispace<M>::operator%(...)
     //Used 
-    sparsity_expr(const sparsity_expr<M,N-1>& sub_expr,const sparse_bispace<1>& cur_subspace) : m_sub_expr(sub_expr), m_cur_subspace(cur_subspace),m_parent_bispace(sub_expr.m_parent_bispace) {}
+    sparsity_expr(const sparsity_expr<M,N-1>& sub_expr,const sparse_bispace<1>& cur_subspace) : m_sub_expr(sub_expr), m_cur_bispace(cur_subspace),m_parent_bispace(sub_expr.m_parent_bispace) {}
     
     //Copy constructor is private, so can ONLY be actually used in code 
     //by calling operator<<(...) to extract a sparse bispace object
-    sparsity_expr(const sparsity_expr<M,N>& rhs) : m_sub_expr(rhs.m_sub_expr), m_cur_subspace(rhs.m_cur_subspace), m_parent_bispace(rhs.m_parent_bispace) {}
+    sparsity_expr(const sparsity_expr<M,N>& rhs) : m_sub_expr(rhs.m_sub_expr), m_cur_bispace(rhs.m_cur_bispace), m_parent_bispace(rhs.m_parent_bispace) {}
 
     //Internal method for recursively constructing a list of all subspaces involved in the expression
-    void retrieve_subspaces(std::deque< sparse_bispace<1> >& subspaces) const; 
+    void retrieve_subspaces(std::deque<subspace>& subspaces) const; 
 public:
     //Resolve this expression into a true sparse_bispace
     //Implemented in sparse_bispace.h

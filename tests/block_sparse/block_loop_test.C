@@ -46,23 +46,34 @@ void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
     orig_ig_offs[2][0] = 9;
     orig_ig_offs[2][1] = 1;
 
-    vector<idx_list> ig_offs(orig_ig_offs);
-    loops[0].apply(ig_offs);
-    loops[1].apply(ig_offs);
-    loops[2].apply(ig_offs);
 
-    if(ig_offs != vector<idx_list>(3,idx_list(2,0)))
-    {
+
+    vector<idx_list> ig_offs(orig_ig_offs);
+    vector<idx_list> block_szs(3,idx_list(2,0));
+    loops[0].apply(ig_offs,block_szs);
+    loops[1].apply(ig_offs,block_szs);
+    loops[2].apply(ig_offs,block_szs);
+
+    vector<idx_list> c_ig_offs(3,idx_list(2,0));
+    vector<idx_list> c_block_szs(3,idx_list(2,2));
+    c_block_szs[1][1] = 1; 
+    c_block_szs[2][0] = 1; 
+
+    if(ig_offs != c_ig_offs)
         fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::apply() returned incorrect value");
-    }
+          "block_loop::apply() returned incorrect ig_offs");
+
+    if(block_szs != c_block_szs)
+        fail_test(test_name,__FILE__,__LINE__,
+          "block_loop::apply() returned incorrect ig_offs");
 
     ig_offs = orig_ig_offs;
+    block_szs = vector<idx_list>(3,idx_list(2,0));
     ++loops[2];
-    loops[0].apply(ig_offs);
-    loops[1].apply(ig_offs);
-    loops[2].apply(ig_offs);
-    vector<idx_list> c_ig_offs(3,idx_list(2));
+    loops[0].apply(ig_offs,block_szs);
+    loops[1].apply(ig_offs,block_szs);
+    loops[2].apply(ig_offs,block_szs);
+
     c_ig_offs[0][0] = 0;
     c_ig_offs[0][1] = 0;
     c_ig_offs[1][0] = 0;
@@ -70,11 +81,16 @@ void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
     c_ig_offs[2][0] = 9;
     c_ig_offs[2][1] = 0;
 
+    c_block_szs[1][1] = 3;
+    c_block_szs[2][0] = 3;
+
     if(ig_offs != c_ig_offs)
-    {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_loop::apply() returned incorrect value");
-    }
+          "block_loop::apply() returned incorrect ig_offs");
+
+    if(block_szs != c_block_szs)
+        fail_test(test_name,__FILE__,__LINE__,
+          "block_loop::apply() returned incorrect ig_offs");
 }
 
 } // namespace libtensor

@@ -25,12 +25,14 @@ block_loop::block_loop(const subspace& subspace,
         }
     }
 }
-void block_loop::apply(vector<idx_list>& ig_offs) const
+void block_loop::apply(vector<idx_list>& ig_offs,
+                       vector<idx_list>& block_szs) const
 {
     for(size_t i = 0; i < m_t_igs.size(); ++i)
     {
         size_t t_idx = m_t_igs[i].first;
         size_t ig_idx = m_t_igs[i].second;
+        block_szs[t_idx][ig_idx] = m_block_szs[m_cur_idx];
         ig_offs[t_idx][ig_idx] *= m_block_offs[m_cur_idx][i];
         for(size_t f_ig_idx = ig_idx+1; f_ig_idx < ig_offs[t_idx].size(); ++f_ig_idx)
         {
@@ -43,6 +45,11 @@ block_loop& block_loop::operator++()
 {
    ++m_cur_idx;
    return *this;
+}
+
+bool block_loop::done() const
+{
+    return (m_cur_idx == m_block_inds.size());
 }
 
 } /* namespace libtensor */
