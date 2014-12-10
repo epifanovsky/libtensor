@@ -17,7 +17,7 @@ block_loop::block_loop(const subspace& subspace,
 {
     for(size_t i = 0; i < m_block_inds.size(); ++i)
     {
-        m_block_szs.push_back(subspace.get_block_size(i));
+        m_block_dims.push_back(subspace.get_block_size(i));
         m_block_offs.push_back(idx_list());
         for(size_t t = 0; t < m_t_igs.size(); ++t)
         {
@@ -26,17 +26,17 @@ block_loop::block_loop(const subspace& subspace,
     }
 }
 void block_loop::apply(vector<idx_list>& ig_offs,
-                       vector<idx_list>& block_szs) const
+                       vector<idx_list>& block_dims) const
 {
     for(size_t i = 0; i < m_t_igs.size(); ++i)
     {
         size_t t_idx = m_t_igs[i].first;
         size_t ig_idx = m_t_igs[i].second;
-        block_szs[t_idx][ig_idx] = m_block_szs[m_cur_idx];
+        block_dims[t_idx][ig_idx] = m_block_dims[m_cur_idx];
         ig_offs[t_idx][ig_idx] *= m_block_offs[m_cur_idx][i];
         for(size_t f_ig_idx = ig_idx+1; f_ig_idx < ig_offs[t_idx].size(); ++f_ig_idx)
         {
-            ig_offs[t_idx][f_ig_idx] *= m_block_szs[m_cur_idx];
+            ig_offs[t_idx][f_ig_idx] *= m_block_dims[m_cur_idx];
         }
     }
 }
@@ -50,6 +50,11 @@ block_loop& block_loop::operator++()
 bool block_loop::done() const
 {
     return (m_cur_idx == m_block_inds.size());
+}
+
+void block_loop::reset()
+{
+    m_cur_idx = m_start_idx;
 }
 
 } /* namespace libtensor */

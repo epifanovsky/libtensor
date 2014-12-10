@@ -13,7 +13,7 @@ private:
 
     size_t m_start_idx;
     size_t m_cur_idx;
-    idx_list m_block_szs;
+    idx_list m_block_dims;
     idx_list m_block_inds;
     std::vector<idx_list> m_block_offs;
     idx_pair_list m_t_igs;
@@ -26,7 +26,9 @@ public:
                std::vector<idx_list>& block_szs) const;
 
     block_loop& operator++();
+
     bool done() const;
+    void reset();
 };
 
 } /* namespace libtensor */

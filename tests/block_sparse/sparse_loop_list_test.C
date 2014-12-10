@@ -21,7 +21,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_construct_duplicate_subspaces_looped();
 #endif
 
-    /*test_run_block_permute_kernel_2d();*/
+    test_run_block_permute_kernel_2d();
 #if 0
     test_run_block_permute_kernel_2d_sparse();
     test_run_block_permute_kernel_3d_120();
