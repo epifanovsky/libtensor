@@ -11,8 +11,8 @@ class block_loop
 private:
     static const char* k_clazz; //!< Class name
 
-    size_t start_idx;
-    size_t cur_idx;
+    size_t m_start_idx;
+    size_t m_cur_idx;
     idx_list m_block_szs;
     idx_list m_block_inds;
     std::vector<idx_list> m_block_offs;
@@ -23,7 +23,8 @@ public:
                const idx_pair_list& t_igs);
 
     void apply(std::vector<idx_list>& idx_grp_offs) const;
-               
+
+    block_loop& operator++();
 };
 
 } /* namespace libtensor */

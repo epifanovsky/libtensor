@@ -38,13 +38,39 @@ void block_loop_test::test_apply_contract2() throw(libtest::test_exception)
     k_t_igs.push_back(idx_pair(2,0));
     loops.push_back(block_loop(sub_k,k_t_igs));
 
-    vector<idx_list> ig_offs(3,idx_list(2,1));
+    vector<idx_list> orig_ig_offs(3,idx_list(2));
+    orig_ig_offs[0][0] = 9;
+    orig_ig_offs[0][1] = 1;
+    orig_ig_offs[1][0] = 10;
+    orig_ig_offs[1][1] = 1;
+    orig_ig_offs[2][0] = 9;
+    orig_ig_offs[2][1] = 1;
+
+    vector<idx_list> ig_offs(orig_ig_offs);
     loops[0].apply(ig_offs);
     loops[1].apply(ig_offs);
     loops[2].apply(ig_offs);
 
-
     if(ig_offs != vector<idx_list>(3,idx_list(2,0)))
+    {
+        fail_test(test_name,__FILE__,__LINE__,
+                "block_loop::apply() returned incorrect value");
+    }
+
+    ig_offs = orig_ig_offs;
+    ++loops[2];
+    loops[0].apply(ig_offs);
+    loops[1].apply(ig_offs);
+    loops[2].apply(ig_offs);
+    vector<idx_list> c_ig_offs(3,idx_list(2));
+    c_ig_offs[0][0] = 0;
+    c_ig_offs[0][1] = 0;
+    c_ig_offs[1][0] = 0;
+    c_ig_offs[1][1] = 2;
+    c_ig_offs[2][0] = 9;
+    c_ig_offs[2][1] = 0;
+
+    if(ig_offs != c_ig_offs)
     {
         fail_test(test_name,__FILE__,__LINE__,
                 "block_loop::apply() returned incorrect value");
