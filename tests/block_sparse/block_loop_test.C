@@ -145,6 +145,8 @@ void block_loop_test::test_contract2_2d_2d_sparse_dense() throw(libtest::test_ex
     k_t_s.push_back(idx_pair(2,1));
     loops.push_back(block_loop(sub_k,k_t_igs,k_t_s,sd,1,idx_pair_list(1,idx_pair(0,0))));
 
+    loops[0].set_dependent_loop(loops[2]);
+
 
     //Starts off initialized to inner size of all index groups
     vector<idx_list> orig_ig_offs(3,idx_list(2));
@@ -210,7 +212,7 @@ void block_loop_test::test_contract2_2d_2d_sparse_dense() throw(libtest::test_ex
 
     if(block_dims != c_block_dims)
         fail_test(test_name,__FILE__,__LINE__,
-          "block_loop::apply_dims() returned incorrect block_dims_offs");
+          "block_loop::apply_dims() returned incorrect block_dims");
 
 
     ++loops[2];
@@ -219,6 +221,51 @@ void block_loop_test::test_contract2_2d_2d_sparse_dense() throw(libtest::test_ex
           "k loop done() did not return true");
 
     /*** i loop iteration 1, k loop iteration 0 ***/
+    ig_offs = orig_ig_offs;
+    block_dims = vector<idx_list>(3,idx_list(2,0));
+    ++loops[0];
+    loops[0].apply_offsets(ig_offs);
+    loops[0].apply_dims(block_dims);
+    loops[1].apply_offsets(ig_offs);
+    loops[1].apply_dims(block_dims);
+    loops[2].apply_offsets(ig_offs);
+    loops[2].apply_dims(block_dims);
+
+    c_ig_offs = vector<idx_list>(3,idx_list(2,0));
+    c_ig_offs[1].resize(1);
+    c_ig_offs[0][0] = 45;
+    c_ig_offs[1][0] = 15;
+    c_ig_offs[2][1] = 2;
+
+    c_block_dims[0][0] = 4; 
+    c_block_dims[1][0] = 4; 
+    c_block_dims[1][1] = 3; 
+    c_block_dims[2][1] = 3; 
+
+    if(ig_offs != c_ig_offs)
+        fail_test(test_name,__FILE__,__LINE__,
+          "block_loop::apply_offsets() returned incorrect ig_offs");
+
+    if(block_dims != c_block_dims)
+        fail_test(test_name,__FILE__,__LINE__,
+          "block_loop::apply_dims() returned incorrect block_dims");
+
+    if(loops[2].done())
+        fail_test(test_name,__FILE__,__LINE__,
+          "k loop done() did not return false");
+
+    /*** both sparse loops now should be done after incr of k ***/
+    ++loops[2];
+    if(!loops[2].done())
+        fail_test(test_name,__FILE__,__LINE__,
+          "k loop done() did not return true");
+    ++loops[0];
+    if(!loops[0].done())
+        fail_test(test_name,__FILE__,__LINE__,
+          "i loop done() did not return true");
+    if(!loops[2].done())
+        fail_test(test_name,__FILE__,__LINE__,
+          "k loop done() did not return true");
 }
 
 } // namespace libtensor

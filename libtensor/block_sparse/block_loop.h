@@ -12,6 +12,7 @@ class block_loop
 private:
     static const char* k_clazz; //!< Class name
 
+    bool m_sparse;
     bool m_done;
     size_t m_start_idx;
     size_t m_cur_idx;
@@ -20,6 +21,8 @@ private:
     std::vector<idx_list> m_block_offs;
     idx_pair_list m_t_igs;
     idx_pair_list m_t_s;
+    block_loop* m_controlling_loop;
+    block_loop* m_dependent_loop;
 public:
     //Dense constructor
 	block_loop(const subspace& subspace,
@@ -37,6 +40,8 @@ public:
     void apply_offsets(std::vector<idx_list>& ig_offs) const;
                        
     void apply_dims(std::vector<idx_list>& block_dims) const;
+
+    void set_dependent_loop(block_loop& dep_loop);
                     
     block_loop& operator++();
 
