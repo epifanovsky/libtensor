@@ -107,27 +107,37 @@ void block_loop::set_dependent_loop(block_loop& dep_loop)
 
 block_loop& block_loop::operator++()
 {
-   size_t old_block_idx = m_block_inds[m_cur_idx];
-   if(m_dependent_loop != NULL)
+#ifdef LIBTENSOR_DEBUG
+   if(m_done)
+       throw bad_parameter(g_ns,k_clazz,"operator++",__FILE__,__LINE__,"loop is finished cannot increment"); 
+#endif
+   if(m_cur_idx == m_block_inds.size() - 1)
+       m_done = true;
+   else if(m_controlling_loop != NULL)
    {
-       if(m_dependent_loop->done())
+       size_t old_block_idx = m_controlling_loop->m_block_inds[m_cur_idx];
+       if(m_controlling_loop->m_block_inds[m_cur_idx+1] != old_block_idx)
        {
-           m_start_idx = m_dependent_loop->m_cur_idx;
-           m_cur_idx = m_start_idx;
-           m_dependent_loop->m_start_idx = m_start_idx;
-           m_dependent_loop->reset();
+           m_done = true;
+       }
+   }
+   if(!m_done)
+   {
+       if(m_dependent_loop != NULL)
+       {
+           if(m_dependent_loop->done())
+           {
+               m_start_idx = m_dependent_loop->m_cur_idx+1;
+               m_cur_idx = m_start_idx;
+               m_dependent_loop->m_start_idx = m_start_idx;
+               m_dependent_loop->reset();
+           }
+           else
+               throw bad_parameter(g_ns,k_clazz,"operator++",__FILE__,__LINE__,"incrementing outer loop before inner loop finished"); 
        }
        else
-           throw bad_parameter(g_ns,k_clazz,"operator++",__FILE__,__LINE__,"incrementing outer loop before inner loop finished"); 
+           ++m_cur_idx;
    }
-   else
-   {
-       ++m_cur_idx;
-   }
-   if(m_cur_idx == m_block_inds.size())
-       m_done = true;
-   else if(m_block_inds[m_cur_idx] <= old_block_idx)
-       m_done = true;
    return *this;
 }
 
