@@ -18,6 +18,7 @@ block_loop::block_loop(const subspace& subspace,
                                                    m_cur_idx(0),
                                                    m_done(false),
                                                    m_sparse(false),
+                                                   m_controlling_loop(NULL),
                                                    m_dependent_loop(NULL)
 {
     for(size_t i = 0; i < m_block_inds.size(); ++i)
@@ -44,6 +45,7 @@ block_loop::block_loop(const subspace& subspace,
                                                             m_cur_idx(0),
                                                             m_done(false),
                                                             m_sparse(true),
+                                                            m_controlling_loop(NULL),
                                                             m_dependent_loop(NULL)
 
 {
@@ -99,6 +101,7 @@ void block_loop::apply_dims(vector<idx_list>& block_dims) const
 
 void block_loop::set_dependent_loop(block_loop& dep_loop)
 {
+    dep_loop.m_controlling_loop = this;
     this->m_dependent_loop = &dep_loop;
 }
 
