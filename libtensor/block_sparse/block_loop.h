@@ -21,7 +21,6 @@ private:
     std::vector<idx_list> m_block_offs;
     idx_pair_list m_t_igs;
     idx_pair_list m_t_s;
-    block_loop* m_controlling_loop;
     block_loop* m_dependent_loop;
 public:
     //Dense constructor
