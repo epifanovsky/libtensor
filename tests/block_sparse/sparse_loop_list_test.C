@@ -6,7 +6,7 @@
  */
 
 #include <libtensor/block_sparse/sparse_loop_list.h>
-#include <libtensor/block_sparse/block_permute_kernel.h>
+#include <libtensor/block_sparse/block_kernel_permute.h>
 /*#include <libtensor/block_sparse/block_contract2_kernel.h>*/
 #include "sparse_loop_list_test.h"
 
@@ -21,11 +21,11 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_construct_duplicate_subspaces_looped();
 #endif
 
-    test_run_block_permute_kernel_2d();
-    /*test_run_block_permute_kernel_2d_sparse();*/
+    test_run_block_kernel_permute_2d();
+    /*test_run_block_kernel_permute_2d_sparse();*/
 #if 0
-    test_run_block_permute_kernel_3d_120();
-    test_run_block_permute_kernel_3d_120_sparse();
+    test_run_block_kernel_permute_3d_120();
+    test_run_block_kernel_permute_3d_120_sparse();
 #endif
 
     test_run_block_contract2_kernel_2d_2d();
@@ -132,9 +132,9 @@ void sparse_loop_list_test::test_construct_duplicate_subspaces_looped() throw(li
 
 //Permutation 01
 //Permuted nested loops
-void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::test_exception)
+void sparse_loop_list_test::test_run_block_kernel_permute_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_run_block_permute_kernel_2d()";
+    static const char *test_name = "sparse_loop_list_test::test_run_block_kernel_permute_2d()";
 
 	//Indices in comments are block indices
     double test_input_arr[20] = { //i = 0, j = 0
@@ -187,7 +187,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
 
     runtime_permutation perm(2);
     perm.permute(0,1);
-    block_permute_kernel<double> bpk(perm);
+    block_kernel_permute<double> bpk(perm);
 
     //We stride the input, not the output
     vector<idx_pair_list> ts_groups(2);
@@ -213,9 +213,9 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d() throw(libtest::te
     }
 }
 
-void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libtest::test_exception)
+void sparse_loop_list_test::test_run_block_kernel_permute_2d_sparse() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse()";
+    static const char *test_name = "sparse_loop_list_test::test_run_block_kernel_permute_2d_sparse()";
 
 	//Indices in comments are block indices
     double test_input_arr[14] = { //i = 0, j = 0
@@ -275,7 +275,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
 
     runtime_permutation rperm(2);
     rperm.permute(0,1);
-    block_permute_kernel<double> bpk(rperm);
+    block_kernel_permute<double> bpk(rperm);
 
 
     vector<idx_pair_list> ts_groups(2);
@@ -298,9 +298,9 @@ void sparse_loop_list_test::test_run_block_permute_kernel_2d_sparse() throw(libt
 }
 
 #if 0
-void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest::test_exception)
+void sparse_loop_list_test::test_run_block_kernel_permute_3d_120() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_run_block_permute_kernel_3d_120()";
+    static const char *test_name = "block_loop_test::test_run_block_kernel_permute_3d_120()";
 
     //3x4x5
     //Permutation is kij -> ijk
@@ -422,7 +422,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest
     runtime_permutation perm(3);
     perm.permute(0,2);
     perm.permute(0,1);
-    block_permute_kernel<double> bpk(perm);
+    block_kernel_permute<double> bpk(perm);
 
     vector<block_loop> loops(3,block_loop(bispaces));
     loops[0].set_subspace_looped(0,0);
@@ -445,9 +445,9 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120() throw(libtest
 
 }
 
-void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(libtest::test_exception)
+void sparse_loop_list_test::test_run_block_kernel_permute_3d_120_sparse() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_loop_test::test_run_block_permute_kernel_3d_120_sparse()";
+    static const char *test_name = "block_loop_test::test_run_block_kernel_permute_3d_120_sparse()";
 
     //3x4x5
     //Permutation is kij -> ijk
@@ -565,7 +565,7 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(
     runtime_permutation rperm(3);
     rperm.permute(0,2);
     rperm.permute(0,1);
-    block_permute_kernel<double> bpk(rperm);
+    block_kernel_permute<double> bpk(rperm);
 
     vector<block_loop> loops(3,block_loop(bispaces));
     loops[0].set_subspace_looped(0,0);
