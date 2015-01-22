@@ -1,8 +1,8 @@
 #include "block_kernels_test.h" 
+#include <libtensor/block_sparse/block_kernel_print.h>
+#include <libtensor/block_sparse/block_kernel_permute.h>
 #if 0
 #include <libtensor/block_sparse/sparse_loop_list.h>
-#include <libtensor/block_sparse/block_print_kernel.h>
-#include <libtensor/block_sparse/block_permute_kernel.h>
 #include <libtensor/block_sparse/block_contract2_kernel.h>
 #include <libtensor/block_sparse/block_add2_kernel.h>
 #include <libtensor/expr/iface/letter.h>
@@ -16,13 +16,13 @@ namespace libtensor {
 
 void block_kernels_test::perform() throw(libtest::test_exception) {
 
-#if 0
-    test_block_print_kernel_2d();
-    test_block_print_kernel_3d();
+    test_block_kernel_print_2d();
+    test_block_kernel_print_3d();
 
-    test_block_permute_kernel_2d();
-    test_block_permute_kernel_3d_120();
-    test_block_permute_kernel_3d_021();
+    test_block_kernel_permute_2d();
+    test_block_kernel_permute_3d_120();
+    test_block_kernel_permute_3d_021();
+#if 0
 
     test_block_contract2_kernel_2d_not_enough_loops();
     test_block_contract2_kernel_2d_not_enough_bispaces();
@@ -49,10 +49,9 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
 #endif
 }
 
-#if 0
-void block_kernels_test::test_block_print_kernel_2d() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_print_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_print_kernel_2d()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_print_2d()";
 
     double test_block_arr[4] = {1,2,
                                 3,4};
@@ -63,7 +62,7 @@ void block_kernels_test::test_block_print_kernel_2d() throw(libtest::test_except
     dims.push_back(2); 
     vector<dim_list> dim_lists(1,dims);
 
-    block_print_kernel<double> bpk;
+    block_kernel_print<double> bpk;
     bpk(ptrs,dim_lists);
     string correct_str("---\n 1 2\n 3 4\n");
 
@@ -75,9 +74,9 @@ void block_kernels_test::test_block_print_kernel_2d() throw(libtest::test_except
 }
 
 
-void block_kernels_test::test_block_print_kernel_3d() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_print_3d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_print_kernel_3d()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_print_3d()";
 
     double test_block_arr[8] = {1,2,
                                 3,4,
@@ -92,7 +91,7 @@ void block_kernels_test::test_block_print_kernel_3d() throw(libtest::test_except
     dims.push_back(2); 
     vector<dim_list> dim_lists(1,dims);
 
-    block_print_kernel<double> bpk;
+    block_kernel_print<double> bpk;
     bpk(ptrs,dim_lists);
     string correct_str("---\n 1 2\n 3 4\n\n 5 6\n 7 8\n");
     if(bpk.str()  != correct_str)
@@ -102,9 +101,9 @@ void block_kernels_test::test_block_print_kernel_3d() throw(libtest::test_except
     }
 }
 
-void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_permute_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d()";
 
     double test_input_block[4] = {1,2,
                                   3,4};
@@ -124,7 +123,7 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
 
     runtime_permutation perm(2);
     perm.permute(0,1);
-    block_permute_kernel<double> b_perm_k(perm);
+    block_kernel_permute<double> b_perm_k(perm);
     b_perm_k(ptrs,dim_lists);
 
     for(int i = 0; i < 4; ++i)
@@ -132,15 +131,15 @@ void block_kernels_test::test_block_permute_kernel_2d() throw(libtest::test_exce
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_permute_kernel::operator(...) did not produce correct result");
+                    "block_kernel_permute::operator(...) did not produce correct result");
         }
     }
 }
 
 //A more complicated 3D permutation, with indices permuted in cyclic order
-void block_kernels_test::test_block_permute_kernel_3d_120() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_permute_3d_120() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_3d_201()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_3d_201()";
 
     //ordering is kij slow->fast to start
     //Dimensions are: 
@@ -198,21 +197,21 @@ void block_kernels_test::test_block_permute_kernel_3d_120() throw(libtest::test_
     perm.apply(dims);
     dim_lists[0] = dims;
 
-    block_permute_kernel<double> b_perm_k(perm);
+    block_kernel_permute<double> b_perm_k(perm);
     b_perm_k(ptrs,dim_lists);
     for(int i = 0; i < 24; ++i)
     {
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_permute_kernel::operator(...) did not produce correct result");
+                    "block_kernel_permute::operator(...) did not produce correct result");
         }
     }
 }
 
-void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_permute_3d_021() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_3d_021()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_3d_021()";
 
     //ordering is kij slow->fast to start
     //Dimensions are: 
@@ -282,7 +281,7 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
 
     runtime_permutation perm(3);
     perm.permute(1,2);
-    block_permute_kernel<double> b_perm_k(perm);
+    block_kernel_permute<double> b_perm_k(perm);
     b_perm_k(ptrs,dim_lists);
 
     for(int i = 0; i < 24; ++i)
@@ -290,11 +289,12 @@ void block_kernels_test::test_block_permute_kernel_3d_021() throw(libtest::test_
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_permute_kernel::operator(...) did not produce correct result");
+                    "block_kernel_permute::operator(...) did not produce correct result");
         }
     }
 }
 
+#if 0
 //Should throw an exception because there is only one loop, minimum is two loops for matrix-vector multiply
 void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw(libtest::test_exception)
 {
@@ -338,7 +338,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw
 //Should throw an exception exception when there are too few bispaces
 void block_kernels_test::test_block_contract2_kernel_2d_not_enough_bispaces() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_not_enough_bispaces()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_not_enough_bispaces()";
 
     //C_ij = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -526,7 +526,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_no_contracted_inds() thr
 //We don't allow output to be strided in the inner kernel - just dumb...and unsupported by typical blas implementations
 void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_strided_output()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_strided_output()";
 
     //Output strided test
     //C_ji = \sum_k A_ik B_kj
@@ -668,7 +668,7 @@ void block_kernels_test::test_block_contract2_kernel_perm_A_ikj() throw(libtest:
 //for each bispace
 void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_not_enough_dims()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_not_enough_dims()";
 
     //C_ji = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -742,7 +742,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs
 //Should throw exception when length of dim_lists doesn't match order of bispaces
 void block_kernels_test::test_block_contract2_kernel_2d_invalid_dims() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_invalid_dims()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_invalid_dims()";
 
     //C_ji = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -799,7 +799,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_invalid_dims() throw(lib
 //Should throw exception when dimensions in dim_lists don't match up with their contraction partners
 void block_kernels_test::test_block_contract2_kernel_2d_incompatible_dims() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_incompatible_dims()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_incompatible_dims()";
 
     //C_ji = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -852,7 +852,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_incompatible_dims() thro
 //Should produce correct matrix multiply output, with matrices in standard order
 void block_kernels_test::test_block_contract2_kernel_2d_ik_kj() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_ik_kj()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ik_kj()";
 
     //C_ij = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -925,7 +925,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_kj() throw(libtest::t
 //Should produce correct matrix multiply output, with b transposed (both matrices have same fast index
 void block_kernels_test::test_block_contract2_kernel_2d_ik_jk() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_ik_jk()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ik_jk()";
 
     //C_ij = \sum_k A_ik B_jk
     //dimensions: i = 2,j = 3,k = 4
@@ -995,7 +995,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_jk() throw(libtest::t
 
 void block_kernels_test::test_block_contract2_kernel_2d_ki_kj() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_ki_kj()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ki_kj()";
 
     //C_ij = \sum_k A_ki B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -1070,7 +1070,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj() throw(libtest::t
 
 void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_ki_jk()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ki_jk()";
 
     //C_ij = \sum_k A_ki B_jk
     //dimensions: i = 2,j = 3,k = 4
@@ -1145,7 +1145,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::t
 //as long as the subspaces are compatible
 void block_kernels_test::test_block_contract2_kernel_2d_ki_kj_permuted_loops() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_permute_kernel_2d_ki_kj_permuted_loops()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ki_kj_permuted_loops()";
 
     //C_ij = \sum_k A_ki B_kj
     //dimensions: i = 2,j = 3,k = 4

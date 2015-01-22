@@ -13,15 +13,15 @@ private:
     /*
      * block_printer tests
      */
-    void test_block_print_kernel_2d() throw(libtest::test_exception);
-    void test_block_print_kernel_3d() throw(libtest::test_exception);
+    void test_block_kernel_print_2d() throw(libtest::test_exception);
+    void test_block_kernel_print_3d() throw(libtest::test_exception);
 
     /*
-     * block_permute_kernel tests
+     * block_kernel_permute tests
      */
-    void test_block_permute_kernel_2d() throw(libtest::test_exception);
-    void test_block_permute_kernel_3d_120() throw(libtest::test_exception);
-    void test_block_permute_kernel_3d_021() throw(libtest::test_exception);
+    void test_block_kernel_permute_2d() throw(libtest::test_exception);
+    void test_block_kernel_permute_3d_120() throw(libtest::test_exception);
+    void test_block_kernel_permute_3d_021() throw(libtest::test_exception);
 
     /*
      * block_contract_kernel tests

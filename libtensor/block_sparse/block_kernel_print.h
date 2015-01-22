@@ -5,9 +5,6 @@
  *      Author: smanzer
  */
 
-#ifndef BLOCK_PRINT_KERNEL_H_
-#define BLOCK_PRINT_KERNEL_H_
-
 #include "block_kernel_i.h"
 #include <sstream>
 
@@ -15,7 +12,7 @@ namespace libtensor
 {
 
 template<typename T>
-class block_print_kernel: public libtensor::block_kernel_i<block_print_kernel<T>,T>
+class block_kernel_print: public libtensor::block_kernel_i<block_kernel_print<T>,T>
 {
 private:
     std::stringstream m_ss;
@@ -33,10 +30,10 @@ public:
 } /* namespace libtensor */
 
 template<typename T>
-const char* libtensor::block_print_kernel<T>::k_clazz = "block_print_kernel<T>";
+const char* libtensor::block_kernel_print<T>::k_clazz = "block_kernel_print<T>";
 
 template<typename T>
-void libtensor::block_print_kernel<T>::_process_dimension(const T* data_ptr,const dim_list& dims,size_t offset,size_t dim_idx)
+void libtensor::block_kernel_print<T>::_process_dimension(const T* data_ptr,const dim_list& dims,size_t offset,size_t dim_idx)
 {
     //Base case
     if(dim_idx == (dims.size() - 1))
@@ -72,17 +69,15 @@ void libtensor::block_print_kernel<T>::_process_dimension(const T* data_ptr,cons
 }
 
 template<typename T>
-void libtensor::block_print_kernel<T>::operator()(
+void libtensor::block_kernel_print<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
 	if(ptrs.size() != 1 || ptrs.size() != dim_lists.size())
 	{
-		throw bad_parameter(g_ns, k_clazz,"block_print_kernel(...)",
+		throw bad_parameter(g_ns, k_clazz,"block_kernel_print(...)",
 				__FILE__, __LINE__, "incorrect number of pointers and dimension lists");
 	}
 
     m_ss << "---\n";
     _process_dimension(ptrs[0],dim_lists[0]);
 }
-
-#endif /* BLOCK_PRINT_KERNEL_H_ */
