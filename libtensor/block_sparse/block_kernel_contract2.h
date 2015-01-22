@@ -1,19 +1,12 @@
-/*
- * block_contract2_kernel_new.h
- *
- *  Created on: Nov 16, 2013
- *      Author: smanzer
- */
-
-#ifndef BLOCK_CONTRACT2_KERNEL_H_
-#define BLOCK_CONTRACT2_KERNEL_H_
+#ifndef BLOCK_KERNEL_CONTRACT2_H
+#define BLOCK_KERNEL_CONTRACT2_H
 
 #include "block_kernel_i.h"
-#include "block_permute_kernel.h"
-#include "sparse_loop_list.h"
-#include "blas_isomorphism.h"
+#include "block_kernel_permute.h"
+//#include "blas_isomorphism.h"
 #include "../linalg/linalg.h"
 
+#if 0
 namespace libtensor
 {
 
@@ -22,7 +15,7 @@ extern bool count_flops;
 //extern double contract_seconds;
 
 template<typename T>
-class block_contract2_kernel: public libtensor::block_kernel_i<block_contract2_kernel<T>,T>
+class block_kernel_contract2: public libtensor::block_kernel_i<block_kernel_contract2<T>,T>
 {
 private:
     static const char* k_clazz; //!< Class name
@@ -32,15 +25,17 @@ private:
     dgemm_fp_t m_dgemm_fp;
     static const dgemm_fp_t dgemm_fp_arr[4];
 
-    std::vector<block_loop> m_loops;
+    std::vector<idx_pair_list> m_ts_groups;
     size_t m_n_contracted_inds;
 
     void (*m_dgemv_fn)(void*,size_t,size_t,const T*,size_t,const T*,size_t,T*,size_t,T);
 
+#if 0
     //Sets everything up if we are doing a matrix-vector multiply
     void init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
                      const std::vector<size_t>& A_contracted_indices,
                      const std::vector<size_t>& B_contracted_indices);
+#endif
 
     //Is the vector the first argument in the matrix vector multiply contraction?
     size_t m_vec_bispace_idx;
@@ -50,36 +45,36 @@ private:
     bool m_A_trans;
     bool m_B_trans;
     std::vector<runtime_permutation> m_perms;
-    block_permute_kernel<T> m_C_perm_kern;
-    std::vector<block_permute_kernel<T> > m_perm_kerns;
+    block_kernel_permute<T> m_C_perm_kern;
+    std::vector<block_kernel_permute<T> > m_perm_kerns;
     std::vector<runtime_permutation> m_ident_perms;
     std::vector<dim_list> m_perm_dim_lists;
     std::vector<T*> m_perm_ptrs;
     dim_list m_perm_ptr_sizes;
 public:
-    block_contract2_kernel(const sparse_loop_list& loop_list);
-	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
+    block_kernel_contract2(const sparse_loop_list& loop_list);
+	//void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 
-    block_contract2_kernel(const block_contract2_kernel<T>& rhs);
-    block_contract2_kernel<T>& operator=(const block_contract2_kernel<T>& rhs);
-    ~block_contract2_kernel();
+    block_kernel_contract2(const block_kernel_contract2<T>& rhs);
+    block_kernel_contract2<T>& operator=(const block_kernel_contract2<T>& rhs);
+    ~block_kernel_contract2();
 };
 
 template<typename T>
-const typename block_contract2_kernel<T>::dgemm_fp_t block_contract2_kernel<T>::dgemm_fp_arr[4] = {&linalg::mul2_ij_ip_pj_x,
+const typename block_kernel_contract2<T>::dgemm_fp_t block_kernel_contract2<T>::dgemm_fp_arr[4] = {&linalg::mul2_ij_ip_pj_x,
                                                                                                    &linalg::mul2_ij_ip_jp_x,
                                                                                                    &linalg::mul2_ij_pi_pj_x,
                                                                                                    &linalg::mul2_ij_pi_jp_x};
 
 template<typename T>
-const char* block_contract2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
+const char* block_kernel_contract2<T>::k_clazz = "block_kernel_contract2<T>";
 
 } /* namespace libtensor */
 
 template<typename T>
-libtensor::block_contract2_kernel<T>::block_contract2_kernel(const block_contract2_kernel<T>& rhs) : m_block_orders(rhs.m_block_orders),
+libtensor::block_kernel_contract2<T>::block_kernel_contract2(const block_kernel_contract2<T>& rhs) : m_block_orders(rhs.m_block_orders),
                                                                                                      m_dgemm_fp(rhs.m_dgemm_fp),
-                                                                                                     m_loops(rhs.m_loops),
+                                                                                                     m_ts_groups(rhs.m_ts_groups),
                                                                                                      m_n_contracted_inds(rhs.m_n_contracted_inds),
                                                                                                      m_vec_bispace_idx(rhs.m_vec_bispace_idx),
                                                                                                      m_mat_bispace_idx(rhs.m_mat_bispace_idx),
@@ -103,11 +98,11 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(const block_contrac
 }
 
 template<typename T>
-libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::operator=(const block_contract2_kernel<T>& rhs)
+libtensor::block_kernel_contract2<T>& libtensor::block_kernel_contract2<T>::operator=(const block_kernel_contract2<T>& rhs)
 {
     m_block_orders = rhs.m_block_orders;
     m_dgemm_fp = rhs.m_dgemm_fp;
-    m_loops = rhs.m_loops;
+    m_ts_groups = rhs.m_ts_groups;
     m_n_contracted_inds = rhs.m_n_contracted_inds;
     m_vec_bispace_idx = rhs.m_vec_bispace_idx;
     m_mat_bispace_idx = rhs.m_mat_bispace_idx;
@@ -130,7 +125,7 @@ libtensor::block_contract2_kernel<T>& libtensor::block_contract2_kernel<T>::oper
 }
 
 template<typename T>
-libtensor::block_contract2_kernel<T>::~block_contract2_kernel()
+libtensor::block_kernel_contract2<T>::~block_kernel_contract2()
 {
     for(size_t perm_idx = 0; perm_idx < m_perms.size(); ++perm_idx)
     {
@@ -141,8 +136,9 @@ libtensor::block_contract2_kernel<T>::~block_contract2_kernel()
     }
 }
 template<typename T>
-libtensor::block_contract2_kernel<T>::block_contract2_kernel(
-		const sparse_loop_list& sll) : m_loops(sll.get_loops()),
+libtensor::block_kernel_contract2<T>::block_kernel_contract2(const std::vector<sparse_bispace_impl>& bispaces,
+                                                             const std::vector<idx_pair_list>& ts_groups) : 
+                                       m_ts_groups(ts_groups),
                                        m_dgemm_fp(NULL),
                                        m_perm_dim_lists(3),
                                        m_perms(3,runtime_permutation(0)),
@@ -150,21 +146,22 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
                                        m_ident_perms(3,runtime_permutation(0)),
                                        m_perm_ptrs(3),
                                        m_perm_ptr_sizes(3),
-                                       m_perm_kerns(3,block_permute_kernel<T>(runtime_permutation(0)))
+                                       m_perm_kerns(3,block_kernel_permute<T>(runtime_permutation(0)))
 {
 
 	//Simplest contraction is matrix vector multiply and requires 2 loops
-    if(m_loops.size() < 2)
+    if(m_ts_groups.size() < 2)
     {
-        throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
-                __FILE__, __LINE__, "sparse_loop_list must contain at least 2 loops");
+        throw bad_parameter(g_ns, k_clazz,"block_kernel_contract2(...)",
+                __FILE__, __LINE__, "must be at least two ts_groups (indices)");
     }
 
+#if 0
 	//Ensure that we have a valid number of bispaces
 	const std::vector< sparse_bispace_any_order >& bispaces = sll.get_bispaces();
 	if(bispaces.size() != 3)
 	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+		throw bad_parameter(g_ns, k_clazz,"block_kernel_contract2(...)",
 				__FILE__, __LINE__, "sparse_loop_list must contain at least 3 bispaces");
 	}
 
@@ -188,7 +185,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
 			//If contracted idx doesn't appear in both input tensors, it shouldn't be contracted
 			if((cur_loop.is_bispace_ignored(1)) || (cur_loop.is_bispace_ignored(2)))
 			{
-				throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+				throw bad_parameter(g_ns, k_clazz,"block_kernel_contract2(...)",
 						__FILE__, __LINE__, "an idx not present in both A and B should appear in C");
 			}
 			A_contracted_indices.push_back(cur_loop.get_subspace_looped(1));
@@ -200,7 +197,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
     //No dot products
     if((A_contracted_indices.size() == m_loops.size()) || (B_contracted_indices.size() == m_loops.size()))
     {
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+		throw bad_parameter(g_ns, k_clazz,"block_kernel_contract2(...)",
 				__FILE__, __LINE__, "All loops cannot correspond to contracted indices");
     }
 
@@ -208,7 +205,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
     //First out if we are doing a matrix-matrix multiply or a matrix-vector multiply
 	if(A_contracted_indices.size() == 0)
 	{
-		throw bad_parameter(g_ns, k_clazz,"block_contract2_kernel(...)",
+		throw bad_parameter(g_ns, k_clazz,"block_kernel_contract2(...)",
 				__FILE__, __LINE__, "must have at least one contracted index");
 	}
     else if((A_contracted_indices.size() == bispaces[1].get_order()) || (B_contracted_indices.size() == bispaces[2].get_order()))
@@ -228,7 +225,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
         {
             C_perm[m_perms[0][i]] = i;
         }
-        m_C_perm_kern = block_permute_kernel<T>(C_perm);
+        m_C_perm_kern = block_kernel_permute<T>(C_perm);
 
 
         m_perms[1] = mip.get_A_perm();
@@ -242,7 +239,7 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
         {
             if(m_perms[perm_idx] != m_ident_perms[perm_idx])
             {
-                m_perm_kerns[perm_idx] = block_permute_kernel<T>(m_perms[perm_idx]);
+                m_perm_kerns[perm_idx] = block_kernel_permute<T>(m_perms[perm_idx]);
                 size_t max_block_size = 1;
                 for(size_t subspace_idx = 0; subspace_idx < bispaces[perm_idx].get_order(); ++subspace_idx)
                 {
@@ -263,10 +260,11 @@ libtensor::block_contract2_kernel<T>::block_contract2_kernel(
         }
         m_dgemm_fp = dgemm_fp_arr[(size_t)m_A_trans*2+(size_t)m_B_trans];
     }
+#endif
 }
 
 template<typename T>
-void libtensor::block_contract2_kernel<T>::init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
+void libtensor::block_kernel_contract2<T>::init_matvec(const std::vector< sparse_bispace_any_order >& bispaces,
                                                        const std::vector<size_t>& A_contracted_indices,
                                                        const std::vector<size_t>& B_contracted_indices)
 {
@@ -308,7 +306,7 @@ void libtensor::block_contract2_kernel<T>::init_matvec(const std::vector< sparse
 }
 
 template<typename T>
-void libtensor::block_contract2_kernel<T>::operator ()(
+void libtensor::block_kernel_contract2<T>::operator ()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
 #ifdef LIBTENSOR_DEBUG
@@ -467,5 +465,7 @@ void libtensor::block_contract2_kernel<T>::operator ()(
         //contract_seconds += read_timer<double>() - seconds;
     }
 }
+#endif
 
-#endif /* BLOCK_CONTRACT2_KERNEL_H_ */
+
+#endif /* BLOCK_KERNEL_CONTRACT2_H */

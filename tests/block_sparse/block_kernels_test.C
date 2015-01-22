@@ -1,9 +1,10 @@
 #include "block_kernels_test.h" 
+#include <libtensor/block_sparse/sparse_bispace.h>
 #include <libtensor/block_sparse/block_kernel_print.h>
 #include <libtensor/block_sparse/block_kernel_permute.h>
+#include <libtensor/block_sparse/block_kernel_contract2.h>
 #if 0
 #include <libtensor/block_sparse/sparse_loop_list.h>
-#include <libtensor/block_sparse/block_contract2_kernel.h>
 #include <libtensor/block_sparse/block_add2_kernel.h>
 #include <libtensor/expr/iface/letter.h>
 #include <sstream>
@@ -22,28 +23,28 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_kernel_permute_2d();
     test_block_kernel_permute_3d_120();
     test_block_kernel_permute_3d_021();
+
+    test_block_kernel_contract2_2d_not_enough_inds();
 #if 0
+    test_block_kernel_contract2_2d_not_enough_bispaces();
+    test_block_kernel_contract2_2d_C_missing_idx();
+    test_block_kernel_contract2_2d_C_extra_idx();
+    test_block_kernel_contract2_2d_no_contracted_inds();
+    test_block_kernel_contract2_2d_strided_output();
+    test_block_kernel_contract2_perm_A_ikj();
 
-    test_block_contract2_kernel_2d_not_enough_loops();
-    test_block_contract2_kernel_2d_not_enough_bispaces();
-    test_block_contract2_kernel_2d_C_missing_idx();
-    test_block_contract2_kernel_2d_C_extra_idx();
-    test_block_contract2_kernel_2d_no_contracted_inds();
-    test_block_contract2_kernel_2d_strided_output();
-    test_block_contract2_kernel_perm_A_ikj();
-
-    test_block_contract2_kernel_2d_not_enough_dims_and_ptrs();
-    test_block_contract2_kernel_2d_invalid_dims();
-    test_block_contract2_kernel_2d_incompatible_dims();
-    test_block_contract2_kernel_2d_ik_kj();
-    test_block_contract2_kernel_2d_ik_jk();
-    test_block_contract2_kernel_2d_ki_kj();
-    test_block_contract2_kernel_2d_ki_jk();
-    test_block_contract2_kernel_2d_ki_kj_permuted_loops();
-    test_block_contract2_kernel_3d_2d();
-    test_block_contract2_kernel_3d_3d_multi_index();
-    test_block_contract2_kernel_2d_3d_permute_output();
-    test_block_contract2_kernel_matrix_vector_mult();
+    test_block_kernel_contract2_2d_not_enough_dims_and_ptrs();
+    test_block_kernel_contract2_2d_invalid_dims();
+    test_block_kernel_contract2_2d_incompatible_dims();
+    test_block_kernel_contract2_2d_ik_kj();
+    test_block_kernel_contract2_2d_ik_jk();
+    test_block_kernel_contract2_2d_ki_kj();
+    test_block_kernel_contract2_2d_ki_jk();
+    test_block_kernel_contract2_2d_ki_kj_permuted_loops();
+    test_block_kernel_contract2_3d_2d();
+    test_block_kernel_contract2_3d_3d_multi_index();
+    test_block_kernel_contract2_2d_3d_permute_output();
+    test_block_kernel_contract2_matrix_vector_mult();
 
     test_block_add2_kernel_3d();
 #endif
@@ -294,11 +295,10 @@ void block_kernels_test::test_block_kernel_permute_3d_021() throw(libtest::test_
     }
 }
 
-#if 0
-//Should throw an exception because there is only one loop, minimum is two loops for matrix-vector multiply
-void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw(libtest::test_exception)
+//Should throw an exception because there is only one index, minimum is two indices for matrix-vector multiply
+void block_kernels_test::test_block_kernel_contract2_2d_not_enough_inds() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_2d_not_enough_inds()";
 
     //C_i = \sum_k A_ij B_j
     //dimensions: i = 2,j = 3
@@ -306,23 +306,22 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw
     sparse_bispace<1> spb_i(2);
     sparse_bispace<1> spb_j(3);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i);
+    vector<sparse_bispace_impl> bispaces(1,spb_i);
     bispaces.push_back(spb_i|spb_j);
     bispaces.push_back(spb_j);
 
     //i loop
-    vector<block_loop> loops(1,block_loop(bispaces));
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    vector<idx_pair_list> ts_groups(1);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
 
+#if 0
     //j loop - left out!
-
-    sparse_loop_list sll(loops,bispaces);
 
     bool threw_exception = false;
     try
     {
-        block_contract2_kernel<double> bc2k(sll);
+        block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     }
     catch(bad_parameter&)
     {
@@ -331,12 +330,14 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_loops() throw
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel(...) did not throw exception when less than three loops specified");
+                "block_kernel_contract2<T>::block_kernel_contract2(...) did not throw exception when less than three loops specified");
     }
+#endif
 }
 
+#if 0
 //Should throw an exception exception when there are too few bispaces
-void block_kernels_test::test_block_contract2_kernel_2d_not_enough_bispaces() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_not_enough_bispaces() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_not_enough_bispaces()";
 
@@ -365,7 +366,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_bispaces() th
     bool threw_exception = false;
     try
     {
-    	block_contract2_kernel<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(sll);
     }
     catch(bad_parameter&)
     {
@@ -374,16 +375,16 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_bispaces() th
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when not enough bispaces specified");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when not enough bispaces specified");
     }
 }
 
 //If a loop ignores C, the index over which it loops must be contracted
 //meaning that it must touch both A and B. If it does not touch one of them, the
 //index should have appeared in C
-void block_kernels_test::test_block_contract2_kernel_2d_C_missing_idx() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_C_missing_idx() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_C_missing_idx()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_2d_C_missing_idx()";
 
     //C_ij = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -414,7 +415,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_C_missing_idx() throw(li
     bool threw_exception = false;
     try
     {
-    	block_contract2_kernel<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(sll);
     }
     catch(bad_parameter&)
     {
@@ -423,13 +424,13 @@ void block_kernels_test::test_block_contract2_kernel_2d_C_missing_idx() throw(li
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when an uncontracted index missing from C");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when an uncontracted index missing from C");
     }
 }
 
-void block_kernels_test::test_block_contract2_kernel_2d_C_extra_idx() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_C_extra_idx() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_C_extra_idx()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_2d_C_extra_idx()";
 
     //C_ij = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
@@ -460,7 +461,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_C_extra_idx() throw(libt
     bool threw_exception = false;
     try
     {
-    	block_contract2_kernel<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(sll);
     }
     catch(bad_parameter&)
     {
@@ -469,16 +470,16 @@ void block_kernels_test::test_block_contract2_kernel_2d_C_extra_idx() throw(libt
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when an index in C but not A or B");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when an index in C but not A or B");
     }
 }
 
 //C_ijk = A_jik + B_jik
 //dimensions: i = 2,j = 3,k = 4
 //No contracted indices, so should throw an exception
-void block_kernels_test::test_block_contract2_kernel_2d_no_contracted_inds() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_no_contracted_inds() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_no_contracted_inds()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_2d_no_contracted_inds()";
 
     //Just need dummy bispaces for this test
     sparse_bispace<1> spb_i(2);
@@ -510,7 +511,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_no_contracted_inds() thr
     bool threw_exception = false;
     try
     {
-    	block_contract2_kernel<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(sll);
     }
     catch(bad_parameter&)
     {
@@ -519,12 +520,12 @@ void block_kernels_test::test_block_contract2_kernel_2d_no_contracted_inds() thr
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when no contracted indices present");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when no contracted indices present");
     }
 }
 
 //We don't allow output to be strided in the inner kernel - just dumb...and unsupported by typical blas implementations
-void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_strided_output() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_strided_output()";
 
@@ -557,7 +558,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(l
     bool threw_exception = false;
     try
     {
-    	block_contract2_kernel<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(sll);
     }
     catch(bad_parameter&)
     {
@@ -566,15 +567,15 @@ void block_kernels_test::test_block_contract2_kernel_2d_strided_output() throw(l
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when output is strided");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when output is strided");
     }
 }
 
 //C_ijl = \sum_k A_ikj B_kl
 //dimensions: i = 2,j = 3,k = 4,l = 5
-void block_kernels_test::test_block_contract2_kernel_perm_A_ikj() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_perm_A_ikj() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_non_matmul_A_ikj()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_non_matmul_A_ikj()";
 
     //TODO: Merge with 3d-2d contraction
     //C
@@ -640,7 +641,7 @@ void block_kernels_test::test_block_contract2_kernel_perm_A_ikj() throw(libtest:
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[3] = {2,3,5};
     size_t A_dim_list_arr[3] = {2,4,3};
@@ -659,14 +660,14 @@ void block_kernels_test::test_block_contract2_kernel_perm_A_ikj() throw(libtest:
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
 //Should throw an exception due to passing a dimension list without the right number of dimensions
 //for each bispace
-void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_not_enough_dims_and_ptrs() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_not_enough_dims()";
 
@@ -694,7 +695,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs
 
     sparse_loop_list sll(loops,bispaces);
 
-	block_contract2_kernel<double> bc2k(sll);
+	block_kernel_contract2<double> bc2k(sll);
 
 	//Fake dimensions, just care about how many are bassed
 	dim_list dl(2,2);
@@ -716,7 +717,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when not enough dim_lists passed");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when not enough dim_lists passed");
     }
 
     //Check ptrs by fixing dim_lists and breaking ptrs
@@ -734,13 +735,13 @@ void block_kernels_test::test_block_contract2_kernel_2d_not_enough_dims_and_ptrs
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when not enough ptrs passed");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when not enough ptrs passed");
     }
 
 }
 
 //Should throw exception when length of dim_lists doesn't match order of bispaces
-void block_kernels_test::test_block_contract2_kernel_2d_invalid_dims() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_invalid_dims() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_invalid_dims()";
 
@@ -768,7 +769,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_invalid_dims() throw(lib
 
     sparse_loop_list sll(loops,bispaces);
 
-	block_contract2_kernel<double> bc2k(sll);
+	block_kernel_contract2<double> bc2k(sll);
 
 	//Fake dimensions, just care about vector length
 	dim_list dl(2,2);
@@ -792,12 +793,12 @@ void block_kernels_test::test_block_contract2_kernel_2d_invalid_dims() throw(lib
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when dim_lists of invalid length passed");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when dim_lists of invalid length passed");
     }
 }
 
 //Should throw exception when dimensions in dim_lists don't match up with their contraction partners
-void block_kernels_test::test_block_contract2_kernel_2d_incompatible_dims() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_incompatible_dims() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_incompatible_dims()";
 
@@ -825,7 +826,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_incompatible_dims() thro
 
     sparse_loop_list sll(loops,bispaces);
 
-	block_contract2_kernel<double> bc2k(sll);
+	block_kernel_contract2<double> bc2k(sll);
 
 	dim_list dl(2,2);
 	vector<dim_list> dim_lists(3,dl);
@@ -845,12 +846,12 @@ void block_kernels_test::test_block_contract2_kernel_2d_incompatible_dims() thro
     if(!threw_exception)
     {
         fail_test(test_name,__FILE__,__LINE__,
-                "block_contract2_kernel<T>::block_contract2_kernel()(...) did not throw exception when incompatible dim_lists passed");
+                "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when incompatible dim_lists passed");
     }
 }
 
 //Should produce correct matrix multiply output, with matrices in standard order
-void block_kernels_test::test_block_contract2_kernel_2d_ik_kj() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_ik_kj() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ik_kj()";
 
@@ -899,7 +900,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_kj() throw(libtest::t
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {2,4};
@@ -917,13 +918,13 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_kj() throw(libtest::t
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
 //Should produce correct matrix multiply output, with b transposed (both matrices have same fast index
-void block_kernels_test::test_block_contract2_kernel_2d_ik_jk() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_ik_jk() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ik_jk()";
 
@@ -970,7 +971,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_jk() throw(libtest::t
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {2,4};
@@ -988,12 +989,12 @@ void block_kernels_test::test_block_contract2_kernel_2d_ik_jk() throw(libtest::t
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
-void block_kernels_test::test_block_contract2_kernel_2d_ki_kj() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_ki_kj() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ki_kj()";
 
@@ -1045,7 +1046,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj() throw(libtest::t
     sparse_loop_list sll(loops,bispaces);
 
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {4,2};
@@ -1063,12 +1064,12 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj() throw(libtest::t
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
-void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_ki_jk() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ki_jk()";
 
@@ -1117,7 +1118,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::t
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {4,2};
@@ -1136,14 +1137,14 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_jk() throw(libtest::t
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
 //This test ensures that the contraction still works when the block loops are in a nontraditional order, 
 //as long as the subspaces are compatible
-void block_kernels_test::test_block_contract2_kernel_2d_ki_kj_permuted_loops() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_ki_kj_permuted_loops() throw(libtest::test_exception)
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_ki_kj_permuted_loops()";
 
@@ -1197,7 +1198,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj_permuted_loops() t
     sparse_loop_list sll(loops,bispaces);
 
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {4,2};
@@ -1215,15 +1216,15 @@ void block_kernels_test::test_block_contract2_kernel_2d_ki_kj_permuted_loops() t
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
 //Contract 3d with 2d
-void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_3d_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_3d_2d()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_3d_2d()";
 
     //C_ijl = \sum_k A_ijk B_kl
     //dimensions: i = 2,j = 3,k = 4,l=5
@@ -1289,7 +1290,7 @@ void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[3] = {2,3,5};
     size_t A_dim_list_arr[3] = {2,3,4};
@@ -1308,14 +1309,14 @@ void block_kernels_test::test_block_contract2_kernel_3d_2d() throw(libtest::test
         if(test_output_block[i] != correct_output_block[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
-void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_3d_3d_multi_index() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_3d_3d_multi_index()";
 
     //Cil = Aijk Bljk
     //2x5 2x3x4 5x3x4
@@ -1391,7 +1392,7 @@ void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(l
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[2] = {2,5};
     size_t A_dim_list_arr[3] = {2,3,4};
@@ -1411,14 +1412,14 @@ void block_kernels_test::test_block_contract2_kernel_3d_3d_multi_index() throw(l
         if(C_arr[i] != C_correct_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
-void block_kernels_test::test_block_contract2_kernel_2d_3d_permute_output() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_2d_3d_permute_output() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_2d_3d_permute_output()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_2d_3d_permute_output()";
 
     //Cijl = Akj Bikl
     //5x2x4  3x2  5x3x4
@@ -1512,7 +1513,7 @@ void block_kernels_test::test_block_contract2_kernel_2d_3d_permute_output() thro
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[3] = {5,2,4};
     size_t A_dim_list_arr[2] = {3,2};
@@ -1532,14 +1533,14 @@ void block_kernels_test::test_block_contract2_kernel_2d_3d_permute_output() thro
         if(C_arr[i] != C_correct_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
 
-void block_kernels_test::test_block_contract2_kernel_matrix_vector_mult() throw(libtest::test_exception)
+void block_kernels_test::test_block_kernel_contract2_matrix_vector_mult() throw(libtest::test_exception)
 {
-    static const char *test_name = "block_kernels_test::test_block_contract2_kernel_matrix_vector_mult()";
+    static const char *test_name = "block_kernels_test::test_block_kernel_contract2_matrix_vector_mult()";
 
     double x_arr[3] = {1,2,3}; 
 
@@ -1573,7 +1574,7 @@ void block_kernels_test::test_block_contract2_kernel_matrix_vector_mult() throw(
 
     sparse_loop_list sll(loops,bispaces);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     size_t C_dim_list_arr[1] = {2};
     size_t x_dim_list_arr[1] = {3};
@@ -1593,7 +1594,7 @@ void block_kernels_test::test_block_contract2_kernel_matrix_vector_mult() throw(
         if(C_arr[i] != C_correct_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_contract2_kernel::operator(...) did not produce correct result");
+                    "block_kernel_contract2::operator(...) did not produce correct result");
         }
     }
 }
