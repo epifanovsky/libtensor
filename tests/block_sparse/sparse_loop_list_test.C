@@ -26,10 +26,12 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
 #if 0
     test_run_block_permute_kernel_3d_120();
     test_run_block_permute_kernel_3d_120_sparse();
+#endif
 
     test_run_block_contract2_kernel_2d_2d();
-    test_run_block_contract2_kernel_3d_2d();
+    /*test_run_block_contract2_kernel_3d_2d();*/
 
+#if 0
     test_run_direct_3d_3d();
 #endif
 }
@@ -586,6 +588,8 @@ void sparse_loop_list_test::test_run_block_permute_kernel_3d_120_sparse() throw(
     }
 }
 
+#endif
+
 void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtest::test_exception)
 {
     static const char *test_name = "sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d()";
@@ -670,22 +674,20 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
     split_points_k.push_back(2);
     spb_k.split(split_points_k);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i | spb_j);
     bispaces.push_back(spb_i | spb_k);
     bispaces.push_back(spb_j | spb_k);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
-    //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
-    //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,0);
-    //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,1);
+    vector<idx_pair_list> ts_groups(3);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,0));
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,1));
 
-    sparse_loop_list sll(loops,bispaces);
+    sparse_loop_list sll(bispaces,ts_groups);
+    /*
     block_contract2_kernel<double> bc2k(sll);
     sll.run(bc2k,ptrs);
 
@@ -697,7 +699,9 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
                     "block_loop<M,N,T>::run(...) produced incorrect output");
         }
     }
+    */
 }
+#if 0
 
 void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtest::test_exception)
 {
