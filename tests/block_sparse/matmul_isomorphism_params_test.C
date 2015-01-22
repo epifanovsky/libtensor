@@ -1,13 +1,13 @@
-#include "blas_isomorphism_test.h"
-/*#include <libtensor/block_sparse/blas_isomorphism.h>*/
+#include "matmul_isomorphism_params_test.h"
+#include <libtensor/block_sparse/matmul_isomorphism_params.h>
 
 using namespace std;
 
 namespace libtensor {
 
 void blas_isomorphism_test::perform() throw(libtest::test_exception) {
-#if 0
     test_matmul_isomorphism_params_identity_NN();
+#if 0
     test_matmul_isomorphism_params_identity_NT();
     test_matmul_isomorphism_params_identity_TN();
     test_matmul_isomorphism_params_identity_TT();
@@ -18,7 +18,6 @@ void blas_isomorphism_test::perform() throw(libtest::test_exception) {
 #endif
 }
 
-#if 0
 //Give it NN,NT,TN,TT matrix multiply cases, it should return identity permutation for
 //both bispaces for all of them
 void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NN() throw(libtest::test_exception)
@@ -30,24 +29,22 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NN() throw(l
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    matmul_isomorphism_params<double> mip(sll);
+    matmul_isomorphism_params mip(bispaces,ts_groups);
 
     runtime_permutation perm_A = mip.get_A_perm();
     runtime_permutation perm_B = mip.get_B_perm();
@@ -63,6 +60,7 @@ void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NN() throw(l
     }
 }
 
+#if 0
 void blas_isomorphism_test::test_matmul_isomorphism_params_identity_NT() throw(libtest::test_exception)
 {
     static const char *test_name = "blas_isomorphism_test::test_matmul_isomorphism_params_identity_NT()";

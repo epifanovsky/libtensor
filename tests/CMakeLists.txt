@@ -264,7 +264,7 @@ set(SRC_BLOCK_SPARSE
     block_sparse/sparse_loop_grouper_test.C
     block_sparse/sparsity_data_test.C
     block_sparse/direct_sparse_btensor_test.C
-    block_sparse/blas_isomorphism_test.C
+    block_sparse/matmul_isomorphism_params_test.C
     block_sparse/batch_kernels_test.C
     block_sparse/batch_list_builder_test.C
     block_sparse/subspace_iterator_test.C

@@ -1,36 +1,10 @@
-#ifndef BLAS_ISOMORPHISM_H
-#define BLAS_ISOMORPHISM_H
+#include "matmul_isomorphism_params.h"
 
-#include "sparse_loop_list.h"
-#include "../linalg/linalg.h"
+using namespace std;
 
 namespace libtensor {
 
-template<typename T>
-class matmul_isomorphism_params
-{
-public:
-    static const char* k_clazz; //!< Class name
-private:
-    runtime_permutation m_C_perm;
-    runtime_permutation m_A_perm;
-    runtime_permutation m_B_perm;
-    bool m_A_trans;
-    bool m_B_trans;
-
-                
-public:
-    matmul_isomorphism_params(const sparse_loop_list& sll);
-    runtime_permutation get_C_perm() { return m_C_perm; }
-    runtime_permutation get_A_perm() { return m_A_perm; }
-    runtime_permutation get_B_perm() { return m_B_perm; }
-    bool get_A_trans() { return m_A_trans; }
-    bool get_B_trans() { return m_B_trans; }
-};
-
-template<typename T>
-const char* matmul_isomorphism_params<T>::k_clazz = "matmul_isomorphism_params<T>";
-
+const char* matmul_isomorphism_params::k_clazz = "matmul_isomorphism_params";
 
 //Determine the type of matmul required to execute the contraction:
 //	A.B     [ C_ij = A_ik B_kj ]
@@ -40,56 +14,58 @@ const char* matmul_isomorphism_params<T>::k_clazz = "matmul_isomorphism_params<T
 //
 //  If the contraction cannot be executed in this fashion, return the permutations 
 //  necessary to make it happen
-template<typename T>
-matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& sll) : m_C_perm(0),m_A_perm(0),m_B_perm(0) 
+matmul_isomorphism_params::matmul_isomorphism_params(const std::vector<sparse_bispace_impl>& bispaces,
+                                                     const std::vector<idx_pair_list>& ts_groups) : 
+    m_C_perm(0),m_A_perm(0),m_B_perm(0) 
 {
     static const char *method = "matmul_isomorphism_params, "
         "args go here";
 
-    std::vector<sparse_bispace_any_order> bispaces = sll.get_bispaces();
     if(bispaces.size() != 3)
     {
         throw bad_parameter(g_ns, k_clazz,"matmul_isomorphism_params(...)",__FILE__, __LINE__, "Only 3-bispace contractions can be handled via matmul at this time");
     }
     
     //Build the connectivity vector
-    std::vector<block_loop> loops = sll.get_loops();
     idx_list conn;
     for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
     {
-        const sparse_bispace_any_order& bispace = bispaces[bispace_idx];
-        for(size_t subspace_idx = 0; subspace_idx < bispace.get_order(); ++subspace_idx)
+        for(size_t sub_idx = 0; sub_idx < bispaces[bispace_idx].get_order(); ++sub_idx)
         {
-            bool found_connected_subspace = false;
-            for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
+            bool found = false;
+            for(size_t grp_idx = 0; grp_idx < ts_groups.size(); ++grp_idx) 
             {
-                const block_loop& cur_loop = loops[loop_idx];
-                if(!cur_loop.is_bispace_ignored(bispace_idx) && cur_loop.get_subspace_looped(bispace_idx) == subspace_idx)
+                const idx_pair_list& grp = ts_groups[grp_idx];
+                if(grp.size() != 2)
+                    throw bad_parameter(g_ns, k_clazz,"matmul_isomorphism_params(...)",__FILE__, __LINE__, "wrong number of connected indices");
+
+                size_t conn_bispace_idx; 
+                size_t conn_subspace_idx;
+                for(size_t ent_idx = 0; ent_idx < 2; ++ent_idx)
+                {
+                    if(grp[ent_idx].first == bispace_idx && grp[ent_idx].second == sub_idx)
+                    {
+                        found = true;
+                        size_t conn_ent_idx = (ent_idx == 0) ? 1 : 0;
+                        conn_bispace_idx = grp[conn_ent_idx].first;
+                        conn_subspace_idx = grp[conn_ent_idx].second;
+                        break;
+                    }
+                }
+                if(found)
                 {
                     size_t bispace_off = 0;
-                    for(size_t other_bispace_idx = 0; other_bispace_idx < bispaces.size(); ++other_bispace_idx)
-                    {
-                        const sparse_bispace_any_order& other_bispace = bispaces[other_bispace_idx];
-                        if(!cur_loop.is_bispace_ignored(other_bispace_idx))
-                        {
-                            if(other_bispace_idx != bispace_idx)
-                            {
-                                found_connected_subspace = true;
-                                conn.push_back(bispace_off + cur_loop.get_subspace_looped(other_bispace_idx));
-                                break;
-                            }
-                        }
-                        bispace_off += other_bispace.get_order();
-                    }
+                    for(size_t ob_idx = 0; ob_idx < conn_bispace_idx; ++ob_idx)
+                        bispace_off += bispaces[ob_idx].get_order();
+                    conn.push_back(bispace_off + conn_subspace_idx);
                     break;
                 }
             }
-            if(!found_connected_subspace)
-            {
-                throw bad_parameter(g_ns, k_clazz,"matmul_isomorphism_params(...)",__FILE__, __LINE__, "Incomplete sparse_loop_list passed!");
-            }
+            if(!found)
+                throw bad_parameter(g_ns, k_clazz,"matmul_isomorphism_params(...)",__FILE__, __LINE__, "subspace not connected to anything");
         }
     }
+
 	size_t NC = bispaces[0].get_order();
 	size_t NA = bispaces[1].get_order();
 	size_t NB = bispaces[2].get_order();
@@ -323,10 +299,6 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
     {
         m_B_trans = true;
     }
-
-    //m_dgemm_fp = dgemm_fp_arr[(size_t)A_trans*2+(size_t)B_trans];
 }
 
 } // namespace libtensor
-
-#endif /* BLAS_ISOMORPHISM_H */

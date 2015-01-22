@@ -33,6 +33,8 @@ public:
     //Called by symbolic operator|
     sparse_bispace_impl(const sparse_bispace_impl& lhs,
                         const sparse_bispace_impl& rhs);
+
+    size_t get_order() const { return m_subspaces.size(); }
                         
     sparse_bispace_impl permute(const runtime_permutation& perm) const;
     sparse_bispace_impl contract(size_t contract_idx) const;

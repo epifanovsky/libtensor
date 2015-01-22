@@ -14,7 +14,7 @@
 #include "sparse_loop_list_test.h"
 #include "sparsity_fuser_test.h"
 #include "sparse_loop_grouper_test.h"
-#include "blas_isomorphism_test.h"
+#include "matmul_isomorphism_params_test.h"
 #include "batch_kernels_test.h"
 #include "batch_list_builder_test.h"
 #include "subspace_iterator_test.h"
