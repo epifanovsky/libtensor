@@ -53,7 +53,7 @@ private:
     /*
      * add2 kernel
      */
-    void test_block_add2_kernel_3d() throw(libtest::test_exception);
+    void test_block_kernel_add2_3d() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

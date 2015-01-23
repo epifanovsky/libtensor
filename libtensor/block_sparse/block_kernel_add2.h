@@ -1,36 +1,36 @@
+#ifndef BLOCK_KERNEL_ADD2_H
+#define BLOCK_KERNEL_ADD2_H
+
 /*
- * block_add2_kernel.h
+ * block_kernel_add2.h
  *
  *  Created on: Nov 20, 2013
  *      Author: smanzer
  */
-
-#ifndef BLOCK_ADD2_KERNEL_H_
-#define BLOCK_ADD2_KERNEL_H_
 
 #include "block_kernel_i.h"
 
 namespace libtensor {
 
 template<typename T>
-class block_add2_kernel: public libtensor::block_kernel_i<block_add2_kernel<T>,T>
+class block_kernel_add2: public libtensor::block_kernel_i<block_kernel_add2<T>,T>
 {
 private:
     static const char* k_clazz; //!< Class name
     T m_lhs_scalar;
     T m_rhs_scalar;
 public:
-    block_add2_kernel(T lhs_scalar,T rhs_scalar) : m_lhs_scalar(lhs_scalar),m_rhs_scalar(rhs_scalar) {}
+    block_kernel_add2(T lhs_scalar,T rhs_scalar) : m_lhs_scalar(lhs_scalar),m_rhs_scalar(rhs_scalar) {}
 	void operator()(const std::vector<T*>& ptrs, const std::vector< dim_list >& dim_lists);
 };
 
 template<typename T>
-const char* block_add2_kernel<T>::k_clazz = "block_contract2_kernel<T>";
+const char* block_kernel_add2<T>::k_clazz = "block_contract2_kernel<T>";
 
 } /* namespace libtensor */
 
 template<typename T>
-void libtensor::block_add2_kernel<T>::operator()(
+void libtensor::block_kernel_add2<T>::operator()(
 		const std::vector<T*>& ptrs, const std::vector<dim_list>& dim_lists)
 {
 	size_t first_size = dim_lists[0].size();
@@ -76,4 +76,4 @@ void libtensor::block_add2_kernel<T>::operator()(
 	}
 }
 
-#endif /* BLOCK_ADD2_KERNEL_H_ */
+#endif /* BLOCK_KERNEL_ADD2_H */
