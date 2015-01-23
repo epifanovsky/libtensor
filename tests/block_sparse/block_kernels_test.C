@@ -3,13 +3,8 @@
 #include <libtensor/block_sparse/block_kernel_print.h>
 #include <libtensor/block_sparse/block_kernel_permute.h>
 #include <libtensor/block_sparse/block_kernel_contract2.h>
-#if 0
-#include <libtensor/block_sparse/sparse_loop_list.h>
 #include <libtensor/block_sparse/block_add2_kernel.h>
-#include <libtensor/expr/iface/letter.h>
-#include <sstream>
 #include "test_fixtures/permute_3d_sparse_120_test_f.h"
-#endif
 
 using namespace std;
 
@@ -25,14 +20,13 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_kernel_permute_3d_021();
 
     test_block_kernel_contract2_2d_not_enough_inds();
-#if 0
     test_block_kernel_contract2_2d_not_enough_bispaces();
     test_block_kernel_contract2_2d_C_missing_idx();
     test_block_kernel_contract2_2d_C_extra_idx();
     test_block_kernel_contract2_2d_no_contracted_inds();
     test_block_kernel_contract2_2d_strided_output();
-    test_block_kernel_contract2_perm_A_ikj();
 
+    test_block_kernel_contract2_perm_A_ikj();
     test_block_kernel_contract2_2d_not_enough_dims_and_ptrs();
     test_block_kernel_contract2_2d_invalid_dims();
     test_block_kernel_contract2_2d_incompatible_dims();
@@ -47,7 +41,6 @@ void block_kernels_test::perform() throw(libtest::test_exception) {
     test_block_kernel_contract2_matrix_vector_mult();
 
     test_block_add2_kernel_3d();
-#endif
 }
 
 void block_kernels_test::test_block_kernel_print_2d() throw(libtest::test_exception)
@@ -315,7 +308,6 @@ void block_kernels_test::test_block_kernel_contract2_2d_not_enough_inds() throw(
     ts_groups[0].push_back(idx_pair(0,0));
     ts_groups[0].push_back(idx_pair(1,0));
 
-#if 0
     //j loop - left out!
 
     bool threw_exception = false;
@@ -332,10 +324,8 @@ void block_kernels_test::test_block_kernel_contract2_2d_not_enough_inds() throw(
         fail_test(test_name,__FILE__,__LINE__,
                 "block_kernel_contract2<T>::block_kernel_contract2(...) did not throw exception when less than three loops specified");
     }
-#endif
 }
 
-#if 0
 //Should throw an exception exception when there are too few bispaces
 void block_kernels_test::test_block_kernel_contract2_2d_not_enough_bispaces() throw(libtest::test_exception)
 {
@@ -348,25 +338,23 @@ void block_kernels_test::test_block_kernel_contract2_2d_not_enough_bispaces() th
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_i|spb_k);
     //DELIBERATELY LEAVE OUT B bispaces
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
+    ts_groups[1].push_back(idx_pair(0,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-
-    sparse_loop_list sll(loops,bispaces);
+    ts_groups[2].push_back(idx_pair(1,1));
 
     bool threw_exception = false;
     try
     {
-    	block_kernel_contract2<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     }
     catch(bad_parameter&)
     {
@@ -393,29 +381,25 @@ void block_kernels_test::test_block_kernel_contract2_2d_C_missing_idx() throw(li
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i | spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
-
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
     //DELIBERATELY DONT TOUCH j INDEX OF C - SHOULD CAUSE AN ERROR BECAUSE J IS NOT CONTRACTED
-    loops[1].set_subspace_looped(2,1);
-
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
-
-    sparse_loop_list sll(loops,bispaces);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
     bool threw_exception = false;
     try
     {
-    	block_kernel_contract2<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     }
     catch(bad_parameter&)
     {
@@ -439,29 +423,25 @@ void block_kernels_test::test_block_kernel_contract2_2d_C_extra_idx() throw(libt
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i | spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
     //DELIBERATELY DON'T TOUCH i occurence in A - should cause an exception
-
+    ts_groups[0].push_back(idx_pair(0,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
-
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
-
-    sparse_loop_list sll(loops,bispaces);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
     bool threw_exception = false;
     try
     {
-    	block_kernel_contract2<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     }
     catch(bad_parameter&)
     {
@@ -486,36 +466,32 @@ void block_kernels_test::test_block_kernel_contract2_2d_no_contracted_inds() thr
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j | spb_k);
-    bispaces.push_back(spb_j| spb_i | spb_k);
-    bispaces.push_back(spb_j| spb_i | spb_k);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j|spb_k);
+    bispaces.push_back(spb_j|spb_i|spb_k);
+    bispaces.push_back(spb_j|spb_i|spb_k);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,1);
-    loops[0].set_subspace_looped(2,1);
-
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,1));
+    ts_groups[0].push_back(idx_pair(2,1));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,0);
-    loops[1].set_subspace_looped(2,0);
-
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,0));
+    ts_groups[1].push_back(idx_pair(2,0));
     //k loop
-    loops[2].set_subspace_looped(0,2);
-    loops[2].set_subspace_looped(1,2);
-    loops[2].set_subspace_looped(2,2);
-
-    sparse_loop_list sll(loops,bispaces);
+    ts_groups[2].push_back(idx_pair(0,2));
+    ts_groups[2].push_back(idx_pair(1,2));
+    ts_groups[2].push_back(idx_pair(2,2));
 
     bool threw_exception = false;
     try
     {
-    	block_kernel_contract2<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     }
     catch(bad_parameter&)
     {
-    	threw_exception = true;
+        threw_exception = true;
     }
     if(!threw_exception)
     {
@@ -537,28 +513,26 @@ void block_kernels_test::test_block_kernel_contract2_2d_strided_output() throw(l
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_j | spb_i);
+    vector<sparse_bispace_impl> bispaces(1,spb_j|spb_i);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //Deliberately swap i and j order
     //j loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(2,1);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(2,1));
     //i loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,0);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,0));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
-
-    sparse_loop_list sll(loops,bispaces);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
     bool threw_exception = false;
     try
     {
-    	block_kernel_contract2<double> bc2k(sll);
+    	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     }
     catch(bad_parameter&)
     {
@@ -621,27 +595,25 @@ void block_kernels_test::test_block_kernel_contract2_perm_A_ikj() throw(libtest:
     sparse_bispace<1> spb_k(4);
     sparse_bispace<1> spb_l(5);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j|spb_l);
     bispaces.push_back(spb_i|spb_k|spb_j);
     bispaces.push_back(spb_k|spb_l);
 
-    vector<block_loop> loops(4,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(4);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,2);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,2));
     //l loop
-    loops[2].set_subspace_looped(0,2);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[2].push_back(idx_pair(0,2));
+    ts_groups[2].push_back(idx_pair(2,1));
     //k loop
-    loops[3].set_subspace_looped(1,1);
-    loops[3].set_subspace_looped(2,0);
+    ts_groups[3].push_back(idx_pair(1,1));
+    ts_groups[3].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[3] = {2,3,5};
     size_t A_dim_list_arr[3] = {2,4,3};
@@ -671,31 +643,29 @@ void block_kernels_test::test_block_kernel_contract2_2d_not_enough_dims_and_ptrs
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_not_enough_dims()";
 
-    //C_ji = \sum_k A_ik B_kj
+    //C_ij = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
     //Just need dummy bispaces for this test
     sparse_bispace<1> spb_i(2);
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-	block_kernel_contract2<double> bc2k(sll);
+	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
 	//Fake dimensions, just care about how many are bassed
 	dim_list dl(2,2);
@@ -737,7 +707,6 @@ void block_kernels_test::test_block_kernel_contract2_2d_not_enough_dims_and_ptrs
         fail_test(test_name,__FILE__,__LINE__,
                 "block_kernel_contract2<T>::block_kernel_contract2()(...) did not throw exception when not enough ptrs passed");
     }
-
 }
 
 //Should throw exception when length of dim_lists doesn't match order of bispaces
@@ -745,31 +714,29 @@ void block_kernels_test::test_block_kernel_contract2_2d_invalid_dims() throw(lib
 {
     static const char *test_name = "block_kernels_test::test_block_kernel_permute_2d_invalid_dims()";
 
-    //C_ji = \sum_k A_ik B_kj
+    //C_ij = \sum_k A_ik B_kj
     //dimensions: i = 2,j = 3,k = 4
     //Just need dummy bispaces for this test
     sparse_bispace<1> spb_i(2);
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i | spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-	block_kernel_contract2<double> bc2k(sll);
+	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
 	//Fake dimensions, just care about vector length
 	dim_list dl(2,2);
@@ -809,24 +776,22 @@ void block_kernels_test::test_block_kernel_contract2_2d_incompatible_dims() thro
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-	block_kernel_contract2<double> bc2k(sll);
+	block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
 	dim_list dl(2,2);
 	vector<dim_list> dim_lists(3,dl);
@@ -883,24 +848,22 @@ void block_kernels_test::test_block_kernel_contract2_2d_ik_kj() throw(libtest::t
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,0);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {2,4};
@@ -954,24 +917,22 @@ void block_kernels_test::test_block_kernel_contract2_2d_ik_jk() throw(libtest::t
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_i|spb_k);
     bispaces.push_back(spb_j|spb_k);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,0);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,0));
     //k loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,1));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {2,4};
@@ -1028,25 +989,22 @@ void block_kernels_test::test_block_kernel_contract2_2d_ki_kj() throw(libtest::t
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_k|spb_i);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,1);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,1));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
     //k loop
-    loops[2].set_subspace_looped(1,0);
-    loops[2].set_subspace_looped(2,0);
+    ts_groups[2].push_back(idx_pair(1,0));
+    ts_groups[2].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {4,2};
@@ -1101,24 +1059,22 @@ void block_kernels_test::test_block_kernel_contract2_2d_ki_jk() throw(libtest::t
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_k|spb_i);
     bispaces.push_back(spb_j|spb_k);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(3);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,1);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,1));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,0);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,0));
     //k loop
-    loops[2].set_subspace_looped(1,0);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[2].push_back(idx_pair(1,0));
+    ts_groups[2].push_back(idx_pair(2,1));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {4,2};
@@ -1178,27 +1134,22 @@ void block_kernels_test::test_block_kernel_contract2_2d_ki_kj_permuted_loops() t
     sparse_bispace<1> spb_j(3);
     sparse_bispace<1> spb_k(4);
 
-    vector<sparse_bispace_any_order> bispaces(1,spb_i | spb_j);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
     bispaces.push_back(spb_k|spb_i);
     bispaces.push_back(spb_k|spb_j);
 
-    vector<block_loop> loops(3,block_loop(bispaces));
-
+    vector<idx_pair_list> ts_groups(3);
     //k loop
-    loops[0].set_subspace_looped(1,0);
-    loops[0].set_subspace_looped(2,0);
-
+    ts_groups[0].push_back(idx_pair(1,0));
+    ts_groups[0].push_back(idx_pair(2,0));
     //i loop
-    loops[1].set_subspace_looped(0,0);
-    loops[1].set_subspace_looped(1,1);
+    ts_groups[1].push_back(idx_pair(0,0));
+    ts_groups[1].push_back(idx_pair(1,1));
     //j loop
-    loops[2].set_subspace_looped(0,1);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[2].push_back(idx_pair(0,1));
+    ts_groups[2].push_back(idx_pair(2,1));
 
-    sparse_loop_list sll(loops,bispaces);
-
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[2] = {2,3};
     size_t A_dim_list_arr[2] = {4,2};
@@ -1270,27 +1221,25 @@ void block_kernels_test::test_block_kernel_contract2_3d_2d() throw(libtest::test
     sparse_bispace<1> spb_k(4);
     sparse_bispace<1> spb_l(5);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j|spb_l);
     bispaces.push_back(spb_i|spb_j|spb_k);
     bispaces.push_back(spb_k|spb_l);
 
-    vector<block_loop> loops(4,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(4);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,1));
     //l loop
-    loops[2].set_subspace_looped(0,2);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[2].push_back(idx_pair(0,2));
+    ts_groups[2].push_back(idx_pair(2,1));
     //k loop
-    loops[3].set_subspace_looped(1,2);
-    loops[3].set_subspace_looped(2,0);
+    ts_groups[3].push_back(idx_pair(1,2));
+    ts_groups[3].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[3] = {2,3,5};
     size_t A_dim_list_arr[3] = {2,3,4};
@@ -1372,27 +1321,25 @@ void block_kernels_test::test_block_kernel_contract2_3d_3d_multi_index() throw(l
     sparse_bispace<1> spb_k(4);
     sparse_bispace<1> spb_l(5);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_l);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_l);
     bispaces.push_back(spb_i|spb_j|spb_k);
     bispaces.push_back(spb_l|spb_j|spb_k);
 
-    vector<block_loop> loops(4,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(4);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
-    //l loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(2,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[2].set_subspace_looped(1,1);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,0));
+    //l loop
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,1));
     //k loop
-    loops[3].set_subspace_looped(1,2);
-    loops[3].set_subspace_looped(2,2);
+    ts_groups[3].push_back(idx_pair(1,2));
+    ts_groups[3].push_back(idx_pair(2,2));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[2] = {2,5};
     size_t A_dim_list_arr[3] = {2,3,4};
@@ -1493,27 +1440,25 @@ void block_kernels_test::test_block_kernel_contract2_2d_3d_permute_output() thro
     sparse_bispace<1> spb_k(3);
     sparse_bispace<1> spb_l(4);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j|spb_l);
     bispaces.push_back(spb_k|spb_j);
     bispaces.push_back(spb_i|spb_k|spb_l);
 
-    vector<block_loop> loops(4,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(4);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(2,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(2,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,1));
     //l loop
-    loops[2].set_subspace_looped(0,2);
-    loops[2].set_subspace_looped(2,2);
+    ts_groups[2].push_back(idx_pair(0,2));
+    ts_groups[2].push_back(idx_pair(2,2));
     //k loop
-    loops[3].set_subspace_looped(1,0);
-    loops[3].set_subspace_looped(2,1);
+    ts_groups[3].push_back(idx_pair(1,0));
+    ts_groups[3].push_back(idx_pair(2,1));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[3] = {5,2,4};
     size_t A_dim_list_arr[2] = {3,2};
@@ -1560,21 +1505,19 @@ void block_kernels_test::test_block_kernel_contract2_matrix_vector_mult() throw(
     sparse_bispace<1> spb_i(2);
     sparse_bispace<1> spb_j(3);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i);
+    vector<sparse_bispace_impl> bispaces(1,spb_i);
     bispaces.push_back(spb_j);
     bispaces.push_back(spb_i|spb_j);
 
-    vector<block_loop> loops(2,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(2);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(2,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(2,0));
     //j loop
-    loops[1].set_subspace_looped(1,0);
-    loops[1].set_subspace_looped(2,1);
+    ts_groups[1].push_back(idx_pair(1,0));
+    ts_groups[1].push_back(idx_pair(2,1));
 
-    sparse_loop_list sll(loops,bispaces);
-
-    block_kernel_contract2<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
 
     size_t C_dim_list_arr[1] = {2};
     size_t x_dim_list_arr[1] = {3};
@@ -1634,6 +1577,5 @@ void block_kernels_test::test_block_add2_kernel_3d() throw(libtest::test_excepti
         }
     }
 }
-#endif
 
 } // namespace libtensor
