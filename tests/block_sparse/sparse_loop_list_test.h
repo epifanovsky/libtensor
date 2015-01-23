@@ -26,8 +26,9 @@ private:
     void test_run_block_kernel_permute_3d_120() throw(libtest::test_exception);
     void test_run_block_kernel_permute_3d_120_sparse() throw(libtest::test_exception);
 
-    void test_run_block_contract2_kernel_2d_2d() throw(libtest::test_exception);
-    void test_run_block_contract2_kernel_3d_2d() throw(libtest::test_exception);
+    void test_run_block_kernel_contract2_2d_2d() throw(libtest::test_exception);
+    void test_run_block_kernel_contract2_3d_2d() throw(libtest::test_exception);
+    void test_run_block_kernel_contract2_2d_2d_sparse_dense() throw(libtest::test_exception);
 
     void test_run_direct_3d_3d() throw(libtest::test_exception);
 };

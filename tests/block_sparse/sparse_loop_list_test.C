@@ -7,7 +7,7 @@
 
 #include <libtensor/block_sparse/sparse_loop_list.h>
 #include <libtensor/block_sparse/block_kernel_permute.h>
-/*#include <libtensor/block_sparse/block_contract2_kernel.h>*/
+#include <libtensor/block_sparse/block_kernel_contract2.h>
 #include "sparse_loop_list_test.h"
 
 using namespace std;
@@ -28,8 +28,9 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
     test_run_block_kernel_permute_3d_120_sparse();
 #endif
 
-    test_run_block_contract2_kernel_2d_2d();
-    /*test_run_block_contract2_kernel_3d_2d();*/
+    test_run_block_kernel_contract2_2d_2d();
+    test_run_block_kernel_contract2_3d_2d();
+    test_run_block_kernel_contract2_2d_2d_sparse_dense();
 
 #if 0
     test_run_direct_3d_3d();
@@ -292,7 +293,7 @@ void sparse_loop_list_test::test_run_block_kernel_permute_2d_sparse() throw(libt
         if(test_output_arr[i] != correct_output_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_loop<M,N,T>::run(...) produced incorrect output");
+                    "sparse_loop_list::run(...) produced incorrect output");
         }
     }
 }
@@ -583,16 +584,16 @@ void sparse_loop_list_test::test_run_block_kernel_permute_3d_120_sparse() throw(
         if(test_output_arr[i] != correct_output_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_loop<M,N,T>::run(...) produced incorrect output");
+                    "sparse_loop_list::run(...) produced incorrect output");
         }
     }
 }
 
 #endif
 
-void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtest::test_exception)
+void sparse_loop_list_test::test_run_block_kernel_contract2_2d_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d()";
+    static const char *test_name = "sparse_loop_list_test::test_run_block_kernel_contract2_2d_2d()";
 
 	//Indices in comments are block indices
     //dimensions: i = 4,k = 5,j = 6
@@ -687,8 +688,7 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
     ts_groups[2].push_back(idx_pair(2,1));
 
     sparse_loop_list sll(bispaces,ts_groups);
-    /*
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     sll.run(bc2k,ptrs);
 
     for(int i = 0; i < 24; ++i)
@@ -696,16 +696,14 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_2d_2d() throw(libtes
         if(test_output_arr[i] != correct_output_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_loop<M,N,T>::run(...) produced incorrect output");
+                    "sparse_loop_list::run(...) produced incorrect output");
         }
     }
-    */
 }
-#if 0
 
-void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtest::test_exception)
+void sparse_loop_list_test::test_run_block_kernel_contract2_3d_2d() throw(libtest::test_exception)
 {
-    static const char *test_name = "sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d()";
+    static const char *test_name = "sparse_loop_list_test::test_run_block_kernel_contract2_3d_2d()";
 
 	//Indices in comments are block indices
     //dimensions: i = 3,j = 4, k = 5,l = 6
@@ -841,26 +839,26 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
     split_points_l.push_back(3);
     spb_l.split(split_points_l);
 
-    vector< sparse_bispace_any_order > bispaces(1,spb_i|spb_j|spb_l);
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j|spb_l);
     bispaces.push_back(spb_i|spb_j|spb_k);
     bispaces.push_back(spb_k|spb_l);
 
-    vector<block_loop> loops(4,block_loop(bispaces));
+    vector<idx_pair_list> ts_groups(4);
     //i loop
-    loops[0].set_subspace_looped(0,0);
-    loops[0].set_subspace_looped(1,0);
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
     //j loop
-    loops[1].set_subspace_looped(0,1);
-    loops[1].set_subspace_looped(1,1);
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(1,1));
     //l loop
-    loops[2].set_subspace_looped(0,2);
-    loops[2].set_subspace_looped(2,1);
+    ts_groups[2].push_back(idx_pair(0,2));
+    ts_groups[2].push_back(idx_pair(2,1));
     //k loop
-    loops[3].set_subspace_looped(1,2);
-    loops[3].set_subspace_looped(2,0);
+    ts_groups[3].push_back(idx_pair(1,2));
+    ts_groups[3].push_back(idx_pair(2,0));
 
-    sparse_loop_list sll(loops,bispaces);
-    block_contract2_kernel<double> bc2k(sll);
+    sparse_loop_list sll(bispaces,ts_groups);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
     sll.run(bc2k,ptrs);
 
     for(int i = 0; i < 72; ++i)
@@ -868,11 +866,114 @@ void sparse_loop_list_test::test_run_block_contract2_kernel_3d_2d() throw(libtes
         if(test_output_arr[i] != correct_output_arr[i])
         {
             fail_test(test_name,__FILE__,__LINE__,
-                    "block_loop<M,N,T>::run(...) produced incorrect output");
+                    "sparse_loop_list::run(...) produced incorrect output");
         }
     }
 }
 
+void sparse_loop_list_test::test_run_block_kernel_contract2_2d_2d_sparse_dense() throw(libtest::test_exception)
+{
+    static const char *test_name = "sparse_loop_list_test::test_run_block_kernel_contract2_2d_2d_sparse_dense()";
+
+    //Both matrices stored slow->fast, so blas must transpose second one
+    //dimensions: i = 4, k = 5, j = 6
+
+    //Block major     
+    double A_arr[20] = { //i = 0 //k = 0
+                         1,2,3,
+                         4,5,6,
+
+                         //i = 1 //k = 0
+                         7,8,9,
+                         10,11,12};
+                       
+
+    //Block major
+    double B_arr[30] = {//j = 0 k = 0 
+                        1,2,3,
+                        6,7,8,
+
+                        //j = 0 k = 1
+                        4,5,
+                        9,10,
+
+                        //j = 1 k = 0
+                        11,12,13,
+                        16,17,18,
+                        21,22,23,
+                        26,27,28,
+
+                        //j = 1 k = 1
+                        14,15,
+                        19,20,
+                        24,25,
+                        29,30};
+
+
+    //Block major
+    double C_correct_arr[24] = {//i = 0 j = 0
+                                14,44,
+                                32,107,
+
+                                //i = 0 j = 1
+                                74,104,134,164, 
+                                182,257,332,407,
+
+                                //i = 1 j = 0
+                                50,170,
+                                68,233,
+
+                                //i = 1 j = 1
+                                290,410,530,650,
+                                398,563,728,893};
+
+    double C_arr[24] = {0};
+
+    vector<double*> ptrs(1,C_arr);
+    ptrs.push_back(A_arr);
+    ptrs.push_back(B_arr);
+
+    sparse_bispace<1> spb_i(4,idx_list(1,2)); 
+    sparse_bispace<1> spb_k(5,idx_list(1,3)); 
+    sparse_bispace<1> spb_j(6,idx_list(1,2)); 
+
+    //Keep first block column of A, all of B
+    std::vector< sequence<2,size_t> > sig_blocks_A(2); 
+    sig_blocks_A[0][0] = 0;
+    sig_blocks_A[0][1] = 0;
+    sig_blocks_A[1][0] = 1;
+    sig_blocks_A[1][1] = 0;
+
+    vector<sparse_bispace_impl> bispaces(1,spb_i|spb_j);
+    bispaces.push_back(spb_i % spb_k << sig_blocks_A);
+    bispaces.push_back(spb_j|spb_k);
+
+    vector<idx_pair_list> ts_groups(3);
+    //i loop
+    ts_groups[0].push_back(idx_pair(0,0));
+    ts_groups[0].push_back(idx_pair(1,0));
+    //j loop
+    ts_groups[1].push_back(idx_pair(0,1));
+    ts_groups[1].push_back(idx_pair(2,1));
+    //k loop
+    ts_groups[2].push_back(idx_pair(1,1));
+    ts_groups[2].push_back(idx_pair(2,0));
+
+    sparse_loop_list sll(bispaces,ts_groups);
+    block_kernel_contract2<double> bc2k(bispaces,ts_groups);
+    sll.run(bc2k,ptrs);
+
+    for(int i = 0; i < 24; ++i)
+    {
+        if(C_arr[i] != C_correct_arr[i])
+        {
+            fail_test(test_name,__FILE__,__LINE__,
+                    "sparse_loop_list::run(...) produced incorrect output");
+        }
+    }
+}
+
+#if 0
 //TODO: These tensors are used in sparse_btensor and direct_sparse_btensor test - refactor into test fixture
 //We specify our operand 'A' as a direct tensor, so it is accessed in batches that we manually feed to the loop
 //Cil = A(ij)k Bj(kl)
@@ -1080,7 +1181,7 @@ void sparse_loop_list_test::test_run_direct_3d_3d() throw(libtest::test_exceptio
     vector<size_t> direct_tensors(1,1);
     sparse_loop_list sll(loops,bispaces,direct_tensors);
 
-    block_contract2_kernel<double> bc2k(sll);
+    block_kernel_contract2<double> bc2k(sll);
 
     vector<double*> ptrs(1,C_arr);
     ptrs.push_back(A_batch_1);
