@@ -8,7 +8,6 @@
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_symmetrize2.h>
 #include <libtensor/symmetry/point_group_table.h>
-#include <libtensor/symmetry/print_symmetry.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>

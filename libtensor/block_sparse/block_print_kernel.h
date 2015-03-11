@@ -15,7 +15,7 @@ namespace libtensor
 {
 
 template<typename T>
-class block_print_kernel: public libtensor::block_kernel_i<T>
+class block_print_kernel: public libtensor::block_kernel_i<block_print_kernel<T>,T>
 {
 private:
     std::stringstream m_ss;

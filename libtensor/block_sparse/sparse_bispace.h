@@ -74,15 +74,11 @@ public:
     size_t get_block_abs_index(size_t block_idx) const 
         throw(out_of_bounds);
 
-    /** \brief Returns a 2d sparse_bispace composed of the two arguments
-     **/
-    sparse_bispace<2> operator|(const sparse_bispace<1>& rhs) const;
-
     /** \brief Returns a N+1 d sparse bispace
      *         Called during resolution of sparsity expressions
      **/
     template<size_t M>
-    sparse_bispace<M+1> operator|(const sparse_bispace<M>& rhs);
+    sparse_bispace<M+1> operator|(const sparse_bispace<M>& rhs) const;
 
     /** \brief Returns a sparsity_expr corresponding to a 2d bispace 
      **/
@@ -1264,13 +1260,8 @@ inline sparse_bispace<1>::sparse_bispace(const sparse_bispace<2>& parent,size_t 
     }
 }
 
-inline sparse_bispace<2> sparse_bispace<1>::operator|(const sparse_bispace<1>& rhs) const
-{
-    return sparse_bispace<2>(*this,rhs);
-}
-
 template<size_t M>
-inline sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>& rhs)
+inline sparse_bispace<M+1> sparse_bispace<1>::operator|(const sparse_bispace<M>& rhs) const
 {
     return sparse_bispace<M+1>(*this,rhs);
 }

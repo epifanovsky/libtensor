@@ -46,6 +46,12 @@ public:
      **/
     virtual void assign(const expr_rhs<N, T> &rhs, const label<N> &lab);
 
+protected:
+    /** \brief Actual implementation of operator(), to be redefined in derived
+            classes if necessary
+     **/
+    virtual expr_rhs<N, T> make_rhs(const label<N> &l);
+
 };
 
 
@@ -74,6 +80,13 @@ void expr_tensor<N, T>::assign(const expr_rhs<N, T> &rhs,
         e.add(id, rhs.get_expr());
         m_expr = new expr_tree(e);
     }
+}
+
+
+template<size_t N, typename T>
+expr_rhs<N, T> expr_tensor<N, T>::make_rhs(const label<N> &l) {
+
+    return expr_rhs<N, T>(*m_expr, l);
 }
 
 

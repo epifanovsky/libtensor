@@ -79,13 +79,14 @@ void eval_trace_impl::do_evaluate(expr_tree::node_id_t lhs) {
     btensor_from_node<NA, double> bta(m_tree, e[0]);
 
     sequence<NA, size_t> seqa1, seqa2;
-    for(size_t i = 0; i < N; i++) {
-        seqa1[i] = i;
-        seqa2[i] = nt.get_idx().at(i);
-    }
-    for(size_t i = 0; i < N; i++) {
-        seqa1[N + i] = N + i;
-        seqa2[N + i] = N + nt.get_idx().at(i);
+    for(size_t i = 0; i < NA; i++) seqa1[i] = i;
+    for(size_t k = 0; k < nt.get_cidx().size(); k++) {
+        size_t cidx = nt.get_cidx().at(k);
+        size_t n = 0;
+        for(size_t i = 0; i < NA; i++) if(nt.get_idx().at(i) == cidx) {
+            seqa2[i] = n * N + k;
+            n++;
+        }
     }
     permutation_builder<NA> pb(seqa1, seqa2);
 
