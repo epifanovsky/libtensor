@@ -296,6 +296,7 @@ set(SRC_EXPR
 set(SRC_CTF
     ctf_dense_tensor/impl/ctf_dense_tensor.C
     ctf_dense_tensor/impl/ctf_fctr.C
+    ctf_dense_tensor/impl/ctf_symmetry.C
     ctf_dense_tensor/impl/ctf_tod_collect.C
     ctf_dense_tensor/impl/ctf_tod_contract2_1.C
     ctf_dense_tensor/impl/ctf_tod_contract2_2.C

@@ -3,6 +3,7 @@
 
 #include <libtest/test_suite.h>
 #include "ctf_dense_tensor_test.h"
+#include "ctf_symmetry_test.h"
 #include "ctf_tod_contract2_test.h"
 #include "ctf_tod_copy_test.h"
 #include "ctf_tod_diag_test.h"
@@ -34,6 +35,7 @@ namespace libtensor {
 
     This suite runs the following tests:
      - libtensor::ctf_dense_tensor_test
+     - libtensor::ctf_symmetry_test
      - libtensor::ctf_tod_contract2_test
      - libtensor::ctf_tod_copy_test
      - libtensor::ctf_tod_diag_test
@@ -55,6 +57,7 @@ namespace libtensor {
 class libtensor_ctf_dense_tensor_suite : public libtest::test_suite {
 private:
     unit_test_factory<ctf_dense_tensor_test> m_utf_ctf_dense_tensor;
+    unit_test_factory<ctf_symmetry_test> m_utf_ctf_symmetry;
     unit_test_factory<ctf_tod_contract2_test> m_utf_ctf_tod_contract2;
     unit_test_factory<ctf_tod_copy_test> m_utf_ctf_tod_copy;
     unit_test_factory<ctf_tod_diag_test> m_utf_ctf_tod_diag;
