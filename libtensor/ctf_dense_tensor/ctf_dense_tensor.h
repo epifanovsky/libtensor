@@ -39,6 +39,12 @@ public:
      **/
     ctf_dense_tensor(const dimensions<N> &dims);
 
+    /** \brief Creates a new tensor
+        \param dims Non-zero tensor dimensions.
+        \param sym Tensor symmetry.
+     **/
+    ctf_dense_tensor(const dimensions<N> &dims, const ctf_symmetry<N, T> &sym);
+
     /** \brief Virtual destructor
      **/
     virtual ~ctf_dense_tensor();
