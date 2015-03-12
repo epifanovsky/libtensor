@@ -21,6 +21,8 @@ void ctf_tod_random_test::perform() throw(libtest::test_exception) {
         test_1();
         test_2();
         test_3();
+        test_4();
+        test_5();
 
     } catch(...) {
         ctf::exit();
@@ -150,6 +152,104 @@ void ctf_tod_random_test::test_3() {
     for(size_t i = 0; i < sz; i++) if(pa[i] < 0.0 || pa[i] > 1.0) {
         fail_test(testname, __FILE__, __LINE__,
             "Random value (A) is out of range.");
+    }
+}
+
+
+void ctf_tod_random_test::test_4() {
+
+    static const char testname[] = "ctf_tod_random_test::test_4()";
+
+    typedef std_allocator<double> allocator_t;
+
+    index<2> i2a, i2b;
+    i2b[0] = 49; i2b[1] = 49;
+    dimensions<2> dims(index_range<2>(i2a, i2b));
+    sequence<2, unsigned> grp(0), gind(0);
+    ctf_symmetry<2, double> sym(grp, gind);
+
+    dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
+    ctf_dense_tensor<2, double> dta(dims, sym), dtb(dims, sym);
+
+    tod_set<2>(100.0).perform(ta);
+    tod_set<2>(100.0).perform(tb);
+
+    ctf_tod_distribute<2>(ta).perform(dta);
+    ctf_tod_distribute<2>(tb).perform(dtb);
+
+    ctf_tod_random<2>().perform(true, dta);
+    ctf_tod_random<2>().perform(true, dtb);
+
+    ctf_tod_collect<2>(dta).perform(ta);
+    ctf_tod_collect<2>(dtb).perform(tb);
+
+    dense_tensor_rd_ctrl<2, double> ca(ta), cb(tb);
+    const double *pa = ca.req_const_dataptr(), *pb = cb.req_const_dataptr();
+    size_t sz = dims.get_size();
+
+    for(size_t i = 0; i < sz; i++) if(pa[i] < 0.0 || pa[i] > 1.0) {
+        fail_test(testname, __FILE__, __LINE__,
+            "Random value (A) is out of range.");
+    }
+
+    for(size_t i = 0; i < sz; i++) if(pb[i] < 0.0 || pb[i] > 1.0) {
+        fail_test(testname, __FILE__, __LINE__,
+            "Random value (B) is out of range.");
+    }
+
+    size_t ndup = 0;
+    for(size_t i = 0; i < sz; i++) if(fabs(pa[i] - pb[i]) < 1e-14) ndup++;
+    if(ndup > 0) {
+        fail_test(testname, __FILE__, __LINE__, "Too many values are similar.");
+    }
+}
+
+
+void ctf_tod_random_test::test_5() {
+
+    static const char testname[] = "ctf_tod_random_test::test_5()";
+
+    typedef std_allocator<double> allocator_t;
+
+    index<3> i3a, i3b;
+    i3b[0] = 49; i3b[1] = 49; i3b[2] = 49;
+    dimensions<3> dims(index_range<3>(i3a, i3b));
+    sequence<3, unsigned> grp(0), gind(0);
+    ctf_symmetry<3, double> sym(grp, gind);
+
+    dense_tensor<3, double, allocator_t> ta(dims), tb(dims);
+    ctf_dense_tensor<3, double> dta(dims, sym), dtb(dims, sym);
+
+    tod_set<3>(100.0).perform(ta);
+    tod_set<3>(100.0).perform(tb);
+
+    ctf_tod_distribute<3>(ta).perform(dta);
+    ctf_tod_distribute<3>(tb).perform(dtb);
+
+    ctf_tod_random<3>().perform(true, dta);
+    ctf_tod_random<3>().perform(true, dtb);
+
+    ctf_tod_collect<3>(dta).perform(ta);
+    ctf_tod_collect<3>(dtb).perform(tb);
+
+    dense_tensor_rd_ctrl<3, double> ca(ta), cb(tb);
+    const double *pa = ca.req_const_dataptr(), *pb = cb.req_const_dataptr();
+    size_t sz = dims.get_size();
+
+    for(size_t i = 0; i < sz; i++) if(pa[i] < 0.0 || pa[i] > 1.0) {
+        fail_test(testname, __FILE__, __LINE__,
+            "Random value (A) is out of range.");
+    }
+
+    for(size_t i = 0; i < sz; i++) if(pb[i] < 0.0 || pb[i] > 1.0) {
+        fail_test(testname, __FILE__, __LINE__,
+            "Random value (B) is out of range.");
+    }
+
+    size_t ndup = 0;
+    for(size_t i = 0; i < sz; i++) if(fabs(pa[i] - pb[i]) < 1e-14) ndup++;
+    if(ndup > 0) {
+        fail_test(testname, __FILE__, __LINE__, "Too many values are similar.");
     }
 }
 

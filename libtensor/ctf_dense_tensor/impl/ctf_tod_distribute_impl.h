@@ -5,6 +5,7 @@
 #include <libtensor/core/bad_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include "../ctf.h"
+#include "../ctf_dense_tensor.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_distribute.h"
 
@@ -24,6 +25,10 @@ void ctf_tod_distribute<N>::perform(ctf_dense_tensor_i<N, double> &dt) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "dt");
     }
 
+    //  First prepare a non-symmetric tensor filled with random numbers
+
+    ctf_dense_tensor<N, double> dt0(m_t.get_dims());
+
     size_t sz = m_t.get_dims().get_size();
     std::vector<long_int> keys;
     std::vector<double> data;
@@ -40,17 +45,26 @@ void ctf_tod_distribute<N>::perform(ctf_dense_tensor_i<N, double> &dt) {
         }
         ctrl.ret_const_dataptr(p);
 
-        ctf_dense_tensor_ctrl<N, double> dctrl(dt);
-        tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
+        ctf_dense_tensor_ctrl<N, double> dctrl0(dt0);
+        tCTF_Tensor<double> &dt = dctrl0.req_ctf_tensor();
         dt.write(sz, &keys[0], &data[0]);
 
     } else {
 
-        ctf_dense_tensor_ctrl<N, double> dctrl(dt);
-        tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
+        ctf_dense_tensor_ctrl<N, double> dctrl0(dt0);
+        tCTF_Tensor<double> &dt = dctrl0.req_ctf_tensor();
         dt.write(0, 0, 0);
 
     }
+
+    //  Then symmetrize (if necessary) into the result
+
+    ctf_dense_tensor_ctrl<N, double> dctrl0(dt0), dctrl(dt);
+    tCTF_Tensor<double> &dtsrc = dctrl0.req_ctf_tensor();
+    tCTF_Tensor<double> &dtdst = dctrl.req_ctf_tensor();
+    char idxa[N], idxb[N];
+    for(size_t i = 0; i < N; i++) idxa[i] = idxb[i] = i;
+    dtdst.sum(1.0, dtsrc, idxa, 0.0, idxb);
 }
 
 
