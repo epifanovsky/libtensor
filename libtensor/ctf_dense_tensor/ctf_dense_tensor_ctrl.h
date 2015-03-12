@@ -33,6 +33,18 @@ public:
         return m_t.on_req_ctf_tensor();
     }
 
+    /** \brief Requests the symmetry of the CTF tensor
+     **/
+    const ctf_symmetry<N, T> &req_symmetry() {
+        return m_t.on_req_symmetry();
+    }
+
+    /** \brief Resets the symmetry of the CTF tensor
+     **/
+    void reset_symmetry(const ctf_symmetry<N, T> &sym) {
+        m_t.on_reset_symmetry(sym);
+    }
+
 };
 
 

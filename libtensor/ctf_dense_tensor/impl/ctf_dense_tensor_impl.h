@@ -59,6 +59,29 @@ tCTF_Tensor<T> &ctf_dense_tensor<N, T>::on_req_ctf_tensor() {
 
 
 template<size_t N, typename T>
+const ctf_symmetry<N, T> &ctf_dense_tensor<N, T>::on_req_symmetry() {
+
+    return m_sym;
+}
+
+
+template<size_t N, typename T>
+void ctf_dense_tensor<N, T>::on_reset_symmetry(const ctf_symmetry<N, T> &sym) {
+
+    delete m_tens;
+    m_sym = sym;
+
+    int edge_len[N], edge_sym[N];
+    for(size_t i = 0; i < N; i++) {
+        edge_len[i] = m_dims[N - i - 1];
+        edge_sym[i] = NS;
+    }
+    m_sym.write(edge_sym);
+    m_tens = new tCTF_Tensor<T>(N, edge_len, edge_sym, ctf::get_world());
+}
+
+
+template<size_t N, typename T>
 void ctf_dense_tensor<N, T>::on_set_immutable() {
 
 }

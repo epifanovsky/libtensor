@@ -30,6 +30,7 @@ public:
 
 private:
     dimensions<N> m_dims; //!< Tensor dimensions
+    ctf_symmetry<N, T> m_sym; //!< Tensor symmetry
     tCTF_Tensor<double> *m_tens; //!< CTF tensor
 
 public:
@@ -50,6 +51,14 @@ protected:
     /** \brief Returns the CTF tensor object
      **/
     virtual tCTF_Tensor<T> &on_req_ctf_tensor();
+
+    /** \brief Handles requests for the symmetry of the CTF tensor
+     **/
+    virtual const ctf_symmetry<N, T> &on_req_symmetry();
+
+    /** \brief Resets the symmetry of the CTF tensor
+     **/
+    virtual void on_reset_symmetry(const ctf_symmetry<N, T> &sym);
 
     /** \brief Called when state changes to immutable
      **/

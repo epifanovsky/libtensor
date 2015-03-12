@@ -3,6 +3,7 @@
 
 #include <libtensor/core/dimensions.h>
 #include "ctf.h"
+#include "ctf_symmetry.h"
 
 namespace libtensor {
 
@@ -41,6 +42,16 @@ protected:
         \return CTF tensor object
      **/
     virtual tCTF_Tensor<T> &on_req_ctf_tensor() = 0;
+
+    /** \brief Handles requests for the symmetry of the CTF tensor
+     **/
+    virtual const ctf_symmetry<N, T> &on_req_symmetry() = 0;
+
+    /** \brief Handles requests to reset the symmetry of the CTF tensor
+     **/
+    virtual void on_reset_symmetry(const ctf_symmetry<N, T> &sym) = 0;
+
+    //@}
 
 };
 

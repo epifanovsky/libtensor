@@ -48,6 +48,18 @@ public:
         const sequence<N, unsigned> &grp,
         const sequence<N, unsigned> &sym);
 
+    /** \brief Returns the symmetry subgroup index array
+     **/
+    const sequence<N, unsigned> &get_grp() const {
+        return m_grp;
+    }
+
+    /** \brief Returns the symmetric/antisymmetric indicator array
+     **/
+    const sequence<N, unsigned> &get_sym() const {
+        return m_sym;
+    }
+
     /** \brief Builds the symmetry object from a list of transformations
      **/
     void build(const transf_list<N, T> &trl);
