@@ -42,7 +42,7 @@ public:
 
     /** \brief Evaluates the result into given node
      **/
-    void evaluate(node_id_t lhs);
+    void evaluate(node_id_t lhs, bool add);
 
 };
 

@@ -57,7 +57,8 @@ private:
     template<size_t N>
     void add() {
 
-        node_id_t id0 = m_g.add(node_assign(m_g.get_vertex(m_nid).get_n()));
+        node_id_t id0 = m_g.add(node_assign(m_g.get_vertex(m_nid).get_n(),
+                false));
         node_id_t id1 = m_g.add(node_ctf_btensor_interm<N, double>());
 
         graph::edge_list_t ei = m_g.get_edges_in(m_nid);

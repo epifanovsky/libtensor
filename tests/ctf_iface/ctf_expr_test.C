@@ -1,4 +1,5 @@
 #include <libtensor/core/allocator.h>
+#include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/ctf_block_tensor/ctf_btod_collect.h>
 #include <libtensor/ctf_block_tensor/ctf_btod_distribute.h>
@@ -24,6 +25,8 @@ void ctf_expr_test::perform() throw(libtest::test_exception) {
 
         test_1();
         test_2();
+        test_3();
+        test_4();
 
     } catch(...) {
         ctf::exit();
@@ -139,6 +142,83 @@ void ctf_expr_test::test_2() {
     ctf_btod_collect<4>(di3_ovvv).perform(i3_ovvv);
 
     compare_ref<4>::compare(testname, i3_ovvv, i3_ovvv_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_3() {
+
+    static const char testname[] = "ctf_expr_test::test_3()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2, double> t1(sov), t3(sov), t3_ref(sov);
+    ctf_btensor<2, double> dt1(sov), dt3(sov);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t3_ref);
+    btod_copy<2>(t3_ref).perform(t3);
+    t1.set_immutable();
+
+    ctf_btod_distribute<2>(t1).perform(dt1);
+    ctf_btod_distribute<2>(t3).perform(dt3);
+
+    letter i, a;
+
+    t3_ref(i|a) += t1(i|a);
+    dt3(i|a) += dt1(i|a);
+
+    ctf_btod_collect<2>(dt3).perform(t3);
+
+    compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_4() {
+
+    static const char testname[] = "ctf_expr_test::test_4()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv), svv(sv&sv);
+
+    btensor<2, double> t1(sov), t2(svv), t3(sov), t3_ref(sov);
+    ctf_btensor<2, double> dt1(sov), dt2(svv), dt3(sov);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t2);
+    btod_random<2>().perform(t3_ref);
+    btod_copy<2>(t3_ref).perform(t3);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    ctf_btod_distribute<2>(t1).perform(dt1);
+    ctf_btod_distribute<2>(t2).perform(dt2);
+    ctf_btod_distribute<2>(t3).perform(dt3);
+
+    letter i, a, b;
+
+    t3_ref(i|a) += contract(b, t1(i|b), t2(a|b));
+    dt3(i|a) += contract(b, dt1(i|b), dt2(a|b));
+
+    ctf_btod_collect<2>(dt3).perform(t3);
+
+    compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
