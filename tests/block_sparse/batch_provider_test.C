@@ -31,7 +31,7 @@ void batch_provider_test::test_permute_3d_sparse_120() throw(libtest::test_excep
     sparse_btensor_new<3> A(tf.input_bispace,tf.input_arr,true);
     sparse_btensor_new<3> B(tf.output_bispace);
 
-    node_assign root(3);
+    node_assign root(3, false);
     expr_tree e(root);
     expr_tree::node_id_t root_id = e.get_root();
     e.add(root_id, node_ident_any_tensor<3,double>(B));
@@ -66,7 +66,7 @@ void batch_provider_test::test_contract2() throw(libtest::test_exception)
     sparse_btensor_new<3> B(tf.spb_B,tf.B_arr,true);
     sparse_btensor_new<2> C(tf.spb_C);
 
-    node_assign root(2);
+    node_assign root(2, false);
     expr_tree e(root);
     expr_tree::node_id_t root_id = e.get_root();
     e.add(root_id, node_ident_any_tensor<2,double>(C));

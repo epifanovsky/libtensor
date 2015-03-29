@@ -28,8 +28,8 @@ T dot_product(
 
     T d;
 
-    node_assign n1(0);
-    expr_tree e(node_assign(0));
+    node_assign n1(0, false);
+    expr_tree e(node_assign(0, false));
     expr_tree::node_id_t id_res = e.add(e.get_root(), node_scalar<T>(d));
     expr_tree::node_id_t id_dot =
         e.add(e.get_root(), node_dot_product(idxa, idxb));

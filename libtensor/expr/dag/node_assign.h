@@ -22,12 +22,16 @@ class node_assign : public node {
 public:
     static const char k_op_type[]; //!< Operation type
 
+private:
+    bool m_add; //!< Assign with addition (true/false)
+
 public:
     /** \brief Creates an assignment node
         \param n Tensor order
+        \param add Assign with addition (+=)
      **/
-    node_assign(size_t n) :
-        node(k_op_type, n)
+    node_assign(size_t n, bool add) :
+        node(k_op_type, n), m_add(add)
     { }
 
     /** \brief Virtual destructor
@@ -38,6 +42,10 @@ public:
      **/
     virtual node *clone() const {
         return new node_assign(*this);
+    }
+
+    bool is_add() const {
+        return m_add;
     }
 
 };
