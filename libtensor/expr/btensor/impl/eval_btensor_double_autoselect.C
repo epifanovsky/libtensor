@@ -1,3 +1,4 @@
+#include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/block_tensor/btod_traits.h>
 #include <libtensor/expr/common/metaprog.h>
@@ -63,7 +64,7 @@ autoselect<N>::~autoselect() {
 
 
 template<size_t N>
-void autoselect<N>::evaluate(node_id_t nid_lhs) {
+void autoselect<N>::evaluate(node_id_t nid_lhs, bool add) {
 
     const node &lhs = m_tree.get_vertex(nid_lhs);
 
@@ -74,13 +75,28 @@ void autoselect<N>::evaluate(node_id_t nid_lhs) {
     }
 
     additive_gen_bto<N, bti_traits> &op = m_impl->get_bto();
-    btensor_from_node<N, double> bt(m_tree, nid_lhs);
+    btensor_from_node<N, double> bt_lhs(m_tree, nid_lhs);
+    btensor<N, double> &bt = bt_lhs.get_or_create_btensor(op.get_bis());
 
-    gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(),
-        bt.get_or_create_btensor(op.get_bis()));
-    out.open();
-    op.perform(out);
-    out.close();
+    if(add) {
+        gen_block_tensor_rd_ctrl<N, bti_traits> ctrl(bt);
+        std::vector<size_t> nzblk;
+        ctrl.req_nonzero_blocks(nzblk);
+        addition_schedule<N, btod_traits> asch(op.get_symmetry(),
+            ctrl.req_const_symmetry());
+        asch.build(op.get_schedule(), nzblk);
+
+        gen_bto_aux_add<N, btod_traits> out(op.get_symmetry(), asch, bt,
+            scalar_transf<double>());
+        out.open();
+        op.perform(out);
+        out.close();
+    } else {
+        gen_bto_aux_copy<N, btod_traits> out(op.get_symmetry(), bt);
+        out.open();
+        op.perform(out);
+        out.close();
+    }
 }
 
 

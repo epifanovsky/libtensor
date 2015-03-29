@@ -26,6 +26,11 @@ public:
      **/
     virtual void assign(const expr_rhs<N, T> &rhs, const label<N> &l) = 0;
 
+    /** \brief Performs the assignment with addition of the right-hand side
+            to this left-hand side of the expression
+     **/
+    virtual void assign_add(const expr_rhs<N, T> &rhs, const label<N> &l) = 0;
+
     /** \brief Attaches a letter label to the left-hand-side of a tensor
             expression
      **/
@@ -56,6 +61,11 @@ public:
      **/
     const expr_rhs<N, T> &operator=(const expr_rhs<N, T> &rhs);
 
+    /** \brief Assignment with addition of the right-hand-side of a tensor
+            expression to the left-hand-side
+     **/
+    const expr_rhs<N, T> &operator+=(const expr_rhs<N, T> &rhs);
+
 };
 
 
@@ -70,6 +80,14 @@ template<size_t N, typename T>
 const expr_rhs<N, T> &labeled_lhs<N, T>::operator=(const expr_rhs<N, T> &rhs) {
 
     m_lhs.assign(rhs, m_label);
+    return rhs;
+}
+
+
+template<size_t N, typename T>
+const expr_rhs<N, T> &labeled_lhs<N, T>::operator+=(const expr_rhs<N, T> &rhs) {
+
+    m_lhs.assign_add(rhs, m_label);
     return rhs;
 }
 

@@ -37,6 +37,8 @@ void expr_test::perform() throw(libtest::test_exception) {
         test_9();
         test_10();
         test_11();
+        test_12();
+        test_13();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -768,6 +770,74 @@ void expr_test::test_11() throw(libtest::test_exception) {
                 + contract(k|l, i_oooo(i|j|k|l), t_oovv(k|l|a|b))),
           symm(i, j, dirsum(df_ov(i|a), df_ov(j|b))));
 
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_test::test_12() throw(libtest::test_exception) {
+
+    static const char *testname = "expr_test::test_12()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2> t1(sov), t3(sov), t3_ref(sov);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t3_ref);
+    btod_copy<2>(t3_ref).perform(t3);
+    t1.set_immutable();
+
+    btod_copy<2>(t1).perform(t3_ref, 1.0);
+
+    letter i, a;
+
+    t3(i|a) += t1(i|a);
+
+    compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_test::test_13() throw(libtest::test_exception) {
+
+    static const char *testname = "expr_test::test_13()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv), svv(sv&sv);
+
+    btensor<2> t1(sov), t2(svv), t3(sov), t3_ref(sov);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t2);
+    btod_random<2>().perform(t3_ref);
+    btod_copy<2>(t3_ref).perform(t3);
+    t1.set_immutable();
+    t2.set_immutable();
+
+    contraction2<1, 1, 1> contr;
+    contr.contract(1, 1);
+    btod_contract2<1, 1, 1>(contr, t1, t2).perform(t3_ref, 1.0);
+
+    letter i, a, b;
+
+    t3(i|a) += contract(b, t1(i|b), t2(a|b));
+
+    compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

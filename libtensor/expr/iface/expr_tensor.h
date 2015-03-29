@@ -46,6 +46,10 @@ public:
      **/
     virtual void assign(const expr_rhs<N, T> &rhs, const label<N> &lab);
 
+    /** \brief Adds the given expression to this container
+     **/
+    virtual void assign_add(const expr_rhs<N, T> &rhs, const label<N> &lab);
+
 protected:
     /** \brief Actual implementation of operator(), to be redefined in derived
             classes if necessary
@@ -66,6 +70,28 @@ template<size_t N, typename T>
 void expr_tensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     const label<N> &lab) {
 
+    if(m_expr) delete m_expr;
+
+    permutation<N> px = lab.permutation_of(rhs.get_label());
+    if(px.is_identity()) {
+        m_expr = new expr_tree(rhs.get_expr());
+    } else {
+        std::vector<size_t> perm(N);
+        for(size_t i = 0; i < N; i++) perm[i] = px[i];
+        node_transform<T> nt(perm, scalar_transf<T>());
+        expr_tree e(nt);
+        expr_tree::node_id_t id = e.get_root();
+        e.add(id, rhs.get_expr());
+        m_expr = new expr_tree(e);
+    }
+}
+
+
+template<size_t N, typename T>
+void expr_tensor<N, T>::assign_add(const expr_rhs<N, T> &rhs,
+    const label<N> &lab) {
+
+    throw 0;
     if(m_expr) delete m_expr;
 
     permutation<N> px = lab.permutation_of(rhs.get_label());

@@ -68,7 +68,7 @@ public:
     void evaluate_scalar(expr_tree::node_id_t lhs);
 
     template<size_t N>
-    void evaluate(expr_tree::node_id_t lhs);
+    void evaluate(expr_tree::node_id_t lhs, bool add);
 
 };
 
@@ -89,13 +89,13 @@ void eval_node::evaluate_scalar(expr_tree::node_id_t lhs) {
 
 
 template<size_t N>
-void eval_node::evaluate(expr_tree::node_id_t lhs) {
+void eval_node::evaluate(expr_tree::node_id_t lhs, bool add) {
 
     tensor_transf<N, double> tr;
     expr_tree::node_id_t rhs = transf_from_node(m_tree, m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    eval_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs);
+    eval_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs, add);
 }
 
 
@@ -104,16 +104,17 @@ private:
     const expr_tree &m_tree;
     expr_tree::node_id_t m_lhs; //!< Left-hand side node (has to be ident or interm)
     expr_tree::node_id_t m_rhs;
+    bool m_add;
 
 public:
     eval_assign_tensor(const expr_tree &tr, expr_tree::node_id_t lhs,
-        expr_tree::node_id_t rhs) :
-        m_tree(tr), m_lhs(lhs), m_rhs(rhs)
+        expr_tree::node_id_t rhs, bool add) :
+        m_tree(tr), m_lhs(lhs), m_rhs(rhs), m_add(add)
     { }
 
     template<size_t N>
     void dispatch() {
-        eval_node(m_tree, m_rhs).evaluate<N>(m_lhs);
+        eval_node(m_tree, m_rhs).evaluate<N>(m_lhs, m_add);
     }
 
 };
@@ -139,6 +140,7 @@ void eval_btensor_double_impl::evaluate() {
 void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
 
     const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
+    const node_assign &n = m_tree.get_vertex(id).recast_as<node_assign>();
 
     if(out.size() != 2) {
         throw eval_exception(__FILE__, __LINE__, "libtensor::expr",
@@ -154,7 +156,7 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
         verify_tensor(lhs);
 
         // Evaluate r.h.s. before performing the assignment
-        eval_assign_tensor e(m_tree, out[0], out[1]);
+        eval_assign_tensor e(m_tree, out[0], out[1], n.is_add());
         dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
 
         // Put l.h.s. at position of assignment and erase subtree
