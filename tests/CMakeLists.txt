@@ -296,6 +296,7 @@ set(SRC_CTF_IFACE
     ctf_iface/ctf_btensor_test.C
     ctf_iface/ctf_dot_product_test.C
     ctf_iface/ctf_expr_test.C
+    ctf_iface/ctf_trace_test.C
 )
 
 set(SRC_BLOCK_SPARSE
