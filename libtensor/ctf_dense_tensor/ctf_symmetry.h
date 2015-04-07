@@ -60,6 +60,10 @@ public:
         return m_sym;
     }
 
+    /** \brief Returns true if given symmetry is a subgroup of this symmetry
+     **/
+    bool is_subgroup(const ctf_symmetry &other) const;
+
     /** \brief Builds the symmetry object from a list of transformations
      **/
     void build(const transf_list<N, T> &trl);

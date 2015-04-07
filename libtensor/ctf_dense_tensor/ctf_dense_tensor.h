@@ -66,6 +66,10 @@ protected:
      **/
     virtual void on_reset_symmetry(const ctf_symmetry<N, T> &sym);
 
+    /** \brief Adjusts the symmetry of the CTF tensor
+     **/
+    virtual void on_adjust_symmetry(const ctf_symmetry<N, T> &sym);
+
     /** \brief Called when state changes to immutable
      **/
     virtual void on_set_immutable();

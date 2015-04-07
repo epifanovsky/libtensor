@@ -327,6 +327,7 @@ set(SRC_CTF
     ctf_dense_tensor/impl/ctf_tod_scatter.C
     ctf_dense_tensor/impl/ctf_tod_set.C
     ctf_dense_tensor/impl/ctf_tod_set_diag.C
+    ctf_dense_tensor/impl/ctf_tod_set_symmetry.C
     ctf_dense_tensor/impl/ctf_tod_trace.C
     ctf_block_tensor/impl/ctf_block_tensor.C
     ctf_block_tensor/impl/ctf_btod_addition_schedule.C

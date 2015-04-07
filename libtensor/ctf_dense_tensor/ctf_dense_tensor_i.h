@@ -51,6 +51,10 @@ protected:
      **/
     virtual void on_reset_symmetry(const ctf_symmetry<N, T> &sym) = 0;
 
+    /** \brief Handles requests to adjust the symmetry of the CTF tensor
+     **/
+    virtual void on_adjust_symmetry(const ctf_symmetry<N, T> &sym) = 0;
+
     //@}
 
 };

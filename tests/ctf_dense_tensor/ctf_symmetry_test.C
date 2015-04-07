@@ -16,6 +16,7 @@ void ctf_symmetry_test::perform() throw(libtest::test_exception) {
         test_2();
         test_3();
         test_4();
+        test_5();
 
     } catch(...) {
         ctf::exit();
@@ -252,6 +253,39 @@ void ctf_symmetry_test::test_4() {
             ss << "Result doesn't match reference (3): "
                << "s[" << i << "] = " << s[i] << "; "
                << "s_ref_3[" << i << "] = " << s_ref_3[i];
+            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        }
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_5() {
+
+    static const char testname[] = "ctf_symmetry_test::test_5()";
+
+    try {
+
+    sequence<3, unsigned> grp(0), symind(0);
+    grp[0] = 0; grp[1] = 0; grp[2] = 0;
+    symind[0] = 0;
+    ctf_symmetry<3, double> sym(grp, symind);
+    int s[3];
+    int s_ref[3] = { SY, SY, NS };
+
+    for(int i = 0; i < 3; i++) s[i] = -999;
+
+    sym.write(s);
+
+    for(int i = 0; i < 3; i++) {
+        if(s[i] != s_ref[i]) {
+            std::ostringstream ss;
+            ss << "Result doesn't match reference: "
+               << "s[" << i << "] = " << s[i] << "; "
+               << "s_ref[" << i << "] = " << s_ref[i];
             fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
     }

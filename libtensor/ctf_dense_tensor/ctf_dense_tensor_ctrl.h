@@ -45,6 +45,12 @@ public:
         m_t.on_reset_symmetry(sym);
     }
 
+    /** \brief Adjusts the symmetry of the CTF tensor
+     **/
+    void adjust_symmetry(const ctf_symmetry<N, T> &sym) {
+        m_t.on_adjust_symmetry(sym);
+    }
+
 };
 
 

@@ -22,6 +22,7 @@ libtensor_ctf_dense_tensor_suite::libtensor_ctf_dense_tensor_suite() :
     add_test("ctf_tod_scatter", m_utf_ctf_tod_scatter);
     add_test("ctf_tod_set", m_utf_ctf_tod_set);
     add_test("ctf_tod_set_diag", m_utf_ctf_tod_set_diag);
+    add_test("ctf_tod_set_symmetry", m_utf_ctf_tod_set_symmetry);
     add_test("ctf_tod_trace", m_utf_ctf_tod_trace);
 }
 
