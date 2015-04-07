@@ -2,7 +2,6 @@
 #define LIBTENSOR_CTF_SYMMETRY_H
 
 #include <libtensor/core/permutation.h>
-#include <libtensor/core/transf_list.h>
 
 namespace libtensor {
 
@@ -63,10 +62,6 @@ public:
     /** \brief Returns true if given symmetry is a subgroup of this symmetry
      **/
     bool is_subgroup(const ctf_symmetry &other) const;
-
-    /** \brief Builds the symmetry object from a list of transformations
-     **/
-    void build(const transf_list<N, T> &trl);
 
     /** \brief Applies permutation to the indices
      **/

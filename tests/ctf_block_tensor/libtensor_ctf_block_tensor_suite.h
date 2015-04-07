@@ -15,6 +15,7 @@
 #include "ctf_btod_scale_test.h"
 #include "ctf_btod_set_test.h"
 #include "ctf_btod_trace_test.h"
+#include "ctf_symmetry_builder_test.h"
 
 using libtest::unit_test_factory;
 
@@ -43,6 +44,7 @@ namespace libtensor {
      - libtensor::ctf_btod_scale_test
      - libtensor::ctf_btod_set_test
      - libtensor::ctf_btod_trace_test
+     - libtensor::ctf_symmetry_builder_test
 
     \ingroup libtensor_ctf_block_tensor_tests
  **/
@@ -61,6 +63,7 @@ private:
     unit_test_factory<ctf_btod_scale_test> m_utf_ctf_btod_scale;
     unit_test_factory<ctf_btod_set_test> m_utf_ctf_btod_set;
     unit_test_factory<ctf_btod_trace_test> m_utf_ctf_btod_trace;
+    unit_test_factory<ctf_symmetry_builder_test> m_utf_ctf_symmetry_builder;
 
 public:
     //! Creates the suite

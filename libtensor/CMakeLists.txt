@@ -363,6 +363,7 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_symmetrize3.C
     ctf_block_tensor/impl/ctf_btod_trace.C
     ctf_block_tensor/impl/ctf_btod_unfold_block_list.C
+    ctf_block_tensor/impl/ctf_symmetry_builder.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_add.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_autoselect.C

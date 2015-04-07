@@ -31,12 +31,6 @@ bool ctf_symmetry<N, T>::is_subgroup(const ctf_symmetry<N, T> &other) const {
 
 
 template<size_t N, typename T>
-void ctf_symmetry<N, T>::build(const transf_list<N, T> &trl) {
-
-}
-
-
-template<size_t N, typename T>
 void ctf_symmetry<N, T>::permute(const permutation<N> &perm) {
 
     perm.apply(m_grp);
