@@ -34,7 +34,7 @@ public:
     /** \brief Distributes the data to a CTF block tensor
         \param dbt Distributed block tensor.
      **/
-    void perform(ctf_block_tensor_wr_i<N, double> &dbt);
+    void perform(ctf_block_tensor_i<N, double> &dbt);
 
 };
 

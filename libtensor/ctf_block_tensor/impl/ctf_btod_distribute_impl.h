@@ -6,6 +6,7 @@
 #include <libtensor/ctf_dense_tensor/ctf_tod_distribute.h>
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
+#include "ctf_btod_set_symmetry.h"
 #include "../ctf_btod_distribute.h"
 
 namespace libtensor {
@@ -16,9 +17,9 @@ const char ctf_btod_distribute<N>::k_clazz[] = "ctf_btod_distribute<N>";
 
 
 template<size_t N>
-void ctf_btod_distribute<N>::perform(ctf_block_tensor_wr_i<N, double> &dbt) {
+void ctf_btod_distribute<N>::perform(ctf_block_tensor_i<N, double> &dbt) {
 
-    static const char method[] = "perform(ctf_block_tensor_wr_i<N, double>&)";
+    static const char method[] = "perform(ctf_block_tensor_i<N, double>&)";
 
     block_index_space<N> bis1(m_bt.get_bis()), bis2(dbt.get_bis());
     bis1.match_splits();
@@ -41,6 +42,8 @@ void ctf_btod_distribute<N>::perform(ctf_block_tensor_wr_i<N, double> &dbt) {
 
     std::vector<size_t> nzblk;
     ca.req_nonzero_blocks(nzblk);
+
+    ctf_btod_set_symmetry<N>().perform(nzblk, dbt);
 
     for(size_t i = 0; i < nzblk.size(); i++) {
         index<N> idx;

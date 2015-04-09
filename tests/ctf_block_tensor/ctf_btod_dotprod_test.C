@@ -61,7 +61,7 @@ void ctf_btod_dotprod_test::test_1() {
     double d = ctf_btod_dotprod<2>(dbta, perma, dbtb, permb).calculate();
     double d_ref = btod_dotprod<2>(bta, perma, btb, permb).calculate();
 
-    if(fabs(d - d_ref) > 1e-12) {
+    if(fabs(d - d_ref) > 1e-11) {
         std::ostringstream ss;
         ss << "Result does not match reference: " << d << " vs. "
             << d_ref << " (ref), " << (d - d_ref) << " (diff).";

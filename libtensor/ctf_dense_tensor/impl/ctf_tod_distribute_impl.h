@@ -25,46 +25,24 @@ void ctf_tod_distribute<N>::perform(ctf_dense_tensor_i<N, double> &dt) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "dt");
     }
 
-    //  First prepare a non-symmetric tensor filled with random numbers
+    long_int np, *idx;
+    double *pdst;
 
-    ctf_dense_tensor<N, double> dt0(m_t.get_dims());
+    ctf_dense_tensor_ctrl<N, double> dctrl(dt);
+    tCTF_Tensor<double> &dta = dctrl.req_ctf_tensor();
+    dta.read_local(&np, &idx, &pdst);
 
-    size_t sz = m_t.get_dims().get_size();
-    std::vector<long_int> keys;
-    std::vector<double> data;
-
-    if(ctf::is_master()) {
-
-        data.reserve(sz);
-
-        dense_tensor_rd_ctrl<N, double> ctrl(m_t);
-        const double *p = ctrl.req_const_dataptr();
-        for(size_t i = 0; i < sz; i++) {
-            keys.push_back(i);
-            data.push_back(p[i]);
-        }
-        ctrl.ret_const_dataptr(p);
-
-        ctf_dense_tensor_ctrl<N, double> dctrl0(dt0);
-        tCTF_Tensor<double> &dt = dctrl0.req_ctf_tensor();
-        dt.write(sz, &keys[0], &data[0]);
-
-    } else {
-
-        ctf_dense_tensor_ctrl<N, double> dctrl0(dt0);
-        tCTF_Tensor<double> &dt = dctrl0.req_ctf_tensor();
-        dt.write(0, 0, 0);
-
+    dense_tensor_rd_ctrl<N, double> ctrl(m_t);
+    const double *psrc = ctrl.req_const_dataptr();
+    for(size_t i = 0; i < np; i++) {
+        pdst[i] = psrc[idx[i]];
     }
+    ctrl.ret_const_dataptr(psrc);
 
-    //  Then symmetrize (if necessary) into the result
+    dta.write(np, idx, pdst);
 
-    ctf_dense_tensor_ctrl<N, double> dctrl0(dt0), dctrl(dt);
-    tCTF_Tensor<double> &dtsrc = dctrl0.req_ctf_tensor();
-    tCTF_Tensor<double> &dtdst = dctrl.req_ctf_tensor();
-    char idxa[N], idxb[N];
-    for(size_t i = 0; i < N; i++) idxa[i] = idxb[i] = i;
-    dtdst.sum(1.0, dtsrc, idxa, 0.0, idxb);
+    free(idx);
+    free(pdst);
 }
 
 

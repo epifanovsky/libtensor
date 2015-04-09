@@ -38,6 +38,9 @@ void ctf_tod_random<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
     if(zero) linalg::rng_set_i_x(0, np, p, 1, m_c);
     else linalg::rng_add_i_x(0, np, p, 1, m_c);
     dta.write(np, idx, p);
+
+    free(idx);
+    free(p);
 }
 
 
