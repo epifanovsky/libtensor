@@ -5,6 +5,7 @@
 #include <libtensor/ctf_dense_tensor/ctf_tod_set.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
+#include "ctf_btod_set_symmetry.h"
 #include "../ctf_btod_ewmult2.h"
 
 namespace libtensor {
@@ -62,6 +63,7 @@ void ctf_btod_ewmult2<N, M, K>::perform(
 
     gen_bto_aux_copy<N + M + K, ctf_btod_traits> out(get_symmetry(), btc);
     out.open();
+    ctf_btod_set_symmetry<NC>().perform(get_schedule(), btc);
     m_gbto.perform(out);
     out.close();
 }
@@ -81,6 +83,7 @@ void ctf_btod_ewmult2<N, M, K>::perform(
 
     gen_bto_aux_add<NC, ctf_btod_traits> out(get_symmetry(), asch, btc, d);
     out.open();
+    ctf_btod_set_symmetry<NC>().perform(asch, btc);
     m_gbto.perform(out);
     out.close();
 }

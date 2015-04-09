@@ -6,6 +6,7 @@
 #include <libtensor/ctf_dense_tensor/ctf_tod_set.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
+#include "ctf_btod_set_symmetry.h"
 #include "../ctf_btod_dirsum.h"
 
 namespace libtensor {
@@ -21,6 +22,7 @@ void ctf_btod_dirsum<N, M>::perform(
 
     gen_bto_aux_copy<N + M, ctf_btod_traits> out(get_symmetry(), btb);
     out.open();
+    ctf_btod_set_symmetry<N + M>().perform(get_schedule(), btb);
     perform(out);
     out.close();
 }
@@ -40,6 +42,7 @@ void ctf_btod_dirsum<N, M>::perform(
 
     gen_bto_aux_add<N + M, ctf_btod_traits> out(get_symmetry(), asch, btb, c);
     out.open();
+    ctf_btod_set_symmetry<N + M>().perform(asch, btb);
     perform(out);
     out.close();
 }

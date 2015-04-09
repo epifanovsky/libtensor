@@ -6,6 +6,7 @@
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_contract2_simple_impl.h>
+#include "ctf_btod_set_symmetry.h"
 #include "../ctf_btod_contract2.h"
 
 namespace libtensor {
@@ -53,6 +54,7 @@ void ctf_btod_contract2<N, M, K>::perform(
 
     gen_bto_aux_copy<NC, ctf_btod_traits> out(get_symmetry(), btc);
     out.open();
+    ctf_btod_set_symmetry<NC>().perform(get_schedule(), btc);
     perform(out);
     out.close();
 }
@@ -72,6 +74,7 @@ void ctf_btod_contract2<N, M, K>::perform(
 
     gen_bto_aux_add<NC, ctf_btod_traits> out(get_symmetry(), asch, btc, d);
     out.open();
+    ctf_btod_set_symmetry<NC>().perform(asch, btc);
     perform(out);
     out.close();
 }
