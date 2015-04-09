@@ -23,6 +23,11 @@ private:
     void test_3b();
     void test_4a();
     void test_4b();
+    void test_5();
+    void test_6();
+    void test_7();
+    void test_8();
+    void test_9();
 
 };
 

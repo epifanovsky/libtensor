@@ -18,6 +18,8 @@ libtensor_ctf_block_tensor_suite::libtensor_ctf_block_tensor_suite() :
     add_test("ctf_btod_random", m_utf_ctf_btod_random);
     add_test("ctf_btod_scale", m_utf_ctf_btod_scale);
     add_test("ctf_btod_set", m_utf_ctf_btod_set);
+    add_test("ctf_btod_symmetrize2", m_utf_ctf_btod_symmetrize2);
+    add_test("ctf_btod_symmetrize3", m_utf_ctf_btod_symmetrize3);
     add_test("ctf_btod_trace", m_utf_ctf_btod_trace);
     add_test("ctf_symmetry_builder", m_utf_ctf_symmetry_builder);
 }

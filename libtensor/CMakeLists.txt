@@ -358,6 +358,7 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_random.C
     ctf_block_tensor/impl/ctf_btod_scale.C
     ctf_block_tensor/impl/ctf_btod_set.C
+    ctf_block_tensor/impl/ctf_btod_set_symmetry.C
     ctf_block_tensor/impl/ctf_btod_sum.C
     ctf_block_tensor/impl/ctf_btod_symmetrize2.C
     ctf_block_tensor/impl/ctf_btod_symmetrize3.C

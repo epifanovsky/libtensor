@@ -29,18 +29,14 @@ public:
             symmetry
         \param bt Block %tensor.
      **/
-    void perform(ctf_block_tensor_wr_i<N, double> &bt) {
-        m_gbto.perform(bt);
-    }
+    void perform(ctf_block_tensor_i<N, double> &bt);
 
     /** \brief Fills one block of a block tensor with random values
             preserving symmetry
         \param bt Block tensor.
         \param idx Block index in the block tensor.
      **/
-    void perform(ctf_block_tensor_wr_i<N, double> &bt, const index<N> &idx) {
-        m_gbto.perform(bt, idx);
-    }
+    void perform(ctf_block_tensor_i<N, double> &bt, const index<N> &idx);
 
 };
 

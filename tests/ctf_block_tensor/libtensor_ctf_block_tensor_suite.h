@@ -14,6 +14,8 @@
 #include "ctf_btod_random_test.h"
 #include "ctf_btod_scale_test.h"
 #include "ctf_btod_set_test.h"
+#include "ctf_btod_symmetrize2_test.h"
+#include "ctf_btod_symmetrize3_test.h"
 #include "ctf_btod_trace_test.h"
 #include "ctf_symmetry_builder_test.h"
 
@@ -43,6 +45,8 @@ namespace libtensor {
      - libtensor::ctf_btod_random_test
      - libtensor::ctf_btod_scale_test
      - libtensor::ctf_btod_set_test
+     - libtensor::ctf_btod_symmetrize2_test
+     - libtensor::ctf_btod_symmetrize3_test
      - libtensor::ctf_btod_trace_test
      - libtensor::ctf_symmetry_builder_test
 
@@ -62,6 +66,8 @@ private:
     unit_test_factory<ctf_btod_random_test> m_utf_ctf_btod_random;
     unit_test_factory<ctf_btod_scale_test> m_utf_ctf_btod_scale;
     unit_test_factory<ctf_btod_set_test> m_utf_ctf_btod_set;
+    unit_test_factory<ctf_btod_symmetrize2_test> m_utf_ctf_btod_symmetrize2;
+    unit_test_factory<ctf_btod_symmetrize3_test> m_utf_ctf_btod_symmetrize3;
     unit_test_factory<ctf_btod_trace_test> m_utf_ctf_btod_trace;
     unit_test_factory<ctf_symmetry_builder_test> m_utf_ctf_symmetry_builder;
 

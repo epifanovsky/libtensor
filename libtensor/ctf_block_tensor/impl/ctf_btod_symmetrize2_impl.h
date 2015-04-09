@@ -7,6 +7,7 @@
 #include <libtensor/ctf_dense_tensor/ctf_tod_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
+#include "ctf_btod_set_symmetry.h"
 #include "../ctf_btod_symmetrize2.h"
 
 namespace libtensor {
@@ -31,6 +32,7 @@ void ctf_btod_symmetrize2<N>::perform(
     gen_bto_aux_add<N, ctf_btod_traits> out(get_symmetry(), asch, bt,
         scalar_transf<double>());
     out.open();
+    ctf_btod_set_symmetry<N>().perform(asch, bt);
     perform(out);
     out.close();
 }
@@ -51,6 +53,7 @@ void ctf_btod_symmetrize2<N>::perform(
 
     gen_bto_aux_add<N, ctf_btod_traits> out(get_symmetry(), asch, bt, d);
     out.open();
+    ctf_btod_set_symmetry<N>().perform(asch, bt);
     perform(out);
     out.close();
 }
