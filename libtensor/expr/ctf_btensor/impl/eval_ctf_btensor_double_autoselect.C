@@ -1,6 +1,7 @@
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
 #include <libtensor/ctf_block_tensor/ctf_btod_traits.h>
+#include <libtensor/ctf_block_tensor/impl/ctf_btod_set_symmetry.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_contract.h>
@@ -90,11 +91,13 @@ void autoselect<N>::evaluate(node_id_t nid_lhs, bool add) {
         gen_bto_aux_add<N, ctf_btod_traits> out(op.get_symmetry(), asch, bt,
             scalar_transf<double>());
         out.open();
+        ctf_btod_set_symmetry<N>().perform(asch, bt);
         op.perform(out);
         out.close();
     } else {
         gen_bto_aux_copy<N, ctf_btod_traits> out(op.get_symmetry(), bt);
         out.open();
+        ctf_btod_set_symmetry<N>().perform(op.get_schedule(), bt);
         op.perform(out);
         out.close();
     }
