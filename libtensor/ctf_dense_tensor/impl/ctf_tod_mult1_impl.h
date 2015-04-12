@@ -77,9 +77,9 @@ void ctf_tod_mult1<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
 
     if(m_recip) {
         CTF::Bivar_Function<double> op(&ctf_fctr_ddiv);
-        dtb.contract(m_c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapb, op);
+        dta.contract(m_c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapa, op);
     } else {
-        dtb.contract(m_c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapb);
+        dta.contract(m_c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapa);
     }
 }
 
