@@ -75,15 +75,12 @@ void ctf_tod_mult1<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
         mapb[i] = seqb[N - i - 1] + 1;
     }
 
-    tCTF_fsum<double> op;
     if(m_recip) {
-        if(zero) op.func_ptr = &ctf_fsum_ddiv;
-        else op.func_ptr = &ctf_fsum_ddiv_add;
+        CTF::Bivar_Function<double> op(&ctf_fctr_ddiv);
+        dtb.contract(m_c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapb, op);
     } else {
-        if(zero) op.func_ptr = &ctf_fsum_dmul;
-        else op.func_ptr = &ctf_fsum_dmul_add;
+        dtb.contract(m_c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapb);
     }
-    dta.sum(m_c, dtb, mapb, 1.0, mapa, op);
 }
 
 

@@ -405,6 +405,7 @@ if(WITH_ARMADILLO)
 endif(WITH_ARMADILLO)
 if(WITH_CTF)
     set(SRC ${SRC} ${SRC_CTF})
+    set_property(SOURCE ${SRC_CTF} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
 endif(WITH_CTF)
 
 add_library(tensor_core ${SRC_CORE})

@@ -103,9 +103,12 @@ void ctf_tod_mult<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tc) {
         mapc[i] = seqc[N - i - 1] + 1;
     }
 
-    tCTF_fctr<double> op;
-    if(m_recip) op.func_ptr = &ctf_fctr_ddiv;
-    dtc.contract(c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapc, op);
+    if(m_recip) {
+        CTF::Bivar_Function<double> op(&ctf_fctr_ddiv);
+        dtc.contract(c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapc, op);
+    } else {
+        dtc.contract(c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapc);
+    }
 }
 
 
