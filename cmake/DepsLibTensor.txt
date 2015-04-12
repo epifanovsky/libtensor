@@ -110,6 +110,8 @@ if(CTF_FOUND)
     set(WITH_CTF TRUE)
     include_directories(${CTF_INCLUDE_PATH})
     set(LIBTENSOR_DEP_LIBS ${LIBTENSOR_DEP_LIBS} ctf)
+else(CTF_FOUND)
+    message(STATUS "Did not find CTF ($CTF_DIR), distributed tensors will not be built")
 endif(CTF_FOUND)
 
 set(ARMADILLO_ROOT $ENV{ARMADILLO_ROOT})
