@@ -31,16 +31,34 @@ void ctf_tod_random<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
     ctf_dense_tensor_ctrl<N, double> ca(ta);
     tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
 
-    long_int np, *idx;
-    double *p;
+    size_t sz = ta.get_dims().get_size();
+    double *buf = new double[sz];
 
-    dta.read_local(&np, &idx, &p);
-    if(zero) linalg::rng_set_i_x(0, np, p, 1, m_c);
-    else linalg::rng_add_i_x(0, np, p, 1, m_c);
-    dta.write(np, idx, p);
+    try {
 
-    free(idx);
-    free(p);
+        linalg::rng_set_i_x(0, sz, buf, 1, m_c);
+        MPI_Bcast(buf, sz, MPI_DOUBLE, 0, ctf::get_world().comm);
+
+        long_int np, *idx;
+        double *p;
+
+        dta.read_local(&np, &idx, &p);
+        if(zero) {
+            for(size_t i = 0; i < np; i++) p[i] = buf[idx[i]];
+        } else {
+            for(size_t i = 0; i < np; i++) p[i] += buf[idx[i]];
+        }
+        dta.write(np, idx, p);
+
+        free(idx);
+        free(p);
+
+    } catch(...) {
+        delete [] buf;
+        throw;
+    }
+
+    delete [] buf;
 }
 
 
