@@ -50,6 +50,46 @@ ctf_btod_contract2<N, M, K>::ctf_btod_contract2(
 
 template<size_t N, size_t M, size_t K>
 void ctf_btod_contract2<N, M, K>::perform(
+    gen_block_stream_i<NC, bti_traits> &out) {
+
+    typedef ctf_dense_tensor_i<NC, double> rd_block_type;
+    typedef ctf_dense_tensor_i<NC, double> wr_block_type;
+
+    dimensions<NC> bidimsc = get_bis().get_block_index_dims();
+
+    ctf_block_tensor<NC, double> btc(get_bis());
+    gen_block_tensor_ctrl<NC, bti_traits> cc(btc);
+    so_copy<NC, double>(get_symmetry()).perform(cc.req_symmetry());
+
+    const assignment_schedule<NC, double> &sch = get_schedule();
+
+    for(typename assignment_schedule<NC, double>::iterator i = sch.begin();
+        i != sch.end(); ++i) {
+
+        index<NC> ic;
+        abs_index<NC>::get_index(sch.get_abs_index(i), bidimsc, ic);
+        tensor_transf<NC, double> trc0;
+
+        std::vector<size_t> blst(1, sch.get_abs_index(i));
+        ctf_btod_set_symmetry<NC>().perform(blst, btc);
+
+        {
+            wr_block_type &blkc = cc.req_block(ic);
+            m_gbto.compute_block(true, ic, trc0, blkc);
+            cc.ret_block(ic);
+        }
+        {
+            rd_block_type &blkc = cc.req_const_block(ic);
+            out.put(ic, blkc, trc0);
+            cc.ret_const_block(ic);
+        }
+        cc.req_zero_block(ic);
+    }
+}
+
+
+template<size_t N, size_t M, size_t K>
+void ctf_btod_contract2<N, M, K>::perform(
     gen_block_tensor_i<NC, bti_traits> &btc) {
 
     gen_bto_aux_copy<NC, ctf_btod_traits> out(get_symmetry(), btc);

@@ -56,6 +56,7 @@ void ctf_symmetry<N, T>::write(int (&sym)[N]) const {
             symidx++;
         }
     }
+    //for(i = 0; i < N; i++) sym[i] = NS;
 }
 
 

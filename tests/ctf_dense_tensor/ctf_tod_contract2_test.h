@@ -19,6 +19,8 @@ private:
     void test_1b();
     void test_2a();
     void test_2b();
+    void test_3a();
+    void test_3b();
 
 };
 

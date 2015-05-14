@@ -95,10 +95,7 @@ public:
 
     /** \brief Computes the result into an output stream
      **/
-    virtual void perform(gen_block_stream_i<NC, bti_traits> &out) {
-
-        m_gbto.perform(out);
-    }
+    virtual void perform(gen_block_stream_i<NC, bti_traits> &out);
 
     /** \brief Computes the result into an output tensor
      **/

@@ -18,6 +18,7 @@ private:
     void test_1();
     void test_2(double d);
     void test_3(double d);
+    void test_4(double d);
 
 };
 
