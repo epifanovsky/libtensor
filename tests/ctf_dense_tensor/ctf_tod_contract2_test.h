@@ -21,6 +21,7 @@ private:
     void test_2b();
     void test_3a();
     void test_3b();
+    void test_4(double d);
 
 };
 

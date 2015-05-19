@@ -1,7 +1,8 @@
-#ifndef LIBTENSOR_CTF_TOD_CONTRACT2_IMPL
-#define LIBTENSOR_CTF_TOD_CONTRACT2_IMPL
+#ifndef LIBTENSOR_CTF_TOD_CONTRACT2_IMPL_H
+#define LIBTENSOR_CTF_TOD_CONTRACT2_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
+#include <libtensor/core/mask.h>
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_contract2.h"
@@ -25,6 +26,58 @@ ctf_tod_contract2<N, M, K>::ctf_tod_contract2(
 
 }
 
+namespace {
+
+template<size_t N, size_t M, size_t K>
+ctf_symmetry<N + M, double> ctf_tod_contract2_symmetry(
+    const contraction2<N, M, K> &contr,
+    const ctf_symmetry<N + K, double> &syma,
+    const ctf_symmetry<M + K, double> &symb) {
+
+    enum {
+        NA = N + K, NB = M + K, NC = N + M
+    };
+
+    const sequence<NA + NB + NC, size_t> &conn = contr.get_conn();
+    const sequence<NA, unsigned> &grpa = syma.get_grp();
+    const sequence<NA, unsigned> &taga = syma.get_sym();
+    const sequence<NB, unsigned> &grpb = symb.get_grp();
+    const sequence<NB, unsigned> &tagb = symb.get_sym();
+
+    mask<NA> mappeda;
+    mask<NB> mappedb;
+    sequence<NA, size_t> mapa;
+    sequence<NB, size_t> mapb;
+
+    sequence<NC, unsigned> grpc, tagc;
+    unsigned igrp = 0;
+    for(size_t i = 0; i < NA; i++) if(conn[NC + i] < NC) {
+        if(!mappeda[i]) {
+            for(size_t j = i; j < NA; j++) if(grpa[i] == grpa[j]) {
+                mapa[grpa[j]] = igrp;
+                mappeda[j] = true;
+            }
+            tagc[igrp] = taga[grpa[i]];
+            igrp++;
+        }
+        grpc[conn[NC + i]] = mapa[grpa[i]];
+    }
+    for(size_t i = 0; i < NB; i++) if(conn[NC + NA + i] < NC) {
+        if(!mappedb[i]) {
+            for(size_t j = i; j < NB; j++) if(grpb[i] == grpb[j]) {
+                mapb[grpb[j]] = igrp;
+                mappedb[j] = true;
+            }
+            tagc[igrp] = tagb[grpb[i]];
+            igrp++;
+        }
+        grpc[conn[NC + NA + i]] = mapb[grpb[i]];
+    }
+
+    return ctf_symmetry<NC, double>(grpc, tagc);
+}
+
+} // unnamed namespace
 
 template<size_t N, size_t M, size_t K>
 void ctf_tod_contract2<N, M, K>::perform(
@@ -69,12 +122,16 @@ void ctf_tod_contract2<N, M, K>::perform(
         }
     }
 
-    dtc.contract(m_d, dta, &map[NC], dtb, &map[NC + NA], zero ? 0.0 : 1.0,
+    ctf_symmetry<NC, double> symc = ctf_tod_contract2_symmetry(m_contr,
+        ca.req_symmetry(), cb.req_symmetry());
+    double z = ctf_symmetry<NC, double>::symconv_factor(symc,
+        cc.req_symmetry());
+    dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA], zero ? 0.0 : 1.0,
         &map[0]);
 }
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_CTF_TOD_CONTRACT2_IMPL
+#endif // LIBTENSOR_CTF_TOD_CONTRACT2_IMPL_H
 

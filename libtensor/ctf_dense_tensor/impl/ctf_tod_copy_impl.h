@@ -43,28 +43,6 @@ ctf_tod_copy<N>::ctf_tod_copy(ctf_dense_tensor_i<N, double> &ta,
 }
 
 
-namespace {
-
-unsigned long symmetry_factor(size_t N, int *sym) {
-
-    unsigned long f = 1;
-    for(size_t i = 0, j = 0; i < N; i++) {
-        if(sym[i] == SY || sym[i] == AS) {
-            j++;
-            continue;
-        }
-        if(sym[i] == NS) {
-            j++;
-            for(size_t k = 2; k <= j; k++) f *= k;
-            j = 0;
-        }
-    }
-    return f;
-}
-
-} // unnamed namespace
-
-
 template<size_t N>
 void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
 
@@ -90,21 +68,12 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
         mapb[i] = seqb[N - i - 1] + 1;
     }
 
-    //  Tricky part: CTF implies symmetrization when the symmetry of B is
-    //  higher than the symmetry of A. Need to correct with an appropriate
-    //  factor for bug-free computing
-    sequence<N, int> syma, symb;
-    for(size_t i = 0; i < N; i++) {
-        syma[i] = dta.sym[i];
-        symb[i] = dtb.sym[i];
-    }
-    for(size_t i = 0; i < N; i++) {
-        if(symb[i] == NS) syma[i] = NS;
-    }
-    unsigned long fa = symmetry_factor(N, &syma[0]);
-    unsigned long fb = symmetry_factor(N, &symb[0]);
+    ctf_symmetry<N, double> syma(ca.req_symmetry());
+    syma.permute(m_tra.get_perm());
+    const ctf_symmetry<N, double> &symb = cb.req_symmetry();
+    double z = ctf_symmetry<N, double>::symconv_factor(syma, symb);
 
-    dtb.sum(c / double(fb / fa), dta, mapa, zero ? 0.0 : 1.0, mapb);
+    dtb.sum(c * z, dta, mapa, zero ? 0.0 : 1.0, mapb);
 }
 
 

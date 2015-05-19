@@ -28,6 +28,7 @@ private:
     void test_7();
     void test_8();
     void test_9();
+    void test_10();
 
 };
 
