@@ -13,6 +13,7 @@ block_loop::block_loop(const subspace& subspace,
                        const idx_pair_list& t_s) : 
                                                    m_t_igs(t_igs),
                                                    m_t_s(t_s),
+                                                   m_set_ig_off(t_igs.size(),true), 
                                                    m_block_inds(range(0,subspace.get_n_blocks())),
                                                    m_start_idx(0),
                                                    m_cur_idx(0),
@@ -36,11 +37,13 @@ block_loop::block_loop(const subspace& subspace,
 block_loop::block_loop(const subspace& subspace,
                        const idx_pair_list& t_igs,
                        const idx_pair_list& t_s,
+                       const vector<bool>& set_ig_off,
                        const sparsity_data& sd,
                        size_t sd_sub,
                        const idx_pair_list& sd_off_map) :
                                                             m_t_igs(t_igs),
                                                             m_t_s(t_s),
+                                                            m_set_ig_off(set_ig_off), 
                                                             m_start_idx(0),
                                                             m_cur_idx(0),
                                                             m_done(false),
@@ -81,7 +84,9 @@ void block_loop::apply_offsets(vector<idx_list>& ig_offs) const
     {
         size_t t_idx = m_t_igs[i].first;
         size_t ig_idx = m_t_igs[i].second;
-        ig_offs[t_idx][ig_idx] *= m_block_offs[m_cur_idx][i];
+
+        if(m_set_ig_off[i])
+            ig_offs[t_idx][ig_idx] *= m_block_offs[m_cur_idx][i];
         for(size_t f_ig_idx = ig_idx+1; f_ig_idx < ig_offs[t_idx].size(); ++f_ig_idx)
         {
             ig_offs[t_idx][f_ig_idx] *= m_block_dims[m_cur_idx];

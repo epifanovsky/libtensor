@@ -50,8 +50,7 @@ size_t subspace::get_block_size(size_t block_idx) const throw(out_of_bounds)
 {
     if(block_idx > (m_abs_indices.size() - 1))
     {
-        throw out_of_bounds(g_ns,k_clazz,"get_block_size(size_t block_idx)",
-                __FILE__,__LINE__,"Cannot pass block_idx greater than (# of blocks - 1)"); 
+        throw out_of_bounds(g_ns,k_clazz,"get_block_size(size_t block_idx)",                __FILE__,__LINE__,"Cannot pass block_idx greater than (# of blocks - 1)"); 
     }
     else if(block_idx == (m_abs_indices.size() - 1))
     {
@@ -68,8 +67,7 @@ size_t subspace::get_block_abs_index(size_t block_idx) const throw(out_of_bounds
 {
     if(block_idx > (m_abs_indices.size() - 1))
     {
-        throw out_of_bounds(g_ns,k_clazz,"get_block_abs_index(size_t block_idx)",
-                __FILE__,__LINE__,"Cannot pass block_idx greater than (# of blocks - 1)"); 
+        throw out_of_bounds(g_ns,k_clazz,"get_block_abs_index(size_t block_idx)",__FILE__,__LINE__,"Cannot pass block_idx greater than (# of blocks - 1)"); 
     }
     return m_abs_indices[block_idx];
 }

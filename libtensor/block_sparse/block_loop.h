@@ -21,6 +21,7 @@ private:
     std::vector<idx_list> m_block_offs;
     idx_pair_list m_t_igs;
     idx_pair_list m_t_s;
+    std::vector<bool> m_set_ig_off;
     block_loop* m_controlling_loop;
     block_loop* m_dependent_loop;
 public:
@@ -33,6 +34,7 @@ public:
 	block_loop(const subspace& subspace,
                const idx_pair_list& t_igs,
                const idx_pair_list& t_s,
+               const std::vector<bool>& set_ig_off,
                const sparsity_data& sd,
                size_t sd_sub,
                const idx_pair_list& sd_off_map);

@@ -15,6 +15,7 @@ private:
     static const char* k_clazz; //!< Class name
     std::vector<block_loop> m_loops;
     std::vector<idx_list> m_ig_offs;
+    std::vector<idx_list> m_block_dims;
 public:
     sparse_loop_list(const std::vector<sparse_bispace_impl>& bispaces,
                      const std::vector<idx_pair_list>& ts_groups);
@@ -31,10 +32,6 @@ void sparse_loop_list::run(kern_t& kernel,
 {
     std::vector<T*> block_ptrs(ptrs.size());
 
-    std::vector<dim_list> block_dims(m_ig_offs.size());
-    for(size_t i = 0; i < m_ig_offs.size(); ++i)
-        block_dims[i].resize(m_ig_offs[i].size(),0);
-
     std::vector< std::vector<idx_list> > ig_off_grps(m_loops.size());
 
     size_t c_loop_idx = 0;
@@ -49,7 +46,7 @@ void sparse_loop_list::run(kern_t& kernel,
         if(!c_loop.done())
         {
             c_loop.apply_offsets(ig_off_grps[c_loop_idx]);
-            c_loop.apply_dims(block_dims);
+            c_loop.apply_dims(m_block_dims);
 
             if(c_loop_idx == m_loops.size() - 1)
             {
@@ -62,7 +59,7 @@ void sparse_loop_list::run(kern_t& kernel,
                     }
                     block_ptrs[t_idx] = ptrs[t_idx] + offset;
                 }
-                kernel(block_ptrs,block_dims);
+                kernel(block_ptrs,m_block_dims);
             }
             else
                 m_loops[++c_loop_idx].reset();
