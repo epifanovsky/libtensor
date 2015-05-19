@@ -206,7 +206,7 @@ void ctf_btod_contract2_test::test_3(double d) {
 
     contraction2<2, 2, 0> contr;
 
-    if(d == 0) {
+    if(d == 0.0) {
         btod_contract2<2, 2, 0>(contr, bta, bta).perform(btc_ref);
         ctf_btod_contract2<2, 2, 0>(contr, dbta, dbta).perform(dbtc);
     } else {
@@ -285,7 +285,7 @@ void ctf_btod_contract2_test::test_4(double d) {
     contr.contract(0, 2);
     contr.contract(1, 3);
 
-    if(d == 0) {
+    if(d == 0.0) {
         btod_contract2<0, 2, 2>(contr, bta, btb).perform(btc_ref);
         ctf_btod_contract2<0, 2, 2>(contr, dbta, dbtb).perform(dbtc);
     } else {
