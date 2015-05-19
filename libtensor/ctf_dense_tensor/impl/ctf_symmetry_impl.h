@@ -56,7 +56,51 @@ void ctf_symmetry<N, T>::write(int (&sym)[N]) const {
             symidx++;
         }
     }
-    //for(i = 0; i < N; i++) sym[i] = NS;
+
+    //  To disable symmetry in CTF entirely, comment out the body of this
+    //  function and uncomment the line below.
+    //for(size_t i = 0; i < N; i++) sym[i] = NS;
+}
+
+
+namespace {
+
+unsigned long symmetry_factor(size_t N, int *sym) {
+
+    unsigned long f = 1;
+    for(size_t i = 0, j = 0; i < N; i++) {
+        if(sym[i] == SY || sym[i] == AS) {
+            j++;
+            continue;
+        }
+        if(sym[i] == NS) {
+            j++;
+            for(size_t k = 2; k <= j; k++) f *= k;
+            j = 0;
+        }
+    }
+    return f;
+}
+
+} // unnamed namespace
+
+
+template<size_t N, typename T>
+T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &syma,
+    const ctf_symmetry<N, T> &symb) {
+
+    int sa[N], sb[N];
+    syma.write(sa);
+    symb.write(sb);
+    for(size_t i = 0; i < N; i++) {
+        if(sb[i] == NS) sa[i] = NS;
+    }
+    unsigned long fa = symmetry_factor(N, sa);
+    unsigned long fb = symmetry_factor(N, sb);
+
+    //  It might be tempting to optimize the expression below, but don't
+    //  do it to avoid errors. It is exactly right as it is.
+    return T(1.0 / double(fb / fa));
 }
 
 

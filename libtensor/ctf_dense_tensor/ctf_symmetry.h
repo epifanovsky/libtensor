@@ -71,6 +71,13 @@ public:
      **/
     void write(int (&sym)[N]) const;
 
+public:
+    /** \brief Produces a compensation factor for A being symmetrized into
+            higher symmetry of B by CTF
+     **/
+    static T symconv_factor(const ctf_symmetry<N, T> &syma,
+        const ctf_symmetry<N, T> &symb);
+
 };
 
 
