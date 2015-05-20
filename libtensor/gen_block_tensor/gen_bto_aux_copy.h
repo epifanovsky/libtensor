@@ -82,16 +82,16 @@ public:
      **/
     virtual ~gen_bto_aux_copy();
 
-    /** \brief Implements bto_stream_i::open(). Prepares the copy operation
+    /** \brief Implements gen_block_stream_i::open(). Prepares the copy operation
      **/
     virtual void open();
 
-    /** \brief Implements bto_stream_i::close()
+    /** \brief Implements gen_block_stream_i::close()
      **/
     virtual void close();
 
-    /** \brief Implements bto_stream_i::put(). Saves a block in the output
-            block tensor
+    /** \brief Implements gen_block_stream_i::put(). Saves a block in the
+            output block tensor
      **/
     virtual void put(
         const index<N> &idx,

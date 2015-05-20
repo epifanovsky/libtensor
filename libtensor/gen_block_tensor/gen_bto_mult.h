@@ -143,4 +143,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_MULT_H
+#endif // LIBTENSOR_GEN_BTO_MULT_H

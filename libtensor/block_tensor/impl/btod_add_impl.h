@@ -1,8 +1,6 @@
 #ifndef LIBTENSOR_BTOD_ADD_IMPL_H
 #define LIBTENSOR_BTOD_ADD_IMPL_H
 
-#include <libtensor/dense_tensor/tod_copy.h>
-#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>

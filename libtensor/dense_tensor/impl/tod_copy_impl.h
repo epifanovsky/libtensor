@@ -66,7 +66,7 @@ void tod_copy<N>::perform(bool zero, dense_tensor_wr_i<N, double> &tb) {
     if(m_c == 0.0) {
         if(zero) {
             tod_copy<N>::start_timer("zero");
-            tod_set<N>().perform(tb);
+            tod_set<N>().perform(zero, tb);
             tod_copy<N>::stop_timer("zero");
         }
         return;

@@ -116,7 +116,7 @@ void btod_sum<N>::compute_block(
         }
     }
 
-    if(zero1) tod_set<N>().perform(blk);
+    if(zero1) tod_set<N>().perform(zero1, blk);
 }
 
 

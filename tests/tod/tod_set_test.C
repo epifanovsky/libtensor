@@ -34,7 +34,7 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
 
         dense_tensor<1, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<1>().perform(t1);
+        tod_set<1>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<1, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -46,7 +46,7 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<1>(d).perform(t2);
+        tod_set<1>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<1, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -81,7 +81,7 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
 
         dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<2>().perform(t1);
+        tod_set<2>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<2, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -93,7 +93,7 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<2>(d).perform(t2);
+        tod_set<2>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<2, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -128,7 +128,7 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
 
         dense_tensor<3, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<3>().perform(t1);
+        tod_set<3>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<3, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -140,7 +140,7 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<3>(d).perform(t2);
+        tod_set<3>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<3, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -175,7 +175,7 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
 
         dense_tensor<4, double, allocator_t> t1(dims), t2(dims);
 
-        tod_set<4>().perform(t1);
+        tod_set<4>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<4, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -187,7 +187,7 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<4>(d).perform(t2);
+        tod_set<4>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<4, double> c2(t2);
             const double *p = c2.req_const_dataptr();

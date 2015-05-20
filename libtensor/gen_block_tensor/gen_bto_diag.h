@@ -15,7 +15,7 @@ namespace libtensor {
 
 /** \brief Extracts a general diagonal from a block %tensor
     \tparam N Tensor order.
-    \tparam M Diagonal order.
+    \tparam M Result tensor order.
     \tparam Traits Block tensor operation traits.
     \tparam Timed Timed implementation.
 
@@ -33,9 +33,10 @@ template<size_t N, size_t M, typename Traits, typename Timed>
 class gen_bto_diag : public timings<Timed>, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
-
-    static const size_t k_ordera = N; //!< Order of the argument
-    static const size_t k_orderb = N - M + 1; //!< Order of the result
+    enum {
+        NA = N, //!< Order of the argument
+        NB = M //!< Order of the result
+    };
 
 public:
     //! Type of tensor elements
@@ -50,17 +51,17 @@ public:
 
     //! Type of write-only block
     typedef typename
-            bti_traits::template wr_block_type<N - M + 1>::type wr_block_type;
+            bti_traits::template wr_block_type<M>::type wr_block_type;
 
-    typedef tensor_transf<N - M + 1, element_type> tensor_transf_type;
+    typedef tensor_transf<M, element_type> tensor_transf_type;
 
 private:
-    gen_block_tensor_rd_i<k_ordera, bti_traits> &m_bta; //!< Input block %tensor
-    mask<k_ordera> m_msk; //!< Diagonal %mask
+    gen_block_tensor_rd_i<NA, bti_traits> &m_bta; //!< Input block %tensor
+    sequence<NA, size_t> m_msk; //!< Diagonal %mask
     tensor_transf_type m_tr; //!< Tensor transformation
-    block_index_space<k_orderb> m_bis; //!< Block %index space of the result
-    symmetry<k_orderb, element_type> m_sym; //!< Symmetry of the result
-    assignment_schedule<k_orderb, element_type> m_sch; //!< Assignment schedule
+    block_index_space<NB> m_bis; //!< Block %index space of the result
+    symmetry<NB, element_type> m_sym; //!< Symmetry of the result
+    assignment_schedule<NB, element_type> m_sch; //!< Assignment schedule
 
 public:
     //!    \name Construction and destruction
@@ -73,33 +74,33 @@ public:
      **/
     gen_bto_diag(
             gen_block_tensor_rd_i<N, bti_traits> &bta,
-            const mask<N> &m,
+            const sequence<N, size_t> &msk,
             const tensor_transf_type &tr = tensor_transf_type());
 
     //@}
 
     /** \brief Returns the block index space of the result
      **/
-    const block_index_space<k_orderb> &get_bis() const {
+    const block_index_space<NB> &get_bis() const {
         return m_bis;
     }
 
     /** \brief Returns the symmetry of the result
      **/
-    const symmetry<k_orderb, element_type> &get_symmetry() const {
+    const symmetry<NB, element_type> &get_symmetry() const {
         return m_sym;
     }
 
     /** \brief Returns the list of canonical non-zero blocks of the result
      **/
-    const assignment_schedule<k_orderb, element_type> &get_schedule() const {
+    const assignment_schedule<NB, element_type> &get_schedule() const {
         return m_sch;
     }
 
     /** \brief Computes and writes the blocks of the result to an output stream
         \param out Output stream.
      **/
-    void perform(gen_block_stream_i<N - M + 1, bti_traits> &out);
+    void perform(gen_block_stream_i<NB, bti_traits> &out);
 
     /** \brief Computes one block of the result
         \param zero Zero target block first
@@ -109,7 +110,7 @@ public:
      **/
     void compute_block(
         bool zero,
-        const index<N - M + 1> &ib,
+        const index<NB> &ib,
         const tensor_transf_type &trb,
         wr_block_type &blkb);
 
@@ -117,7 +118,7 @@ public:
      **/
     void compute_block_untimed(
         bool zero,
-        const index<N - M + 1> &ib,
+        const index<NB> &ib,
         const tensor_transf_type &trb,
         wr_block_type &blkb);
 
@@ -125,8 +126,8 @@ private:
     /** \brief Forms the block %index space of the output or throws an
             exception if the input is incorrect.
      **/
-    static block_index_space<N - M + 1> mk_bis(
-        const block_index_space<N> &bis, const mask<N> &msk);
+    static block_index_space<M> mk_bis(const block_index_space<NA> &bis,
+            const sequence<NA, size_t> &msk);
 
     /** \brief Sets up the symmetry of the operation result
      **/

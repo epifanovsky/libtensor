@@ -186,7 +186,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
 
     //  Execute the contraction
     if(op.get() == 0) {
-        if(zero) to_set().perform(blkc);
+        if(zero) to_set().perform(zero, blkc);
     } else {
         op->perform(zero, blkc);
     }

@@ -29,6 +29,7 @@
 #include "btod_set_test.h"
 #include "btod_set_diag_test.h"
 #include "btod_set_elem_test.h"
+#include "btod_shift_diag_test.h"
 #include "btod_sum_test.h"
 #include "btod_symcontract3_test.h"
 #include "btod_symmetrize2_test.h"
@@ -85,6 +86,7 @@ namespace libtensor {
     \li libtensor::btod_set_test
     \li libtensor::btod_set_diag_test
     \li libtensor::btod_set_elem_test
+    \li libtensor::btod_shift_diag_test
     \li libtensor::btod_sum_test
     \li libtensor::btod_symcontract3_test
     \li libtensor::btod_symmetrize2_test
@@ -130,6 +132,7 @@ private:
     unit_test_factory<btod_set_test> m_utf_btod_set;
     unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
     unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
+    unit_test_factory<btod_shift_diag_test> m_utf_btod_shift_diag;
     unit_test_factory<btod_sum_test> m_utf_btod_sum;
     unit_test_factory<btod_symcontract3_test> m_utf_btod_symcontract3;
     unit_test_factory<btod_symmetrize2_test> m_utf_btod_symmetrize2;

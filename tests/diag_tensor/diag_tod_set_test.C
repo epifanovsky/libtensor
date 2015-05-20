@@ -6,6 +6,7 @@
 #include <libtensor/dense_tensor/tod_set_diag.h>
 #include <libtensor/diag_tensor/diag_tensor.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
+#include <libtensor/diag_tensor/diag_tod_random.h>
 #include <libtensor/diag_tensor/diag_tod_set.h>
 #include <libtensor/diag_tensor/tod_conv_diag_tensor.h>
 #include "../compare_ref.h"
@@ -21,8 +22,10 @@ void diag_tod_set_test::perform() throw(libtest::test_exception) {
     try {
 
     test_1();
-    test_2();
-    test_3();
+    test_2(true);
+    test_2(false);
+    test_3(true);
+    test_3(false);
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -67,12 +70,12 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
 
         dense_tensor<2, double, allocator_t> t55(dims55), t66(dims66),
             t55d(dims55), t66d(dims66);
-        tod_set<2>().perform(t55);
-        tod_set<2>().perform(t66);
-        tod_set<2>().perform(t55d);
-        tod_set<2>().perform(t66d);
-        tod_set_diag<2>(1.0).perform(t55d);
-        tod_set_diag<2>(1.0).perform(t66d);
+        tod_set<2>().perform(true, t55);
+        tod_set<2>().perform(true, t66);
+        tod_set<2>().perform(true, t55d);
+        tod_set<2>().perform(true, t66d);
+        tod_set_diag<2>(1.0).perform(true, t55d);
+        tod_set_diag<2>(1.0).perform(true, t66d);
 
         diag_tensor<4, double, allocator_t> dt(dts);
         dense_tensor<4, double, allocator_t> t(dims5656), t_ref(dims5656);
@@ -86,10 +89,10 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
         tod_contract2<2, 2, 0>(contr2, t66d, t55).
             perform(false, t_ref);
 
-        diag_tod_set<4>().perform(dt);
+        diag_tod_set<4>().perform(true, dt);
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-    compare_ref<4>::compare(testname, t, t_ref, 1e-15);
+        compare_ref<4>::compare(testname, t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -97,7 +100,7 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void diag_tod_set_test::test_2() throw(libtest::test_exception) {
+void diag_tod_set_test::test_2(bool zero) throw(libtest::test_exception) {
 
     static const char *testname = "diag_tod_set_test::test_2()";
 
@@ -131,27 +134,30 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
 
         dense_tensor<2, double, allocator_t> t55(dims55), t66(dims66),
             t55d(dims55), t66d(dims66);
-        tod_set<2>(1.0).perform(t55);
-        tod_set<2>(1.0).perform(t66);
-        tod_set<2>().perform(t55d);
-        tod_set<2>().perform(t66d);
-        tod_set_diag<2>(1.0).perform(t55d);
-        tod_set_diag<2>(1.0).perform(t66d);
+        tod_set<2>(1.0).perform(true, t55);
+        tod_set<2>(1.0).perform(true, t66);
+        tod_set<2>().perform(true, t55d);
+        tod_set<2>().perform(true, t66d);
+        tod_set_diag<2>(1.0).perform(true, t55d);
+        tod_set_diag<2>(1.0).perform(true, t66d);
 
         diag_tensor<4, double, allocator_t> dt(dts);
         dense_tensor<4, double, allocator_t> t(dims5656), t_ref(dims5656);
+
+        diag_tod_random<4>().perform(dt);
+        tod_conv_diag_tensor<4>(dt).perform(t_ref);
 
         permutation<4> p0213, p3120;
         p0213.permute(1, 2);
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
-        tod_contract2<2, 2, 0>(contr1, t55d, t66).perform(true, t_ref);
+        tod_contract2<2, 2, 0>(contr1, t55d, t66).perform(zero, t_ref);
         tod_contract2<2, 2, 0>(contr2, t66d, t55).perform(false, t_ref);
 
-        diag_tod_set<4>(1.0).perform(dt);
+        diag_tod_set<4>(1.0).perform(zero, dt);
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-    compare_ref<4>::compare(testname, t, t_ref, 1e-15);
+        compare_ref<4>::compare(testname, t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
@@ -159,9 +165,9 @@ void diag_tod_set_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void diag_tod_set_test::test_3() throw(libtest::test_exception) {
+void diag_tod_set_test::test_3(bool zero) throw(libtest::test_exception) {
 
-    static const char *testname = "diag_tod_set_test::test_3()";
+    static const char *testname = "diag_tod_set_test::test_3(bool)";
 
     typedef std_allocator<double> allocator_t;
 
@@ -188,24 +194,26 @@ void diag_tod_set_test::test_3() throw(libtest::test_exception) {
         size_t sz1 = dts.get_subspace_size(ssn1);
 
         dense_tensor<2, double, allocator_t> t66(dims66), t66d(dims66);
-        tod_set<2>(1.0).perform(t66);
-        tod_set<2>().perform(t66d);
-        tod_set_diag<2>(1.0).perform(t66d);
+        tod_set<2>(1.0).perform(true, t66);
+        tod_set<2>().perform(true, t66d);
+        tod_set_diag<2>(1.0).perform(true, t66d);
 
         diag_tensor<4, double, allocator_t> dt(dts);
+        diag_tod_random<4>().perform(dt);
+
         dense_tensor<4, double, allocator_t> t(dims6666), t_ref(dims6666);
+        tod_conv_diag_tensor<4>(dt).perform(t_ref);
 
         permutation<4> p0213, p3120;
         p0213.permute(1, 2);
         p3120.permute(0, 3);
         contraction2<2, 2, 0> contr1(p0213), contr2(p3120);
-        tod_contract2<2, 2, 0>(contr1, t66d, t66d).perform(true, t_ref);
-        tod_scale<4>(-2.5).perform(t_ref);
+        tod_contract2<2, 2, 0>(contr1, t66d, t66d, -2.5).perform(zero, t_ref);
 
-        diag_tod_set<4>(-2.5).perform(dt);
+        diag_tod_set<4>(-2.5).perform(zero, dt);
 
         tod_conv_diag_tensor<4>(dt).perform(t);
-    compare_ref<4>::compare(testname, t, t_ref, 1e-15);
+        compare_ref<4>::compare(testname, t, t_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

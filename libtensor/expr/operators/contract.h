@@ -65,6 +65,16 @@ expr_rhs<N + M - 2, T> contract(
 }
 
 
+/** \brief Contraction of three expressions over multiple indices
+    \tparam N1 Order of the first expression.
+    \tparam N2 Order of the second expression.
+    \tparam N3 Order of the third expression.
+    \tparam K1 Number of contracted indices of first two expressions.
+    \tparam K2 Number of contracted indices of the remaining expressions.
+    \tparam T Tensor element type.
+
+    \ingroup libtensor_expr_operators
+ **/
 template<size_t N1, size_t N2, size_t N3, size_t K1, size_t K2, typename T>
 expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
     const label<K1> contr1,
@@ -120,6 +130,14 @@ expr_rhs<N1 + N2 + N3 - 2 * K1 - 2 * K2, T> contract(
 }
 
 
+/** \brief Contraction of three expressions over two indices
+    \tparam N1 Order of the first expression.
+    \tparam N2 Order of the second expression.
+    \tparam N3 Order of the third expression.
+    \tparam T Tensor element type.
+
+    \ingroup libtensor_expr_operators
+ **/
 template<size_t N1, size_t N2, size_t N3, typename T>
 expr_rhs<N1 + N2 + N3 - 4, T> contract(
     const letter &let1,

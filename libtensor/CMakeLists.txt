@@ -190,6 +190,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_set_diag.C
     block_tensor/impl/btod_set_elem.C
     block_tensor/impl/btod_set.C
+    block_tensor/impl/btod_shift_diag.C
     block_tensor/impl/btod_size.C
     block_tensor/impl/btod_symcontract3.C
     block_tensor/impl/btod_symmetrize2.C
@@ -259,6 +260,7 @@ set(SRC_EXPR
     expr/btensor/impl/eval_btensor_double_dirsum.C
     expr/btensor/impl/eval_btensor_double_div.C
     expr/btensor/impl/eval_btensor_double_dot_product.C
+    expr/btensor/impl/eval_btensor_double_set.C
     expr/btensor/impl/eval_btensor_double_symm.C
     expr/btensor/impl/eval_btensor_double_trace.C
     expr/btensor/impl/eval_tree_builder_btensor.C
@@ -276,6 +278,7 @@ set(SRC_EXPR
     expr/dag/node_null.C
     expr/dag/node_product.C
     expr/dag/node_scalar.C
+    expr/dag/node_set.C
     expr/dag/node_symm.C
     expr/dag/node_trace.C
     expr/dag/node_transform.C

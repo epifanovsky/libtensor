@@ -12,6 +12,7 @@
 #include "ewmult.h"
 #include "multiply_divide.h"
 #include "plus_minus.h"
+#include "set.h"
 #include "symm_asymm.h"
 #include "trace.h"
 

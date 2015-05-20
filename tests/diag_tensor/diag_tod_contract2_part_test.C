@@ -91,7 +91,7 @@ void diag_tod_contract2_part_test::test_ij_ik_kj(size_t ni, size_t nj,
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(tc);
+        tod_set<2>().perform(true, tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
@@ -162,7 +162,7 @@ void diag_tod_contract2_part_test::test_ij_ii_ij(size_t ni, size_t nj)
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(tc);
+        tod_set<2>().perform(true, tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
@@ -245,7 +245,7 @@ void diag_tod_contract2_part_test::test_ii_ii_ij(size_t ni)
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(tc);
+        tod_set<2>().perform(true, tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);
@@ -342,7 +342,7 @@ void diag_tod_contract2_part_test::test_ii_ii_ii(size_t ni)
         dense_tensor<2, double, allocator_t> tc(dimsc), tc_ref(dimsc);
         tod_import_raw<2>(&da[0], dimsa, index_range<2>(ia1, ia2)).perform(ta);
         tod_import_raw<2>(&db[0], dimsb, index_range<2>(ib1, ib2)).perform(tb);
-        tod_set<2>().perform(tc);
+        tod_set<2>().perform(true, tc);
 
         contraction2<1, 1, 1> contr;
         contr.contract(1, 0);

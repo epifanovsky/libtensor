@@ -162,7 +162,7 @@ void gen_bto_dirsum<N, M, Traits, Timed>::compute_block_untimed(
             m_op_sch.find(aic.get_abs_index());
 
     if(isch == m_op_sch.end()) {
-        if(zero) to_set_type().perform(blkc);
+        if(zero) to_set_type().perform(zero, blkc);
         return;
     }
 

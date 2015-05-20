@@ -11,6 +11,7 @@
 #include "node_ident_any_tensor_test.h"
 #include "node_product_test.h"
 #include "node_scalar_test.h"
+#include "node_set_test.h"
 #include "node_trace_test.h"
 #include "node_transform_test.h"
 
@@ -37,6 +38,7 @@ namespace libtensor {
      - libtensor::node_mult_test
      - libtensor::node_product_test
      - libtensor::node_scalar_test
+     - libtensor::node_set_test
      - libtensor::node_trace_test
      - libtensor::node_transform_test
 
@@ -53,6 +55,7 @@ private:
     unit_test_factory<node_ident_any_tensor_test> m_utf_node_ident_any_tensor;
     unit_test_factory<node_product_test> m_utf_node_product;
     unit_test_factory<node_scalar_test> m_utf_node_scalar;
+    unit_test_factory<node_set_test> m_utf_node_set;
     unit_test_factory<node_trace_test> m_utf_node_trace;
     unit_test_factory<node_transform_test> m_utf_node_transform;
 

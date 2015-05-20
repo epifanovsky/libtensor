@@ -174,6 +174,7 @@ set(SRC_BTOD
     btod/btod_set_diag_test.C
     btod/btod_set_elem_test.C
     btod/btod_set_test.C
+    btod/btod_shift_diag_test.C
     btod/btod_sum_test.C
     btod/btod_symcontract3_test.C
     btod/btod_symmetrize2_test.C
@@ -222,6 +223,7 @@ set(SRC_EXPR
     expr/node_ident_any_tensor_test.C
     expr/node_product_test.C
     expr/node_scalar_test.C
+    expr/node_set_test.C
     expr/node_trace_test.C
     expr/node_transform_test.C
 )
@@ -246,6 +248,7 @@ set(SRC_IFACE
     iface/letter_expr_test.C
     iface/letter_test.C
     iface/mult_test.C
+    iface/set_test.C
     iface/symm_test.C
     iface/trace_test.C
 )

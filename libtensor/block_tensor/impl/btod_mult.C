@@ -1,4 +1,3 @@
-#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/gen_block_tensor/impl/gen_bto_mult_impl.h>
 #include "btod_mult_impl.h"
 

@@ -48,7 +48,7 @@ void btod_set_test::test_1() throw(libtest::test_exception) {
 
     //  Prepare the reference
 
-    tod_set<2>(1.0).perform(ta_ref);
+    tod_set<2>(1.0).perform(true, ta_ref);
 
     //  Invoke the operation
 
@@ -90,7 +90,7 @@ void btod_set_test::test_2() throw(libtest::test_exception) {
 
     //  Prepare the reference
 
-    tod_set<2>(1.0).perform(ta_ref);
+    tod_set<2>(1.0).perform(true, ta_ref);
 
     //  Invoke the operation
 

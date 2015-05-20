@@ -14,7 +14,6 @@
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
-#include <libtensor/dense_tensor/tod_set.h>
 #include <libtensor/dense_tensor/tod_select.h>
 #include <libtensor/dense_tensor/impl/tod_select_impl.h>
 #include "btod_select_test.h"

@@ -127,4 +127,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_EXTRACT_H
+#endif // LIBTENSOR_GEN_BTO_EXTRACT_H

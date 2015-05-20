@@ -161,7 +161,7 @@ void btod_read_test::test_3() throw(libtest::test_exception) {
     i2[0] = 4; i2[1] = 5;
     dimensions<2> dims(index_range<2>(i1, i2));
     dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
-    tod_set<2>().perform(t_ref);
+    tod_set<2>().perform(true, t_ref);
 
     std::stringstream ss;
     ss << "2 " << dims[0] << " " << dims[1] << std::endl;

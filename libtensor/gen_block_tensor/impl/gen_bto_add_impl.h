@@ -218,7 +218,7 @@ void gen_bto_add<N, Traits, Timed>::compute_block_untimed(
     }
 
     if(zero1) {
-        to_set().perform(blkb);
+        to_set().perform(zero1, blkb);
     }
 }
 

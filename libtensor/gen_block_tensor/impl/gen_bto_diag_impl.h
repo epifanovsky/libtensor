@@ -24,21 +24,21 @@ class gen_bto_diag_task : public libutil::task_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename Traits::template temp_block_tensor_type<N - M + 1>::type
+    typedef typename Traits::template temp_block_tensor_type<M>::type
         temp_block_tensor_type;
 
 private:
     gen_bto_diag<N, M, Traits, Timed> &m_bto;
     temp_block_tensor_type &m_btb;
-    index<N - M + 1> m_idx;
-    gen_block_stream_i<N - M + 1, bti_traits> &m_out;
+    index<M> m_idx;
+    gen_block_stream_i<M, bti_traits> &m_out;
 
 public:
     gen_bto_diag_task(
         gen_bto_diag<N, M, Traits, Timed> &bto,
         temp_block_tensor_type &btb,
-        const index<N - M + 1> &idx,
-        gen_block_stream_i<N - M + 1, bti_traits> &out);
+        const index<M> &idx,
+        gen_block_stream_i<M, bti_traits> &out);
 
     virtual ~gen_bto_diag_task() { }
     virtual unsigned long get_cost() const { return 0; }
@@ -52,21 +52,21 @@ class gen_bto_diag_task_iterator : public libutil::task_iterator_i {
 public:
     typedef typename Traits::element_type element_type;
     typedef typename Traits::bti_traits bti_traits;
-    typedef typename Traits::template temp_block_tensor_type<N - M + 1>::type
+    typedef typename Traits::template temp_block_tensor_type<M>::type
         temp_block_tensor_type;
 
 private:
     gen_bto_diag<N, M, Traits, Timed> &m_bto;
     temp_block_tensor_type &m_btb;
-    gen_block_stream_i<N - M + 1, bti_traits> &m_out;
-    const assignment_schedule<N - M + 1, element_type> &m_sch;
-    typename assignment_schedule<N - M + 1, element_type>::iterator m_i;
+    gen_block_stream_i<M, bti_traits> &m_out;
+    const assignment_schedule<M, element_type> &m_sch;
+    typename assignment_schedule<M, element_type>::iterator m_i;
 
 public:
     gen_bto_diag_task_iterator(
         gen_bto_diag<N, M, Traits, Timed> &bto,
         temp_block_tensor_type &btb,
-        gen_block_stream_i<N - M + 1, bti_traits> &out);
+        gen_block_stream_i<M, bti_traits> &out);
 
     virtual bool has_more() const;
     virtual libutil::task_i *get_next();
@@ -85,7 +85,8 @@ public:
 
 template<size_t N, size_t M, typename Traits, typename Timed>
 gen_bto_diag<N, M, Traits, Timed>::gen_bto_diag(
-        gen_block_tensor_rd_i<N, bti_traits> &bta, const mask<N> &m,
+        gen_block_tensor_rd_i<N, bti_traits> &bta,
+        const sequence<N, size_t> &m,
         const tensor_transf_type &tr) :
 
     m_bta(bta), m_msk(m), m_tr(tr),
@@ -99,9 +100,9 @@ gen_bto_diag<N, M, Traits, Timed>::gen_bto_diag(
 
 template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag<N, M, Traits, Timed>::perform(
-        gen_block_stream_i<N - M + 1, bti_traits> &out) {
+        gen_block_stream_i<NB, bti_traits> &out) {
 
-    typedef typename Traits::template temp_block_tensor_type<N - M + 1>::type
+    typedef typename Traits::template temp_block_tensor_type<M>::type
         temp_block_tensor_type;
 
     gen_bto_diag::start_timer();
@@ -126,7 +127,7 @@ void gen_bto_diag<N, M, Traits, Timed>::perform(
 template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag<N, M, Traits, Timed>::compute_block(
         bool zero,
-        const index<N - M + 1> &ib,
+        const index<NB> &ib,
         const tensor_transf_type &trb,
         wr_block_type &blkb) {
 
@@ -148,7 +149,7 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block(
 template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
         bool zero,
-        const index<N - M + 1> &ib,
+        const index<NB> &ib,
         const tensor_transf_type &trb,
         wr_block_type &blkb) {
 
@@ -159,60 +160,67 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
 
     //  Build ia from ib
     //
-    sequence<N, size_t> map(0);
-    size_t j = 0, jd; // Current index, index on diagonal
-    bool b = false;
-    for(size_t i = 0; i < N; i++) {
-        if(m_msk[i]) {
-            if(!b) { map[i] = jd = j++; b = true; }
-            else { map[i] = jd; }
-        } else {
+    sequence<NA, size_t> map(0);
+    sequence<NB, size_t> k(NB);
+    size_t j = 0, jd = 0; // Current index and j-th diagonal
+    for(size_t i = 0; i < NA; i++) {
+        if(m_msk[i] != 0) {
+            jd = m_msk[i] - 1;
+            if(k[jd] == NB) { map[i] = k[jd] = j++; }
+            else { map[i] = k[jd]; }
+        }
+        else {
             map[i] = j++;
         }
     }
-    index<N> ia;
-    index<N - M + 1> ib2(ib);
-    permutation<N - M + 1> pinvb(m_tr.get_perm(), true);
+
+    index<NA> ia;
+    index<NB> ib2(ib);
+    permutation<NB> pinvb(m_tr.get_perm(), true);
     ib2.permute(pinvb);
-    for(size_t i = 0; i < N; i++) ia[i] = ib2[map[i]];
+    for(size_t i = 0; i < NA; i++) ia[i] = ib2[map[i]];
 
     //  Find canonical index cia, transformation cia->ia
     //
-    orbit<N, element_type> oa(ctrla.req_const_symmetry(), ia);
-    abs_index<N> acia(oa.get_acindex(), bidimsa);
-    const tensor_transf<N, element_type> &tra = oa.get_transf(ia);
+    orbit<NA, element_type> oa(ctrla.req_const_symmetry(), ia);
+    abs_index<NA> acia(oa.get_acindex(), bidimsa);
+    const tensor_transf<NA, element_type> &tra = oa.get_transf(ia);
 
     //  Build new diagonal mask and permutation in b
     //
-    mask<N> m1(m_msk), m2(m_msk);
-    sequence<N, size_t> map1(map), map2(map);
-    m2.permute(tra.get_perm());
+    sequence<NA, size_t> m1(m_msk), m2(m_msk);
+    sequence<NA, size_t> map1(map), map2(map);
+    tra.get_perm().apply(m2);
     tra.get_perm().apply(map2);
 
-    sequence<N - M, size_t> seq1(0), seq2(0);
-    sequence<N - M + 1, size_t> seqb1(0), seqb2(0);
-    for(register size_t i = 0, j1 = 0, j2 = 0; i < N; i++) {
-        if(!m1[i]) seq1[j1++] = map1[i];
-        if(!m2[i]) seq2[j2++] = map2[i];
+    sequence<NB, size_t> seq1(0), seq2(0);
+    sequence<NB, size_t> seqb1(0), seqb2(0);
+    for(register size_t i = 0, j1 = 0, j2 = 0; i < NA; i++) {
+        if(m1[i] == 0) seq1[j1++] = map1[i];
+        if(m2[i] == 0) seq2[j2++] = map2[i];
     }
-    bool b1 = false, b2 = false;
-    for(register size_t i = 0, j1 = 0, j2 = 0; i < N - M + 1; i++) {
-        if(m1[i] && !b1) { seqb1[i] = N - M + 1; b1 = true; }
+    mask<NB + 1> b1, b2;
+    for(register size_t i = 0, j1 = 0, j2 = 0; i < NB; i++) {
+        if (m1[i] != 0 && !b1[m1[i]]) {
+            seqb1[i] = NB + m1[i]; b1[m1[i]] = true;
+        }
         else { seqb1[i] = seq1[j1++]; }
-        if(m2[i] && !b2) { seqb2[i] = N - M + 1; b2 = true; }
+        if(m2[i] != 0 && !b2[m2[i]]) {
+            seqb2[i] = NB + m2[i]; b2[m2[i]] = true;
+        }
         else { seqb2[i] = seq2[j2++]; }
     }
 
-    permutation_builder<N - M + 1> pb(seqb1, seqb2);
-    permutation<N - M + 1> permb(pb.get_perm());
+    permutation_builder<NB> pb(seqb1, seqb2);
+    permutation<NB> permb(pb.get_perm());
     permb.permute(m_tr.get_perm());
-    permb.permute(permutation<N - M + 1>(trb.get_perm(), true));
+    permb.permute(permutation<NB>(trb.get_perm(), true));
 
     scalar_transf<element_type> sa(tra.get_scalar_tr());
     sa.invert().transform(m_tr.get_scalar_tr());
     sa.transform(trb.get_scalar_tr());
 
-    tensor_transf<N - M + 1, element_type> tr(permb, sa);
+    tensor_transf<NB, element_type> tr(permb, sa);
 
     //  Invoke the tensor operation
     //
@@ -223,25 +231,35 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
 
 
 template<size_t N, size_t M, typename Traits, typename Timed>
-block_index_space<N - M + 1> gen_bto_diag<N, M, Traits, Timed>::mk_bis(
-    const block_index_space<N> &bis, const mask<N> &msk) {
+block_index_space<M> gen_bto_diag<N, M, Traits, Timed>::mk_bis(
+    const block_index_space<NA> &bis, const sequence<NA, size_t> &msk) {
+
+    static const char method[] = "mk_bis(const block_index_space<NA> &, "
+            "const sequence<NA, size_t> &)";
 
     //  Create the mask for the subspace builder
     //
-    mask<N> m;
-    bool b = false;
-    for(size_t i = 0; i < N; i++) {
-        if(msk[i]) {
-            if(!b) { m[i] = true; b = true; }
-        } else {
+    mask<NA> m;
+    mask<NB> b;
+    bool bad_msk = false;
+    for(size_t i = 0, id = 0; i < N; i++) {
+        if (msk[i] != 0) {
+            id = msk[i] - 1;
+            if (id >= NB) { bad_msk = true; break; }
+            if (! b[id]) { m[i] = true; b[id] = true; }
+        }
+        else {
             m[i] = true;
         }
+    }
+    if (bad_msk) {
+        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");
     }
 
     //  Build the output block index space
     //
-    block_index_subspace_builder<N - M + 1, M - 1> bb(bis, m);
-    block_index_space<N - M + 1> obis(bb.get_bis());
+    block_index_subspace_builder<NB, NA - NB> bb(bis, m);
+    block_index_space<NB> obis(bb.get_bis());
     obis.match_splits();
 
     return obis;
@@ -251,16 +269,22 @@ block_index_space<N - M + 1> gen_bto_diag<N, M, Traits, Timed>::mk_bis(
 template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag<N, M, Traits, Timed>::make_symmetry() {
 
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ca(m_bta);
 
-    gen_block_tensor_rd_ctrl<N, bti_traits> ca(m_bta);
-
-    block_index_space<N - M + 1> bis(m_bis);
-    permutation<N - M + 1> pinv(m_tr.get_perm(), true);
+    block_index_space<NB> bis(m_bis);
+    permutation<NB> pinv(m_tr.get_perm(), true);
     bis.permute(pinv);
-    symmetry<N - M + 1, element_type> symx(bis);
-    so_merge<N, M - 1, element_type>(ca.req_const_symmetry(),
-            m_msk, sequence<N, size_t>()).perform(symx);
-    so_permute<N - M + 1, element_type>(symx, m_tr.get_perm()).perform(m_sym);
+
+    mask<NA> m;
+    sequence<NA, size_t> s(0);
+    for (size_t i = 0; i < NA; i++) {
+        if (m_msk[i] != 0) { m[i] = true; s[i] = m_msk[i] - 1; }
+    }
+
+    symmetry<M, element_type> symx(bis);
+    so_merge<N, N - M, element_type>(
+            ca.req_const_symmetry(), m, s).perform(symx);
+    so_permute<M, element_type>(symx, m_tr.get_perm()).perform(m_sym);
 
 }
 
@@ -268,29 +292,28 @@ void gen_bto_diag<N, M, Traits, Timed>::make_symmetry() {
 template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag<N, M, Traits, Timed>::make_schedule() {
 
-    gen_block_tensor_rd_ctrl<N, bti_traits> ctrla(m_bta);
-    dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
+    gen_block_tensor_rd_ctrl<NA, bti_traits> ctrla(m_bta);
+    dimensions<NA> bidimsa = m_bta.get_bis().get_block_index_dims();
 
-    permutation<N - M + 1> pinv(m_tr.get_perm(), true);
-    size_t map[N];
-    size_t j = 0, jd;
-    bool b = false;
-    for(size_t i = 0; i < N; i++) {
-        if(m_msk[i]) {
-            if(b) map[i] = jd;
-            else { map[i] = jd = j++; b = true; }
-        } else {
-            map[i] = j++;
+    permutation<NB> pinv(m_tr.get_perm(), true);
+    size_t map[NA], id = 0;
+    sequence<NB, size_t> jb(NB);
+    for(size_t i = 0, j = 0; i < NA; i++) {
+        if (m_msk[i] != 0) {
+            id = m_msk[i] - 1;
+            if (jb[id] != NB) { map[i] = jb[id]; }
+            else { map[i] = jb[id] = j++; }
         }
+        else { map[i] = j++; }
     }
 
     orbit_list<N, element_type> ola(ctrla.req_const_symmetry());
-    orbit_list<N - M + 1, element_type> olb(m_sym);
-    for (typename orbit_list<N - M + 1, double>::iterator iob = olb.begin();
+    orbit_list<M, element_type> olb(m_sym);
+    for (typename orbit_list<M, double>::iterator iob = olb.begin();
             iob != olb.end(); iob++) {
 
         index<N> idxa;
-        index<N - M + 1> idxb;
+        index<M> idxb;
         olb.get_index(iob, idxb);
         idxb.permute(pinv);
 
@@ -312,8 +335,8 @@ template<size_t N, size_t M, typename Traits, typename Timed>
 gen_bto_diag_task<N, M, Traits, Timed>::gen_bto_diag_task(
         gen_bto_diag<N, M, Traits, Timed> &bto,
         temp_block_tensor_type &btb,
-        const index<N - M + 1> &idx,
-        gen_block_stream_i<N - M + 1, bti_traits> &out) :
+        const index<M> &idx,
+        gen_block_stream_i<M, bti_traits> &out) :
 
         m_bto(bto), m_btb(btb), m_idx(idx), m_out(out) {
 
@@ -323,13 +346,13 @@ gen_bto_diag_task<N, M, Traits, Timed>::gen_bto_diag_task(
 template<size_t N, size_t M, typename Traits, typename Timed>
 void gen_bto_diag_task<N, M, Traits, Timed>::perform() {
 
-    typedef typename bti_traits::template rd_block_type<N - M + 1>::type
+    typedef typename bti_traits::template rd_block_type<M>::type
             rd_block_type;
-    typedef typename bti_traits::template wr_block_type<N - M + 1>::type
+    typedef typename bti_traits::template wr_block_type<M>::type
             wr_block_type;
 
-    tensor_transf<N - M + 1, element_type> tr0;
-    gen_block_tensor_ctrl<N - M + 1, bti_traits> cb(m_btb);
+    tensor_transf<M, element_type> tr0;
+    gen_block_tensor_ctrl<M, bti_traits> cb(m_btb);
     {
         wr_block_type &blkb = cb.req_block(m_idx);
         m_bto.compute_block_untimed(true, m_idx, tr0, blkb);
@@ -350,7 +373,7 @@ template<size_t N, size_t M, typename Traits, typename Timed>
 gen_bto_diag_task_iterator<N, M, Traits, Timed>::gen_bto_diag_task_iterator(
     gen_bto_diag<N, M, Traits, Timed> &bto,
     temp_block_tensor_type &btb,
-    gen_block_stream_i<N - M + 1, bti_traits> &out) :
+    gen_block_stream_i<M, bti_traits> &out) :
 
     m_bto(bto), m_btb(btb), m_out(out), m_sch(m_bto.get_schedule()),
     m_i(m_sch.begin()) {
@@ -368,9 +391,9 @@ bool gen_bto_diag_task_iterator<N, M, Traits, Timed>::has_more() const {
 template<size_t N, size_t M, typename Traits, typename Timed>
 libutil::task_i *gen_bto_diag_task_iterator<N, M, Traits, Timed>::get_next() {
 
-    dimensions<N - M + 1> bidims = m_btb.get_bis().get_block_index_dims();
-    index<N - M + 1> idx;
-    abs_index<N - M + 1>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
+    dimensions<M> bidims = m_btb.get_bis().get_block_index_dims();
+    index<M> idx;
+    abs_index<M>::get_index(m_sch.get_abs_index(m_i), bidims, idx);
     gen_bto_diag_task<N, M, Traits, Timed> *t =
         new gen_bto_diag_task<N, M, Traits, Timed>(m_bto, m_btb, idx, m_out);
     ++m_i;

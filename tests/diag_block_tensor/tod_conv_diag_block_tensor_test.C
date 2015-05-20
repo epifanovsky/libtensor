@@ -53,7 +53,7 @@ void tod_conv_diag_block_tensor_test::test_1() {
     dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
 
     tod_conv_diag_block_tensor<2>(bt).perform(t);
-    tod_set<2>().perform(t_ref);
+    tod_set<2>().perform(true, t_ref);
 
     compare_ref<2>::compare(testname, t, t_ref, 1e-15);
 

@@ -226,7 +226,7 @@ void gen_bto_extract<N, M, Traits, Timed>::compute_block_untimed(
 
     } else if(zero) {
 
-        to_set_type().perform(blkb);
+        to_set_type().perform(zero, blkb);
     }
 }
 
@@ -413,4 +413,4 @@ void gen_bto_extract_task_observer<N, M, Traits>::notify_finish_task(
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_EXTRACT_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_EXTRACT_IMPL_H

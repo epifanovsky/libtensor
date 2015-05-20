@@ -1,5 +1,3 @@
-#include <libtensor/dense_tensor/tod_contract2.h>
-#include <libtensor/dense_tensor/tod_set.h>
 #include "btod_contract2_impl.h"
 
 namespace libtensor {

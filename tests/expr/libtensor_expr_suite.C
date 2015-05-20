@@ -15,6 +15,7 @@ libtensor_expr_suite::libtensor_expr_suite() :
     add_test("node_ident_any_tensor", m_utf_node_ident_any_tensor);
     add_test("node_product", m_utf_node_product);
     add_test("node_scalar", m_utf_node_scalar);
+    add_test("node_set", m_utf_node_set);
     add_test("node_trace", m_utf_node_trace);
     add_test("node_transform", m_utf_node_transform);
 }

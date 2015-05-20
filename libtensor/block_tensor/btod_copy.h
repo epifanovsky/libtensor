@@ -107,6 +107,11 @@ public:
 
     //@}
 
+    /** \brief Convenience wrapper to function 
+            \c perform(gen_block_tensor_i<N, bti_traits> &, const scalar_transf<double>&)
+        \param btb Result vlock tensor
+        \param c Factor
+     **/
     void perform(block_tensor_i<N, double> &btb, double c);
 
 };

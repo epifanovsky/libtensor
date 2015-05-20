@@ -58,7 +58,7 @@ btensor_i<N, T> &btensor_from_node<N, T>::get_btensor() const {
     } else if(n.check_type<node_interm_base>()) {
 
         const node_interm<N, T> &ni =
-        		n.template recast_as< node_interm<N, T> >();
+            n.template recast_as< node_interm<N, T> >();
         btensor_placeholder<N, T> &ph =
             btensor_placeholder<N, T>::from_any_tensor(ni.get_tensor());
         if(ph.is_empty()) {

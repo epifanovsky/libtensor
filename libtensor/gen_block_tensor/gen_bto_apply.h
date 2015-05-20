@@ -50,14 +50,14 @@ namespace libtensor {
     The traits class has to provide definitions for
     - \c element_type -- Type of data elements
     - \c bti_traits -- Type of block tensor interface traits class
-    - \c template temp_block_type<N>::type -- Type of temporary tensor block
     - \c template temp_block_tensor_type<N>::type -- Type of temporary
             block tensor
     - \c template to_set_type<N>::type -- Type of tensor operation to_set
-    - \c template to_copy_type<N>::type -- Type of tensor operation to_copy
     - \c template to_apply_type<N>::type -- Type of tensor operation to_apply
 
     \sa so_apply
+
+    TODO: revise algorithm removing necessity of keep_zero in functor
 
     \ingroup libtensor_gen_bto
  **/

@@ -42,7 +42,7 @@ void gen_bto_set_elem<N, Traits>::perform(
     bool zero = ctrl.req_is_zero_block(abidx.get_index());
     wr_block_type &blk = ctrl.req_block(abidx.get_index());
 
-    if(zero) to_set().perform(blk);
+    if(zero) to_set().perform(zero, blk);
 
     permutation<N> perm(tr.get_perm(), true);
     index<N> idx1(idx); idx1.permute(perm);

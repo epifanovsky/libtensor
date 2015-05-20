@@ -156,13 +156,9 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
         const tensor_transf_type &trb,
         wr_block_type &blkb) {
 
-    typedef typename Traits::template temp_block_type<N>::type temp_block_type;
     typedef typename Traits::template to_set_type<N>::type to_set;
-    typedef typename Traits::template to_copy_type<N>::type to_copy;
     typedef typename Traits::template to_apply_type<N, Functor>::type
         to_apply;
-
-    //if(zero) to_set_type().perform(blk);
 
     gen_block_tensor_rd_ctrl<N, bti_traits> ctrla(m_bta);
     dimensions<N> bidimsa = m_bta.get_bis().get_block_index_dims();
@@ -182,16 +178,10 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
             element_type val = m_fn(Traits::zero());
             m_tr2.apply(val);
 
-            if (zero)
-                to_set(val).perform(blkb);
-            else {
-                temp_block_type temp_blk(blkb.get_dims());
-                to_set(val).perform(temp_blk);
-                to_copy(temp_blk).perform(false, blkb);
-            }
+            to_set(val).perform(zero, blkb);
         }
         else {
-            to_set().perform(blkb);
+            to_set().perform(true, blkb);
         }
         return;
     }
@@ -220,13 +210,7 @@ void gen_bto_apply<N, Functor, Traits, Timed>::compute_block_untimed(
             element_type val = m_fn(Traits::zero());
             tr2.apply(val);
 
-            if (zero)
-                to_set(val).perform(blkb);
-            else {
-                temp_block_type temp_blk(blkb.get_dims());
-                to_set(val).perform(temp_blk);
-                to_copy(temp_blk).perform(false, blkb);
-            }
+            to_set(val).perform(zero, blkb);
         }
     }
 }

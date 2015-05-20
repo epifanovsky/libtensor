@@ -1947,7 +1947,7 @@ throw(libtest::test_exception) {
         dense_tensor<4, double, allocator_t> tc(dims_iaaa), tc_ref(dims_iaaa);
         tod_btconv<4>(bta).perform(ta);
         tod_btconv<4>(btb).perform(tb);
-        tod_set<4>().perform(tc_ref);
+        tod_set<4>().perform(true, tc_ref);
 
         //  Run contraction and compute the reference
 

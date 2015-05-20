@@ -90,7 +90,7 @@ void diag_tod_contract2s<N, M, K>::perform(
         zero1 = false;
     }
     if(zero1) {
-        diag_tod_set<NC>().perform(dtc);
+        diag_tod_set<NC>().perform(zero1, dtc);
     }
 }
 
