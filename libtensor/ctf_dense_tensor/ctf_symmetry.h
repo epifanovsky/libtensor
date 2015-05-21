@@ -78,6 +78,10 @@ public:
     static T symconv_factor(const ctf_symmetry<N, T> &syma,
         const ctf_symmetry<N, T> &symb);
 
+    /** \brief Sets a global flag to disable/enable use of symmetry in CTF
+     **/
+    static void use_ctf_symmetry(bool use);
+
 };
 
 

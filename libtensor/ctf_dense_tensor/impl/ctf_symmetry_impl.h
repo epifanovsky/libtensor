@@ -37,29 +37,38 @@ void ctf_symmetry<N, T>::permute(const permutation<N> &perm) {
 }
 
 
+namespace {
+    static bool g_use_ctf_symmetry = true;
+} // unnamed namespace
+
+
 template<size_t N, typename T>
 void ctf_symmetry<N, T>::write(int (&sym)[N]) const {
 
-    sequence<N, unsigned> grp(0);
-    for(size_t i = 0; i < N; i++) grp[i] = m_grp[N - 1 - i];
-    size_t i = 0;
-    size_t symidx = 0;
-    while(i < N) {
-        unsigned g = grp[i];
-        size_t i0 = i;
-        while(i < N && grp[i] == g) i++;
-        int symasym = m_sym[g] == 0 ? SY : AS;
-        sym[i0] = NS;
-        for(size_t j = i0 + 1; j < i; j++) {
-            sym[j - 1] = symasym;
-            sym[j] = NS;
-            symidx++;
-        }
-    }
+    if(g_use_ctf_symmetry) {
 
-    //  To disable symmetry in CTF entirely, comment out the body of this
-    //  function and uncomment the line below.
-    //for(size_t i = 0; i < N; i++) sym[i] = NS;
+        sequence<N, unsigned> grp(0);
+        for(size_t i = 0; i < N; i++) grp[i] = m_grp[N - 1 - i];
+        size_t i = 0;
+        size_t symidx = 0;
+        while(i < N) {
+            unsigned g = grp[i];
+            size_t i0 = i;
+            while(i < N && grp[i] == g) i++;
+            int symasym = m_sym[g] == 0 ? SY : AS;
+            sym[i0] = NS;
+            for(size_t j = i0 + 1; j < i; j++) {
+                sym[j - 1] = symasym;
+                sym[j] = NS;
+                symidx++;
+            }
+        }
+
+    } else {
+
+        for(size_t i = 0; i < N; i++) sym[i] = NS;
+
+    }
 }
 
 
@@ -101,6 +110,13 @@ T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &syma,
     //  It might be tempting to optimize the expression below, but don't
     //  do it to avoid errors. It is exactly right as it is.
     return T(1.0 / double(fb / fa));
+}
+
+
+template<size_t N, typename T>
+void ctf_symmetry<N, T>::use_ctf_symmetry(bool use) {
+
+    g_use_ctf_symmetry = use;
 }
 
 
