@@ -12,7 +12,7 @@ const char ctf_tod_set<N>::k_clazz[] = "ctf_tod_set<N>";
 
 
 template<size_t N>
-void ctf_tod_set<N>::perform(ctf_dense_tensor_i<N, double> &ta) {
+void ctf_tod_set<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
 
     size_t sz = ta.get_dims().get_size();
 

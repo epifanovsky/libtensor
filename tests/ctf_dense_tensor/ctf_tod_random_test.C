@@ -48,8 +48,8 @@ void ctf_tod_random_test::test_1() {
     dense_tensor<3, double, allocator_t> ta(dims), tb(dims);
     ctf_dense_tensor<3, double> dta(dims), dtb(dims);
 
-    tod_set<3>(100.0).perform(ta);
-    tod_set<3>(100.0).perform(tb);
+    tod_set<3>(100.0).perform(true, ta);
+    tod_set<3>(100.0).perform(true, tb);
 
     ctf_tod_distribute<3>(ta).perform(dta);
     ctf_tod_distribute<3>(tb).perform(dtb);
@@ -95,8 +95,8 @@ void ctf_tod_random_test::test_2() {
     dense_tensor<3, double, allocator_t> ta(dims), tb(dims);
     ctf_dense_tensor<3, double> dta(dims), dtb(dims);
 
-    tod_set<3>(-1.0).perform(ta);
-    tod_set<3>(-1.0).perform(tb);
+    tod_set<3>(-1.0).perform(true, ta);
+    tod_set<3>(-1.0).perform(true, tb);
 
     ctf_tod_distribute<3>(ta).perform(dta);
     ctf_tod_distribute<3>(tb).perform(dtb);
@@ -142,7 +142,7 @@ void ctf_tod_random_test::test_3() {
     dense_tensor<1, double, allocator_t> ta(dims);
     ctf_dense_tensor<1, double> dta(dims);
 
-    tod_set<1>(100.0).perform(ta);
+    tod_set<1>(100.0).perform(true, ta);
     ctf_tod_distribute<1>(ta).perform(dta);
     ctf_tod_random<1>().perform(true, dta);
     ctf_tod_collect<1>(dta).perform(ta);
@@ -173,8 +173,8 @@ void ctf_tod_random_test::test_4() {
     dense_tensor<2, double, allocator_t> ta(dims), tb(dims);
     ctf_dense_tensor<2, double> dta(dims, sym), dtb(dims, sym);
 
-    tod_set<2>(100.0).perform(ta);
-    tod_set<2>(100.0).perform(tb);
+    tod_set<2>(100.0).perform(true, ta);
+    tod_set<2>(100.0).perform(true, tb);
 
     ctf_tod_distribute<2>(ta).perform(dta);
     ctf_tod_distribute<2>(tb).perform(dtb);
@@ -222,8 +222,8 @@ void ctf_tod_random_test::test_5() {
     dense_tensor<3, double, allocator_t> ta(dims), tb(dims);
     ctf_dense_tensor<3, double> dta(dims, sym), dtb(dims, sym);
 
-    tod_set<3>(100.0).perform(ta);
-    tod_set<3>(100.0).perform(tb);
+    tod_set<3>(100.0).perform(true, ta);
+    tod_set<3>(100.0).perform(true, tb);
 
     ctf_tod_distribute<3>(ta).perform(dta);
     ctf_tod_distribute<3>(tb).perform(dtb);

@@ -45,7 +45,7 @@ void ctf_tod_set_diag_test::test_1() {
 
     tod_random<2>().perform(ta);
     tod_copy<2>(ta).perform(true, ta_ref);
-    tod_set_diag<2>().perform(ta_ref);
+    tod_set_diag<2>().perform(true, ta_ref);
 
     ctf_tod_distribute<2>(ta).perform(dta);
     ctf_tod_set_diag<2>().perform(dta);
@@ -75,7 +75,7 @@ void ctf_tod_set_diag_test::test_2() {
 
     tod_random<4>().perform(ta);
     tod_copy<4>(ta).perform(true, ta_ref);
-    tod_set_diag<4>(-1.0).perform(ta_ref);
+    tod_set_diag<4>(-1.0).perform(true, ta_ref);
 
     ctf_tod_distribute<4>(ta).perform(dta);
     ctf_tod_set_diag<4>(-1.0).perform(dta);

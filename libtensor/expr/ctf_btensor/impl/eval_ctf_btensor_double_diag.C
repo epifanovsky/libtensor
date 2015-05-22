@@ -95,14 +95,18 @@ void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
 
     ctf_btensor_from_node<NA, double> bta(m_tree, e[0]);
 
-    mask<NA> m;
+    sequence<NA, size_t> m(0);
 
     const std::vector<size_t> &idx = nd.get_idx();
-    for(size_t i = 0; i < NA; i++) if(idx[i] == nd.get_didx()) m[i] = true;
+    const std::vector<size_t> &didx = nd.get_didx();
+    for(size_t i = 0; i < NA; i++) {
+        if(idx[i] < didx.size()) m[i] = didx[idx[i]] + 1;
+    }
 
     double d = bta.get_transf().get_scalar_tr().get_coeff() *
         trc.get_scalar_tr().get_coeff();
-    m_op = new ctf_btod_diag<NA, M>(bta.get_btensor(), m, trc.get_perm(), d);
+    m_op = new ctf_btod_diag<NA, NA - M + 1>(bta.get_btensor(), m,
+        trc.get_perm(), d);
 }
 
 

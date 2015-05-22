@@ -25,12 +25,12 @@ public:
 public:
     enum {
         NA = N,
-        NB = N + 1 - M
+        NB = M
     };
 
 private:
     ctf_dense_tensor_i<NA, double> &m_ta; //!< Source tensor
-    mask<NA> m_mask; //!< Diagonal mask
+    sequence<NA, size_t> m_mask; //!< Diagonal mask
     tensor_transf<NB, double> m_trb; //!< Transformation of the result
     dimensions<NB> m_dimsb; //!< Dimensions of the result
 
@@ -42,7 +42,7 @@ public:
      **/
     ctf_tod_diag(
         ctf_dense_tensor_i<NA, double> &ta,
-        const mask<NA> &m,
+        const sequence<NA, size_t> &m,
         const tensor_transf<NB, double> &trb = tensor_transf<NB, double>());
 
     /** \brief Virtual destructor

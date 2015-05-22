@@ -24,7 +24,7 @@ public:
 public:
     enum {
         NA = N,
-        NB = N + 1 - M
+        NB = M
     };
 
 private:
@@ -38,7 +38,7 @@ public:
      **/
     to_diag_dims(
         const dimensions<NA> &dimsa,
-        const mask<NA> &m,
+        const sequence<NA, size_t> &m,
         const permutation<NB> &permb);
 
     /** \brief Returns the dimensions of the output

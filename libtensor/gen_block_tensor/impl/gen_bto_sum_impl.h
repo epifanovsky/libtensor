@@ -156,7 +156,7 @@ void gen_bto_sum<N, Traits>::compute_block(
         }
     }
 
-    if(zero1) to_set().perform(blk);
+    if(zero1) to_set().perform(zero1, blk);
 }
 
 

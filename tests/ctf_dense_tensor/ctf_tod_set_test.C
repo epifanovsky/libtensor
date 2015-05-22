@@ -44,10 +44,10 @@ void ctf_tod_set_test::test_1() {
     ctf_dense_tensor<2, double> dta(dimsa);
 
     tod_random<2>().perform(ta);
-    tod_set<2>().perform(ta_ref);
+    tod_set<2>().perform(true, ta_ref);
 
     ctf_tod_distribute<2>(ta).perform(dta);
-    ctf_tod_set<2>().perform(dta);
+    ctf_tod_set<2>().perform(true, dta);
     ctf_tod_collect<2>(dta).perform(ta);
 
     compare_ref<2>::compare(testname, ta, ta_ref, 1e-15);
@@ -73,10 +73,10 @@ void ctf_tod_set_test::test_2() {
     ctf_dense_tensor<4, double> dta(dimsa);
 
     tod_random<4>().perform(ta);
-    tod_set<4>(-1.0).perform(ta_ref);
+    tod_set<4>(-1.0).perform(true, ta_ref);
 
     ctf_tod_distribute<4>(ta).perform(dta);
-    ctf_tod_set<4>(-1.0).perform(dta);
+    ctf_tod_set<4>(-1.0).perform(true, dta);
     ctf_tod_collect<4>(dta).perform(ta);
 
     compare_ref<4>::compare(testname, ta, ta_ref, 1e-15);

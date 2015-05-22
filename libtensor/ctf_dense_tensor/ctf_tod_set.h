@@ -31,7 +31,7 @@ public:
     /** \brief Performs the operation
         \param ta Tensor.
      **/
-    void perform(ctf_dense_tensor_i<N, double> &ta);
+    void perform(bool zero, ctf_dense_tensor_i<N, double> &ta);
 
 };
 

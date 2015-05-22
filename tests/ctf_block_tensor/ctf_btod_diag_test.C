@@ -61,14 +61,17 @@ void ctf_btod_diag_test::test_1a() {
     ctf_block_tensor<2, double> dbta(bisa);
     ctf_block_tensor<1, double> dbtb(bisb);
 
+    sequence<2, size_t> diag11;
+    diag11[0] = 1; diag11[1] = 1;
+
     btod_random<2>().perform(bta);
     btod_random<1>().perform(btb);
-    btod_diag<2, 2>(bta, m11).perform(btb_ref);
+    btod_diag<2, 1>(bta, diag11).perform(btb_ref);
 
     ctf_btod_distribute<2>(bta).perform(dbta);
     ctf_btod_distribute<1>(btb).perform(dbtb);
 
-    ctf_btod_diag<2, 2>(dbta, m11).perform(dbtb);
+    ctf_btod_diag<2, 1>(dbta, diag11).perform(dbtb);
     ctf_btod_collect<1>(dbtb).perform(btb);
 
     compare_ref<1>::compare(testname, btb, btb_ref, 1e-15);
@@ -110,15 +113,18 @@ void ctf_btod_diag_test::test_1b() {
     ctf_block_tensor<2, double> dbta(bisa);
     ctf_block_tensor<1, double> dbtb(bisb);
 
+    sequence<2, size_t> diag11;
+    diag11[0] = 1; diag11[1] = 1;
+
     btod_random<2>().perform(bta);
     btod_random<1>().perform(btb);
     btod_copy<1>(btb).perform(btb_ref);
-    btod_diag<2, 2>(bta, m11).perform(btb_ref, -0.5);
+    btod_diag<2, 1>(bta, diag11).perform(btb_ref, -0.5);
 
     ctf_btod_distribute<2>(bta).perform(dbta);
     ctf_btod_distribute<1>(btb).perform(dbtb);
 
-    ctf_btod_diag<2, 2>(dbta, m11).perform(dbtb, -0.5);
+    ctf_btod_diag<2, 1>(dbta, diag11).perform(dbtb, -0.5);
     ctf_btod_collect<1>(dbtb).perform(btb);
 
     compare_ref<1>::compare(testname, btb, btb_ref, 1e-15);

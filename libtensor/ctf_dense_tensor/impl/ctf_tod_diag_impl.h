@@ -17,7 +17,7 @@ const char ctf_tod_diag<N, M>::k_clazz[] = "ctf_tod_diag<N, M>";
 template<size_t N, size_t M>
 ctf_tod_diag<N, M>::ctf_tod_diag(
     ctf_dense_tensor_i<NA, double> &ta,
-    const mask<NA> &m,
+    const sequence<NA, size_t> &m,
     const tensor_transf<NB, double> &trb) :
 
     m_ta(ta), m_mask(m), m_trb(trb),

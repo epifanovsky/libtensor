@@ -43,8 +43,8 @@ void ctf_tod_diag_test::test_1a() {
     index<2> i2a, i2b;
     i2b[0] = 99; i2b[1] = 99;
 
-    mask<2> md;
-    md[0] = true; md[1] = true;
+    sequence<2, size_t> md;
+    md[0] = 1; md[1] = 1;
 
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
     dimensions<1> dimsb(index_range<1>(i1a, i1b));
@@ -56,12 +56,12 @@ void ctf_tod_diag_test::test_1a() {
 
     tod_random<2>().perform(ta);
     tod_random<1>().perform(tb);
-    tod_diag<2, 2>(ta, md, tensor_transf<1, double>()).perform(true, tb_ref);
+    tod_diag<2, 1>(ta, md, tensor_transf<1, double>()).perform(true, tb_ref);
 
     ctf_tod_distribute<2>(ta).perform(dta);
     ctf_tod_distribute<1>(tb).perform(dtb);
 
-    ctf_tod_diag<2, 2>(dta, md, tensor_transf<1, double>()).
+    ctf_tod_diag<2, 1>(dta, md, tensor_transf<1, double>()).
         perform(true, dtb);
     ctf_tod_collect<1>(dtb).perform(tb);
 
@@ -86,8 +86,8 @@ void ctf_tod_diag_test::test_1b() {
     index<2> i2a, i2b;
     i2b[0] = 99; i2b[1] = 99;
 
-    mask<2> md;
-    md[0] = true; md[1] = true;
+    sequence<2, size_t> md;
+    md[0] = 1; md[1] = 1;
 
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
     dimensions<1> dimsb(index_range<1>(i1a, i1b));
@@ -100,12 +100,12 @@ void ctf_tod_diag_test::test_1b() {
     tod_random<2>().perform(ta);
     tod_random<1>().perform(tb);
     tod_copy<1>(tb).perform(true, tb_ref);
-    tod_diag<2, 2>(ta, md, tensor_transf<1, double>()).perform(false, tb_ref);
+    tod_diag<2, 1>(ta, md, tensor_transf<1, double>()).perform(false, tb_ref);
 
     ctf_tod_distribute<2>(ta).perform(dta);
     ctf_tod_distribute<1>(tb).perform(dtb);
 
-    ctf_tod_diag<2, 2>(dta, md, tensor_transf<1, double>()).
+    ctf_tod_diag<2, 1>(dta, md, tensor_transf<1, double>()).
         perform(false, dtb);
     ctf_tod_collect<1>(dtb).perform(tb);
 
