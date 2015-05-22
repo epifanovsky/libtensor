@@ -22,21 +22,21 @@ void node_diag_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    std::vector<size_t> idx(2);
+    std::vector<size_t> idx(2), didx(1, 0);
     idx[0] = 0; idx[1] = 0;
 
-    node_diag d1(1, idx, 0);
+    node_diag d1(1, idx, didx);
 
-    if(d1.get_didx() != 0) {
-        fail_test(testname, __FILE__, __LINE__, "d1.get_didx() != 0");
+    if(d1.get_didx() != didx) {
+        fail_test(testname, __FILE__, __LINE__, "Inconsistent diagonal indices.");
     }
 
     std::auto_ptr<node_diag> d1copy(dynamic_cast<node_diag*>(d1.clone()));
     if(d1copy->get_idx() != idx) {
         fail_test(testname, __FILE__, __LINE__, "Inconsistent tensor indices.");
     }
-    if(d1copy->get_didx() != 0) {
-        fail_test(testname, __FILE__, __LINE__, "d1copy->get_didx() != 0");
+    if(d1copy->get_didx() != didx) {
+        fail_test(testname, __FILE__, __LINE__, "Inconsistent diagonal indices.");
     }
 
 

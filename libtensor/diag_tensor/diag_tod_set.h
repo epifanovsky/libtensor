@@ -8,12 +8,12 @@
 namespace libtensor {
 
 
-/** \brief Assigns all tensor entries to a value
+/** \brief Changes all tensor entries by or to a value
     \param N Tensor order.
 
-    This operation assigns all allowed tensor entries to the specified value.
-    Only the elements that are allowed by the constraints of the output tensor
-    are affected.
+    This operation changes all allowed tensor entries by or to the specified
+    value. Only the elements that are allowed by the constraints of the output
+    tensor are affected.
 
     \ingroup libtensor_diag_tensor
  **/
@@ -32,9 +32,10 @@ public:
     diag_tod_set(double d = 0.0) : m_d(d) { }
 
     /** \brief Performs the operation
+        \param zero Zero tensor first
         \param ta Output tensor.
      **/
-    void perform(diag_tensor_wr_i<N, double> &ta);
+    void perform(bool zero, diag_tensor_wr_i<N, double> &ta);
 
 };
 

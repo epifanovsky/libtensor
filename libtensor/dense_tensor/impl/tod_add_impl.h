@@ -126,7 +126,7 @@ void tod_add<N>::perform(bool zero, dense_tensor_wr_i<N, double> &t) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
     }
 
-    if(zero) tod_set<N>().perform(t);
+    if(zero) tod_set<N>().perform(zero, t);
 
     tod_add<N>::start_timer();
 

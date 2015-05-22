@@ -7,12 +7,22 @@
 namespace libtensor {
 
 
-/** \brief Assigns the diagonal elements of a block %tensor to a value
+/** \brief Set the elements of a generalized diagonal of a block %tensor to
+        a constant value
     \tparam N Tensor order.
     \tparam Traits Block tensor operation traits.
 
-    This operation sets the diagonal elements of a block %tensor to a value
-    without affecting all the off-diagonal elements.
+    This operation sets the elements of a generalized diagonal of a block
+    %tensor by a constant value without affecting the off-diagonal elements.
+    The generalized diagonal is defined using a masking sequence. Dimensions
+    for which the mask is 0 are not part of the diagonal, while dimensions for
+    which the mask has the same non-zero value are taken as diagonal. For
+    example, using the operation on a block tensor \f$ a\f$ with mask
+    \c [10221] will only affect the elements
+    \f$ a_{ijkki}, \forall i, j, k \f$ .
+
+    The block structure of the dimensions of the block tensor belonging to
+    the same diagonal must be identical.
 
     <b>Traits</b>
 
@@ -28,7 +38,7 @@ namespace libtensor {
 template<size_t N, typename Traits>
 class gen_bto_set_diag : public noncopyable {
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 public:
     //! Type of tensor elements
@@ -41,6 +51,7 @@ public:
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
 private:
+    sequence<N, size_t> m_msk; //!< Diagonal mask
     element_type m_v; //!< Value
 
 public:
@@ -48,9 +59,11 @@ public:
     //@{
 
     /** \brief Initializes the operation
+        \param msk Diagonal mask
         \param v Tensor element value (default zero).
      **/
-    gen_bto_set_diag(const element_type &v = Traits::zero());
+    gen_bto_set_diag(const sequence<N, size_t> &msk,
+        const element_type &v = Traits::zero());
 
     //@}
 

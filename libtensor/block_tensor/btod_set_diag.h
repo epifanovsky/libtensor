@@ -29,9 +29,16 @@ public:
     //@{
 
     /** \brief Initializes the operation
+        \param msk Diagonal mask
+        \param v Tensor element value (default 0.0).
+     **/
+    btod_set_diag(const sequence<N, size_t> &msk, double v = 0.0);
+
+    /** \brief Initializes the operation (compatability wrapper)
         \param v Tensor element value (default 0.0).
      **/
     btod_set_diag(double v = 0.0);
+
     //@}
 
     //!    \name Operation

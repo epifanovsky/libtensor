@@ -51,7 +51,7 @@ void tod_mult1<N>::perform(bool zero, dense_tensor_wr_i<N, double> &ta) {
     }
 
     if (m_c == 0) {
-        if (zero) tod_set<N>().perform(ta);
+        if (zero) tod_set<N>().perform(zero, ta);
         return;
     }
 

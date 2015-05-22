@@ -439,8 +439,8 @@ void tod_conv_diag_tensor_test::test_1_ii_ij_off(size_t ni, size_t mi,
         diag_tensor<2, double, allocator_t> dt(dts);
         dense_tensor<2, double, allocator_t> t(dimsb), t_ref(dimsb);
 
-        tod_set<2>().perform(t);
-        tod_set<2>().perform(t_ref);
+        tod_set<2>().perform(true, t);
+        tod_set<2>().perform(true, t_ref);
 
         {
             diag_tensor_wr_ctrl<2, double> cdt(dt);

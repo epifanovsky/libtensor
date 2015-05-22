@@ -33,6 +33,7 @@ libtensor_btod_suite::libtensor_btod_suite() :
     add_test("btod_set", m_utf_btod_set);
     add_test("btod_set_diag", m_utf_btod_set_diag);
     add_test("btod_set_elem", m_utf_btod_set_elem);
+    add_test("btod_shift_diag", m_utf_btod_shift_diag);
     add_test("btod_sum", m_utf_btod_sum);
     add_test("btod_symcontract3", m_utf_btod_symcontract3);
     add_test("btod_symmetrize2", m_utf_btod_symmetrize2);

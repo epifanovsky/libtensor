@@ -160,7 +160,7 @@ void gen_bto_symmetrize3<N, Traits, Timed>::compute_block(
         }
     }
 
-    if(zero1) to_set().perform(blkb);
+    if(zero1) to_set().perform(zero, blkb);
 }
 
 

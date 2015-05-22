@@ -16,9 +16,12 @@ public:
 
 private:
     template<size_t N>
-    void run_test(const dimensions<N> &dims, double d)
+    void run_test1(const dimensions<N> &dims, double d, bool zero)
         throw(libtest::test_exception);
 
+    template<size_t N>
+    void run_test2(const dimensions<N> &dims, const sequence<N, size_t> &msk,
+        double d, bool zero) throw(libtest::test_exception);
 };
 
 } // namespace libtensor

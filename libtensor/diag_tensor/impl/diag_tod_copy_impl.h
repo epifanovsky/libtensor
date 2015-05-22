@@ -1,7 +1,6 @@
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include <libtensor/diag_tensor/diag_to_add_space.h>
 #include <libtensor/diag_tensor/diag_tod_adjust_space.h>
-#include <libtensor/diag_tensor/diag_tod_set.h>
 #include "diag_tod_aux_constr_add.h"
 #include "../diag_tod_copy.h"
 

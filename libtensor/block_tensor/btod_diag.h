@@ -19,7 +19,7 @@ namespace libtensor {
  **/
 template<size_t N, size_t M>
 class btod_diag :
-    public additive_gen_bto<N - M + 1, btod_traits::bti_traits>,
+    public additive_gen_bto<M, btod_traits::bti_traits>,
     public noncopyable {
 public:
     static const char k_clazz[]; //!< Class name
@@ -38,11 +38,11 @@ public:
      **/
     btod_diag(
         block_tensor_rd_i<N, double> &bta,
-        const mask<N> &m,
+        const sequence<N, size_t> &m,
         double c = 1.0) :
 
-        m_gbto(bta, m, tensor_transf<N - M + 1, double>(
-            permutation<N - M + 1>(), scalar_transf<double>(c))) {
+        m_gbto(bta, m, tensor_transf<M, double>(permutation<M>(),
+                scalar_transf<double>(c))) {
 
     }
 
@@ -54,12 +54,11 @@ public:
      **/
     btod_diag(
         block_tensor_rd_i<N, double> &bta,
-        const mask<N> &m,
-        const permutation<N - M + 1> &p,
+        const sequence<N, size_t> &m,
+        const permutation<M> &p,
         double c = 1.0) :
 
-        m_gbto(bta, m, tensor_transf<N - M + 1, double>(
-            p, scalar_transf<double>(c))) {
+        m_gbto(bta, m, tensor_transf<M, double>(p, scalar_transf<double>(c))) {
     }
 
     virtual ~btod_diag() { }
@@ -67,52 +66,57 @@ public:
     //! \name Implementation of libtensor::direct_gen_bto<N, bti_traits>
     //@{
 
-    virtual const block_index_space<N - M + 1> &get_bis() const {
+    virtual const block_index_space<M> &get_bis() const {
 
         return m_gbto.get_bis();
     }
 
-    virtual const symmetry<N - M + 1, double> &get_symmetry() const {
+    virtual const symmetry<M, double> &get_symmetry() const {
 
         return m_gbto.get_symmetry();
     }
 
-    virtual const assignment_schedule<N - M + 1, double> &get_schedule() const {
+    virtual const assignment_schedule<M, double> &get_schedule() const {
 
         return m_gbto.get_schedule();
     }
 
-    virtual void perform(gen_block_stream_i<N - M + 1, bti_traits> &out) {
+    virtual void perform(gen_block_stream_i<M, bti_traits> &out) {
 
         m_gbto.perform(out);
     }
 
     //@}
 
-    //! \name Implementation of libtensor::additive_gen_bto<N, bti_traits>
+    //! \name Implementation of libtensor::additive_gen_bto<M, bti_traits>
     //@{
 
-    virtual void perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb);
+    virtual void perform(gen_block_tensor_i<M, bti_traits> &btb);
 
-    virtual void perform(gen_block_tensor_i<N - M + 1, bti_traits> &btb,
+    virtual void perform(gen_block_tensor_i<M, bti_traits> &btb,
             const scalar_transf<double> &c);
 
     virtual void compute_block(
             bool zero,
-            const index<N - M + 1> &ib,
-            const tensor_transf<N - M + 1, double> &trb,
-            dense_tensor_wr_i<N - M + 1, double> &blkb);
+            const index<M> &ib,
+            const tensor_transf<M, double> &trb,
+            dense_tensor_wr_i<M, double> &blkb);
 
     virtual void compute_block(
-            const index<N - M + 1> &ib,
-            dense_tensor_wr_i<N - M + 1, double> &blkb) {
+            const index<M> &ib,
+            dense_tensor_wr_i<M, double> &blkb) {
 
-        compute_block(true, ib, tensor_transf<N - M + 1, double>(), blkb);
+        compute_block(true, ib, tensor_transf<M, double>(), blkb);
     }
 
     //@}
 
-    void perform(block_tensor_i<N - M + 1, double> &btb, double c);
+    /** \brief Convenience wrapper to function
+            \c perform(gen_block_tensor_i<M, bti_traits> &, const scalar_transf<double>&)
+        \param btb Result block tensor
+        \param c Factor
+     **/
+    void perform(block_tensor_i<M, double> &btb, double c);
 
 };
 

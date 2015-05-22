@@ -10,9 +10,11 @@ const char *diag_tod_set<N>::k_clazz = "diag_tod_set<N>";
 
 
 template<size_t N>
-void diag_tod_set<N>::perform(diag_tensor_wr_i<N, double> &ta) {
+void diag_tod_set<N>::perform(bool zero, diag_tensor_wr_i<N, double> &ta) {
 
     diag_tod_set<N>::start_timer();
+
+    if (! zero && m_d == 0.0) return;
 
     try {
 
@@ -26,7 +28,10 @@ void diag_tod_set<N>::perform(diag_tensor_wr_i<N, double> &ta) {
             size_t ssn = ssl[ssi];
             size_t sz = dtsa.get_subspace_size(ssn);
             double *pa = ca.req_dataptr(ssn);
-            for(size_t i = 0; i < sz; i++) pa[i] = m_d;
+            if (zero)
+                for(size_t i = 0; i < sz; i++) pa[i] = m_d;
+            else
+                for(size_t i = 0; i < sz; i++) pa[i] += m_d;
             ca.ret_dataptr(ssn, pa);
         }
 

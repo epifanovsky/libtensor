@@ -11,7 +11,14 @@ const char *btod_set_diag<N>::k_clazz = "btod_set_diag<N>";
 
 
 template<size_t N>
-btod_set_diag<N>::btod_set_diag(double v) : m_gbto(v) {
+btod_set_diag<N>::btod_set_diag(const sequence<N, size_t> &msk, double v) :
+    m_gbto(msk, v) {
+
+}
+
+
+template<size_t N>
+btod_set_diag<N>::btod_set_diag(double v) : m_gbto(sequence<N, size_t>(1), v) {
 
 }
 

@@ -245,7 +245,7 @@ void gen_bto_copy<N, Traits, Timed>::compute_block(
             to_copy(blka, tra).perform(zero, blkb);
             ca.ret_const_block(cia);
         } else if(zero) {
-            to_set().perform(blkb);
+            to_set().perform(zero, blkb);
         }
 
     } catch(...) {

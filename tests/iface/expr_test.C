@@ -654,8 +654,8 @@ void expr_test::test_9() throw(libtest::test_exception) {
 
     letter i, j;
 
-        d2_oo(i|j) = dirsum(diag(i, i|j, f_oo(i|j)), -diag(j, i|j, f_oo(i|j)))
-            + d1_oo(i|j);
+    d2_oo(i|j) = dirsum(diag(i, i|j, f_oo(i|j)), -diag(j, j|i, f_oo(i|j)))
+        + d1_oo(i|j);
 
     }
 

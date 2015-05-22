@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_BTOD_SET_IMPL_H
 #define LIBTENSOR_BTOD_SET_IMPL_H
 
-#include <libtensor/dense_tensor/tod_set.h>
 #include "../btod_set.h"
 
 namespace libtensor {

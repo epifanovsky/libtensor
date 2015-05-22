@@ -5,7 +5,6 @@
 #include <libtensor/kernels/kern_dmuladd1.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
-#include <libtensor/diag_tensor/diag_tod_set.h>
 #include "diag_tod_aux_constr_add.h"
 #include "../diag_tod_mult1.h"
 

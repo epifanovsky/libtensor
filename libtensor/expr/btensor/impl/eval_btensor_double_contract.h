@@ -22,7 +22,6 @@ public:
 
 private:
     eval_btensor_evaluator_i<NC, double> *m_impl;
-    bool m_add;
 
 public:
     /** \brief Initializes the evaluator

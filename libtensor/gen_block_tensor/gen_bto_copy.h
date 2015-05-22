@@ -85,8 +85,7 @@ public:
     /** \brief Writes the blocks of the result to an output stream
         \param out Output stream.
      **/
-    void perform(
-        gen_block_stream_i<N, bti_traits> &out);
+    void perform(gen_block_stream_i<N, bti_traits> &out);
 
     /** \brief Writes a subset of blocks of the result to an output stream
         \param blst List of absolute indexes of canonical blocks to be computed.

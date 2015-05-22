@@ -227,7 +227,7 @@ void gen_bto_mult<N, Traits, Timed>::compute_block_untimed(
     scalar_transf<element_type> trc1(trc.get_scalar_tr());
     trc1.transform(m_trc);
 
-    if(zero) to_set().perform(blkc);
+    if(zero) to_set().perform(zero, blkc);
     to_mult(blka, tra, blkb, trb, m_recip, trc1).perform(false, blkc);
 
     ctrla.ret_const_block(cidxa.get_index());

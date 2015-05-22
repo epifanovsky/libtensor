@@ -198,7 +198,7 @@ bool gen_bto_compare<N, Traits>::compare_data(const abs_index<N> &aidx,
             {
                 gen_block_tensor_wr_ctrl<N, bti_traits> cb(btc);
                 wr_block_type &blkb = cb.req_block(aidx.get_index());
-                to_set().perform(blkb);
+                to_set().perform(true, blkb);
                 cb.ret_block(aidx.get_index());
             }
 

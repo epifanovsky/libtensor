@@ -34,7 +34,7 @@ void gen_bto_set<N, Traits, Timed>::perform(
                 index<N> bi;
                 ol.get_index(io, bi);
                 wr_block_type &blk = ca.req_block(bi);
-                to_set(m_v).perform(blk);
+                to_set(m_v).perform(true, blk);
                 ca.ret_block(bi);
             }
 

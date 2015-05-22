@@ -196,7 +196,7 @@ void gen_bto_symmetrize4<N, Traits, Timed>::compute_block(
         }
     }
 
-    if(zero1) to_set().perform(blkb);
+    if(zero1) to_set().perform(zero1, blkb);
 }
 
 

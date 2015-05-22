@@ -25,15 +25,16 @@ public:
     static const char k_op_type[]; //!< Operation type
 
 private:
-    size_t m_didx; //!< Diagonal index
+    std::vector<size_t> m_didx; //!< Diagonal indexes
 
 public:
     /** \brief Creates an identity node
         \param n Order of result.
         \param idx Tensor indices.
-        \param didx Index of the diagonal.
+        \param didx Indexes of the diagonal.
      **/
-    node_diag(size_t n, const std::vector<size_t> &idx, size_t didx) :
+    node_diag(size_t n, const std::vector<size_t> &idx,
+        const std::vector<size_t> didx) :
         node_product(node_diag::k_op_type, n, idx), m_didx(didx)
     { }
 
@@ -47,12 +48,11 @@ public:
         return new node_diag(*this);
     }
 
-    /** \brief Return the index on the diagonal
+    /** \brief Return the array of diagonal indexes
      **/
-    size_t get_didx() const {
+    const std::vector<size_t> get_didx() const {
         return m_didx;
     }
-
 };
 
 

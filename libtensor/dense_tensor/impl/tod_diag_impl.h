@@ -19,8 +19,8 @@ const char *tod_diag<N, M>::k_clazz = "tod_diag<N, M>";
 
 
 template<size_t N, size_t M>
-tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
-    const tensor_transf<k_orderb, double> &tr) :
+tod_diag<N, M>::tod_diag(dense_tensor_rd_i<NA, double> &t,
+    const sequence<NA, size_t> &m, const tensor_transf<NB, double> &tr) :
 
     m_t(t), m_mask(m), m_perm(tr.get_perm()),
     m_c(tr.get_scalar_tr().get_coeff()),
@@ -30,10 +30,10 @@ tod_diag<N, M>::tod_diag(dense_tensor_rd_i<N, double> &t, const mask<N> &m,
 
 
 template<size_t N, size_t M>
-void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb) {
+void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<NB, double> &tb) {
 
     static const char *method =
-            "perform(bool, dense_tensor_wr_i<N - M + 1, double> &)";
+            "perform(bool, dense_tensor_wr_i<M, double> &)";
 
 #ifdef LIBTENSOR_DEBUG
     if(!tb.get_dims().equals(m_dims)) {
@@ -44,7 +44,7 @@ void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb)
     if(m_c == 0.0) {
         if (zero) {
             tod_diag<N, M>::start_timer("zero");
-            tod_set<k_orderb>().perform(tb);
+            tod_set<NB>().perform(zero, tb);
             tod_diag<N, M>::stop_timer("zero");
         }
         return;
@@ -53,45 +53,48 @@ void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb)
     tod_diag<N, M>::start_timer();
 
     try {
-        dense_tensor_rd_ctrl<k_ordera, double> ca(m_t);
-        dense_tensor_wr_ctrl<k_orderb, double> cb(tb);
+        dense_tensor_rd_ctrl<NA, double> ca(m_t);
+        dense_tensor_wr_ctrl<NB, double> cb(tb);
 
         ca.req_prefetch();
         cb.req_prefetch();
 
-        const dimensions<k_ordera> &dimsa = m_t.get_dims();
-        const dimensions<k_orderb> &dimsb = tb.get_dims();
+        const dimensions<NA> &dimsa = m_t.get_dims();
+        const dimensions<NB> &dimsb = tb.get_dims();
 
         //  Mapping of unpermuted indexes in b to permuted ones
         //
-        sequence<k_orderb, size_t> ib(0);
-        for(size_t i = 0; i < k_orderb; i++) ib[i] = i;
-        permutation<k_orderb> pinv(m_perm, true);
+        sequence<NB, size_t> ib(0);
+        for(size_t i = 0; i < NB; i++) ib[i] = i;
+        permutation<NB> pinv(m_perm, true);
         pinv.apply(ib);
 
         std::list< loop_list_node<1, 1> > loop_in, loop_out;
         typename std::list< loop_list_node<1, 1> >::iterator inode =
                 loop_in.end();
 
-        bool diag_done = false;
+        mask<NA> done;
         size_t iboffs = 0;
 
-        for(size_t idxa = 0; idxa < N; idxa++) {
+        for(size_t idxa = 0; idxa < NA; idxa++) {
 
             size_t inca = 0, incb = 0, len = 0;
-            if(m_mask[idxa]) {
-                if(diag_done) {
+            if(m_mask[idxa] != 0) {
+                if(done[idxa]) {
                     iboffs++; continue;
                 }
 
+                size_t diag_idx = m_mask[idxa];
+
                 //  Compute the stride on the diagonal
                 //
-                for(size_t j = idxa; j < N; j++) {
-                    if(m_mask[j]) inca += dimsa.get_increment(j);
+                for(size_t j = idxa; j < NA; j++) {
+                    if(m_mask[j] != diag_idx) continue;
+                    inca += dimsa.get_increment(j);
+                    done[j] = true;
                 }
-                incb = dimsb.get_increment(ib[idxa]);
+                incb = dimsb.get_increment(ib[idxa - iboffs]);
                 len = dimsa.get_dim(idxa);
-                diag_done = true;
             } else {
 
                 //  Compute the stride off the diagonal
@@ -99,7 +102,8 @@ void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<k_orderb, double> &tb)
                 //
                 len = 1;
                 size_t idxb = ib[idxa - iboffs];
-                while(idxa < N && !m_mask[idxa] && idxb == ib[idxa - iboffs]) {
+                while(idxa < N && m_mask[idxa] == 0 &&
+                        idxb == ib[idxa - iboffs]) {
 
                     len *= dimsa.get_dim(idxa);
                     idxa++;

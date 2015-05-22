@@ -8,8 +8,11 @@
 namespace libtensor {
 
 
-/** \brief Sets all elements of a tensor to a given value
+/** \brief Changes a tensor by or to a given constant value
     \tparam N Tensor order.
+
+    The operation either adds a given value to a tensor or sets the 
+    tensor to the respective value.
 
     \ingroup libtensor_dense_tensor_tod
  **/
@@ -28,9 +31,10 @@ public:
     tod_set(double v = 0.0) : m_v(v) { }
 
     /** \brief Performs the operation
+        \param zero Zero tensor first
         \param ta Tensor.
      **/
-    void perform(dense_tensor_wr_i<N, double> &ta);
+    void perform(bool zero, dense_tensor_wr_i<N, double> &ta);
 };
 
 

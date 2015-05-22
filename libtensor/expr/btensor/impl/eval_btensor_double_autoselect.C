@@ -7,6 +7,7 @@
 #include <libtensor/expr/dag/node_diag.h>
 #include <libtensor/expr/dag/node_dirsum.h>
 #include <libtensor/expr/dag/node_div.h>
+#include <libtensor/expr/dag/node_set.h>
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -17,6 +18,7 @@
 #include "eval_btensor_double_diag.h"
 #include "eval_btensor_double_dirsum.h"
 #include "eval_btensor_double_div.h"
+#include "eval_btensor_double_set.h"
 #include "eval_btensor_double_symm.h"
 #include "node_interm.h"
 #include "tensor_from_node.h"
@@ -36,6 +38,8 @@ autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
 
     if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
         m_impl = new copy<N>(m_tree, id, tr);
+    } else if(n.check_type<node_set>()) {
+        m_impl = new set<N>(m_tree, id, tr);
     } else if(n.check_type<node_add>()) {
         m_impl = new add<N>(m_tree, id, tr);
     } else if(n.check_type<node_contract>()) {

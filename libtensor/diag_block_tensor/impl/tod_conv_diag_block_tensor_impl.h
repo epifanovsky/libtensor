@@ -30,7 +30,7 @@ void tod_conv_diag_block_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
     dimensions<N> bidimsa = bisa.get_block_index_dims();
     const symmetry<N, double> &syma = ca.req_const_symmetry();
 
-    tod_set<N>().perform(tb);
+    tod_set<N>().perform(true, tb);
 
     orbit_list<N, double> ol(syma);
     for(typename orbit_list<N, double>::iterator io = ol.begin();

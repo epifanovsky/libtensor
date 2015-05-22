@@ -191,7 +191,7 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::compute_block_untimed(
     bool zerob = ctrlb.req_is_zero_block(idxb0);
 
     if(zeroa || zerob) {
-        if(zero) to_set().perform(blkc);
+        if(zero) to_set().perform(zero, blkc);
         return;
     }
 
@@ -496,4 +496,4 @@ void gen_bto_ewmult2_task_observer<N, M, K>::notify_finish_task(
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_BTOD_EWMULT2_IMPL_H
+#endif // LIBTENSOR_GEN_BTO_EWMULT2_IMPL_H

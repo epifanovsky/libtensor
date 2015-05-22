@@ -343,9 +343,9 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
     }//end of iterations
 
     //get eigenvalues
-    mask<2> msk;
-    msk[0] = true; msk[1] = true;
-    btod_diag<2, 2>(btb, msk).perform(eigvalue);
+    sequence<2, size_t> msk;
+    msk[0] = 1; msk[1] = 1;
+    btod_diag<2, 1>(btb, msk).perform(eigvalue);
     //get matrix of eigenvectors
     contraction2<1,1,1> contr;
     contr.contract(1,0);

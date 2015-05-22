@@ -49,13 +49,13 @@ void diag_test::test_t_1() throw(libtest::test_exception) {
     btod_random<2>().perform(t1);
     t1.set_immutable();
 
-    mask<2> msk;
-    msk[0] = true; msk[1] = true;
+    sequence<2, size_t> msk(0);
+    msk[0] = 1; msk[1] = 1;
     permutation<1> perm;
-    btod_diag<2, 2>(t1, msk, perm).perform(t2_ref);
+    btod_diag<2, 1>(t1, msk, perm).perform(t2_ref);
 
-    letter i, j, k;
-    t2(k) = diag(k, i|j, t1(j|i));
+    letter i, j;
+    t2(i) = diag(i, i|j, t1(j|i));
 
     compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -81,8 +81,8 @@ void diag_test::test_t_2() throw(libtest::test_exception) {
     btod_random<3>().perform(t1);
     t1.set_immutable();
 
-    mask<3> msk;
-    msk[0] = true; msk[1] = true;
+    sequence<3, size_t> msk(0);
+    msk[0] = 1; msk[1] = 1;
     permutation<2> perm;
     btod_diag<3, 2>(t1, msk, perm).perform(t2_ref);
 
@@ -113,8 +113,8 @@ void diag_test::test_t_3() throw(libtest::test_exception) {
     btod_random<3>().perform(t1);
     t1.set_immutable();
 
-    mask<3> msk;
-    msk[0] = true; msk[2] = true;
+    sequence<3, size_t> msk(0);
+    msk[0] = 1; msk[2] = 1;
     permutation<2> perm;
     perm.permute(0, 1); // ia->ai
     btod_diag<3, 2>(t1, msk, perm).perform(t2_ref);
@@ -145,10 +145,10 @@ void diag_test::test_t_4() throw(libtest::test_exception) {
     btod_random<2>().perform(t1);
     t1.set_immutable();
 
-    mask<2> msk;
-    msk[0] = true; msk[1] = true;
+    sequence<2, size_t> msk(0);
+    msk[0] = 1; msk[1] = 1;
     permutation<1> perm;
-    btod_diag<2, 2>(t1, msk, perm, -1.0).perform(t2_ref);
+    btod_diag<2, 1>(t1, msk, perm, -1.0).perform(t2_ref);
 
     letter i, j;
     t2(i) = - diag(i, i|j, t1(i|j));
@@ -179,16 +179,13 @@ void diag_test::test_t_5() throw(libtest::test_exception) {
     btod_random<4>().perform(t1);
     t1.set_immutable();
 
-    mask<4> m0101;
-    m0101[1] = true; m0101[3] = true;
-    mask<3> m110;
-    m110[0] = true; m110[1] = true;
+    sequence<4, size_t> m1212(0);
+    m1212[0] = 1; m1212[1] = 2; m1212[2] = 1; m1212[3] = 2;
 
-    btod_diag<4, 2>(t1, m0101, permutation<3>().permute(1, 2)).perform(tt);
-    btod_diag<3, 2>(tt, m110, permutation<2>(), 0.5).perform(t2_ref);
+    btod_diag<4, 2>(t1, m1212, permutation<2>(), 0.5).perform(t2_ref);
 
     letter i, j, k, l;
-    t2(i|j) = 0.5 * diag(i, i|k, diag(j, j|l, t1(i|j|k|l)));
+    t2(i|j) = 0.5 * diag(i|j, i|k|j|l, t1(i|j|k|l));
 
     compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -213,10 +210,10 @@ void diag_test::test_t_6() throw(libtest::test_exception) {
     btod_random<2>().perform(t1);
     t1.set_immutable();
 
-    mask<2> m11;
-    m11[0] = true; m11[1] = true;
+    sequence<2, size_t> m11(0);
+    m11[0] = 1; m11[1] = 1;
 
-    btod_diag<2, 2>(t1, m11, permutation<1>(), -1.0).perform(t2_ref);
+    btod_diag<2, 1>(t1, m11, permutation<1>(), -1.0).perform(t2_ref);
 
     letter i, j;
     t2(i) = diag(i, i|j, -t1(i|j));
@@ -246,17 +243,17 @@ void diag_test::test_e_1() throw(libtest::test_exception) {
     t1a.set_immutable();
     t1b.set_immutable();
 
-    mask<2> msk;
-    msk[0] = true; msk[1] = true;
+    sequence<2, size_t> msk(0);
+    msk[0] = 1; msk[1] = 1;
     permutation<1> perm;
-    btod_diag<2, 2>(t1a, msk, perm).perform(t2a);
-    btod_diag<2, 2>(t1b, msk, perm).perform(t2b);
+    btod_diag<2, 1>(t1a, msk, perm).perform(t2a);
+    btod_diag<2, 1>(t1b, msk, perm).perform(t2b);
     btod_add<1> add(t2a);
     add.add_op(t2b);
     add.perform(t2_ref);
 
-    letter i, j, k;
-    t2(k) = diag(k, i|j, t1a(j|i) + t1b(i|j));
+    letter i, j;
+    t2(i) = diag(i, i|j, t1a(j|i) + t1b(i|j));
 
     compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -290,18 +287,12 @@ void diag_test::test_x_1() throw(libtest::test_exception) {
     t2.set_immutable();
 
     btod_copy<2>(t1).perform(t3_ref);
-    mask<4> msk1;
-    msk1[1] = true; msk1[3] = true;
-    permutation<3> perm1;
-    btod_diag<4, 2>(t2, msk1, perm1, 1.0).perform(tx);
-    mask<3> msk2;
-    msk2[0] = true; msk2[2] = true;
-    permutation<2> perm2;
-    //perm2.permute(0, 1);
-    btod_diag<3, 2>(tx, msk2, perm2, -1.0).perform(t3_ref, 1.0);
+    sequence<4, size_t> msk(0);
+    msk[0] = 1; msk[1] = 2; msk[2] = 1; msk[3] = 2;
+    btod_diag<4, 2>(t2, msk, permutation<2>(), -1.0).perform(t3_ref, 1.0);
 
     letter i, j, a, b;
-    t3(i|a) = t1(i|a) - diag(i, i|j, diag(a, a|b, t2(i|a|j|b)));
+    t3(i|a) = t1(i|a) - diag(i|a, i|j|a|b, t2(i|a|j|b));
 
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
