@@ -8,8 +8,10 @@
 #include <libtensor/symmetry/so_copy.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
 #include <libtensor/block_tensor/btod_random.h>
+#include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/ctf_dense_tensor/ctf.h>
 #include <libtensor/ctf_block_tensor/ctf_btod_random.h>
+#include <libtensor/ctf_block_tensor/ctf_btod_set.h>
 #include <libtensor/expr/ctf_btensor/ctf_btensor.h>
 
 using namespace libtensor;
@@ -39,28 +41,50 @@ public:
 };
 
 
-void set_symmetry(btensor<4, double> &bt) {
+void set_symmetry(btensor<4, double> &bt, int z) {
 
     symmetry<4, double> sym(bt.get_bis());
-    sym.insert(se_perm<4, double>(permutation<4>().permute(0, 1).permute(2, 3),
-        scalar_transf<double>(1.0)));
-    sym.insert(se_perm<4, double>(permutation<4>().permute(0, 1),
-        scalar_transf<double>(-1.0)));
+    permutation<4> p1023, p1032;
+    p1023.permute(0, 1);
+    p1032.permute(0, 1).permute(2, 3);
+    if(z > 0) {
+        sym.insert(se_perm<4, double>(p1032, scalar_transf<double>(1.0)));
+    }
+    if(z > 1) {
+        sym.insert(se_perm<4, double>(p1023, scalar_transf<double>(-1.0)));
+    }
     gen_block_tensor_ctrl<4, block_tensor_i_traits<double> > ctrl(bt);
+    ctrl.req_zero_all_blocks();
     so_copy<4, double>(sym).perform(ctrl.req_symmetry());
 }
 
-void set_symmetry(ctf_btensor<4, double> &bt) {
+void set_random(btensor<4, double> &bt) {
+    //btod_set<4>(1.0).perform(bt);
+    btod_random<4>().perform(bt);
+}
+
+void set_symmetry(ctf_btensor<4, double> &bt, int z) {
 
     symmetry<4, double> sym(bt.get_bis());
-    sym.insert(se_perm<4, double>(permutation<4>().permute(0, 1).permute(2, 3),
-        scalar_transf<double>(1.0)));
-//    sym.insert(se_perm<4, double>(permutation<4>().permute(0, 1),
-//        scalar_transf<double>(-1.0)));
+    permutation<4> p1023, p1032;
+    p1023.permute(0, 1);
+    p1032.permute(0, 1).permute(2, 3);
+    if(z > 0) {
+        sym.insert(se_perm<4, double>(p1032, scalar_transf<double>(1.0)));
+    }
+    if(z > 1) {
+        sym.insert(se_perm<4, double>(p1023, scalar_transf<double>(-1.0)));
+    }
     gen_block_tensor_ctrl<4, ctf_block_tensor_i_traits<double> > ctrl(bt);
+    ctrl.req_zero_all_blocks();
     so_copy<4, double>(sym).perform(ctrl.req_symmetry());
 }
 
+
+void set_random(ctf_btensor<4, double> &bt) {
+    //ctf_btod_set<4>(1.0).perform(bt);
+    ctf_btod_random<4>().perform(bt);
+}
 
 void expr_1(any_tensor<4, double> &ta, any_tensor<4, double> &tb,
     expr_lhs<4, double> &tc) {
@@ -91,23 +115,41 @@ int main(int argc, char **argv) {
     btensor<4, double> bta(zzzz), btb(zzzz), btc(zzzz);
     ctf_btensor<4, double> dta(xxxx), dtb(xxxx), dtc(xxxx);
 
-    set_symmetry(bta);
-    set_symmetry(btb);
-    btod_random<4>().perform(bta);
-    btod_random<4>().perform(btb);
-
-    T.start_timer("libtensor");
+    set_symmetry(bta, 0); set_symmetry(btb, 0);
+    set_random(bta); set_random(btb);
+    T.start_timer("libtensor0[nosym]");
     expr_1(bta, btb, btc);
-    T.stop_timer("libtensor");
+    T.stop_timer("libtensor0[nosym]");
 
-    set_symmetry(dta);
-    set_symmetry(dtb);
-    ctf_btod_random<4>().perform(dta);
-    ctf_btod_random<4>().perform(dtb);
+    set_symmetry(bta, 1); set_symmetry(btb, 1);
+    set_random(bta); set_random(btb);
+    T.start_timer("libtensor1[jilk]");
+    expr_1(bta, btb, btc);
+    T.stop_timer("libtensor1[jilk]");
 
-    T.start_timer("ctf");
+    set_symmetry(bta, 2); set_symmetry(btb, 2);
+    set_random(bta); set_random(btb);
+    T.start_timer("libtensor2[ji,lk]");
+    expr_1(bta, btb, btc);
+    T.stop_timer("libtensor2[ji,lk]");
+
+    set_symmetry(dta, 0); set_symmetry(dtb, 0);
+    set_random(dta); set_random(dtb);
+    T.start_timer("ctf0[nosym]");
     expr_1(dta, dtb, dtc);
-    T.stop_timer("ctf");
+    T.stop_timer("ctf0[nosym]");
+
+    set_symmetry(dta, 1); set_symmetry(dtb, 1);
+    set_random(dta); set_random(dtb);
+    T.start_timer("ctf1[jilk]");
+    expr_1(dta, dtb, dtc);
+    T.stop_timer("ctf1[jilk]");
+
+    set_symmetry(dta, 2); set_symmetry(dtb, 2);
+    set_random(dta); set_random(dtb);
+    T.start_timer("ctf2[ji,lk]");
+    expr_1(dta, dtb, dtc);
+    T.stop_timer("ctf2[ji,lk]");
 
     if(master) T.print_timings(std::cout);
 
