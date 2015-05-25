@@ -131,6 +131,16 @@ void ctf_tod_contract2_special(
     };
 }
 
+void ctf_tod_contract2_copies(
+    tCTF_Tensor<double> &tx,
+    ctf_dense_tensor_i<4, double> &tx1,
+    ctf_dense_tensor_i<4, double> &tx2) {
+
+    ctf_dense_tensor_ctrl<4, double> cx1(tx1), cx2(tx2);
+    cx1.req_ctf_tensor()["ijkl"] = 0.5 * tx["ijkl"];
+    cx2.req_ctf_tensor()["ijkl"] = 0.5 * tx["ijkl"];
+}
+
 void ctf_tod_contract2_special(
     const contraction2<2, 2, 2> &contr,
     ctf_dense_tensor_i<4, double> &ta,
@@ -163,20 +173,36 @@ void ctf_tod_contract2_special(
     tagc[0] = 1; tagc[1] = 1;
     ctf_symmetry<NC, double> asymc(grpc, tagc);
 
+    ctf_dense_tensor_ctrl<NA, double> ca(ta);
+    ctf_dense_tensor_ctrl<NA, double> cb(tb);
+
+    int symx[NA] = { SY, NS, NS, NS };
+    tCTF_Tensor<double> txa(ca.req_ctf_tensor(), symx);
+    tCTF_Tensor<double> txb(cb.req_ctf_tensor(), symx);
+
     ctf_dense_tensor<NA, double> xa1(ta.get_dims(), syma);
     ctf_dense_tensor<NA, double> xa2(ta.get_dims(), asyma);
     ctf_dense_tensor<NB, double> xb1(tb.get_dims(), symb);
     ctf_dense_tensor<NB, double> xb2(tb.get_dims(), asymb);
     ctf_dense_tensor<NC, double> xc1(tc.get_dims(), symc);
     ctf_dense_tensor<NC, double> xc2(tc.get_dims(), asymc);
+/*
     ctf_tod_copy<NA>(ta).perform(true, xa1);
     ctf_tod_copy<NB>(tb).perform(true, xb1);
-    ctf_tod_contract2<N, M, K>(contr, xa1, xb1).perform(true, xc1);
     ctf_tod_copy<NA>(ta).perform(true, xa2);
     ctf_tod_copy<NB>(tb).perform(true, xb2);
+ */
+    ctf_tod_contract2_copies(txa, xa1, xa2);
+    ctf_tod_contract2_copies(txb, xb1, xb2);
+
+    ctf_tod_contract2<N, M, K>(contr, xa1, xb1).perform(true, xc1);
     ctf_tod_contract2<N, M, K>(contr, xa2, xb2).perform(true, xc2);
     ctf_tod_copy<NC>(xc1, d).perform(zero, tc);
     ctf_tod_copy<NC>(xc2, d).perform(false, tc);
+/*
+    ctf_tod_contract2<N, M, K>(contr, xa1, xb1, d).perform(zero, tc);
+    ctf_tod_contract2<N, M, K>(contr, xa2, xb2, d).perform(false, tc);
+ */
 }
 
 } // unnamed namespace
