@@ -33,6 +33,7 @@ class ctf_symmetry {
 private:
     sequence<N, unsigned> m_grp; //!< Symmetry groups
     sequence<N, unsigned> m_sym; //!< Symmetric (0) or antisymmetric (1) groups
+    bool m_jilk; //!< Specific case of (ijkl->jilk) symmetry
 
 public:
     /** \brief Default constructor
@@ -42,10 +43,12 @@ public:
     /** \brief Initializing constructor
         \param grp Symmetry groups
         \param sym Symmetric (0) or antisymmetric (1) indicators
+        \param jilk Specific case of (ijkl->jilk) symmetry
      **/
     ctf_symmetry(
         const sequence<N, unsigned> &grp,
-        const sequence<N, unsigned> &sym);
+        const sequence<N, unsigned> &sym,
+        bool jilk = false);
 
     /** \brief Returns the symmetry subgroup index array
      **/
@@ -57,6 +60,12 @@ public:
      **/
     const sequence<N, unsigned> &get_sym() const {
         return m_sym;
+    }
+
+    /** \brief Returns true if this is a specific case of (ijkl->jilk) symmetry
+     **/
+    bool is_jilk() const {
+        return m_jilk;
     }
 
     /** \brief Returns true if given symmetry is a subgroup of this symmetry

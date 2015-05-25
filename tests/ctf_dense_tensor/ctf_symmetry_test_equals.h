@@ -11,6 +11,9 @@ bool ctf_symmetry_test_equals(
     const ctf_symmetry<N, T> &sym1,
     const ctf_symmetry<N, T> &sym2) {
 
+    if(sym1.is_jilk() && sym2.is_jilk()) return true;
+    if(sym1.is_jilk() != sym2.is_jilk()) return false;
+
     const sequence<N, unsigned> &grp1 = sym1.get_grp();
     const sequence<N, unsigned> &indic1 = sym1.get_sym();
     const sequence<N, unsigned> &grp2 = sym2.get_grp();

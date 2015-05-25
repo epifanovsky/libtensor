@@ -8,11 +8,24 @@ namespace libtensor {
 
 
 template<size_t N, typename T>
+bool is_jilk_symmetry(const tensor_transf<N, T> &tr) {
+    return false;
+}
+template<typename T>
+bool is_jilk_symmetry(const tensor_transf<4, T> &tr) {
+    tensor_transf<4, T> jilk(permutation<4>().permute(0, 1).permute(2, 3),
+        scalar_transf<T>());
+    return tr == jilk;
+}
+
+
+template<size_t N, typename T>
 ctf_symmetry<N, T> ctf_symmetry_builder<N, T>::build(
     const transf_list<N, T> &trl) {
 
     sequence<N, unsigned> grp(0), grpind(0);
     for(size_t i = 0; i < N; i++) grp[i] = i;
+    bool has_jilk_sym = false;
 
     for(typename transf_list<N, T>::iterator i = trl.begin();
         i != trl.end(); ++i) {
@@ -27,8 +40,10 @@ ctf_symmetry<N, T> ctf_symmetry_builder<N, T>::build(
             jdiff = j;
             ndiff++;
         }
+        has_jilk_sym = is_jilk_symmetry(tr);
         if(ndiff != 2) continue; // Skip all non-pairwise permutations
 
+        has_jilk_sym = false; // In the presence of pairwise sym don't use jilk
         sequence<N, unsigned> grp2(grp);
         tr.get_perm().apply(grp2);
         unsigned g1 = grp[jdiff], g2 = grp2[jdiff];
@@ -40,7 +55,7 @@ ctf_symmetry<N, T> ctf_symmetry_builder<N, T>::build(
         grpind[g1] = symasym;
     }
 
-    return ctf_symmetry<N, T>(grp, grpind);
+    return ctf_symmetry<N, T>(grp, grpind, has_jilk_sym);
 }
 
 

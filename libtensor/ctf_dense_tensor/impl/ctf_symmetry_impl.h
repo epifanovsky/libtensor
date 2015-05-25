@@ -14,12 +14,15 @@ ctf_symmetry<N, T>::ctf_symmetry() {
         m_grp[i] = i;
         m_sym[i] = 0;
     }
+    m_jilk = false;
 }
 
 
 template<size_t N, typename T>
 ctf_symmetry<N, T>::ctf_symmetry(const sequence<N, unsigned> &grp,
-    const sequence<N, unsigned> &sym) : m_grp(grp), m_sym(sym) {
+    const sequence<N, unsigned> &sym, bool jilk) :
+
+    m_grp(grp), m_sym(sym), m_jilk(jilk) {
 
 }
 
