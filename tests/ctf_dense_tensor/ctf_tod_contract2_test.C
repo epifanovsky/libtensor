@@ -25,6 +25,10 @@ void ctf_tod_contract2_test::perform() throw(libtest::test_exception) {
         test_3b();
         test_4(0.0);
         test_4(-0.3);
+        test_5(0.0);
+        test_5(1.6);
+        test_6(0.0);
+        test_6(-1.6);
 
     } catch(...) {
         ctf::exit();
@@ -351,6 +355,159 @@ void ctf_tod_contract2_test::test_4(double d) {
     ctf_tod_collect<2>(dtc).perform(tc);
 
     compare_ref<2>::compare(testname, tc, tc_ref, 5e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_contract2_test::test_5(double d) {
+
+    std::ostringstream tnss;
+    tnss << "ctf_tod_contract2_test::test_5(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> ia1, ia2;
+    ia2[0] = 9; ia2[1] = 9; ia2[2] = 9; ia2[3] = 9;
+    sequence<4, unsigned> syma_grp, syma_sym;
+    syma_grp[0] = 0; syma_grp[1] = 1; syma_grp[2] = 2; syma_grp[3] = 3;
+    dimensions<4> dimsa(index_range<4>(ia1, ia2));
+    ctf_symmetry<4, double> syma(syma_grp, syma_sym, true);
+
+    index<4> ib1, ib2;
+    ib2[0] = 9; ib2[1] = 9; ib2[2] = 9; ib2[3] = 9;
+    sequence<4, unsigned> symb_grp, symb_sym;
+    symb_grp[0] = 0; symb_grp[1] = 1; symb_grp[2] = 2; symb_grp[3] = 3;
+    dimensions<4> dimsb(index_range<4>(ib1, ib2));
+    ctf_symmetry<4, double> symb(symb_grp, symb_sym, true);
+
+    index<4> ic1, ic2;
+    ic2[0] = 9; ic2[1] = 9; ic2[2] = 9; ic2[3] = 9;
+    sequence<4, unsigned> symc_grp, symc_sym;
+    symc_grp[0] = 0; symc_grp[1] = 1; symc_grp[2] = 2; symc_grp[3] = 3;
+    dimensions<4> dimsc(index_range<4>(ic1, ic2));
+    ctf_symmetry<4, double> symc(symc_grp, symc_sym, true);
+    dense_tensor<4, double, allocator_t> ta0(dimsa), ta(dimsa);
+    dense_tensor<4, double, allocator_t> tb0(dimsb), tb(dimsb);
+    dense_tensor<4, double, allocator_t> tc0(dimsc), tc(dimsc), tc_ref(dimsc);
+    ctf_dense_tensor<4, double> dta(dimsa, syma);
+    ctf_dense_tensor<4, double> dtb(dimsb, symb);
+    ctf_dense_tensor<4, double> dtc(dimsc, symc);
+
+    tod_random<4>().perform(ta0);
+    tod_copy<4>(ta0).perform(true, ta);
+    tod_copy<4>(ta0, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, ta);
+    tod_random<4>().perform(tb0);
+    tod_copy<4>(tb0).perform(true, tb);
+    tod_copy<4>(tb0, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, tb);
+    tod_random<4>().perform(tc0);
+    tod_copy<4>(tc0).perform(true, tc);
+    tod_copy<4>(tc0, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, tc);
+    tod_copy<4>(tc).perform(true, tc_ref);
+
+    ctf_tod_distribute<4>(ta).perform(dta);
+    ctf_tod_distribute<4>(tb).perform(dtb);
+    ctf_tod_distribute<4>(tc).perform(dtc);
+
+    // c(ijkl) = a(pqkl) b(ijpq)
+    contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).permute(1, 3));
+    contr.contract(0, 2);
+    contr.contract(1, 3);
+    if(d == 0.0) {
+        tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
+        ctf_tod_contract2<2, 2, 2>(contr, dta, dtb).perform(true, dtc);
+    } else {
+        tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc_ref);
+        ctf_tod_contract2<2, 2, 2>(contr, dta, dtb, d).perform(false, dtc);
+    }
+
+    ctf_tod_collect<4>(dtc).perform(tc);
+
+    compare_ref<4>::compare(testname, tc, tc_ref, 5e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_contract2_test::test_6(double d) {
+
+    std::ostringstream tnss;
+    tnss << "ctf_tod_contract2_test::test_6(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> ia1, ia2;
+    ia2[0] = 9; ia2[1] = 9; ia2[2] = 9; ia2[3] = 9;
+    sequence<4, unsigned> syma_grp, syma_sym;
+    syma_grp[0] = 0; syma_grp[1] = 1; syma_grp[2] = 2; syma_grp[3] = 3;
+    dimensions<4> dimsa(index_range<4>(ia1, ia2));
+    ctf_symmetry<4, double> syma(syma_grp, syma_sym, true);
+
+    index<4> ib1, ib2;
+    ib2[0] = 9; ib2[1] = 9; ib2[2] = 9; ib2[3] = 9;
+    sequence<4, unsigned> symb_grp, symb_sym;
+    symb_grp[0] = 0; symb_grp[1] = 1; symb_grp[2] = 2; symb_grp[3] = 3;
+    dimensions<4> dimsb(index_range<4>(ib1, ib2));
+    ctf_symmetry<4, double> symb(symb_grp, symb_sym, true);
+
+    index<4> ic1, ic2;
+    ic2[0] = 9; ic2[1] = 9; ic2[2] = 9; ic2[3] = 9;
+    sequence<4, unsigned> symc_grp, symc_sym;
+    symc_grp[0] = 0; symc_grp[1] = 1; symc_grp[2] = 2; symc_grp[3] = 3;
+    dimensions<4> dimsc(index_range<4>(ic1, ic2));
+    ctf_symmetry<4, double> symc(symc_grp, symc_sym);
+    dense_tensor<4, double, allocator_t> ta0(dimsa), ta(dimsa);
+    dense_tensor<4, double, allocator_t> tb0(dimsb), tb(dimsb);
+    dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+    ctf_dense_tensor<4, double> dta(dimsa, syma);
+    ctf_dense_tensor<4, double> dtb(dimsb, symb);
+    ctf_dense_tensor<4, double> dtc(dimsc, symc);
+
+    tod_random<4>().perform(ta0);
+    tod_copy<4>(ta0).perform(true, ta);
+    tod_copy<4>(ta0, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, ta);
+    tod_random<4>().perform(tb0);
+    tod_copy<4>(tb0).perform(true, tb);
+    tod_copy<4>(tb0, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, tb);
+    tod_random<4>().perform(tc);
+    tod_copy<4>(tc).perform(true, tc_ref);
+
+    ctf_tod_distribute<4>(ta).perform(dta);
+    ctf_tod_distribute<4>(tb).perform(dtb);
+    ctf_tod_distribute<4>(tc).perform(dtc);
+
+    // c(ijkl) = a(pqkl) b(ijpq)
+    contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).permute(1, 3));
+    contr.contract(0, 2);
+    contr.contract(1, 3);
+    if(d == 0.0) {
+        tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
+        ctf_tod_contract2<2, 2, 2>(contr, dta, dtb).perform(true, dtc);
+    } else {
+        tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc_ref);
+        ctf_tod_contract2<2, 2, 2>(contr, dta, dtb, d).perform(false, dtc);
+    }
+
+    ctf_tod_collect<4>(dtc).perform(tc);
+
+    compare_ref<4>::compare(testname, tc, tc_ref, 5e-14);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

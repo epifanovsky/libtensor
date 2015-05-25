@@ -20,6 +20,8 @@ private:
     void test_3a();
     void test_3b();
     void test_4(double d);
+    void test_5(double d);
+    void test_6(double d);
 
 };
 
