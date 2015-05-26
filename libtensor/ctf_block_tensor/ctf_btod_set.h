@@ -35,10 +35,7 @@ public:
     /** \brief Performs the operation
         \param bta Output block tensor.
      **/
-    void perform(ctf_block_tensor_wr_i<N, double> &bta) {
-
-        m_gbto.perform(bta);
-    }
+    void perform(ctf_block_tensor_i<N, double> &bta);
 
 };
 
