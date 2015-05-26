@@ -59,8 +59,8 @@ void set_symmetry(btensor<4, double> &bt, int z) {
 }
 
 void set_random(btensor<4, double> &bt) {
-    //btod_set<4>(1.0).perform(bt);
-    btod_random<4>().perform(bt);
+    btod_set<4>(1.0).perform(bt);
+    //btod_random<4>().perform(bt);
 }
 
 void set_symmetry(ctf_btensor<4, double> &bt, int z) {
@@ -82,8 +82,8 @@ void set_symmetry(ctf_btensor<4, double> &bt, int z) {
 
 
 void set_random(ctf_btensor<4, double> &bt) {
-    //ctf_btod_set<4>(1.0).perform(bt);
-    ctf_btod_random<4>().perform(bt);
+    ctf_btod_set<4>(1.0).perform(bt);
+    //ctf_btod_random<4>().perform(bt);
 }
 
 void expr_1(any_tensor<4, double> &ta, any_tensor<4, double> &tb,
@@ -120,31 +120,28 @@ int main(int argc, char **argv) {
     T.start_timer("libtensor0[nosym]");
     expr_1(bta, btb, btc);
     T.stop_timer("libtensor0[nosym]");
-
-    set_symmetry(bta, 1); set_symmetry(btb, 1);
-    set_random(bta); set_random(btb);
-    T.start_timer("libtensor1[jilk]");
-    expr_1(bta, btb, btc);
-    T.stop_timer("libtensor1[jilk]");
-
-    set_symmetry(bta, 2); set_symmetry(btb, 2);
-    set_random(bta); set_random(btb);
-    T.start_timer("libtensor2[ji,lk]");
-    expr_1(bta, btb, btc);
-    T.stop_timer("libtensor2[ji,lk]");
-
     set_symmetry(dta, 0); set_symmetry(dtb, 0);
     set_random(dta); set_random(dtb);
     T.start_timer("ctf0[nosym]");
     expr_1(dta, dtb, dtc);
     T.stop_timer("ctf0[nosym]");
 
+    set_symmetry(bta, 1); set_symmetry(btb, 1);
+    set_random(bta); set_random(btb);
+    T.start_timer("libtensor1[jilk]");
+    expr_1(bta, btb, btc);
+    T.stop_timer("libtensor1[jilk]");
     set_symmetry(dta, 1); set_symmetry(dtb, 1);
     set_random(dta); set_random(dtb);
     T.start_timer("ctf1[jilk]");
     expr_1(dta, dtb, dtc);
     T.stop_timer("ctf1[jilk]");
 
+    set_symmetry(bta, 2); set_symmetry(btb, 2);
+    set_random(bta); set_random(btb);
+    T.start_timer("libtensor2[ji,lk]");
+    expr_1(bta, btb, btc);
+    T.stop_timer("libtensor2[ji,lk]");
     set_symmetry(dta, 2); set_symmetry(dtb, 2);
     set_random(dta); set_random(dtb);
     T.start_timer("ctf2[ji,lk]");
