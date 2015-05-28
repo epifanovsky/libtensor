@@ -309,8 +309,9 @@ expr_rhs<N, T> shift(const label<M> &l, T &value,
 
 namespace libtensor {
 
-using expr::diag;
+using expr::set;
+using expr::shift;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_EXPR_OPERATORS_DIAG_H
+#endif // LIBTENSOR_EXPR_OPERATORS_SET_H
