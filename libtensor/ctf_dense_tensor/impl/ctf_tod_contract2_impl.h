@@ -130,8 +130,20 @@ void ctf_tod_contract2_copies(
     ctf_dense_tensor_ctrl<N, double> ca(ta), ca1(ta1), ca2(ta2);
     char mapa[N], mapb[N];
     for(size_t i = 0; i < N; i++) mapa[i] = mapb[i] = char(i) + 1;
-    ca1.req_ctf_tensor().sum(0.25, ca.req_ctf_tensor(), mapa, 0.0, mapb);
-    ca2.req_ctf_tensor().sum(0.25, ca.req_ctf_tensor(), mapa, 0.0, mapb);
+
+    mapa[0] = char(2); mapa[1] = char(1);
+    tCTF_Tensor<double> txa1(ca.req_ctf_tensor(), true);
+    tCTF_Tensor<double> txa2(ca.req_ctf_tensor(), true);
+    txa1[mapb] += ca.req_ctf_tensor()[mapa];
+    txa2[mapb] -= ca.req_ctf_tensor()[mapa];
+
+    tCTF_Tensor<double> tya1(txa1, ca1.req_ctf_tensor().sym);
+    tCTF_Tensor<double> tya2(txa2, ca2.req_ctf_tensor().sym);
+
+    ca1.req_ctf_tensor()[mapa] = 0.5 * tya1[mapa];
+    ca2.req_ctf_tensor()[mapa] = 0.5 * tya2[mapa];
+    //ca1.req_ctf_tensor().sum(0.25, ca.req_ctf_tensor(), mapa, 0.0, mapb);
+    //ca2.req_ctf_tensor().sum(0.25, ca.req_ctf_tensor(), mapa, 0.0, mapb);
 }
 
 template<size_t N, size_t M, size_t K>
