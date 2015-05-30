@@ -73,7 +73,19 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     const ctf_symmetry<N, double> &symb = cb.req_symmetry();
     double z = ctf_symmetry<N, double>::symconv_factor(syma, symb);
 
+    static char sym[] = "NSAH";
+    char variant[N * 2 + 2];
+    int sa[N], sb[N];
+    syma.write(sa); symb.write(sb);
+    for(size_t i = 0; i < N; i++) {
+        variant[i] = sym[sa[i]];
+        variant[N + i + 1] = sym[sb[i]];
+    }
+    variant[N] = '_'; variant[2 * N + 1] = '\0';
+
+    ctf_tod_copy::start_timer(variant);
     dtb.sum(c * z, dta, mapa, zero ? 0.0 : 1.0, mapb);
+    ctf_tod_copy::stop_timer(variant);
 }
 
 

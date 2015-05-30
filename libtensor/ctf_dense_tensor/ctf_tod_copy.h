@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_CTF_TOD_COPY_H
 #define LIBTENSOR_CTF_TOD_COPY_H
 
+#include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/core/tensor_transf.h>
@@ -18,7 +19,7 @@ namespace libtensor {
     \ingroup libtensor_ctf_dense_tensor
  **/
 template<size_t N>
-class ctf_tod_copy : public noncopyable {
+class ctf_tod_copy : public timings< ctf_tod_copy<N> >, public noncopyable {
 public:
     static const char k_clazz[]; //!< Class name
 

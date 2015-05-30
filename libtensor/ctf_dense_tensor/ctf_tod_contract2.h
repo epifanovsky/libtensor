@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_CTF_TOD_CONTRACT2_H
 #define LIBTENSOR_CTF_TOD_CONTRACT2_H
 
+#include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
@@ -21,7 +22,10 @@ namespace libtensor {
     \ingroup libtensor_ctf_dense_tensor
  **/
 template<size_t N, size_t M, size_t K>
-class ctf_tod_contract2 : public noncopyable {
+class ctf_tod_contract2 :
+    public timings< ctf_tod_contract2<N, M, K> >,
+    public noncopyable {
+
 public:
     static const char k_clazz[]; //!< Class name
 
