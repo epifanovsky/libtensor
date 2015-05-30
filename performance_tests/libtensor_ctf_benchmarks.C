@@ -93,6 +93,18 @@ void expr_1(any_tensor<4, double> &ta, any_tensor<4, double> &tb,
     tc(i|j|a|b) = contract(c|d, ta(a|b|c|d), tb(i|j|c|d));
 }
 
+void expr_2(any_tensor<4, double> &ta, expr_lhs<4, double> &tb) {
+
+    letter i, j, a, b, c, d;
+    tb(i|j|a|b) = ta(i|j|a|b) + ta(j|i|a|b);
+}
+
+void expr_3(any_tensor<4, double> &ta, expr_lhs<4, double> &tb) {
+
+    letter i, j, a, b, c, d;
+    tb(i|j|a|b) = ta(i|j|a|b) + ta(i|j|b|a);
+}
+
 
 int main(int argc, char **argv) {
 
@@ -107,14 +119,17 @@ int main(int argc, char **argv) {
 
     bench_timings T;
 
-    size_t n = 64;
-    bispace<1> x(n), z(n);
-    for(size_t i = 16; i < n; i+=16) z.split(i);
-    bispace<4> xxxx(x&x&x&x), zzzz(z&z&z&z);
+    size_t ni = 16, na = 128;
+    bispace<1> si(ni), sj(ni), sa(na), sb(na);
+    for(size_t i = 16; i < na; i+=16) sa.split(i);
+    bispace<2> sii(si&si), sjj(sj&sj), saa(sa&sa), sbb(sb&sb);
+    bispace<4> bbbb(sbb&sbb), aaaa(saa&saa);
+    bispace<4> jjbb(sjj|sbb), iiaa(sii|saa);
 
-    btensor<4, double> bta(zzzz), btb(zzzz), btc(zzzz);
-    ctf_btensor<4, double> dta(xxxx), dtb(xxxx), dtc(xxxx);
+    btensor<4, double> bta(aaaa), btb(iiaa), btc(iiaa), btd(aaaa);
+    ctf_btensor<4, double> dta(bbbb), dtb(jjbb), dtc(jjbb), dtd(bbbb);
 
+/*
     set_symmetry(bta, 0); set_symmetry(btb, 0);
     set_random(bta); set_random(btb);
     T.start_timer("libtensor0[nosym]");
@@ -147,6 +162,29 @@ int main(int argc, char **argv) {
     T.start_timer("ctf2[ji,lk]");
     expr_1(dta, dtb, dtc);
     T.stop_timer("ctf2[ji,lk]");
+ */
+
+    set_symmetry(bta, 0);
+    set_random(bta);
+    T.start_timer("libtensor[ijab+jiab]");
+    expr_2(bta, btd);
+    T.stop_timer("libtensor[ijab+jiab]");
+    set_symmetry(dta, 0);
+    set_random(dta);
+    T.start_timer("ctf[ijab+jiab]");
+    expr_2(dta, dtd);
+    T.stop_timer("ctf[ijab+jiab]");
+
+    set_symmetry(bta, 0);
+    set_random(bta);
+    T.start_timer("libtensor[ijab+ijba]");
+    expr_2(bta, btd);
+    T.stop_timer("libtensor[ijab+ijba]");
+    set_symmetry(dta, 0);
+    set_random(dta);
+    T.start_timer("ctf[ijab+ijba]");
+    expr_2(dta, dtd);
+    T.stop_timer("ctf[ijab+ijba]");
 
     if(master) T.print_timings(std::cout);
 
