@@ -31,7 +31,7 @@ public:
 private:
     dimensions<N> m_dims; //!< Tensor dimensions
     ctf_symmetry<N, T> m_sym; //!< Tensor symmetry
-    tCTF_Tensor<double> *m_tens; //!< CTF tensor
+    std::vector< CTF::Tensor<T>* > m_tens; //!< CTF tensors
 
 public:
     /** \brief Creates a new tensor
@@ -54,13 +54,14 @@ public:
     virtual const dimensions<N> &get_dims() const;
 
 protected:
-    /** \brief Returns the CTF tensor object
-     **/
-    virtual tCTF_Tensor<T> &on_req_ctf_tensor();
-
     /** \brief Handles requests for the symmetry of the CTF tensor
      **/
     virtual const ctf_symmetry<N, T> &on_req_symmetry();
+
+    /** \brief Returns the CTF tensor object
+        \param icomp Symmetry component
+     **/
+    virtual CTF::Tensor<T> &on_req_ctf_tensor(size_t icomp);
 
     /** \brief Resets the symmetry of the CTF tensor
      **/

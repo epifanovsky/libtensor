@@ -29,7 +29,7 @@ void ctf_tod_set_diag<N>::perform(ctf_dense_tensor_i<N, double> &ta) {
     for(size_t i = 0; i < N; i++) inc += dims.get_increment(i);
 
     ctf_dense_tensor_ctrl<N, double> ca(ta);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
 
     const size_t bufsz = 1024 * 1024;
     std::vector<long_int> idx(bufsz);

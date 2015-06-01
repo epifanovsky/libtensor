@@ -27,16 +27,17 @@ public:
      **/
     virtual ~ctf_dense_tensor_ctrl() { }
 
-    /** \brief Requests the CTF tensor object
-     **/
-    tCTF_Tensor<T> &req_ctf_tensor() {
-        return m_t.on_req_ctf_tensor();
-    }
-
     /** \brief Requests the symmetry of the CTF tensor
      **/
     const ctf_symmetry<N, T> &req_symmetry() {
         return m_t.on_req_symmetry();
+    }
+
+    /** \brief Requests the CTF tensor object
+        \param icomp Symmetry component
+     **/
+    CTF::Tensor<T> &req_ctf_tensor(size_t icomp = 0) {
+        return m_t.on_req_ctf_tensor(icomp);
     }
 
     /** \brief Resets the symmetry of the CTF tensor

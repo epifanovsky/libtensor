@@ -24,7 +24,7 @@ template<size_t N>
 void ctf_tod_scale<N>::perform(ctf_dense_tensor_i<N, double> &ta) {
 
     ctf_dense_tensor_ctrl<N, double> ca(ta);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
 
     char mapa[N];
     for(size_t i = 0; i < N; i++) mapa[i] = char(i + 1);

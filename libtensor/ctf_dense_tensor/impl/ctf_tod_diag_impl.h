@@ -40,8 +40,8 @@ void ctf_tod_diag<N, M>::perform(
 
     ctf_dense_tensor_ctrl<NA, double> ca(m_ta);
     ctf_dense_tensor_ctrl<NB, double> cb(tb);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
-    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
 
     double c = m_trb.get_scalar_tr().get_coeff();
 

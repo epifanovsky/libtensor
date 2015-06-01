@@ -1,6 +1,8 @@
 #ifndef LIBTENSOR_CTF_SYMMETRY_H
 #define LIBTENSOR_CTF_SYMMETRY_H
 
+#include <utility>
+#include <vector>
 #include <libtensor/core/permutation.h>
 
 namespace libtensor {
@@ -11,10 +13,14 @@ namespace libtensor {
     \tparam T Tensor element type.
 
     This data structure stores information about the permutational symmetry
-    of a CTF tensor using the direct product of permutational subgroups.
-    Each permutational subgroup must be fully symmetric or antisymmetric.
-    Only pairwise index permutations are supported. Furthermore, permutational
-    symmetry in CTF is limited to adjacent tensor indices.
+    of a ctf_dense_tensor using symmetry components. The tensor is thus a sum
+    of its components.
+
+    Within each component, the symmetry is a direct product of permutational
+    subgroups. Each permutational subgroup must be fully symmetric or
+    antisymmetric with only pairwise index permutations supported. Furthermore,
+    permutational symmetry in CTF (and therefore within each symmetry component
+    here) is limited to adjacent tensor indices.
 
     Permutational symmetry is stored as a combination of two arrays, index
     grouping and the symmetric/antisymmetric indicator for each subgroup.
@@ -31,9 +37,11 @@ namespace libtensor {
 template<size_t N, typename T>
 class ctf_symmetry {
 private:
-    sequence<N, unsigned> m_grp; //!< Symmetry groups
-    sequence<N, unsigned> m_sym; //!< Symmetric (0) or antisymmetric (1) groups
-    bool m_jilk; //!< Specific case of (ijkl->jilk) symmetry
+    typedef std::pair< sequence<N, unsigned>, sequence<N, unsigned> >
+        symmetry_component_type;
+
+private:
+    std::vector<symmetry_component_type> m_sym; //!< Symmetry components
 
 public:
     /** \brief Default constructor
@@ -50,22 +58,39 @@ public:
         const sequence<N, unsigned> &sym,
         bool jilk = false);
 
-    /** \brief Returns the symmetry subgroup index array
+    /** \brief Adds a symmetry component
+        \param grp Symmetry groups
+        \param sym Symmetric (0) or antisymmetric (1) indicators
      **/
-    const sequence<N, unsigned> &get_grp() const {
-        return m_grp;
+    void add_component(
+        const sequence<N, unsigned> &grp,
+        const sequence<N, unsigned> &sym);
+
+    /** \brief Returns the number of symmetry components
+     **/
+    size_t get_ncomp() const {
+        return m_sym.size();
+    }
+
+    /** \brief Returns the symmetry subgroup index array
+        \param icomp Component number
+     **/
+    const sequence<N, unsigned> &get_grp(size_t icomp) const {
+        return m_sym[icomp].first;
     }
 
     /** \brief Returns the symmetric/antisymmetric indicator array
+        \param icomp Component index
      **/
-    const sequence<N, unsigned> &get_sym() const {
-        return m_sym;
+    const sequence<N, unsigned> &get_sym(size_t icomp) const {
+        return m_sym[icomp].second;
     }
 
-    /** \brief Returns true if this is a specific case of (ijkl->jilk) symmetry
-     **/
-    bool is_jilk() const {
-        return m_jilk;
+    const sequence<N, unsigned> &get_grp() const {
+        return get_grp(0);
+    }
+    const sequence<N, unsigned> &get_sym() const {
+        return get_sym(0);
     }
 
     /** \brief Returns true if given symmetry is a subgroup of this symmetry
@@ -78,7 +103,11 @@ public:
 
     /** \brief Exports symmetry in the CTF format
      **/
-    void write(int (&sym)[N]) const;
+    void write(size_t icomp, int (&sym)[N]) const;
+
+    void write(int (&sym)[N]) const {
+        write(0, sym);
+    }
 
 public:
     /** \brief Produces a compensation factor for A being symmetrized into

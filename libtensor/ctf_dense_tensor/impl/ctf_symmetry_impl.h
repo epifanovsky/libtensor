@@ -10,25 +10,44 @@ namespace libtensor {
 template<size_t N, typename T>
 ctf_symmetry<N, T>::ctf_symmetry() {
 
+    sequence<N, unsigned> grp, sym;
     for(size_t i = 0; i < N; i++) {
-        m_grp[i] = i;
-        m_sym[i] = 0;
+        grp[i] = i;
+        sym[i] = 0;
     }
-    m_jilk = false;
+    add_component(grp, sym);
 }
 
 
 template<size_t N, typename T>
 ctf_symmetry<N, T>::ctf_symmetry(const sequence<N, unsigned> &grp,
-    const sequence<N, unsigned> &sym, bool jilk) :
+    const sequence<N, unsigned> &sym, bool jilk) {
 
-    m_grp(grp), m_sym(sym), m_jilk(jilk) {
+    if(jilk) {
+        sequence<N, unsigned> grp, sym;
+        for(size_t i = 0; i < N/2; i++) grp[i] = 0;
+        for(size_t i = N/2; i < N; i++) grp[i] = 1;
+        sym[0] = 0; sym[1] = 0;
+        m_sym.push_back(std::make_pair(grp, sym));
+        sym[0] = 1; sym[1] = 1;
+        m_sym.push_back(std::make_pair(grp, sym));
+    } else {
+        m_sym.push_back(std::make_pair(grp, sym));
+    }
+}
 
+
+template<size_t N, typename T>
+void ctf_symmetry<N, T>::add_component(const sequence<N, unsigned> &grp,
+    const sequence<N, unsigned> &sym) {
+
+    m_sym.push_back(std::make_pair(grp, sym));
 }
 
 
 template<size_t N, typename T>
 bool ctf_symmetry<N, T>::is_subgroup(const ctf_symmetry<N, T> &other) const {
+
     return true;
 }
 
@@ -36,7 +55,9 @@ bool ctf_symmetry<N, T>::is_subgroup(const ctf_symmetry<N, T> &other) const {
 template<size_t N, typename T>
 void ctf_symmetry<N, T>::permute(const permutation<N> &perm) {
 
-    perm.apply(m_grp);
+    for(size_t i = 0; i < m_sym.size(); i++) {
+        perm.apply(m_sym[i].first);
+    }
 }
 
 
@@ -46,19 +67,21 @@ namespace {
 
 
 template<size_t N, typename T>
-void ctf_symmetry<N, T>::write(int (&sym)[N]) const {
+void ctf_symmetry<N, T>::write(size_t icomp, int (&sym)[N]) const {
 
     if(g_use_ctf_symmetry) {
 
+        const sequence<N, unsigned> &grp0 = m_sym[icomp].first;
+        const sequence<N, unsigned> &sym0 = m_sym[icomp].second;
         sequence<N, unsigned> grp(0);
-        for(size_t i = 0; i < N; i++) grp[i] = m_grp[N - 1 - i];
+        for(size_t i = 0; i < N; i++) grp[i] = grp0[N - 1 - i];
         size_t i = 0;
         size_t symidx = 0;
         while(i < N) {
             unsigned g = grp[i];
             size_t i0 = i;
             while(i < N && grp[i] == g) i++;
-            int symasym = m_sym[g] == 0 ? SY : AS;
+            int symasym = sym0[g] == 0 ? SY : AS;
             sym[i0] = NS;
             for(size_t j = i0 + 1; j < i; j++) {
                 sym[j - 1] = symasym;

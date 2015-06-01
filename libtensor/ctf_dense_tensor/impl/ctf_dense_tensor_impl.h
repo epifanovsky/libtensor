@@ -53,7 +53,7 @@ ctf_dense_tensor<N, T>::ctf_dense_tensor(const dimensions<N> &dims,
 template<size_t N, typename T>
 ctf_dense_tensor<N, T>::~ctf_dense_tensor() {
 
-    delete m_tens;
+    for(size_t i = 0; i < m_tens.size(); i++) delete m_tens[i];
 }
 
 
@@ -65,13 +65,6 @@ const dimensions<N> &ctf_dense_tensor<N, T>::get_dims() const {
 
 
 template<size_t N, typename T>
-tCTF_Tensor<T> &ctf_dense_tensor<N, T>::on_req_ctf_tensor() {
-
-    return *m_tens;
-}
-
-
-template<size_t N, typename T>
 const ctf_symmetry<N, T> &ctf_dense_tensor<N, T>::on_req_symmetry() {
 
     return m_sym;
@@ -79,9 +72,17 @@ const ctf_symmetry<N, T> &ctf_dense_tensor<N, T>::on_req_symmetry() {
 
 
 template<size_t N, typename T>
+CTF::Tensor<T> &ctf_dense_tensor<N, T>::on_req_ctf_tensor(size_t icomp) {
+
+    return *m_tens[icomp];
+}
+
+
+template<size_t N, typename T>
 void ctf_dense_tensor<N, T>::on_reset_symmetry(const ctf_symmetry<N, T> &sym) {
 
-    delete m_tens;
+    for(size_t i = 0; i < m_tens.size(); i++) delete m_tens[i];
+    m_tens.clear();
     m_sym = sym;
 
     //  CTF stores tensors in the column-major format,
@@ -92,8 +93,14 @@ void ctf_dense_tensor<N, T>::on_reset_symmetry(const ctf_symmetry<N, T> &sym) {
         edge_len[i] = m_dims[N - i - 1];
         edge_sym[i] = NS;
     }
-    m_sym.write(edge_sym);
-    m_tens = new tCTF_Tensor<T>(N, edge_len, edge_sym, ctf::get_world());
+
+    size_t ncomp = m_sym.get_ncomp();
+    m_tens.resize(ncomp, 0);
+    for(size_t icomp = 0; icomp < ncomp; icomp++) {
+        m_sym.write(icomp, edge_sym);
+        m_tens[icomp] = new CTF::Tensor<T>(N, edge_len, edge_sym,
+            ctf::get_world());
+    }
 }
 
 
@@ -101,6 +108,8 @@ template<size_t N, typename T>
 void ctf_dense_tensor<N, T>::on_adjust_symmetry(const ctf_symmetry<N, T> &sym) {
 
     static const char method[] = "on_adjust_symmetry()";
+
+#if 0
 
     //  Check that the new symmetry is a subgroup of the original symmetry
     //  (i.e. no data will be lost)
@@ -116,6 +125,7 @@ void ctf_dense_tensor<N, T>::on_adjust_symmetry(const ctf_symmetry<N, T> &sym) {
     tmp.m_tens->sum(1.0, *m_tens, idxmap, 0.0, idxmap);
     std::swap(m_tens, tmp.m_tens);
     std::swap(m_sym, tmp.m_sym);
+#endif
 }
 
 

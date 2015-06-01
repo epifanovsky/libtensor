@@ -29,7 +29,7 @@ void ctf_tod_distribute<N>::perform(ctf_dense_tensor_i<N, double> &dt) {
     double *pdst;
 
     ctf_dense_tensor_ctrl<N, double> dctrl(dt);
-    tCTF_Tensor<double> &dta = dctrl.req_ctf_tensor();
+    CTF::Tensor<double> &dta = dctrl.req_ctf_tensor();
     dta.read_local(&np, &idx, &pdst);
 
     dense_tensor_rd_ctrl<N, double> ctrl(m_t);

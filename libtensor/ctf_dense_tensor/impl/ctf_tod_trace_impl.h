@@ -36,7 +36,7 @@ template<size_t N>
 double ctf_tod_trace<N>::calculate() {
 
     ctf_dense_tensor_ctrl<NA, double> ca(m_ta);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
 
     sequence<NA, int> seqa(0);
     sequence<N, int> seqb(0);
@@ -46,7 +46,7 @@ double ctf_tod_trace<N>::calculate() {
     char mapa[NA];
     for(size_t i = 0; i < NA; i++) mapa[i] = seqa[NA - i - 1] + 1;
 
-    tCTF_Scalar<double> dtb(0.0, ctf::get_world());
+    CTF::Scalar<double> dtb(0.0, ctf::get_world());
     dtb.sum(1.0, dta, mapa, 0.0, 0);
     return dtb.get_val();
 }

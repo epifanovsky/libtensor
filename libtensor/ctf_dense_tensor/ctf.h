@@ -11,7 +11,7 @@ class ctf : public libutil::singleton<ctf> {
     friend class libutil::singleton<ctf>;
 
 private:
-    tCTF_World<double> *m_world;
+    CTF::World *m_world;
 
 protected:
     ctf() { }
@@ -25,7 +25,7 @@ public:
         ctf::get_instance().do_exit();
     }
 
-    static tCTF_World<double> &get_world() {
+    static CTF::World &get_world() {
         return *ctf::get_instance().m_world;
     }
 
@@ -47,7 +47,7 @@ public:
 
 private:
     void do_init() {
-        m_world = new tCTF_World<double>();
+        m_world = new CTF::World;
     }
 
     void do_exit() {

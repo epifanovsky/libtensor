@@ -62,8 +62,8 @@ void ctf_tod_mult1<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
     }
 
     ctf_dense_tensor_ctrl<N, double> ca(ta), cb(m_tb);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
-    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
 
     sequence<N, int> seqa(0), seqb(0);
     for(size_t i = 0; i < N; i++) seqa[i] = seqb[i] = i;

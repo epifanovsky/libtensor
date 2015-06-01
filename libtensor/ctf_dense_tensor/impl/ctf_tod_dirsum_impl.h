@@ -45,9 +45,9 @@ void ctf_tod_dirsum<N, M>::perform(
     ctf_dense_tensor_ctrl<NA, double> ca(m_ta);
     ctf_dense_tensor_ctrl<NB, double> cb(m_tb);
     ctf_dense_tensor_ctrl<NC, double> cc(tc);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
-    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
-    tCTF_Tensor<double> &dtc = cc.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
+    CTF::Tensor<double> &dtc = cc.req_ctf_tensor();
 
     sequence<NA, int> seqa(0);
     sequence<NB, int> seqb(0);

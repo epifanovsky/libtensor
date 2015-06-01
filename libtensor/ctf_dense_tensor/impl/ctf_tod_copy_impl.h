@@ -54,8 +54,8 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     }
 
     ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(tb);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
-    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
 
     double c = m_tra.get_scalar_tr().get_coeff();
 

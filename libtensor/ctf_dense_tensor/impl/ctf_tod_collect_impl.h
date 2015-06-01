@@ -29,18 +29,24 @@ void ctf_tod_collect<N>::perform(dense_tensor_wr_i<N, double> &t) {
 
     ctf_dense_tensor_ctrl<N, double> dctrl(m_dt);
     dense_tensor_wr_ctrl<N, double> ctrl(t);
-
-    tCTF_Tensor<double> &dt = dctrl.req_ctf_tensor();
     double *p = ctrl.req_dataptr();
 
     ::memset(p, 0, sizeof(double) * sz);
 
-    const size_t bufsz = 1024 * 1024;
-    std::vector<long_int> idx(bufsz);
-    for(size_t i = 0; i < sz; i += bufsz) {
-        size_t n = std::min(sz - i, bufsz);
-        for(size_t j = 0; j < n; j++) idx[j] = long_int(i + j);
-        dt.read(n, &idx[0], p + i);
+    const ctf_symmetry<N, double> &sym = dctrl.req_symmetry();
+    for(size_t icomp = 0; icomp < sym.get_ncomp(); icomp++) {
+
+        CTF::Tensor<double> &dt = dctrl.req_ctf_tensor(icomp);
+
+        const size_t bufsz = 1024 * 1024;
+        std::vector<long_int> idx(bufsz);
+        std::vector<double> data(bufsz);
+        for(size_t i = 0; i < sz; i += bufsz) {
+            size_t n = std::min(sz - i, bufsz);
+            for(size_t j = 0; j < n; j++) idx[j] = long_int(i + j);
+            dt.read(n, &idx[0], &data[0]);
+            for(size_t j = 0; j < n; j++) p[i + j] += data[j];
+        }
     }
 
     ctrl.ret_dataptr(p);

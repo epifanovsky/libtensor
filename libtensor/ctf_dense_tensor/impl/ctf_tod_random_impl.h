@@ -29,7 +29,7 @@ template<size_t N>
 void ctf_tod_random<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
 
     ctf_dense_tensor_ctrl<N, double> ca(ta);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
 
     size_t sz = ta.get_dims().get_size();
     double *buf = new double[sz];

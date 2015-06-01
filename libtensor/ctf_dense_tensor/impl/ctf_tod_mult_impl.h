@@ -84,9 +84,9 @@ void ctf_tod_mult<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tc) {
     }
 
     ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
-    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
-    tCTF_Tensor<double> &dtc = cc.req_ctf_tensor();
+    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
+    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
+    CTF::Tensor<double> &dtc = cc.req_ctf_tensor();
 
     double c = m_c * m_tra.get_scalar_tr().get_coeff() *
         m_trb.get_scalar_tr().get_coeff();

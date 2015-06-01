@@ -102,6 +102,7 @@ ctf_symmetry<4, double> ctf_tod_contract2_symmetry(
     const sequence<NA + NB + NC, size_t> &conn = contr.get_conn();
 
     bool jilk = false;
+/*
     if(syma.is_jilk() && symb.is_jilk()) {
         mask<4> mca, mcb, mcc, m1100, m0011;
         m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
@@ -118,6 +119,7 @@ ctf_symmetry<4, double> ctf_tod_contract2_symmetry(
         for(unsigned i = 0; i < 4; i++) grpc[i] = i;
         return ctf_symmetry<4, double>(grpc, tagc, true);
     }
+ */
     return ctf_tod_contract2_symmetry_gen(contr, syma, symb);
 }
 
@@ -132,13 +134,13 @@ void ctf_tod_contract2_copies(
     for(size_t i = 0; i < N; i++) mapa[i] = mapb[i] = char(i) + 1;
 
     mapa[0] = char(2); mapa[1] = char(1);
-    tCTF_Tensor<double> txa1(ca.req_ctf_tensor(), true);
-    tCTF_Tensor<double> txa2(ca.req_ctf_tensor(), true);
+    CTF::Tensor<double> txa1(ca.req_ctf_tensor(), true);
+    CTF::Tensor<double> txa2(ca.req_ctf_tensor(), true);
     txa1[mapb] += ca.req_ctf_tensor()[mapa];
     txa2[mapb] -= ca.req_ctf_tensor()[mapa];
 
-    tCTF_Tensor<double> tya1(txa1, ca1.req_ctf_tensor().sym);
-    tCTF_Tensor<double> tya2(txa2, ca2.req_ctf_tensor().sym);
+    CTF::Tensor<double> tya1(txa1, ca1.req_ctf_tensor().sym);
+    CTF::Tensor<double> tya2(txa2, ca2.req_ctf_tensor().sym);
 
     ca1.req_ctf_tensor()[mapa] = 0.5 * tya1[mapa];
     ca2.req_ctf_tensor()[mapa] = 0.5 * tya2[mapa];
@@ -281,29 +283,16 @@ static void contract(
 const char ctf_tod_contract2_special<2, 2, 2>::k_clazz[] =
     "ctf_tod_contract2_special<2, 2, 2>";
 
-} // unnamed namespace
-
 template<size_t N, size_t M, size_t K>
-void ctf_tod_contract2<N, M, K>::perform(
-    bool zero,
-    ctf_dense_tensor_i<NC, double> &tc) {
+void ctf_tod_contract2_make_map(
+    const contraction2<N, M, K> &contr,
+    char (&map)[2 * (N + M + K)]) {
 
-    static const char method[] =
-        "perform(bool, ctf_dense_tensor_i<NC, double>&)";
+    enum {
+        NA = N + K, NB = M + K, NC = N + M
+    };
 
-    if(!m_dimsc.get_dims().equals(tc.get_dims())) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
-    }
-
-    ctf_dense_tensor_ctrl<NA, double> ca(m_ta);
-    ctf_dense_tensor_ctrl<NB, double> cb(m_tb);
-    ctf_dense_tensor_ctrl<NC, double> cc(tc);
-
-    ctf_symmetry<NC, double> symc = ctf_tod_contract2_symmetry(m_contr,
-        ca.req_symmetry(), cb.req_symmetry());
-
-    char map[NC + NA + NB];
-    const sequence<NA + NB + NC, size_t> &conn = m_contr.get_conn();
+    const sequence<NA + NB + NC, size_t> &conn = contr.get_conn();
     for(size_t i = 0; i < NC; i++) {
         map[i] = i + 1;
         size_t ii = conn[NC - i - 1] - NC;
@@ -325,22 +314,60 @@ void ctf_tod_contract2<N, M, K>::perform(
             j++;
         }
     }
+}
 
+} // unnamed namespace
+
+
+template<size_t N, size_t M, size_t K>
+void ctf_tod_contract2<N, M, K>::perform(
+    bool zero,
+    ctf_dense_tensor_i<NC, double> &tc) {
+
+    static const char method[] =
+        "perform(bool, ctf_dense_tensor_i<NC, double>&)";
+
+    if(!m_dimsc.get_dims().equals(tc.get_dims())) {
+        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
+    }
+
+    ctf_dense_tensor_ctrl<NA, double> ca(m_ta);
+    ctf_dense_tensor_ctrl<NB, double> cb(m_tb);
+    ctf_dense_tensor_ctrl<NC, double> cc(tc);
+
+    const ctf_symmetry<NA, double> &syma = ca.req_symmetry();
+    const ctf_symmetry<NB, double> &symb = cb.req_symmetry();
+
+    ctf_symmetry<NC, double> symc =
+        ctf_tod_contract2_symmetry(m_contr, syma, symb);
+
+/*
     if(symc.is_jilk()) {
         ctf_tod_contract2_special<N, M, K>::contract(m_contr,
             map, m_ta, m_tb, m_d, zero, tc);
         return;
     }
+ */
 
-    tCTF_Tensor<double> &dta = ca.req_ctf_tensor();
-    tCTF_Tensor<double> &dtb = cb.req_ctf_tensor();
-    tCTF_Tensor<double> &dtc = cc.req_ctf_tensor();
+    char map[NC + NA + NB];
+    ctf_tod_contract2_make_map(m_contr, map);
 
-    double z = ctf_symmetry<NC, double>::symconv_factor(symc,
-        cc.req_symmetry());
     ctf_tod_contract2::start_timer();
-    dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA], zero ? 0.0 : 1.0,
-        &map[0]);
+
+    for(size_t icompa = 0; icompa < syma.get_ncomp(); icompa++)
+    for(size_t icompb = 0; icompb < symb.get_ncomp(); icompb++) {
+
+        CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
+        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
+        CTF::Tensor<double> &dtc = cc.req_ctf_tensor(0);
+
+        double z = ctf_symmetry<NC, double>::symconv_factor(symc,
+            cc.req_symmetry());
+        dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA],
+            zero ? 0.0 : 1.0, &map[0]);
+        zero = false;
+    }
+
     ctf_tod_contract2::stop_timer();
 }
 

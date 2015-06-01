@@ -38,14 +38,15 @@ protected:
     //! \name Tensor events
     //@{
 
-    /** \brief Handles requests for the CTF tensor object
-        \return CTF tensor object
-     **/
-    virtual tCTF_Tensor<T> &on_req_ctf_tensor() = 0;
-
     /** \brief Handles requests for the symmetry of the CTF tensor
      **/
     virtual const ctf_symmetry<N, T> &on_req_symmetry() = 0;
+
+    /** \brief Handles requests for the CTF tensor object
+        \param icomp Symmetry component
+        \return CTF tensor object
+     **/
+    virtual CTF::Tensor<T> &on_req_ctf_tensor(size_t icomp) = 0;
 
     /** \brief Handles requests to reset the symmetry of the CTF tensor
      **/
