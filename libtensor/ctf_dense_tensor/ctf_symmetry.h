@@ -113,8 +113,8 @@ public:
     /** \brief Produces a compensation factor for A being symmetrized into
             higher symmetry of B by CTF
      **/
-    static T symconv_factor(const ctf_symmetry<N, T> &syma,
-        const ctf_symmetry<N, T> &symb);
+    static T symconv_factor(const ctf_symmetry<N, T> &syma, size_t icompa,
+        const ctf_symmetry<N, T> &symb, size_t icompb);
 
     /** \brief Sets a global flag to disable/enable use of symmetry in CTF
      **/

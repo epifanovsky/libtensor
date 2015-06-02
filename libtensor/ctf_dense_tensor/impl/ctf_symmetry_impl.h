@@ -122,11 +122,11 @@ unsigned long symmetry_factor(size_t N, int *sym) {
 
 template<size_t N, typename T>
 T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &syma,
-    const ctf_symmetry<N, T> &symb) {
+    size_t icompa, const ctf_symmetry<N, T> &symb, size_t icompb) {
 
     int sa[N], sb[N];
-    syma.write(sa);
-    symb.write(sb);
+    syma.write(icompa, sa);
+    symb.write(icompb, sb);
     for(size_t i = 0; i < N; i++) {
         if(sb[i] == NS) sa[i] = NS;
     }
@@ -134,7 +134,7 @@ T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &syma,
     unsigned long fb = symmetry_factor(N, sb);
 
     //  It might be tempting to optimize the expression below, but don't
-    //  do it to avoid errors. It is exactly right as it is.
+    //  do it to avoid errors. It is exactly right as written.
     return T(1.0 / double(fb / fa));
 }
 

@@ -361,8 +361,8 @@ void ctf_tod_contract2<N, M, K>::perform(
         CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
         CTF::Tensor<double> &dtc = cc.req_ctf_tensor(0);
 
-        double z = ctf_symmetry<NC, double>::symconv_factor(symc,
-            cc.req_symmetry());
+        double z = ctf_symmetry<NC, double>::symconv_factor(symc, 0,
+            cc.req_symmetry(), 0);
         dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA],
             zero ? 0.0 : 1.0, &map[0]);
         zero = false;

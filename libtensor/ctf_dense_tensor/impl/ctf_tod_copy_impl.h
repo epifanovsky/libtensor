@@ -5,6 +5,7 @@
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_copy.h"
+#include "ctf_tod_aux_symcomp.h"
 
 namespace libtensor {
 
@@ -54,38 +55,39 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     }
 
     ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(tb);
-    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
-    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
 
     double c = m_tra.get_scalar_tr().get_coeff();
 
     sequence<N, int> seqa(0), seqb(0);
-    char mapa[N], mapb[N];
+    char labela[N + 1], labelb[N + 1];
     for(size_t i = 0; i < N; i++) seqa[i] = seqb[i] = N - i - 1;
     m_tra.get_perm().apply(seqb);
     for(size_t i = 0; i < N; i++) {
-        mapa[i] = seqa[N - i - 1] + 1;
-        mapb[i] = seqb[N - i - 1] + 1;
+        labela[i] = seqa[N - i - 1] + 1;
+        labelb[i] = seqb[N - i - 1] + 1;
     }
+    labela[N] = '\0'; labelb[N] = '\0';
 
-    ctf_symmetry<N, double> syma(ca.req_symmetry());
-    syma.permute(m_tra.get_perm());
+    const ctf_symmetry<N, double> &syma = ca.req_symmetry();
     const ctf_symmetry<N, double> &symb = cb.req_symmetry();
-    double z = ctf_symmetry<N, double>::symconv_factor(syma, symb);
+    ctf_symmetry<N, double> symap(syma);
+    symap.permute(m_tra.get_perm());
 
-    static char sym[] = "NSAH";
-    char variant[N * 2 + 2];
-    int sa[N], sb[N];
-    syma.write(sa); symb.write(sb);
-    for(size_t i = 0; i < N; i++) {
-        variant[i] = sym[sa[i]];
-        variant[N + i + 1] = sym[sb[i]];
+    std::vector<bool> zerob(symb.get_ncomp(), zero);
+    for(size_t icompa = 0; icompa < symap.get_ncomp(); icompa++) {
+
+        size_t icompb = ctf_tod_aux_symcomp(symap, icompa, symb);
+        double z = ctf_symmetry<N, double>::symconv_factor(symap, icompa,
+            symb, icompb);
+
+        CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
+        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
+        ctf_tod_copy::start_timer();
+        if(zerob[icompb]) dtb[labelb] = c * z * dta[labela];
+        else dtb[labelb] += c * z * dta[labela];
+        zerob[icompb] = false;
+        ctf_tod_copy::stop_timer();
     }
-    variant[N] = '_'; variant[2 * N + 1] = '\0';
-
-    ctf_tod_copy::start_timer(variant);
-    dtb.sum(c * z, dta, mapa, zero ? 0.0 : 1.0, mapb);
-    ctf_tod_copy::stop_timer(variant);
 }
 
 

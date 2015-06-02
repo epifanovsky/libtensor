@@ -28,21 +28,36 @@ void ctf_tod_distribute<N>::perform(ctf_dense_tensor_i<N, double> &dt) {
     long_int np, *idx;
     double *pdst;
 
-    ctf_dense_tensor_ctrl<N, double> dctrl(dt);
-    CTF::Tensor<double> &dta = dctrl.req_ctf_tensor();
-    dta.read_local(&np, &idx, &pdst);
-
+    sequence<N, unsigned> symt_grp, symt_sym;
+    for(size_t i = 0; i < N; i++) symt_grp[i] = i;
+    ctf_symmetry<N, double> symt(symt_grp, symt_sym);
+    ctf_dense_tensor<N, double> dtmp(dt.get_dims(), symt);
+    ctf_dense_tensor_ctrl<N, double> dct(dtmp);
+    CTF::Tensor<double> &dtt = dct.req_ctf_tensor(0);
+    dtt.read_local(&np, &idx, &pdst);
     dense_tensor_rd_ctrl<N, double> ctrl(m_t);
     const double *psrc = ctrl.req_const_dataptr();
     for(size_t i = 0; i < np; i++) {
         pdst[i] = psrc[idx[i]];
     }
     ctrl.ret_const_dataptr(psrc);
-
-    dta.write(np, idx, pdst);
-
+    dtt.write(np, idx, pdst);
     free(idx);
     free(pdst);
+
+    ctf_dense_tensor_ctrl<N, double> dca(dt);
+    const ctf_symmetry<N, double> &syma = dca.req_symmetry();
+    char labela[N + 1];
+    for(size_t i = 0; i < N; i++) labela[i] = char(i) + 1;
+    labela[N] = '\0';
+
+    for(size_t icomp = 0; icomp < syma.get_ncomp(); icomp++) {
+        CTF::Tensor<double> &dta = dca.req_ctf_tensor(icomp);
+        double z = ctf_symmetry<N, double>::symconv_factor(symt, 0,
+            syma, icomp);
+        dta[labela] = z * dtt[labela];
+        dtt[labela] -= dta[labela];
+    }
 }
 
 

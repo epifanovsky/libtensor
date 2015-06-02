@@ -31,6 +31,8 @@ void ctf_tod_copy_test::perform() throw(libtest::test_exception) {
         test_8();
         test_9();
         test_10();
+        test_11();
+        test_12();
 
     } catch(...) {
         ctf::exit();
@@ -554,13 +556,85 @@ void ctf_tod_copy_test::test_10() {
 
     tod_copy<4>(tb).perform(true, tb_ref);
     tod_copy<4>(ta, permutation<4>().permute(0, 2).permute(1, 3), -0.5).
-        perform(false, tb_ref);
+        perform(true, tb_ref);
 
     ctf_tod_copy<4>(dta, permutation<4>().permute(0, 2).permute(1, 3), -0.5).
-        perform(false, dtb);
+        perform(true, dtb);
     ctf_tod_collect<4>(dtb).perform(tb);
 
     compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_copy_test::test_11() {
+
+    static const char testname[] = "ctf_tod_copy_test::test_11()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 99; i2[1] = 99;
+    dimensions<2> dimsa(index_range<2>(i1, i2)), dimsb(dimsa);
+    dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+    sequence<2, unsigned> sym_grp(0), sym_sym(0);
+    ctf_symmetry<2, double> sym(sym_grp, sym_sym);
+    sym_sym[0] = 1;
+    sym.add_component(sym_grp, sym_sym);
+    ctf_dense_tensor<2, double> dta(dimsa, sym), dtb(dimsb, sym);
+
+    tod_random<2>().perform(ta);
+    tod_random<2>().perform(tb);
+    tod_copy<2>(ta).perform(true, tb_ref);
+
+    ctf_tod_distribute<2>(ta).perform(dta);
+    ctf_tod_distribute<2>(tb).perform(dtb);
+
+    ctf_tod_copy<2>(dta).perform(true, dtb);
+    ctf_tod_collect<2>(dtb).perform(tb);
+
+    compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_copy_test::test_12() {
+
+    static const char testname[] = "ctf_tod_copy_test::test_12()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<2> i1, i2;
+    i2[0] = 99; i2[1] = 99;
+    dimensions<2> dimsa(index_range<2>(i1, i2)), dimsb(dimsa);
+    dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb), tb_ref(dimsb);
+    sequence<2, unsigned> sym_grp(0), sym_sym(0);
+    ctf_symmetry<2, double> sym(sym_grp, sym_sym);
+    sym_sym[0] = 1;
+    sym.add_component(sym_grp, sym_sym);
+    ctf_dense_tensor<2, double> dta(dimsa, sym), dtb(dimsb, sym);
+
+    tod_random<2>().perform(ta);
+    tod_random<2>().perform(tb);
+    tod_copy<2>(ta, permutation<2>().permute(0, 1)).perform(true, tb_ref);
+
+    ctf_tod_distribute<2>(ta).perform(dta);
+    ctf_tod_distribute<2>(tb).perform(dtb);
+
+    ctf_tod_copy<2>(dta, permutation<2>().permute(0, 1)).perform(true, dtb);
+    ctf_tod_collect<2>(dtb).perform(tb);
+
+    compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
