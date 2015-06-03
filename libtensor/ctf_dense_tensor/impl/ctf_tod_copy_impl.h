@@ -2,6 +2,7 @@
 #define LIBTENSOR_CTF_TOD_COPY_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
+#include "../ctf_dense_tensor.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_copy.h"
@@ -73,27 +74,37 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     ctf_symmetry<N, double> symap(syma);
     symap.permute(m_tra.get_perm());
 
-    ctf_tod_copy::start_timer();
-
-    std::vector<bool> zerob(symb.get_ncomp(), zero);
+    if(zero) {
+        for(size_t i = 0; i < symb.get_ncomp(); i++) {
+            CTF::Tensor<double> &dtb = cb.req_ctf_tensor(i);
+            dtb = 0.0;
+        }
+    }
+    bool need_decomp = false;
     for(size_t icompa = 0; icompa < symap.get_ncomp(); icompa++) {
-
-        size_t icompb = ctf_tod_aux_symcomp(symap, icompa, symb);
-        double z = ctf_symmetry<N, double>::symconv_factor(symap, icompa,
-            symb, icompb);
-
-        CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
-        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
-        if(zerob[icompb]) dtb[labelb] = c * z * dta[labela];
-        else dtb[labelb] += c * z * dta[labela];
-        zerob[icompb] = false;
+        std::pair<bool, size_t> compb =
+            ctf_tod_aux_symcomp_ex(symap, icompa, symb);
+        if(!compb.first) need_decomp = true;
     }
-    for(size_t i = 0; i < zerob.size(); i++) if(zerob[i]) {
-        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(i);
-        dtb = 0.0;
+    if(!need_decomp) {
+        ctf_tod_copy::start_timer();
+        for(size_t icompa = 0; icompa < symap.get_ncomp(); icompa++) {
+            size_t icompb = ctf_tod_aux_symcomp(symap, icompa, symb);
+            double z = ctf_symmetry<N, double>::symconv_factor(symap, icompa,
+                symb, icompb);
+            CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
+            CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
+            dtb[labelb] += c * z * dta[labela];
+        }
+        ctf_tod_copy::stop_timer();
+    } else {
+        ctf_dense_tensor<N, double> tt(tb.get_dims(), symap);
+        ctf_tod_copy<N>(m_ta, m_tra).perform(true, tt);
+        ctf_dense_tensor_ctrl<N, double> ct(tt);
+        ct.adjust_symmetry(symb);
+        ctf_tod_copy<N>(tt).perform(zero, tb);
     }
 
-    ctf_tod_copy::stop_timer();
 }
 
 

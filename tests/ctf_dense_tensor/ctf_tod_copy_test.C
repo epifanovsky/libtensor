@@ -33,6 +33,7 @@ void ctf_tod_copy_test::perform() throw(libtest::test_exception) {
         test_10();
         test_11();
         test_12();
+        test_13();
 
     } catch(...) {
         ctf::exit();
@@ -635,6 +636,55 @@ void ctf_tod_copy_test::test_12() {
     ctf_tod_collect<2>(dtb).perform(tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_copy_test::test_13() {
+
+    static const char testname[] = "ctf_tod_copy_test::test_13()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+    dimensions<4> dims(index_range<4>(i1, i2));
+    dense_tensor<4, double, allocator_t> tt(dims), ta(dims), tb(dims),
+        tb_ref(dims);
+    sequence<4, unsigned> syma_grp(0), syma_sym(0);
+    syma_grp[0] = 0; syma_grp[1] = 1; syma_grp[2] = 2; syma_grp[3] = 3;
+    ctf_symmetry<4, double> syma(syma_grp, syma_sym);
+    sequence<4, unsigned> symb_grp(0), symb_sym(0);
+    symb_grp[0] = 0; symb_grp[1] = 0; symb_grp[2] = 1; symb_grp[3] = 1;
+    ctf_symmetry<4, double> symb(symb_grp, symb_sym);
+    symb_sym[0] = 1; symb_sym[1] = 1;
+    symb.add_component(symb_grp, symb_sym);
+    ctf_dense_tensor<4, double> dta(dims, syma), dtb(dims, symb);
+
+    tod_random<4>().perform(tt);
+    tod_copy<4>(tt).perform(true, ta);
+    tod_copy<4>(tt, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, ta);
+    tod_random<4>().perform(tt);
+    tod_copy<4>(tt).perform(true, tb);
+    tod_copy<4>(tt, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, tb);
+
+    ctf_tod_distribute<4>(ta).perform(dta);
+    ctf_tod_distribute<4>(tb).perform(dtb);
+
+    tod_copy<4>(tb).perform(true, tb_ref);
+    tod_copy<4>(ta, -0.5).perform(true, tb_ref);
+
+    ctf_tod_copy<4>(dta, -0.5).perform(true, dtb);
+    ctf_tod_collect<4>(dtb).perform(tb);
+
+    compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

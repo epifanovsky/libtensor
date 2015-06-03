@@ -23,6 +23,7 @@ void ctf_btod_symmetrize2_test::perform() throw(libtest::test_exception) {
         test_2();
         test_3();
         test_4();
+        test_5();
 
     } catch(...) {
         ctf::exit();
@@ -193,6 +194,53 @@ void ctf_btod_symmetrize2_test::test_4() {
 
     permutation<4> perm;
     perm.permute(0, 1).permute(2, 3);
+
+    btod_copy<4> cp(bta);
+    btod_symmetrize2<4>(cp, perm, true).perform(btb_ref);
+
+    ctf_btod_distribute<4>(bta).perform(dbta);
+    ctf_btod_distribute<4>(btb).perform(dbtb);
+
+    ctf_btod_copy<4> dcp(dbta);
+    ctf_btod_symmetrize2<4>(dcp, perm, true).perform(dbtb);
+    ctf_btod_collect<4>(dbtb).perform(btb);
+
+    compare_ref<4>::compare(testname, btb, btb_ref, 1e-15);
+
+    // check block symmetry
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_btod_symmetrize2_test::test_5() {
+
+    static const char testname[] = "ctf_btod_symmetrize2_test::test_5()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    mask<4> m1111;
+    m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+    index<4> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+    dimensions<4> dimsa(index_range<4>(i1, i2)), dimsb(dimsa);
+    block_index_space<4> bisa(dimsa);
+    bisa.split(m1111, 6);
+    block_index_space<4> bisb(bisa);
+
+    block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btb_ref(bisb);
+    ctf_block_tensor<4, double> dbta(bisa), dbtb(bisb);
+
+    btod_random<4>().perform(bta);
+    btod_random<4>().perform(btb);
+
+    permutation<4> perm;
+    perm.permute(0, 2).permute(1, 3);
 
     btod_copy<4> cp(bta);
     btod_symmetrize2<4>(cp, perm, true).perform(btb_ref);

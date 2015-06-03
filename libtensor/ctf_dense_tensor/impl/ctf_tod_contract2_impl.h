@@ -171,7 +171,12 @@ void ctf_tod_contract2<N, M, K>::perform(
 
     ctf_tod_contract2::start_timer();
 
-    std::vector<bool> zeroc(symc.get_ncomp(), zero);
+    if(zero) {
+        for(size_t i = 0; i < symc.get_ncomp(); i++) {
+            CTF::Tensor<double> &dtc = cc.req_ctf_tensor(i);
+            dtc = 0.0;
+        }
+    }
     for(size_t icompa = 0; icompa < syma.get_ncomp(); icompa++)
     for(size_t icompb = 0; icompb < symb.get_ncomp(); icompb++) {
 
@@ -200,17 +205,11 @@ void ctf_tod_contract2<N, M, K>::perform(
             CTF::Tensor<double> &dtx = cx.req_ctf_tensor(0);
             dtx.contract(1.0, dta, &map[NC], dtb, &map[NC + NA],
                 0.0, &map[0]);
-            dtc.sum(m_d * z, dtx, &map[NC], zeroc[icompc] ? 0.0 : 1.0,
-                &map[NC]);
+            dtc.sum(m_d * z, dtx, &map[NC], 1.0, &map[NC]);
         } else {
-            dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA],
-                zeroc[icompc] ? 0.0 : 1.0, &map[0]);
+            dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA], 1.0,
+                &map[0]);
         }
-        zeroc[icompc] = false;
-    }
-    for(size_t i = 0; i < zeroc.size(); i++) if(zeroc[i]) {
-        CTF::Tensor<double> &dtc = cc.req_ctf_tensor(i);
-        dtc = 0.0;
     }
 
     ctf_tod_contract2::stop_timer();
