@@ -105,6 +105,13 @@ void expr_3(any_tensor<4, double> &ta, expr_lhs<4, double> &tb) {
     tb(i|j|a|b) = ta(i|j|a|b) + ta(i|j|b|a);
 }
 
+void expr_4(any_tensor<4, double> &ta, any_tensor<4, double> &tb,
+    expr_lhs<4, double> &tc) {
+
+    letter i, j, a, b, c, d;
+    tc(i|j|a|b) = symm(i|a, j|b, contract(c|d, ta(a|b|c|d), tb(i|j|c|d)));
+}
+
 
 int main(int argc, char **argv) {
 
@@ -129,7 +136,6 @@ int main(int argc, char **argv) {
     btensor<4, double> bta(aaaa), btb(iiaa), btc(iiaa), btd(aaaa);
     ctf_btensor<4, double> dta(bbbb), dtb(jjbb), dtc(jjbb), dtd(bbbb);
 
-/*
     set_symmetry(bta, 0); set_symmetry(btb, 0);
     set_random(bta); set_random(btb);
     T.start_timer("libtensor0[nosym]");
@@ -162,8 +168,19 @@ int main(int argc, char **argv) {
     T.start_timer("ctf2[ji,lk]");
     expr_1(dta, dtb, dtc);
     T.stop_timer("ctf2[ji,lk]");
- */
 
+    set_symmetry(bta, 0); set_symmetry(btb, 0);
+    set_random(bta); set_random(btb);
+    T.start_timer("libtensor3[symmetrize]");
+    expr_4(bta, btb, btc);
+    T.stop_timer("libtensor3[symmetrize]");
+    set_symmetry(dta, 0); set_symmetry(dtb, 0);
+    set_random(dta); set_random(dtb);
+    T.start_timer("ctf3[symmetrize]");
+    expr_4(dta, dtb, dtc);
+    T.stop_timer("ctf3[symmetrize]");
+
+/*
     set_symmetry(bta, 0);
     set_random(bta);
     T.start_timer("libtensor[ijab+jiab]");
@@ -185,6 +202,7 @@ int main(int argc, char **argv) {
     T.start_timer("ctf[ijab+ijba]");
     expr_2(dta, dtd);
     T.stop_timer("ctf[ijab+ijba]");
+ */
 
     if(master) T.print_timings(std::cout);
 
