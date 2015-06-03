@@ -109,23 +109,34 @@ void ctf_dense_tensor<N, T>::on_adjust_symmetry(const ctf_symmetry<N, T> &sym) {
 
     static const char method[] = "on_adjust_symmetry()";
 
-#if 0
+    //  If this operation becomes a bottleneck, use largest subgroup
+    //  as symmetry of temporary tensor
 
-    //  Check that the new symmetry is a subgroup of the original symmetry
-    //  (i.e. no data will be lost)
-    if(!m_sym.is_subgroup(sym)) {
-        throw symmetry_violation(g_ns, k_clazz, method, __FILE__, __LINE__,
-                "!m_sym.is_subgroup(sym)");
+    sequence<N, unsigned> symt_grp, symt_sym;
+    for(size_t i = 0; i < N; i++) symt_grp[i] = i;
+    ctf_symmetry<N, double> symt(symt_grp, symt_sym);
+    ctf_dense_tensor<N, double> dtmp(get_dims(), symt);
+    CTF::Tensor<double> &dtt = *dtmp.m_tens[0];
+
+    char label[N + 1];
+    for(size_t i = 0; i < N; i++) label[i] = char(i) + 1;
+    label[N] = '\0';
+
+    for(size_t icomp = 0; icomp < m_tens.size(); icomp++) {
+        CTF::Tensor<double> &dta = *m_tens[icomp];
+        if(icomp == 0) dtt[label] = dta[label];
+        else dtt[label] += dta[label];
     }
 
-    ctf_dense_tensor<N, T> tmp(m_dims, sym);
+    on_reset_symmetry(sym);
 
-    char idxmap[N];
-    for(size_t i = 0; i < N; i++) idxmap[i] = i;
-    tmp.m_tens->sum(1.0, *m_tens, idxmap, 0.0, idxmap);
-    std::swap(m_tens, tmp.m_tens);
-    std::swap(m_sym, tmp.m_sym);
-#endif
+    for(size_t icomp = 0; icomp < m_tens.size(); icomp++) {
+        CTF::Tensor<double> &dta = *m_tens[icomp];
+        double z = ctf_symmetry<N, double>::symconv_factor(symt, 0,
+            sym, icomp);
+        dta[label] = z * dtt[label];
+        dtt[label] -= dta[label];
+    }
 }
 
 
