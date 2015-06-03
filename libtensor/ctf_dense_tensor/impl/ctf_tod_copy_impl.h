@@ -73,6 +73,8 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
     ctf_symmetry<N, double> symap(syma);
     symap.permute(m_tra.get_perm());
 
+    ctf_tod_copy::start_timer();
+
     std::vector<bool> zerob(symb.get_ncomp(), zero);
     for(size_t icompa = 0; icompa < symap.get_ncomp(); icompa++) {
 
@@ -82,12 +84,16 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
 
         CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
         CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
-        ctf_tod_copy::start_timer();
         if(zerob[icompb]) dtb[labelb] = c * z * dta[labela];
         else dtb[labelb] += c * z * dta[labela];
         zerob[icompb] = false;
-        ctf_tod_copy::stop_timer();
     }
+    for(size_t i = 0; i < zerob.size(); i++) if(zerob[i]) {
+        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(i);
+        dtb = 0.0;
+    }
+
+    ctf_tod_copy::stop_timer();
 }
 
 
