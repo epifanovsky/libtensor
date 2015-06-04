@@ -7,6 +7,7 @@
 #include "../ctf_error.h"
 #include "../ctf_dense_tensor.h"
 #include "../ctf_tod_contract2.h"
+#include "../ctf_tod_copy.h"
 #include "ctf_tod_aux_symcomp.h"
 
 namespace libtensor {
@@ -169,50 +170,83 @@ void ctf_tod_contract2<N, M, K>::perform(
     char map[NC + NA + NB];
     ctf_tod_contract2_make_map(m_contr, map);
 
-    ctf_tod_contract2::start_timer();
-
     if(zero) {
         for(size_t i = 0; i < symc.get_ncomp(); i++) {
             CTF::Tensor<double> &dtc = cc.req_ctf_tensor(i);
             dtc = 0.0;
         }
     }
+    bool need_decomp = false;
     for(size_t icompa = 0; icompa < syma.get_ncomp(); icompa++)
     for(size_t icompb = 0; icompb < symb.get_ncomp(); icompb++) {
-
         ctf_symmetry<NC, double> symab;
         bool nonzero = ctf_tod_contract2_symmetry(m_contr, syma, icompa,
             symb, icompb, symab);
         if(!nonzero) continue;
+        std::pair<bool, size_t> compc = ctf_tod_aux_symcomp_ex(symab, 0, symc);
+        if(!compc.first) need_decomp = true;
+    }
+    if(!need_decomp) {
+        ctf_tod_contract2::start_timer();
+        for(size_t icompa = 0; icompa < syma.get_ncomp(); icompa++)
+        for(size_t icompb = 0; icompb < symb.get_ncomp(); icompb++) {
 
-        size_t icompc = ctf_tod_aux_symcomp(symab, 0, symc);
-        double z = ctf_symmetry<NC, double>::symconv_factor(symab, 0,
-            symc, icompc);
+            ctf_symmetry<NC, double> symab;
+            bool nonzero = ctf_tod_contract2_symmetry(m_contr, syma, icompa,
+                symb, icompb, symab);
+            if(!nonzero) continue;
 
-        int sab[NC], sc[NC];
-        symab.write(0, sab);
-        symc.write(icompc, sc);
-        bool use_interm = false;
-        for(size_t i = 0; i < NC; i++) if(sab[i] != sc[i]) use_interm = true;
+            size_t icompc = ctf_tod_aux_symcomp(symab, 0, symc);
+            double z = ctf_symmetry<NC, double>::symconv_factor(symab, 0,
+                symc, icompc);
 
-        CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
-        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
-        CTF::Tensor<double> &dtc = cc.req_ctf_tensor(icompc);
+            int sab[NC], sc[NC];
+            symab.write(0, sab);
+            symc.write(icompc, sc);
+            bool use_interm = false;
+            for(size_t i = 0; i < NC; i++) if(sab[i] != sc[i]) use_interm = true;
 
-        if(use_interm) {
-            ctf_dense_tensor<NC, double> tx(tc.get_dims(), symab);
-            ctf_dense_tensor_ctrl<NC, double> cx(tx);
-            CTF::Tensor<double> &dtx = cx.req_ctf_tensor(0);
-            dtx.contract(1.0, dta, &map[NC], dtb, &map[NC + NA],
-                0.0, &map[0]);
-            dtc.sum(m_d * z, dtx, &map[NC], 1.0, &map[NC]);
-        } else {
-            dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA], 1.0,
-                &map[0]);
+            CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
+            CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
+            CTF::Tensor<double> &dtc = cc.req_ctf_tensor(icompc);
+
+            if(use_interm) {
+                ctf_dense_tensor<NC, double> tx(tc.get_dims(), symab);
+                ctf_dense_tensor_ctrl<NC, double> cx(tx);
+                CTF::Tensor<double> &dtx = cx.req_ctf_tensor(0);
+                dtx.contract(1.0, dta, &map[NC], dtb, &map[NC + NA],
+                    0.0, &map[0]);
+                dtc.sum(m_d * z, dtx, &map[NC], 1.0, &map[NC]);
+            } else {
+                dtc.contract(m_d * z, dta, &map[NC], dtb, &map[NC + NA], 1.0,
+                    &map[0]);
+            }
         }
+        ctf_tod_contract2::stop_timer();
+    } else {
+        ctf_symmetry<NC, double> symab;
+        bool first = true;
+        for(size_t icompa = 0; icompa < syma.get_ncomp(); icompa++)
+        for(size_t icompb = 0; icompb < symb.get_ncomp(); icompb++) {
+
+            ctf_symmetry<NC, double> symab0;
+            bool nonzero = ctf_tod_contract2_symmetry(m_contr, syma, icompa,
+                symb, icompb, symab0);
+            if(!nonzero) continue;
+            if(first) {
+                symab = symab0;
+                first = false;
+            } else {
+                symab.add_component(symab0.get_grp(0), symab0.get_sym(0));
+            }
+        }
+        ctf_dense_tensor<NC, double> tt(tc.get_dims(), symab);
+        ctf_tod_contract2<N, M, K>(m_contr, m_ta, m_tb, m_d).perform(true, tt);
+        ctf_dense_tensor_ctrl<NC, double> ct(tt);
+        ct.adjust_symmetry(symc);
+        ctf_tod_copy<NC>(tt).perform(zero, tc);
     }
 
-    ctf_tod_contract2::stop_timer();
 }
 
 

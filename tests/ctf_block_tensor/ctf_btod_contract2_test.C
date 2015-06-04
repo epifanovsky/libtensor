@@ -29,6 +29,8 @@ void ctf_btod_contract2_test::perform() throw(libtest::test_exception) {
         test_4(1.45);
         test_5(0.0);
         test_5(2.2);
+        test_6(0.0);
+        test_6(-0.3);
 
     } catch(...) {
         ctf::exit();
@@ -377,6 +379,80 @@ void ctf_btod_contract2_test::test_5(double d) {
     contraction2<2, 2, 2> contr;
     contr.contract(0, 2);
     contr.contract(1, 3);
+
+    if(d == 0.0) {
+        btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc_ref);
+        ctf_btod_contract2<2, 2, 2>(contr, dbta, dbtb).perform(dbtc);
+    } else {
+        btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc_ref, d);
+        ctf_btod_contract2<2, 2, 2>(contr, dbta, dbtb).perform(dbtc, d);
+    }
+
+    ctf_btod_collect<4>(dbtc).perform(btc);
+
+    compare_ref<4>::compare(tn.c_str(), btc, btc_ref, 5e-15);
+
+    } catch(exception &e) {
+        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_btod_contract2_test::test_6(double d) {
+
+    std::ostringstream tnss;
+    tnss << "ctf_btod_contract2_test::test_6(" << d << ")";
+    std::string tn = tnss.str();
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    mask<4> m1111;
+    m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+    index<4> i4a, i4b;
+    i4b[0] = 9; i4b[1] = 9; i4b[2] = 9; i4b[3] = 9;
+    dimensions<4> dimsa(index_range<4>(i4a, i4b));
+    dimensions<4> dimsb(index_range<4>(i4a, i4b));
+    dimensions<4> dimsc(index_range<4>(i4a, i4b));
+    block_index_space<4> bisa(dimsa);
+    bisa.split(m1111, 4);
+    block_index_space<4> bisb(dimsb);
+    bisb.split(m1111, 4);
+    block_index_space<4> bisc(bisa);
+    bisc.split(m1111, 4);
+
+    block_tensor<4, double, allocator_t> bta(bisa);
+    block_tensor<4, double, allocator_t> btb(bisb);
+    block_tensor<4, double, allocator_t> btc(bisc), btc_ref(bisc);
+    ctf_block_tensor<4, double> dbta(bisa);
+    ctf_block_tensor<4, double> dbtb(bisb);
+    ctf_block_tensor<4, double> dbtc(bisc);
+
+    {
+        se_perm<4, double> seperm1(permutation<4>().permute(0, 1).
+            permute(2, 3), scalar_transf<double>());
+        block_tensor_ctrl<4, double> ca(bta);
+        ca.req_symmetry().insert(seperm1);
+        block_tensor_ctrl<4, double> cb(btb);
+        cb.req_symmetry().insert(seperm1);
+        block_tensor_ctrl<4, double> cc(btc);
+        cc.req_symmetry().insert(seperm1);
+    }
+
+    btod_random<4>().perform(bta);
+    btod_random<4>().perform(btb);
+    btod_random<4>().perform(btc);
+    btod_copy<4>(btc).perform(btc_ref);
+
+    ctf_btod_distribute<4>(bta).perform(dbta);
+    ctf_btod_distribute<4>(btb).perform(dbtb);
+    ctf_btod_distribute<4>(btc).perform(dbtc);
+
+    contraction2<2, 2, 2> contr;
+    contr.contract(2, 2);
+    contr.contract(3, 3);
 
     if(d == 0.0) {
         btod_contract2<2, 2, 2>(contr, bta, btb).perform(btc_ref);

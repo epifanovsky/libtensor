@@ -134,6 +134,7 @@ void ctf_dense_tensor<N, T>::on_adjust_symmetry(const ctf_symmetry<N, T> &sym) {
         CTF::Tensor<double> &dta = *m_tens[icomp];
         double z = ctf_symmetry<N, double>::symconv_factor(symt, 0,
             sym, icomp);
+        if(z == 0.0) continue;
         dta[label] = z * dtt[label];
         dtt[label] -= dta[label];
     }

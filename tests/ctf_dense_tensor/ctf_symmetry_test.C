@@ -17,6 +17,9 @@ void ctf_symmetry_test::perform() throw(libtest::test_exception) {
         test_3();
         test_4();
         test_5();
+        test_convfac_1();
+        test_convfac_2();
+        test_convfac_3();
 
     } catch(...) {
         ctf::exit();
@@ -288,6 +291,93 @@ void ctf_symmetry_test::test_5() {
                << "s_ref[" << i << "] = " << s_ref[i];
             fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_1() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_1()";
+
+    try {
+
+    sequence<4, unsigned> grp1(0), tag1(0), grp2(0), tag2(0);
+    grp1[0] = 0; grp1[1] = 0; grp1[2] = 1; grp1[3] = 1;
+    tag1[0] = 0; tag1[1] = 0;
+    grp2[0] = 0; grp2[1] = 0; grp2[2] = 1; grp2[3] = 1;
+    tag2[0] = 1; tag2[1] = 0;
+    ctf_symmetry<4, double> sym1(grp1, tag1), sym2(grp2, tag2);
+
+    double z = ctf_symmetry<4, double>::symconv_factor(sym1, 0, sym2, 0);
+    double z_ref = 0.0;
+
+    if(z != z_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_2() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_2()";
+
+    try {
+
+    sequence<4, unsigned> grp1(0), tag1(0), grp2(0), tag2(0);
+    grp1[0] = 0; grp1[1] = 0; grp1[2] = 1; grp1[3] = 2;
+    tag1[0] = 0; tag1[1] = 0; tag1[2] = 0;
+    grp2[0] = 0; grp2[1] = 0; grp2[2] = 1; grp2[3] = 1;
+    tag2[0] = 0; tag2[1] = 0;
+    ctf_symmetry<4, double> sym1(grp1, tag1), sym2(grp2, tag2);
+
+    double z = ctf_symmetry<4, double>::symconv_factor(sym1, 0, sym2, 0);
+    double z_ref = 0.5;
+
+    if(z != z_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_3() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_3()";
+
+    try {
+
+    sequence<4, unsigned> grp1(0), tag1(0), grp2(0), tag2(0);
+    grp1[0] = 0; grp1[1] = 0; grp1[2] = 1; grp1[3] = 1;
+    tag1[0] = 0; tag1[1] = 0;
+    grp2[0] = 0; grp2[1] = 0; grp2[2] = 1; grp2[3] = 2;
+    tag2[0] = 0; tag2[1] = 0; tag2[2] = 0;
+    ctf_symmetry<4, double> sym1(grp1, tag1), sym2(grp2, tag2);
+
+    double z = ctf_symmetry<4, double>::symconv_factor(sym1, 0, sym2, 0);
+    double z_ref = 1.0;
+
+    if(z != z_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {

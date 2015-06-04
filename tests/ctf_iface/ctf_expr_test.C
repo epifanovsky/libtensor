@@ -27,6 +27,7 @@ void ctf_expr_test::perform() throw(libtest::test_exception) {
         test_2();
         test_3();
         test_4();
+        test_5();
 
     } catch(...) {
         ctf::exit();
@@ -219,6 +220,84 @@ void ctf_expr_test::test_4() {
     ctf_btod_collect<2>(dt3).perform(t3);
 
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_5() {
+
+    static const char testname[] = "ctf_expr_test::test_5()";
+
+    try {
+
+    bispace<1> so(13); so.split(7);
+    bispace<1> sv(7); sv.split(3);
+
+    bispace<2> sov(so|sv);
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv)),
+		sovvv(so|(sv&sv&sv)), svvvv(sv&sv&sv&sv);
+
+    bispace<1> so1(so), so2(so), sv1(sv), sv2(sv);
+    bispace<4> sovov(so1|sv1|so2|sv2, (so1&so2)|(sv1&sv2));
+
+    symmetry<2, double> sym_ov(sov.get_bis());
+    symmetry<4, double> sym_oovv(soovv.get_bis()), sym_ovvv(sovvv.get_bis()),
+        sym_vvvv(svvvv.get_bis());
+    {
+        permutation<4> p1032;
+        p1032.permute(0, 1).permute(2, 3);
+        se_perm<4, double> sep1032(p1032, scalar_transf<double>());
+        sym_oovv.insert(sep1032);
+        sym_vvvv.insert(sep1032);
+    }
+
+    btensor<2, double> t1(sov);
+    btensor<4, double> t2(soovv);
+    btensor<4, double> i_oovv(soovv), i_ovvv(sovvv), i_vvvv(svvvv);
+    btensor<4, double> i5_vvvv(svvvv), i5_vvvv_ref(svvvv);
+    ctf_btensor<2, double> dt1(sov);
+    ctf_btensor<4, double> dt2(soovv);
+    ctf_btensor<4, double> di_oovv(soovv), di_ovvv(sovvv), di_vvvv(svvvv);
+    ctf_btensor<4, double> di5_vvvv(svvvv);
+
+    {
+        block_tensor_ctrl<4, double> ctrl_t2(t2), ctrl_i_oovv(i_oovv),
+            ctrl_i_vvvv(i_vvvv);
+        so_copy<4, double>(sym_oovv).perform(ctrl_t2.req_symmetry());
+        so_copy<4, double>(sym_oovv).perform(ctrl_i_oovv.req_symmetry());
+        so_copy<4, double>(sym_vvvv).perform(ctrl_i_vvvv.req_symmetry());
+    }
+
+    btod_random<2>().perform(t1);
+    btod_random<4>().perform(t2);
+    btod_random<4>().perform(i_oovv);
+    btod_random<4>().perform(i_ovvv);
+    btod_random<4>().perform(i_vvvv);
+
+    ctf_btod_distribute<2>(t1).perform(dt1);
+    ctf_btod_distribute<4>(t2).perform(dt2);
+    ctf_btod_distribute<4>(i_oovv).perform(di_oovv);
+    ctf_btod_distribute<4>(i_ovvv).perform(di_ovvv);
+    ctf_btod_distribute<4>(i_vvvv).perform(di_vvvv);
+
+    letter i, j, k, a, b, c, d;
+
+    i5_vvvv_ref(a|b|c|d) =
+          i_vvvv(a|b|c|d)
+        + 0.5 * contract(i|j, t2(i|j|a|b), i_oovv(i|j|c|d));
+        - asymm(a, b, contract(i, i_ovvv(i|b|c|d), t1(i|a)));
+
+    di5_vvvv(a|b|c|d) =
+          di_vvvv(a|b|c|d)
+        + 0.5 * contract(i|j, dt2(i|j|a|b), di_oovv(i|j|c|d));
+        - asymm(a, b, contract(i, di_ovvv(i|b|c|d), dt1(i|a)));
+
+    ctf_btod_collect<4>(di5_vvvv).perform(i5_vvvv);
+
+    compare_ref<4>::compare(testname, i5_vvvv, i5_vvvv_ref, 1e-13);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

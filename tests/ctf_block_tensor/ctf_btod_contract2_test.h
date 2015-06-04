@@ -20,6 +20,7 @@ private:
     void test_3(double d);
     void test_4(double d);
     void test_5(double d);
+    void test_6(double d);
 
 };
 

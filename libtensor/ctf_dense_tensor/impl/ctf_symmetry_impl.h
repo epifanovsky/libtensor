@@ -127,6 +127,13 @@ T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &syma,
     int sa[N], sb[N];
     syma.write(icompa, sa);
     symb.write(icompb, sb);
+
+    for(size_t i = 0; i < N; i++) {
+        int ga = sa[i], gb = sb[i];
+        if(ga == NS || gb == NS) continue;
+        if(ga != gb) return 0.0;
+    }
+
     for(size_t i = 0; i < N; i++) {
         if(sb[i] == NS) sa[i] = NS;
     }
