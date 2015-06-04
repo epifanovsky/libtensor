@@ -269,6 +269,7 @@ set(SRC_EXPR
     expr/dag/graph.C
     expr/dag/node_add.C
     expr/dag/node_assign.C
+    expr/dag/node_const_scalar.C
     expr/dag/node_contract.C
     expr/dag/node_diag.C
     expr/dag/node_dirsum.C

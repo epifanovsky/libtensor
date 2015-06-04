@@ -19,12 +19,18 @@ void set_test::perform() throw(libtest::test_exception) {
 
     try {
 
-        test_s_1();
-        test_s_2();
-        test_d_1();
-        test_d_2();
-        test_x_1();
-        test_x_2();
+        test_s_1(0.0);
+        test_s_1(1.0);
+        test_s_2(0.0);
+        test_s_2(-2.1);
+        test_d_1(0.0);
+        test_d_1(1.0);
+        test_d_2(0.0);
+        test_d_2(-1.0);
+        test_x_1(0.0);
+        test_x_1(0.2);
+        test_x_2(0.0);
+        test_x_2(0.1);
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -35,13 +41,14 @@ void set_test::perform() throw(libtest::test_exception) {
 }
 
 
-void set_test::test_s_1() throw(libtest::test_exception) {
+void set_test::test_s_1(double d) {
 
-    static const char testname[] = "set_test::test_s_1()";
+    std::ostringstream tnss;
+    tnss << "set_test::test_s_1(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
 
     try {
-
-    double v = 1.2;
 
     bispace<1> sp_i(10), sp_a(11);
     bispace<2> sp_ij(sp_i&sp_i);
@@ -51,10 +58,10 @@ void set_test::test_s_1() throw(libtest::test_exception) {
     btod_random<2>().perform(t1);
     t1.set_immutable();
 
-    btod_set<2>(v).perform(t2_ref);
+    btod_set<2>(d).perform(t2_ref);
 
     letter i, j;
-    t2(i|j) = set(v, t1(i|j));
+    t2(i|j) = set(d, t1(i|j));
 
     compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -64,13 +71,14 @@ void set_test::test_s_1() throw(libtest::test_exception) {
 }
 
 
-void set_test::test_s_2() throw(libtest::test_exception) {
+void set_test::test_s_2(double d) {
 
-    static const char testname[] = "set_test::test_s_2()";
+    std::ostringstream tnss;
+    tnss << "set_test::test_s_2(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
 
     try {
-
-    double v = -2.1;
 
     bispace<1> sp_i(10), sp_a(11);
     bispace<3> sp_ija((sp_i&sp_i)|sp_a), sp_iaj(sp_i|sp_a|sp_i);
@@ -80,10 +88,10 @@ void set_test::test_s_2() throw(libtest::test_exception) {
     btod_random<3>().perform(t1);
     t1.set_immutable();
 
-   btod_set<3>(v).perform(t2_ref);
+    btod_set<3>(d).perform(t2_ref);
 
     letter i, j, a;
-    t2(i|a|j) = set(v, t1(i|j|a));
+    t2(i|a|j) = set(d, t1(i|j|a));
 
     compare_ref<3>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -93,13 +101,14 @@ void set_test::test_s_2() throw(libtest::test_exception) {
 }
 
 
-void set_test::test_d_1() throw(libtest::test_exception) {
+void set_test::test_d_1(double d) {
 
-    static const char testname[] = "set_test::test_d_1()";
+    std::ostringstream tnss;
+    tnss << "set_test::test_d_1(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
 
     try {
-
-    double v = 1.0;
 
     bispace<1> sp_i(10);
     bispace<2> sp_ij(sp_i&sp_i);
@@ -113,10 +122,10 @@ void set_test::test_d_1() throw(libtest::test_exception) {
 
     sequence<2, size_t> msk(0);
     msk[0] = 1; msk[1] = 1;
-    btod_set_diag<2>(msk, v).perform(t2_ref);
+    btod_set_diag<2>(msk, d).perform(t2_ref);
 
     letter i, j;
-    t2(j|i) = set(i, i|j, v, t1(i|j));
+    t2(j|i) = set(i, i|j, d, t1(i|j));
 
     compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -126,13 +135,14 @@ void set_test::test_d_1() throw(libtest::test_exception) {
 }
 
 
-void set_test::test_d_2() throw(libtest::test_exception) {
+void set_test::test_d_2(double d) {
 
-    static const char testname[] = "set_test::test_d_2()";
+    std::ostringstream tnss;
+    tnss << "set_test::test_d_2(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
 
     try {
-
-    double v = 0.0;
 
     bispace<1> sp_i(10), sp_a(5), sp_p(7);
     bispace<5> sp_iajbp(((sp_i|sp_a)&(sp_i|sp_a))|sp_p);
@@ -149,10 +159,10 @@ void set_test::test_d_2() throw(libtest::test_exception) {
 
     sequence<5, size_t> msk(0);
     msk[0] = 1; msk[1] = 1; msk[3] = 2; msk[4] = 2;
-    btod_set_diag<5>(msk, v).perform(t2_ref);
+    btod_set_diag<5>(msk, d).perform(t2_ref);
 
     letter i, j, a, b, p;
-    t2(i|j|p|a|b) = set(i|a, i|j|a|b, v, t1(i|a|j|b|p));
+    t2(i|j|p|a|b) = set(i|a, i|j|a|b, d, t1(i|a|j|b|p));
 
     compare_ref<5>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -162,13 +172,14 @@ void set_test::test_d_2() throw(libtest::test_exception) {
 }
 
 
-void set_test::test_x_1() throw(libtest::test_exception) {
+void set_test::test_x_1(double d) {
 
-    static const char testname[] = "set_test::test_x_1()";
+    std::ostringstream tnss;
+    tnss << "set_test::test_x_1(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
 
     try {
-
-    double v = 0.2;
 
     bispace<1> sp_i(10), sp_a(4);
     bispace<3> sp_iaj(sp_i|sp_a|sp_i);
@@ -180,11 +191,11 @@ void set_test::test_x_1() throw(libtest::test_exception) {
     btod_copy<3>(t1).perform(t2_ref);
     sequence<3, size_t> msk(0);
     msk[0] = 1; msk[2] = 1;
-    btod_shift_diag<3>(msk, v).perform(t2_ref);
+    btod_shift_diag<3>(msk, d).perform(t2_ref);
     btod_scale<3>(t2_ref, 0.5).perform();
 
     letter i, j, a;
-    t2(i|a|j) = 0.5 * shift(i, i|j, v, t1(i|a|j));
+    t2(i|a|j) = 0.5 * shift(i, i|j, d, t1(i|a|j));
 
     compare_ref<3>::compare(testname, t2, t2_ref, 1e-15);
 
@@ -194,13 +205,14 @@ void set_test::test_x_1() throw(libtest::test_exception) {
 }
 
 
-void set_test::test_x_2() throw(libtest::test_exception) {
+void set_test::test_x_2(double d) {
 
-    static const char testname[] = "set_test::test_x_2()";
+    std::ostringstream tnss;
+    tnss << "set_test::test_x_2(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
 
     try {
-
-    double v = 0.1;
 
     bispace<1> sp_i(10), sp_a(16), sp_p(4);
     sp_i.split(5);
@@ -220,10 +232,10 @@ void set_test::test_x_2() throw(libtest::test_exception) {
 
     sequence<6, size_t> msk(0);
     msk[0] = 1; msk[1] = 1; msk[2] = 2; msk[3] = 2;
-    btod_shift_diag<6>(msk, v).perform(t2_ref);
+    btod_shift_diag<6>(msk, d).perform(t2_ref);
 
     letter i, j, a, b, p, q;
-    t2(i|j|a|b|p|q) = shift(i|a, i|j|a|b, v, t1(p|i|a|j|b|q));
+    t2(i|j|a|b|p|q) = shift(i|a, i|j|a|b, d, t1(p|i|a|j|b|q));
 
     compare_ref<6>::compare(testname, t2, t2_ref, 1e-15);
 

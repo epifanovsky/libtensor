@@ -4,7 +4,7 @@
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/block_tensor/btod_set_diag.h>
 #include <libtensor/block_tensor/btod_shift_diag.h>
-#include <libtensor/expr/dag/node_scalar.h>
+#include <libtensor/expr/dag/node_const_scalar.h>
 #include <libtensor/expr/dag/node_set.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -72,8 +72,8 @@ eval_set_impl<N>::eval_set_impl(const expr_tree &tree,
     additive_gen_bto<N, bti_traits> &op = eval.get_bto();
 
     // Retrieve scalar argument
-    const node_scalar<double> &ns =
-            tree.get_vertex(e[1]).template recast_as< node_scalar<double> >();
+    const node_const_scalar<double> &ns = tree.get_vertex(e[1]).
+            template recast_as< node_const_scalar<double> >();
     const double &val = ns.get_scalar();
 
     // Create tensor

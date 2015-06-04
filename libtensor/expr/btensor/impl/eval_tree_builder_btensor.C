@@ -1,6 +1,7 @@
 #include <deque>
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_assign.h>
+#include <libtensor/expr/dag/node_const_scalar.h>
 #include <libtensor/expr/dag/node_ident.h>
 #include <libtensor/expr/dag/node_scalar.h>
 #include <libtensor/expr/dag/node_symm.h>
@@ -137,6 +138,7 @@ void insert_intermediates(graph &g, graph::node_id_t n0) {
 
         //  Skip nodes that won't need further inspection
         if(g.get_vertex(n).check_type<node_ident>() ||
+            g.get_vertex(n).check_type<node_const_scalar_base>() ||
             g.get_vertex(n).check_type<node_scalar_base>() ||
             g.get_vertex(n).check_type<node_assign>()) continue;
 

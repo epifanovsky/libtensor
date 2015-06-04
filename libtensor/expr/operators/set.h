@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_EXPR_OPERATORS_SET_H
 #define LIBTENSOR_EXPR_OPERATORS_SET_H
 
-#include <libtensor/expr/dag/node_scalar.h>
+#include <libtensor/expr/dag/node_const_scalar.h>
 #include <libtensor/expr/dag/node_set.h>
 #include <libtensor/expr/expr_exception.h>
 
@@ -23,7 +23,7 @@ namespace expr {
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, typename T>
-expr_rhs<N, T> set(T &value, const expr_rhs<N, T> &expr) {
+expr_rhs<N, T> set(const T &value, const expr_rhs<N, T> &expr) {
 
     std::vector<size_t> idx(N);
     for (size_t i = 0; i < N; i++) idx[i] = i;
@@ -31,7 +31,7 @@ expr_rhs<N, T> set(T &value, const expr_rhs<N, T> &expr) {
     node_set n(idx);
     expr_tree e(n);
     e.add(e.get_root(), expr.get_expr());
-    e.add(e.get_root(), node_scalar<T>(value));
+    e.add(e.get_root(), node_const_scalar<T>(value));
 
     return expr_rhs<N, T>(e, expr.get_label());
 }
@@ -60,7 +60,7 @@ expr_rhs<N, T> set(T &value, const expr_rhs<N, T> &expr) {
  **/
 template<size_t N, size_t K, size_t M, typename T>
 expr_rhs<N, T> set(const label<K> &l1, const label<M> &l2,
-    T &value, const expr_rhs<N, T> &expr) {
+    const T &value, const expr_rhs<N, T> &expr) {
 
     static const char method[] = "set(const label<K> &, "
             "const label<M> &, const T &, const expr_rhs<NA, T> &)";
@@ -111,7 +111,7 @@ expr_rhs<N, T> set(const label<K> &l1, const label<M> &l2,
     node_set n(idx);
     expr_tree e(n);
     e.add(e.get_root(), expr.get_expr());
-    e.add(e.get_root(), node_scalar<T>(value));
+    e.add(e.get_root(), node_const_scalar<T>(value));
     return expr_rhs<N, T>(e, expr.get_label());
 }
 
@@ -136,7 +136,7 @@ expr_rhs<N, T> set(const label<K> &l1, const label<M> &l2,
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr_rhs<N, T> set(const letter &l1, const label<M> &l2, T &value,
+expr_rhs<N, T> set(const letter &l1, const label<M> &l2, const T &value,
     const expr_rhs<N, T> &expr) {
 
     return set(label<1>(l1), l2, value, expr);
@@ -162,7 +162,7 @@ expr_rhs<N, T> set(const letter &l1, const label<M> &l2, T &value,
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr_rhs<N, T> set(const label<M> &l, T &value,
+expr_rhs<N, T> set(const label<M> &l, const T &value,
     const expr_rhs<N, T> &expr) {
 
     return set(label<1>(l.letter_at(0)), l, value, expr);
@@ -191,7 +191,7 @@ expr_rhs<N, T> set(const label<M> &l, T &value,
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, size_t K, typename T>
-expr_rhs<N, T> shift(const label<K> &l1, const label<M> &l2, T &value,
+expr_rhs<N, T> shift(const label<K> &l1, const label<M> &l2, const T &value,
     const expr_rhs<N, T> &expr) {
 
     static const char method[] = "shift(const label<K> &, "
@@ -243,7 +243,7 @@ expr_rhs<N, T> shift(const label<K> &l1, const label<M> &l2, T &value,
     node_set n(idx, true);
     expr_tree e(n);
     e.add(e.get_root(), expr.get_expr());
-    e.add(e.get_root(), node_scalar<T>(value));
+    e.add(e.get_root(), node_const_scalar<T>(value));
     return expr_rhs<N, T>(e, expr.get_label());
 }
 
@@ -268,7 +268,7 @@ expr_rhs<N, T> shift(const label<K> &l1, const label<M> &l2, T &value,
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr_rhs<N, T> shift(const letter &l1, const label<M> &l2, T &value,
+expr_rhs<N, T> shift(const letter &l1, const label<M> &l2, const T &value,
     const expr_rhs<N, T> &expr) {
 
     return shift(label<1>(l1), l2, value, expr);
@@ -294,7 +294,7 @@ expr_rhs<N, T> shift(const letter &l1, const label<M> &l2, T &value,
     \ingroup libtensor_btensor_expr_op
  **/
 template<size_t N, size_t M, typename T>
-expr_rhs<N, T> shift(const label<M> &l, T &value,
+expr_rhs<N, T> shift(const label<M> &l, const T &value,
     const expr_rhs<N, T> &expr) {
 
     return shift(label<1>(l.letter_at(0)), l, value, expr);
