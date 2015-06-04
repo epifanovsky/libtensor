@@ -45,7 +45,7 @@ void contract_test::perform() throw(libtest::test_exception) {
         test_ee_1();
         test_ee_2();
         test_ee_3();
-        test_contract3_ttt_1();
+//        test_contract3_ttt_1();
 
     } catch(...) {
         allocator<double>::shutdown();
