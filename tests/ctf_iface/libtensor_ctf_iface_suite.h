@@ -5,6 +5,7 @@
 #include "ctf_btensor_test.h"
 #include "ctf_dot_product_test.h"
 #include "ctf_expr_test.h"
+#include "ctf_mult_test.h"
 #include "ctf_set_test.h"
 #include "ctf_trace_test.h"
 
@@ -24,6 +25,7 @@ namespace libtensor {
      - libtensor::ctf_btensor_test
      - libtensor::ctf_dot_product_test
      - libtensor::ctf_expr_test
+     - libtensor::ctf_mult_test
      - libtensor::ctf_set_test
      - libtensor::ctf_trace_test
 
@@ -34,6 +36,7 @@ private:
     unit_test_factory<ctf_btensor_test> m_utf_ctf_btensor;
     unit_test_factory<ctf_dot_product_test> m_utf_ctf_dot_product;
     unit_test_factory<ctf_expr_test> m_utf_ctf_expr;
+    unit_test_factory<ctf_mult_test> m_utf_ctf_mult;
     unit_test_factory<ctf_set_test> m_utf_ctf_set;
     unit_test_factory<ctf_trace_test> m_utf_ctf_trace;
 
