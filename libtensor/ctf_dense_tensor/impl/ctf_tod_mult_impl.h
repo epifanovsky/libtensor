@@ -2,8 +2,10 @@
 #define LIBTENSOR_CTF_TOD_MULT_IMPL_H
 
 #include <libtensor/core/bad_dimensions.h>
+#include "../ctf_dense_tensor.h"
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
+#include "../ctf_tod_copy.h"
 #include "../ctf_tod_mult.h"
 #include "ctf_fctr.h"
 
@@ -83,10 +85,14 @@ void ctf_tod_mult<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tc) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tc");
     }
 
-    ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb), cc(tc);
-    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
-    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
-    CTF::Tensor<double> &dtc = cc.req_ctf_tensor();
+    ctf_dense_tensor<N, double> tta(m_ta.get_dims());
+    ctf_dense_tensor<N, double> ttb(m_tb.get_dims());
+    ctf_dense_tensor<N, double> ttc(tc.get_dims());
+    ctf_tod_copy<N>(m_ta).perform(true, tta);
+    ctf_tod_copy<N>(m_tb).perform(true, ttb);
+
+    ctf_dense_tensor_ctrl<N, double> cc(tc);
+    ctf_dense_tensor_ctrl<N, double> cta(tta), ctb(ttb), ctc(ttc);
 
     double c = m_c * m_tra.get_scalar_tr().get_coeff() *
         m_trb.get_scalar_tr().get_coeff();
@@ -103,12 +109,19 @@ void ctf_tod_mult<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tc) {
         mapc[i] = seqc[N - i - 1] + 1;
     }
 
+    CTF::Tensor<double> &dta = cta.req_ctf_tensor(0);
+    CTF::Tensor<double> &dtb = ctb.req_ctf_tensor(0);
+    CTF::Tensor<double> &dtc = ctc.req_ctf_tensor(0);
+
     if(m_recip) {
         CTF::Bivar_Function<double> op(&ctf_fctr_ddiv);
-        dtc.contract(c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapc, op);
+        dtc.contract(c, dta, mapa, dtb, mapb, 0.0, mapc, op);
     } else {
-        dtc.contract(c, dta, mapa, dtb, mapb, zero ? 0.0 : 1.0, mapc);
+        dtc.contract(c, dta, mapa, dtb, mapb, 0.0, mapc);
     }
+
+    ctc.adjust_symmetry(cc.req_symmetry());
+    ctf_tod_copy<N>(ttc).perform(zero, tc);
 }
 
 

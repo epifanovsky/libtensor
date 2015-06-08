@@ -19,6 +19,7 @@ private:
     void test_mult_1b();
     void test_div_1a();
     void test_div_1b();
+    void test_2(bool zero, bool muldiv);
 
 };
 
