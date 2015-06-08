@@ -38,8 +38,6 @@ autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
 
     if(n.check_type<node_ident>() || n.check_type<node_interm_base>()) {
         m_impl = new copy<N>(m_tree, id, tr);
-    } else if(n.check_type<node_set>()) {
-        m_impl = new set<N>(m_tree, id, tr);
     } else if(n.check_type<node_add>()) {
         m_impl = new add<N>(m_tree, id, tr);
     } else if(n.check_type<node_contract>()) {
@@ -50,6 +48,8 @@ autoselect<N>::autoselect(const expr_tree &tree, node_id_t &id,
         m_impl = new dirsum<N>(m_tree, id, tr);
     } else if(n.check_type<node_div>()) {
         m_impl = new div<N>(m_tree, id, tr);
+    } else if(n.check_type<node_set>()) {
+        m_impl = new set<N>(m_tree, id, tr);
     } else if(n.check_type<node_symm_base>()) {
         m_impl = new symm<N>(m_tree, id, tr);
     } else {

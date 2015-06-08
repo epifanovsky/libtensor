@@ -362,7 +362,9 @@ set(SRC_CTF
     ctf_block_tensor/impl/ctf_btod_random.C
     ctf_block_tensor/impl/ctf_btod_scale.C
     ctf_block_tensor/impl/ctf_btod_set.C
+    ctf_block_tensor/impl/ctf_btod_set_diag.C
     ctf_block_tensor/impl/ctf_btod_set_symmetry.C
+    ctf_block_tensor/impl/ctf_btod_shift_diag.C
     ctf_block_tensor/impl/ctf_btod_sum.C
     ctf_block_tensor/impl/ctf_btod_symmetrize2.C
     ctf_block_tensor/impl/ctf_btod_symmetrize3.C
@@ -378,6 +380,7 @@ set(SRC_CTF
     expr/ctf_btensor/impl/eval_ctf_btensor_double_dirsum.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_div.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_dot_product.C
+    expr/ctf_btensor/impl/eval_ctf_btensor_double_set.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_symm.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_trace.C
     expr/ctf_btensor/impl/eval_tree_builder_ctf_btensor.C

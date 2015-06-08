@@ -22,6 +22,7 @@ template<size_t N> class ctf_tod_random;
 template<size_t N, size_t M> class ctf_tod_scatter;
 template<size_t N> class ctf_tod_scale;
 template<size_t N> class ctf_tod_set;
+template<size_t N> class ctf_tod_set_diag;
 template<size_t N> class ctf_tod_trace;
 
 
@@ -122,12 +123,10 @@ struct ctf_btod_traits {
     };
  */
 
-/*
     template<size_t N>
     struct to_set_diag_type {
-        typedef tod_set_diag<N> type;
+        typedef ctf_tod_set_diag<N> type;
     };
- */
 
 /*
     template<size_t N>
