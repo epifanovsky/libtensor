@@ -29,6 +29,8 @@ void ctf_tod_contract2_test::perform() throw(libtest::test_exception) {
         test_5(1.6);
         test_6(0.0);
         test_6(-1.6);
+        test_7(0.0);
+        test_7(0.23);
 
     } catch(...) {
         ctf::exit();
@@ -497,6 +499,66 @@ void ctf_tod_contract2_test::test_6(double d) {
     contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).permute(1, 3));
     contr.contract(0, 2);
     contr.contract(1, 3);
+    if(d == 0.0) {
+        tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
+        ctf_tod_contract2<2, 2, 2>(contr, dta, dtb).perform(true, dtc);
+    } else {
+        tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc_ref);
+        ctf_tod_contract2<2, 2, 2>(contr, dta, dtb, d).perform(false, dtc);
+    }
+
+    ctf_tod_collect<4>(dtc).perform(tc);
+
+    compare_ref<4>::compare(testname, tc, tc_ref, 5e-14);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_contract2_test::test_7(double d) {
+
+    std::ostringstream tnss;
+    tnss << "ctf_tod_contract2_test::test_7(" << d << ")";
+    std::string tn = tnss.str();
+    const char *testname = tn.c_str();
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> ia1, ia2;
+    ia2[0] = 1; ia2[1] = 1; ia2[2] = 0; ia2[3] = 0;
+    dimensions<4> dimsa(index_range<4>(ia1, ia2));
+
+    index<4> ib1, ib2;
+    ib2[0] = 1; ib2[1] = 1; ib2[2] = 0; ib2[3] = 0;
+    dimensions<4> dimsb(index_range<4>(ib1, ib2));
+
+    index<4> ic1, ic2;
+    ic2[0] = 1; ic2[1] = 1; ic2[2] = 1; ic2[3] = 1;
+    dimensions<4> dimsc(index_range<4>(ic1, ic2));
+    dense_tensor<4, double, allocator_t> ta0(dimsa), ta(dimsa);
+    dense_tensor<4, double, allocator_t> tb0(dimsb), tb(dimsb);
+    dense_tensor<4, double, allocator_t> tc(dimsc), tc_ref(dimsc);
+    ctf_dense_tensor<4, double> dta(dimsa);
+    ctf_dense_tensor<4, double> dtb(dimsb);
+    ctf_dense_tensor<4, double> dtc(dimsc);
+
+    tod_random<4>().perform(ta);
+    tod_random<4>().perform(tb);
+    tod_random<4>().perform(tc);
+    tod_copy<4>(tc).perform(true, tc_ref);
+
+    ctf_tod_distribute<4>(ta).perform(dta);
+    ctf_tod_distribute<4>(tb).perform(dtb);
+    ctf_tod_distribute<4>(tc).perform(dtc);
+
+    // c(ijkl) = a(klab) b(ijab)
+    contraction2<2, 2, 2> contr(permutation<4>().permute(0, 2).permute(1, 3));
+    contr.contract(2, 2);
+    contr.contract(3, 3);
     if(d == 0.0) {
         tod_contract2<2, 2, 2>(contr, ta, tb).perform(true, tc_ref);
         ctf_tod_contract2<2, 2, 2>(contr, dta, dtb).perform(true, dtc);
