@@ -1,51 +1,43 @@
 #
 #    Locates the Cyclops Tensor Framewok (CTF) library
 #
+#    Input:
+#
+#    CTF_INCLUDE      - CTF include path
+#    CTF_LIB          - CTF lib path
+#
 #    Output:
 #
 #    CTF_FOUND - TRUE/FALSE - Whether the library has been found.
 #        If FALSE, all other output variables are not defined.
 #
-#    CTF_PATH         - Library home.
 #    CTF_INCLUDE_PATH - Path to the library's header files.
 #    CTF_LIBRARY_PATH - Path to the library's binaries.
 #    CTF_LIBRARIES    - Line for the linker.
 #
-#    The following locations are searched:
-#    1. $ENV{CTF_DIR}
-#    
 set(CTF_FOUND FALSE)
 
-set(CTF_DIR "$ENV{CTF_DIR}")
+if(CTF_INCLUDE AND CTF_LIB)
 
-if(CTF_DIR)
+    find_file(CTF_HPP ctf.hpp PATHS "${CTF_INCLUDE}" NO_DEFAULT_PATH)
+    find_library(CTF_A ctf PATHS "${CTF_LIB}" NO_DEFAULT_PATH)
+    if(NOT (CTF_HPP AND CTF_A))
+        message(SEND_ERROR "CTF was not found in ${CTF_INCLUDE}")
+    endif()
 
-find_file(CTF_HPP ctf.hpp PATHS "${CTF_DIR}/include" NO_DEFAULT_PATH)
+    if(CTF_HPP AND CTF_A)
 
-set(SAVED_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib")
-find_library(CTF_A ctf PATHS "${CTF_DIR}/lib" NO_DEFAULT_PATH)
-set(CMAKE_FIND_LIBRARY_SUFFIXES ${SAVED_CMAKE_FIND_LIBRARY_SUFFIXES})
-unset(SAVED_CMAKE_FIND_LIBRARY_SUFFIXES)
+        set(CTF_INCLUDE_PATH "${CTF_INCLUDE}")
+        set(CTF_LIBRARY_PATH "${CTF_LIB}")
+        add_library(ctf UNKNOWN IMPORTED)
+        set_target_properties(ctf PROPERTIES IMPORTED_LOCATION ${CTF_A})
+        set(CTF_LIBRARIES ctf)
+        set(CTF_FOUND TRUE)
+        if(NOT CTF_FIND_QUIETLY)
+            message(STATUS "Found CTF: ${CTF_A}")
+        endif(NOT CTF_FIND_QUIETLY)
 
-if(NOT (CTF_HPP AND CTF_A))
-    message(SEND_ERROR "CTF was not found in ${CTF_DIR}")
+    endif(CTF_HPP AND CTF_A)
+
 endif()
-
-if(CTF_HPP AND CTF_A)
-
-set(CTF_PATH "${CTF_DIR}")
-set(CTF_INCLUDE_PATH "${CTF_DIR}/include")
-set(CTF_LIBRARY_PATH "${CTF_DIR}/lib")
-add_library(ctf STATIC IMPORTED)
-set_target_properties(ctf PROPERTIES IMPORTED_LOCATION ${CTF_A})
-set(CTF_LIBRARIES ctf)
-set(CTF_FOUND TRUE)
-if(NOT CTF_FIND_QUIETLY)
-    message(STATUS "Found CTF: ${CTF_PATH}")
-endif(NOT CTF_FIND_QUIETLY)
-
-endif(CTF_HPP AND CTF_A)
-
-endif(CTF_DIR)
 
