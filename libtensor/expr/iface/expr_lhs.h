@@ -95,6 +95,7 @@ const expr_rhs<N, T> &labeled_lhs<N, T>::operator+=(const expr_rhs<N, T> &rhs) {
 } // namespace expr
 } // namespace libtensor
 
+
 namespace libtensor {
 
 using expr::expr_lhs;
