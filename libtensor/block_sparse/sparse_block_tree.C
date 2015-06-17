@@ -7,19 +7,14 @@ using namespace std;
 
 namespace libtensor {
 
-//TODO: DEBUG REMOVE
-/*template<typename T>*/
-/*T read_timer();*/
-
-
 //Used to return empty trees by sub_tree
-static const sparse_block_tree_any_order empty = sparse_block_tree<1>(vector< sequence<1,size_t> >(),vector< sparse_bispace<1> >(1,sparse_bispace<1>(1)));
+static const sparse_block_tree empty = sparse_block_tree(vector< sequence<1,size_t> >(),vector< sparse_bispace<1> >(1,sparse_bispace<1>(1)));
 
-void sparse_block_tree_any_order::set_offsets_sizes_nnz(const vector< sparse_bispace<1> >& subspaces)
+void sparse_block_tree::set_offsets_sizes_nnz(const vector< sparse_bispace<1> >& subspaces)
 {
     if(subspaces.size() != m_order)
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_any_order","set_offsets_sizes_nnz",
+        throw bad_parameter(g_ns,"sparse_block_tree","set_offsets_sizes_nnz",
                             __FILE__,__LINE__,"Wrong number of subspaces specified!");
     }
 
@@ -40,7 +35,7 @@ void sparse_block_tree_any_order::set_offsets_sizes_nnz(const vector< sparse_bis
 }
 
 //Assignment operator
-sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse_block_tree_any_order& rhs)
+sparse_block_tree& sparse_block_tree::operator=(const sparse_block_tree& rhs)
 {
     if(this != &rhs)
     {
@@ -66,7 +61,7 @@ sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse
         {
             for(size_t i = 0; i < m_children.size(); ++i)
             {
-                m_children[i] = new sparse_block_tree_any_order(*rhs.m_children[i]);
+                m_children[i] = new sparse_block_tree(*rhs.m_children[i]);
             }
         } 
         else
@@ -81,7 +76,7 @@ sparse_block_tree_any_order& sparse_block_tree_any_order::operator=(const sparse
 }
 
 //Copy constructor
-sparse_block_tree_any_order::sparse_block_tree_any_order(const sparse_block_tree_any_order& rhs) : m_keys(rhs.m_keys),
+sparse_block_tree::sparse_block_tree(const sparse_block_tree& rhs) : m_keys(rhs.m_keys),
                                                                                                                m_values(rhs.m_values)
 {
     m_order = rhs.m_order;
@@ -93,13 +88,13 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const sparse_block_tree
         m_children.resize(rhs.m_children.size());
         for(size_t i = 0; i < m_children.size(); ++i)
         {
-            m_children[i] = new sparse_block_tree_any_order(*rhs.m_children[i]);
+            m_children[i] = new sparse_block_tree(*rhs.m_children[i]);
         }
     } 
 }
 
 //Destructor
-sparse_block_tree_any_order::~sparse_block_tree_any_order() 
+sparse_block_tree::~sparse_block_tree() 
 {
     for(size_t i = 0; i < m_children.size(); ++i)
     {
@@ -108,7 +103,7 @@ sparse_block_tree_any_order::~sparse_block_tree_any_order()
 }
 
 
-sparse_block_tree_any_order::sparse_block_tree_any_order(const vector< vector<key_t> >& sig_blocks,size_t order)
+sparse_block_tree::sparse_block_tree(const vector< vector<key_t> >& sig_blocks,size_t order)
 {
     m_order = order;
     m_n_entries = 0;
@@ -118,7 +113,7 @@ sparse_block_tree_any_order::sparse_block_tree_any_order(const vector< vector<ke
     }
 }
 
-struct sparse_block_tree_any_order::kv_pair_compare {
+struct sparse_block_tree::kv_pair_compare {
 
     bool operator()(const pair< vector<key_t>,value_t>& p1,const pair< vector<key_t>,value_t>& p2)
     {
@@ -142,7 +137,7 @@ struct sparse_block_tree_any_order::kv_pair_compare {
     }
 };
 
-const sparse_block_tree_any_order& sparse_block_tree_any_order::get_sub_tree(const vector<key_t>& sub_key) const
+const sparse_block_tree& sparse_block_tree::get_sub_tree(const vector<key_t>& sub_key) const
 {
     static const char *method = "get_sub_tree(const vector<key_t>& sub_key) const";
 
@@ -152,7 +147,7 @@ const sparse_block_tree_any_order& sparse_block_tree_any_order::get_sub_tree(con
     }
 
     //Find the position of the current key in this node's list of keys
-    const sparse_block_tree_any_order* cur_node = this;
+    const sparse_block_tree* cur_node = this;
     for(size_t i = 0; i < sub_key.size(); ++i)
     {
         vector<key_t>::const_iterator cur_pos = lower_bound(cur_node->m_keys.begin(),cur_node->m_keys.end(),sub_key[i]);
@@ -165,7 +160,7 @@ const sparse_block_tree_any_order& sparse_block_tree_any_order::get_sub_tree(con
     return *cur_node;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::permute(const runtime_permutation& perm) const
+sparse_block_tree sparse_block_tree::permute(const runtime_permutation& perm) const
 {
     vector< pair< vector<key_t>, value_t > > kv_pairs;
     for(const_iterator it = begin(); it != end(); ++it)
@@ -185,7 +180,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::permute(const runtime_p
         all_vals.push_back(kv_pairs[i].second);
     }
 
-    sparse_block_tree_any_order sbt(all_keys,m_order);
+    sparse_block_tree sbt(all_keys,m_order);
     size_t m = 0; 
     for(iterator it = sbt.begin(); it != sbt.end(); ++it)
     {
@@ -195,11 +190,11 @@ sparse_block_tree_any_order sparse_block_tree_any_order::permute(const runtime_p
     return sbt;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contract_idx,const vector< sparse_bispace<1> >& subspaces) const
+sparse_block_tree sparse_block_tree::contract(size_t contract_idx,const vector< sparse_bispace<1> >& subspaces) const
 {
     if(subspaces.size() != m_order - 1)
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_any_order","contract(...)",
+        throw bad_parameter(g_ns,"sparse_block_tree","contract(...)",
             __FILE__,__LINE__,"not enough subspaces specified"); 
     }
 
@@ -228,24 +223,24 @@ sparse_block_tree_any_order sparse_block_tree_any_order::contract(size_t contrac
     }
 
 
-    sparse_block_tree_any_order sbt(unique_keys,m_order - 1);
+    sparse_block_tree sbt(unique_keys,m_order - 1);
     sbt.set_offsets_sizes_nnz(subspaces);
     return sbt;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs,const vector<size_t>& lhs_indices,const vector<size_t>& rhs_indices) const
+sparse_block_tree sparse_block_tree::fuse(const sparse_block_tree& rhs,const vector<size_t>& lhs_indices,const vector<size_t>& rhs_indices) const
 {
     /*double seconds = read_timer<double>();*/
 
     //Sanitize input
     if(lhs_indices.size() != rhs_indices.size())
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_any_order","fuse(...)",
+        throw bad_parameter(g_ns,"sparse_block_tree","fuse(...)",
             __FILE__,__LINE__,"lhs and rhs number of fused indices dont match"); 
     }
     else if(lhs_indices.size() == 0)
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_any_order","fuse(...)",
+        throw bad_parameter(g_ns,"sparse_block_tree","fuse(...)",
             __FILE__,__LINE__,"must specify at least one index to fuse"); 
     }
 
@@ -281,7 +276,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
 
     //Don't permute if unnecessary
     runtime_permutation perm(permutation_entries);
-    const sparse_block_tree_any_order& rhs_permuted = (perm == runtime_permutation(rhs_order)) ? rhs : rhs.permute(perm);
+    const sparse_block_tree& rhs_permuted = (perm == runtime_permutation(rhs_order)) ? rhs : rhs.permute(perm);
 
     for(const_iterator it = begin(); it != end(); ++it)
     {
@@ -321,7 +316,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
         }
         else
         {
-            const sparse_block_tree_any_order& st = rhs_permuted.get_sub_tree(sub_key);
+            const sparse_block_tree& st = rhs_permuted.get_sub_tree(sub_key);
             start_it = st.begin(); 
             end_it = st.end();
         }
@@ -360,9 +355,9 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
     }
 
     //By virtue of both trees being sorted, the list will be sorted already
-    sparse_block_tree_any_order new_tree(new_keys,out_order);
+    sparse_block_tree new_tree(new_keys,out_order);
     size_t m = 0; 
-    for(sparse_block_tree_any_order::iterator it = new_tree.begin(); it != new_tree.end(); ++it)
+    for(sparse_block_tree::iterator it = new_tree.begin(); it != new_tree.end(); ++it)
     {
         *it = new_values[m];
         ++m;
@@ -371,7 +366,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
     return new_tree;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block_tree_any_order& rhs) const
+sparse_block_tree sparse_block_tree::fuse(const sparse_block_tree& rhs) const
 {
     vector<size_t> lhs_fuse_points(1,m_order - 1);
     vector<size_t> rhs_fuse_points(1,0);
@@ -379,15 +374,15 @@ sparse_block_tree_any_order sparse_block_tree_any_order::fuse(const sparse_block
 }
 
 
-sparse_block_tree_any_order::const_iterator sparse_block_tree_any_order::search(const vector<size_t>& key) const
+sparse_block_tree::const_iterator sparse_block_tree::search(const vector<size_t>& key) const
 {
     if(key.size() != m_order)
     {
-        throw bad_parameter(g_ns,"sparse_block_tree_any_order","search(...)",
+        throw bad_parameter(g_ns,"sparse_block_tree","search(...)",
             __FILE__,__LINE__,"key length does not match depth of tree"); 
     }
 
-    const sparse_block_tree_any_order* cur_node = this;
+    const sparse_block_tree* cur_node = this;
     vector<size_t> displacement(m_order);
     for(size_t i = 0; i < key.size(); ++i)
     {
@@ -430,7 +425,7 @@ sparse_block_tree_any_order::const_iterator sparse_block_tree_any_order::search(
     return it;
 }
 
-sparse_block_tree_iterator<false> sparse_block_tree_any_order::begin()
+sparse_block_tree_iterator<false> sparse_block_tree::begin()
 {
     if(m_keys.size() == 0)
     {
@@ -442,14 +437,14 @@ sparse_block_tree_iterator<false> sparse_block_tree_any_order::begin()
     }
 }
 
-sparse_block_tree_iterator<false> sparse_block_tree_any_order::end()
+sparse_block_tree_iterator<false> sparse_block_tree::end()
 {
     return iterator(NULL);
 }
 
 
 //TODO: merge const and non-const functions
-sparse_block_tree_iterator<true> sparse_block_tree_any_order::begin() const
+sparse_block_tree_iterator<true> sparse_block_tree::begin() const
 {
     if(m_keys.size() == 0)
     {
@@ -461,12 +456,12 @@ sparse_block_tree_iterator<true> sparse_block_tree_any_order::begin() const
     }
 }
 
-sparse_block_tree_iterator<true> sparse_block_tree_any_order::end() const
+sparse_block_tree_iterator<true> sparse_block_tree::end() const
 {
     return const_iterator(NULL);
 }
 
-bool sparse_block_tree_any_order::operator==(const sparse_block_tree_any_order& rhs) const
+bool sparse_block_tree::operator==(const sparse_block_tree& rhs) const
 {
     for(size_t i = 0; i < m_keys.size(); ++i)
     {
@@ -492,13 +487,13 @@ bool sparse_block_tree_any_order::operator==(const sparse_block_tree_any_order& 
     return true;
 }
 
-bool sparse_block_tree_any_order::operator!=(const sparse_block_tree_any_order& rhs) const
+bool sparse_block_tree::operator!=(const sparse_block_tree& rhs) const
 {
     return !(*this == rhs);
 }
 
 
-sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const
+sparse_block_tree sparse_block_tree::truncate_subspace(size_t subspace_idx,const idx_pair& subspace_bounds) const
 {
     vector< vector<key_t> > new_keys; 
     vector<value_t> new_values; 
@@ -516,7 +511,7 @@ sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_
     }
     
     //Preserve the original values in the tree
-    sparse_block_tree_any_order sbt(new_keys,m_order);
+    sparse_block_tree sbt(new_keys,m_order);
     size_t m = 0;
     for(iterator it = sbt.begin(); it != sbt.end(); ++it)
     {
@@ -526,11 +521,11 @@ sparse_block_tree_any_order sparse_block_tree_any_order::truncate_subspace(size_
     return sbt;
 }
 
-sparse_block_tree_any_order sparse_block_tree_any_order::insert_subspace(size_t subspace_idx,const sparse_bispace<1>& subspace) const
+sparse_block_tree sparse_block_tree::insert_subspace(size_t subspace_idx,const sparse_bispace<1>& subspace) const
 {
     if(subspace_idx > m_order)
     {
-        throw out_of_bounds(g_ns,"sparse_block_tree_any_order","insert_subspace(...)",__FILE__,__LINE__,
+        throw out_of_bounds(g_ns,"sparse_block_tree","insert_subspace(...)",__FILE__,__LINE__,
                 "subspace idx out of bounds"); 
     }
 
@@ -601,10 +596,10 @@ sparse_block_tree_any_order sparse_block_tree_any_order::insert_subspace(size_t 
         }
     }
 
-    sparse_block_tree_any_order sbt(all_keys,m_order+1);
+    sparse_block_tree sbt(all_keys,m_order+1);
     return sbt;
 }
 
-const char* sparse_block_tree_any_order::k_clazz = "sparse_block_tree_any_order";
+const char* sparse_block_tree::k_clazz = "sparse_block_tree";
 
 } // namespace libtensor

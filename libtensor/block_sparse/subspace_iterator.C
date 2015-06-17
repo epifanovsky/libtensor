@@ -28,7 +28,7 @@ subspace_iterator::subspace_iterator(const sparse_bispace_any_order& bispace,siz
             if(idx_grp_offset == sparse_grp_offset)
             {
                 //Permute tree so that iterated subspace is at position 0
-                sparse_block_tree_any_order tree = bispace.get_sparse_group_tree(sparse_grp_idx);
+                sparse_block_tree tree = bispace.get_sparse_group_tree(sparse_grp_idx);
                 if(subspace_idx != 0)
                 {
                     runtime_permutation perm(tree.get_order());
@@ -39,7 +39,7 @@ subspace_iterator::subspace_iterator(const sparse_bispace_any_order& bispace,siz
                 size_t block_subtotal = 0;
                 bool empty = (tree.begin() == tree.end());
                 if(!empty) m_blocks.push_back(tree.begin().key()[0]);
-                for(sparse_block_tree_any_order::iterator it = tree.begin(); it != tree.end(); ++it)
+                for(sparse_block_tree::iterator it = tree.begin(); it != tree.end(); ++it)
                 {
                     size_t block_idx = it.key()[0];
                     if(block_idx != m_blocks.back())

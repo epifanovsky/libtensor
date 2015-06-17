@@ -6,8 +6,6 @@
 
 namespace libtensor {
 namespace expr {
-namespace eval_btensor_double {
-
 
 /** \brief Dispatches a single-integer-parameter template at runtime
     \tparam Nmin Minimum value of parameter.
@@ -106,8 +104,6 @@ struct meta_max {
     };
 };
 
-
-} // namespace eval_btensor_double
 } // namespace expr
 } // namespace libtensor
 

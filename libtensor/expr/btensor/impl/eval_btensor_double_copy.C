@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include "metaprog.h"
+#include <libtensor/expr/metaprog.h>
 #include "tensor_from_node.h"
 #include "eval_btensor_double_copy.h"
 

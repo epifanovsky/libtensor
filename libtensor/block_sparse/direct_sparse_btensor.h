@@ -1,77 +1,71 @@
-#ifndef DIRECT_SPARSE_BTENSOR_H
-#define DIRECT_SPARSE_BTENSOR_H
+#ifndef DIRECT_SPARSE_BTENSOR_NEW_H
+#define DIRECT_SPARSE_BTENSOR_NEW_H
 
 #include "sparse_bispace.h"
-#include "labeled_direct_sparse_btensor.h"
+#include "gen_sparse_btensor.h"
+#include "batch_provider.h"
+#include <libtensor/expr/iface/expr_lhs.h>
+#include <libtensor/expr/iface/labeled_lhs_rhs.h>
+#include <libtensor/expr/dag/node_null.h>
 
 namespace libtensor {
 
 template<size_t N, typename T=double> 
-class direct_sparse_btensor
+class direct_sparse_btensor : public gen_sparse_btensor<N,T>,public expr::expr_lhs<N,T>
 {
 private:
     sparse_bispace<N> m_bispace;
-    batch_provider<T>* m_batch_provider;
+    batch_provider_i<T>* m_batch_provider;
+    expr::expr_tree* m_expr;
 public:
-    direct_sparse_btensor(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL) {}
-    labeled_direct_sparse_btensor<N,T> operator()(const expr::label<N>& le);
+    direct_sparse_btensor(const sparse_bispace<N>& bispace) : m_bispace(bispace),m_batch_provider(NULL),m_expr(new expr::expr_tree(expr::node_null(N))) {}
+    void set_batch_provider(batch_provider_i<T>& bp) { m_batch_provider = &bp; }
 
-    void get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail = 0);
+    batch_provider_i<T>* get_batch_provider() const { return m_batch_provider; }
 
-    void set_batch_provider(const batch_provider<T>& bp);
+    const sparse_bispace<N>& get_bispace() const { return m_bispace; }
+    const T* get_data_ptr() const { return NULL; }
 
-    direct_sparse_btensor(const direct_sparse_btensor<N,T>& rhs);
-    direct_sparse_btensor<N,T>&  operator=(const direct_sparse_btensor<N,T>& rhs);
-    ~direct_sparse_btensor() { if(m_batch_provider != NULL) { delete m_batch_provider; } }
+    virtual void assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
+
+    expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &lab);
 };
 
 template<size_t N,typename T>
-labeled_direct_sparse_btensor<N,T> direct_sparse_btensor<N,T>::operator()(const expr::label<N>& le)
+void direct_sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
 {
-    return labeled_direct_sparse_btensor<N,T>(m_bispace,le,&m_batch_provider);
-}
+    using namespace expr;
+    delete m_expr;
+    node_assign root(N);
+    m_expr = new expr_tree(root);
+    expr_tree::node_id_t root_id = m_expr->get_root();
+    node_ident_any_tensor<N,T> n_tensor(*this);
+    m_expr->add(root_id,n_tensor);
 
-//For custom batch providers such as molecular integral interfaces
-template<size_t N,typename T>
-void direct_sparse_btensor<N,T>::set_batch_provider(const batch_provider<T>& bp)
-{
-    m_batch_provider = bp.clone();
-}
-
-template<size_t N,typename T>
-direct_sparse_btensor<N,T>::direct_sparse_btensor(const direct_sparse_btensor<N,T>& rhs) : m_bispace(rhs.m_bispace),m_batch_provider(NULL)
-{
-    if(rhs.m_batch_provider != NULL)
+    permutation<N> perm = l.permutation_of(rhs.get_label());
+    if(!perm.is_identity()) 
     {
-        m_batch_provider = rhs.m_batch_provider->clone();
+        std::vector<size_t> perm_entries(N);
+        for(size_t i = 0; i < N; i++) perm_entries[i] = perm[i];
+
+        node_transform<T> n_tf(perm_entries, scalar_transf<T>());
+        root_id = m_expr->add(root_id,n_tf);
     }
+    m_expr->add(root_id, rhs.get_expr());
 }
 
 template<size_t N,typename T>
-direct_sparse_btensor<N,T>&  direct_sparse_btensor<N,T>::operator=(const direct_sparse_btensor<N,T>& rhs)
+expr::labeled_lhs_rhs<N, T> direct_sparse_btensor<N,T>::operator()(const expr::label<N> &lab)
 {
-    m_bispace = rhs.m_bispace;
-    if(rhs.m_batch_provider != NULL)
+    if(m_batch_provider != NULL)
     {
-        m_batch_provider = rhs.m_batch_provider->clone();
+        return expr::labeled_lhs_rhs<N, T>(*this, lab,any_tensor<N, T>::make_rhs(lab));
     }
     else
     {
-        m_batch_provider = NULL;
+        return expr::labeled_lhs_rhs<N, T>(*this, lab, expr::expr_rhs<N, T>(*m_expr, lab));
     }
 }
-
-template<size_t N,typename T>
-void direct_sparse_btensor<N,T>::get_batch(T* batch_mem,const std::map<idx_pair,idx_pair>& batches,size_t mem_avail)
-{
-    if(m_batch_provider == NULL)
-    {
-        throw generic_exception(g_ns,"direct_sparse_btensor<N,T>","get_batch(...)",__FILE__,__LINE__,
-                "Direct tensor called without being initialized!"); 
-    }
-    m_batch_provider->get_batch(batch_mem,batches,mem_avail);
-}
-
 
 } // namespace libtensor
 

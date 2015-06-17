@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_SPARSE_BISPACE_H
-#define LIBTENSOR_SPARSE_BISPACE_H
+#ifndef SPARSE_BISPACE_H
+#define SPARSE_BISPACE_H
 
 #include <vector>
 #include <map>
@@ -7,7 +7,7 @@
 #include "../core/sequence.h"
 #include "../core/permutation.h"
 #include "runtime_permutation.h"
-#include "sparse_block_tree.h"
+#include "sparse_block_tree_iterator.h"
 #include "sparsity_expr.h"
 #include "range.h"
 
@@ -94,7 +94,7 @@ public:
      **/
     size_t get_n_sparse_groups() const { return 0; }
 
-    const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
+    const sparse_block_tree& get_sparse_group_tree(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
     size_t get_sparse_group_offset(size_t group_idx) const { throw bad_parameter(g_ns,"sparse_bispace<1>","get_sparse_group_tree(...)",__FILE__,__LINE__,"not implemented"); }
 
     size_t get_n_index_groups() const { return 1; }
@@ -288,7 +288,7 @@ private:
     std::vector<size_t> m_sparse_indices_sets_offsets;
 
     //Contains the trees that describe the sparsity of each group of coupled indices  
-    std::vector< sparse_block_tree_any_order > m_sparse_block_trees;
+    std::vector< sparse_block_tree > m_sparse_block_trees;
 
     //Internal-use array containing the dimension of each subspace/sparse composite subspace group. 
     //Used to calculate number of elements and offsets
@@ -310,7 +310,7 @@ private:
     void init();
     
     //Used to initialize offsets stored in sparse_block_tree members
-    size_t set_offsets(sparse_block_tree_any_order& tree,const std::vector<size_t>& positions);
+    size_t set_offsets(sparse_block_tree& tree,const std::vector<size_t>& positions);
 
     /** \brief Constructors a composite sparse_bispace from two component spaces
      *         Used to implement operator|(...) between multi-dimensional spaces
@@ -382,7 +382,7 @@ public:
     /** \brief Access the tree corresponding to sparse index group group_idx
      *         Two N-D spaces are equal if all of their subspaces are equal and in the same order
      **/
-    const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const;
+    const sparse_block_tree& get_sparse_group_tree(size_t group_idx) const;
 
     /** \brief Get the subspace index corresponding to the beginning of a given sparsity coupled index group 
      **/
@@ -459,7 +459,7 @@ void sparse_bispace<N>::init()
     //Initialize the sparse key vectors for each tree only once to save performance
     for(size_t group_idx = 0; group_idx < m_sparse_block_trees.size(); ++group_idx)
     {
-        const sparse_block_tree_any_order& sbt = m_sparse_block_trees[group_idx];
+        const sparse_block_tree& sbt = m_sparse_block_trees[group_idx];
         size_t cur_order = sbt.get_order();
         m_sparse_key_vecs.push_back(std::vector<size_t>(cur_order));
     }
@@ -536,7 +536,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N-L+1>& lhs,const std::ve
     }
 
     //Initialize the new sparse_block_tree with offset information  
-    sparse_block_tree<L> sbt(sig_blocks,m_subspaces);
+    sparse_block_tree sbt(sig_blocks,m_subspaces);
     std::vector<size_t>  positions(L);
     for(size_t i = 0; i < L; ++i)
     {
@@ -817,7 +817,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
     //Contract sparse information appropriately, by default just copying unaffected trees
     for(size_t group_idx = 0; group_idx < parent.m_sparse_block_trees.size(); ++group_idx)
     {
-        const sparse_block_tree_any_order& cur_tree = parent.m_sparse_block_trees[group_idx];
+        const sparse_block_tree& cur_tree = parent.m_sparse_block_trees[group_idx];
         size_t offset =   parent.m_sparse_indices_sets_offsets[group_idx];
         size_t order = cur_tree.get_order();
 
@@ -846,7 +846,7 @@ sparse_bispace<N>::sparse_bispace(const sparse_bispace<N+1>& parent,size_t contr
 
                 //Tree-relative idx
                 size_t rel_idx = contract_idx - offset;
-                sparse_block_tree_any_order new_tree = cur_tree.contract(rel_idx,tree_subspaces);
+                sparse_block_tree new_tree = cur_tree.contract(rel_idx,tree_subspaces);
                 m_sparse_block_trees.push_back(new_tree);
                 m_sparse_indices_sets_offsets.push_back(new_group_offset);
             }
@@ -896,7 +896,7 @@ void sparse_bispace<N>::truncate_subspace(size_t subspace_idx,const idx_pair& bo
     {
         size_t grp_offset = m_sparse_indices_sets_offsets[target_sparse_grp_idx];
         size_t tree_subspace = subspace_idx - grp_offset;
-        sparse_block_tree_any_order& cur_tree = m_sparse_block_trees[target_sparse_grp_idx];
+        sparse_block_tree& cur_tree = m_sparse_block_trees[target_sparse_grp_idx];
         cur_tree = cur_tree.truncate_subspace(tree_subspace,bounds);
         std::vector< sparse_bispace<1> > subspaces;
 
@@ -904,13 +904,13 @@ void sparse_bispace<N>::truncate_subspace(size_t subspace_idx,const idx_pair& bo
         //so that we can use them to match up dense offsets in other tensors
         //We need to make the keys internally consistent
         std::vector<std::vector<size_t> > new_keys;
-        for(sparse_block_tree_any_order::iterator it = cur_tree.begin(); it != cur_tree.end(); ++it)
+        for(sparse_block_tree::iterator it = cur_tree.begin(); it != cur_tree.end(); ++it)
         {
             std::vector<size_t> cur_key = it.key();
             cur_key[tree_subspace] -= bounds.first;
             new_keys.push_back(cur_key);
         }
-        cur_tree = sparse_block_tree_any_order(new_keys,cur_tree.get_order());
+        cur_tree = sparse_block_tree(new_keys,cur_tree.get_order());
 
         for(size_t tree_subspace_idx = 0; tree_subspace_idx < cur_tree.get_order(); ++tree_subspace_idx)
         {
@@ -979,13 +979,13 @@ std::vector<idx_pair> sparse_bispace<N>::get_batches(size_t subspace_idx,size_t 
         size_t tree_subspace = subspace_idx - min;
 
         //We must place the batched index at 0 to ensure that it is strictly increasing so that we can batch over it
-        const sparse_block_tree_any_order& orig_tree = m_sparse_block_trees[target_sparse_grp];
+        const sparse_block_tree& orig_tree = m_sparse_block_trees[target_sparse_grp];
         runtime_permutation perm(orig_tree.get_order());
         perm.permute(0,tree_subspace);
-        sparse_block_tree_any_order permuted_tree = orig_tree.permute(perm);
+        sparse_block_tree permuted_tree = orig_tree.permute(perm);
         size_t prev_block_idx = 0;
         size_t this_block_idx_subtotal = 0;
-        for(sparse_block_tree_any_order::iterator it = permuted_tree.begin(); it != permuted_tree.end(); ++it)
+        for(sparse_block_tree::iterator it = permuted_tree.begin(); it != permuted_tree.end(); ++it)
         {
             size_t this_block_contrib = (*it)[0].second*scale_fac;
             if(this_block_contrib > max_n_elem)
@@ -1061,8 +1061,8 @@ size_t sparse_bispace<N>::get_batch_size(size_t subspace_idx,const idx_pair& bat
     {
         size_t min = m_sparse_indices_sets_offsets[target_sparse_grp];
         size_t tree_subspace = subspace_idx - min;
-        const sparse_block_tree_any_order& tree = m_sparse_block_trees[target_sparse_grp];
-        for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+        const sparse_block_tree& tree = m_sparse_block_trees[target_sparse_grp];
+        for(sparse_block_tree::const_iterator it = tree.begin(); it != tree.end(); ++it)
         {
             size_t block_idx = it.key()[tree_subspace];
             if((batch.first <= block_idx) && (block_idx < batch.second))
@@ -1134,7 +1134,7 @@ sparse_bispace<N+L-1> sparse_bispace<N>::fuse(const sparse_bispace<L>& rhs) cons
 }
 
 template<size_t N>
-const sparse_block_tree_any_order& sparse_bispace<N>::get_sparse_group_tree(size_t group_idx) const
+const sparse_block_tree& sparse_bispace<N>::get_sparse_group_tree(size_t group_idx) const
 {
     if(group_idx > (m_sparse_block_trees.size() - 1))
     {
@@ -1316,7 +1316,7 @@ private:
         virtual size_t get_nnz() const = 0; 
         virtual sparse_bispace_generic_i* clone() const = 0;
         virtual size_t get_n_sparse_groups() const  = 0;
-        virtual const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const  = 0;
+        virtual const sparse_block_tree& get_sparse_group_tree(size_t group_idx) const  = 0;
         virtual size_t get_sparse_group_offset(size_t group_idx) const = 0; 
         virtual size_t get_n_index_groups() const = 0;
         virtual size_t get_index_group_offset(size_t grp_idx) const = 0;
@@ -1343,7 +1343,7 @@ private:
         size_t get_order() const { return N; }
         size_t get_nnz() const { return m_bispace.get_nnz(); }
         size_t get_n_sparse_groups() const  { return m_bispace.get_n_sparse_groups(); }
-        const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
+        const sparse_block_tree& get_sparse_group_tree(size_t group_idx) const { return m_bispace.get_sparse_group_tree(group_idx); };
         size_t get_sparse_group_offset(size_t group_idx) const { return m_bispace.get_sparse_group_offset(group_idx); }
         size_t get_n_index_groups() const { return m_bispace.get_n_index_groups(); }
         size_t get_index_group_offset(size_t grp_idx) const { return m_bispace.get_index_group_offset(grp_idx); }
@@ -1381,7 +1381,7 @@ public:
     size_t get_order() const { return m_spb_ptr->get_order(); }
     size_t get_nnz() const { return m_spb_ptr->get_nnz(); }
     size_t get_n_sparse_groups() const { return m_spb_ptr->get_n_sparse_groups(); }
-    const sparse_block_tree_any_order& get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
+    const sparse_block_tree& get_sparse_group_tree(size_t group_idx) const { return m_spb_ptr->get_sparse_group_tree(group_idx); }
     size_t get_sparse_group_offset(size_t group_idx) const { return m_spb_ptr->get_sparse_group_offset(group_idx); } 
     size_t get_n_index_groups() const { return m_spb_ptr->get_n_index_groups(); }
     size_t get_index_group_offset(size_t grp_idx) const { return m_spb_ptr->get_index_group_offset(grp_idx); }
@@ -1407,4 +1407,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_SPARSE_BISPACE_H
+#endif // SPARSE_BISPACE_H

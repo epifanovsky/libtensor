@@ -8,6 +8,7 @@
 #ifndef BLOCK_PERMUTE_KERNEL_H_
 #define BLOCK_PERMUTE_KERNEL_H_
 
+#include <functional>
 #include <numeric>
 #include "runtime_permutation.h"
 #include "block_kernel_i.h"

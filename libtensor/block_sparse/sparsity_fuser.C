@@ -24,7 +24,7 @@ sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
         const sparse_bispace_any_order& bispace = bispaces[bispace_idx];
         for(size_t tree_idx = 0; tree_idx < bispace.get_n_sparse_groups(); ++tree_idx)
         {
-            sparse_block_tree_any_order tree = bispace.get_sparse_group_tree(tree_idx);
+            sparse_block_tree tree = bispace.get_sparse_group_tree(tree_idx);
             m_sub_key_offsets_for_trees.push_back(vector<idx_list>(1,idx_list()));
             for(size_t tree_sub_idx = 0; tree_sub_idx < tree.get_order(); ++tree_sub_idx)
             {

@@ -1,429 +1,649 @@
 #ifndef BATCH_PROVIDER_H
 #define BATCH_PROVIDER_H
 
-#include <map>
-#include "block_loop.h"
-#include "get_batches.h"
+#include "gen_sparse_btensor.h"
+#include "batch_kernel_permute.h"
+#include "batch_kernel_contract2.h"
+#include "batch_kernel_add2.h"
+#include "batch_kernel_unblock.h"
+#include "batch_kernel_reblock.h"
+#include "connectivity.h"
+#include "../expr/dag/expr_tree.h"
+#include "../expr/dag/node_ident.h"
+#include "../expr/iface/node_ident_any_tensor.h"
+#include "../expr/dag/node_assign.h"
+#include "../expr/dag/node_transform.h"
+#include "../expr/dag/node_contract.h"
+#include "../expr/dag/node_contract.h"
+#include "../expr/dag/node_add.h"
+#include "../expr/dag/node_unblock.h"
+#include "../expr/dag/node_reblock.h"
+#include "../expr/metaprog.h"
+#include <algorithm>
+#include <libutil/timings/timer.h>
 
 namespace libtensor {
 
 template<typename T>
-T read_timer();
+class batch_provider_i
+{
+public:
+    virtual idx_list get_batchable_subspaces() const { return idx_list(); } 
+    virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()) = 0; 
+    virtual ~batch_provider_i() {}; 
+    virtual void print_timings() const {};
+};
 
-//TODO: Should rewrite this using mixins/CRTP so that I don't need to INHERIT from the class too much baggage
-//Constructor is too messy and huge...
-template<typename T>
-class batch_provider 
+namespace expr {
+
+
+//Can't do this with a function because C++03 won't let function templates have default template args
+template<typename T,size_t NC=0,size_t NA=0,size_t NB=0>
+class kernel_builder
 {
 private:
-    //These are set in the base constructor we can't let anything modify them
-    idx_list m_direct_tensors;
-    idx_list m_direct_tensors_to_alloc;
-protected:
-    static const char *k_clazz; //!< Class name
-    std::vector<block_loop> m_loops;
-    std::vector<sparse_bispace_any_order> m_bispaces;
+    const expr_tree& m_tree;
+    const expr_tree::edge_list_t& m_edges;
+    batch_kernel<T>** m_kern; //Have to cache in a member var to pass through dispatch_1
+    std::string* m_type_str;
     std::vector<T*> m_ptrs;
-    std::vector<batch_provider<T>* > m_batch_providers;
-    size_t m_mem_avail;
-    idx_pair_list m_forced_batched_bs; 
-
-
-    //Used - for example, to set the output tensor to zero prior to contraction
-    virtual void init(const std::vector<block_loop>& loops,
-                      const idx_list& direct_tensors,
-                      const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                      const std::vector<T*>& ptrs) {};
-
-    virtual void run_impl(const std::vector<block_loop>& loops,
-                          const idx_list& direct_tensors,
-                          const std::vector<sparse_bispace_any_order>& truncated_bispaces,
-                          const std::vector<T*>& ptrs,
-                          const std::map<size_t,idx_pair>& loop_batches) = 0;
+    std::vector<batch_provider_i<T>*> m_suppliers;
+    std::vector<sparse_bispace_any_order> m_bispaces;
 public:
-    batch_provider(const std::vector<block_loop>& loops,
-                   const std::vector<sparse_bispace_any_order>& bispaces,
-                   const std::vector<size_t>& direct_tensors,
-                   const std::vector<batch_provider<T>*>& batch_providers,
-                   const std::vector<T*>& ptrs,
-                   size_t mem_avail,
-                   const idx_pair_list& forced_batched_bs = idx_pair_list()) : m_loops(loops),m_bispaces(bispaces),
-                                       m_ptrs(ptrs),
-                                       m_direct_tensors(direct_tensors),
-                                       m_mem_avail(mem_avail),m_forced_batched_bs(forced_batched_bs) 
+    std::vector<T*> get_ptrs() { return m_ptrs; }
+    std::vector<batch_provider_i<T>*> get_suppliers() { return m_suppliers; }
+    std::vector<sparse_bispace_any_order> get_bispaces() { return m_bispaces; }
+    void build_kernel(batch_kernel<T>*& kern,std::string& type_str)
     {
-        for(size_t bp_idx = 0; bp_idx < batch_providers.size(); ++bp_idx)
+        m_kern = &kern;
+        m_type_str = &type_str;
+        size_t n_tensors_processed = (NC == 0 ? 0 : (NA == 0 ? 1 : (NB == 0 ? 2 : 3)));
+        size_t n_tensors_to_process = (m_edges.size() == 2) ? 2 : m_edges.size() - 1;
+        if(n_tensors_processed == n_tensors_to_process)
         {
-            m_batch_providers.push_back(batch_providers[bp_idx]->clone());
-        }
-        //Find the direct tensors that don't already have memory allocated for them
-        //TODO: Need some recursive implementation of this to be truly rigorous
-        for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors.size(); ++direct_tensor_rel_idx)
-        {
-            size_t direct_tensor_idx = m_direct_tensors[direct_tensor_rel_idx];
-            //It is an input direct tensor - we need to figure out how much batch memory to allocate for it
-            if(direct_tensor_idx != 0)
+            const node& op_node = m_tree.get_vertex(m_edges.back());
+            const node& n_0 = m_tree.get_vertex(m_edges[0]);
+            const node_ident_any_tensor<NC,T>& n_0_concrete = dynamic_cast< const node_ident_any_tensor<NC,T>& >(n_0);
+            gen_sparse_btensor<NC,T>& C = dynamic_cast< gen_sparse_btensor<NC,T>& >(n_0_concrete.get_tensor());
+            m_bispaces.push_back(C.get_bispace());
+            if(n_tensors_processed > 1)
             {
-                m_direct_tensors_to_alloc.push_back(direct_tensor_idx);
+                const node& n_1 = (m_edges.size() == 2) ? op_node : m_tree.get_vertex(m_edges[1]);
+                const node_ident_any_tensor<NA,T>& n_1_concrete = dynamic_cast< const node_ident_any_tensor<NA,T>& >(n_1);
+                gen_sparse_btensor<NA,T>& A = dynamic_cast< gen_sparse_btensor<NA,T>& >(n_1_concrete.get_tensor());
+                m_ptrs[1] = (T*)A.get_data_ptr();
+                m_suppliers[1] = A.get_batch_provider();
+                m_bispaces.push_back(A.get_bispace());
+                if(&n_1 == &op_node)
+                {
+                    //TODO: This is very clunky and requires an extra copy step - should form tensor directly from provider into output pointer
+                    idx_list perm_entries;
+                    for(size_t i = 0; i < NA; ++i) perm_entries.push_back(i);
+                    kern = new batch_kernel_permute<T>(C,A,perm_entries);
+                    type_str = std::string("permute");
+                }
+                else if(n_tensors_processed > 2)
+                {
+                    const node& n_2 = m_tree.get_vertex(m_edges[2]);
+                    const node_ident_any_tensor<NB,T>& n_2_concrete = dynamic_cast< const node_ident_any_tensor<NB,T>& >(n_2);
+                    gen_sparse_btensor<NB,T>& B = dynamic_cast< gen_sparse_btensor<NB,T>& >(n_2_concrete.get_tensor());
+                    m_ptrs[2] = (T*)B.get_data_ptr();
+                    m_suppliers[2] = B.get_batch_provider();
+                    m_bispaces.push_back(B.get_bispace());
+
+                    if(op_node.check_type<node_contract>())
+                    {
+                        const node_contract& n_c = dynamic_cast< const node_contract& >(op_node);
+                        kern = new batch_kernel_contract2<T>(C,A,B,n_c.get_map());
+                        type_str = std::string("contract2");
+                    }
+                    else if(op_node.check_type<node_add>())
+                    {
+                        const node_add& n_a = dynamic_cast< const node_add& >(op_node);
+                        expr_tree::edge_list_t add_children = m_tree.get_edges_out(m_edges.back());
+                        T lhs_scalar = 1;
+                        T rhs_scalar = 1;
+                        for(size_t i = 0; i < 2; ++i)
+                        {
+                            const node& cur_node = m_tree.get_vertex(add_children[i]);
+                            if(cur_node.check_type<node_transform<T> >())
+                            {
+                                //TODO: NEED TO CONSIDER PERMUTATION HERE!
+                                const node_transform<T>& n_tf = dynamic_cast< const node_transform<T>& >(cur_node);
+                                T cur_scalar = n_tf.get_coeff().get_coeff(); 
+                                if(i == 0) lhs_scalar = cur_scalar;
+                                if(i == 1) rhs_scalar = cur_scalar;
+                            }
+                        }
+                        kern = new batch_kernel_add2<T>(C,A,B,lhs_scalar,rhs_scalar);
+                        type_str = std::string("add2");
+                    }
+                    else
+                    {
+                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                                __FILE__, __LINE__, "Invalid node type");
+                    }
+                }
+                else
+                {
+                    if(op_node.check_type<node_transform_base>())
+                    {
+                        const node_transform_base& n_tf = dynamic_cast< const node_transform_base& >(op_node);
+                        kern = new batch_kernel_permute<T>(C,A,n_tf.get_perm());
+                        type_str = std::string("permute");
+                    }
+                    else if(op_node.check_type<node_unblock>())
+                    {
+                        const node_unblock& n_un = dynamic_cast< const node_unblock& >(op_node);
+                        kern = new batch_kernel_unblock<T>(A.get_bispace(),n_un.get_subspace(),A.get_data_ptr() == NULL);
+                        type_str = std::string("unblock");
+                    }
+                    else if(op_node.check_type<node_reblock>())
+                    {
+                        const node_reblock& n_re = dynamic_cast< const node_reblock& >(op_node);
+                        kern = new batch_kernel_reblock<T>(C.get_bispace(),n_re.get_subspace(),C.get_data_ptr() == NULL);
+                        type_str = std::string("reblock");
+                    }
+                    else
+                    {
+                        throw bad_parameter(g_ns, "kernel_builder","somemethod",
+                                __FILE__, __LINE__, "Invalid node type");
+                    }
+                }
             }
+        }
+        else
+        {
+            size_t cur_node_idx = (NA != 0 ? 2 : (NC != 0 ? 1 : 0));
+            const node& cur_tensor_node = m_tree.get_vertex(m_edges[cur_node_idx]);
+            dispatch_1<1,4>::dispatch(*this,cur_tensor_node.get_n());
         }
     }
 
-    std::pair<size_t,idx_pair_list> compute_batches() const;
+    kernel_builder(const expr_tree& tree,const expr_tree::edge_list_t& edges) : m_tree(tree),m_edges(edges),m_kern(NULL),m_type_str(NULL)
+    {
+        m_ptrs.resize(std::max<size_t>(2,m_edges.size() - 1),NULL);
+        m_suppliers.resize(std::max<size_t>(2,m_edges.size() - 1),NULL);
+    }
 
-    void set_mem_avail(size_t mem_avail) { m_mem_avail = mem_avail; }
-    //Client code cannot assume a particular loop ordering, so it must specify the output batch
-    //by specifying what bispace/subspace to truncate .
-    void get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches = (std::map<idx_pair,idx_pair>()),size_t mem_avail=0);
-    void set_forced_batched_bs(const idx_pair_list& forced_batched_bs) { m_forced_batched_bs = forced_batched_bs; }
-    virtual batch_provider<T>* clone() const = 0;
+    template<size_t M>
+    void dispatch()
+    {
+        if(NC == 0)
+        {
+            kernel_builder<T,M,0,0> kb(m_tree,m_edges);
+            kb.build_kernel(*m_kern,*m_type_str);
+            m_ptrs = kb.get_ptrs();
+            m_suppliers = kb.get_suppliers();
+            m_bispaces = kb.get_bispaces();
+        }
+        else if(NA == 0)
+        {
+            kernel_builder<T,NC,M,0> kb(m_tree,m_edges);
+            kb.build_kernel(*m_kern,*m_type_str);
+            m_ptrs = kb.get_ptrs();
+            m_suppliers = kb.get_suppliers();
+            m_bispaces = kb.get_bispaces();
+        }
+        else if(NB == 0)
+        {
+            kernel_builder<T,NC,NA,M> kb(m_tree,m_edges);
+            kb.build_kernel(*m_kern,*m_type_str);
+            m_ptrs = kb.get_ptrs();
+            m_suppliers = kb.get_suppliers();
+            m_bispaces = kb.get_bispaces();
+        }
+    }
 
-    batch_provider(const batch_provider<T>& rhs);
-    batch_provider<T>& operator=(const batch_provider<T>& rhs);
-    virtual ~batch_provider() { for(size_t bp_idx = 0; bp_idx < m_batch_providers.size(); ++bp_idx) delete m_batch_providers[bp_idx]; }
+    ~kernel_builder()
+    {
+    }
+};
+
+} // namespace expr
+
+
+template<typename T>
+class batch_provider : public batch_provider_i<T>
+{
+private:
+    libutil::time_diff_t m_t;
+    std::string m_type_str;
+    batch_kernel<T>* m_kern;
+    std::vector<T*> m_ptrs;
+    std::vector<size_t> m_batch_array_sizes;
+    std::vector<sparse_bispace_any_order> m_bispaces;
+    std::vector<batch_provider_i<T>*> m_suppliers;
+    idx_list m_suppliers_allocd;
+    idx_list m_batchable_subspaces;
+    idx_list m_batched_subspaces;
+    idx_pair_list m_batch_list;
+    expr::connectivity m_conn;
+    void set_batch_info_internal(std::vector<idx_list>::const_iterator& batched_subspace_grps_it,const idx_pair_list& batch_list);
+    void set_batch_array_sizes_internal(std::vector< std::vector<size_t> >::const_iterator& it,bool output_batched);
+public:
+    static const char* k_clazz; //!< Class name
+    batch_provider(const expr::expr_tree& tree); 
+    virtual void get_batch(T* output_ptr,const bispace_batch_map& bbm = bispace_batch_map()); 
+    virtual idx_list get_batchable_subspaces() const;
+    ~batch_provider();
+    void set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list);
+    void set_batch_array_sizes(const std::vector< std::vector<size_t> >& batch_array_size_grps);
+    void get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched=0) const;
+    void get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const;
+    void print_timings() const;
 };
 
 template<typename T>
-batch_provider<T>::batch_provider(const batch_provider<T>& rhs) :   m_direct_tensors(rhs.m_direct_tensors),
-                                                                    m_direct_tensors_to_alloc(rhs.m_direct_tensors_to_alloc), 
-                                                                    m_loops(rhs.m_loops),m_bispaces(rhs.m_bispaces),m_ptrs(rhs.m_ptrs),m_mem_avail(rhs.m_mem_avail),m_forced_batched_bs(rhs.m_forced_batched_bs)
+void batch_provider<T>::print_timings() const
 {
-    for(size_t bp_idx = 0; bp_idx < rhs.m_batch_providers.size(); ++bp_idx)
+    std::cout << "-----------------\n"; 
+    std::cout << "batch provider type: " << m_type_str << "\n"; 
+    std::cout << "tensor orders:\n"; 
+    for(size_t i = 0; i < m_bispaces.size(); ++i)
     {
-        m_batch_providers.push_back(rhs.m_batch_providers[bp_idx]->clone());
+        std::cout << "\t" << m_bispaces[i].get_order() << "\n";
     }
-}
-
-template<typename T>
-batch_provider<T>& batch_provider<T>::operator=(const batch_provider<T>& rhs) 
-{ 
-    m_direct_tensors = rhs.m_direct_tensors;
-    m_direct_tensors_to_alloc = rhs.m_direct_tensors_to_alloc;
-    m_loops = rhs.m_loops;
-    m_bispaces = rhs.m_bispaces;
-    m_ptrs = rhs.m_ptrs;
-    m_batch_providers.clear();
-    for(size_t bp_idx = 0; bp_idx < rhs.m_batch_providers.size(); ++bp_idx) 
+    std::cout << "elapsed time: " << m_t << "\n";
+    for(size_t i = 0; i < m_suppliers.size(); ++i)
     {
-        m_batch_providers.push_back(rhs.m_batch_providers[bp_idx]->clone());
-    }  
-    m_mem_avail = rhs.m_mem_avail;
-    m_forced_batched_bs = rhs.m_forced_batch_bs; 
-
-    return *this;
-}
-
-
-template<typename T>
-std::pair<size_t,idx_pair_list> batch_provider<T>::compute_batches() const
-{
-    //Easy way out
-    std::vector<idx_pair> batches;
-    if(m_direct_tensors_to_alloc.size() == 0)
-    {
-        return std::make_pair(0,batches);
+        if(m_suppliers[i] != NULL)
+            m_suppliers[i]->print_timings();
     }
-    //We will partition our available memory equally among them - it's a hack but whatever
-    size_t mem_per_tensor = m_mem_avail/m_direct_tensors_to_alloc.size();
-
-    //Do we need to batch beyond what is enforced by the output tensor batching? 
-    bool need_to_batch = false;
-    for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-    {
-        if(m_bispaces[m_direct_tensors_to_alloc[direct_tensor_rel_idx]].get_nnz()*sizeof(T) > mem_per_tensor)
-        {
-            need_to_batch = true;
-            break;
-        }
-    }
-
-    //Deal with forced batching loop selection
-    //This needs to be done even if we don't use any batches so that batched_loop_idx has a sensible value
-    size_t batched_loop_idx;
-    if(m_forced_batched_bs.size() > 0)
-    {
-        for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-        {
-            const block_loop& loop = m_loops[loop_idx];
-            for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
-            {
-                if(!loop.is_bispace_ignored(bispace_idx))
-                {
-                    //Prioritize finding the loops corresponding to the bispace/subspace we are supposed to
-                    //batch
-                    size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
-                    if(find(m_forced_batched_bs.begin(),m_forced_batched_bs.end(),idx_pair(bispace_idx,subspace_idx)) != m_forced_batched_bs.end())
-                    {
-                        batched_loop_idx = loop_idx;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    //Transmit batch forcing information to all children 
-    if(m_forced_batched_bs.size() > 0)
-    {
-        const block_loop& batched_loop = m_loops[batched_loop_idx];
-        for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-        {
-            size_t bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-            if(!batched_loop.is_bispace_ignored(bispace_idx))
-            {
-                size_t subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
-                m_batch_providers[direct_tensor_rel_idx]->set_forced_batched_bs(idx_pair_list(1,idx_pair(0,subspace_idx)));
-            }
-        }
-    }
-
-
-    if(need_to_batch)
-    {
-        //Prioritize choosing a loop that accesses the most direct tensors
-        if(m_forced_batched_bs.size() == 0)
-        {
-            bool found = false;
-            size_t max_n_direct_tensors_touched = 0;
-            for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-            {
-                const block_loop& loop = m_loops[loop_idx];
-                //Can't use a loop that is already batched over
-                size_t n_direct_tensors_touched = 0;    
-                for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-                {
-                    size_t bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-                    if(!loop.is_bispace_ignored(bispace_idx))
-                    {
-                        found = true;
-                        ++n_direct_tensors_touched;
-                    }
-                }
-                if(n_direct_tensors_touched > max_n_direct_tensors_touched)
-                {
-                    batched_loop_idx = loop_idx;
-                    max_n_direct_tensors_touched = n_direct_tensors_touched;
-                }
-            }
-            if(!found)
-            {
-                throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
-                        "all subspaces are fully batched and tensor still does not fit in memory");
-            }
-        }
-
-        //Determine a batch structure that will make ALL batched tensors fit in memory
-        const block_loop& batched_loop = m_loops[batched_loop_idx];
-        std::vector<idx_pair> batched_bispaces_subspaces;
-        for(size_t batched_bispace_idx = 0; batched_bispace_idx < m_bispaces.size(); ++batched_bispace_idx)
-        {
-            if(!batched_loop.is_bispace_ignored(batched_bispace_idx))
-            {
-                if(binary_search(m_direct_tensors_to_alloc.begin(),m_direct_tensors_to_alloc.end(),batched_bispace_idx))
-                {
-                    batched_bispaces_subspaces.push_back(idx_pair(batched_bispace_idx,batched_loop.get_subspace_looped(batched_bispace_idx)));
-                }
-            }
-        }
-        batches = get_batches(m_bispaces,batched_bispaces_subspaces,mem_per_tensor/sizeof(T));
-    }
-
-    //Our children may need to batch even if we don't - currently only works for forced batching
-    //Would like to enable for everything
-    if(batches.size() == 0 && m_forced_batched_bs.size() > 0)
-    {
-        const block_loop& batched_loop = m_loops[batched_loop_idx];
-        for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-        {
-            size_t bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-            if(!batched_loop.is_bispace_ignored(bispace_idx))
-            {
-                size_t subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
-                m_batch_providers[direct_tensor_rel_idx]->set_mem_avail(m_mem_avail);
-                idx_pair_list this_tensor_batches = m_batch_providers[direct_tensor_rel_idx]->compute_batches().second;
-                if(this_tensor_batches.size() > 0)
-                {
-                    batches = this_tensor_batches;
-                    break;
-                }
-            }
-        }
-    }
-    return std::make_pair(batched_loop_idx,batches);
-}
-
-template<typename T>
-void batch_provider<T>::get_batch(T* output_batch_ptr,const std::map<idx_pair,idx_pair>& output_batches,size_t mem_avail)
-{
-    double seconds = read_timer<double>();
-    //TODO: Hack for subtraction,permutation - need a better way
-    if(mem_avail != 0)
-    {
-        m_mem_avail = mem_avail;
-    }
-
-    if(output_batches.size() > 1)
-    {
-        throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__,
-                "Can only batch over one subspace at a time at this time.");
-    }
-
-
-    //Do we need to compute batch information?
-    std::vector<idx_pair> batches;
-    size_t batched_loop_idx;
-    std::vector<sparse_bispace_any_order> truncated_bispaces(m_bispaces);
-    std::map<size_t,idx_pair> loop_batches;
-    if(output_batches.size() == 0 && m_direct_tensors_to_alloc.size() > 0)
-    {
-        //We will partition our available memory equally among them - it's a hack but whatever
-        size_t mem_per_tensor = m_mem_avail/m_direct_tensors_to_alloc.size();
-
-        std::pair<size_t,idx_pair_list> batch_res = compute_batches(); 
-        batched_loop_idx = batch_res.first;
-        batches = batch_res.second;
-        const block_loop& batched_loop = m_loops[batched_loop_idx];
-
-        //We will allocate memory large enough to hold the biggest batch for each bispace
-        std::vector<size_t> max_batch_sizes(m_bispaces.size(),0);
-        std::vector<size_t> max_batch_inds(m_bispaces.size(),0);
-        for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
-        {
-            for(size_t cur_bispace_idx = 0; cur_bispace_idx < m_bispaces.size(); ++cur_bispace_idx)
-            {
-                if(!batched_loop.is_bispace_ignored(cur_bispace_idx))
-                {
-                    size_t cur_batched_subspace_idx = batched_loop.get_subspace_looped(cur_bispace_idx);
-                    size_t batch_size = m_bispaces[cur_bispace_idx].get_batch_size(cur_batched_subspace_idx,batches[batch_idx]);
-                    if(batch_size > max_batch_sizes[cur_bispace_idx])
-                    {
-                        max_batch_sizes[cur_bispace_idx] = batch_size;
-                        max_batch_inds[cur_bispace_idx] = batch_idx;
-                    }
-                }
-            }
-        }
-
-        if(batches.size() > 0)
-        {
-            //Truncate all direct tensors to the size of the largest batch 
-            //If any of the bispaces are still too big, code can't handle it right now
-            for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx) 
-            {
-                size_t cur_bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-                if(!batched_loop.is_bispace_ignored(cur_bispace_idx))
-                {
-                    size_t subspace_idx = batched_loop.get_subspace_looped(cur_bispace_idx);
-                    truncated_bispaces[cur_bispace_idx].truncate_subspace(subspace_idx,batches[max_batch_inds[cur_bispace_idx]]);
-                    if(truncated_bispaces[cur_bispace_idx].get_nnz()*sizeof(T) > mem_per_tensor)
-                    {
-                        throw bad_parameter(g_ns, k_clazz,"get_batch(...)",__FILE__, __LINE__, 
-                            "after batching one loop a tensor still does not fit in memory");
-                                
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        //Use the batch information enforced by higher-level  
-        for(std::map<idx_pair,idx_pair>::const_iterator it = output_batches.begin(); it != output_batches.end(); ++it)
-        {
-            size_t bispace_idx = it->first.first;
-            size_t subspace_idx = it->first.second;
-            idx_pair bounds = it->second;
-            for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
-            {
-                const block_loop& loop = m_loops[loop_idx];
-                if(!loop.is_bispace_ignored(bispace_idx))
-                {
-                    if(subspace_idx == loop.get_subspace_looped(bispace_idx))
-                    {
-                        loop_batches[loop_idx] = bounds;
-
-                        //Batch the whole loop
-                        for(size_t cur_bispace_idx = 0; cur_bispace_idx < m_bispaces.size(); ++cur_bispace_idx)
-                        {
-                            if(!loop.is_bispace_ignored(cur_bispace_idx))
-                            {
-                                truncated_bispaces[cur_bispace_idx].truncate_subspace(loop.get_subspace_looped(cur_bispace_idx),bounds);
-                            }
-                        }
-                        batched_loop_idx = loop_idx; 
-                        batches.push_back(bounds);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    //Do we need to allocate storage for our input tensors? 
-    std::vector<size_t> direct_tensors_to_free;
-    if(m_direct_tensors_to_alloc.size() > 0)
-    {
-        //Alloc the memory for input direct tensors
-        for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx) 
-        {
-            size_t cur_bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-            m_ptrs[cur_bispace_idx] = new T[truncated_bispaces[cur_bispace_idx].get_nnz()];
-            direct_tensors_to_free.push_back(cur_bispace_idx);
-        }
-    }
-
-    //Compute the batch size
-    size_t output_batch_size = truncated_bispaces[0].get_nnz()*sizeof(T);
-
-    //Place output in the provided batch memory
-    m_ptrs[0] = output_batch_ptr;
-
-    init(m_loops,m_direct_tensors,truncated_bispaces,m_ptrs);
-
-    if(batches.size() > 0)
-    {
-        //Generate the necessary input batches
-        const block_loop& batched_loop = m_loops[batched_loop_idx];
-        for(size_t batch_idx = 0; batch_idx < batches.size(); ++batch_idx)
-        {
-            loop_batches[batched_loop_idx] = batches[batch_idx];
-
-            for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-            {
-                size_t bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-                size_t subspace_idx = batched_loop.get_subspace_looped(bispace_idx);
-                std::map<idx_pair,idx_pair> this_bispace_batch;
-                this_bispace_batch[idx_pair(0,subspace_idx)] = batches[batch_idx];
-                m_batch_providers[direct_tensor_rel_idx]->set_mem_avail(m_mem_avail);
-                m_batch_providers[direct_tensor_rel_idx]->get_batch(m_ptrs[bispace_idx],this_bispace_batch);
-            }
-            run_impl(m_loops,m_direct_tensors,truncated_bispaces,m_ptrs,loop_batches);
-        }
-    }
-    else
-    {
-        //The input direct tensors can be formed as one batch
-        for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < m_direct_tensors_to_alloc.size(); ++direct_tensor_rel_idx)
-        {
-            size_t bispace_idx = m_direct_tensors_to_alloc[direct_tensor_rel_idx];
-            m_batch_providers[direct_tensor_rel_idx]->set_mem_avail(m_mem_avail);
-            m_batch_providers[direct_tensor_rel_idx]->get_batch(m_ptrs[bispace_idx]);
-        }
-        run_impl(m_loops,m_direct_tensors,truncated_bispaces,m_ptrs,loop_batches);
-    }
-
-
-
-    //Delete the batch memory that we allocated for the direct tensor inputs
-    for(size_t direct_tensor_rel_idx = 0; direct_tensor_rel_idx < direct_tensors_to_free.size(); ++direct_tensor_rel_idx)
-    {
-        delete [] m_ptrs[direct_tensors_to_free[direct_tensor_rel_idx]];
-    }
-    //std::cout << "TIME IN get_batch: " << read_timer<double>() - seconds << "\n";
 }
 
 template<typename T>
 const char* batch_provider<T>::k_clazz = "batch_provider<T>";
+
+template<typename T>
+batch_provider<T>::batch_provider(const expr::expr_tree& tree) : m_conn(tree),m_batch_list(1,idx_pair(0,0))
+{
+    using namespace expr;
+    expr_tree::node_id_t root_id = tree.get_root();
+    const node& root = tree.get_vertex(root_id);
+
+    if(!root.check_type<node_assign>())
+    {
+        throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+            "Invalid root node");
+    }
+
+    const expr_tree::edge_list_t& children = tree.get_edges_out(root_id);
+    if(children.size() != 2)
+    {
+        throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+            "Root node does not have right number of children");
+    }
+
+    expr_tree::edge_list_t edges = expr_tree::edge_list_t(1,children[0]);
+
+    //Our contraction kernels handle permutations of the output internally, we can ignore them
+    expr_tree::node_id_t op_node_id = children[1];
+    const node& op_node = tree.get_vertex(op_node_id); 
+    if(op_node.check_type<node_transform_base>())
+    {
+        expr_tree::node_id_t transf_child_id = tree.get_edges_out(op_node_id)[0]; 
+        const node& transf_child = tree.get_vertex(transf_child_id);
+        if(!(transf_child.check_type<node_ident>() || transf_child.check_type<node_assign>()))
+        {
+            op_node_id = transf_child_id;
+        }
+    }
+    expr_tree::edge_list_t input_edges = tree.get_edges_out(op_node_id);
+    expr_tree::edge_list_t input_assignment_nodes;
+
+    //Figure out which inputs correspond to tensors and which are nested expressions
+    for(size_t i = 0; i < input_edges.size(); ++i)
+    {
+        const node& cur_node = tree.get_vertex(input_edges[i]);
+        //Right now we add spurious assign nodes for direct tensors
+        if(cur_node.check_type<node_ident>())
+        {
+           edges.push_back(input_edges[i]);
+           //Filler so that we can index directly into this list
+           input_assignment_nodes.push_back(-1);
+        }
+        else
+        {
+            //If one of our inputs is scalar transformed, we ignore it for now
+            //Will deal with it when building kernel
+            if(cur_node.check_type<node_transform_base>())
+            {
+                expr_tree::node_id_t next_inter_node_id = tree.get_edges_out(input_edges[i])[0];
+                const node& next_inter_node = tree.get_vertex(next_inter_node_id);
+                if(next_inter_node.check_type<node_ident>())
+                {
+                    edges.push_back(next_inter_node_id);
+                    input_assignment_nodes.push_back(-1);
+                }
+                else if(next_inter_node.check_type<node_assign>())
+                {
+                    edges.push_back(tree.get_edges_out(next_inter_node_id)[0]);
+                    input_assignment_nodes.push_back(next_inter_node_id);
+                }
+                else
+                {
+                    throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                            "Unsupported node type");
+                }
+            }
+            else if(cur_node.check_type<node_assign>())
+            {
+                //Save the tensor output from this assignment
+                edges.push_back(tree.get_edges_out(input_edges[i])[0]);
+                input_assignment_nodes.push_back(input_edges[i]);
+            }
+            else
+            {
+                throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                        "Unsupported node type");
+            }
+        }
+    }
+    //Operation node goes at the end
+    edges.push_back(op_node_id);
+    kernel_builder<T> kb(tree,edges);
+    kb.build_kernel(m_kern,m_type_str);
+    m_ptrs = kb.get_ptrs();
+    m_bispaces = kb.get_bispaces();
+    m_suppliers = kb.get_suppliers();
+
+    //Create child batch providers for direct tensors used as inputs to this one 
+    for(size_t i = 0; i < std::max<size_t>(1,input_edges.size()); ++i)
+    {
+        size_t tensor_idx = i+1;
+        if(m_ptrs[tensor_idx] == NULL)
+        {
+            if(m_suppliers[tensor_idx] == NULL)
+            {
+                m_suppliers[tensor_idx] = new batch_provider<T>(tree.get_subtree(input_assignment_nodes[i]));
+                m_suppliers_allocd.push_back(tensor_idx);
+            }
+            idx_list child_bs(m_suppliers[tensor_idx]->get_batchable_subspaces());
+            for(size_t child_bs_idx = 0; child_bs_idx < child_bs.size(); ++child_bs_idx)
+            {
+                size_t bs = child_bs[child_bs_idx];
+                for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(tensor_idx,bs); ++conn_subspace_idx)
+                {
+                    idx_pair conn_tensor_subspace = m_conn(tensor_idx,bs,conn_subspace_idx);
+                    if(conn_tensor_subspace.first == 0)
+                    {
+                        m_batchable_subspaces.push_back(conn_tensor_subspace.second);
+                    }
+                }
+            }
+        }
+    }
+    sort(m_batchable_subspaces.begin(),m_batchable_subspaces.end());
+    unique(m_batchable_subspaces.begin(),m_batchable_subspaces.end());
+}
+
+template<typename T>
+batch_provider<T>::~batch_provider()
+{
+    for(size_t i = 0; i < m_suppliers.size(); ++i)
+    {
+        if(m_suppliers[i] != NULL)
+        {
+            if(m_ptrs[i] != NULL) delete [] m_ptrs[i];
+            if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),i) != m_suppliers_allocd.end())
+            {
+                delete m_suppliers[i];
+            }
+        }
+    }
+    delete m_kern;
+}
+
+
+template<typename T>
+void batch_provider<T>::get_batch(T* output_ptr,const bispace_batch_map& bbm)
+{ 
+    libutil::timer t;
+    m_ptrs[0] = output_ptr; 
+    m_kern->init(m_ptrs,bbm);
+    bool output_batched  = false;
+    for(bispace_batch_map::const_iterator it = bbm.begin(); it != bbm.end(); ++it)
+    {
+        if(it->first.first == 0)
+        {
+            output_batched = true;
+            m_batch_list = idx_pair_list(1,it->second);
+            break;
+        }
+    }
+
+#ifdef DEVELOPMENT
+    std::cout << "------------------\n";
+    std::cout << "Running batch provider type: " << m_type_str << "\n";
+#endif
+    //Always have 1 dummy batch_list entry to make code run once
+    for(size_t batch_idx = 0; batch_idx < m_batch_list.size(); ++batch_idx)
+    {
+        idx_pair batch_from_supplier = m_batch_list[batch_idx];
+        bispace_batch_map augmented_bbm(bbm);
+        idx_list::iterator batched_subspace_it = m_batched_subspaces.begin(); 
+        if(output_batched) ++batched_subspace_it; //Advance past the output subspace
+        for(size_t supplier_idx = 1; supplier_idx < m_ptrs.size(); ++supplier_idx)
+        {
+            if(m_suppliers[supplier_idx] != NULL)
+            {
+                bispace_batch_map supplier_bbm;
+                if(m_batch_list[0] != idx_pair(0,0))
+                {
+                    size_t supplier_subspace_idx = *batched_subspace_it;
+                    ++batched_subspace_it;
+                    supplier_bbm[idx_pair(0,supplier_subspace_idx)] = batch_from_supplier;
+                    augmented_bbm[idx_pair(supplier_idx,supplier_subspace_idx)] = batch_from_supplier;
+                }
+                if(m_ptrs[supplier_idx] == NULL)
+                {
+                    size_t batch_array_size;
+                    if(m_batch_array_sizes.size() > 0)
+                    {
+                        batch_array_size = m_batch_array_sizes[supplier_idx];
+                    }
+                    else
+                    {
+                        batch_array_size = m_bispaces[supplier_idx].get_nnz();
+                    }
+                    m_ptrs[supplier_idx] = new T[batch_array_size];
+                }
+                m_suppliers[supplier_idx]->get_batch(m_ptrs[supplier_idx],supplier_bbm);
+            }
+        }
+        t.start();
+        m_kern->generate_batch(m_ptrs,augmented_bbm); 
+        t.stop();
+        m_t += t.duration();
+#ifdef DEVELOPMENT
+        cout << "batch_idx: " << batch_idx << "\n";
+        cout << "time: " << t.duration() << "\n";
+#endif
+    }
+}
+
+template<typename T>
+idx_list batch_provider<T>::get_batchable_subspaces() const
+{ 
+    return m_batchable_subspaces;
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_info(const std::vector<idx_list>& batched_subspace_grps,const idx_pair_list& batch_list)
+{
+    std::vector<idx_list>::const_iterator batched_subspace_grps_it = batched_subspace_grps.begin();
+    set_batch_info_internal(batched_subspace_grps_it,batch_list);
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_array_sizes(const std::vector< std::vector<size_t> >& batch_array_size_grps)
+{
+    std::vector< std::vector<size_t> >::const_iterator it = batch_array_size_grps.begin();
+    set_batch_array_sizes_internal(it,false);
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_array_sizes_internal(std::vector< std::vector<size_t> >::const_iterator& it,bool output_batched)
+{
+    if(it->size() > 0)
+    {
+        m_batch_array_sizes.resize(m_suppliers.size(),0);
+        size_t m = 0;
+        for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+        {
+            if(m_suppliers[supplier_idx] != NULL || (supplier_idx == 0 && output_batched))
+            {
+                m_batch_array_sizes[supplier_idx] = (*it)[m];
+                ++m;
+            }
+        }
+    }
+    for(size_t i = 0; i < m_suppliers_allocd.size(); ++i)
+    {
+        static_cast<batch_provider<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_array_sizes_internal(++it,output_batched ? output_batched : !output_batched);
+    }
+}
+
+template<typename T>
+void batch_provider<T>::set_batch_info_internal(std::vector<idx_list>::const_iterator& batched_subspace_grps_it,const idx_pair_list& batch_list)
+{
+    if(batched_subspace_grps_it->size() > 0)
+    {
+        m_batched_subspaces = *batched_subspace_grps_it;
+        m_batch_list = batch_list;
+    }
+
+    for(size_t i = 0; i < m_suppliers_allocd.size(); ++i)
+    {
+        static_cast<batch_provider<T>*>(m_suppliers[m_suppliers_allocd[i]])->set_batch_info_internal(++batched_subspace_grps_it,batch_list);
+    }
+}
+
+template<typename T>
+void batch_provider<T>::get_direct_bispace_grps(std::vector< std::vector<sparse_bispace_any_order> >& direct_bispace_grps) const
+{
+    std::vector<sparse_bispace_any_order> grp;
+    if(direct_bispace_grps.size() != 0)
+    {
+        grp.push_back(m_bispaces[0]);
+    }
+    for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+    {
+        if(m_suppliers[supplier_idx] != NULL)
+        {
+            grp.push_back(m_bispaces[supplier_idx]);
+        }
+    }
+    direct_bispace_grps.push_back(grp);
+    for(size_t supplier_allocd_idx = 0; supplier_allocd_idx < m_suppliers_allocd.size(); ++supplier_allocd_idx)
+    {
+        size_t supplier_idx = m_suppliers_allocd[supplier_allocd_idx];
+        static_cast<batch_provider<T>*>(m_suppliers[supplier_idx])->get_direct_bispace_grps(direct_bispace_grps);
+    }
+}
+
+template<typename T>
+void batch_provider<T>::get_batched_subspace_grps(std::vector<idx_list>& bs_grps,size_t output_subspace_batched) const
+{
+    size_t fixed_supplier_idx;
+    size_t fixed_subspace_idx;
+    size_t max_direct_tensors_touched = 0;
+    if(bs_grps.size() == 0)
+    {
+        for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+        {
+            if(m_suppliers[supplier_idx] != NULL)
+            {
+                if(m_suppliers[supplier_idx]->get_batchable_subspaces().size() > 0)
+                {
+                    fixed_supplier_idx = supplier_idx;
+                    fixed_subspace_idx = m_suppliers[supplier_idx]->get_batchable_subspaces()[0];
+                    max_direct_tensors_touched = 1;
+                    break;
+                }
+                for(size_t subspace_idx = 0; subspace_idx < m_bispaces[supplier_idx].get_order(); ++subspace_idx)
+                {
+                    //TODO Haxx - just take the index touching the most direct tensors 
+                    size_t n_direct_tensors_touched = 1;
+                    for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(supplier_idx,subspace_idx); ++conn_subspace_idx)
+                    {
+                        idx_pair conn_bas = m_conn(supplier_idx,subspace_idx,conn_subspace_idx);
+                        if(m_suppliers[conn_bas.first] != NULL)
+                        {
+                            ++n_direct_tensors_touched;
+                        }
+                    }
+                    if(n_direct_tensors_touched > max_direct_tensors_touched)
+                    {
+                        max_direct_tensors_touched = n_direct_tensors_touched;
+                        fixed_supplier_idx = supplier_idx;
+                        fixed_subspace_idx = subspace_idx;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        fixed_supplier_idx = 0;
+        fixed_subspace_idx = output_subspace_batched;
+    }
+
+    idx_list cur_grp;
+    idx_list bispace_list;
+    if(bs_grps.size() > 0 || max_direct_tensors_touched > 0)
+    {
+        bispace_list.push_back(fixed_supplier_idx);
+        cur_grp.push_back(fixed_subspace_idx);
+        for(size_t conn_subspace_idx = 0; conn_subspace_idx < m_conn.get_n_conn_subspaces(fixed_supplier_idx,fixed_subspace_idx); ++conn_subspace_idx)
+        {
+            idx_pair conn_bas = m_conn(fixed_supplier_idx,fixed_subspace_idx,conn_subspace_idx);
+            if(m_suppliers[conn_bas.first] != NULL)
+            {
+                bispace_list.push_back(conn_bas.first);
+                cur_grp.push_back(conn_bas.second);
+            }
+        }
+    }
+
+    size_t n_subspaces_should_be_batched = (bs_grps.size() == 0) ? 0 : 1;
+    //TODO: Avoid multibatching with this check
+    for(size_t supplier_idx = 0; supplier_idx < m_suppliers.size(); ++supplier_idx)
+        if(m_suppliers[supplier_idx] != NULL)
+            ++n_subspaces_should_be_batched;
+
+    if(n_subspaces_should_be_batched != cur_grp.size())
+    {
+        throw bad_parameter(g_ns,k_clazz,"batch_provider(...)",__FILE__, __LINE__,
+                "Operation requires batching over multiple indices");
+    }
+
+    //We must ensure that children are visited in-order
+    //batchable_subspaces might make our fixed_supplier_idx 2 even when 1 is also batched
+    idx_pair_list bispace_pos_list; 
+    idx_list sorted_cur_grp(cur_grp.size());
+    for(size_t i = 0; i < bispace_list.size(); ++i)
+    {
+        bispace_pos_list.push_back(idx_pair(bispace_list[i],i));
+    }
+    sort(bispace_pos_list.begin(),bispace_pos_list.end());
+    for(size_t i = 0; i < bispace_pos_list.size(); ++i)
+    {
+        sorted_cur_grp[i] = cur_grp[bispace_pos_list[i].second];
+    }
+    bs_grps.push_back(sorted_cur_grp);
+
+
+    for(size_t i = 0; i < bispace_pos_list.size(); ++i)
+    {
+        size_t bispace_idx  = bispace_pos_list[i].first;
+        if(find(m_suppliers_allocd.begin(),m_suppliers_allocd.end(),bispace_idx) != m_suppliers_allocd.end())
+        {
+            static_cast<batch_provider<T>*>(m_suppliers[bispace_idx])->get_batched_subspace_grps(bs_grps,sorted_cur_grp[i]);
+        }
+    }
+}
 
 } // namespace libtensor
 

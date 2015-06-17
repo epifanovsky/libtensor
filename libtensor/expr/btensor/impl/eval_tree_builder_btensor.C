@@ -12,13 +12,11 @@
 #include <libtensor/expr/opt/opt_merge_adjacent_transf.h>
 #include <libtensor/expr/opt/opt_merge_equiv_ident.h>
 #include "node_interm.h"
-#include "metaprog.h"
+#include <libtensor/expr/metaprog.h>
 #include "eval_tree_builder_btensor.h"
 
 namespace libtensor {
 namespace expr {
-using namespace eval_btensor_double; // for dispatch_1
-
 
 const char eval_tree_builder_btensor::k_clazz[] = "eval_tree_builder_btensor";
 

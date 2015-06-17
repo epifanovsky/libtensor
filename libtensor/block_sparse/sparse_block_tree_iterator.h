@@ -1,7 +1,7 @@
 #ifndef SPARSE_BLOCK_TREE_ITERATOR_H
 #define SPARSE_BLOCK_TREE_ITERATOR_H
 
-#include "sparse_block_tree_any_order.h"
+#include "sparse_block_tree.h"
 
 //TODO REMOVE
 #include <iostream>
@@ -17,15 +17,15 @@ class iterator_const_traits;
 template<>
 class iterator_const_traits<false> {
 public:
-    typedef sparse_block_tree_any_order* ptr_t;
-    typedef sparse_block_tree_any_order::value_t& ref_t;
+    typedef sparse_block_tree* ptr_t;
+    typedef sparse_block_tree::value_t& ref_t;
 };
 
 template<>
 class iterator_const_traits<true> {
 public:
-    typedef const sparse_block_tree_any_order* ptr_t;
-    typedef const sparse_block_tree_any_order::value_t& ref_t;
+    typedef const sparse_block_tree* ptr_t;
+    typedef const sparse_block_tree::value_t& ref_t;
 };
 
 template<bool is_const>

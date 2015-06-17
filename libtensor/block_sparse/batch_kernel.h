@@ -10,6 +10,8 @@ class batch_kernel
 {
 public:
     virtual void generate_batch(const std::vector<T*>& ptrs,const bispace_batch_map& batches) = 0;
+    virtual void init(const std::vector<T*>& ptrs,const bispace_batch_map& bbm) {}
+    virtual ~batch_kernel() { } 
 };
 
 } // namespace libtensor
