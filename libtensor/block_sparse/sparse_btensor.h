@@ -59,6 +59,7 @@ public:
     void set_memory_reserve(memory_reserve& mr);
 
     virtual void assign(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l);
+    virtual void assign_add(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l);
 
     expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &label) {
         return expr::labeled_lhs_rhs<N, T>(*this, label,
@@ -196,7 +197,7 @@ template<size_t N,typename T>
 void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l)
 {
     using namespace expr;
-    node_assign root(N);
+    node_assign root(N,false);
     expr_tree e(root);
     expr_tree::node_id_t root_id = e.get_root();
     node_ident_any_tensor<N,T> n_tensor(*this);
@@ -283,7 +284,7 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                         if(D_bispace.get_index_group_containing_subspace(0) == 0 && D_bispace.get_index_group_order(0) == 1)
                         {
                             //Add the tree to unblock D
-                            expr_tree::node_id_t D_unblocked_assign_id = e.insert(op_child_0_id,node_assign(3));
+                            expr_tree::node_id_t D_unblocked_assign_id = e.insert(op_child_0_id,node_assign(3,false));
                             expr_tree::node_id_t D_ub_subtree_id = e.insert(op_child_0_id,node_unblock(3,0));
                             sparse_bispace<1> unblocked_subspace(D_bispace[0].get_dim()); 
                             sparse_bispace<3> D_unblocked_bispace = unblocked_subspace | D_bispace.contract(0);
@@ -294,7 +295,7 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                             e.add(D_unblocked_assign_id,D_ub_subtree);
 
                             //Add the tree to unblock H
-                            expr_tree H_ub_subtree(node_assign(3));
+                            expr_tree H_ub_subtree(node_assign(3,false));
                             sparse_bispace<3> H_unblocked_bispace = unblocked_subspace | H_bispace.contract(0);
 
                             expr_tree::node_id_t H_unblocked_assign_id = H_ub_subtree.get_root();
@@ -310,12 +311,12 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                             //Add the tree to reblock M idx 0 and 1
                             expr_tree rb_subtree(node_reblock(2,1));
                             expr_tree::node_id_t rb_root_id = rb_subtree.get_root();
-                            expr_tree::node_id_t M_reblocked_0_assign_id = rb_subtree.add(rb_root_id,node_assign(2));
+                            expr_tree::node_id_t M_reblocked_0_assign_id = rb_subtree.add(rb_root_id,node_assign(2,false));
                             M_reblocked_0_tensor_ptr = new direct_sparse_btensor<2>(unblocked_subspace|m_bispace[1]);
                             rb_subtree.add(M_reblocked_0_assign_id,node_ident_any_tensor<2,T>(*M_reblocked_0_tensor_ptr));
                             expr_tree::node_id_t reblock_0_id = rb_subtree.add(M_reblocked_0_assign_id,node_reblock(2,0));
 
-                            expr_tree::node_id_t M_unblocked_assign_id = rb_subtree.add(reblock_0_id,node_assign(2));
+                            expr_tree::node_id_t M_unblocked_assign_id = rb_subtree.add(reblock_0_id,node_assign(2,false));
                             M_unblocked_tensor_ptr = new direct_sparse_btensor<2>(unblocked_subspace|unblocked_subspace);
                             rb_subtree.add(M_unblocked_assign_id,node_ident_any_tensor<2,T>(*M_unblocked_tensor_ptr));
                             rb_subtree.add(M_unblocked_assign_id,e.get_subtree(last_op_node_id));
@@ -380,6 +381,11 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     if(H_unblocked_tensor_ptr == NULL) delete H_unblocked_tensor_ptr;
     if(M_unblocked_tensor_ptr == NULL) delete M_unblocked_tensor_ptr;
     if(M_reblocked_0_tensor_ptr == NULL) delete M_reblocked_0_tensor_ptr;
+}
+
+template<size_t N,typename T>
+void sparse_btensor<N,T>::assign_add(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l)
+{
 }
 
 } // namespace libtensor
