@@ -61,7 +61,7 @@ void ctf_dense_tensor_test::test_2() {
         fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 0 (t1)");
     }
-    if(t1.get_dims()[2] != 3) {
+    if(t1.get_dims()[1] != 3) {
         fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 1 (t1)");
     }
@@ -109,7 +109,7 @@ void ctf_dense_tensor_test::test_3() {
         fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 0 (t1)");
     }
-    if(t1.get_dims()[2] != 3) {
+    if(t1.get_dims()[1] != 3) {
         fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 1 (t1)");
     }
