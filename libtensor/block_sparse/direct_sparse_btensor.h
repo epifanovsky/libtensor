@@ -27,6 +27,7 @@ public:
     const T* get_data_ptr() const { return NULL; }
 
     virtual void assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
+    virtual void assign_add(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
 
     expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &lab);
 };
@@ -36,7 +37,7 @@ void direct_sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T> &rhs, const e
 {
     using namespace expr;
     delete m_expr;
-    node_assign root(N);
+    node_assign root(N,false);
     m_expr = new expr_tree(root);
     expr_tree::node_id_t root_id = m_expr->get_root();
     node_ident_any_tensor<N,T> n_tensor(*this);
@@ -65,6 +66,11 @@ expr::labeled_lhs_rhs<N, T> direct_sparse_btensor<N,T>::operator()(const expr::l
     {
         return expr::labeled_lhs_rhs<N, T>(*this, lab, expr::expr_rhs<N, T>(*m_expr, lab));
     }
+}
+
+template<size_t N,typename T>
+void direct_sparse_btensor<N,T>::assign_add(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
+{
 }
 
 } // namespace libtensor
