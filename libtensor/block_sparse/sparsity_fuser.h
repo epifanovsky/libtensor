@@ -10,7 +10,7 @@ class sparsity_fuser
 private:
     std::vector<sparse_bispace_any_order> m_bispaces;
     std::vector<block_loop> m_loops;
-    std::vector< sparse_block_tree_any_order > m_trees;
+    std::vector< sparse_block_tree > m_trees;
     std::vector<idx_list> m_loops_for_trees;
     std::vector<idx_list> m_trees_for_loops;
     std::vector<idx_pair_list> m_bispaces_and_index_groups_for_trees;
@@ -26,7 +26,7 @@ public:
 
     std::vector<block_loop> get_loops() const { return m_loops; }
     std::vector<sparse_bispace_any_order> get_bispaces() const { return m_bispaces; }
-    std::vector<sparse_block_tree_any_order> get_trees() const { return m_trees; } 
+    std::vector<sparse_block_tree> get_trees() const { return m_trees; } 
 
     idx_list get_direct_tensors() const { return m_direct_tensors; }
     std::map<size_t,idx_pair> get_batches() const { return m_batches; }

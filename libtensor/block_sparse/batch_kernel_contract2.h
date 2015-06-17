@@ -12,6 +12,7 @@ template<typename T>
 class batch_kernel_contract2 : public batch_kernel<T>
 {
 private:
+    std::vector<sparse_bispace_any_order> m_bispaces;
 public:
     static const char* k_clazz; //!< Class name
 
@@ -26,6 +27,7 @@ public:
     ~batch_kernel_contract2() { delete m_sll_ptr; delete m_bc2k_ptr; }
     batch_kernel_contract2(const batch_kernel_contract2<T>& rhs) : m_sll_ptr(new sparse_loop_list(*rhs.m_sll_ptr)),m_bc2k_ptr(new block_contract2_kernel<T>(*rhs.m_bc2k_ptr)) {}
     batch_kernel_contract2& operator=(const batch_kernel_contract2<T>& rhs) { m_sll_ptr = new sparse_loop_list(*rhs.m_sll_ptr); m_bc2k_ptr = new block_contract2_kernel<T>(*rhs.m_bc2k_ptr); }
+    virtual void init(const std::vector<T*>& ptrs,const bispace_batch_map& bbm);
 };
 
 template<typename T>
@@ -40,15 +42,15 @@ batch_kernel_contract2<T>::batch_kernel_contract2(const gen_sparse_btensor<NC,T>
                 __FILE__, __LINE__, "Invalid tensor orders");
     }
 
-    std::vector<sparse_bispace_any_order> bispaces(1,C.get_bispace());
-    bispaces.push_back(A.get_bispace());
-    bispaces.push_back(B.get_bispace());
+    m_bispaces.push_back(C.get_bispace());
+    m_bispaces.push_back(A.get_bispace());
+    m_bispaces.push_back(B.get_bispace());
 
     std::vector<block_loop> contracted_loops;
     std::multimap<size_t,size_t> contr_inv;
     for(std::multimap<size_t,size_t>::const_iterator it = contr_map.begin(); it != contr_map.end(); ++it)
     {
-        block_loop bl(bispaces);
+        block_loop bl(m_bispaces);
         bl.set_subspace_looped(1,it->first);
         bl.set_subspace_looped(2,it->second - NA);
         contracted_loops.push_back(bl);
@@ -72,7 +74,7 @@ batch_kernel_contract2<T>::batch_kernel_contract2(const gen_sparse_btensor<NC,T>
     }
 
     m = 0;
-    std::vector<block_loop> uncontracted_loops(NC,block_loop(bispaces));
+    std::vector<block_loop> uncontracted_loops(NC,block_loop(m_bispaces));
     for(std::multimap<size_t,size_t>::iterator it = uncontr_map.begin(); it != uncontr_map.end(); ++it)
     {
         uncontracted_loops[m].set_subspace_looped(0,it->first);
@@ -89,12 +91,12 @@ batch_kernel_contract2<T>::batch_kernel_contract2(const gen_sparse_btensor<NC,T>
     for(size_t loop_idx = 0; loop_idx < uncontracted_loops.size(); ++loop_idx)
     {
         const block_loop& loop = uncontracted_loops[loop_idx];
-        for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+        for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
         {
             if(!loop.is_bispace_ignored(bispace_idx))
             {
                 size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
-                uncontracted_dim *= bispaces[bispace_idx][subspace_idx].get_dim();
+                uncontracted_dim *= m_bispaces[bispace_idx][subspace_idx].get_dim();
             }
         }
     }
@@ -102,12 +104,12 @@ batch_kernel_contract2<T>::batch_kernel_contract2(const gen_sparse_btensor<NC,T>
     for(size_t loop_idx = 0; loop_idx < contracted_loops.size(); ++loop_idx)
     {
         const block_loop& loop = contracted_loops[loop_idx];
-        for(size_t bispace_idx = 0; bispace_idx < bispaces.size(); ++bispace_idx)
+        for(size_t bispace_idx = 0; bispace_idx < m_bispaces.size(); ++bispace_idx)
         {
             if(!loop.is_bispace_ignored(bispace_idx))
             {
                 size_t subspace_idx = loop.get_subspace_looped(bispace_idx);
-                contracted_dim *= bispaces[bispace_idx][subspace_idx].get_dim();
+                contracted_dim *= m_bispaces[bispace_idx][subspace_idx].get_dim();
             }
         }
     }
@@ -138,8 +140,22 @@ batch_kernel_contract2<T>::batch_kernel_contract2(const gen_sparse_btensor<NC,T>
     {
         direct_tensors.push_back(2);
     }
-    m_sll_ptr = new sparse_loop_list(loops,bispaces,direct_tensors);
+    m_sll_ptr = new sparse_loop_list(loops,m_bispaces,direct_tensors);
     m_bc2k_ptr = new block_contract2_kernel<T>(*m_sll_ptr);
+}
+template<typename T>
+void batch_kernel_contract2<T>::init(const std::vector<T*>& ptrs,const bispace_batch_map& bbm)
+{
+    size_t output_batch_size = m_bispaces[0].get_nnz();
+    for(bispace_batch_map::const_iterator it = bbm.begin(); it != bbm.end(); ++it)
+    {
+        if(it->first.first == 0)
+        {
+            output_batch_size = m_bispaces[0].get_batch_size(it->first.second,it->second);
+            break;
+        }
+    }
+    memset(ptrs[0],0,output_batch_size*sizeof(T));
 }
     
 template<typename T>

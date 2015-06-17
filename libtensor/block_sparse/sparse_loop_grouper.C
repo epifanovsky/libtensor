@@ -1,18 +1,10 @@
 #include "sparse_loop_grouper.h"
 
-//TODO REMOVE
-#include <iostream>
-
-//TODO: DEBUG REMOVE for read_timer
-#include "sparse_loop_list.h"
-
 using namespace std;
 
 namespace libtensor {
 
 const char* sparse_loop_grouper::k_clazz = "sparse_loop_grouper";
-
-
 
 sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
 {
@@ -30,7 +22,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
     } 
     /*double bispace_tree_seconds = read_timer<double>();*/
     vector<sparse_bispace_any_order> bispaces = sf.get_bispaces();
-    vector<sparse_block_tree_any_order> trees = sf.get_trees(); 
+    vector<sparse_block_tree> trees = sf.get_trees(); 
     /*std::cout << "tree bispace copy outside time: " << read_timer<double>() - bispace_tree_seconds << "\n";*/
 
     /*double get_batches_seconds = read_timer<double>();*/
@@ -53,7 +45,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
         {
             //Is this loop part of a group that we have already started?
             size_t tree_idx = trees_for_loop[0];
-            const sparse_block_tree_any_order& tree = trees[tree_idx];
+            const sparse_block_tree& tree = trees[tree_idx];
             bool found = false;
             for(size_t grp_idx = 0; grp_idx < trees_for_groups.size(); ++grp_idx)
             {
@@ -84,7 +76,7 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
             tree_baig = sf.get_bispaces_and_index_groups_for_tree(tree_idx);
 
             /*double iter_sec = read_timer<double>();*/
-            for(sparse_block_tree_any_order::const_iterator it = tree.begin(); it != tree.end(); ++it)
+            for(sparse_block_tree::const_iterator it = tree.begin(); it != tree.end(); ++it)
             {
                 loop_block_list.push_back(it.key()[tree_subspace_idx]);
                 sparse_offsets_and_sizes.push_back(*it);
@@ -186,7 +178,8 @@ sparse_loop_grouper::sparse_loop_grouper(const sparsity_fuser& sf)
                             }
                             else
                             {
-                                base_offset = subspace.get_block_abs_index(loop_block_list[0]);
+                                size_t min_idx = *(min_element(loop_block_list.begin(),loop_block_list.end()));
+                                base_offset = subspace.get_block_abs_index(min_idx);
                             }
                         }
                         else

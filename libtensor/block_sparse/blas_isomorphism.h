@@ -60,6 +60,7 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
         const sparse_bispace_any_order& bispace = bispaces[bispace_idx];
         for(size_t subspace_idx = 0; subspace_idx < bispace.get_order(); ++subspace_idx)
         {
+            bool found_connected_subspace = false;
             for(size_t loop_idx = 0; loop_idx < loops.size(); ++loop_idx)
             {
                 const block_loop& cur_loop = loops[loop_idx];
@@ -73,6 +74,7 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
                         {
                             if(other_bispace_idx != bispace_idx)
                             {
+                                found_connected_subspace = true;
                                 conn.push_back(bispace_off + cur_loop.get_subspace_looped(other_bispace_idx));
                                 break;
                             }
@@ -81,6 +83,10 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
                     }
                     break;
                 }
+            }
+            if(!found_connected_subspace)
+            {
+                throw bad_parameter(g_ns, k_clazz,"matmul_isomorphism_params(...)",__FILE__, __LINE__, "Incomplete sparse_loop_list passed!");
             }
         }
     }

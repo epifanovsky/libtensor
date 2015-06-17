@@ -347,9 +347,9 @@ set(TARGETS
     libtensor_iface_tests
     libtensor_linalg_tests
     libtensor_symmetry_tests
-    libtensor_block_sparse_benchmark
-    libtensor_block_sparse_tests
-    sparse_block_tree_benchmark
+#    libtensor_block_sparse_benchmark
+#    libtensor_block_sparse_tests
+#    sparse_block_tree_benchmark
 )
 if(WITH_CTF)
     set(TARGETS ${TARGETS}
@@ -368,9 +368,9 @@ add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
 add_executable(libtensor_tod_tests ${SRC_TOD})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
-add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
-add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
-add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
+#add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
+#add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
+#add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
 if(WITH_CTF)
     set_property(SOURCE ${SRC_CTF_DENSE_TENSOR} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
     set_property(SOURCE ${SRC_CTF_BLOCK_TENSOR} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
@@ -407,5 +407,5 @@ endforeach(TARGET)
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
-set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
-set_property(TARGET sparse_block_tree_benchmark  APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
+#set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
+#set_property(TARGET sparse_block_tree_benchmark  APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)

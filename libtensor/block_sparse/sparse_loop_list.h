@@ -16,13 +16,14 @@
 #include "sparse_loop_grouper.h"
 
 //TODO REMOVE
-#include <sys/time.h>
-#include <iostream>
+//#include <sys/time.h>
+//#include <iostream>
 
 namespace libtensor
 {
 
 
+#if 0
 //TODO: DEBUG REMOVE
 template<typename T>
 T read_timer()
@@ -40,6 +41,7 @@ T read_timer()
 
     return (end.tv_sec - start.tv_sec) + 1.0e-6 * (end.tv_usec - start.tv_usec);
 }
+#endif
 //extern double contract_seconds;
 
 typedef std::map<size_t, std::vector<size_t> > fixed_block_map;
@@ -87,14 +89,14 @@ template<typename kern_t, typename T>
 void sparse_loop_list::run(kern_t& kernel,const std::vector<T*>& ptrs,const std::map<size_t,idx_pair>& batches)
 {
     //std::cout << "STARTING SLL:\n";
-    double seconds = read_timer<double>();
+    //double seconds = read_timer<double>();
     //std::cout << "STARTING SLL:\n";
     //double seconds = read_timer<double>();
     //std::cout << "STARTING SLL:\n";
     //double seconds = read_timer<double>();
     //Fuse all coupled sparse trees
     //std::cout << "STARTING FUSION:\n";
-    double init = read_timer<double>();
+    //double init = read_timer<double>();
     sparsity_fuser sf(m_loops,m_bispaces,m_direct_tensors,batches);
     for(size_t loop_idx = 0; loop_idx < m_loops.size(); ++loop_idx)
     {
@@ -122,7 +124,7 @@ void sparse_loop_list::run(kern_t& kernel,const std::vector<T*>& ptrs,const std:
     //std::cout  << "FUSE DURATION: " << read_timer<double>()  - init << "\n";
 
     //std::cout << "STARTING GROUP:\n";
-    init = read_timer<double>();
+    //init = read_timer<double>();
     //Create block offset and size information for each loop group
     sparse_loop_grouper slg(sf);
     m_bispaces_and_index_groups = slg.get_bispaces_and_index_groups();
@@ -181,7 +183,7 @@ void sparse_loop_list::run(kern_t& kernel,const std::vector<T*>& ptrs,const std:
     //std::cout  << "ALLOCATING OFFSET VECTORS DURATION: " << read_timer<double>()  - init << "\n";
 
     //std::cout << "WORKING:\n";
-    init = read_timer<double>();
+    //init = read_timer<double>();
     //contract_seconds = 0;
 	_run_internal(kernel,ptrs,block_ptrs,bispace_grp_offsets,bispace_block_dims,0);
     //std::cout  << "WORKING DURATION: " << read_timer<double>()  - init << "\n";

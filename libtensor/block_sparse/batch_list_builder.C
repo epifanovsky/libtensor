@@ -4,44 +4,48 @@ using namespace std;
 
 namespace libtensor {
 
-batch_list_builder::batch_list_builder(const vector< vector<labeled_bispace> >& labeled_bispace_groups,const letter& batched_index)
+using namespace expr;
+
+batch_list_builder::batch_list_builder(const vector< vector<sparse_bispace_any_order> >& bispace_grps,
+                                       const vector<idx_list>& batched_subspace_grps)
 {
-    for(size_t grp_idx = 0; grp_idx  < labeled_bispace_groups.size(); ++grp_idx)
+    for(size_t grp_idx = 0; grp_idx  < bispace_grps.size(); ++grp_idx)
     {
-        const vector<labeled_bispace>& lbs = labeled_bispace_groups[grp_idx];
-        vector<subspace_iterator> iter_group;
-        for(size_t bispace_idx = 0; bispace_idx < lbs.size(); ++bispace_idx)
+        const vector<sparse_bispace_any_order>& bispace_grp = bispace_grps[grp_idx];
+        const idx_list& batched_subspace_grp = batched_subspace_grps[grp_idx];
+        vector<subspace_iterator> iter_grp;
+        for(size_t bispace_idx = 0; bispace_idx < bispace_grp.size(); ++bispace_idx)
         {
-            sparse_bispace_any_order bispace = lbs[bispace_idx].get_bispace();
-            size_t subspace_idx = lbs[bispace_idx].index_of(batched_index);
-            iter_group.push_back(subspace_iterator(bispace,subspace_idx));
+            const sparse_bispace_any_order& bispace = bispace_grp[bispace_idx];
+            size_t subspace_idx = batched_subspace_grp[bispace_idx];
+            iter_grp.push_back(subspace_iterator(bispace,subspace_idx));
             m_end_idx = bispace[subspace_idx].get_n_blocks(); 
         }
-        m_iter_groups.push_back(iter_group);
+        m_iter_grps.push_back(iter_grp);
     }
 }
 
 idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
 {
     idx_pair_list batch_list;
-    dim_list grp_batch_sizes(m_iter_groups.size(),0);
-    dim_list grp_cur_subtotals(m_iter_groups.size(),0);
+    dim_list grp_batch_sizes(m_iter_grps.size(),0);
+    dim_list grp_cur_subtotals(m_iter_grps.size(),0);
     size_t batch_start_idx = 0;
 
     //Do this by value so as not to corrupt member var as we incr
-    vector< vector<subspace_iterator> > iter_groups(m_iter_groups);
+    vector< vector<subspace_iterator> > iter_grps(m_iter_grps);
     vector< pair<size_t,idx_pair> > cur_block_inds; 
     while(true)
     {
         //Figure out what index each iterator is at
         bool all_done = true;
-        for(size_t grp_idx = 0; grp_idx < m_iter_groups.size(); ++grp_idx)
+        for(size_t grp_idx = 0; grp_idx < m_iter_grps.size(); ++grp_idx)
         {
-            vector<subspace_iterator>& iter_group = iter_groups[grp_idx];
+            vector<subspace_iterator>& iter_grp = iter_grps[grp_idx];
             //Did all of our iterators reach the end?
-            for(size_t iter_idx = 0; iter_idx < iter_group.size(); ++iter_idx)
+            for(size_t iter_idx = 0; iter_idx < iter_grp.size(); ++iter_idx)
             {
-                const subspace_iterator& it = iter_group[iter_idx];
+                const subspace_iterator& it = iter_grp[iter_idx];
                 if(!it.done())
                 {
                     all_done = false;
@@ -61,17 +65,17 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
             if(block_idx != least_idx) break;
             size_t grp_idx = cur_block_inds[sig_it_idx].second.first;
             size_t iter_idx = cur_block_inds[sig_it_idx].second.second;
-            size_t this_block_contrib = iter_groups[grp_idx][iter_idx].get_slice_size();
-            if(this_block_contrib > max_n_elem)
+            size_t this_block_contrib = iter_grps[grp_idx][iter_idx].get_slice_size();
+            if(grp_cur_subtotals[grp_idx] + this_block_contrib > max_n_elem)
             {
-                throw out_of_memory(g_ns,"batch_list_builder","get_batch_list(...)",
-                    __FILE__,__LINE__,"Not enough memory provided to compute valid batch list"); 
+                throw out_of_memory(g_ns,"batch_list_builder","get_batch_list(...)",__FILE__,__LINE__,
+                    "Not enough memory provided to compute valid batch list"); 
             }
             grp_cur_subtotals[grp_idx] += this_block_contrib;
-            ++iter_groups[grp_idx][iter_idx];
+            ++iter_grps[grp_idx][iter_idx];
         }
 
-        //Find groups that have exceeded the memory allowance
+        //Find grps that have exceeded the memory allowance
         //If any of them have the current smallest index, that marks the end of the batch
         for(size_t sig_it_idx = 0; sig_it_idx < cur_block_inds.size(); ++sig_it_idx)
         {
@@ -81,7 +85,7 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
                 if(grp_batch_sizes[grp_idx] + grp_cur_subtotals[grp_idx] > max_n_elem) 
                 {
                     grp_batch_sizes[grp_idx] = grp_cur_subtotals[grp_idx];
-                    //To ensure that multiple groups at same index don't duplicate
+                    //To ensure that multiple grps at same index don't duplicate
                     if(least_idx > batch_start_idx)
                     {
                         batch_list.push_back(idx_pair(batch_start_idx,least_idx));
@@ -99,6 +103,37 @@ idx_pair_list batch_list_builder::get_batch_list(size_t max_n_elem)
     }
     batch_list.push_back(idx_pair(batch_start_idx,m_end_idx));
     return batch_list;
+}
+
+vector< vector<size_t> > batch_list_builder::get_batch_array_size_grps(const idx_pair_list& batch_list)
+{
+    vector< vector<size_t> > batch_array_size_grps;
+    //Copy to preserve state
+    vector< vector<subspace_iterator> > iter_grps(m_iter_grps);
+    for(size_t grp_idx = 0; grp_idx  < iter_grps.size(); ++grp_idx)
+    {
+        vector<size_t> batch_array_size_grp;
+        vector<subspace_iterator>& iter_grp = iter_grps[grp_idx];
+        for(size_t iter_idx = 0; iter_idx < iter_grp.size(); ++iter_idx)
+        {
+            subspace_iterator& it = iter_grp[iter_idx]; 
+            size_t max_batch_size = 0;
+            for(size_t batch_idx = 0; batch_idx < batch_list.size(); ++batch_idx)  
+            {
+                idx_pair batch = batch_list[batch_idx];
+                size_t cur_batch_size = 0;
+                while((!it.done()) && (it.get_block_index() < batch.second))
+                {
+                    cur_batch_size += it.get_slice_size();
+                    ++it;
+                }
+                if(cur_batch_size > max_batch_size) max_batch_size = cur_batch_size;
+            }
+            batch_array_size_grp.push_back(max_batch_size);
+        }
+        batch_array_size_grps.push_back(batch_array_size_grp);
+    }
+    return batch_array_size_grps;
 }
 
 } // namespace libtensor

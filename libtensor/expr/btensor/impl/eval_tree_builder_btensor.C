@@ -17,8 +17,6 @@
 
 namespace libtensor {
 namespace expr {
-using namespace eval_btensor_double; // for dispatch_1
-
 
 const char eval_tree_builder_btensor::k_clazz[] = "eval_tree_builder_btensor";
 
@@ -45,7 +43,7 @@ public:
     { }
 
     void add() {
-        dispatch_1<1, Nmax>::dispatch(*this, m_g.get_vertex(m_nid).get_n());
+        eval_btensor_double::dispatch_1<1, Nmax>::dispatch(*this, m_g.get_vertex(m_nid).get_n());
     }
 
     template<size_t N>
