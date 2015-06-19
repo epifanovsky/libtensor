@@ -132,9 +132,8 @@ block_loop& block_loop::operator++()
        {
            if(m_dependent_loop->done())
            {
-               m_start_idx = m_dependent_loop->m_cur_idx+1;
-               m_cur_idx = m_start_idx;
-               m_dependent_loop->m_start_idx = m_start_idx;
+               m_cur_idx = m_dependent_loop->m_cur_idx+1;
+               m_dependent_loop->m_start_idx = m_cur_idx;
                m_dependent_loop->reset();
            }
            else

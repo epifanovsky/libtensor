@@ -946,7 +946,7 @@ void sparse_btensor_test::test_contract2_3d_2d_sparse_sparse() throw(libtest::te
                          17,18,19};
 
     //Block major
-    double C_correct_arr[72] = {//i = 0 j = 0 l = 2
+    double C_correct_arr[42] = {//i = 0 j = 0 l = 2
                                 9,
                                 18,
 

@@ -30,7 +30,7 @@ void sparse_loop_list_test::perform() throw(libtest::test_exception) {
 
     test_run_block_kernel_contract2_2d_2d();
     test_run_block_kernel_contract2_3d_2d();
-    test_run_block_kernel_contract2_2d_2d_sparse_dense();
+    /*test_run_block_kernel_contract2_2d_2d_sparse_dense();*/
 
 #if 0
     test_run_direct_3d_3d();
@@ -954,10 +954,10 @@ void sparse_loop_list_test::test_run_block_kernel_contract2_2d_2d_sparse_dense()
     ts_groups[0].push_back(idx_pair(1,0));
     //j loop
     ts_groups[1].push_back(idx_pair(0,1));
-    ts_groups[1].push_back(idx_pair(2,1));
+    ts_groups[1].push_back(idx_pair(2,0));
     //k loop
     ts_groups[2].push_back(idx_pair(1,1));
-    ts_groups[2].push_back(idx_pair(2,0));
+    ts_groups[2].push_back(idx_pair(2,1));
 
     sparse_loop_list sll(bispaces,ts_groups);
     block_kernel_contract2<double> bc2k(bispaces,ts_groups);

@@ -12,6 +12,7 @@ private:
 
     void test_contract2() throw(libtest::test_exception);
     void test_contract2_2d_2d_sparse_dense() throw(libtest::test_exception);
+    void test_contract2_3d_2d_sparse_sparse() throw(libtest::test_exception);
 };
 
 } // namespace libtensor

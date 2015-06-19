@@ -60,13 +60,13 @@ void sparse_loop_list::run(kern_t& kernel,
                     block_ptrs[t_idx] = ptrs[t_idx] + offset;
                 }
                 kernel(block_ptrs,m_block_dims);
+                ++c_loop;
             }
             else
                 m_loops[++c_loop_idx].reset();
-            ++c_loop;
         }
         else
-            --c_loop_idx;
+            ++m_loops[--c_loop_idx];
     }
 }
 
