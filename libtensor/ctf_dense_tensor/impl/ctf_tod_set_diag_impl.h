@@ -5,6 +5,7 @@
 #include <libtensor/core/mask.h>
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_set_diag.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 
@@ -57,7 +58,7 @@ void ctf_tod_set_diag<N>::perform(
     ctf_dense_tensor_ctrl<N, double> ca(ta);
     CTF::Tensor<double> &dta = ca.req_ctf_tensor();
 
-    CTF::Scalar<> v(m_v, ctf::get_world());
+    CTF::Scalar<> v(m_v, ctf_world::get_world());
     if(zero) dta[label] = v[""];
     else dta[label] += v[""];
 }

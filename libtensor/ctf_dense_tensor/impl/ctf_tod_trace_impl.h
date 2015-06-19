@@ -4,6 +4,7 @@
 #include <libtensor/core/bad_dimensions.h>
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_trace.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 
@@ -46,7 +47,7 @@ double ctf_tod_trace<N>::calculate() {
     char mapa[NA];
     for(size_t i = 0; i < NA; i++) mapa[i] = seqa[NA - i - 1] + 1;
 
-    CTF::Scalar<double> dtb(0.0, ctf::get_world());
+    CTF::Scalar<double> dtb(0.0, ctf_world::get_world());
     dtb.sum(1.0, dta, mapa, 0.0, 0);
     return dtb.get_val();
 }

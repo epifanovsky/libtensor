@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_CTF_DENSE_TENSOR_CTRL_H
 #define LIBTENSOR_CTF_DENSE_TENSOR_CTRL_H
 
+#include <ctf.hpp>
 #include "ctf_dense_tensor_i.h"
 
 namespace libtensor {
@@ -37,7 +38,7 @@ public:
         \param icomp Symmetry component
      **/
     CTF::Tensor<T> &req_ctf_tensor(size_t icomp = 0) {
-        return m_t.on_req_ctf_tensor(icomp);
+        return *reinterpret_cast<CTF::Tensor<T>*>(m_t.on_req_ctf_tensor(icomp));
     }
 
     /** \brief Resets the symmetry of the CTF tensor

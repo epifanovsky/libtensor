@@ -4,6 +4,7 @@
 #include <libtensor/linalg/linalg.h>
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_random.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 
@@ -34,7 +35,8 @@ void ctf_tod_random<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
     int64_t np, npmax, *idx;
     double *p;
     dta.read_local(&np, &idx, &p);
-    MPI_Allreduce(&np, &npmax, 1, MPI_INT64_T, MPI_MAX, ctf::get_world().comm);
+    MPI_Allreduce(&np, &npmax, 1, MPI_INT64_T, MPI_MAX,
+        ctf_world::get_world().comm);
 
     size_t sz = npmax;
     double *buf = new double[sz];

@@ -1,4 +1,4 @@
-#include <libtensor/expr/ctf_btensor/ctf_btensor.h>
+#include <libtensor/ctf_btensor.h>
 #include "ctf_btensor_test.h"
 
 namespace libtensor {

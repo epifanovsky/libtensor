@@ -1,3 +1,4 @@
+#include <libtensor/ctf_dense_tensor/ctf.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_scale.h>

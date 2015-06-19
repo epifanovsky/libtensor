@@ -5,6 +5,7 @@
 #include <libtensor/exception.h>
 #include "../ctf_error.h"
 #include "../ctf_dense_tensor.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 
@@ -53,7 +54,18 @@ ctf_dense_tensor<N, T>::ctf_dense_tensor(const dimensions<N> &dims,
 template<size_t N, typename T>
 ctf_dense_tensor<N, T>::~ctf_dense_tensor() {
 
-    for(size_t i = 0; i < m_tens.size(); i++) delete m_tens[i];
+    cleanup();
+}
+
+
+template<size_t N, typename T>
+void ctf_dense_tensor<N, T>::cleanup() {
+
+    for(size_t i = 0; i < m_tens.size(); i++) {
+        CTF::Tensor<T> *t = reinterpret_cast<CTF::Tensor<T>*>(m_tens[i]);
+        delete t;
+    }
+    m_tens.clear();
 }
 
 
@@ -72,17 +84,17 @@ const ctf_symmetry<N, T> &ctf_dense_tensor<N, T>::on_req_symmetry() {
 
 
 template<size_t N, typename T>
-CTF::Tensor<T> &ctf_dense_tensor<N, T>::on_req_ctf_tensor(size_t icomp) {
+ctf_dense_tensor<N, T>::ctf_tensor_adapter*
+ctf_dense_tensor<N, T>::on_req_ctf_tensor(size_t icomp) {
 
-    return *m_tens[icomp];
+    return m_tens[icomp];
 }
 
 
 template<size_t N, typename T>
 void ctf_dense_tensor<N, T>::on_reset_symmetry(const ctf_symmetry<N, T> &sym) {
 
-    for(size_t i = 0; i < m_tens.size(); i++) delete m_tens[i];
-    m_tens.clear();
+    cleanup();
     m_sym = sym;
 
     //  CTF stores tensors in the column-major format,
@@ -98,8 +110,9 @@ void ctf_dense_tensor<N, T>::on_reset_symmetry(const ctf_symmetry<N, T> &sym) {
     m_tens.resize(ncomp, 0);
     for(size_t icomp = 0; icomp < ncomp; icomp++) {
         m_sym.write(icomp, edge_sym);
-        m_tens[icomp] = new CTF::Tensor<T>(N, edge_len, edge_sym,
-            ctf::get_world());
+        CTF::Tensor<T> *t = new CTF::Tensor<T>(N, edge_len, edge_sym,
+            ctf_world::get_world());
+        m_tens[icomp] = reinterpret_cast<ctf_tensor_adapter*>(t);
     }
 }
 
@@ -114,16 +127,16 @@ void ctf_dense_tensor<N, T>::on_adjust_symmetry(const ctf_symmetry<N, T> &sym) {
 
     sequence<N, unsigned> symt_grp, symt_sym;
     for(size_t i = 0; i < N; i++) symt_grp[i] = i;
-    ctf_symmetry<N, double> symt(symt_grp, symt_sym);
-    ctf_dense_tensor<N, double> dtmp(get_dims(), symt);
-    CTF::Tensor<double> &dtt = *dtmp.m_tens[0];
+    ctf_symmetry<N, T> symt(symt_grp, symt_sym);
+    ctf_dense_tensor<N, T> dtmp(get_dims(), symt);
+    CTF::Tensor<T> &dtt = *reinterpret_cast<CTF::Tensor<T>*>(dtmp.m_tens[0]);
 
     char label[N + 1];
     for(size_t i = 0; i < N; i++) label[i] = char(i) + 1;
     label[N] = '\0';
 
     for(size_t icomp = 0; icomp < m_tens.size(); icomp++) {
-        CTF::Tensor<double> &dta = *m_tens[icomp];
+        CTF::Tensor<T> &dta = *reinterpret_cast<CTF::Tensor<T>*>(m_tens[icomp]);
         if(icomp == 0) dtt[label] = dta[label];
         else dtt[label] += dta[label];
     }
@@ -131,10 +144,9 @@ void ctf_dense_tensor<N, T>::on_adjust_symmetry(const ctf_symmetry<N, T> &sym) {
     on_reset_symmetry(sym);
 
     for(size_t icomp = 0; icomp < m_tens.size(); icomp++) {
-        CTF::Tensor<double> &dta = *m_tens[icomp];
-        double z = ctf_symmetry<N, double>::symconv_factor(symt, 0,
-            sym, icomp);
-        if(z == 0.0) continue;
+        CTF::Tensor<T> &dta = *reinterpret_cast<CTF::Tensor<T>*>(m_tens[icomp]);
+        T z = ctf_symmetry<N, T>::symconv_factor(symt, 0, sym, icomp);
+        if(z == T(0)) continue;
         dta[label] = z * dtt[label];
         dtt[label] -= dta[label];
     }

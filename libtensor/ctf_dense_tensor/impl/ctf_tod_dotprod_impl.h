@@ -5,6 +5,7 @@
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_error.h"
 #include "../ctf_tod_dotprod.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 
@@ -91,7 +92,7 @@ double ctf_tod_dotprod<N>::calculate() {
     for(size_t i = 0; i < N; i++) idxmapb[i] = seq[N - i - 1] + 1;
     for(size_t i = 0; i < N; i++) idxmapd[i] = N + 1;
 
-    CTF::Scalar<double> dtd(0.0, ctf::get_world());
+    CTF::Scalar<double> dtd(0.0, ctf_world::get_world());
     dtd.contract(1.0, dta, idxmapa, dtb, idxmapb, 0.0, idxmapd);
     return c * dtd.get_val();
 }

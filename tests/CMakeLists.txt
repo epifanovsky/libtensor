@@ -372,9 +372,9 @@ add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 #add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 #add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
 if(WITH_CTF)
-    set_property(SOURCE ${SRC_CTF_DENSE_TENSOR} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
-    set_property(SOURCE ${SRC_CTF_BLOCK_TENSOR} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
-    set_property(SOURCE ${SRC_CTF_IFACE} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
+    set_property(SOURCE ctf_dense_tensor/ctf_dense_tensor_test.C
+        ctf_dense_tensor/ctf_symmetry_test.C
+        APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
     add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
 #    set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
 #        LINK_FLAGS ${OpenMP_CXX_FLAGS})

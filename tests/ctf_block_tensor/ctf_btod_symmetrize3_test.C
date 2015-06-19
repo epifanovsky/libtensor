@@ -2,6 +2,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
 #include <libtensor/block_tensor/btod_symmetrize3.h>
+#include <libtensor/ctf_dense_tensor/ctf.h>
 #include <libtensor/ctf_block_tensor/ctf_block_tensor.h>
 #include <libtensor/ctf_block_tensor/ctf_btod_collect.h>
 #include <libtensor/ctf_block_tensor/ctf_btod_copy.h>

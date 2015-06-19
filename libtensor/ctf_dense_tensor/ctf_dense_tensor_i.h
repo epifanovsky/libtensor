@@ -2,7 +2,6 @@
 #define LIBTENSOR_CTF_DENSE_TENSOR_I_H
 
 #include <libtensor/core/dimensions.h>
-#include "ctf.h"
 #include "ctf_symmetry.h"
 
 namespace libtensor {
@@ -25,6 +24,9 @@ template<size_t N, typename T>
 class ctf_dense_tensor_i {
     friend class ctf_dense_tensor_ctrl<N, T>;
 
+protected:
+    struct ctf_tensor_adapter { };
+
 public:
     /** \brief Virtual destructor
      **/
@@ -46,7 +48,7 @@ protected:
         \param icomp Symmetry component
         \return CTF tensor object
      **/
-    virtual CTF::Tensor<T> &on_req_ctf_tensor(size_t icomp) = 0;
+    virtual ctf_tensor_adapter *on_req_ctf_tensor(size_t icomp) = 0;
 
     /** \brief Handles requests to reset the symmetry of the CTF tensor
      **/

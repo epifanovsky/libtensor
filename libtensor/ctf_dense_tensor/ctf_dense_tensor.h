@@ -29,9 +29,12 @@ public:
     typedef T element_t; //!< Tensor element type
 
 private:
+    using typename ctf_dense_tensor_i<N, T>::ctf_tensor_adapter;
+
+private:
     dimensions<N> m_dims; //!< Tensor dimensions
     ctf_symmetry<N, T> m_sym; //!< Tensor symmetry
-    std::vector< CTF::Tensor<T>* > m_tens; //!< CTF tensors
+    std::vector< ctf_tensor_adapter* > m_tens; //!< CTF tensors
 
 public:
     /** \brief Creates a new tensor
@@ -61,7 +64,7 @@ protected:
     /** \brief Returns the CTF tensor object
         \param icomp Symmetry component
      **/
-    virtual CTF::Tensor<T> &on_req_ctf_tensor(size_t icomp);
+    virtual ctf_tensor_adapter *on_req_ctf_tensor(size_t icomp);
 
     /** \brief Resets the symmetry of the CTF tensor
      **/
@@ -74,6 +77,9 @@ protected:
     /** \brief Called when state changes to immutable
      **/
     virtual void on_set_immutable();
+
+private:
+    void cleanup();
 
 };
 

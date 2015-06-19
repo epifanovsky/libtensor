@@ -1,8 +1,8 @@
 #ifndef LIBTENSOR_CTF_SYMMETRY_IMPL_H
 #define LIBTENSOR_CTF_SYMMETRY_IMPL_H
 
-#include "../ctf.h"
 #include "../ctf_symmetry.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 

@@ -26,7 +26,6 @@ endif(HAVE_LIBVMM)
 target_link_libraries(libtensor_performance_tests
     tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS}
     test)
-set_property(TARGET libtensor_ctf_benchmarks APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
 set_property(TARGET libtensor_ctf_benchmarks APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
 target_link_libraries(libtensor_ctf_benchmarks
     tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS})

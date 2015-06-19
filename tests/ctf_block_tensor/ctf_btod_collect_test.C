@@ -1,4 +1,3 @@
-#include <mpi.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/gen_block_tensor/gen_block_tensor_ctrl.h>
 #include <libtensor/block_tensor/block_tensor.h>

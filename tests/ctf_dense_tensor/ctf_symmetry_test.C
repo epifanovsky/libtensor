@@ -1,3 +1,4 @@
+#include <ctf.hpp>
 #include <libtensor/ctf_dense_tensor/ctf.h>
 #include <libtensor/ctf_dense_tensor/ctf_symmetry.h>
 #include "../compare_ref.h"

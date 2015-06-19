@@ -3,6 +3,7 @@
 
 #include "../ctf_dense_tensor_ctrl.h"
 #include "../ctf_tod_set.h"
+#include "ctf_world.h"
 
 namespace libtensor {
 
@@ -34,7 +35,7 @@ void ctf_tod_set<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &ta) {
     } else {
         char ij[N];
         for(size_t i = 0; i < N; i++) ij[i] = char(i) + 1;
-        CTF::Scalar<> v(m_v, ctf::get_world());
+        CTF::Scalar<> v(m_v, ctf_world::get_world());
         dta[ij] += v[""];
     }
 }

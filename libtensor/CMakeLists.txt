@@ -303,6 +303,7 @@ set(SRC_EXPR
 )
 
 set(SRC_CTF
+    ctf_dense_tensor/impl/ctf.C
     ctf_dense_tensor/impl/ctf_dense_tensor.C
     ctf_dense_tensor/impl/ctf_fctr.C
     ctf_dense_tensor/impl/ctf_symmetry.C
