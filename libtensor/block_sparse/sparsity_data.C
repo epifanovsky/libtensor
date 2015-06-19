@@ -132,21 +132,18 @@ sparsity_data sparsity_data::fuse(const sparsity_data& rhs,
             sub_key[lhs_idx] = m_kv_pairs[kv_idx].first[lhs_indices[lhs_idx]];
         }
 
-        //Successively narrow down the position of the corresponding rhs key
-        const_iterator rhs_pos = permuted_rhs.begin();
-        for(size_t rel_fused_idx = 0; rel_fused_idx < nfi; ++rel_fused_idx)
+        idx_list padded_sub_key(sub_key); 
+        padded_sub_key.resize(rhs.m_order);
+        const_iterator rhs_pos = lower_bound(permuted_rhs.begin(),permuted_rhs.end(),pair<idx_list,idx_list>(padded_sub_key,idx_list()));
+        if(rhs_pos != permuted_rhs.end())
         {
-            pair<idx_list,idx_list> sub_sub_kv(sub_key,idx_list());
-            for(size_t extra_idx = rel_fused_idx+1; extra_idx < nfi; ++extra_idx) 
+            for(size_t rel_fused_idx = 0; rel_fused_idx < nfi; ++rel_fused_idx)
             {
-                sub_sub_kv.first[extra_idx] = 0;
-            }
-            rhs_pos = lower_bound(rhs_pos,permuted_rhs.end(),sub_sub_kv);
-            if(rhs_pos == permuted_rhs.end()) break;
-            if(rhs_pos->first[rel_fused_idx] != sub_key[rel_fused_idx]) 
-            {
-                rhs_pos = permuted_rhs.end();
-                break;
+                if(rhs_pos->first[rel_fused_idx] != sub_key[rel_fused_idx]) 
+                {
+                    rhs_pos = permuted_rhs.end();
+                    break;
+                }
             }
         }
 
