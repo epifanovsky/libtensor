@@ -72,8 +72,6 @@ double ctf_tod_dotprod<N>::calculate() {
     static const char method[] = "calculate()";
 
     ctf_dense_tensor_ctrl<N, double> ca(m_ta), cb(m_tb);
-    CTF::Tensor<double> &dta = ca.req_ctf_tensor();
-    CTF::Tensor<double> &dtb = cb.req_ctf_tensor();
 
     const permutation<N> &perma = m_tra.get_perm();
     const permutation<N> &permb = m_trb.get_perm();
@@ -93,7 +91,15 @@ double ctf_tod_dotprod<N>::calculate() {
     for(size_t i = 0; i < N; i++) idxmapd[i] = N + 1;
 
     CTF::Scalar<double> dtd(0.0, ctf_world::get_world());
-    dtd.contract(1.0, dta, idxmapa, dtb, idxmapb, 0.0, idxmapd);
+
+    const ctf_symmetry<N, double> &syma = ca.req_symmetry();
+    const ctf_symmetry<N, double> &symb = cb.req_symmetry();
+    for(size_t i = 0; i < syma.get_ncomp(); i++)
+    for(size_t j = 0; j < symb.get_ncomp(); j++) {
+        CTF::Tensor<double> &dta = ca.req_ctf_tensor(i);
+        CTF::Tensor<double> &dtb = cb.req_ctf_tensor(j);
+        dtd.contract(1.0, dta, idxmapa, dtb, idxmapb, 1.0, idxmapd);
+    }
     return c * dtd.get_val();
 }
 

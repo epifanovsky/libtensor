@@ -23,6 +23,7 @@ void ctf_tod_dotprod_test::perform() throw(libtest::test_exception) {
         test_2b();
         test_3a();
         test_3b();
+        test_4a();
 
     } catch(...) {
         ctf::exit();
@@ -256,6 +257,51 @@ void ctf_tod_dotprod_test::test_3b() {
 
     double d_ref = tod_dotprod<3>(ta, tra, tb, trb).calculate();
     double d = ctf_tod_dotprod<3>(dta, tra, dtb, trb).calculate();
+
+    if(fabs(d - d_ref) > 1e-14 * fabs(d_ref)) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: " << d << " (result), "
+            << d_ref << " (reference), " << d - d_ref << " (diff)";
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_tod_dotprod_test::test_4a() {
+
+    static const char testname[] = "ctf_tod_dotprod_test::test_4a()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    index<4> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+    dimensions<4> dimsa(index_range<4>(i1, i2)), dimsb(dimsa);
+    sequence<4, unsigned> syma_grp, syma_sym(0);
+    syma_grp[0] = 0; syma_grp[1] = 0; syma_grp[2] = 1; syma_grp[3] = 1;
+    ctf_symmetry<4, double> syma(syma_grp, syma_sym);
+    syma_sym[0] = 1; syma_sym[1] = 1;
+    syma.add_component(syma_grp, syma_sym);
+    dense_tensor<4, double, allocator_t> ta0(dimsa), ta(dimsa), tb(dimsb);
+
+    ctf_dense_tensor<4, double> dta(dimsa, syma), dtb(dimsb);
+
+    tod_random<4>().perform(ta0);
+    tod_copy<4>(ta0).perform(true, ta);
+    tod_copy<4>(ta0, permutation<4>().permute(0, 1).permute(2, 3)).
+        perform(false, ta);
+    tod_random<4>().perform(tb);
+
+    ctf_tod_distribute<4>(ta).perform(dta);
+    ctf_tod_distribute<4>(tb).perform(dtb);
+
+    double d_ref = tod_dotprod<4>(ta, tb).calculate();
+    double d = ctf_tod_dotprod<4>(dta, dtb).calculate();
 
     if(fabs(d - d_ref) > 1e-14 * fabs(d_ref)) {
         std::ostringstream ss;
