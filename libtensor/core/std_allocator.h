@@ -37,7 +37,7 @@ public:
         \param mem_limit Memory limit in data elements.
      **/
     static void init(size_t base_sz, size_t min_sz, size_t max_sz,
-        size_t mem_limit) {
+        size_t mem_limit, const char*) {
 
         batching_policy_base::set_batch_size(
             mem_limit / min_sz / base_sz / base_sz / base_sz / 2);
