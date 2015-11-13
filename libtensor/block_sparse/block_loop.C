@@ -12,6 +12,9 @@ namespace libtensor
 
 size_t flops = 0;
 bool count_flops = false;
+bool tally = false;
+double total = 0.0;
+size_t factor_count = 0;
 /*double contract_seconds = 0;*/
 
 const char* block_loop::k_clazz = "block_loop";

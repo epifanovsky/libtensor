@@ -28,7 +28,7 @@ subspace_iterator::subspace_iterator(const sparse_bispace_any_order& bispace,siz
             if(idx_grp_offset == sparse_grp_offset)
             {
                 //Permute tree so that iterated subspace is at position 0
-                sparse_block_tree tree = bispace.get_sparse_group_tree(sparse_grp_idx);
+                sparsity_data tree = bispace.get_sparse_group_tree(sparse_grp_idx);
                 if(subspace_idx != 0)
                 {
                     runtime_permutation perm(tree.get_order());
@@ -37,18 +37,18 @@ subspace_iterator::subspace_iterator(const sparse_bispace_any_order& bispace,siz
                 }
 
                 size_t block_subtotal = 0;
-                bool empty = (tree.begin() == tree.end());
-                if(!empty) m_blocks.push_back(tree.begin().key()[0]);
-                for(sparse_block_tree::iterator it = tree.begin(); it != tree.end(); ++it)
+                bool empty = (tree.get_n_entries() == 0);
+                if(!empty) m_blocks.push_back(tree.get_keys()[0]);
+                for(size_t ent_idx = 0; ent_idx < tree.get_n_entries(); ++ent_idx)
                 {
-                    size_t block_idx = it.key()[0];
+                    size_t block_idx = tree.get_keys()[ent_idx*tree.get_order()];
                     if(block_idx != m_blocks.back())
                     {
                         m_blocks.push_back(block_idx);
                         m_slice_sizes.push_back(block_subtotal);
                         block_subtotal = 0;
                     }
-                    block_subtotal += (*it)[0].second*slice_scale_fac; 
+                    block_subtotal += tree.get_values()[ent_idx*tree.get_value_order()+1]*slice_scale_fac; 
                 }
                 if(!empty) m_slice_sizes.push_back(block_subtotal);
                 break;

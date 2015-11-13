@@ -19,6 +19,10 @@ namespace libtensor
 
 extern size_t flops;
 extern bool count_flops;
+extern bool tally;
+extern double total;
+extern size_t factor_count;
+
 //extern double contract_seconds;
 
 template<typename T>
@@ -463,6 +467,22 @@ void libtensor::block_contract2_kernel<T>::operator ()(
         if(count_flops)
         {
             flops += 2*m*n*k;
+        }
+
+        if(tally)
+        {
+            //for this SPECIFIC case, I KNOW that order is Aik Bjk (row major)
+            for(size_t i = 0; i < m; ++i)
+            {
+                for(size_t j = 0; j < n; ++j)
+                {
+                    for(size_t z = 0; z < k; ++z)
+                    {
+                        total += fabs(m_perm_ptrs[1][i*lda+k])*fabs(m_perm_ptrs[2][j*ldb+k]);
+                        factor_count += 1;
+                    }
+                }
+            }
         }
         //contract_seconds += read_timer<double>() - seconds;
     }
