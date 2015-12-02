@@ -17,5 +17,6 @@ template<typename T> class eval_btensor;
 } // namespace libtensor
 
 #include "eval_btensor_double.h"
+#include "eval_btensor_complex_double.h"
 
 #endif // LIBTENSOR_EXPR_EVAL_BTENSOR_H

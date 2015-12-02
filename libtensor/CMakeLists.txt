@@ -254,6 +254,7 @@ set(SRC_DIAG_TENSOR
 )
 
 set(SRC_EXPR
+    expr/btensor/impl/eval_btensor_complex_double.C
     expr/btensor/impl/eval_btensor_double.C
     expr/btensor/impl/eval_btensor_double_add.C
     expr/btensor/impl/eval_btensor_double_autoselect.C
