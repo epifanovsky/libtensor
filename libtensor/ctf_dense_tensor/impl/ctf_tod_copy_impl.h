@@ -90,11 +90,13 @@ void ctf_tod_copy<N>::perform(bool zero, ctf_dense_tensor_i<N, double> &tb) {
         ctf_tod_copy::start_timer();
         for(size_t icompa = 0; icompa < symap.get_ncomp(); icompa++) {
             size_t icompb = ctf_tod_aux_symcomp(symap, icompa, symb);
-            double z = ctf_symmetry<N, double>::symconv_factor(symap, icompa,
+            double z0 = ctf_symmetry<N, double>::symconv_factor(syma, icompa,
+                m_tra.get_perm());
+            double z1 = ctf_symmetry<N, double>::symconv_factor(symap, icompa,
                 symb, icompb);
             CTF::Tensor<double> &dta = ca.req_ctf_tensor(icompa);
             CTF::Tensor<double> &dtb = cb.req_ctf_tensor(icompb);
-            dtb[labelb] += c * z * dta[labela];
+            dtb[labelb] += c * z0 * z1 * dta[labela];
         }
         ctf_tod_copy::stop_timer();
     } else {

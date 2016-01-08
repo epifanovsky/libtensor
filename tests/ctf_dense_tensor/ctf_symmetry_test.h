@@ -23,6 +23,10 @@ private:
     void test_convfac_1();
     void test_convfac_2();
     void test_convfac_3();
+    void test_convfac_4();
+    void test_convfac_5();
+    void test_convfac_6();
+    void test_convfac_7();
 
 };
 

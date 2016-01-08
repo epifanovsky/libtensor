@@ -21,6 +21,10 @@ void ctf_symmetry_test::perform() throw(libtest::test_exception) {
         test_convfac_1();
         test_convfac_2();
         test_convfac_3();
+        test_convfac_4();
+        test_convfac_5();
+        test_convfac_6();
+        test_convfac_7();
 
     } catch(...) {
         ctf::exit();
@@ -378,6 +382,124 @@ void ctf_symmetry_test::test_convfac_3() {
         std::ostringstream ss;
         ss << "Result doesn't match reference: "
            << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_4() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_4()";
+
+    try {
+
+    sequence<4, unsigned> grp(0), tag(0);
+    grp[0] = 0; grp[1] = 1; grp[2] = 2; grp[3] = 3;
+    ctf_symmetry<4, double> sym(grp, tag);
+
+    double z = ctf_symmetry<4, double>::symconv_factor(sym, 0,
+        permutation<4>().permute(0, 1));
+    double z_ref = 1.0;
+
+    if(z != z_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_5() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_5()";
+
+    try {
+
+    sequence<4, unsigned> grp(0), tag(0);
+    grp[0] = 0; grp[1] = 0; grp[2] = 2; grp[3] = 3;
+    ctf_symmetry<4, double> sym(grp, tag);
+
+    double z = ctf_symmetry<4, double>::symconv_factor(sym, 0,
+        permutation<4>().permute(0, 1));
+    double z_ref = 1.0;
+
+    if(z != z_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_6() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_6()";
+
+    try {
+
+    sequence<4, unsigned> grp(0), tag(0);
+    grp[0] = 0; grp[1] = 1; grp[2] = 0; grp[3] = 3;
+    ctf_symmetry<4, double> sym(grp, tag);
+
+    double z = ctf_symmetry<4, double>::symconv_factor(sym, 0,
+        permutation<4>().permute(0, 1));
+    double z_ref = 0.5;
+
+    if(z != z_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z = " << z << "; " << "z_ref = " << z_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_symmetry_test::test_convfac_7() {
+
+    static const char testname[] = "ctf_symmetry_test::test_convfac_7()";
+
+    try {
+
+    sequence<2, unsigned> grp(0), tag(0);
+    ctf_symmetry<2, double> sym(grp, tag);
+    tag[0] = 1;
+    sym.add_component(grp, tag);
+
+
+    double z0 = ctf_symmetry<2, double>::symconv_factor(sym, 0,
+        permutation<2>().permute(0, 1));
+    double z1 = ctf_symmetry<2, double>::symconv_factor(sym, 1,
+        permutation<2>().permute(0, 1));
+    double z0_ref = 1.0, z1_ref = 1.0;
+
+    if(z0 != z0_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z0 = " << z0 << "; " << "z0_ref = " << z0_ref;
+        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+    }
+    if(z1 != z1_ref) {
+        std::ostringstream ss;
+        ss << "Result doesn't match reference: "
+           << "z1 = " << z1 << "; " << "z1_ref = " << z1_ref;
         fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
 

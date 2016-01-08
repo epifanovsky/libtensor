@@ -1,3 +1,4 @@
+#include <libtensor/symmetry/se_perm.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/btod_copy.h>
 #include <libtensor/block_tensor/btod_random.h>
@@ -25,6 +26,7 @@ void ctf_btod_symmetrize2_test::perform() throw(libtest::test_exception) {
         test_3();
         test_4();
         test_5();
+        test_6();
 
     } catch(...) {
         ctf::exit();
@@ -251,6 +253,60 @@ void ctf_btod_symmetrize2_test::test_5() {
 
     ctf_btod_copy<4> dcp(dbta);
     ctf_btod_symmetrize2<4>(dcp, perm, true).perform(dbtb);
+    ctf_btod_collect<4>(dbtb).perform(btb);
+
+    compare_ref<4>::compare(testname, btb, btb_ref, 1e-15);
+
+    // check block symmetry
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_btod_symmetrize2_test::test_6() {
+
+    static const char testname[] = "ctf_btod_symmetrize2_test::test_6()";
+
+    typedef std_allocator<double> allocator_t;
+
+    try {
+
+    mask<4> m1111;
+    m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
+
+    permutation<4> p1023, p2103;
+    p1023.permute(0, 1);
+    p2103.permute(0, 2);
+
+    index<4> i1, i2;
+    i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
+    dimensions<4> dimsa(index_range<4>(i1, i2)), dimsb(dimsa);
+    block_index_space<4> bisa(dimsa);
+    //bisa.split(m1111, 6);
+    block_index_space<4> bisb(bisa);
+
+    block_tensor<4, double, allocator_t> bta(bisa), btb(bisb), btb_ref(bisb);
+    ctf_block_tensor<4, double> dbta(bisa), dbtb(bisb);
+
+    {
+        se_perm<4, double> seperm2103(p2103, scalar_transf<double>());
+        block_tensor_ctrl<4, double> ca(bta);
+        ca.req_symmetry().insert(seperm2103);
+    }
+
+    btod_random<4>().perform(bta);
+    btod_random<4>().perform(btb);
+
+    btod_copy<4> cp(bta);
+    btod_symmetrize2<4>(cp, p1023, false).perform(btb_ref);
+
+    ctf_btod_distribute<4>(bta).perform(dbta);
+    ctf_btod_distribute<4>(btb).perform(dbtb);
+
+    ctf_btod_copy<4> dcp(dbta);
+    ctf_btod_symmetrize2<4>(dcp, p1023, false).perform(dbtb);
     ctf_btod_collect<4>(dbtb).perform(btb);
 
     compare_ref<4>::compare(testname, btb, btb_ref, 1e-15);

@@ -116,6 +116,12 @@ public:
     static T symconv_factor(const ctf_symmetry<N, T> &syma, size_t icompa,
         const ctf_symmetry<N, T> &symb, size_t icompb);
 
+    /** \brief Produces a compensation factor for A being permuted into
+            higher symmetry by CTF
+     **/
+    static T symconv_factor(const ctf_symmetry<N, T> &sym, size_t icomp,
+        const permutation<N> &perm);
+
     /** \brief Sets a global flag to disable/enable use of symmetry in CTF
      **/
     static void use_ctf_symmetry(bool use);

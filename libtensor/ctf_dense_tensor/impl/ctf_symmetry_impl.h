@@ -131,18 +131,44 @@ T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &syma,
     for(size_t i = 0; i < N; i++) {
         int ga = sa[i], gb = sb[i];
         if(ga == NS || gb == NS) continue;
-        if(ga != gb) return 0.0;
+        if(ga != gb) return T(0.0);
     }
 
     for(size_t i = 0; i < N; i++) {
         if(sb[i] == NS) sa[i] = NS;
     }
+
     unsigned long fa = symmetry_factor(N, sa);
     unsigned long fb = symmetry_factor(N, sb);
 
     //  It might be tempting to optimize the expression below, but don't
     //  do it to avoid errors. It is exactly right as written.
     return T(1.0 / double(fb / fa));
+}
+
+
+template<size_t N, typename T>
+T ctf_symmetry<N, T>::symconv_factor(const ctf_symmetry<N, T> &sym,
+    size_t icomp, const permutation<N> &perm) {
+
+    int sa[N];
+    sequence<N, unsigned> sgrp, ssym;
+    sym.write(icomp, sa);
+    for(size_t i = 0, g = 0; i < N; i++) {
+        sgrp[N - i - 1] = g;
+        if(sa[i] == NS) {
+            g++;
+        } else {
+            if(sa[i] == AS) ssym[g] = 1;
+        }
+    }
+
+    ctf_symmetry<N, T> syma(sgrp, ssym);
+    ctf_symmetry<N, T> symb(sym);
+    syma.permute(perm);
+    symb.permute(perm);
+
+    return symconv_factor(syma, 0, symb, icomp);
 }
 
 

@@ -30,6 +30,7 @@ void ctf_expr_test::perform() throw(libtest::test_exception) {
         test_4();
         test_5();
         test_6();
+        test_7();
 
     } catch(...) {
         ctf::exit();
@@ -373,6 +374,52 @@ void ctf_expr_test::test_6() {
     ctf_btod_collect<4>(di4_oooo).perform(i4_oooo);
 
     compare_ref<4>::compare(testname, i4_oooo, i4_oooo_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_7() {
+
+    static const char testname[] = "ctf_expr_test::test_7()";
+
+    try {
+
+    bispace<1> so(10); so.split(5);
+    bispace<1> sv(12); sv.split(6);
+
+    bispace<4> sooov((so&so&so)|sv), soovv((so&so)|(sv&sv));
+
+    symmetry<4, double> sym_ooov(sooov.get_bis());
+    {
+        permutation<4> p2103;
+        p2103.permute(0, 2);
+        se_perm<4, double> sep2103(p2103, scalar_transf<double>());
+        sym_ooov.insert(sep2103);
+    }
+
+    btensor<4, double> i_ooov(sooov), j_ooov(sooov), j_ooov_ref(sooov);
+    ctf_btensor<4, double> di_ooov(sooov), dj_ooov(sooov);
+
+    {
+        block_tensor_ctrl<4, double> ctrl_i_ooov(i_ooov);
+        so_copy<4, double>(sym_ooov).perform(ctrl_i_ooov.req_symmetry());
+    }
+
+    btod_random<4>().perform(i_ooov);
+
+    ctf_btod_distribute<4>(i_ooov).perform(di_ooov);
+
+    letter i, j, k, l, a, b, c, d;
+
+    j_ooov_ref(i|j|k|a) = asymm(i, j, i_ooov(i|j|k|a));
+    dj_ooov(i|j|k|a) = asymm(i, j, di_ooov(i|j|k|a));
+
+    ctf_btod_collect<4>(dj_ooov).perform(j_ooov);
+
+    compare_ref<4>::compare(testname, j_ooov, j_ooov_ref, 1e-13);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
