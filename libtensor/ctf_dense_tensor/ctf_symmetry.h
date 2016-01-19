@@ -86,13 +86,6 @@ public:
         return m_sym[icomp].second;
     }
 
-    const sequence<N, unsigned> &get_grp() const {
-        return get_grp(0);
-    }
-    const sequence<N, unsigned> &get_sym() const {
-        return get_sym(0);
-    }
-
     /** \brief Returns true if given symmetry is a subgroup of this symmetry
      **/
     bool is_subgroup(const ctf_symmetry &other) const;
@@ -104,10 +97,6 @@ public:
     /** \brief Exports symmetry in the CTF format
      **/
     void write(size_t icomp, int (&sym)[N]) const;
-
-    void write(int (&sym)[N]) const {
-        write(0, sym);
-    }
 
 public:
     /** \brief Produces a compensation factor for A being symmetrized into

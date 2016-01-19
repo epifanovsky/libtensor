@@ -47,7 +47,7 @@ void ctf_symmetry_test::test_1() {
 
     for(int i = 0; i < 4; i++) s[i] = -999;
 
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref[i]) {
@@ -82,7 +82,7 @@ void ctf_symmetry_test::test_2() {
     int s_ref_3[4] = { SY, NS, SY, NS };
 
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_1[i]) {
@@ -96,7 +96,7 @@ void ctf_symmetry_test::test_2() {
 
     sym.permute(permutation<4>().permute(1, 2));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_2[i]) {
@@ -110,7 +110,7 @@ void ctf_symmetry_test::test_2() {
 
     sym.permute(permutation<4>().permute(1, 2));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_3[i]) {
@@ -147,7 +147,7 @@ void ctf_symmetry_test::test_3() {
     int s_ref_4[4] = { AS, NS, SY, NS };
 
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_1[i]) {
@@ -161,7 +161,7 @@ void ctf_symmetry_test::test_3() {
 
     sym.permute(permutation<4>().permute(1, 2));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_2[i]) {
@@ -175,7 +175,7 @@ void ctf_symmetry_test::test_3() {
 
     sym.permute(permutation<4>().permute(1, 2));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_3[i]) {
@@ -189,7 +189,7 @@ void ctf_symmetry_test::test_3() {
 
     sym.permute(permutation<4>().permute(0, 2).permute(1, 3));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_4[i]) {
@@ -225,7 +225,7 @@ void ctf_symmetry_test::test_4() {
     int s_ref_3[4] = { AS, NS, AS, NS };
 
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_1[i]) {
@@ -239,7 +239,7 @@ void ctf_symmetry_test::test_4() {
 
     sym.permute(permutation<4>().permute(1, 2));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_2[i]) {
@@ -253,7 +253,7 @@ void ctf_symmetry_test::test_4() {
 
     sym.permute(permutation<4>().permute(1, 2));
     for(int i = 0; i < 4; i++) s[i] = -999;
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 4; i++) {
         if(s[i] != s_ref_3[i]) {
@@ -286,7 +286,7 @@ void ctf_symmetry_test::test_5() {
 
     for(int i = 0; i < 3; i++) s[i] = -999;
 
-    sym.write(s);
+    sym.write(0, s);
 
     for(int i = 0; i < 3; i++) {
         if(s[i] != s_ref[i]) {
