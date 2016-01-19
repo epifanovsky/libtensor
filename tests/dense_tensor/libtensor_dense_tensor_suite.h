@@ -1,7 +1,8 @@
-#ifndef LIBTENSOR_LIBTENSOR_TOD_SUITE_H
-#define LIBTENSOR_LIBTENSOR_TOD_SUITE_H
+#ifndef LIBTENSOR_LIBTENSOR_DENSE_TENSOR_SUITE_H
+#define LIBTENSOR_LIBTENSOR_DENSE_TENSOR_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "dense_tensor_test.h"
 #include "tod_add_test.h"
 #include "tod_apply_test.h"
 #include "tod_btconv_test.h"
@@ -45,6 +46,7 @@ namespace libtensor {
     \ingroup libtensor_tests
 
     This suite runs the following tests:
+    \li libtensor::dense_tensor_test
     \li libtensor::tod_add_test
     \li libtensor::tod_apply_test
     \li libtensor::tod_btconv_test
@@ -73,8 +75,9 @@ namespace libtensor {
     \li libtensor::tod_trace_test
     \li libtensor::tod_vmpriority_test
 **/
-class libtensor_tod_suite : public libtest::test_suite {
+class libtensor_dense_tensor_suite : public libtest::test_suite {
 private:
+    unit_test_factory<dense_tensor_test> m_utf_dense_tensor;
     unit_test_factory<tod_add_test> m_utf_tod_add;
     unit_test_factory<tod_apply_test> m_utf_tod_apply;
     unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
@@ -105,10 +108,10 @@ private:
 
 public:
     //! Creates the suite
-    libtensor_tod_suite();
+    libtensor_dense_tensor_suite();
 };
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LIBTENSOR_SUITE_H
+#endif // LIBTENSOR_LIBTENSOR_DENSE_TENSOR_SUITE_H
 

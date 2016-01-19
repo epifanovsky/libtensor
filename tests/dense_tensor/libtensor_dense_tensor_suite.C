@@ -1,10 +1,12 @@
 #include <libtensor/libtensor.h>
-#include "libtensor_tod_suite.h"
+#include "libtensor_dense_tensor_suite.h"
 
 namespace libtensor {
 
-libtensor_tod_suite::libtensor_tod_suite() : libtest::test_suite("libtensor") {
+libtensor_dense_tensor_suite::libtensor_dense_tensor_suite() :
+    libtest::test_suite("libtensor_dense_tensor") {
 
+    add_test("dense_tensor", m_utf_dense_tensor);
     add_test("tod_add", m_utf_tod_add);
     add_test("tod_apply", m_utf_tod_apply);
     add_test("tod_btconv", m_utf_tod_btconv);
