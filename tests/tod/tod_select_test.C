@@ -35,7 +35,7 @@ void tod_select_test::test_1(size_t n, double c)
 
     static const char *testname = "tod_select_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef typename tod_select<2, ComparePolicy>::list_type list_type;
 
     try {
@@ -120,7 +120,7 @@ void tod_select_test::test_2(size_t n, double c)
 
     static const char *testname = "tod_select_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef typename tod_select<3, ComparePolicy>::list_type list_type;
 
     try {

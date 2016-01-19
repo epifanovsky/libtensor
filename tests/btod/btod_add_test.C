@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_add_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -71,7 +71,7 @@ void btod_add_test::test_1(double ca1, double ca2)
     std::ostringstream tnss;
     tnss << "btod_add_test::test_1(" << ca1 << ", " << ca2 << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -135,7 +135,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
     tnss << "btod_add_test::test_2(" << ca1 << ", " << ca2
         << ", " << cs << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -199,7 +199,7 @@ void btod_add_test::test_3(double ca1, double ca2)
     std::ostringstream tnss;
     tnss << "btod_add_test::test_3(" << ca1 << ", " << ca2 << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -276,7 +276,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
     tnss << "btod_add_test::test_4(" << ca1 << ", " << ca2
         << ", " << ca3 << ", " << ca4 << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -373,7 +373,7 @@ void btod_add_test::test_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_add_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
     try {
@@ -408,7 +408,7 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
 
     static const char *testname = "btod_add_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
     try {
@@ -444,7 +444,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 
     static const char *testname = "btod_add_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -508,7 +508,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 
     static const char *testname = "btod_add_test::test_8()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -578,7 +578,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 
     static const char *testname = "btod_add_test::test_9()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -642,7 +642,7 @@ void btod_add_test::test_10(double d) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_add_test::test_10(" << d << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -727,7 +727,7 @@ void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_add_test::test_11(" << (sign ? '+' : '-') << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

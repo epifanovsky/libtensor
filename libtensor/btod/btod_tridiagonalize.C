@@ -51,7 +51,7 @@ void btod_tridiagonalize::perform(block_tensor_i<2, double> &btb,
         bis.split(splmskc,f);
     }
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     block_tensor<1, double, allocator_t> btcol(bis);//tensor which contains
     //column
 

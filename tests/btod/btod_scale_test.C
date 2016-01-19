@@ -13,12 +13,12 @@
 namespace libtensor {
 
 
-typedef std_allocator<double> allocator_t;
+typedef allocator<double> allocator_t;
 
 
 void btod_scale_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
     try {
 
     test_0();

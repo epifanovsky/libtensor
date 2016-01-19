@@ -13,7 +13,7 @@ namespace libtensor {
 
 void btod_diagonalize_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -38,7 +38,7 @@ void btod_diagonalize_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diagonalize_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
         double matrix[9] = { 1, 3, 4, 3, 2, 8, 4, 8, 3};
@@ -112,7 +112,7 @@ void btod_diagonalize_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diagonalize_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
         double matrix[16] = { 4, 1, -2, 2, 1, 2, 0, 1, -2, 0, 3, -2, 2,1,-2,-1};
@@ -192,7 +192,7 @@ void btod_diagonalize_test::test_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diagonalize_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
         double matrix[9] = { 3, 1, 0, 1, 3, 1, 0, 1, 3};
@@ -268,7 +268,7 @@ void btod_diagonalize_test::test_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diagonalize_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
         double matrix[16] = { 3, 1, 0, 0,1,4,8,0,0,8,5,6,0,0,6,7};
@@ -346,7 +346,7 @@ void btod_diagonalize_test::test_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diagonalize_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
         double matrix[25] = { 2, -1,-1,0,0,-1,3,0,-2,0,-1,0,4,2,1,0,-2,2,8,3,0,

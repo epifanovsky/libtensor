@@ -107,7 +107,7 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
     tnss << "tod_ewmult2_test::test_i_i_i(" << ni << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -191,7 +191,7 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
         << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -278,7 +278,7 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
         << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -368,7 +368,7 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
         << nj << ", " << nk << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -460,7 +460,7 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
         << nj << ", " << nk << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -553,7 +553,7 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
         << nj << ", " << nk << ", " << nl << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -650,7 +650,7 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
         << nj << ", " << nk << ", " << nl << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

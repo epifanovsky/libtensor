@@ -18,7 +18,7 @@ namespace libtensor {
 
 void gen_bto_aux_add_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
 
     try {
 
@@ -41,7 +41,7 @@ void gen_bto_aux_add_test::test_1a() {
 
     static const char *testname = "gen_bto_aux_add_test::test_1a()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -144,7 +144,7 @@ void gen_bto_aux_add_test::test_1b() {
 
     static const char *testname = "gen_bto_aux_add_test::test_1b()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -267,7 +267,7 @@ void gen_bto_aux_add_test::test_1c() {
 
     static const char *testname = "gen_bto_aux_add_test::test_1c()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -395,7 +395,7 @@ void gen_bto_aux_add_test::test_2() {
 
     static const char *testname = "gen_bto_aux_add_test::test_2()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -510,7 +510,7 @@ void gen_bto_aux_add_test::test_3a() {
 
     static const char *testname = "gen_bto_aux_add_test::test_3a()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -691,7 +691,7 @@ void gen_bto_aux_add_test::test_3b() {
 
     static const char *testname = "gen_bto_aux_add_test::test_3b()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {

@@ -15,7 +15,7 @@ void diag_block_tensor_test::test_1() {
 
     static const char *testname = "diag_block_tensor_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

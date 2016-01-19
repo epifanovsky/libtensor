@@ -20,7 +20,7 @@ namespace libtensor {
 
 void btod_symcontract3_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -50,7 +50,7 @@ void btod_symcontract3_test::test_contr_1() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -123,7 +123,7 @@ void btod_symcontract3_test::test_contr_2() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -208,7 +208,7 @@ void btod_symcontract3_test::test_contr_3() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -311,7 +311,7 @@ void btod_symcontract3_test::test_contr_4() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -418,7 +418,7 @@ void btod_symcontract3_test::test_contr_5() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -539,7 +539,7 @@ void btod_symcontract3_test::test_contr_6() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -656,7 +656,7 @@ void btod_symcontract3_test::test_contr_7() {
 
     static const char testname[] = "btod_symcontract3_test::test_contr_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

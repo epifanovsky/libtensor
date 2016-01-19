@@ -13,7 +13,7 @@
 
 namespace libtensor {
 
-template<size_t N, typename Alloc = std_allocator<double> >
+template<size_t N, typename Alloc = allocator<double> >
 class btod_print {
 public:
     static const char *k_clazz; //!< Class name

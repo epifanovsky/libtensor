@@ -22,7 +22,7 @@ namespace libtensor {
 
 void btod_symmetrize2_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -72,7 +72,7 @@ void btod_symmetrize2_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_symmetrize2_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -134,7 +134,7 @@ void btod_symmetrize2_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_symmetrize2_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -197,7 +197,7 @@ void btod_symmetrize2_test::test_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_symmetrize2_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -269,7 +269,7 @@ void btod_symmetrize2_test::test_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_symmetrize2_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -339,7 +339,7 @@ void btod_symmetrize2_test::test_5(bool symm) throw(libtest::test_exception) {
 
     static const char *testname = "btod_symmetrize2_test::test_5(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -409,7 +409,7 @@ void btod_symmetrize2_test::test_6a(bool symm, bool label,
             << label << ", " << part << ", " << doadd << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     if (label) {
         std::vector<std::string> irnames(2);
@@ -532,7 +532,7 @@ void btod_symmetrize2_test::test_6b(bool symm, bool label,
             << label << ", " << part << ", " << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     if (label) {
         std::vector<std::string> irnames(2);
@@ -668,7 +668,7 @@ void btod_symmetrize2_test::test_7() {
 
     const char *testname = "btod_symmetrize2_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

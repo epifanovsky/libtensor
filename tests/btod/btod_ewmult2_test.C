@@ -20,7 +20,7 @@ namespace libtensor {
 
 void btod_ewmult2_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -54,7 +54,7 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_1(" << doadd << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -130,7 +130,7 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_2(" << doadd << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -214,7 +214,7 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_3(" << doadd << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -298,7 +298,7 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_4(" << doadd << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -390,7 +390,7 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_5(" << doadd << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -486,7 +486,7 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_6(" << doadd << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -611,7 +611,7 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     static const char *pgsym = "cs";
     std::vector<std::string> irnames(2);

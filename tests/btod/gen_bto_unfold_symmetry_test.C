@@ -17,7 +17,7 @@ namespace libtensor {
 
 void gen_bto_unfold_symmetry_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
 
     try {
 
@@ -38,7 +38,7 @@ void gen_bto_unfold_symmetry_test::test_1() {
 
     static const char *testname = "gen_bto_unfold_symmetry_test::test_1()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
 
     try {
 
@@ -91,7 +91,7 @@ void gen_bto_unfold_symmetry_test::test_2() {
 
     static const char *testname = "gen_bto_unfold_symmetry_test::test_2()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
 
     try {
 
@@ -148,7 +148,7 @@ void gen_bto_unfold_symmetry_test::test_3() {
 
     static const char *testname = "gen_bto_unfold_symmetry_test::test_3()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
 
     try {
 
@@ -228,7 +228,7 @@ void gen_bto_unfold_symmetry_test::test_4() {
 
     static const char *testname = "gen_bto_unfold_symmetry_test::test_4()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
 
     try {
 

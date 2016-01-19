@@ -43,7 +43,7 @@ void diag_btod_copy_test::test_copy_nosym_1() {
 
     static const char *testname = "diag_btod_copy_test::test_copy_nosym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -72,7 +72,7 @@ void diag_btod_copy_test::test_copy_nosym_2() {
 
     static const char *testname = "diag_btod_copy_test::test_copy_nosym_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -120,7 +120,7 @@ void diag_btod_copy_test::test_copy_nosym_3() {
 
     static const char *testname = "diag_btod_copy_test::test_copy_nosym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -169,7 +169,7 @@ void diag_btod_copy_test::test_copy_nosym_4() {
 
     static const char *testname = "diag_btod_copy_test::test_copy_nosym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -232,7 +232,7 @@ void diag_btod_copy_test::test_add_nosym_1() {
 
     static const char *testname = "diag_btod_copy_test::test_add_nosym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -263,7 +263,7 @@ void diag_btod_copy_test::test_add_nosym_2a() {
 
     static const char *testname = "diag_btod_copy_test::test_add_nosym_2a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -323,7 +323,7 @@ void diag_btod_copy_test::test_add_nosym_2b() {
 
     static const char *testname = "diag_btod_copy_test::test_add_nosym_2b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -385,7 +385,7 @@ void diag_btod_copy_test::test_add_nosym_3() {
 
     static const char *testname = "diag_btod_copy_test::test_add_nosym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -446,7 +446,7 @@ void diag_btod_copy_test::test_add_nosym_4() {
 
     static const char *testname = "diag_btod_copy_test::test_add_nosym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {

@@ -22,7 +22,7 @@ namespace libtensor {
 
 void btod_contract2_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -115,7 +115,7 @@ void btod_contract2_test::test_bis_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_bis_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -167,7 +167,7 @@ void btod_contract2_test::test_bis_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_bis_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -228,7 +228,7 @@ void btod_contract2_test::test_bis_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_bis_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -290,7 +290,7 @@ void btod_contract2_test::test_bis_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_bis_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -337,7 +337,7 @@ void btod_contract2_test::test_bis_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_bis_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -402,7 +402,7 @@ void btod_contract2_test::test_zeroblk_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_zeroblk_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -455,7 +455,7 @@ void btod_contract2_test::test_zeroblk_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_zeroblk_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -509,7 +509,7 @@ void btod_contract2_test::test_zeroblk_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_zeroblk_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -562,7 +562,7 @@ void btod_contract2_test::test_zeroblk_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_zeroblk_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -617,7 +617,7 @@ void btod_contract2_test::test_zeroblk_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_zeroblk_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -690,7 +690,7 @@ void btod_contract2_test::test_zeroblk_6() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_zeroblk_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -762,7 +762,7 @@ void btod_contract2_test::test_contr_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -831,7 +831,7 @@ void btod_contract2_test::test_contr_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -901,7 +901,7 @@ void btod_contract2_test::test_contr_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -983,7 +983,7 @@ void btod_contract2_test::test_contr_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1079,7 +1079,7 @@ void btod_contract2_test::test_contr_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1181,7 +1181,7 @@ void btod_contract2_test::test_contr_6() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1281,7 +1281,7 @@ void btod_contract2_test::test_contr_7() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1359,7 +1359,7 @@ void btod_contract2_test::test_contr_8() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_8()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1427,7 +1427,7 @@ void btod_contract2_test::test_contr_9() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_9()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1495,7 +1495,7 @@ void btod_contract2_test::test_contr_10() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_10()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1552,7 +1552,7 @@ void btod_contract2_test::test_contr_11() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_11()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1614,7 +1614,7 @@ void btod_contract2_test::test_contr_12() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_12()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1678,7 +1678,7 @@ void btod_contract2_test::test_contr_13() throw(libtest::test_exception) {
 
     static const char *testname = "btod_contract2_test::test_contr_13()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1748,7 +1748,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_14(" << c << ")";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1824,7 +1824,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_15(" << c << ")";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1903,7 +1903,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_16(" << c << ")";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1991,7 +1991,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_17(" << c << ")";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2088,7 +2088,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_18(" << c << ")";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2186,7 +2186,7 @@ throw(libtest::test_exception) {
 
     product_table_container::get_instance().add(pg);
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2309,7 +2309,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_20a()";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2391,7 +2391,7 @@ throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_20b()";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2494,7 +2494,7 @@ void btod_contract2_test::test_contr_21() throw(libtest::test_exception) {
     ss << "btod_contract2_test::test_contr_21()";
     std::string tn = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2584,7 +2584,7 @@ void btod_contract2_test::test_contr_22() {
 
     static const char *testname = "btod_contract2_test::test_contr_22()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2719,7 +2719,7 @@ void btod_contract2_test::test_contr_23() {
 
     const char *testname = "btod_contract2_test::test_contr_23()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2782,7 +2782,7 @@ void btod_contract2_test::test_contr_24() {
 
     const char *testname = "btod_contract2_test::test_contr_24()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -2947,7 +2947,7 @@ void btod_contract2_test::test_contr_25() {
 
     const char *testname = "btod_contract2_test::test_contr_25()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3112,7 +3112,7 @@ void btod_contract2_test::test_contr_26() {
 
     const char *testname = "btod_contract2_test::test_contr_26()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3273,7 +3273,7 @@ void btod_contract2_test::test_contr_27() {
 
     const char testname[] = "btod_contract2_test::test_contr_27()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3394,7 +3394,7 @@ void btod_contract2_test::test_contr_28() {
 
     const char testname[] = "btod_contract2_test::test_contr_28()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3527,7 +3527,7 @@ void btod_contract2_test::test_self_1() {
 
     static const char *testname = "btod_contract2_test::test_self_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3602,7 +3602,7 @@ void btod_contract2_test::test_self_2() {
 
     static const char *testname = "btod_contract2_test::test_self_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3679,7 +3679,7 @@ void btod_contract2_test::test_self_3() {
 
     static const char *testname = "btod_contract2_test::test_self_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3766,7 +3766,7 @@ void btod_contract2_test::test_batch_1() {
 
     static const char *testname = "btod_contract2_test::test_batch_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3834,7 +3834,7 @@ void btod_contract2_test::test_batch_2() {
 
     static const char *testname = "btod_contract2_test::test_batch_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -3906,7 +3906,7 @@ void btod_contract2_test::test_batch_3() {
 
     static const char *testname = "btod_contract2_test::test_batch_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

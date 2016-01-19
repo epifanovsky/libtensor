@@ -13,7 +13,7 @@ namespace libtensor {
 
 void btod_set_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
     try {
 
     test_1();
@@ -33,7 +33,7 @@ void btod_set_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_set_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -71,7 +71,7 @@ void btod_set_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_set_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

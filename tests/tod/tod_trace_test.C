@@ -51,7 +51,7 @@ void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
     tnss << "tod_trace_test::test_1(" << ni << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -103,7 +103,7 @@ void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
     tnss << "tod_trace_test::test_2(" << ni << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -157,7 +157,7 @@ void tod_trace_test::test_3(size_t ni, size_t nj)
     tnss << "tod_trace_test::test_3(" << ni << ", " << nj << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -213,7 +213,7 @@ void tod_trace_test::test_4(size_t ni, size_t nj)
     tnss << "tod_trace_test::test_4(" << ni << ", " << nj << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -271,7 +271,7 @@ void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
         << nk << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -332,7 +332,7 @@ void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
         << nk << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

@@ -48,7 +48,7 @@ void tod_import_raw_stream_test::test_1(const dimensions<N> &dims,
     tnss << "tod_import_raw_stream_test::test_1(" << dims << ", "
         << ir.get_begin() << "->" << ir.get_end() << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<N, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
 

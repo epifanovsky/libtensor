@@ -10,7 +10,7 @@ namespace libtensor {
 
 void tod_random_test::perform() throw(libtest::test_exception) {
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
     typedef dense_tensor<3, double, allocator> tensor3;
     typedef dense_tensor_ctrl<3,double> tensor3_ctrl;
 

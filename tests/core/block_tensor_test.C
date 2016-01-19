@@ -18,7 +18,7 @@ void block_tensor_test::test_nonzero_blocks_1() {
 
     static const char *testname = "block_tensor_test::test_nonzero_blocks_1()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -80,7 +80,7 @@ void block_tensor_test::test_nonzero_blocks_2() {
 
     static const char *testname = "block_tensor_test::test_nonzero_blocks_2()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {

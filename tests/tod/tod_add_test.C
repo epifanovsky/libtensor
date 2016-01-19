@@ -33,7 +33,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
 
     static const char *testname = "tod_add_test::test_exc()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -89,7 +89,7 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -141,7 +141,7 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -197,7 +197,7 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -266,7 +266,7 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     tnss << p << "," << q << "," << r << "," << s << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -336,7 +336,7 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     tnss << p << "," << q << "," << r << "," << s << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -406,7 +406,7 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
         << nk << ", " << nl << ", " << c1 << ", " << c2 << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -479,7 +479,7 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
         << s << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -557,7 +557,7 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     tnss << "tod_add_test::test_add_two_pq_qp(" << p << "," << q << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

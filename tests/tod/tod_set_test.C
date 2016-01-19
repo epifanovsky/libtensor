@@ -23,7 +23,7 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
     ss << "tod_set_test::test_1(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -70,7 +70,7 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
     ss << "tod_set_test::test_2(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -117,7 +117,7 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
     ss << "tod_set_test::test_3(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -164,7 +164,7 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
     ss << "tod_set_test::test_4(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

@@ -14,7 +14,7 @@ namespace libtensor {
 
 void btod_extract_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -49,7 +49,7 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -104,7 +104,7 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -161,7 +161,7 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -217,7 +217,7 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -275,7 +275,7 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -338,7 +338,7 @@ void btod_extract_test::test_6() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -409,7 +409,7 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -480,7 +480,7 @@ void btod_extract_test::test_8() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_8()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -552,7 +552,7 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_9()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -612,7 +612,7 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_10()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -704,7 +704,7 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_11()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -775,7 +775,7 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_12a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -862,7 +862,7 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_12b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -955,7 +955,7 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_12c()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1044,7 +1044,7 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
 
     static const char *testname = "btod_extract_test::test_13a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

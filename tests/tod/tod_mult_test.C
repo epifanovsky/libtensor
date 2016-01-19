@@ -55,7 +55,7 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
         << ni << ", " << nj << ", " << recip << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -119,7 +119,7 @@ void tod_mult_test::test_pq_pq_2(
         << ni << ", " << nj << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -179,7 +179,7 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
     tnss << "tod_mult_test::test_3(" << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -243,7 +243,7 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
     tnss << "tod_mult_test::test_4(" << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -307,7 +307,7 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
     tnss << "tod_mult_test::test_5(" << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -374,7 +374,7 @@ void tod_mult_test::test_pqrs_qprs(
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -455,7 +455,7 @@ void tod_mult_test::test_pqrs_qrps(
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -535,7 +535,7 @@ void tod_mult_test::test_pqsr_pqrs(
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -615,7 +615,7 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

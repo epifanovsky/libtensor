@@ -278,7 +278,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
     static const char *testname = "expr_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -404,7 +404,7 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
     static const char *testname = "expr_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

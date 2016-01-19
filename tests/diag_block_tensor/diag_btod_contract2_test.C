@@ -36,7 +36,7 @@ void diag_btod_contract2_test::test_1() {
 
     static const char *testname = "diag_btod_contract2_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -107,7 +107,7 @@ void diag_btod_contract2_test::test_2() {
 
     static const char *testname = "diag_btod_contract2_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {

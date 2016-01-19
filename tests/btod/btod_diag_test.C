@@ -19,7 +19,7 @@ namespace libtensor {
 
 void btod_diag_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init(4, 16, 16777216, 16777216);
 
     try {
 
@@ -85,7 +85,7 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_zero_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -133,7 +133,7 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_zero_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -188,7 +188,7 @@ void btod_diag_test::test_zero_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_zero_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -244,7 +244,7 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_nosym_1(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -308,7 +308,7 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_nosym_2(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -385,7 +385,7 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_nosym_3(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -458,7 +458,7 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_nosym_4(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -538,7 +538,7 @@ void btod_diag_test::test_nosym_5(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_nosym_5(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -614,7 +614,7 @@ void btod_diag_test::test_nosym_6(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_nosym_6(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -693,7 +693,7 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_1(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -772,7 +772,7 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_2(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -860,7 +860,7 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_3(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -940,7 +940,7 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_4(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1027,7 +1027,7 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_5(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1116,7 +1116,7 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_6(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1192,7 +1192,7 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_7(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     const char *pgtid = "point_group_cs";
 
@@ -1300,7 +1300,7 @@ void btod_diag_test::test_sym_8(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_8(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1426,7 +1426,7 @@ void btod_diag_test::test_sym_9(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_9(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1512,7 +1512,7 @@ void btod_diag_test::test_sym_10(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_10(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     const char *pgtid = "point_group_cs";
 
@@ -1657,7 +1657,7 @@ void btod_diag_test::test_sym_11(bool add) throw(libtest::test_exception) {
 
     static const char *testname = "btod_diag_test::test_sym_11(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

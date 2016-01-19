@@ -65,7 +65,7 @@ void tod_dotprod_test::test_i_i(size_t ni) throw(libtest::test_exception) {
     tnss << "tod_dotprod_test::test_i_i(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -135,7 +135,7 @@ void tod_dotprod_test::test_ij_ij(size_t ni, size_t nj)
     tnss << "tod_dotprod_test::test_ij_ij(" << ni << ", " << nj << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -221,7 +221,7 @@ void tod_dotprod_test::test_ij_ji(size_t ni, size_t nj)
     tnss << "tod_dotprod_test::test_ij_ji(" << ni << ", " << nj << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -305,7 +305,7 @@ void tod_dotprod_test::test_ijk_ijk(size_t ni, size_t nj, size_t nk)
         << nk << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -401,7 +401,7 @@ void tod_dotprod_test::test_ijk_ikj(size_t ni, size_t nj, size_t nk)
         << nk << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -503,7 +503,7 @@ void tod_dotprod_test::test_ijk_jik(size_t ni, size_t nj, size_t nk)
         << nk << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -605,7 +605,7 @@ void tod_dotprod_test::test_ijk_jki(size_t ni, size_t nj, size_t nk)
         << nk << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

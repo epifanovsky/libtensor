@@ -8,7 +8,7 @@
 
 namespace libtensor {
 
-typedef std_allocator<double> allocator_t;
+typedef allocator<double> allocator_t;
 typedef dense_tensor<4, double, allocator_t> tensor4;
 typedef dense_tensor_ctrl<4, double> tensor4_ctrl;
 

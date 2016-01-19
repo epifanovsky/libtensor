@@ -17,7 +17,7 @@ namespace libtensor {
 
 void btod_compare_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
     try {
 
     test_1();
@@ -48,7 +48,7 @@ void btod_compare_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -84,7 +84,7 @@ void btod_compare_test::test_2a() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_2a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -127,7 +127,7 @@ void btod_compare_test::test_2b() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_2b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -171,7 +171,7 @@ void btod_compare_test::test_3a() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_3a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -228,7 +228,7 @@ void btod_compare_test::test_3b() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_3b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -285,7 +285,7 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_4a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -346,7 +346,7 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_4b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -407,7 +407,7 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_5a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -466,7 +466,7 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_5b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -525,7 +525,7 @@ void btod_compare_test::test_6() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -576,7 +576,7 @@ void btod_compare_test::test_7() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -630,7 +630,7 @@ void btod_compare_test::test_exc() throw(libtest::test_exception) {
     typedef dimensions<2> dimensions_t;
     typedef mask<2> mask_t;
     typedef block_index_space<2> block_index_space_t;
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
 
 
@@ -693,7 +693,7 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
     typedef dimensions<2> dimensions_t;
     typedef mask<2> mask_t;
     typedef block_index_space<2> block_index_space_t;
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
     typedef block_tensor_ctrl<2, double> block_tensor_ctrl_t;
 

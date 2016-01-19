@@ -18,7 +18,7 @@ namespace libtensor {
 
 void btod_mult1_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
 
     try {
 
@@ -52,7 +52,7 @@ void btod_mult1_test::test_1(
             << (recip ? "true" : "false") << ","
             << (doadd ? "true" : "false") << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -109,7 +109,7 @@ void btod_mult1_test::test_2(
             << (recip ? "true" : "false") << ","
             << (doadd ? "true" : "false") << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -168,7 +168,7 @@ void btod_mult1_test::test_3(
             << (recip ? "true" : "false") << ","
             << (doadd ? "true" : "false") << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -243,7 +243,7 @@ void btod_mult1_test::test_4(
             << (recip ? "true" : "false") << ","
             << (doadd ? "true" : "false") << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -321,7 +321,7 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
             << (recip ? "true" : "false") << ", "
             << (doadd ? "true" : "false") << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

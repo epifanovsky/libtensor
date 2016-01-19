@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_shift_diag_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 65536);
 
     try {
 
@@ -185,7 +185,7 @@ void btod_shift_diag_test::test_generic(const char *testname,
     const block_index_space<N> &bis, const symmetry<N, double> &sym,
     const sequence<N, size_t> &msk, double d) throw(libtest::test_exception) {
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

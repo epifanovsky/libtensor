@@ -95,7 +95,7 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
 
     static const char *testname = "tod_apply_test::test_plain()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -144,7 +144,7 @@ void tod_apply_test::test_plain_additive(Functor &fn,
 
     static const char *testname = "tod_apply_test::test_plain_additive()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -197,7 +197,7 @@ void tod_apply_test::test_scaled(Functor &fn,
 
     static const char *testname = "tod_apply_test::test_scaled()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -248,7 +248,7 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
 
     static const char *testname = "tod_apply_test::test_scaled_additive()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -301,7 +301,7 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
 
     static const char *testname = "tod_apply_test::test_perm()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -358,7 +358,7 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
     static const char *testname = "tod_apply_test::test_perm_additive()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -416,7 +416,7 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
     static const char *testname = "tod_apply_test::test_perm_scaled()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -475,7 +475,7 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
     static const char *testname =
         "tod_apply_test::test_perm_scaled_additive()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -529,7 +529,7 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
 
 void tod_apply_test::test_exc() throw(libtest::test_exception) {
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     index<4> i1, i2, i3;
     i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;

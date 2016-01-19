@@ -26,7 +26,7 @@ void dense_tensor_test::test_ctor() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_ctor()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -135,7 +135,7 @@ void dense_tensor_test::test_immutable() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_immutable()";
 
-    typedef std_allocator<int> allocator;
+    typedef allocator<int> allocator;
 
     try {
 
@@ -292,7 +292,7 @@ void dense_tensor_test::test_operation()throw (libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_operation()";
 
-    typedef std_allocator<int> allocator;
+    typedef allocator<int> allocator;
 
     try {
 
@@ -336,7 +336,7 @@ void dense_tensor_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_1()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -372,7 +372,7 @@ void dense_tensor_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "tensor_test::test_2()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -522,7 +522,7 @@ void dense_tensor_test::test_mp_1() throw(libtest::test_exception) {
 
     static const char *testname = "dense_tensor_test::test_mp_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -559,7 +559,7 @@ void dense_tensor_test::test_mp_2() throw(libtest::test_exception) {
 
     static const char *testname = "dense_tensor_test::test_mp_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -613,7 +613,7 @@ void dense_tensor_test::test_mp_3() throw(libtest::test_exception) {
 
     static const char *testname = "dense_tensor_test::test_mp_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

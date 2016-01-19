@@ -87,7 +87,7 @@ void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
         << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -174,7 +174,7 @@ void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
         << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -261,7 +261,7 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
         << nk << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -357,7 +357,7 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
         << nk << ", " << nl << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -454,7 +454,7 @@ void tod_dirsum_test::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
         << nk << ", " << nl << ", " << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

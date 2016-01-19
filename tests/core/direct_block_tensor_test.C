@@ -44,7 +44,7 @@ void direct_block_tensor_test::test_op_1() {
 
     static const char *testname = "direct_block_tensor_test::test_op_1()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -100,7 +100,7 @@ void direct_block_tensor_test::test_op_2() {
 
     static const char *testname = "direct_block_tensor_test::test_op_2()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -171,7 +171,7 @@ void direct_block_tensor_test::test_op_3() {
 
     static const char *testname = "direct_block_tensor_test::test_op_3()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
 
     try {
 
@@ -235,7 +235,7 @@ void direct_block_tensor_test::test_op_4() {
 
     static const char *testname = "direct_block_tensor_test::test_op_4()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
 
     try {
 
@@ -318,7 +318,7 @@ void direct_block_tensor_test::test_op_5() {
 
     static const char *testname = "direct_block_tensor_test::test_op_5()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -375,7 +375,7 @@ void direct_block_tensor_test::test_op_6() {
 
     static const char *testname = "direct_block_tensor_test::test_op_6()";
 
-    typedef std_allocator<double> allocator_type;
+    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     try {

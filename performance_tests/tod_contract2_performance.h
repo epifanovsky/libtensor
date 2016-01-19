@@ -177,9 +177,9 @@ void tod_contract2_p1<R,N,M,K,DimData>::do_calculate() {
     dimensions<N+M> dima(d.dimA());
     dimensions<N+K> dimb(d.dimB());
     dimensions<M+K> dimc(d.dimC());
-    dense_tensor<N+M, double, std_allocator<double> > ta(dima);
-    dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
-    dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+    dense_tensor<N+M, double, allocator<double> > ta(dima);
+    dense_tensor<N+K, double, allocator<double> > tb(dimb);
+    dense_tensor<M+K, double, allocator<double> > tc(dimc);
     dense_tensor_ctrl<N+M,double> tca(ta);
     dense_tensor_ctrl<N+K,double> tcb(tb);
     dense_tensor_ctrl<M+K,double> tcc(tc);
@@ -220,9 +220,9 @@ void tod_contract2_p2<R,N,M,K,DimData>::do_calculate() {
     permutation_builder<M+K> pbc(a,b);
     dimc.permute(pbc.get_perm());
 
-    dense_tensor<N+M, double, std_allocator<double> > ta(dima);
-    dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
-    dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+    dense_tensor<N+M, double, allocator<double> > ta(dima);
+    dense_tensor<N+K, double, allocator<double> > tb(dimb);
+    dense_tensor<M+K, double, allocator<double> > tc(dimc);
     dense_tensor_ctrl<N+M,double> tca(ta);
     dense_tensor_ctrl<N+K,double> tcb(tb);
     dense_tensor_ctrl<M+K,double> tcc(tc);
@@ -259,9 +259,9 @@ void tod_contract2_p3<R,N,M,K,DimData>::do_calculate() {
     }
     dima.permute(perma);
 
-    dense_tensor<N+M, double, std_allocator<double> > ta(dima);
-    dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
-    dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+    dense_tensor<N+M, double, allocator<double> > ta(dima);
+    dense_tensor<N+K, double, allocator<double> > tb(dimb);
+    dense_tensor<M+K, double, allocator<double> > tc(dimc);
     dense_tensor_ctrl<N+M,double> tca(ta);
     dense_tensor_ctrl<N+K,double> tcb(tb);
     dense_tensor_ctrl<M+K,double> tcc(tc);
@@ -296,9 +296,9 @@ void tod_contract2_p4<R,N,M,K,DimData>::do_calculate() {
         permc.permute(M+i,M+K-1-i);
     dimc.permute(permc);
 
-    dense_tensor<N+M, double, std_allocator<double> > ta(dima);
-    dense_tensor<N+K, double, std_allocator<double> > tb(dimb);
-    dense_tensor<M+K, double, std_allocator<double> > tc(dimc);
+    dense_tensor<N+M, double, allocator<double> > ta(dima);
+    dense_tensor<N+K, double, allocator<double> > tb(dimb);
+    dense_tensor<M+K, double, allocator<double> > tc(dimc);
     dense_tensor_ctrl<N+M,double> tca(ta);
     dense_tensor_ctrl<N+K,double> tcb(tb);
     dense_tensor_ctrl<N+K,double> tcc(tc);

@@ -40,7 +40,7 @@ void tod_conv_diag_block_tensor_test::test_1() {
 
     static const char *testname = "tod_conv_diag_block_tensor_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -67,7 +67,7 @@ void tod_conv_diag_block_tensor_test::test_2() {
 
     static const char *testname = "tod_conv_diag_block_tensor_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -125,7 +125,7 @@ void tod_conv_diag_block_tensor_test::test_3() {
 
     static const char *testname = "tod_conv_diag_block_tensor_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -225,7 +225,7 @@ void tod_conv_diag_block_tensor_test::test_4() {
 
     static const char *testname = "tod_conv_diag_block_tensor_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -320,7 +320,7 @@ void tod_conv_diag_block_tensor_test::test_5() {
 
     static const char *testname = "tod_conv_diag_block_tensor_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {
@@ -415,7 +415,7 @@ void tod_conv_diag_block_tensor_test::test_6() {
 
     static const char *testname = "tod_conv_diag_block_tensor_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
 
     try {

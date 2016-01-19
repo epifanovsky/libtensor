@@ -33,7 +33,7 @@ void tod_mult1_test::test_pq_pq_1(
         << recip << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -91,7 +91,7 @@ void tod_mult1_test::test_pq_pq_2(
         << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -149,7 +149,7 @@ void tod_mult1_test::test_pqrs_qrps(
         << nk << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

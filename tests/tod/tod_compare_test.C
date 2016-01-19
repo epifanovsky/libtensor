@@ -28,7 +28,7 @@ void tod_compare_test::perform() throw(libtest::test_exception) {
 
 void tod_compare_test::test_exc() throw(libtest::test_exception) {
 
-    typedef dense_tensor<4, double, std_allocator<double> > tensor4;
+    typedef dense_tensor<4, double, allocator<double> > tensor4;
 
     index<4> i1, i2, i3;
     i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
@@ -53,7 +53,7 @@ void tod_compare_test::test_exc() throw(libtest::test_exception) {
 void tod_compare_test::test_operation(const dimensions<4> &dim,
     const index<4> &idx) throw(libtest::test_exception) {
 
-    typedef dense_tensor<4, double, std_allocator<double> > tensor4;
+    typedef dense_tensor<4, double, allocator<double> > tensor4;
     typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
 
     tensor4 t1(dim), t2(dim);
@@ -110,7 +110,7 @@ void tod_compare_test::test_0() throw(libtest::test_exception) {
 
     static const char *testname = "tod_compare_test::test_0()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 
@@ -151,7 +151,7 @@ void tod_compare_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "tod_compare_test::test_1()";
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

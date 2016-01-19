@@ -44,7 +44,7 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -109,7 +109,7 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -192,7 +192,7 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -277,7 +277,7 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -382,7 +382,7 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -509,7 +509,7 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -614,7 +614,7 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -715,7 +715,7 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_8()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -871,7 +871,7 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_9()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<4, double> tensor_ctrl_t;
     typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1012,7 +1012,7 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_10()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<4, double> tensor_ctrl_t;
     typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1105,7 +1105,7 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_11()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<4, double> tensor_ctrl_t;
     typedef block_tensor<4, double, allocator_t> block_tensor_t;
@@ -1224,7 +1224,7 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
 
     static const char *testname = "tod_btconv_test::test_12()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

@@ -32,7 +32,7 @@ template<size_t N>
 void tod_scale_test::test_generic(const char *testname,
     const dimensions<N> &d, double c) throw(libtest::test_exception) {
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

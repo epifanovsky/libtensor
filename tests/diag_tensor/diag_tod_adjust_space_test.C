@@ -60,7 +60,7 @@ void diag_tod_adjust_space_test::test_ai_bi(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_ai_bi(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -113,7 +113,7 @@ void diag_tod_adjust_space_test::test_ai_ai_bi(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_ai_ai_bi(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -174,7 +174,7 @@ void diag_tod_adjust_space_test::test_aijk_biij_biii(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_aijk_biij_biii(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -243,7 +243,7 @@ void diag_tod_adjust_space_test::test_aiii_aijk_biii_biij(size_t ni)
         << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -319,7 +319,7 @@ void diag_tod_adjust_space_test::test_aijkl_biiii(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_aijkl_biiii(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -382,7 +382,7 @@ void diag_tod_adjust_space_test::test_aijkl_biiii_bijkl(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_aijkl_biiii_bijkl(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -443,7 +443,7 @@ void diag_tod_adjust_space_test::test_aiiii_biijj_bijij(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_aiiii_biijj_bijij(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -509,7 +509,7 @@ void diag_tod_adjust_space_test::test_aiiii_aijij_biijj_bijij(size_t ni)
         << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -586,7 +586,7 @@ void diag_tod_adjust_space_test::test_aiijj_biiij(size_t ni)
     tnss << "diag_tod_adjust_space_test::test_aiijj_biiij(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

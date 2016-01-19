@@ -12,7 +12,7 @@
 
 namespace libtensor {
 
-typedef std_allocator<double> allocator_t;
+typedef allocator<double> allocator_t;
 
 const double tod_contract2_test::k_thresh = 5e-14;
 

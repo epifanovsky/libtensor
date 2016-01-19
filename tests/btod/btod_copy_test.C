@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 65536, 65536);
+    allocator<double>::init(4, 16, 65536, 131072);
 
     try {
 
@@ -73,7 +73,7 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_zero_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -121,7 +121,7 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_zero_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -173,7 +173,7 @@ void btod_copy_test::test_nosym_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_nosym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -212,7 +212,7 @@ void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_nosym_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -257,7 +257,7 @@ void btod_copy_test::test_nosym_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_nosym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -300,7 +300,7 @@ void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_nosym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -349,7 +349,7 @@ void btod_copy_test::test_sym_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_sym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -398,7 +398,7 @@ void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_sym_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -448,7 +448,7 @@ void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_sym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -512,7 +512,7 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_sym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -578,7 +578,7 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nosym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -621,7 +621,7 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nosym_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -671,7 +671,7 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nosym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -725,7 +725,7 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nosym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -774,7 +774,7 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -827,7 +827,7 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -882,7 +882,7 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -951,7 +951,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1018,7 +1018,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1087,7 +1087,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1139,7 +1139,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1191,7 +1191,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1257,7 +1257,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1323,7 +1323,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1389,7 +1389,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_5_sp()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1470,7 +1470,7 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1542,7 +1542,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_7_sp1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1615,7 +1615,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_7_sp2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1688,7 +1688,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_add_nesym_7_sp3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -1755,7 +1755,7 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 	/*
     static const char *testname = "btod_copy_test::test_dir_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_t;
@@ -1794,7 +1794,7 @@ void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
 
 	/*
     static const char *testname = "btod_copy_test::test_dir_2()";
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef tensor<2, double, allocator_t> tensor_t;
     typedef dense_tensor_ctrl<2, double> tensor_ctrl_t;
     typedef block_tensor<2, double, allocator_t> block_tensor_type;
@@ -1851,7 +1851,7 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
 	/*
     static const char *testname = "btod_copy_test::test_dir_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     try {
 
     index<4> i1, i2;
@@ -1926,7 +1926,7 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_dir_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     try {
 
     index<4> i1, i2;
@@ -1999,7 +1999,7 @@ void btod_copy_test::test_bug_1() throw(libtest::test_exception) {
 
     static const char *testname = "btod_copy_test::test_bug_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

@@ -51,7 +51,7 @@ void tod_set_diag_test::run_test1(const dimensions<N> &dims, double d,
     tnss << "tod_set_diag_test::run_test1(" << dims << ", " << d << ","
             << (zero ? "t" : "f") << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -115,7 +115,7 @@ void tod_set_diag_test::run_test2(const dimensions<N> &dims,
     for (size_t i = 0; i < N - 1; i++) tnss << msk[i] << ", ";
     tnss << msk[N - 1] << "], " << d << ")";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

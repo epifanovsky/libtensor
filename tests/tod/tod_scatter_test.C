@@ -37,7 +37,7 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
         << d << ")";
     std::string tns = tnss.str();
 
-    typedef std_allocator<double> allocator;
+    typedef allocator<double> allocator;
 
     try {
 

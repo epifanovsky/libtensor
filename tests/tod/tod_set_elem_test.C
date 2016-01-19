@@ -22,7 +22,7 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "tod_set_elem_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

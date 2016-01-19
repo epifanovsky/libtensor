@@ -40,7 +40,7 @@ void diag_tod_set_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "diag_tod_set_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -104,7 +104,7 @@ void diag_tod_set_test::test_2(bool zero) throw(libtest::test_exception) {
 
     static const char *testname = "diag_tod_set_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -169,7 +169,7 @@ void diag_tod_set_test::test_3(bool zero) throw(libtest::test_exception) {
 
     static const char *testname = "diag_tod_set_test::test_3(bool)";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
