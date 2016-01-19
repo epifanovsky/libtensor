@@ -1,7 +1,9 @@
-#ifndef LIBTENSOR_LIBTENSOR_BTOD_SUITE_H
-#define LIBTENSOR_LIBTENSOR_BTOD_SUITE_H
+#ifndef LIBTENSOR_LIBTENSOR_BLOCK_TENSOR_SUITE_H
+#define LIBTENSOR_LIBTENSOR_BLOCK_TENSOR_SUITE_H
 
 #include <libtest/test_suite.h>
+#include "block_tensor_test.h"
+#include "direct_block_tensor_test.h"
 #include "addition_schedule_test.h"
 #include "bto_contract2_bis_test.h"
 #include "bto_contract2_sym_test.h"
@@ -59,6 +61,8 @@ namespace libtensor {
     \ingroup libtensor_tests
 
     This suite runs the following tests:
+    \li libtensor::block_tensor_test
+    \li libtensor::direct_block_tensor_test
     \li libtensor::addition_schedule_test
     \li libtensor::bto_contract2_bis_test
     \li libtensor::bto_contract2_sym_test
@@ -103,8 +107,10 @@ namespace libtensor {
     \li libtensor::gen_bto_unfold_symmetry_test
 
  **/
-class libtensor_btod_suite : public libtest::test_suite {
+class libtensor_block_tensor_suite : public libtest::test_suite {
 private:
+    unit_test_factory<block_tensor_test> m_utf_block_tensor;
+    unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
     unit_test_factory<addition_schedule_test> m_utf_addition_schedule;
     unit_test_factory<bto_contract2_bis_test> m_utf_bto_contract2_bis;
     unit_test_factory<bto_contract2_sym_test> m_utf_bto_contract2_sym;
@@ -153,11 +159,11 @@ private:
 
 public:
     //!    Creates the suite
-    libtensor_btod_suite();
+    libtensor_block_tensor_suite();
 };
 
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LIBTENSOR_BTOD_SUITE_H
+#endif // LIBTENSOR_LIBTENSOR_BLOCK_TENSOR_SUITE_H
 

@@ -1,11 +1,13 @@
-#include "libtensor_btod_suite.h"
+#include "libtensor_block_tensor_suite.h"
 
 namespace libtensor {
 
 
-libtensor_btod_suite::libtensor_btod_suite() :
-    libtest::test_suite("libtensor_btod") {
+libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
+    libtest::test_suite("libtensor_block_tensor") {
 
+    add_test("block_tensor", m_utf_block_tensor);
+    add_test("direct_block_tensor", m_utf_direct_block_tensor);
     add_test("addition_schedule", m_utf_addition_schedule);
     add_test("bto_contract2_bis", m_utf_bto_contract2_bis);
     add_test("bto_contract2_sym", m_utf_bto_contract2_sym);
