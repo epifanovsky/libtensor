@@ -78,7 +78,7 @@ void diag_tod_mult1_test::test_ij_1(bool recip, bool zero, size_t ni) {
         << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -152,7 +152,7 @@ void diag_tod_mult1_test::test_ij_2(bool recip, bool zero, size_t ni) {
         << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -235,7 +235,7 @@ void diag_tod_mult1_test::test_ij_3(bool recip, bool zero, size_t ni) {
         << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -326,7 +326,7 @@ void diag_tod_mult1_test::test_ij_4(bool recip, bool zero, size_t ni) {
         << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

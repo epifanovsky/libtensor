@@ -36,7 +36,7 @@ void ctf_btod_collect_test::test_1() {
 
     static const char testname[] = "ctf_btod_collect_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef ctf_block_tensor_i_traits<double> ctf_bti_traits;
 
     try {
@@ -93,7 +93,7 @@ void ctf_btod_collect_test::test_2() {
 
     static const char testname[] = "ctf_btod_collect_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     typedef ctf_block_tensor_i_traits<double> ctf_bti_traits;
 
     try {

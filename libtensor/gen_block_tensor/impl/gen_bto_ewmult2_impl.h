@@ -254,7 +254,7 @@ gen_bto_ewmult2<N, M, K, Traits, Timed>::make_bisc(
     mask<NC> mfin, mdone, mtodo;
     for(size_t i = 0; i < NC; i++) mfin[i] = true;
     while(!mdone.equals(mfin)) {
-        size_t i;
+        ssize_t i;
         for(i = 0; i < NC; i++) mtodo[i] = false;
         for(i = 0; i < NC; i++) if(!mdone[NC - i - 1]) break;
         i = NC - i - 1;

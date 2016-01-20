@@ -38,7 +38,7 @@ void ctf_btod_copy_test::test_1a() {
 
     static const char testname[] = "ctf_btod_copy_test::test_1a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -77,7 +77,7 @@ void ctf_btod_copy_test::test_1b() {
 
     static const char testname[] = "ctf_btod_copy_test::test_1b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -117,7 +117,7 @@ void ctf_btod_copy_test::test_2a() {
 
     static const char testname[] = "ctf_btod_copy_test::test_2a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -159,7 +159,7 @@ void ctf_btod_copy_test::test_2b() {
 
     static const char testname[] = "ctf_btod_copy_test::test_2b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -202,7 +202,7 @@ void ctf_btod_copy_test::test_3a() {
 
     static const char testname[] = "ctf_btod_copy_test::test_3a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -245,7 +245,7 @@ void ctf_btod_copy_test::test_3b() {
 
     static const char testname[] = "ctf_btod_copy_test::test_3b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

@@ -31,7 +31,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         block_tensor_i <1, double> &eigvalue)
     {
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     btod_set_diag<2> (1).perform(eigvector);
 
@@ -569,7 +569,7 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
     {
         tol = m_tol;
     }
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
     block_tensor_ctrl<1, double> ctrleigval(eigvalue);
 
     block_tensor<1, double, allocator_t> zero(eigvalue.get_bis());

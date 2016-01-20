@@ -36,7 +36,7 @@ void ctf_tod_mult1_test::test_mult_1a() {
 
     static const char testname[] = "ctf_tod_mult1_test::test_mult_1a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -68,7 +68,7 @@ void ctf_tod_mult1_test::test_mult_1b() {
 
     static const char testname[] = "ctf_tod_mult1_test::test_mult_1b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -100,7 +100,7 @@ void ctf_tod_mult1_test::test_div_1a() {
 
     static const char testname[] = "ctf_tod_mult1_test::test_div_1a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -132,7 +132,7 @@ void ctf_tod_mult1_test::test_div_1b() {
 
     static const char testname[] = "ctf_tod_mult1_test::test_div_1b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

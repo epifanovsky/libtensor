@@ -115,7 +115,7 @@ void tod_dotprod_p1<R,N,X>::do_calculate() {
 
     X d;
     dimensions<N> dim(d.dimA());
-    dense_tensor<N, double, std_allocator<double> > ta(dim), tb(dim);
+    dense_tensor<N, double, allocator<double> > ta(dim), tb(dim);
     dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
     double *ptra=tca.req_dataptr();
@@ -140,7 +140,7 @@ void tod_dotprod_p2<R,N,X>::do_calculate() {
 
     dimb.permute(permb);
 
-    dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+    dense_tensor<N, double, allocator<double> > ta(dima), tb(dimb);
     dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
     double *ptra=tca.req_dataptr();
@@ -165,7 +165,7 @@ void tod_dotprod_p3<R,N,X>::do_calculate() {
 
     dimb.permute(permb);
 
-    dense_tensor<N, double, std_allocator<double> > ta(dima), tb(dimb);
+    dense_tensor<N, double, allocator<double> > ta(dima), tb(dimb);
     dense_tensor_ctrl<N,double> tca(ta), tcb(tb);
 
     double *ptra=tca.req_dataptr();

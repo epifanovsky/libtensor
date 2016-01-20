@@ -34,7 +34,7 @@ void ctf_tod_scatter_test::test_1a() {
 
     static const char testname[] = "ctf_tod_scatter_test::test_1a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -73,7 +73,7 @@ void ctf_tod_scatter_test::test_1b() {
 
     static const char testname[] = "ctf_tod_scatter_test::test_1b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

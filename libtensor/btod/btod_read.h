@@ -60,7 +60,7 @@ namespace libtensor {
 
     \ingroup libtensor_btod
  **/
-template<size_t N, typename Alloc = std_allocator<double> >
+template<size_t N, typename Alloc = allocator<double> >
 class btod_read : public timings< btod_read<N, Alloc> > {
 public:
     static const char *k_clazz; //!< Class name

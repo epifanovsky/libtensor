@@ -5,6 +5,7 @@
 #include "gen_sparse_btensor.h"
 #include "batch_provider.h"
 #include <libtensor/expr/iface/expr_lhs.h>
+#include <libtensor/expr/iface/expr_rhs.h>
 #include <libtensor/expr/iface/labeled_lhs_rhs.h>
 #include <libtensor/expr/dag/node_null.h>
 
@@ -27,9 +28,14 @@ public:
     const T* get_data_ptr() const { return NULL; }
 
     virtual void assign(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
-    virtual void assign_add(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l);
 
     expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &lab);
+
+    //STUB!!!! DAT NASTY HACK!!
+    virtual void assign_add(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l)
+    {
+        throw bad_parameter(g_ns,"direct_sparse_btensor","assign_add",__FILE__, __LINE__,"assign_add not implemented!");
+    }
 };
 
 template<size_t N,typename T>
@@ -66,11 +72,6 @@ expr::labeled_lhs_rhs<N, T> direct_sparse_btensor<N,T>::operator()(const expr::l
     {
         return expr::labeled_lhs_rhs<N, T>(*this, lab, expr::expr_rhs<N, T>(*m_expr, lab));
     }
-}
-
-template<size_t N,typename T>
-void direct_sparse_btensor<N,T>::assign_add(const expr::expr_rhs<N, T> &rhs, const expr::label<N>& l)
-{
 }
 
 } // namespace libtensor

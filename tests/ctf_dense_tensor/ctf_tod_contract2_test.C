@@ -48,7 +48,7 @@ void ctf_tod_contract2_test::test_1(double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -96,7 +96,7 @@ void ctf_tod_contract2_test::test_2(double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -151,7 +151,7 @@ void ctf_tod_contract2_test::test_3a() {
 
     static const char testname[] = "ctf_tod_contract2_test::test_3a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -219,7 +219,7 @@ void ctf_tod_contract2_test::test_3b() {
 
     static const char testname[] = "ctf_tod_contract2_test::test_3b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -293,7 +293,7 @@ void ctf_tod_contract2_test::test_4(double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -371,7 +371,7 @@ void ctf_tod_contract2_test::test_5(double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -449,7 +449,7 @@ void ctf_tod_contract2_test::test_6(double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -524,7 +524,7 @@ void ctf_tod_contract2_test::test_7(double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

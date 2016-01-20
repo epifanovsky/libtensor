@@ -29,7 +29,7 @@ void ctf_tod_distribute_test::test_1() {
 
     static const char testname[] = "ctf_tod_distribute_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -55,7 +55,7 @@ void ctf_tod_distribute_test::test_2() {
 
     static const char testname[] = "ctf_tod_distribute_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -85,7 +85,7 @@ void ctf_tod_distribute_test::test_3() {
 
     static const char testname[] = "ctf_tod_distribute_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -115,7 +115,7 @@ void ctf_tod_distribute_test::test_4() {
 
     static const char testname[] = "ctf_tod_distribute_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -157,7 +157,7 @@ void ctf_tod_distribute_test::test_5() {
 
     static const char testname[] = "ctf_tod_distribute_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

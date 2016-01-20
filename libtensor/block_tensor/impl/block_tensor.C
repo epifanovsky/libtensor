@@ -7,17 +7,6 @@
 namespace libtensor {
 
 
-typedef block_tensor_traits< double, std_allocator<double> > std_bt_traits;
-
-template class gen_block_tensor<1, std_bt_traits>;
-template class gen_block_tensor<2, std_bt_traits>;
-template class gen_block_tensor<3, std_bt_traits>;
-template class gen_block_tensor<4, std_bt_traits>;
-template class gen_block_tensor<5, std_bt_traits>;
-template class gen_block_tensor<6, std_bt_traits>;
-template class gen_block_tensor<7, std_bt_traits>;
-template class gen_block_tensor<8, std_bt_traits>;
-
 typedef block_tensor_traits< double, allocator<double> > bt_traits;
 
 template class gen_block_tensor<1, bt_traits>;

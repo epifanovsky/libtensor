@@ -40,7 +40,7 @@ void diag_tod_copy_test::test_ij_1(size_t ni, size_t nj, double d) {
         << d << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -114,7 +114,7 @@ void diag_tod_copy_test::test_ij_2(size_t ni, size_t nj, double d) {
         << d << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -190,7 +190,7 @@ void diag_tod_copy_test::test_ij_3(size_t ni, double d) {
     tnss << "diag_tod_copy_test::test_ij_3(" << ni << ", " << d << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

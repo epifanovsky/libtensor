@@ -61,13 +61,12 @@ private:
     				   std::vector<offset_list>& bispace_grp_offsets,
     				   std::vector<dim_list>& bispace_block_dims,
     				   size_t loop_grp_idx);
-    std::vector<std::vector<off_dim_pair_list> > m_offsets_and_sizes; //Each entry contains offsets and sizes of the blocks for each a given loop group
+    std::vector<idx_list> m_offsets_and_sizes; //Each entry contains offsets and sizes of the blocks for each a given loop group
     std::vector<idx_pair_list> m_bispaces_and_index_groups; //Each entry contains the bispaces and index groups touched by a given loop group
     std::vector<idx_pair_list> m_bispaces_and_subspaces; //Each entry contains the bispaces and subspaces touched by a given loop group
-    std::vector<std::vector<dim_list> > m_block_dims; //The block sizes of each tensor 
+    std::vector<dim_list> m_block_dims; //The block sizes of each tensor 
     std::vector<std::vector<offset_list> > m_cur_bispace_grp_offsets; //Used as 'scratch paper' for the offset calculations; pre-alloc for speed
     std::vector<idx_list> m_loops_for_groups;
-    std::vector<std::vector<block_list> > m_tree_keys_for_groups; //The keys of each tree corresponding to a given loop group, for use building offsets for direct code
     const idx_list m_direct_tensors;
 public:
 	sparse_loop_list(const std::vector<block_loop>& loops,const std::vector<sparse_bispace_any_order>& bispaces, const idx_list& direct_tensors = idx_list());
@@ -121,6 +120,7 @@ void sparse_loop_list::run(kern_t& kernel,const std::vector<T*>& ptrs,const std:
             sf.fuse(tree_indices[0],rhs_tree_idx,common_loops);
         }
     }
+
     //std::cout  << "FUSE DURATION: " << read_timer<double>()  - init << "\n";
 
     //std::cout << "STARTING GROUP:\n";
@@ -206,22 +206,22 @@ void sparse_loop_list::_run_internal(kern_t& kernel,
                                      size_t loop_grp_idx)
 {
     //Loop over the significant blocks for this loop group
-    const std::vector<off_dim_pair_list>& grp_offsets_and_sizes = m_offsets_and_sizes[loop_grp_idx];
-    const std::vector<dim_list>& grp_block_dims = m_block_dims[loop_grp_idx];
+    const idx_list& grp_offsets_and_sizes = m_offsets_and_sizes[loop_grp_idx];
+    const dim_list& grp_block_dims = m_block_dims[loop_grp_idx];
     const idx_pair_list& grp_baig = m_bispaces_and_index_groups[loop_grp_idx];
     const idx_pair_list& grp_bas = m_bispaces_and_subspaces[loop_grp_idx];
-    for(size_t block_set_idx = 0; block_set_idx < grp_offsets_and_sizes.size(); ++block_set_idx)
+    size_t block_dim_idx = 0;
+    for(size_t block_set_idx = 0; block_set_idx < grp_offsets_and_sizes.size()/(2*grp_baig.size()); ++block_set_idx)
     {
-        const off_dim_pair_list& block_set_offsets_and_sizes = grp_offsets_and_sizes[block_set_idx];
-        const dim_list& block_set_block_dims = grp_block_dims[block_set_idx];
+        //const dim_list& block_set_block_dims = grp_block_dims[block_set_idx];
         m_cur_bispace_grp_offsets[loop_grp_idx] = bispace_grp_offsets;
         //Fill in/scale offsets appropriately
         for(size_t baig_idx = 0; baig_idx < grp_baig.size(); ++baig_idx)
         {
             size_t bispace_idx = grp_baig[baig_idx].first;
             size_t idx_grp = grp_baig[baig_idx].second;
-            size_t offset = block_set_offsets_and_sizes[baig_idx].first;
-            size_t size  = block_set_offsets_and_sizes[baig_idx].second;
+            size_t offset = grp_offsets_and_sizes[block_set_idx*2*grp_baig.size()+2*baig_idx+0];
+            size_t size  = grp_offsets_and_sizes[block_set_idx*2*grp_baig.size()+2*baig_idx+1];
             m_cur_bispace_grp_offsets[loop_grp_idx][bispace_idx][idx_grp] *= offset;
             for(size_t faster_grp_idx = idx_grp + 1; faster_grp_idx < m_bispaces[bispace_idx].get_n_index_groups(); ++faster_grp_idx)
             {
@@ -234,8 +234,10 @@ void sparse_loop_list::_run_internal(kern_t& kernel,
         {
             size_t bispace_idx = grp_bas[bas_idx].first;
             size_t subspace = grp_bas[bas_idx].second;
-            size_t block_dim = block_set_block_dims[bas_idx];
+
+            size_t block_dim = grp_block_dims[block_dim_idx];
             bispace_block_dims[bispace_idx][subspace] = block_dim;
+            ++block_dim_idx;
         }
 
         //Inner loop?

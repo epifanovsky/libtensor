@@ -24,7 +24,7 @@ namespace libtensor {
 
     \ingroup libtensor_btod
  **/
-template<size_t N, typename Alloc = std_allocator<double> >
+template<size_t N, typename Alloc = allocator<double> >
 class btod_import_raw : public btod_import_raw_base<N, Alloc> {
 public:
     static const char *k_clazz; //!< Class name

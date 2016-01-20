@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "../core/sequence.h"
+#include <string.h>
 
 //TODO: Un-inline and take this out of header!!!!!
 namespace libtensor {
@@ -30,6 +31,9 @@ public:
 
     template<typename T> 
     void apply(std::vector<T>& vec) const;
+
+    template<typename T> 
+    void apply(T* ptr) const;
 
     //Send i to j, j to i
     void permute(size_t i,size_t j);
@@ -88,6 +92,15 @@ void runtime_permutation::apply(std::vector<T>& vec) const
     }
     std::vector<T> buf(vec);
     for(size_t i = 0; i < vec.size(); i++) vec[i] = buf[m_idx[i]];
+}
+
+template<typename T> 
+void runtime_permutation::apply(T* ptr) const 
+{
+    T* tmp_ptr = new T[m_idx.size()];
+    memcpy(tmp_ptr,ptr,m_idx.size()*sizeof(T));
+    for(size_t i = 0; i < m_idx.size(); i++) ptr[i] = tmp_ptr[m_idx[i]];
+    delete [] tmp_ptr;
 }
 
 inline void runtime_permutation::permute(size_t i,size_t j)

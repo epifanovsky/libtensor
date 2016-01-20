@@ -49,7 +49,7 @@ void ctf_tod_copy_test::test_1a() {
 
     static const char testname[] = "ctf_tod_copy_test::test_1a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -81,7 +81,7 @@ void ctf_tod_copy_test::test_1b() {
 
     static const char testname[] = "ctf_tod_copy_test::test_1b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -114,7 +114,7 @@ void ctf_tod_copy_test::test_2a() {
 
     static const char testname[] = "ctf_tod_copy_test::test_2a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -149,7 +149,7 @@ void ctf_tod_copy_test::test_2b() {
 
     static const char testname[] = "ctf_tod_copy_test::test_2b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -185,7 +185,7 @@ void ctf_tod_copy_test::test_3a() {
 
     static const char testname[] = "ctf_tod_copy_test::test_3a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -222,7 +222,7 @@ void ctf_tod_copy_test::test_3b() {
 
     static const char testname[] = "ctf_tod_copy_test::test_3b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -260,7 +260,7 @@ void ctf_tod_copy_test::test_4a() {
 
     static const char testname[] = "ctf_tod_copy_test::test_4a()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -295,7 +295,7 @@ void ctf_tod_copy_test::test_4b() {
 
     static const char testname[] = "ctf_tod_copy_test::test_4b()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -331,7 +331,7 @@ void ctf_tod_copy_test::test_5() {
 
     static const char testname[] = "ctf_tod_copy_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -367,7 +367,7 @@ void ctf_tod_copy_test::test_6() {
 
     static const char testname[] = "ctf_tod_copy_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -409,7 +409,7 @@ void ctf_tod_copy_test::test_7() {
 
     static const char testname[] = "ctf_tod_copy_test::test_7()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -449,7 +449,7 @@ void ctf_tod_copy_test::test_8() {
 
     static const char testname[] = "ctf_tod_copy_test::test_8()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -487,7 +487,7 @@ void ctf_tod_copy_test::test_9() {
 
     static const char testname[] = "ctf_tod_copy_test::test_9()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -529,7 +529,7 @@ void ctf_tod_copy_test::test_10() {
 
     static const char testname[] = "ctf_tod_copy_test::test_10()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -576,7 +576,7 @@ void ctf_tod_copy_test::test_11() {
 
     static const char testname[] = "ctf_tod_copy_test::test_11()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -612,7 +612,7 @@ void ctf_tod_copy_test::test_12() {
 
     static const char testname[] = "ctf_tod_copy_test::test_12()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -648,7 +648,7 @@ void ctf_tod_copy_test::test_13() {
 
     static const char testname[] = "ctf_tod_copy_test::test_13()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -697,7 +697,7 @@ void ctf_tod_copy_test::test_14() {
 
     static const char testname[] = "ctf_tod_copy_test::test_14()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

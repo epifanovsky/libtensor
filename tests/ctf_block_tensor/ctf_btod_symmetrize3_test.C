@@ -38,7 +38,7 @@ void ctf_btod_symmetrize3_test::test_1(bool symm) {
     tnss << "ctf_btod_symmetrize3_test::test_1(" << symm << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

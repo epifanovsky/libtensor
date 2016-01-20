@@ -6,13 +6,10 @@ set(SRC_CORE
     core/block_index_space_product_builder_test.C
     core/block_index_subspace_builder_test.C
     core/block_map_test.C
-    core/block_tensor_test.C
     core/combined_orbits_test.C
     core/contraction2_list_builder_test.C
     core/contraction2_test.C
-    core/dense_tensor_test.C
     core/dimensions_test.C
-    core/direct_block_tensor_test.C
     core/immutable_test.C
     core/index_test.C
     core/index_range_test.C
@@ -33,36 +30,37 @@ set(SRC_CORE
     core/version_test.C
 )
 
-set(SRC_TOD
-    tod/libtensor_tod_tests.C
-    tod/libtensor_tod_suite.C
-    tod/tod_add_test.C
-    tod/tod_apply_test.C
-    tod/tod_btconv_test.C
-    tod/tod_compare_test.C
-    tod/to_contract2_dims_test.C
-    tod/tod_contract2_test.C
-    tod/tod_copy_test.C
-    tod/tod_copy_wnd_test.C
-    tod/tod_diag_test.C
-    tod/tod_dirsum_test.C
-    tod/tod_dotprod_test.C
-    tod/tod_ewmult2_test.C
-    tod/tod_extract_test.C
-    tod/tod_import_raw_test.C
-    tod/tod_import_raw_stream_test.C
-    tod/tod_mult_test.C
-    tod/tod_mult1_test.C
-    tod/tod_random_test.C
-    tod/tod_scale_test.C
-    tod/tod_scatter_test.C
-    tod/tod_select_test.C
-    tod/tod_set_diag_test.C
-    tod/tod_set_elem_test.C
-    tod/tod_set_test.C
-    tod/tod_size_test.C
-    tod/tod_trace_test.C
-    tod/tod_vmpriority_test.C
+set(SRC_DENSE_TENSOR
+    dense_tensor/libtensor_dense_tensor_tests.C
+    dense_tensor/libtensor_dense_tensor_suite.C
+    dense_tensor/dense_tensor_test.C
+    dense_tensor/tod_add_test.C
+    dense_tensor/tod_apply_test.C
+    dense_tensor/tod_btconv_test.C
+    dense_tensor/tod_compare_test.C
+    dense_tensor/to_contract2_dims_test.C
+    dense_tensor/tod_contract2_test.C
+    dense_tensor/tod_copy_test.C
+    dense_tensor/tod_copy_wnd_test.C
+    dense_tensor/tod_diag_test.C
+    dense_tensor/tod_dirsum_test.C
+    dense_tensor/tod_dotprod_test.C
+    dense_tensor/tod_ewmult2_test.C
+    dense_tensor/tod_extract_test.C
+    dense_tensor/tod_import_raw_test.C
+    dense_tensor/tod_import_raw_stream_test.C
+    dense_tensor/tod_mult_test.C
+    dense_tensor/tod_mult1_test.C
+    dense_tensor/tod_random_test.C
+    dense_tensor/tod_scale_test.C
+    dense_tensor/tod_scatter_test.C
+    dense_tensor/tod_select_test.C
+    dense_tensor/tod_set_diag_test.C
+    dense_tensor/tod_set_elem_test.C
+    dense_tensor/tod_set_test.C
+    dense_tensor/tod_size_test.C
+    dense_tensor/tod_trace_test.C
+    dense_tensor/tod_vmpriority_test.C
 )
 
 set(SRC_DIAG_TENSOR
@@ -189,51 +187,53 @@ set(SRC_SYMMETRY
     symmetry/symmetry_element_set_adapter_test.C
 )
 
-set(SRC_BTOD
-    btod/libtensor_btod_tests.C
-    btod/libtensor_btod_suite.C
-    btod/addition_schedule_test.C
-    btod/bto_contract2_bis_test.C
-    btod/bto_contract2_sym_test.C
-    btod/btod_add_test.C
-    btod/btod_apply_test.C
-    btod/btod_compare_test.C
-    btod/btod_contract2_test.C
-    btod/btod_contract3_test.C
-    btod/btod_copy_test.C
-    btod/btod_diag_test.C
-    btod/btod_diagonalize_test.C
-    btod/btod_dirsum_test.C
-    btod/btod_dotprod_test.C
-    btod/btod_ewmult2_test.C
-    btod/btod_extract_test.C
-    btod/btod_import_raw_test.C
-    btod/btod_import_raw_stream_test.C
-    btod/btod_mult_test.C
-    btod/btod_mult1_test.C
-    btod/btod_print_test.C
-    btod/btod_random_test.C
-    btod/btod_read_test.C
-    btod/btod_scale_test.C
-    btod/btod_select_test.C
-    btod/btod_set_diag_test.C
-    btod/btod_set_elem_test.C
-    btod/btod_set_test.C
-    btod/btod_shift_diag_test.C
-    btod/btod_sum_test.C
-    btod/btod_symcontract3_test.C
-    btod/btod_symmetrize2_test.C
-    btod/btod_symmetrize3_test.C
-    btod/btod_symmetrize4_test.C
-    btod/btod_trace_test.C
-    btod/btod_tridiagonalize_test.C
-    btod/btod_vmpriority_test.C
-    btod/gen_bto_aux_add_test.C
-    btod/gen_bto_aux_copy_test.C
-    btod/gen_bto_contract2_clst_builder_test.C
-    btod/gen_bto_dirsum_sym_test.C
-    btod/gen_bto_symcontract2_sym_test.C
-    btod/gen_bto_unfold_symmetry_test.C
+set(SRC_BLOCK_TENSOR
+    block_tensor/libtensor_block_tensor_tests.C
+    block_tensor/libtensor_block_tensor_suite.C
+    block_tensor/block_tensor_test.C
+    block_tensor/direct_block_tensor_test.C
+    block_tensor/addition_schedule_test.C
+    block_tensor/bto_contract2_bis_test.C
+    block_tensor/bto_contract2_sym_test.C
+    block_tensor/btod_add_test.C
+    block_tensor/btod_apply_test.C
+    block_tensor/btod_compare_test.C
+    block_tensor/btod_contract2_test.C
+    block_tensor/btod_contract3_test.C
+    block_tensor/btod_copy_test.C
+    block_tensor/btod_diag_test.C
+    block_tensor/btod_diagonalize_test.C
+    block_tensor/btod_dirsum_test.C
+    block_tensor/btod_dotprod_test.C
+    block_tensor/btod_ewmult2_test.C
+    block_tensor/btod_extract_test.C
+    block_tensor/btod_import_raw_test.C
+    block_tensor/btod_import_raw_stream_test.C
+    block_tensor/btod_mult_test.C
+    block_tensor/btod_mult1_test.C
+    block_tensor/btod_print_test.C
+    block_tensor/btod_random_test.C
+    block_tensor/btod_read_test.C
+    block_tensor/btod_scale_test.C
+    block_tensor/btod_select_test.C
+    block_tensor/btod_set_diag_test.C
+    block_tensor/btod_set_elem_test.C
+    block_tensor/btod_set_test.C
+    block_tensor/btod_shift_diag_test.C
+    block_tensor/btod_sum_test.C
+    block_tensor/btod_symcontract3_test.C
+    block_tensor/btod_symmetrize2_test.C
+    block_tensor/btod_symmetrize3_test.C
+    block_tensor/btod_symmetrize4_test.C
+    block_tensor/btod_trace_test.C
+    block_tensor/btod_tridiagonalize_test.C
+    block_tensor/btod_vmpriority_test.C
+    block_tensor/gen_bto_aux_add_test.C
+    block_tensor/gen_bto_aux_copy_test.C
+    block_tensor/gen_bto_contract2_clst_builder_test.C
+    block_tensor/gen_bto_dirsum_sym_test.C
+    block_tensor/gen_bto_symcontract2_sym_test.C
+    block_tensor/gen_bto_unfold_symmetry_test.C
 )
 
 set(SRC_LINALG
@@ -339,10 +339,10 @@ set(SRC_BLOCK_SPARSE_BENCHMARK
 
 set(TARGETS
     libtensor_core_tests
-    libtensor_tod_tests
+    libtensor_dense_tensor_tests
     libtensor_diag_tensor_tests
     libtensor_diag_block_tensor_tests
-    libtensor_btod_tests
+    libtensor_block_tensor_tests
     libtensor_expr_tests
     libtensor_iface_tests
     libtensor_linalg_tests
@@ -360,12 +360,12 @@ if(WITH_CTF)
 endif(WITH_CTF)
 
 add_executable(libtensor_core_tests ${SRC_CORE})
-add_executable(libtensor_btod_tests ${SRC_BTOD})
+add_executable(libtensor_block_tensor_tests ${SRC_BLOCK_TENSOR})
 add_executable(libtensor_expr_tests ${SRC_EXPR})
 add_executable(libtensor_iface_tests ${SRC_IFACE})
 add_executable(libtensor_linalg_tests ${SRC_LINALG})
 add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
-add_executable(libtensor_tod_tests ${SRC_TOD})
+add_executable(libtensor_dense_tensor_tests ${SRC_DENSE_TENSOR})
 add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
 add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 #add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})

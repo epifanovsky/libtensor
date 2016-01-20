@@ -44,7 +44,7 @@ void ctf_tod_set_test::test_1(bool zero) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -84,7 +84,7 @@ void ctf_tod_set_test::test_2(bool zero, double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -124,7 +124,7 @@ void ctf_tod_set_test::test_3(bool zero, double d) {
     std::string tn = tnss.str();
     const char *testname = tn.c_str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

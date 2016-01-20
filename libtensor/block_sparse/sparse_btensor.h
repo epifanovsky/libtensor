@@ -13,6 +13,7 @@
 #include "memory_reserve.h"
 #include "batch_provider.h"
 #include <libtensor/expr/iface/expr_lhs.h>
+#include <libtensor/expr/iface/expr_rhs.h>
 #include <libtensor/expr/iface/labeled_lhs_rhs.h>
 #include <libtensor/expr/operators/contract.h>
 #include <libtensor/expr/operators/plus_minus.h>
@@ -39,6 +40,8 @@ public:
     //Copy constructor
     sparse_btensor(const sparse_btensor<N>& rhs);
 
+    sparse_btensor<N,T>& operator=(const sparse_btensor<N>& rhs);
+
     /** \brief Return the sparse_bispace defining this tensor 
      **/
     const sparse_bispace<N>& get_bispace() const; 
@@ -59,11 +62,16 @@ public:
     void set_memory_reserve(memory_reserve& mr);
 
     virtual void assign(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l);
-    virtual void assign_add(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l);
 
     expr::labeled_lhs_rhs<N, T> operator()(const expr::label<N> &label) {
         return expr::labeled_lhs_rhs<N, T>(*this, label,
             any_tensor<N, T>::make_rhs(label));
+    }
+
+    //STUB!!!! DAT NASTY HACK!!
+    virtual void assign_add(const expr::expr_rhs<N, T> &rhs, const expr::label<N> &l)
+    {
+        throw bad_parameter(g_ns, k_clazz,"assign_add",__FILE__, __LINE__,"assign_add not implemented!");
     }
 };
 
@@ -121,6 +129,16 @@ sparse_btensor<N,T>::sparse_btensor(const sparse_btensor<N>& rhs) : m_bispace(rh
     if(rhs.m_mr != NULL) this->set_memory_reserve(*rhs.m_mr);
     m_data_ptr = new T[m_bispace.get_nnz()]; 
     memcpy(m_data_ptr,rhs.m_data_ptr,m_bispace.get_nnz()*sizeof(T)); 
+}
+
+template<size_t N,typename T>
+sparse_btensor<N,T>& sparse_btensor<N,T>::operator=(const sparse_btensor<N>& rhs)
+{
+    m_bispace = rhs.m_bispace;
+    if(rhs.m_mr != NULL) this->set_memory_reserve(*rhs.m_mr);
+    m_data_ptr = new T[m_bispace.get_nnz()]; 
+    memcpy(m_data_ptr,rhs.m_data_ptr,m_bispace.get_nnz()*sizeof(T)); 
+    return *this;
 }
 
 template<size_t N,typename T>
@@ -258,6 +276,7 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     direct_sparse_btensor<2>* M_reblocked_0_tensor_ptr = NULL;
     std::vector<idx_list> batched_subspace_grps;
     bool hack = false;
+#if 0
     if(N == 2)
     {
         if(last_op_node.check_type<node_contract>())
@@ -284,7 +303,7 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                         if(D_bispace.get_index_group_containing_subspace(0) == 0 && D_bispace.get_index_group_order(0) == 1)
                         {
                             //Add the tree to unblock D
-                            expr_tree::node_id_t D_unblocked_assign_id = e.insert(op_child_0_id,node_assign(3,false));
+                            expr_tree::node_id_t D_unblocked_assign_id = e.insert(op_child_0_id,node_assign(3));
                             expr_tree::node_id_t D_ub_subtree_id = e.insert(op_child_0_id,node_unblock(3,0));
                             sparse_bispace<1> unblocked_subspace(D_bispace[0].get_dim()); 
                             sparse_bispace<3> D_unblocked_bispace = unblocked_subspace | D_bispace.contract(0);
@@ -295,7 +314,7 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                             e.add(D_unblocked_assign_id,D_ub_subtree);
 
                             //Add the tree to unblock H
-                            expr_tree H_ub_subtree(node_assign(3,false));
+                            expr_tree H_ub_subtree(node_assign(3));
                             sparse_bispace<3> H_unblocked_bispace = unblocked_subspace | H_bispace.contract(0);
 
                             expr_tree::node_id_t H_unblocked_assign_id = H_ub_subtree.get_root();
@@ -311,12 +330,12 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
                             //Add the tree to reblock M idx 0 and 1
                             expr_tree rb_subtree(node_reblock(2,1));
                             expr_tree::node_id_t rb_root_id = rb_subtree.get_root();
-                            expr_tree::node_id_t M_reblocked_0_assign_id = rb_subtree.add(rb_root_id,node_assign(2,false));
+                            expr_tree::node_id_t M_reblocked_0_assign_id = rb_subtree.add(rb_root_id,node_assign(2));
                             M_reblocked_0_tensor_ptr = new direct_sparse_btensor<2>(unblocked_subspace|m_bispace[1]);
                             rb_subtree.add(M_reblocked_0_assign_id,node_ident_any_tensor<2,T>(*M_reblocked_0_tensor_ptr));
                             expr_tree::node_id_t reblock_0_id = rb_subtree.add(M_reblocked_0_assign_id,node_reblock(2,0));
 
-                            expr_tree::node_id_t M_unblocked_assign_id = rb_subtree.add(reblock_0_id,node_assign(2,false));
+                            expr_tree::node_id_t M_unblocked_assign_id = rb_subtree.add(reblock_0_id,node_assign(2));
                             M_unblocked_tensor_ptr = new direct_sparse_btensor<2>(unblocked_subspace|unblocked_subspace);
                             rb_subtree.add(M_unblocked_assign_id,node_ident_any_tensor<2,T>(*M_unblocked_tensor_ptr));
                             rb_subtree.add(M_unblocked_assign_id,e.get_subtree(last_op_node_id));
@@ -342,7 +361,7 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
             }
         }
     }
-
+#endif
     batch_provider<T> bp(e);
     std::vector< std::vector<sparse_bispace_any_order> > direct_bispace_grps;
     bp.get_direct_bispace_grps(direct_bispace_grps);
@@ -381,11 +400,6 @@ void sparse_btensor<N,T>::assign(const expr::expr_rhs<N, T>& rhs, const expr::la
     if(H_unblocked_tensor_ptr == NULL) delete H_unblocked_tensor_ptr;
     if(M_unblocked_tensor_ptr == NULL) delete M_unblocked_tensor_ptr;
     if(M_reblocked_0_tensor_ptr == NULL) delete M_reblocked_0_tensor_ptr;
-}
-
-template<size_t N,typename T>
-void sparse_btensor<N,T>::assign_add(const expr::expr_rhs<N, T>& rhs, const expr::label<N>& l)
-{
 }
 
 } // namespace libtensor

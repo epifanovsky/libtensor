@@ -39,7 +39,7 @@ void ctf_tod_random_test::test_1() {
 
     static const char testname[] = "ctf_tod_random_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     index<3> i3a, i3b;
     i3b[0] = 29; i3b[1] = 19; i3b[2] = 40;
@@ -86,7 +86,7 @@ void ctf_tod_random_test::test_2() {
 
     static const char testname[] = "ctf_tod_random_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     index<3> i3a, i3b;
     i3b[0] = 29; i3b[1] = 19; i3b[2] = 40;
@@ -133,7 +133,7 @@ void ctf_tod_random_test::test_3() {
 
     static const char testname[] = "ctf_tod_random_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     index<1> i1a, i1b;
     i1b[0] = 2;
@@ -162,7 +162,7 @@ void ctf_tod_random_test::test_4() {
 
     static const char testname[] = "ctf_tod_random_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     index<2> i2a, i2b;
     i2b[0] = 19; i2b[1] = 19;
@@ -211,7 +211,7 @@ void ctf_tod_random_test::test_5() {
 
     static const char testname[] = "ctf_tod_random_test::test_5()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     index<3> i3a, i3b;
     i3b[0] = 19; i3b[1] = 19; i3b[2] = 19;
@@ -260,7 +260,7 @@ void ctf_tod_random_test::test_6() {
 
     static const char testname[] = "ctf_tod_random_test::test_6()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

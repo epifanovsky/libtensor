@@ -7,13 +7,10 @@
 #include "block_index_space_product_builder_test.h"
 #include "block_index_subspace_builder_test.h"
 #include "block_map_test.h"
-#include "block_tensor_test.h"
 #include "combined_orbits_test.h"
 #include "contraction2_test.h"
 #include "contraction2_list_builder_test.h"
-#include "dense_tensor_test.h"
 #include "dimensions_test.h"
-#include "direct_block_tensor_test.h"
 #include "immutable_test.h"
 #include "index_test.h"
 #include "index_range_test.h"
@@ -55,13 +52,10 @@ namespace libtensor {
     \li libtensor::block_index_space_test
     \li libtensor::block_index_subspace_builder_test
     \li libtensor::block_map_test
-    \li libtensor::block_tensor_test
     \li libtensor::combined_orbits_test
     \li libtensor::contraction2_test
     \li libtensor::contraction2_list_builder_test
-    \li libtensor::dense_tensor_test
     \li libtensor::dimensions_test
-    \li libtensor::direct_block_tensor_test
     \li libtensor::immutable_test
     \li libtensor::index_test
     \li libtensor::index_range_test
@@ -88,14 +82,11 @@ private:
     unit_test_factory<block_index_subspace_builder_test>
         m_utf_block_index_subspace_builder;
     unit_test_factory<block_map_test> m_utf_block_map;
-    unit_test_factory<block_tensor_test> m_utf_block_tensor;
     unit_test_factory<combined_orbits_test> m_utf_combined_orbits;
     unit_test_factory<contraction2_test> m_utf_contraction2;
     unit_test_factory<contraction2_list_builder_test>
         m_utf_contraction2_list_builder;
-    unit_test_factory<dense_tensor_test> m_utf_dense_tensor;
     unit_test_factory<dimensions_test> m_utf_dimensions;
-    unit_test_factory<direct_block_tensor_test> m_utf_direct_block_tensor;
     unit_test_factory<immutable_test> m_utf_immutable;
     unit_test_factory<index_test> m_utf_index;
     unit_test_factory<index_range_test> m_utf_index_range;

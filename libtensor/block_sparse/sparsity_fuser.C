@@ -24,7 +24,7 @@ sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
         const sparse_bispace_any_order& bispace = bispaces[bispace_idx];
         for(size_t tree_idx = 0; tree_idx < bispace.get_n_sparse_groups(); ++tree_idx)
         {
-            sparse_block_tree tree = bispace.get_sparse_group_tree(tree_idx);
+            sparsity_data tree = bispace.get_sparse_group_tree(tree_idx);
             m_sub_key_offsets_for_trees.push_back(vector<idx_list>(1,idx_list()));
             for(size_t tree_sub_idx = 0; tree_sub_idx < tree.get_order(); ++tree_sub_idx)
             {
@@ -66,7 +66,19 @@ sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
                                 {
                                     subspaces.push_back(bispace[min+tree_subspace_idx]);
                                 }
-                                tree.set_offsets_sizes_nnz(subspaces);
+                                size_t grp_nnz = 0;
+                                idx_list new_values;
+                                for(size_t key_idx = 0; key_idx < tree.get_n_entries(); ++key_idx)
+                                {
+                                    size_t ent_nnz = 1;
+                                    for(size_t i = 0; i < tree.get_order(); ++i)
+                                        ent_nnz *= subspaces[i].get_block_size(tree.get_keys()[key_idx*tree.get_order()+i]);
+
+                                    new_values.push_back(grp_nnz);
+                                    new_values.push_back(ent_nnz);
+                                    grp_nnz += ent_nnz;
+                                }
+                                tree.set_values(2,new_values);
                             }
                         }
                     }
@@ -83,22 +95,22 @@ sparsity_fuser::sparsity_fuser(const vector< block_loop >& loops,
     }
 }
 
-idx_list sparsity_fuser::get_loops_for_tree(size_t tree_idx) const
+const idx_list& sparsity_fuser::get_loops_for_tree(size_t tree_idx) const
 {
     return m_loops_for_trees[tree_idx];
 }
 
-idx_list sparsity_fuser::get_trees_for_loop(size_t loop_idx) const
+const idx_list& sparsity_fuser::get_trees_for_loop(size_t loop_idx) const
 {
     return m_trees_for_loops[loop_idx];
 }
 
-idx_pair_list sparsity_fuser::get_bispaces_and_index_groups_for_tree(size_t tree_idx) const
+const idx_pair_list& sparsity_fuser::get_bispaces_and_index_groups_for_tree(size_t tree_idx) const
 {
     return m_bispaces_and_index_groups_for_trees[tree_idx];
 }
 
-vector<idx_list> sparsity_fuser::get_sub_key_offsets_for_tree(size_t tree_idx) const
+const vector<idx_list>& sparsity_fuser::get_sub_key_offsets_for_tree(size_t tree_idx) const
 {
     return m_sub_key_offsets_for_trees[tree_idx];
 }

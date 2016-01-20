@@ -32,7 +32,7 @@ void ctf_tod_scale_test::test_1() {
 
     static const char testname[] = "ctf_tod_scale_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

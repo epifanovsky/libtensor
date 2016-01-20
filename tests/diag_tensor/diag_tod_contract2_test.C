@@ -62,7 +62,7 @@ void diag_tod_contract2_test::test_1_1_1_01(size_t ni, size_t nj, size_t nk) {
         << ", " << nk << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -147,7 +147,7 @@ void diag_tod_contract2_test::test_1_1_1_02(size_t ni, size_t nj, size_t nk) {
         << ", " << nk << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -233,7 +233,7 @@ void diag_tod_contract2_test::test_1_1_1_03(size_t ni, size_t nj) {
         << nj << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -325,7 +325,7 @@ void diag_tod_contract2_test::test_1_1_1_04(size_t ni) {
     tnss << "diag_tod_contract2_test::test_1_1_1_04(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -425,7 +425,7 @@ void diag_tod_contract2_test::test_1_1_1_05(size_t ni) {
     tnss << "diag_tod_contract2_test::test_1_1_1_05(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

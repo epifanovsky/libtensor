@@ -66,7 +66,7 @@ void tod_conv_diag_tensor_test::test_1_i(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_1_i(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -108,7 +108,7 @@ void tod_conv_diag_tensor_test::test_2_i(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_2_i(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -154,7 +154,7 @@ void tod_conv_diag_tensor_test::test_3_i(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_3_i(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -210,7 +210,7 @@ void tod_conv_diag_tensor_test::test_1_ij(size_t ni, size_t nj)
     tnss << "tod_conv_diag_tensor_test::test_1_ij(" << ni << ", " << nj << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -252,7 +252,7 @@ void tod_conv_diag_tensor_test::test_2_ij(size_t ni, size_t nj)
     tnss << "tod_conv_diag_tensor_test::test_2_ij(" << ni << ", " << nj << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -298,7 +298,7 @@ void tod_conv_diag_tensor_test::test_1_ii(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_1_ii(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -355,7 +355,7 @@ void tod_conv_diag_tensor_test::test_1_ii_ij(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_1_ii_ij(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -416,7 +416,7 @@ void tod_conv_diag_tensor_test::test_1_ii_ij_off(size_t ni, size_t mi,
         << ", " << oi << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -481,7 +481,7 @@ void tod_conv_diag_tensor_test::test_1_iik_iji(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_1_iik_iji(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -555,7 +555,7 @@ void tod_conv_diag_tensor_test::test_1_iijj_ijij_ijjk(size_t ni)
     tnss << "tod_conv_diag_tensor_test::test_1_iijj_ijij_ijjk(" << ni << ")";
     std::string tn = tnss.str();
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 

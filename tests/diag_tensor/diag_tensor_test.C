@@ -19,7 +19,7 @@ void diag_tensor_test::test_1() throw(libtest::test_exception) {
 
     static const char *testname = "diag_tensor_test::test_1()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -76,7 +76,7 @@ void diag_tensor_test::test_2() throw(libtest::test_exception) {
 
     static const char *testname = "diag_tensor_test::test_2()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -165,7 +165,7 @@ void diag_tensor_test::test_3() throw(libtest::test_exception) {
 
     static const char *testname = "diag_tensor_test::test_3()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
@@ -233,7 +233,7 @@ void diag_tensor_test::test_4() throw(libtest::test_exception) {
 
     static const char *testname = "diag_tensor_test::test_4()";
 
-    typedef std_allocator<double> allocator_t;
+    typedef allocator<double> allocator_t;
 
     try {
 
