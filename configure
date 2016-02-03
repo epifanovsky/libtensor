@@ -8,6 +8,7 @@ BLAS=
 GENERATOR_UNIX="Unix Makefiles"
 GENERATOR_MINGW32="MinGW Makefiles"
 GENERATOR=$GENERATOR_UNIX
+USE_LIBXM=0
 
 function set_compilers() {
   if [ "x$CC0" != "x" ]; then
@@ -66,6 +67,8 @@ while [ $# -gt 0 ]; do
               ;;
     relwdeb ) set_build_type "RELWITHDEBINFO"
               ;;
+    libxm )   USE_LIBXM=1
+              ;;
   esac
   shift
 done
@@ -92,5 +95,5 @@ if [ -e CMakeCache.txt ]; then
     rm CMakeCache.txt
 fi
 
-CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" -D WITH_BLAS="$BLAS" ..
+CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" -D WITH_BLAS="$BLAS" -D USE_LIBXM=$USE_LIBXM ..
 

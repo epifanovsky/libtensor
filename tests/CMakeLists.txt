@@ -191,6 +191,12 @@ set(SRC_BLOCK_TENSOR
     block_tensor/gen_bto_unfold_symmetry_test.C
 )
 
+if(USE_LIBXM)
+    add_definitions(-DUSE_LIBXM)
+    set(SRC_BLOCK_TENSOR ${SRC_BLOCK_TENSOR}
+        block_tensor/btod_contract2_xm_test.C)
+endif(USE_LIBXM)
+
 set(SRC_LINALG
     linalg/libtensor_linalg_tests.C
     linalg/libtensor_linalg_suite.C

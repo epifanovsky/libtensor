@@ -241,7 +241,7 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_to_add_space.C
     diag_tensor/impl/diag_to_contract2_space.C
     diag_tensor/impl/diag_tod_adjust_space.C
-   diag_tensor/impl/diag_tod_aux_constr_add.C
+    diag_tensor/impl/diag_tod_aux_constr_add.C
     diag_tensor/impl/diag_tod_aux_constr_base.C
     diag_tensor/impl/diag_tod_aux_dotprod.C
     diag_tensor/impl/diag_tod_contract2.C
@@ -306,6 +306,21 @@ if(WITH_ARMADILLO)
 else(WITH_ARMADILLO)
     set(SRC_ARMA "")
 endif(WITH_ARMADILLO)
+
+if(USE_LIBXM)
+    add_definitions(-DUSE_LIBXM)
+    set(SRC_CORE ${SRC_CORE} libxm/xm.c libxm/alloc.c)
+    set(SRC_BTOD ${SRC_BTOD}
+        block_tensor/impl/btod_contract2_1_xm.C
+        block_tensor/impl/btod_contract2_2_xm.C
+        block_tensor/impl/btod_contract2_3_xm.C
+        block_tensor/impl/btod_contract2_4_xm.C
+        block_tensor/impl/btod_contract2_5_xm.C
+        block_tensor/impl/btod_contract2_6_xm.C
+        block_tensor/impl/btod_contract2_7_xm.C
+        block_tensor/impl/btod_contract2_8_xm.C
+    )
+endif(USE_LIBXM)
 
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})

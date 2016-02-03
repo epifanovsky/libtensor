@@ -10,6 +10,10 @@
 #include "vm_allocator.h"
 #endif
 
+#if defined(USE_LIBXM)
+#include "xm_allocator.h"
+#endif
+
 namespace libtensor {
 
 
@@ -53,7 +57,11 @@ void allocator<T>::init(size_t base_sz, size_t min_sz, size_t max_sz,
     size_t mem_limit, const char *pfprefix) {
 
 #if defined(WITHOUT_LIBVMM)
+#if defined(USE_LIBXM)
+    typedef lt_xm_allocator::lt_xm_allocator<T> allocator_impl;
+#else
     typedef std_allocator<T> allocator_impl;
+#endif
 #else
     typedef vm_allocator<T> allocator_impl;
 #endif
