@@ -66,7 +66,7 @@ namespace libtensor {
  **/
 template<size_t N, typename BtTraits>
 class gen_block_tensor :
-    public gen_block_tensor_i<N, typename BtTraits::bti_traits>,
+    virtual public gen_block_tensor_i<N, typename BtTraits::bti_traits>,
     public immutable,
     public noncopyable {
 

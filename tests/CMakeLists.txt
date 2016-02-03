@@ -92,6 +92,51 @@ set(SRC_DIAG_BLOCK_TENSOR
     diag_block_tensor/tod_conv_diag_block_tensor_test.C
 )
 
+set(SRC_CTF_DENSE_TENSOR
+    ctf_dense_tensor/libtensor_ctf_dense_tensor_tests.C
+    ctf_dense_tensor/libtensor_ctf_dense_tensor_suite.C
+    ctf_dense_tensor/ctf_dense_tensor_test.C
+    ctf_dense_tensor/ctf_symmetry_test.C
+    ctf_dense_tensor/ctf_tod_contract2_test.C
+    ctf_dense_tensor/ctf_tod_copy_test.C
+    ctf_dense_tensor/ctf_tod_diag_test.C
+    ctf_dense_tensor/ctf_tod_dirsum_test.C
+    ctf_dense_tensor/ctf_tod_distribute_test.C
+    ctf_dense_tensor/ctf_tod_dotprod_test.C
+    ctf_dense_tensor/ctf_tod_ewmult2_test.C
+    ctf_dense_tensor/ctf_tod_mult_test.C
+    ctf_dense_tensor/ctf_tod_mult1_test.C
+    ctf_dense_tensor/ctf_tod_random_test.C
+    ctf_dense_tensor/ctf_tod_scale_test.C
+    ctf_dense_tensor/ctf_tod_scatter_test.C
+    ctf_dense_tensor/ctf_tod_set_test.C
+    ctf_dense_tensor/ctf_tod_set_diag_test.C
+    ctf_dense_tensor/ctf_tod_set_symmetry_test.C
+    ctf_dense_tensor/ctf_tod_trace_test.C
+)
+
+set(SRC_CTF_BLOCK_TENSOR
+    ctf_block_tensor/libtensor_ctf_block_tensor_tests.C
+    ctf_block_tensor/libtensor_ctf_block_tensor_suite.C
+    ctf_block_tensor/ctf_btod_collect_test.C
+    ctf_block_tensor/ctf_btod_contract2_test.C
+    ctf_block_tensor/ctf_btod_copy_test.C
+    ctf_block_tensor/ctf_btod_diag_test.C
+    ctf_block_tensor/ctf_btod_dirsum_test.C
+    ctf_block_tensor/ctf_btod_distribute_test.C
+    ctf_block_tensor/ctf_btod_dotprod_test.C
+    ctf_block_tensor/ctf_btod_ewmult2_test.C
+    ctf_block_tensor/ctf_btod_mult_test.C
+    ctf_block_tensor/ctf_btod_mult1_test.C
+    ctf_block_tensor/ctf_btod_random_test.C
+    ctf_block_tensor/ctf_btod_scale_test.C
+    ctf_block_tensor/ctf_btod_set_test.C
+    ctf_block_tensor/ctf_btod_symmetrize2_test.C
+    ctf_block_tensor/ctf_btod_symmetrize3_test.C
+    ctf_block_tensor/ctf_btod_trace_test.C
+    ctf_block_tensor/ctf_symmetry_builder_test.C
+)
+
 set(SRC_SYMMETRY
     symmetry/adjacency_list_test.C
     symmetry/block_labeling_test.C
@@ -253,6 +298,17 @@ set(SRC_IFACE
     iface/trace_test.C
 )
 
+set(SRC_CTF_IFACE
+    ctf_iface/libtensor_ctf_iface_tests.C
+    ctf_iface/libtensor_ctf_iface_suite.C
+    ctf_iface/ctf_btensor_test.C
+    ctf_iface/ctf_dot_product_test.C
+    ctf_iface/ctf_expr_test.C
+    ctf_iface/ctf_mult_test.C
+    ctf_iface/ctf_set_test.C
+    ctf_iface/ctf_trace_test.C
+)
+
 set(SRC_BLOCK_SPARSE
     block_sparse/libtensor_block_sparse_tests.C
     block_sparse/libtensor_block_sparse_suite.C
@@ -295,6 +351,13 @@ set(TARGETS
 #    libtensor_block_sparse_tests
 #    sparse_block_tree_benchmark
 )
+if(WITH_CTF)
+    set(TARGETS ${TARGETS}
+        libtensor_ctf_dense_tensor_tests
+        libtensor_ctf_block_tensor_tests
+        libtensor_ctf_iface_tests
+    )
+endif(WITH_CTF)
 
 add_executable(libtensor_core_tests ${SRC_CORE})
 add_executable(libtensor_block_tensor_tests ${SRC_BLOCK_TENSOR})
@@ -308,6 +371,20 @@ add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
 #add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 #add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 #add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
+if(WITH_CTF)
+    set_property(SOURCE ctf_dense_tensor/ctf_dense_tensor_test.C
+        ctf_dense_tensor/ctf_symmetry_test.C
+        APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
+    add_executable(libtensor_ctf_dense_tensor_tests ${SRC_CTF_DENSE_TENSOR})
+#    set_property(TARGET libtensor_ctf_dense_tensor_tests APPEND PROPERTY
+#        LINK_FLAGS ${OpenMP_CXX_FLAGS})
+    add_executable(libtensor_ctf_block_tensor_tests ${SRC_CTF_BLOCK_TENSOR})
+#    set_property(TARGET libtensor_ctf_block_tensor_tests APPEND PROPERTY
+#        LINK_FLAGS ${OpenMP_CXX_FLAGS})
+    add_executable(libtensor_ctf_iface_tests ${SRC_CTF_IFACE})
+#    set_property(TARGET libtensor_ctf_iface_tests APPEND PROPERTY
+#        LINK_FLAGS ${OpenMP_CXX_FLAGS})
+endif(WITH_CTF)
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
@@ -325,6 +402,7 @@ foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor tensor_core tensor_block_sparse
     ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
 endforeach(TARGET)
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after

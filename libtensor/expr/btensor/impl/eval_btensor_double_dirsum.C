@@ -1,8 +1,8 @@
 #include <libtensor/core/permutation_builder.h>
 #include <libtensor/block_tensor/btod_dirsum.h>
+#include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_dirsum.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include <libtensor/expr/metaprog.h>
 #include "tensor_from_node.h"
 #include "eval_btensor_double_dirsum.h"
 

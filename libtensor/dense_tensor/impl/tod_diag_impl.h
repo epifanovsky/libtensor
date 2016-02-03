@@ -7,6 +7,7 @@
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/core/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
+#include "../to_diag_dims.h"
 #include "../tod_diag.h"
 #include "../tod_set.h"
 
@@ -23,9 +24,8 @@ tod_diag<N, M>::tod_diag(dense_tensor_rd_i<NA, double> &t,
 
     m_t(t), m_mask(m), m_perm(tr.get_perm()),
     m_c(tr.get_scalar_tr().get_coeff()),
-    m_dims(mk_dims(t.get_dims(), m_mask)) {
+    m_dims(to_diag_dims<N, M>(m_t.get_dims(), m_mask, m_perm).get_dimsb()) {
 
-    m_dims.permute(m_perm);
 }
 
 
@@ -147,44 +147,6 @@ void tod_diag<N, M>::perform(bool zero, dense_tensor_wr_i<NB, double> &tb) {
 
 
     tod_diag<N, M>::stop_timer();
-}
-
-
-template<size_t N, size_t M>
-dimensions<M> tod_diag<N, M>::mk_dims(const dimensions<N> &dims,
-    const sequence<N, size_t> &msk) {
-
-    static const char *method =
-        "mk_dims(const dimensions<N> &, const mask<N>&)";
-
-    //  Compute output dimensions
-    //
-    index<NB> i1, i2;
-
-    bool bad_dims = false;
-    sequence<NB + 1, size_t> d(0);
-    size_t m = 0;
-    for(size_t i = 0; i < NA; i++) {
-        if (msk[i] != 0) {
-            if (d[msk[i]] == 0) {
-                d[msk[i]] = dims[i];
-                i2[m++] = dims[i] - 1;
-            }
-            else {
-                bad_dims = bad_dims || d[msk[i]] != dims[i];
-            }
-        }
-        else {
-            if (! bad_dims) i2[m++] = dims[i] - 1;
-        }
-    }
-    if(m != M) {
-        throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "m");
-    }
-    if(bad_dims) {
-        throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "t");
-    }
-    return dimensions<NB>(index_range<NB>(i1, i2));
 }
 
 

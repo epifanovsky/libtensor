@@ -5,20 +5,27 @@ set(SRC
     test_expressions.C
 )
 add_executable(libtensor_performance_tests ${SRC})
+add_executable(libtensor_ctf_benchmarks libtensor_ctf_benchmarks.C)
 
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 set_property(TARGET libtensor_performance_tests APPEND PROPERTY
     COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+set_property(TARGET libtensor_performance_tests APPEND PROPERTY
+    LINK_FLAGS ${OpenMP_CXX_FLAGS})
 if(HAVE_LIBVMM)
     set_property(TARGET libtensor_performance_tests APPEND PROPERTY
         COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
 else(HAVE_LIBVMM)
     set_property(TARGET libtensor_performance_tests APPEND PROPERTY
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)
+    set_property(TARGET libtensor_ctf_benchmarks APPEND PROPERTY
+        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 endif(HAVE_LIBVMM)
 
 target_link_libraries(libtensor_performance_tests
     tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS}
     test)
-
+set_property(TARGET libtensor_ctf_benchmarks APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
+target_link_libraries(libtensor_ctf_benchmarks
+    tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS})

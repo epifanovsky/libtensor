@@ -160,7 +160,6 @@ void gen_bto_random_block<N, Traits, Timed>::make_block(const index<N> &idx) {
     typedef typename bti_traits::template rd_block_type<N>::type rd_block_type;
     typedef typename bti_traits::template wr_block_type<N>::type wr_block_type;
 
-    typedef typename Traits::template to_add_type<N>::type to_add;
     typedef typename Traits::template to_copy_type<N>::type to_copy;
     typedef typename Traits::template to_random_type<N>::type to_random;
     typedef typename Traits::template temp_block_tensor_type<N>::type
@@ -208,15 +207,13 @@ void gen_bto_random_block<N, Traits, Timed>::make_block(const index<N> &idx) {
             rd_block_type &rnd = crnd.req_const_block(idx);
             wr_block_type &symrnd = csymrnd.req_block(idx);
 
-            tottr.add(itr->get_scalar_tr());
-            to_add symop(rnd, *itr);
-
-            for(++itr; itr != ilst->second.end(); ++itr) {
-                symop.add_op(rnd, *itr);
-                tottr.add(itr->get_scalar_tr());
-            }
             gen_bto_random_block::start_timer("symop");
-            symop.perform(true, symrnd);
+            bool z = true;
+            for(; itr != ilst->second.end(); ++itr) {
+                to_copy(rnd, *itr).perform(z, symrnd);
+                tottr.add(itr->get_scalar_tr());
+                z = false;
+            }
             gen_bto_random_block::stop_timer("symop");
 
             crnd.ret_const_block(idx);

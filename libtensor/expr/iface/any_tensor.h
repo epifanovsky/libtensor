@@ -17,6 +17,9 @@ namespace expr {
 template<size_t N, typename T>
 class expr_rhs;
 
+template<size_t N, typename T>
+class btensor_i;
+
 
 /** \brief Any tensor type
     \tparam N Tensor order.
@@ -71,6 +74,13 @@ public:
      **/
     virtual ~any_tensor();
 
+    /** \brief Returns the type of the tensor held inside as a string
+     **/
+    virtual const char *get_tensor_type() const {
+        static const char k_tensor_type[] = "any_tensor";
+        return k_tensor_type;
+    }
+
     /** \brief Returns the tensor object held inside as a concrete tensor type
      **/
     template<typename Tensor>
@@ -79,6 +89,11 @@ public:
     /** \brief Attaches a letter label to the tensor
      **/
     expr_rhs<N, T> operator()(const label<N> &l);
+
+    operator btensor_i<N, T>&() {
+        //return get_tensor< btensor_i<N, T> >();
+        return dynamic_cast< btensor_i<N, T>& >(*this);
+    }
 
 protected:
     /** \brief Constructor that can only be used by derived classes

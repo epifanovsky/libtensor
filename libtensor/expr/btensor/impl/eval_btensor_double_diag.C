@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_diag.h>
+#include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_diag.h>
 #include <libtensor/expr/eval/eval_exception.h>
-#include <libtensor/expr/metaprog.h>
 #include "tensor_from_node.h"
 #include "eval_btensor_double_diag.h"
 

@@ -151,6 +151,10 @@ struct btod_traits {
         return d == 0.0;
     }
 
+    static bool is_zero(const scalar_transf<double> &d) {
+        return is_zero(d.get_coeff());
+    }
+
     static double zero() {
         return 0.0;
     }

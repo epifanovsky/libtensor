@@ -1,4 +1,5 @@
 #include <deque>
+#include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/dag/node_const_scalar.h>
@@ -12,7 +13,6 @@
 #include <libtensor/expr/opt/opt_merge_adjacent_transf.h>
 #include <libtensor/expr/opt/opt_merge_equiv_ident.h>
 #include "node_interm.h"
-#include <libtensor/expr/metaprog.h>
 #include "eval_tree_builder_btensor.h"
 
 namespace libtensor {
@@ -43,7 +43,7 @@ public:
     { }
 
     void add() {
-        dispatch_1<1, Nmax>::dispatch(*this, m_g.get_vertex(m_nid).get_n());
+        eval_btensor_double::dispatch_1<1, Nmax>::dispatch(*this, m_g.get_vertex(m_nid).get_n());
     }
 
     template<size_t N>

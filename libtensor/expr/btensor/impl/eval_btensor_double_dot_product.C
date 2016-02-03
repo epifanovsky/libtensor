@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_dotprod.h>
+#include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_dot_product.h>
 #include <libtensor/expr/dag/node_scalar.h>
-#include <libtensor/expr/metaprog.h>
 #include "tensor_from_node.h"
 #include "eval_btensor_double_dot_product.h"
 

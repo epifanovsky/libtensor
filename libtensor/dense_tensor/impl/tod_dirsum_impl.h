@@ -8,6 +8,7 @@
 #include <libtensor/kernels/kern_dadd2.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include "../dense_tensor_ctrl.h"
+#include "../to_dirsum_dims.h"
 #include "../tod_dirsum.h"
 
 namespace libtensor {
@@ -19,42 +20,42 @@ const char *tod_dirsum<N, M>::k_clazz = "tod_dirsum<N, M>";
 
 template<size_t N, size_t M>
 tod_dirsum<N, M>::tod_dirsum(
-        dense_tensor_rd_i<k_ordera, double> &ta,
-        const scalar_transf<double> &ka,
-        dense_tensor_rd_i<k_orderb, double> &tb,
-        const scalar_transf<double> &kb,
-        const tensor_transf_type &trc) :
+    dense_tensor_rd_i<k_ordera, double> &ta,
+    const scalar_transf<double> &ka,
+    dense_tensor_rd_i<k_orderb, double> &tb,
+    const scalar_transf<double> &kb,
+    const tensor_transf_type &trc) :
 
     m_ta(ta), m_tb(tb), m_ka(ka.get_coeff()), m_kb(kb.get_coeff()),
     m_c(trc.get_scalar_tr().get_coeff()), m_permc(trc.get_perm()),
-    m_dimsc(mk_dimsc(ta, tb)) {
-
-    m_dimsc.permute(m_permc);
+    m_dimsc(to_dirsum_dims<N, M>(m_ta.get_dims(), m_tb.get_dims(), m_permc).
+        get_dimsc()) {
 
 }
 
 
 template<size_t N, size_t M>
 tod_dirsum<N, M>::tod_dirsum(
-        dense_tensor_rd_i<k_ordera, double> &ta, double ka,
-        dense_tensor_rd_i<k_orderb, double> &tb, double kb) :
+    dense_tensor_rd_i<k_ordera, double> &ta, double ka,
+    dense_tensor_rd_i<k_orderb, double> &tb, double kb) :
 
     m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_c(1.0),
-    m_dimsc(mk_dimsc(ta, tb)) {
+    m_dimsc(to_dirsum_dims<N, M>(m_ta.get_dims(), m_tb.get_dims(), m_permc).
+        get_dimsc()) {
 
 }
 
 
 template<size_t N, size_t M>
 tod_dirsum<N, M>::tod_dirsum(
-        dense_tensor_rd_i<k_ordera, double> &ta, double ka,
-        dense_tensor_rd_i<k_orderb, double> &tb, double kb,
-        const permutation<k_orderc> &permc) :
+    dense_tensor_rd_i<k_ordera, double> &ta, double ka,
+    dense_tensor_rd_i<k_orderb, double> &tb, double kb,
+    const permutation<k_orderc> &permc) :
 
     m_ta(ta), m_tb(tb), m_ka(ka), m_kb(kb), m_c(1.0), m_permc(permc),
-    m_dimsc(mk_dimsc(ta, tb)) {
+    m_dimsc(to_dirsum_dims<N, M>(m_ta.get_dims(), m_tb.get_dims(), m_permc).
+        get_dimsc()) {
 
-    m_dimsc.permute(permc);
 }
 
 
@@ -150,22 +151,6 @@ void tod_dirsum<N, M>::perform(bool zero,
     }
 
     tod_dirsum<N, M>::stop_timer();
-}
-
-
-template<size_t N, size_t M>
-dimensions<N + M> tod_dirsum<N, M>::mk_dimsc(
-    dense_tensor_rd_i<k_ordera, double> &ta,
-    dense_tensor_rd_i<k_orderb, double> &tb) {
-
-    const dimensions<k_ordera> &dimsa = ta.get_dims();
-    const dimensions<k_orderb> &dimsb = tb.get_dims();
-
-    index<k_orderc> i1, i2;
-    for(size_t i = 0; i < k_ordera; i++) i2[i] = dimsa[i] - 1;
-    for(size_t i = 0; i < k_orderb; i++) i2[k_ordera + i] = dimsb[i] - 1;
-
-    return dimensions<k_orderc>(index_range<k_orderc>(i1, i2));
 }
 
 

@@ -83,12 +83,6 @@ public:
      **/
     void perform(bool zero, dense_tensor_wr_i<NB, double> &tb);
 
-private:
-    /** \brief Forms the %dimensions of the output or throws an
-        exception if the input is incorrect
-     **/
-    static dimensions<M> mk_dims(
-        const dimensions<N> &dims, const sequence<N, size_t> &msk);
 };
 
 
