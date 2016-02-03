@@ -184,6 +184,10 @@ public:
 
     //@}
 
+    ptr_t get_vm_ptr() const {
+        return m_data;
+    }
+
 protected:
     //! \name Implementation of libtensor::dense_tensor_i<N, T>
     //@{

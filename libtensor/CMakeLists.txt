@@ -244,7 +244,7 @@ set(SRC_DIAG_TENSOR
     diag_tensor/impl/diag_to_add_space.C
     diag_tensor/impl/diag_to_contract2_space.C
     diag_tensor/impl/diag_tod_adjust_space.C
-   diag_tensor/impl/diag_tod_aux_constr_add.C
+    diag_tensor/impl/diag_tod_aux_constr_add.C
     diag_tensor/impl/diag_tod_aux_constr_base.C
     diag_tensor/impl/diag_tod_aux_dotprod.C
     diag_tensor/impl/diag_tod_contract2.C
@@ -397,6 +397,19 @@ set(SRC_ARMA
     arma/impl/btod_export_arma.C
 )
 
+set(SRC_XM
+    libxm/xm.c
+    libxm/alloc.c
+    block_tensor/impl/btod_contract2_1_xm.C
+    block_tensor/impl/btod_contract2_2_xm.C
+    block_tensor/impl/btod_contract2_3_xm.C
+    block_tensor/impl/btod_contract2_4_xm.C
+    block_tensor/impl/btod_contract2_5_xm.C
+    block_tensor/impl/btod_contract2_6_xm.C
+    block_tensor/impl/btod_contract2_7_xm.C
+    block_tensor/impl/btod_contract2_8_xm.C
+)
+
 if(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
 elseif(USE_CBLAS OR USE_GSL)
@@ -416,6 +429,10 @@ set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
 if(WITH_ARMADILLO)
     set(SRC ${SRC} ${SRC_ARMA})
 endif(WITH_ARMADILLO)
+if(WITH_XM)
+    set(SRC ${SRC} ${SRC_XM})
+    add_definitions(-DUSE_LIBXM)
+endif(WITH_XM)
 if(WITH_CTF)
     set(SRC ${SRC} ${SRC_CTF})
     set_property(SOURCE ${SRC_CTF} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")

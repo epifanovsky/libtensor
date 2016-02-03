@@ -15,6 +15,9 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
     add_test("btod_apply", m_utf_btod_apply);
     add_test("btod_compare", m_utf_btod_compare);
     add_test("btod_contract2", m_utf_btod_contract2);
+#ifdef USE_LIBXM
+    add_test("btod_contract2_xm", m_utf_btod_contract2_xm);
+#endif
     add_test("btod_contract3", m_utf_btod_contract3);
     add_test("btod_copy", m_utf_btod_copy);
     add_test("btod_diag", m_utf_btod_diag);

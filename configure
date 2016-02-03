@@ -5,6 +5,7 @@ CXX0=
 BUILD_TYPE=
 DEFAULT_BLAS=
 BLAS=
+WITH_XM=0
 CTF_INCLUDE=
 CTF_LIB=
 GENERATOR_UNIX="Unix Makefiles"
@@ -68,6 +69,9 @@ while [ $# -gt 0 ]; do
               ;;
     relwdeb ) set_build_type "RELWITHDEBINFO"
               ;;
+    --with-xm )
+              WITH_XM=1
+              ;;
     --with-ctf=* )
               CTF_INCLUDE="${1#--with-ctf=}/include"
               CTF_LIB="${1#--with-ctf=}/lib"
@@ -104,5 +108,5 @@ if [ -e CMakeCache.txt ]; then
     rm CMakeCache.txt
 fi
 
-CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" -D WITH_BLAS="$BLAS" -D CTF_INCLUDE="$CTF_INCLUDE" -D CTF_LIB="$CTF_LIB" ..
+CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" -D WITH_BLAS="$BLAS" -D WITH_XM=$WITH_XM -D CTF_INCLUDE="$CTF_INCLUDE" -D CTF_LIB="$CTF_LIB" ..
 
