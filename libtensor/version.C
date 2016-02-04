@@ -8,7 +8,8 @@ const char *version::k_authors[] = {
     "Evgeny Epifanovsky",
     "Michael Wormit",
     "Dmitry Zuev",
-    "Sam Manzer"
+    "Sam Manzer",
+    "Ilya Kaliman"
 };
 
 
