@@ -101,9 +101,11 @@ gen_bto_mult<N, Traits, Timed>::gen_bto_mult(
             "const permutation<N> &pb, "
             "bool recip, const scalar_transf<element_type> &trc)";
 
-    block_index_space<N> bisb(m_btb.get_bis());
+    block_index_space<N> bisb(m_btb.get_bis()), bisc1(m_bisc);
     bisb.permute(m_trb.get_perm());
-    if(! m_bisc.equals(bisb)) {
+    bisb.match_splits();
+    bisc1.match_splits();
+    if(!bisc1.equals(bisb)) {
         throw bad_block_index_space(g_ns, k_clazz, method,
             __FILE__, __LINE__, "bta, btb");
     }
