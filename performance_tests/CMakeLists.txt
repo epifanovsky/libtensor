@@ -12,12 +12,12 @@ endif(WITH_CTF)
 include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 
 set_property(TARGET libtensor_performance_tests APPEND PROPERTY
-    COMPILE_DEFINITIONS_DEBUG LIBTENSOR_DEBUG)
+    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
 set_property(TARGET libtensor_performance_tests APPEND PROPERTY
     LINK_FLAGS ${OpenMP_CXX_FLAGS})
 if(HAVE_LIBVMM)
     set_property(TARGET libtensor_performance_tests APPEND PROPERTY
-        COMPILE_DEFINITIONS_DEBUG LIBVMM_DEBUG)
+        COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBVMM_DEBUG>)
 else(HAVE_LIBVMM)
     set_property(TARGET libtensor_performance_tests APPEND PROPERTY
         COMPILE_DEFINITIONS WITHOUT_LIBVMM)

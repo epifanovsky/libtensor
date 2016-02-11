@@ -93,26 +93,29 @@ find_package(OpenMP REQUIRED)
 
 #   Find MPI library
 #
-find_package(MPI REQUIRED)
+find_package(MPI)
 if(MPI_CXX_FOUND)
     include_directories(${MPI_CXX_INCLUDE_PATH})
 elseif(MPI_FOUND)
     include_directories(${MPI_INCLUDE_PATH})
 endif(MPI_CXX_FOUND)
 
-#   Find CTF library
+#   Find CTF library (only with MPI)
 #
-set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
-set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
-find_package(CTF)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
-if(CTF_FOUND)
-    set(WITH_CTF TRUE)
-    include_directories(${CTF_INCLUDE_PATH})
-    set(LIBTENSOR_DEP_LIBS ${LIBTENSOR_DEP_LIBS} ctf)
-else(CTF_FOUND)
-    message(STATUS "Did not find CTF, distributed tensors will not be built")
-endif(CTF_FOUND)
+if(MPI_FOUND)
+    set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
+    set(CMAKE_MODULE_PATH ${LIBTENSOR_DIR}/cmake)
+    find_package(CTF)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
+    if(CTF_FOUND)
+        set(WITH_CTF TRUE)
+        include_directories(${CTF_INCLUDE_PATH})
+        set(LIBTENSOR_DEP_LIBS ${LIBTENSOR_DEP_LIBS} ctf)
+    else(CTF_FOUND)
+        message(STATUS
+            "Did not find CTF, distributed tensors will not be built")
+    endif(CTF_FOUND)
+endif(MPI_FOUND)
 
 set(ARMADILLO_ROOT $ENV{ARMADILLO_ROOT})
 set(SAVED_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
