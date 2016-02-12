@@ -15,6 +15,9 @@ namespace expr {
     \ingroup libtensor_expr_eval
  **/
 class default_eval_selector : public eval_selector_i {
+public:
+    static const char k_clazz[]; //!< Class name
+
 private:
     const expr_tree &m_expr; //!< Expression to be evaluated
     const eval_i *m_eval; //!< Evaluator

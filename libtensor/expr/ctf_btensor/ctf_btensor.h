@@ -10,8 +10,8 @@
 #include <libtensor/expr/iface/expr_lhs.h>
 #include <libtensor/expr/iface/labeled_lhs_rhs.h>
 #include <libtensor/expr/bispace/bispace.h>
+#include <libtensor/expr/eval/eval.h>
 #include "ctf_btensor_i.h"
-#include "eval_ctf_btensor.h"
 
 namespace libtensor {
 namespace expr {
@@ -82,7 +82,7 @@ void ctf_btensor<N, T>::assign(const expr_rhs<N, T> &rhs,
     }
     e.add(id, rhs.get_expr());
 
-    eval_ctf_btensor<T>().evaluate(e);
+    eval().evaluate(e);
 }
 
 
@@ -106,7 +106,7 @@ void ctf_btensor<N, T>::assign_add(const expr_rhs<N, T> &rhs,
     }
     e.add(id, rhs.get_expr());
 
-    eval_ctf_btensor<T>().evaluate(e);
+    eval().evaluate(e);
 }
 
 

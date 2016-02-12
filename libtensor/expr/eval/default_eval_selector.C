@@ -1,7 +1,11 @@
+#include <libtensor/expr/expr_exception.h>
 #include "default_eval_selector.h"
 
 namespace libtensor {
 namespace expr {
+
+
+const char default_eval_selector::k_clazz[] = "expr::default_eval_selector";
 
 
 default_eval_selector::~default_eval_selector() {
@@ -11,7 +15,12 @@ default_eval_selector::~default_eval_selector() {
 
 const eval_i &default_eval_selector::get_selected() const {
 
-    if(!m_eval) throw 0;
+    static const char method[] = "get_selected()";
+
+    if(!m_eval) {
+        throw expr_exception("libtensor", k_clazz, method, __FILE__, __LINE__,
+            "Unable to find a suitable evaluator for the expression");
+    }
     return *m_eval;
 }
 
