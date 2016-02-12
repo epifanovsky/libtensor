@@ -84,7 +84,7 @@ const ctf_symmetry<N, T> &ctf_dense_tensor<N, T>::on_req_symmetry() {
 
 
 template<size_t N, typename T>
-ctf_dense_tensor<N, T>::ctf_tensor_adapter*
+typename ctf_dense_tensor<N, T>::ctf_tensor_adapter*
 ctf_dense_tensor<N, T>::on_req_ctf_tensor(size_t icomp) {
 
     return m_tens[icomp];
