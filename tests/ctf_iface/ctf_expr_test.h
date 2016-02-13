@@ -14,6 +14,8 @@ public:
     virtual void perform() throw(libtest::test_exception);
 
 private:
+    void test_conv_1();
+    void test_conv_2();
     void test_1();
     void test_2();
     void test_3();

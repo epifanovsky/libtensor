@@ -24,6 +24,8 @@ void ctf_expr_test::perform() throw(libtest::test_exception) {
 
     try {
 
+        test_conv_1();
+        test_conv_2();
         test_1();
         test_2();
         test_3();
@@ -40,6 +42,71 @@ void ctf_expr_test::perform() throw(libtest::test_exception) {
 
     ctf::exit();
     allocator<double>::shutdown();
+}
+
+
+void ctf_expr_test::test_conv_1() {
+
+    static const char testname[] = "ctf_expr_test::test_conv_1()";
+
+    try {
+
+    bispace<1> so(13);
+    bispace<1> sv(7);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2, double> t1(sov), t2(sov), t2_ref(sov);
+    ctf_btensor<2, double> dt1(sov);
+
+    btod_random<2>().perform(t1);
+    btod_random<2>().perform(t2);
+    t1.set_immutable();
+
+    ctf_btod_distribute<2>(t1).perform(dt1);
+
+    letter i, a;
+
+    t2_ref(i|a) = t1(i|a);
+    t2(i|a) = dt1(i|a);
+
+    compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_conv_2() {
+
+    static const char testname[] = "ctf_expr_test::test_conv_2()";
+
+    try {
+
+    bispace<1> so(13);
+    bispace<1> sv(7);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2, double> t1(sov), t2(sov), t2_ref(sov);
+    ctf_btensor<2, double> dt1(sov);
+
+    btod_random<2>().perform(t1);
+    t1.set_immutable();
+
+    letter i, a;
+
+    dt1(i|a) = t1(i|a);
+    t2_ref(i|a) = t1(i|a);
+
+    ctf_btod_collect<2>(dt1).perform(t2);
+
+    compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
 }
 
 

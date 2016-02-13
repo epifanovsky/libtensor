@@ -1,4 +1,5 @@
 #include <libtensor/core/tensor_transf_double.h>
+#include <libtensor/expr/btensor/btensor_i.h>
 #include <libtensor/expr/ctf_btensor/ctf_btensor.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_dot_product.h>
@@ -9,6 +10,7 @@
 #include <libtensor/expr/eval/tensor_type_check.h>
 #include "../eval_ctf_btensor.h"
 #include "eval_ctf_btensor_double_autoselect.h"
+#include "eval_ctf_btensor_double_convert.h"
 #include "eval_ctf_btensor_double_dot_product.h"
 #include "eval_ctf_btensor_double_trace.h"
 #include "eval_tree_builder_ctf_btensor.h"
@@ -94,9 +96,36 @@ void eval_node::evaluate(expr_tree::node_id_t lhs, bool add) {
 
     tensor_transf<N, double> tr;
     expr_tree::node_id_t rhs = transf_from_node(m_tree, m_rhs, tr);
-    const node &n = m_tree.get_vertex(rhs);
 
-    eval_ctf_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs, add);
+    //  Check whether we are dealing with the special case of type conversion:
+    //  b(i|j) = a(i|j) with different tensor types a and b
+
+    bool type_conversion = false;
+    const node &nrhs = m_tree.get_vertex(rhs);
+    const node &nlhs = m_tree.get_vertex(lhs);
+    if(nlhs.check_type<node_ident>() && nrhs.check_type<node_ident>()) {
+        const node_ident_any_tensor<N, double> &nrhs1 =
+            nrhs.template recast_as< node_ident_any_tensor<N, double> >();
+        const node_ident_any_tensor<N, double> &nlhs1 =
+            nlhs.template recast_as< node_ident_any_tensor<N, double> >();
+        std::string ttrhs = nrhs1.get_tensor().get_tensor_type();
+        std::string ttlhs = nlhs1.get_tensor().get_tensor_type();
+        if(ttrhs == ctf_btensor_i<N, double>::k_tensor_type &&
+            ttlhs == btensor_i<N, double>::k_tensor_type) {
+            type_conversion = true;
+        }
+        if(ttrhs == btensor_i<N, double>::k_tensor_type &&
+            ttlhs == ctf_btensor_i<N, double>::k_tensor_type) {
+            type_conversion = true;
+        }
+    }
+
+    if(type_conversion) {
+        eval_ctf_btensor_double::convert<N>(m_tree, rhs).evaluate(lhs);
+    } else {
+        eval_ctf_btensor_double::autoselect<N>(m_tree, rhs, tr).
+            evaluate(lhs, add);
+    }
 }
 
 
@@ -116,6 +145,44 @@ public:
     template<size_t N>
     void dispatch() {
         eval_node(m_tree, m_rhs).evaluate<N>(m_lhs, m_add);
+    }
+
+};
+
+
+class is_conversion {
+private:
+    const expr_tree &m_tree;
+    expr_tree::node_id_t m_lhs;
+    expr_tree::node_id_t m_rhs;
+    bool m_valid;
+
+public:
+    is_conversion(const expr_tree &tr, expr_tree::node_id_t lhs,
+        expr_tree::node_id_t rhs) :
+        m_tree(tr), m_lhs(lhs), m_rhs(rhs), m_valid(false)
+    { }
+
+    bool valid() const { return m_valid; }
+
+    template<size_t N>
+    void dispatch() {
+        const node_ident_any_tensor<N, double> &rhs =
+            m_tree.get_vertex(m_rhs).
+            template recast_as< node_ident_any_tensor<N, double> >();
+        const node_ident_any_tensor<N, double> &lhs =
+            m_tree.get_vertex(m_lhs).
+            template recast_as< node_ident_any_tensor<N, double> >();
+        std::string ttrhs = rhs.get_tensor().get_tensor_type();
+        std::string ttlhs = lhs.get_tensor().get_tensor_type();
+        if(ttrhs == ctf_btensor_i<N, double>::k_tensor_type &&
+            ttlhs == btensor_i<N, double>::k_tensor_type) {
+            m_valid = true;
+        }
+        if(ttrhs == btensor_i<N, double>::k_tensor_type &&
+            ttlhs == ctf_btensor_i<N, double>::k_tensor_type) {
+            m_valid = true;
+        }
     }
 
 };
@@ -231,7 +298,24 @@ eval_ctf_btensor<double>::~eval_ctf_btensor<double>() {
 
 bool eval_ctf_btensor<double>::can_evaluate(const expr_tree &e) const {
 
-    return tensor_type_check<Nmax, double, ctf_btensor_i>(e);
+    bool can_eval = tensor_type_check<Nmax, double, ctf_btensor_i>(e);
+    if(!can_eval) {
+        expr_tree::node_id_t nid = e.get_root();
+        if(e.get_vertex(nid).check_type<node_assign>()) {
+            const expr_tree::edge_list_t &out = e.get_edges_out(nid);
+            const node_assign &n = e.get_vertex(nid).recast_as<node_assign>();
+            const node &lhs = e.get_vertex(out[0]);
+            const node &rhs = e.get_vertex(out[1]);
+            if(lhs.get_n() > 0 && lhs.check_type<node_ident>() &&
+                    rhs.check_type<node_ident>()) {
+                is_conversion isconv(e, out[0], out[1]);
+                dispatch_1<1, Nmax>::dispatch(isconv, lhs.get_n());
+                can_eval = isconv.valid();
+            }
+        }
+    }
+
+    return can_eval;
 }
 
 

@@ -381,6 +381,7 @@ set(SRC_CTF
     expr/ctf_btensor/impl/eval_ctf_btensor_double_add.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_autoselect.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_contract.C
+    expr/ctf_btensor/impl/eval_ctf_btensor_double_convert.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_copy.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_diag.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_dirsum.C
