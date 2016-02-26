@@ -1,11 +1,6 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod_add.h>
-#include <libtensor/block_tensor/btod_contract2.h>
-#include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/block_tensor/btod_set_diag.h>
-#include <libtensor/block_tensor/btod_symmetrize2.h>
+#include <libtensor/block_tensor/btod.h>
 #include <libtensor/symmetry/point_group_table.h>
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_label.h>
@@ -39,6 +34,7 @@ void expr_test::perform() throw(libtest::test_exception) {
         test_11();
         test_12();
         test_13();
+        test_14();
 
     } catch(...) {
         allocator<double>::shutdown();
@@ -838,6 +834,36 @@ void expr_test::test_13() throw(libtest::test_exception) {
     t3(i|a) += contract(b, t1(i|b), t2(a|b));
 
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_test::test_14() throw(libtest::test_exception) {
+
+    static const char *testname = "expr_test::test_14()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2> t1(sov), t1_ref(sov);
+
+    btod_random<2>().perform(t1);
+
+    btod_copy<2>(t1).perform(t1_ref);
+    btod_scale<2>(t1_ref, 0.4).perform();
+
+    letter i, a;
+
+    t1(i|a) *= 0.4;
+
+    compare_ref<2>::compare(testname, t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

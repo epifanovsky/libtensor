@@ -4,8 +4,10 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/core/tensor_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
-#include <libtensor/expr/dag/node_assign.h>
 #include <libtensor/expr/dag/expr_tree.h>
+#include <libtensor/expr/dag/node_assign.h>
+#include <libtensor/expr/dag/node_const_scalar.h>
+#include <libtensor/expr/dag/node_scale.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/iface/expr_lhs.h>
@@ -53,6 +55,10 @@ public:
     /** \brief Computes an expression and adds it to this tensor
      **/
     virtual void assign_add(const expr_rhs<N, T> &rhs, const label<N> &label);
+
+    /** \brief Scales this tensor by a constant
+     **/
+    virtual void scale(const T &c);
 
     /** \brief Converts any_tensor to btensor
      **/
@@ -104,6 +110,21 @@ void btensor<N, T>::assign_add(const expr_rhs<N, T> &rhs,
         id = e.add(id, n3);
     }
     e.add(id, rhs.get_expr());
+
+    eval().evaluate(e);
+}
+
+
+template<size_t N, typename T>
+void btensor<N, T>::scale(const T &c) {
+
+    node_scale n1(N);
+    expr_tree e(n1);
+    expr_tree::node_id_t id = e.get_root();
+    node_ident_any_tensor<N, T> n2(*this);
+    node_const_scalar<T> n3(c);
+    e.add(id, n2);
+    e.add(id, n3);
 
     eval().evaluate(e);
 }

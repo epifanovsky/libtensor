@@ -33,6 +33,7 @@ void ctf_expr_test::perform() throw(libtest::test_exception) {
         test_5();
         test_6();
         test_7();
+        test_8();
 
     } catch(...) {
         ctf::exit();
@@ -487,6 +488,38 @@ void ctf_expr_test::test_7() {
     ctf_btod_collect<4>(dj_ooov).perform(j_ooov);
 
     compare_ref<4>::compare(testname, j_ooov, j_ooov_ref, 1e-13);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void ctf_expr_test::test_8() {
+
+    static const char testname[] = "ctf_expr_test::test_8()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> sov(so|sv);
+
+    btensor<2, double> t1(sov), t1_ref(sov);
+    ctf_btensor<2, double> dt1(sov);
+
+    btod_random<2>().perform(t1);
+    ctf_btod_distribute<2>(t1).perform(dt1);
+
+    letter i, a;
+
+    t1_ref(i|a) = 0.4 * t1(i|a);
+    dt1(i|a) *= 0.4;
+
+    ctf_btod_collect<2>(dt1).perform(t1);
+
+    compare_ref<2>::compare(testname, t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

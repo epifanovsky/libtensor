@@ -31,6 +31,11 @@ public:
      **/
     virtual void assign_add(const expr_rhs<N, T> &rhs, const label<N> &l) = 0;
 
+    /** \brief Performs scaling of the left-hand side of the expression
+            by a constant
+     **/
+    virtual void scale(const T &c) = 0;
+
     /** \brief Attaches a letter label to the left-hand-side of a tensor
             expression
      **/
@@ -66,6 +71,10 @@ public:
      **/
     const expr_rhs<N, T> &operator+=(const expr_rhs<N, T> &rhs);
 
+    /** \brief Scaling of a tensor expression by a constant
+     **/
+    void operator*=(const T &c);
+
 };
 
 
@@ -89,6 +98,13 @@ const expr_rhs<N, T> &labeled_lhs<N, T>::operator+=(const expr_rhs<N, T> &rhs) {
 
     m_lhs.assign_add(rhs, m_label);
     return rhs;
+}
+
+
+template<size_t N, typename T>
+void labeled_lhs<N, T>::operator*=(const T &c) {
+
+    m_lhs.scale(c);
 }
 
 

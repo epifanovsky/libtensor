@@ -29,7 +29,7 @@ endif(WITH_CTF)
 
 target_link_libraries(libtensor_performance_tests
     tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS}
-    test)
+    libtest)
 if(WITH_CTF)
     set_property(TARGET libtensor_ctf_benchmarks APPEND PROPERTY
         LINK_FLAGS ${OpenMP_CXX_FLAGS})

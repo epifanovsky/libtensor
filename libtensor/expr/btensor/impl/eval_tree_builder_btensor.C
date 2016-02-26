@@ -5,6 +5,7 @@
 #include <libtensor/expr/dag/node_const_scalar.h>
 #include <libtensor/expr/dag/node_ident.h>
 #include <libtensor/expr/dag/node_scalar.h>
+#include <libtensor/expr/dag/node_scale.h>
 #include <libtensor/expr/dag/node_symm.h>
 #include <libtensor/expr/dag/node_transform.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -110,6 +111,8 @@ void assume_adds(graph &g) {
 
 void insert_intermediates(graph &g, graph::node_id_t n0) {
 
+    if(g.get_vertex(n0).check_type<node_scale>()) return;
+
     if(!g.get_vertex(n0).check_type<node_assign>()) {
         throw eval_exception(__FILE__, __LINE__, "eval",
             "eval_tree_builder_btensor", "insert_intermediates()",
@@ -173,7 +176,10 @@ void make_eval_order_depth_first(graph &g, node_id_t n,
         make_eval_order_depth_first(g, eo[i], order);
     }
 
-    if(g.get_vertex(n).check_type<node_assign>()) order.push_back(n);
+    if(g.get_vertex(n).check_type<node_assign>() ||
+        g.get_vertex(n).check_type<node_scale>()) {
+        order.push_back(n);
+    }
 }
 
 } // unnamed namespace
@@ -188,9 +194,12 @@ void eval_tree_builder_btensor::build() {
 
     expr_tree::node_id_t head = m_tree.get_root();
     const node &hnode = m_tree.get_vertex(head);
-    if (hnode.get_op().compare(node_assign::k_op_type) != 0) {
+
+    if(hnode.get_op() != node_assign::k_op_type &&
+        hnode.get_op() != node_scale::k_op_type) {
+
         throw bad_parameter("iface", k_clazz, method,
-                __FILE__, __LINE__, "Assignment node missing.");
+                __FILE__, __LINE__, "Unexpected root node.");
     }
 
     opt_merge_equiv_ident(m_tree);

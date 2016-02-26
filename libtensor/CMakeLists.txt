@@ -266,6 +266,7 @@ set(SRC_EXPR
     expr/btensor/impl/eval_btensor_double_dirsum.C
     expr/btensor/impl/eval_btensor_double_div.C
     expr/btensor/impl/eval_btensor_double_dot_product.C
+    expr/btensor/impl/eval_btensor_double_scale.C
     expr/btensor/impl/eval_btensor_double_set.C
     expr/btensor/impl/eval_btensor_double_symm.C
     expr/btensor/impl/eval_btensor_double_trace.C
@@ -285,6 +286,7 @@ set(SRC_EXPR
     expr/dag/node_null.C
     expr/dag/node_product.C
     expr/dag/node_scalar.C
+    expr/dag/node_scale.C
     expr/dag/node_set.C
     expr/dag/node_symm.C
     expr/dag/node_trace.C
@@ -387,6 +389,7 @@ set(SRC_CTF
     expr/ctf_btensor/impl/eval_ctf_btensor_double_dirsum.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_div.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_dot_product.C
+    expr/ctf_btensor/impl/eval_ctf_btensor_double_scale.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_set.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_symm.C
     expr/ctf_btensor/impl/eval_ctf_btensor_double_trace.C

@@ -50,6 +50,10 @@ public:
      **/
     virtual void assign_add(const expr_rhs<N, T> &rhs, const label<N> &lab);
 
+    /** \brief Scales this tensor by a constant
+     **/
+    virtual void scale(const T &c);
+
 protected:
     /** \brief Actual implementation of operator(), to be redefined in derived
             classes if necessary
@@ -106,6 +110,22 @@ void expr_tensor<N, T>::assign_add(const expr_rhs<N, T> &rhs,
         e.add(id, rhs.get_expr());
         m_expr = new expr_tree(e);
     }
+}
+
+
+template<size_t N, typename T>
+void expr_tensor<N, T>::scale(const T &c) {
+
+    if(!m_expr) throw 0;
+
+    std::vector<size_t> perm(N);
+    for(size_t i = 0; i < N; i++) perm[i] = i;
+    node_transform<T> nt(perm, scalar_transf<T>(c));
+    expr_tree e(nt);
+    expr_tree::node_id_t id = e.get_root();
+    e.add(e.get_root(), *m_expr);
+    delete m_expr;
+    m_expr = new expr_tree(e);
 }
 
 

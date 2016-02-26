@@ -25,6 +25,7 @@ void expr_tensor_test::perform() throw(libtest::test_exception) {
     test_2();
     test_3();
     test_4();
+    test_5();
 }
 
 
@@ -116,6 +117,29 @@ void expr_tensor_test::test_4() {
     letter i, j, k;
     t3(i|j) = contract(k, t1(i|k), t2(k|j));
     calculate_4(t4, t1, t3);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    } catch(std::exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void expr_tensor_test::test_5() {
+
+    static const char testname[] = "expr_tensor_test::test_5()";
+
+    try {
+
+    bispace<1> o(10);
+
+    btensor<1> t1(o), t2(o);
+    expr_tensor<1> t3;
+
+    letter i;
+    t3(i) = t1(i) + t2(i);
+    t3(i) *= 2.0;
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());

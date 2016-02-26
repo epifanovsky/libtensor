@@ -407,7 +407,7 @@ endif(HAVE_LIBVMM)
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor tensor_core tensor_block_sparse
-    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} test)
+    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} libtest)
 set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
 endforeach(TARGET)
 

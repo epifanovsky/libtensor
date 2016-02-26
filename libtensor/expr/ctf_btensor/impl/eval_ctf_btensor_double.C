@@ -12,6 +12,7 @@
 #include "eval_ctf_btensor_double_autoselect.h"
 #include "eval_ctf_btensor_double_convert.h"
 #include "eval_ctf_btensor_double_dot_product.h"
+#include "eval_ctf_btensor_double_scale.h"
 #include "eval_ctf_btensor_double_trace.h"
 #include "eval_tree_builder_ctf_btensor.h"
 #include "ctf_btensor_from_node.h"
@@ -48,6 +49,7 @@ public:
 
 private:
     void handle_assign(const expr_tree::node_id_t id);
+    void handle_scale(const expr_tree::node_id_t id);
 
     void verify_scalar(const node &n);
     void verify_tensor(const node &n);
@@ -150,6 +152,26 @@ public:
 };
 
 
+class eval_scale_tensor {
+private:
+    const expr_tree &m_tree;
+    expr_tree::node_id_t m_lhs;
+    expr_tree::node_id_t m_rhs;
+
+public:
+    eval_scale_tensor(const expr_tree &tr, expr_tree::node_id_t lhs,
+        expr_tree::node_id_t rhs) :
+        m_tree(tr), m_lhs(lhs), m_rhs(rhs)
+    { }
+
+    template<size_t N>
+    void dispatch() {
+        eval_ctf_btensor_double::scale<N>(m_tree, m_rhs).evaluate(m_lhs);
+    }
+
+};
+
+
 class is_conversion {
 private:
     const expr_tree &m_tree;
@@ -190,17 +212,20 @@ public:
 
 void eval_ctf_btensor_double_impl::evaluate() {
 
-    for (eval_order_t::const_iterator i = m_order.begin();
+    for(eval_order_t::const_iterator i = m_order.begin();
             i != m_order.end(); i++) {
 
         const node &n = m_tree.get_vertex(*i);
-        if(!n.check_type<node_assign>()) {
+        if(n.check_type<node_assign>()) {
+            handle_assign(*i);
+        } else if(n.check_type<node_scale>()) {
+            handle_scale(*i);
+        } else {
             throw eval_exception(__FILE__, __LINE__, "libtensor::expr",
                 "eval_ctf_btensor_double_impl", "evaluate()",
-                "Evaluator expects an assignment node.");
+                "Unexpected node type.");
         }
 
-        handle_assign(*i);
     }
 }
 
@@ -240,6 +265,26 @@ void eval_ctf_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
         eval_node(m_tree, out[1]).evaluate_scalar(out[0]);
 
     }
+}
+
+
+void eval_ctf_btensor_double_impl::handle_scale(expr_tree::node_id_t id) {
+
+    const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
+    const node_scale &n = m_tree.get_vertex(id).recast_as<node_scale>();
+
+    if(out.size() != 2) {
+        throw eval_exception(__FILE__, __LINE__, "libtensor::expr",
+            "eval_ctf_btensor_double_impl", "handle_scale()",
+            "Malformed expression (scaling must have two children).");
+    }
+
+    const node &lhs = m_tree.get_vertex(out[0]);
+
+    verify_tensor(lhs);
+
+    eval_scale_tensor e(m_tree, out[0], out[1]);
+    dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
 }
 
 
