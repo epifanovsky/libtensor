@@ -73,6 +73,11 @@ public:
     {
         throw bad_parameter(g_ns, k_clazz,"assign_add",__FILE__, __LINE__,"assign_add not implemented!");
     }
+    virtual void scale(const T &c)
+    {
+        throw bad_parameter(g_ns, k_clazz,"scale",__FILE__, __LINE__,"scale not implemented!");
+    }
+
 };
 
 template<size_t N,typename T>
