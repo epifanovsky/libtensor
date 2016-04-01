@@ -42,6 +42,9 @@ public:
 };
 
 
+extern bool use_libxm; //!< Swtich between native/libxm btod_contract
+
+
 } // namespace eval_btensor_double
 } // namespace expr
 } // namespace libtensor

@@ -32,6 +32,11 @@ public:
      **/
     virtual void evaluate(const expr_tree &tree) const;
 
+public:
+    /** \brief Specifies whether to use libxm contractions (if available)
+     **/
+    static void use_libxm(bool usexm);
+
 };
 
 

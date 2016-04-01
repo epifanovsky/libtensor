@@ -9,6 +9,7 @@
 #include <libtensor/expr/eval/tensor_type_check.h>
 #include "../eval_btensor.h"
 #include "eval_btensor_double_autoselect.h"
+#include "eval_btensor_double_contract.h"
 #include "eval_btensor_double_dot_product.h"
 #include "eval_btensor_double_scale.h"
 #include "eval_btensor_double_trace.h"
@@ -281,6 +282,12 @@ void eval_btensor<double>::evaluate(const expr_tree &tree) const {
     bld.build();
 
     eval_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
+}
+
+
+void eval_btensor<double>::use_libxm(bool usexm) {
+
+    eval_btensor_double::use_libxm = usexm;
 }
 
 
