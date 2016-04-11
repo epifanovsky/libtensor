@@ -246,6 +246,41 @@ fail:
 }
 
 void
+xm_allocator_memset(struct xm_allocator *allocator, uintptr_t data_ptr,
+    unsigned char c, size_t size_bytes)
+{
+	size_t write_bytes;
+	ssize_t written;
+	off_t offset;
+	unsigned char buf[65536];
+
+	assert(data_ptr != XM_NULL_PTR);
+
+	if (allocator->path == NULL) {
+		memset((void *)data_ptr, c, size_bytes);
+		return;
+	}
+
+	memset(buf, c, sizeof buf);
+	write_bytes = 0;
+	for (offset = (off_t)data_ptr;
+	     write_bytes + sizeof buf < size_bytes;
+	     offset += sizeof buf) {
+		written = pwrite(allocator->fd, buf, sizeof buf, offset);
+		if (written != (ssize_t)(sizeof buf)) {
+			perror("pwrite");
+			abort();
+		}
+		write_bytes += sizeof buf;
+	}
+	written = pwrite(allocator->fd, buf, size_bytes - write_bytes, offset);
+	if (written != (ssize_t)(size_bytes - write_bytes)) {
+		perror("pwrite");
+		abort();
+	}
+}
+
+void
 xm_allocator_read(struct xm_allocator *allocator, uintptr_t data_ptr,
     void *mem, size_t size_bytes)
 {

@@ -41,6 +41,8 @@ BENCHMARK= benchmark
 BENCHMARK_O= benchmark.o
 TEST= test
 TEST_O= test.o
+TEST3= test3
+TEST3_O= test3.o
 
 AUX_O= aux.o
 XM_A= xm.a
@@ -50,7 +52,7 @@ AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
 
-all: $(BENCHMARK) $(TEST)
+all: $(BENCHMARK) $(TEST) $(TEST3)
 
 $(BENCHMARK): $(AUX_O) $(XM_A) $(BENCHMARK_O)
 	$(CC) -o $@ $(CFLAGS) $(BENCHMARK_O) $(AUX_O) $(XM_A) $(LDFLAGS) $(LIBS)
@@ -58,11 +60,15 @@ $(BENCHMARK): $(AUX_O) $(XM_A) $(BENCHMARK_O)
 $(TEST): $(AUX_O) $(XM_A) $(TEST_O)
 	$(CC) -o $@ $(CFLAGS) $(TEST_O) $(AUX_O) $(XM_A) $(LDFLAGS) $(LIBS)
 
+$(TEST3): $(AUX_O) $(XM_A) $(TEST3_O)
+	$(CC) -o $@ $(CFLAGS) $(TEST3_O) $(AUX_O) $(XM_A) $(LDFLAGS) $(LIBS)
+
 $(XM_A): $(XM_O)
 	$(AR) $@ $(XM_O)
 	$(RANLIB) $@
 
-check: $(TEST)
+check: $(TEST) $(TEST3)
+	@./test3 2>/dev/null
 	@./test 30 2>/dev/null
 
 dist:
@@ -72,6 +78,7 @@ clean:
 	$(RM) $(XM_A) $(XM_O) $(AUX_O)
 	$(RM) $(BENCHMARK) $(BENCHMARK_O)
 	$(RM) $(TEST) $(TEST_O)
+	$(RM) $(TEST3) $(TEST3_O)
 	$(RM) *.core mapping libxm.tgz
 
 .PHONY: all check clean dist

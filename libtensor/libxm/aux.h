@@ -27,6 +27,7 @@ int xm_tensor_init(struct xm_tensor *, struct xm_allocator *, size_t, int);
 int xm_tensor_init_oo(struct xm_tensor *, struct xm_allocator *, size_t, int);
 int xm_tensor_init_ov(struct xm_tensor *, struct xm_allocator *, size_t, int);
 int xm_tensor_init_vv(struct xm_tensor *, struct xm_allocator *, size_t, int);
+int xm_tensor_init_vvx(struct xm_tensor *, struct xm_allocator *, size_t, int);
 int xm_tensor_init_oooo(struct xm_tensor *, struct xm_allocator *, size_t, int);
 int xm_tensor_init_ooov(struct xm_tensor *, struct xm_allocator *, size_t, int);
 int xm_tensor_init_oovv(struct xm_tensor *, struct xm_allocator *, size_t, int);

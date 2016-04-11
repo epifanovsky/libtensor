@@ -1,7 +1,7 @@
 #include <libtensor/block_tensor/btod_contract2.h>
-#ifdef USE_LIBXM
+#ifdef WITH_LIBXM
 #include <libtensor/block_tensor/btod_contract2_xm.h>
-#endif // USE_LIBXM
+#endif // WITH_LIBXM
 #include <libtensor/block_tensor/btod_ewmult2.h>
 #include <libtensor/block_tensor/btod_scale.h>
 #include <libtensor/expr/common/metaprog.h>
@@ -202,7 +202,7 @@ void eval_contract_impl<NC>::init_contract(
     contr.permute_b(btb.get_transf().get_perm());
     contr.permute_c(trc.get_perm());
 
-#ifdef USE_LIBXM
+#ifdef WITH_LIBXM
     if(use_libxm) {
         m_op = new btod_contract2_xm<N, M, K>(contr,
             bta.get_btensor(), bta.get_transf().get_scalar_tr().get_coeff(),
@@ -214,12 +214,12 @@ void eval_contract_impl<NC>::init_contract(
             btb.get_btensor(), btb.get_transf().get_scalar_tr().get_coeff(),
             trc.get_scalar_tr().get_coeff());
     }
-#else // USE_LIBXM
+#else // WITH_LIBXM
     m_op = new btod_contract2<N, M, K>(contr,
         bta.get_btensor(), bta.get_transf().get_scalar_tr().get_coeff(),
         btb.get_btensor(), btb.get_transf().get_scalar_tr().get_coeff(),
         trc.get_scalar_tr().get_coeff());
-#endif // USE_LIBXM
+#endif // WITH_LIBXM
 }
 
 

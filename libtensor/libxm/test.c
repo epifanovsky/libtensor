@@ -1071,7 +1071,8 @@ run_test(int test_num, int skip)
 	struct xm_tensor *a, *b, *c, *d;
 	struct test t;
 	const char *path;
-	size_t id;
+	size_t buf_bytes, id;
+	int res;
 
 	id = rnd(1, sizeof(tests) / sizeof(*tests));
 	printf("test=%-4did=%-3zu", test_num, id);
@@ -1107,22 +1108,33 @@ run_test(int test_num, int skip)
 		fatal("tensor_init(d)");
 	xm_tensor_copy_data(d, c);
 
+	buf_bytes = rnd(10000, 100000);
+	xm_set_memory_limit(buf_bytes);
+
 	if (!skip) {
-		if (xm_contract(t.alpha, a, b, t.beta, d, t.idxa,
-		    t.idxb, t.idxc)) {
-			fatal("xm_contract");
-		} else {
+		res = xm_contract(t.alpha, a, b, t.beta, d,
+		    t.idxa, t.idxb, t.idxc);
+		switch (res) {
+		case XM_RESULT_SUCCESS:
 			t.ref_compare(a, b, c, d, t.alpha, t.beta);
+			printf("   success\n");
+			break;
+		case XM_RESULT_BUFFER_TOO_SMALL:
+			printf("   buffer too small\n");
+			break;
+		case XM_RESULT_NO_MEMORY:
+			fatal("xm_contract: out of memory");
+		default:
+			fatal("xm_contract: unknown error");
 		}
-	}
+	} else
+		printf("   skipping\n");
 
 	xm_tensor_free(a);
 	xm_tensor_free(b);
 	xm_tensor_free(c);
 	xm_tensor_free(d);
 	xm_allocator_destroy(allocator);
-
-	printf("   %s\n", skip ? "skipping" : "success");
 }
 
 int

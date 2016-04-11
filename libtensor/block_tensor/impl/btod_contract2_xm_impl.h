@@ -2,7 +2,7 @@
 #define LIBTENSOR_BTOD_CONTRACT2_XM_IMPL_H
 
 #include <stdexcept>
-//#include <libmdc/threading_policy.h>
+#include <libmdc/threading_policy.h>
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_add.h>
 #include <libtensor/gen_block_tensor/gen_bto_aux_copy.h>
@@ -348,7 +348,7 @@ void btod_contract2_xm<N, M, K>::perform(
     // setup tensor c
     setup_output_tensor<NC, bti_traits>(c, allocator, btc);
 
-    //threading_policy::enable_blas_only();
+    threading_policy::enable_blas_only();
 
     // contract
     double alpha = m_ka.get_coeff() * m_kb.get_coeff() * m_kc.get_coeff();
@@ -356,7 +356,7 @@ void btod_contract2_xm<N, M, K>::perform(
         throw std::runtime_error("xm_contract");
     }
 
-    //threading_policy::pop();
+    threading_policy::pop();
 
     {
         gen_block_tensor_ctrl<NC, bti_traits> ctrl(btc);

@@ -31,6 +31,8 @@ struct xm_allocator *xm_allocator_create(const char *path);
 const char *xm_allocator_get_path(struct xm_allocator *allocator);
 uintptr_t xm_allocator_allocate(struct xm_allocator *allocator,
     size_t size_bytes);
+void xm_allocator_memset(struct xm_allocator *allocator, uintptr_t data_ptr,
+    unsigned char c, size_t size_bytes);
 void xm_allocator_read(struct xm_allocator *allocator, uintptr_t data_ptr,
     void *mem, size_t size_bytes);
 void xm_allocator_write(struct xm_allocator *allocator, uintptr_t data_ptr,
