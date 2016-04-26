@@ -29,5 +29,10 @@ bool ctf::is_master() {
 }
 
 
+unsigned ctf::ctf_version() {
+    return CTF_VERSION;
+}
+
+
 } // namespace libtensor
 
