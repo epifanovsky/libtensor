@@ -1,17 +1,10 @@
 #include <list>
 #include <libtensor/core/contraction2_list_builder.h>
-#include "contraction2_list_builder_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-
-void contraction2_list_builder_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-}
-
-
-namespace contraction2_list_builder_ns {
+namespace {
 
 struct loop_list_node {
 private:
@@ -35,12 +28,12 @@ public:
     }
 };
 
-} // namespace contraction2_list_builder_ns
-namespace ns = contraction2_list_builder_ns;
+} // unnamed namespace
 
-void contraction2_list_builder_test::test_1() throw(libtest::test_exception) {
 
-    static const char *testname = "contraction2_list_builder::test_1()";
+int test_1() {
+
+    static const char testname[] = "contraction2_list_builder::test_1()";
 
     try {
 
@@ -57,15 +50,21 @@ void contraction2_list_builder_test::test_1() throw(libtest::test_exception) {
     dimensions<4> dimb(index_range<4>(ib1, ib2));
     dimensions<4> dimc(index_range<4>(ic1, ic2));
 
-    std::list<ns::loop_list_node> lst;
-    ns::loop_list_adapter adapter(lst);
+    std::list<loop_list_node> lst;
+    loop_list_adapter adapter(lst);
     contraction2_list_builder<1, 3, 1> bldr(contr);
     bldr.populate(adapter, dima, dimb, dimc);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return test_1();
+}
+

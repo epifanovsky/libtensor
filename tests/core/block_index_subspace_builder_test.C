@@ -1,27 +1,15 @@
 #include <libtensor/core/block_index_subspace_builder.h>
-#include "block_index_subspace_builder_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void block_index_subspace_builder_test::perform()
-    throw(libtest::test_exception) {
-
-    test_0();
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-}
+using namespace libtensor;
 
 
 /** \test Subspace of [6(2),6(3)] with mask [1,1] (no dimensions removed).
         Expected result: [6(2),2(3)].
  **/
-void block_index_subspace_builder_test::test_0()
-    throw(libtest::test_exception) {
+int test_0() {
 
-    static const char *testname =
+    static const char testname[] =
         "block_index_subspace_builder_test::test_0()";
 
     try {
@@ -44,23 +32,24 @@ void block_index_subspace_builder_test::test_0()
 
     block_index_subspace_builder<2, 0> bb(bis, m);
     if(!bis_ref.equals(bb.get_bis())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!bis_ref.equals(bb.get_bis()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Subspace of [6,6] with mask [1,0]. No blocks.
         Expected result: [6].
  **/
-void block_index_subspace_builder_test::test_1()
-    throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname =
+    static const char testname[] =
         "block_index_subspace_builder_test::test_1()";
 
     try {
@@ -81,23 +70,24 @@ void block_index_subspace_builder_test::test_1()
 
     block_index_subspace_builder<1, 1> bb(bis, m);
     if(!bis_ref.equals(bb.get_bis())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!bis_ref.equals(bb.get_bis()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Subspace of [6,10] with mask [1,0]. No blocks.
         Expected result: [6].
  **/
-void block_index_subspace_builder_test::test_2()
-    throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname =
+    static const char testname[] =
         "block_index_subspace_builder_test::test_2()";
 
     try {
@@ -118,23 +108,24 @@ void block_index_subspace_builder_test::test_2()
 
     block_index_subspace_builder<1, 1> bb(bis, m);
     if(!bis_ref.equals(bb.get_bis())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!bis_ref.equals(bb.get_bis()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Subspace of [6(2),6(3),6(2),6(3)] with mask [1,0,1,0].
         Expected result: [6(2),6(2)].
  **/
-void block_index_subspace_builder_test::test_3()
-    throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname =
+    static const char testname[] =
         "block_index_subspace_builder_test::test_3()";
 
     try {
@@ -164,23 +155,24 @@ void block_index_subspace_builder_test::test_3()
 
     block_index_subspace_builder<2, 2> bb(bis, m);
     if(!bis_ref.equals(bb.get_bis())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!bis_ref.equals(bb.get_bis()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Subspace of [6(2),6(3),6(2),6(3)] with mask [1,0,0,1].
         Expected result: [6(2),6(3)].
  **/
-void block_index_subspace_builder_test::test_4()
-    throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname =
+    static const char testname[] =
         "block_index_subspace_builder_test::test_4()";
 
     try {
@@ -211,14 +203,28 @@ void block_index_subspace_builder_test::test_4()
 
     block_index_subspace_builder<2, 2> bb(bis, m);
     if(!bis_ref.equals(bb.get_bis())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!bis_ref.equals(bb.get_bis()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_0() |
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+
+    0;
+}
+

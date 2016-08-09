@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_ORBIT_LIST_H
 #define LIBTENSOR_ORBIT_LIST_H
 
-#include <cstring> // for size_t
+#include <cstdlib> // for size_t
 #include <algorithm> // for std::binary_search
 #include <vector>
 #include <libtensor/timings.h>

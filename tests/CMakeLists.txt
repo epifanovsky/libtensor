@@ -427,4 +427,5 @@ macro(libtensor_add_tests SUITE)
 endmacro()
 
 add_subdirectory(linalg)
+add_subdirectory(core)
 

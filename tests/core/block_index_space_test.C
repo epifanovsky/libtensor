@@ -1,46 +1,13 @@
 #include <sstream>
 #include <libtensor/core/print_dimensions.h>
 #include <libtensor/core/block_index_space.h>
-#include "block_index_space_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-void block_index_space_test::perform() throw(libtest::test_exception) {
+int test_ctor_1() {
 
-    test_ctor_1();
-
-    //  test_split_* do not use equals() for comparison
-    test_split_1();
-    test_split_2();
-    test_split_3();
-    test_split_4();
-
-    //  test_equals_* use split()
-    test_equals_1();
-    test_equals_2();
-    test_equals_3();
-    test_equals_4();
-    test_equals_5();
-
-    //  test_match_* use split() and equals()
-    test_match_1();
-    test_match_2();
-    test_match_3();
-    test_match_4();
-    test_match_5();
-
-    //  test_permute_* use split() and equals()
-    test_permute_1();
-
-    test_exc_1();
-    test_exc_2();
-
-}
-
-
-void block_index_space_test::test_ctor_1() throw(libtest::test_exception) {
-
-    static const char *testname = "block_index_space_test::test_ctor_1()";
+    static const char testname[] = "block_index_space_test::test_ctor_1()";
 
     try {
 
@@ -50,23 +17,25 @@ void block_index_space_test::test_ctor_1() throw(libtest::test_exception) {
     block_index_space<4> bis(dims);
 
     if(bis.get_type(0) != bis.get_type(1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Invalid initial splitting type (1).");
     }
     if(bis.get_type(2) != bis.get_type(3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Invalid initial splitting type (2).");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_split_1() throw(libtest::test_exception) {
+int test_split_1() {
 
-    static const char *testname = "block_index_space_test::test_split_1()";
+    static const char testname[] = "block_index_space_test::test_split_1()";
 
     try {
 
@@ -89,7 +58,7 @@ void block_index_space_test::test_split_1() throw(libtest::test_exception) {
     block_index_space<1> bis(d_10);
 
     if(!bis.get_dims().equals(d_10)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect total dimensions");
     }
     if(!bis.get_block_index_dims().equals(d_1)) {
@@ -97,14 +66,14 @@ void block_index_space_test::test_split_1() throw(libtest::test_exception) {
         ss << "(1) Incorrect block index dimensions: "
             << bis.get_block_index_dims() << " vs. "
             << d_1 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!bis.get_block_start(i_0).equals(i_0)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0] start");
     }
     if(!bis.get_block_dims(i_0).equals(d_10)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0] dimensions");
     }
 
@@ -112,7 +81,7 @@ void block_index_space_test::test_split_1() throw(libtest::test_exception) {
     bis.split(splmsk, 2);
 
     if(!bis.get_dims().equals(d_10)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect total dimensions");
     }
     if(!bis.get_block_index_dims().equals(d_2)) {
@@ -120,41 +89,41 @@ void block_index_space_test::test_split_1() throw(libtest::test_exception) {
         ss << "(2) Incorrect block index dimensions: "
             << bis.get_block_index_dims() << " vs. "
             << d_2 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!bis.get_block_start(i_0).equals(i_0)) {
         std::ostringstream ss;
         ss << "(2) Incorrect start of block " << i_0 << ": "
             << bis.get_block_start(i_0) << " vs. "
             << i_0 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!bis.get_block_dims(i_0).equals(d_2)) {
         std::ostringstream ss;
         ss << "(2) Incorrect dimensions of block " << i_0 << ": "
             << bis.get_block_dims(i_0) << " vs. "
             << d_2 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!bis.get_block_start(i_1).equals(i_2)) {
         std::ostringstream ss;
         ss << "(2) Incorrect start of block " << i_1 << ": "
             << bis.get_block_start(i_1) << " vs. "
             << i_2 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!bis.get_block_dims(i_1).equals(d_8)) {
         std::ostringstream ss;
         ss << "(2) Incorrect dimensions of block " << i_1 << ": "
             << bis.get_block_dims(i_1) << " vs. "
             << d_8 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
 
     bis.split(splmsk, 5);
 
     if(!bis.get_dims().equals(d_10)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect total dimensions");
     }
     if(!bis.get_block_index_dims().equals(d_3)) {
@@ -162,42 +131,44 @@ void block_index_space_test::test_split_1() throw(libtest::test_exception) {
         ss << "(3) Incorrect block index dimensions: "
             << bis.get_block_index_dims() << " vs. "
             << d_3 << " (ref).";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!bis.get_block_start(i_0).equals(i_0)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect block [0] start");
     }
     if(!bis.get_block_dims(i_0).equals(d_2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect block [0] dimensions");
     }
     if(!bis.get_block_start(i_1).equals(i_2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect block [1] start");
     }
     if(!bis.get_block_dims(i_1).equals(d_3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect block [1] dimensions");
     }
     if(!bis.get_block_start(i_2).equals(i_5)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect block [2] start");
     }
     if(!bis.get_block_dims(i_2).equals(d_5)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Incorrect block [2] dimensions");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
+    return 0;
 }
 
-void block_index_space_test::test_split_2() throw(libtest::test_exception) {
 
-    static const char *testname = "block_index_space_test::test_split_2()";
+int test_split_2() {
+
+    static const char testname[] = "block_index_space_test::test_split_2()";
 
     try {
 
@@ -213,7 +184,7 @@ void block_index_space_test::test_split_2() throw(libtest::test_exception) {
     block_index_space<1> bis(d_3);
 
     if(!bis.get_dims().equals(d_3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect total dimensions");
     }
 
@@ -222,47 +193,49 @@ void block_index_space_test::test_split_2() throw(libtest::test_exception) {
     bis.split(splmsk, 2);
 
     if(!bis.get_dims().equals(d_3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect total dimensions");
     }
     if(!bis.get_block_index_dims().equals(d_3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block index dimensions");
     }
     if(!bis.get_block_start(i_0).equals(i_0)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block [0] start");
     }
     if(!bis.get_block_dims(i_0).equals(d_1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block [0] dimensions");
     }
     if(!bis.get_block_start(i_1).equals(i_1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block [1] start");
     }
     if(!bis.get_block_dims(i_1).equals(d_1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block [1] dimensions");
     }
     if(!bis.get_block_start(i_2).equals(i_2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block [2] start");
     }
     if(!bis.get_block_dims(i_2).equals(d_1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Incorrect block [2] dimensions");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
+    return 0;
 }
 
-void block_index_space_test::test_split_3() throw(libtest::test_exception) {
 
-    static const char *testname = "block_index_space_test::test_split_3()";
+int test_split_3() {
+
+    static const char testname[] = "block_index_space_test::test_split_3()";
 
     try {
 
@@ -299,7 +272,7 @@ void block_index_space_test::test_split_3() throw(libtest::test_exception) {
 
     size_t type_6 = bis.get_type(0);
     if(bis.get_type(1) != type_6) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect dimension type.");
     }
 
@@ -308,101 +281,102 @@ void block_index_space_test::test_split_3() throw(libtest::test_exception) {
     bis.split(splmsk, 3);
 
     if(!bis.get_dims().equals(d_66)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect total dimensions");
     }
     if(!bis.get_block_index_dims().equals(d_33)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block index dimensions");
     }
     size_t typ = bis.get_type(0);
     if(bis.get_type(1) != typ) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect splitting type");
     }
     if(!bis.get_block_start(i_00).equals(i_00)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0,0] start");
     }
     if(!bis.get_block_dims(i_00).equals(d_11)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0,0] dimensions");
     }
     if(!bis.get_block_start(i_01).equals(i_01)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0,1] start");
     }
     if(!bis.get_block_dims(i_01).equals(d_12)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0,1] dimensions");
     }
     if(!bis.get_block_start(i_02).equals(i_03)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0,2] start");
     }
     if(!bis.get_block_dims(i_02).equals(d_13)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [0,2] dimensions");
     }
     if(!bis.get_block_start(i_10).equals(i_10)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [1,0] start");
     }
     if(!bis.get_block_dims(i_10).equals(d_21)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [1,0] dimensions");
     }
     if(!bis.get_block_start(i_11).equals(i_11)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [1,1] start");
     }
     if(!bis.get_block_dims(i_11).equals(d_22)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [1,1] dimensions");
     }
     if(!bis.get_block_start(i_12).equals(i_13)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [1,2] start");
     }
     if(!bis.get_block_dims(i_12).equals(d_23)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [1,2] dimensions");
     }
     if(!bis.get_block_start(i_20).equals(i_30)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [2,0] start");
     }
     if(!bis.get_block_dims(i_20).equals(d_31)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [2,0] dimensions");
     }
     if(!bis.get_block_start(i_21).equals(i_31)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [2,1] start");
     }
     if(!bis.get_block_dims(i_21).equals(d_32)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [2,1] dimensions");
     }
     if(!bis.get_block_start(i_22).equals(i_33)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [2,2] start");
     }
     if(!bis.get_block_dims(i_22).equals(d_33)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block [2,2] dimensions");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
+    return 0;
 }
 
 
-void block_index_space_test::test_split_4() throw(libtest::test_exception) {
+int test_split_4() {
 
-    static const char *testname = "block_index_space_test::test_split_4()";
+    static const char testname[] = "block_index_space_test::test_split_4()";
 
     try {
 
@@ -420,24 +394,25 @@ void block_index_space_test::test_split_4() throw(libtest::test_exception) {
     bis.split(msk2, 2);
 
     if(!bis.get_dims().equals(d_66)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect total dimensions");
     }
     if(!bis.get_block_index_dims().equals(d_22)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Incorrect block index dimensions");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
+    return 0;
 }
 
 
-void block_index_space_test::test_equals_1() throw(libtest::test_exception) {
+int test_equals_1() {
 
-    static const char *testname = "block_index_space_test::test_equals_1()";
+    static const char testname[] = "block_index_space_test::test_equals_1()";
 
     try {
 
@@ -450,76 +425,78 @@ void block_index_space_test::test_equals_1() throw(libtest::test_exception) {
     mask<1> splmsk; splmsk[0] = true;
 
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1b) failed");
     }
 
     bis1.split(splmsk, 2);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2b) failed");
     }
 
     bis2.split(splmsk, 2);
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (3a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (3b) failed");
     }
 
     bis1.split(splmsk, 8);
     bis2.split(splmsk, 4);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (4a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (4b) failed");
     }
 
     bis1.split(splmsk, 6);
     bis2.split(splmsk, 6);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (5a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (5b) failed");
     }
 
     bis1.split(splmsk, 4);
     bis2.split(splmsk, 8);
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (6a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (6b) failed");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
+int test_equals_2() {
 
-    static const char *testname = "block_index_space_test::test_equals_2()";
+    static const char testname[] = "block_index_space_test::test_equals_2()";
 
     try {
 
@@ -531,11 +508,11 @@ void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
     block_index_space<2> bis1(dims), bis2(dims), bis3(dims), bis4(dims);
 
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1b) failed");
     }
 
@@ -546,11 +523,11 @@ void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
     bis1.split(msk, 6);
     bis1.split(msk, 8);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2b) failed");
     }
 
@@ -559,11 +536,11 @@ void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
     bis2.split(msk, 4);
     bis2.split(msk, 2);
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (3a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (3b) failed");
     }
 
@@ -571,22 +548,22 @@ void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
     bis3.split(msk1, 3);
     bis3.split(msk1, 7);
     if(bis4.equals(bis3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (4a) failed");
     }
     if(bis3.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (4b) failed");
     }
 
     bis4.split(msk2, 7);
     bis4.split(msk2, 3);
     if(bis4.equals(bis3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (5a) failed");
     }
     if(bis3.equals(bis4)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (5b) failed");
     }
 
@@ -594,23 +571,25 @@ void block_index_space_test::test_equals_2() throw(libtest::test_exception) {
     p1.permute(0, 1);
     bis4.permute(p1);
     if(!bis4.equals(bis3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (6a) failed");
     }
     if(!bis3.equals(bis4)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (6b) failed");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_equals_3() throw(libtest::test_exception) {
+int test_equals_3() {
 
-    static const char *testname = "block_index_space_test::test_equals_3()";
+    static const char testname[] = "block_index_space_test::test_equals_3()";
 
     try {
 
@@ -629,55 +608,57 @@ void block_index_space_test::test_equals_3() throw(libtest::test_exception) {
     block_index_space<4> bis1(dims_89), bis2(dims_98);
 
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1b) failed");
     }
 
     bis1.split(msk1, 5);
     bis2.split(msk2, 5);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2b) failed");
     }
 
     bis1.split(msk2, 3);
     bis2.split(msk1, 3);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (3a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (3b) failed");
     }
 
     bis2.permute(perm);
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (4a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (4b) failed");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_equals_4() throw(libtest::test_exception) {
+int test_equals_4() {
 
-    static const char *testname = "block_index_space_test::test_equals_4()";
+    static const char testname[] = "block_index_space_test::test_equals_4()";
 
     try {
 
@@ -693,11 +674,11 @@ void block_index_space_test::test_equals_4() throw(libtest::test_exception) {
     block_index_space<4> bis1(dims), bis2(dims);
 
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1b) failed");
     }
 
@@ -707,23 +688,25 @@ void block_index_space_test::test_equals_4() throw(libtest::test_exception) {
     bis2.split(m0010, 6);
     bis2.split(m0001, 6);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2b) failed");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_equals_5() throw(libtest::test_exception) {
+int test_equals_5() {
 
-    static const char *testname = "block_index_space_test::test_equals_5()";
+    static const char testname[] = "block_index_space_test::test_equals_5()";
 
     try {
 
@@ -739,11 +722,11 @@ void block_index_space_test::test_equals_5() throw(libtest::test_exception) {
     block_index_space<4> bis1(dims), bis2(dims);
 
     if(!bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1a) failed");
     }
     if(!bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (1b) failed");
     }
 
@@ -753,23 +736,25 @@ void block_index_space_test::test_equals_5() throw(libtest::test_exception) {
     bis2.split(m0010, 5);
     bis2.split(m0001, 5);
     if(bis1.equals(bis2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2a) failed");
     }
     if(bis2.equals(bis1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Equality test (2b) failed");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_match_1() throw(libtest::test_exception) {
+int test_match_1() {
 
-    static const char *testname = "block_index_space_test::test_match_1()";
+    static const char testname[] = "block_index_space_test::test_match_1()";
 
     try {
 
@@ -781,18 +766,20 @@ void block_index_space_test::test_match_1() throw(libtest::test_exception) {
     bis.match_splits();
 
     if(!bis.equals(bis_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+        return fail_test(testname, __FILE__, __LINE__, "Invalid result.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_match_2() throw(libtest::test_exception) {
+int test_match_2() {
 
-    static const char *testname = "block_index_space_test::test_match_2()";
+    static const char testname[] = "block_index_space_test::test_match_2()";
 
     try {
 
@@ -815,18 +802,20 @@ void block_index_space_test::test_match_2() throw(libtest::test_exception) {
     bis.match_splits();
 
     if(!bis.equals(bis_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+        return fail_test(testname, __FILE__, __LINE__, "Invalid result.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_match_3() throw(libtest::test_exception) {
+int test_match_3() {
 
-    static const char *testname = "block_index_space_test::test_match_3()";
+    static const char testname[] = "block_index_space_test::test_match_3()";
 
     try {
 
@@ -846,18 +835,20 @@ void block_index_space_test::test_match_3() throw(libtest::test_exception) {
     bis.match_splits();
 
     if(!bis.equals(bis_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+        return fail_test(testname, __FILE__, __LINE__, "Invalid result.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_match_4() throw(libtest::test_exception) {
+int test_match_4() {
 
-    static const char *testname = "block_index_space_test::test_match_4()";
+    static const char testname[] = "block_index_space_test::test_match_4()";
 
     try {
 
@@ -880,18 +871,20 @@ void block_index_space_test::test_match_4() throw(libtest::test_exception) {
     bis.match_splits();
 
     if(!bis.equals(bis_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+        return fail_test(testname, __FILE__, __LINE__, "Invalid result.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_match_5() throw(libtest::test_exception) {
+int test_match_5() {
 
-    static const char *testname = "block_index_space_test::test_match_5()";
+    static const char testname[] = "block_index_space_test::test_match_5()";
 
     try {
 
@@ -911,18 +904,20 @@ void block_index_space_test::test_match_5() throw(libtest::test_exception) {
     bis.match_splits();
 
     if(!bis.equals(bis_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "Invalid result.");
+        return fail_test(testname, __FILE__, __LINE__, "Invalid result.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_permute_1() throw(libtest::test_exception) {
+int test_permute_1() {
 
-    static const char *testname =
+    static const char testname[] =
         "block_index_space_test::test_permute_1()";
 
     try {
@@ -955,11 +950,11 @@ void block_index_space_test::test_permute_1() throw(libtest::test_exception) {
     dimensions<4> bidimsb(bisb.get_block_index_dims());
 
     if(!bisb.equals(bisb_ref)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect permuted block index space (1).");
     }
     if(!bidimsb.equals(bidimsb_ref)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block index dimensions (1).");
     }
 
@@ -967,23 +962,25 @@ void block_index_space_test::test_permute_1() throw(libtest::test_exception) {
     dimensions<4> bidimsb2(bisb2.get_block_index_dims());
 
     if(!bisb2.equals(bisb_ref)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect permuted block index space (2).");
     }
     if(!bidimsb2.equals(bidimsb_ref)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block index dimensions (2).");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
+int test_exc_1() {
 
-    static const char *testname = "block_index_space_test::test_exc_1()";
+    static const char testname[] = "block_index_space_test::test_exc_1()";
 
     try {
 
@@ -1014,7 +1011,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Index out of bounds in get_block_start()");
     }
 
@@ -1025,7 +1022,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Index out of bounds in get_block_dims()");
     }
 
@@ -1036,7 +1033,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Index out of bounds in get_block_start()");
     }
 
@@ -1047,7 +1044,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
@@ -1063,7 +1060,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Index out of bounds in get_block_start()");
     }
 
@@ -1074,7 +1071,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Index out of bounds in get_block_dims()");
     }
 
@@ -1085,7 +1082,7 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(4) Index out of bounds in get_block_start()");
     }
 
@@ -1096,20 +1093,22 @@ void block_index_space_test::test_exc_1() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(4) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
+    return 0;
 }
 
-void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
 
-    static const char *testname = "block_index_space_test::test_exc_2()";
+int test_exc_2() {
+
+    static const char testname[] = "block_index_space_test::test_exc_2()";
 
     try {
 
@@ -1155,7 +1154,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Index out of bounds in get_block_start()");
     }
 
@@ -1166,7 +1165,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(1) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
@@ -1183,7 +1182,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Index out of bounds in get_block_start()");
     }
 
@@ -1194,7 +1193,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(2) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
@@ -1209,7 +1208,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Index out of bounds in get_block_start()");
     }
 
@@ -1220,7 +1219,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(3) Index out of bounds in get_block_dims()");
     }
 
@@ -1231,7 +1230,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(4) Index out of bounds in get_block_start()");
     }
 
@@ -1242,7 +1241,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(4) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
@@ -1257,7 +1256,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(5) Index out of bounds in get_block_start()");
     }
 
@@ -1268,7 +1267,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(5) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
@@ -1283,7 +1282,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(6) Index out of bounds in get_block_start()");
     }
 
@@ -1294,7 +1293,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(6) Index out of bounds in get_block_dims()");
     }
 
@@ -1305,7 +1304,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(7) Index out of bounds in get_block_start()");
     }
 
@@ -1316,7 +1315,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(7) Index out of bounds in get_block_dims()");
     }
 
@@ -1327,7 +1326,7 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(8) Index out of bounds in get_block_start()");
     }
 
@@ -1338,14 +1337,51 @@ void block_index_space_test::test_exc_2() throw(libtest::test_exception) {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(8) Index out of bounds in get_block_dims()");
     }
 #endif // LIBTENSOR_DEBUG
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-} // namespace libtensor
+
+int main() {
+
+    return
+
+    test_ctor_1() |
+
+    //  test_split_* do not use equals() for comparison
+    test_split_1() |
+    test_split_2() |
+    test_split_3() |
+    test_split_4() |
+
+    //  test_equals_* use split()
+    test_equals_1() |
+    test_equals_2() |
+    test_equals_3() |
+    test_equals_4() |
+    test_equals_5() |
+
+    //  test_match_* use split() and equals()
+    test_match_1() |
+    test_match_2() |
+    test_match_3() |
+    test_match_4() |
+    test_match_5() |
+
+    //  test_permute_* use split() and equals()
+    test_permute_1() |
+
+    test_exc_1() |
+    test_exc_2() |
+
+    0;
+}
+

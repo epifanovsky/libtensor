@@ -5,21 +5,14 @@
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
-#include "short_orbit_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void short_orbit_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-}
+using namespace libtensor;
 
 
-void short_orbit_test::test_1() {
+int test_1() {
 
-    static const char *testname = "short_orbit_test::test_1()";
+    static const char testname[] = "short_orbit_test::test_1()";
 
     try {
 
@@ -40,20 +33,22 @@ void short_orbit_test::test_1() {
         if(orb.get_acindex() != aio.get_abs_index()) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void short_orbit_test::test_2() {
+int test_2() {
 
-    static const char *testname = "orbit_test::test_2()";
+    static const char testname[] = "orbit_test::test_2()";
 
     try {
 
@@ -83,15 +78,26 @@ void short_orbit_test::test_2() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+
+    0;
+}
+

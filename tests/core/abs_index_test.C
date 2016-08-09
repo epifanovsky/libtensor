@@ -1,28 +1,10 @@
 #include <sstream>
 #include <libtensor/core/abs_index.h>
-#include "abs_index_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-
-void abs_index_test::perform() throw(libtest::test_exception) {
-
-    test_ctor_1();
-    test_ctor_2();
-    test_ctor_3();
-    test_ctor_4();
-    test_ctor_5();
-    test_inc_1();
-    test_inc_2();
-    test_inc_3();
-    test_inc_4();
-    test_last_1();
-    test_get_index_1();
-    test_get_index_2();
-}
-
-
-void abs_index_test::test_ctor_1() {
+int test_ctor_1() {
 
     static const char testname[] = "abs_index_test::test_ctor_1()";
 
@@ -36,17 +18,19 @@ void abs_index_test::test_ctor_1() {
     abs_index<2> ai(i, dims);
 
     if(ai.get_abs_index() != 0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "abs(0,0) in (10,10) doesn't return 0.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_ctor_2() {
+int test_ctor_2() {
 
     static const char testname[] = "abs_index_test::test_ctor_2()";
 
@@ -60,17 +44,19 @@ void abs_index_test::test_ctor_2() {
     abs_index<2> ai(i, dims);
 
     if(ai.get_abs_index() != 10) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "abs(1,0) in (10,10) doesn't return 10.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_ctor_3() {
+int test_ctor_3() {
 
     static const char testname[] = "abs_index_test::test_ctor_3()";
 
@@ -84,17 +70,19 @@ void abs_index_test::test_ctor_3() {
     abs_index<2> ai(i, dims);
 
     if(ai.get_abs_index() != 99) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "abs(9,9) in (10,10) doesn't return 99.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_ctor_4() {
+int test_ctor_4() {
 
     static const char testname[] = "abs_index_test::test_ctor_4()";
 
@@ -108,17 +96,19 @@ void abs_index_test::test_ctor_4() {
     abs_index<4> ai(154, dims);
 
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "abs(154) in (2,5,2,14) doesn't return (1,0,1,0).");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_ctor_5() {
+int test_ctor_5() {
 
     static const char testname[] = "abs_index_test::test_ctor_5()";
 
@@ -137,16 +127,18 @@ void abs_index_test::test_ctor_5() {
         ok = true;
     }
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__, "out_of_bounds expected.");
+        return fail_test(testname, __FILE__, __LINE__, "out_of_bounds expected.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_inc_1() {
+int test_inc_1() {
 
     static const char testname[] = "abs_index_test::test_inc_1()";
 
@@ -159,26 +151,28 @@ void abs_index_test::test_inc_1() {
     abs_index<4> ai(i, dims);
 
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,0,0,0) doesn't return true.");
     }
     i[0] = 0; i[1] = 0; i[2] = 0; i[3] = 1;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,0,0,0) doesn't return (0,0,0,1).");
     }
     if(ai.get_abs_index() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,0,0,0) doesn't return 1.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_inc_2() {
+int test_inc_2() {
 
     static const char testname[] = "abs_index_test::test_inc_2()";
 
@@ -192,64 +186,66 @@ void abs_index_test::test_inc_2() {
     abs_index<4> ai(i, dims);
 
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,0) doesn't return true.");
     }
     i[0] = 1; i[1] = 1; i[2] = 0; i[3] = 1;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,0) doesn't return (1,1,0,1).");
     }
     if(ai.get_abs_index() != 13) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,0) doesn't return 13.");
     }
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,1) doesn't return true.");
     }
     i[0] = 1; i[1] = 1; i[2] = 1; i[3] = 0;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,1) doesn't return (1,1,1,0).");
     }
     if(ai.get_abs_index() != 14) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,0,1) doesn't return 14.");
     }
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,1,0) doesn't return true.");
     }
     i[0] = 1; i[1] = 1; i[2] = 1; i[3] = 1;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,1,0) doesn't return (1,1,1,1).");
     }
     if(ai.get_abs_index() != 15) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,1,0) doesn't return 15.");
     }
     if(ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,1,1) doesn't return false.");
     }
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,1,1) doesn't preserve the index.");
     }
     if(ai.get_abs_index() != 15) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(1,1,1,1) doesn't preserve the absolute index.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_inc_3() {
+int test_inc_3() {
 
     static const char testname[] = "abs_index_test::test_inc_3()";
 
@@ -263,39 +259,41 @@ void abs_index_test::test_inc_3() {
     abs_index<2> ai(i, dims);
 
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,11) doesn't return true.");
     }
     i[0] = 0; i[1] = 12;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,11) doesn't return (0,12).");
     }
     if(ai.get_abs_index() != 12) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,11) doesn't return 12.");
     }
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,12) doesn't return true.");
     }
     i[0] = 1; i[1] = 0;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,12) doesn't return (1,0).");
     }
     if(ai.get_abs_index() != 13) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0,12) doesn't return 13.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_inc_4() {
+int test_inc_4() {
 
     static const char testname[] = "abs_index_test::test_inc_4()";
 
@@ -308,26 +306,28 @@ void abs_index_test::test_inc_4() {
     abs_index<1> ai(i, dims);
 
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0) doesn't return true.");
     }
     i[0] = 1;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0) doesn't return (1).");
     }
     if(ai.get_abs_index() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(0) doesn't return 1.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_inc_5() {
+int test_inc_5() {
 
     static const char testname[] = "abs_index_test::test_inc_5()";
 
@@ -341,38 +341,40 @@ void abs_index_test::test_inc_5() {
     abs_index<1> ai(i, dims);
 
     if(!ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(4) doesn't return true.");
     }
     i[0] = 5;
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(4) doesn't return (5).");
     }
     if(ai.get_abs_index() != 5) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(4) doesn't return 5.");
     }
     if(ai.inc()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(5) doesn't return false.");
     }
     if(!i.equals(ai.get_index())) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(5) doesn't preserve the index.");
     }
     if(ai.get_abs_index() != 5) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "inc(5) doesn't preserve the absolute index.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_last_1() {
+int test_last_1() {
 
     static const char testname[] = "abs_index_test::test_last_1()";
 
@@ -386,7 +388,7 @@ void abs_index_test::test_last_1() {
     abs_index<4> ii1(i1, dims);
 
     if(ii1.is_last()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "[1,1,0,0] returns is_last() = true in [2,2,2,2]");
     }
 
@@ -394,17 +396,19 @@ void abs_index_test::test_last_1() {
     abs_index<4> ii2(i1, dims);
 
     if(!ii2.is_last()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "[1,1,1,1] returns is_last() = false in [2,2,2,2]");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_get_index_1() {
+int test_get_index_1() {
 
     static const char testname[] = "abs_index_test::test_get_index_1()";
 
@@ -421,19 +425,21 @@ void abs_index_test::test_get_index_1() {
     abs_index<2>::get_index(25, mdims, i2);
 
     if(!i1.equals(i_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "!i1.equals(i_ref)");
+        return fail_test(testname, __FILE__, __LINE__, "!i1.equals(i_ref)");
     }
     if(!i2.equals(i_ref)) {
-        fail_test(testname, __FILE__, __LINE__, "!i2.equals(i_ref)");
+        return fail_test(testname, __FILE__, __LINE__, "!i2.equals(i_ref)");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void abs_index_test::test_get_index_2() {
+int test_get_index_2() {
 
     static const char testname[] = "abs_index_test::test_get_index_2()";
 
@@ -449,56 +455,77 @@ void abs_index_test::test_get_index_2() {
 
         magic_dimensions<2> mdims1(dims1, true);
         if(!mdims1.get_dims().equals(dims1)) {
-            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (1)");
+            return fail_test(testname, __FILE__, __LINE__, "Bad dimensions (1)");
         }
         abs_index<2>::get_index(34, mdims1, i);
         i_ref[0] = 3; i_ref[1] = 4;
         if(!i.equals(i_ref)) {
             std::ostringstream ss;
             ss << "Bad index (1): " << i << " vs. " << i_ref << " (ref)";
-            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
 
         magic_dimensions<2> mdims2(mdims1);
         if(!mdims2.get_dims().equals(dims1)) {
-            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (2)");
+            return fail_test(testname, __FILE__, __LINE__, "Bad dimensions (2)");
         }
         abs_index<2>::get_index(34, mdims2, i);
         i_ref[0] = 3; i_ref[1] = 4;
         if(!i.equals(i_ref)) {
             std::ostringstream ss;
             ss << "Bad index (2): " << i << " vs. " << i_ref << " (ref)";
-            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
 
         mdims1.permute(permutation<2>().permute(0, 1));
         if(!mdims1.get_dims().equals(dims2)) {
-            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (3)");
+            return fail_test(testname, __FILE__, __LINE__, "Bad dimensions (3)");
         }
         abs_index<2>::get_index(34, mdims1, i);
         i_ref[0] = 5; i_ref[1] = 4;
         if(!i.equals(i_ref)) {
             std::ostringstream ss;
             ss << "Bad index (3): " << i << " vs. " << i_ref << " (ref)";
-            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
 
         mdims2.permute(permutation<2>());
         if(!mdims2.get_dims().equals(dims1)) {
-            fail_test(testname, __FILE__, __LINE__, "Bad dimensions (4)");
+            return fail_test(testname, __FILE__, __LINE__, "Bad dimensions (4)");
         }
         abs_index<2>::get_index(34, mdims2, i);
         i_ref[0] = 3; i_ref[1] = 4;
         if(!i.equals(i_ref)) {
             std::ostringstream ss;
             ss << "Bad index (4): " << i << " vs. " << i_ref << " (ref)";
-            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_ctor_1() |
+    test_ctor_2() |
+    test_ctor_3() |
+    test_ctor_4() |
+    test_ctor_5() |
+    test_inc_1() |
+    test_inc_2() |
+    test_inc_3() |
+    test_inc_4() |
+    test_last_1() |
+    test_get_index_1() |
+    test_get_index_2() |
+
+    0;
+}
+

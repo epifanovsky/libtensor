@@ -38,6 +38,7 @@ elseif(CMAKE_USE_PTHREADS_INIT)
 endif()
 
 add_library(util ${SRC} ${SRC_THREADS})
+target_link_libraries(util ${LIBUTIL_DEP_LIBS})
 
 include_directories(${LIBUTIL_DIR})
 

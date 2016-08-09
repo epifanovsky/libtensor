@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_COMBINED_ORBITS_H
 #define LIBTENSOR_COMBINED_ORBITS_H
 
-#include <cstring> // for size_t
+#include <cstdlib> // for size_t
 #include <algorithm> // for std::binary_search
 #include <vector>
 #include "abs_index.h"

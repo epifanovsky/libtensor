@@ -1,29 +1,21 @@
-#include <libtensor/core/sequence_generator.h>
-#include "sequence_generator_test.h"
 #include <list>
-#include <iostream>
+#include <libtensor/core/sequence_generator.h>
+#include "../test_utils.h"
 
-
-namespace libtensor {
-
-
-void sequence_generator_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-}
+using namespace libtensor;
 
 
 /** \test Add sequences to the list of sequences
  **/
-void sequence_generator_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "sequence_generator_test::test_1()";
+    static const char testname[] = "sequence_generator_test::test_1()";
 
     try {
 
     sequence_generator gen(3, 7);
     if (gen.get_seq().size() != 3) {
-        fail_test(testname, __FILE__, __LINE__, "seq.size() != 3");
+        return fail_test(testname, __FILE__, __LINE__, "seq.size() != 3");
     }
 
     std::list< std::vector<size_t> > lst;
@@ -31,7 +23,7 @@ void sequence_generator_test::test_1() throw(libtest::test_exception) {
         const std::vector<size_t> &seq = gen.get_seq();
         for (size_t i = 1; i < seq.size(); i++) {
             if (seq[i] <= seq[i - 1]) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "seq[i] <= seq[i - 1]");
             }
         }
@@ -45,7 +37,7 @@ void sequence_generator_test::test_1() throw(libtest::test_exception) {
                 if (seq[i] != seq2[i]) break;
             }
             if (i == seq2.size()) {
-                fail_test(testname, __FILE__, __LINE__, "seq == seq2");
+                return fail_test(testname, __FILE__, __LINE__, "seq == seq2");
             }
         }
         lst.push_back(seq);
@@ -53,13 +45,19 @@ void sequence_generator_test::test_1() throw(libtest::test_exception) {
     } while (gen.next());
 
     if (lst.size() != 35) {
-        fail_test(testname, __FILE__, __LINE__, "# sequences.");
+        return fail_test(testname, __FILE__, __LINE__, "# sequences.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return test_1();
+}
+

@@ -2,7 +2,6 @@
 #define LIBUTIL_EXCEPTION_BASE_H
 
 #include <cstdio>
-#include <cstring>
 #include <typeinfo>
 #include "exception.h"
 

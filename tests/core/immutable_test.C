@@ -1,9 +1,9 @@
 #include <libtensor/core/immutable.h>
-#include "immutable_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-namespace immutable_test_ns {
+namespace {
 
 class immut : public immutable {
 protected:
@@ -12,20 +12,19 @@ protected:
 
 }
 
-using namespace immutable_test_ns;
+int main() {
 
-void immutable_test::perform() throw(libtest::test_exception) {
     immut im;
     if(im.is_immutable()) {
-        fail_test("immutable_test::perform()", __FILE__, __LINE__,
+        return fail_test("immutable_test::perform()", __FILE__, __LINE__,
             "New object must be mutable");
     }
     im.set_immutable();
     if(!im.is_immutable()) {
-        fail_test("immutable_test::perform()", __FILE__, __LINE__,
+        return fail_test("immutable_test::perform()", __FILE__, __LINE__,
             "set_immutable() failed");
     }
-}
 
-} // namespace libtensor
+    return 0;
+}
 

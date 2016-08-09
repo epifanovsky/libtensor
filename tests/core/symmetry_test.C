@@ -1,22 +1,12 @@
 #include <set>
 #include <typeinfo>
 #include <libtensor/core/symmetry.h>
-#include "symmetry_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void symmetry_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-}
+using namespace libtensor;
 
 
-namespace symmetry_test_ns {
+namespace {
 
 
 class symelem1 : public symmetry_element_i<4, double> {
@@ -73,15 +63,14 @@ const char *symelem1::k_typ = "symelem1";
 const char *symelem2::k_typ = "symelem2";
 
 
-} // namespace symmetry_test_ns
-using namespace symmetry_test_ns;
+} // unnamed namespace
 
 
 /** \test Tests that a new symmetry doesn't contain any subsets
  **/
-void symmetry_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "symmetry_test::test_1()";
+    static const char testname[] = "symmetry_test::test_1()";
 
     typedef symmetry<4, double> symmetry_t;
 
@@ -94,20 +83,22 @@ void symmetry_test::test_1() throw(libtest::test_exception) {
     symmetry_t sym(bis);
     symmetry_t::iterator i = sym.begin();
     if(i != sym.end()) {
-        fail_test(testname, __FILE__, __LINE__, "i != sym.end()");
+        return fail_test(testname, __FILE__, __LINE__, "i != sym.end()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests the insertion of one symmetry element
  **/
-void symmetry_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "symmetry_test::test_2()";
+    static const char testname[] = "symmetry_test::test_2()";
 
     typedef symmetry<4, double> symmetry_t;
     typedef symmetry_element_set<4, double> symmetry_element_set_t;
@@ -123,49 +114,51 @@ void symmetry_test::test_2() throw(libtest::test_exception) {
     sym.insert(elem1);
     symmetry_t::iterator i = sym.begin();
     if(i == sym.end()) {
-        fail_test(testname, __FILE__, __LINE__, "i == sym.end()");
+        return fail_test(testname, __FILE__, __LINE__, "i == sym.end()");
     }
     if(sym.get_subset(i).get_id().compare(symelem1::k_typ) != 0) {
-        fail_test(testname, __FILE__, __LINE__, "Bad symmetry id.");
+        return fail_test(testname, __FILE__, __LINE__, "Bad symmetry id.");
     }
 
     const symmetry_element_set_t &subset1 = sym.get_subset(i);
     symmetry_element_set_t::const_iterator ii = subset1.begin();
     if(ii == subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii == subset1.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii == subset1.end()");
     }
     try {
         const symelem1 &elem1i = dynamic_cast<const symelem1&>(
             subset1.get_elem(ii));
         if(elem1i.get_n() != 22) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
     }
 
     ii++;
     if(ii != subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii != subset1.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii != subset1.end()");
     }
 
     i++;
     if(i != sym.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Expected only one subset.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests the insertion of two symmetry element of the same type
  **/
-void symmetry_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "symmetry_test::test_3()";
+    static const char testname[] = "symmetry_test::test_3()";
 
     typedef symmetry<4, double> symmetry_t;
     typedef symmetry_element_set<4, double> symmetry_element_set_t;
@@ -182,10 +175,10 @@ void symmetry_test::test_3() throw(libtest::test_exception) {
     sym.insert(elem2);
     symmetry_t::iterator i = sym.begin();
     if(i == sym.end()) {
-        fail_test(testname, __FILE__, __LINE__, "i == sym.end()");
+        return fail_test(testname, __FILE__, __LINE__, "i == sym.end()");
     }
     if(sym.get_subset(i).get_id().compare(symelem1::k_typ) != 0) {
-        fail_test(testname, __FILE__, __LINE__, "Bad symmetry id.");
+        return fail_test(testname, __FILE__, __LINE__, "Bad symmetry id.");
     }
 
     std::set<size_t> refset;
@@ -194,7 +187,7 @@ void symmetry_test::test_3() throw(libtest::test_exception) {
     const symmetry_element_set_t &subset1 = sym.get_subset(i);
     symmetry_element_set_t::const_iterator ii = subset1.begin();
     if(ii == subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset1 (1).");
     }
     try {
@@ -202,17 +195,17 @@ void symmetry_test::test_3() throw(libtest::test_exception) {
             subset1.get_elem(ii));
         std::set<size_t>::iterator j = refset.find(elem1i.get_n());
         if(j == refset.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
         } else {
             refset.erase(j);
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
     }
 
     ii++;
     if(ii == subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset1 (2).");
     }
     try {
@@ -220,36 +213,38 @@ void symmetry_test::test_3() throw(libtest::test_exception) {
             subset1.get_elem(ii));
         std::set<size_t>::iterator j = refset.find(elem2i.get_n());
         if(j == refset.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem2i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem2i.");
         } else {
             refset.erase(j);
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem2i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem2i");
     }
 
     ii++;
     if(ii != subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii != subset1.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii != subset1.end()");
     }
 
     i++;
     if(i != sym.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Expected only one subset.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests the insertion of two symmetry element of different types
  **/
-void symmetry_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname = "symmetry_test::test_4()";
+    static const char testname[] = "symmetry_test::test_4()";
 
     typedef symmetry<4, double> symmetry_t;
     typedef symmetry_element_set<4, double> symmetry_element_set_t;
@@ -270,19 +265,19 @@ void symmetry_test::test_4() throw(libtest::test_exception) {
     symmetry_t::iterator i = sym.begin();
     for(size_t is = 0; is < 2; is++) {    
         if(i == sym.end()) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 "Unexpected end of sym.");
         }
         if(sym.get_subset(i).get_id().compare(symelem1::k_typ) == 0) {
             if(subset1_ptr != 0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Duplicate subset1.");
             }
             subset1_ptr = &sym.get_subset(i);
         }
         if(sym.get_subset(i).get_id().compare(symelem2::k_typ) == 0) {
             if(subset2_ptr != 0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Duplicate subset2.");
             }
             subset2_ptr = &sym.get_subset(i);
@@ -290,11 +285,11 @@ void symmetry_test::test_4() throw(libtest::test_exception) {
         i++;
     }
     if(i != sym.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Expected only two subsets.");
     }
     if(subset1_ptr == 0 || subset2_ptr == 0) {
-        fail_test(testname, __FILE__, __LINE__, "Bad subset found.");
+        return fail_test(testname, __FILE__, __LINE__, "Bad subset found.");
     }
 
     const symmetry_element_set_t &subset1 = *subset1_ptr;
@@ -302,54 +297,56 @@ void symmetry_test::test_4() throw(libtest::test_exception) {
 
     symmetry_element_set_t::const_iterator ii1 = subset1.begin();
     if(ii1 == subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset1.");
     }
     try {
         const symelem1 &elem1i = dynamic_cast<const symelem1&>(
             subset1.get_elem(ii1));
         if(elem1i.get_n() != 22) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
     }
     ii1++;
     if(ii1 != subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii1 != subset1.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii1 != subset1.end()");
     }
 
     symmetry_element_set_t::const_iterator ii2 = subset2.begin();
     if(ii2 == subset2.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset2.");
     }
     try {
         const symelem2 &elem2i = dynamic_cast<const symelem2&>(
             subset2.get_elem(ii2));
         if(elem2i.get_m() != 33) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem2i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem2i.");
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem2i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem2i");
     }
     ii2++;
     if(ii2 != subset2.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii2 != subset2.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii2 != subset2.end()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests the insertion of four symmetry element of two different
         types
  **/
-void symmetry_test::test_5() throw(libtest::test_exception) {
+int test_5() {
 
-    static const char *testname = "symmetry_test::test_5()";
+    static const char testname[] = "symmetry_test::test_5()";
 
     typedef symmetry<4, double> symmetry_t;
     typedef symmetry_element_set<4, double> symmetry_element_set_t;
@@ -374,19 +371,19 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
     symmetry_t::iterator i = sym.begin();
     for(size_t is = 0; is < 2; is++) {    
         if(i == sym.end()) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 "Unexpected end of sym.");
         }
         if(sym.get_subset(i).get_id().compare(symelem1::k_typ) == 0) {
             if(subset1_ptr != 0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Duplicate subset1.");
             }
             subset1_ptr = &sym.get_subset(i);
         }
         if(sym.get_subset(i).get_id().compare(symelem2::k_typ) == 0) {
             if(subset2_ptr != 0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Duplicate subset2.");
             }
             subset2_ptr = &sym.get_subset(i);
@@ -394,11 +391,11 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
         i++;
     }
     if(i != sym.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Expected only two subsets.");
     }
     if(subset1_ptr == 0 || subset2_ptr == 0) {
-        fail_test(testname, __FILE__, __LINE__, "Bad subset found.");
+        return fail_test(testname, __FILE__, __LINE__, "Bad subset found.");
     }
 
     std::set<size_t> refset1, refset2;
@@ -410,7 +407,7 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
 
     symmetry_element_set_t::const_iterator ii1 = subset1.begin();
     if(ii1 == subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset1 (1).");
     }
     try {
@@ -418,16 +415,16 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
             subset1.get_elem(ii1));
         std::set<size_t>::iterator j = refset1.find(elem1i.get_n());
         if(j == refset1.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem1i.");
         } else {
             refset1.erase(j);
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem1i");
     }
     ii1++;
     if(ii1 == subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset1 (2).");
     }
     try {
@@ -435,21 +432,21 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
             subset1.get_elem(ii1));
         std::set<size_t>::iterator j = refset1.find(elem2i.get_n());
         if(j == refset1.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem2i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem2i.");
         } else {
             refset1.erase(j);
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem2i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem2i");
     }
     ii1++;
     if(ii1 != subset1.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii1 != subset1.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii1 != subset1.end()");
     }
 
     symmetry_element_set_t::const_iterator ii2 = subset2.begin();
     if(ii2 == subset2.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset2 (1).");
     }
     try {
@@ -457,16 +454,16 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
             subset2.get_elem(ii2));
         std::set<size_t>::iterator j = refset2.find(elem3i.get_m());
         if(j == refset2.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem3i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem3i.");
         } else {
             refset2.erase(j);
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem3i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem3i");
     }
     ii2++;
     if(ii2 == subset2.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Unexpected end of subset2 (2).");
     }
     try {
@@ -474,22 +471,36 @@ void symmetry_test::test_5() throw(libtest::test_exception) {
             subset2.get_elem(ii2));
         std::set<size_t>::iterator j = refset2.find(elem4i.get_m());
         if(j == refset2.end()) {
-            fail_test(testname, __FILE__, __LINE__, "Bad elem4i.");
+            return fail_test(testname, __FILE__, __LINE__, "Bad elem4i.");
         } else {
             refset2.erase(j);
         }
     } catch(std::bad_cast &e) {
-        fail_test(testname, __FILE__, __LINE__, "bad_cast for elem4i");
+        return fail_test(testname, __FILE__, __LINE__, "bad_cast for elem4i");
     }
     ii2++;
     if(ii2 != subset2.end()) {
-        fail_test(testname, __FILE__, __LINE__, "ii2 != subset2.end()");
+        return fail_test(testname, __FILE__, __LINE__, "ii2 != subset2.end()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+
+    0;
+}
+
