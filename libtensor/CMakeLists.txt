@@ -445,6 +445,7 @@ endif(WITH_CTF)
 add_library(tensor_core ${SRC_CORE})
 add_library(tensor ${SRC})
 add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
+target_link_libraries(tensor tensor_core util)
 
 if(QCHEM_SOURCE_DIR)
     set(TARGETS ${TARGETS} tensor_qchem)

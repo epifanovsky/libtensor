@@ -24,8 +24,9 @@ include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
 include_directories(${LIBTENSOR_DIR} ${ARMADILLO_INCLUDE_DIRS})
 
+enable_testing()
 add_subdirectory(libutil)
 add_subdirectory(libtensor)
-#add_subdirectory(tests)
+add_subdirectory(tests)
 #add_subdirectory(performance_tests)
 

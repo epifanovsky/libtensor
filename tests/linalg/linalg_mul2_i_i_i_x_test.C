@@ -3,31 +3,15 @@
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_mul2_i_i_i_x_test.h"
+#include "test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-
-void linalg_mul2_i_i_i_x_test::perform() throw(libtest::test_exception) {
-
-    test_mul2_i_i_i_x(1, 1, 1, 1, 0.5);
-    test_mul2_i_i_i_x(2, 1, 1, 1, 1.0);
-    test_mul2_i_i_i_x(16, 1, 1, 1, -1.5);
-    test_mul2_i_i_i_x(17, 1, 1, 1, 1.0);
-    test_mul2_i_i_i_x(1024, 1, 1, 1, 0.4);
-    test_mul2_i_i_i_x(1031, 1, 1, 1, 1.2);
-    test_mul2_i_i_i_x(2, 2, 3, 1, -6.0);
-    test_mul2_i_i_i_x(2, 3, 1, 2, 0.1);
-    test_mul2_i_i_i_x(300, 5, 6, 7, 1.0);
-}
-
-
-void linalg_mul2_i_i_i_x_test::test_mul2_i_i_i_x(size_t ni, size_t sia,
-    size_t sib, size_t sic, double d) {
+int test_mul2_i_i_i_x(size_t ni, size_t sia, size_t sib, size_t sic, double d) {
 
     std::ostringstream ss;
-    ss << "linalg_mul2_i_i_i_x_test::test_mul2_i_i_i_x("
-        << ni << ", " << sia << ", " << sib << ", " << sic << ", " << d << ")";
+    ss << "test_mul2_i_i_i_x(" << ni << ", " << sia << ", " << sib << ", "
+        << sic << ", " << d << ")";
     std::string tnss = ss.str();
 
     try {
@@ -45,14 +29,33 @@ void linalg_mul2_i_i_i_x_test::test_mul2_i_i_i_x(size_t ni, size_t sia,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__, "Incorrect result.");
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result.");
         }
     }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_mul2_i_i_i_x(1, 1, 1, 1, 0.5) |
+    test_mul2_i_i_i_x(2, 1, 1, 1, 1.0) |
+    test_mul2_i_i_i_x(16, 1, 1, 1, -1.5) |
+    test_mul2_i_i_i_x(17, 1, 1, 1, 1.0) |
+    test_mul2_i_i_i_x(1024, 1, 1, 1, 0.4) |
+    test_mul2_i_i_i_x(1031, 1, 1, 1, 1.2) |
+    test_mul2_i_i_i_x(2, 2, 3, 1, -6.0) |
+    test_mul2_i_i_i_x(2, 3, 1, 2, 0.1) |
+    test_mul2_i_i_i_x(300, 5, 6, 7, 1.0) |
+
+    0;
+}
+
