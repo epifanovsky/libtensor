@@ -3,49 +3,14 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_trace.h>
 #include "../compare_ref.h"
-#include "tod_trace_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_trace_test::perform() throw(libtest::test_exception) {
-
-    test_1(1);
-    test_1(3);
-    test_1(16);
-    test_2(1);
-    test_2(3);
-    test_2(16);
-
-    test_3(1, 1);
-    test_3(1, 3);
-    test_3(3, 1);
-    test_3(3, 5);
-    test_3(16, 16);
-    test_4(1, 1);
-    test_4(1, 3);
-    test_4(3, 1);
-    test_4(3, 5);
-    test_4(16, 16);
-
-    test_5(1, 1, 1);
-    test_5(1, 1, 3);
-    test_5(1, 3, 1);
-    test_5(3, 1, 1);
-    test_5(3, 7, 5);
-    test_5(8, 8, 8);
-    test_6(1, 1, 1);
-    test_6(1, 1, 3);
-    test_6(1, 3, 1);
-    test_6(3, 1, 1);
-    test_6(3, 7, 5);
-    test_6(8, 8, 8);
-}
+using namespace libtensor;
 
 
 /** \test Computes the trace of a square matrix: \f$ d = \sum_i a_{ii} \f$
  **/
-void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
+int test_1(size_t ni) {
 
     std::ostringstream tnss;
     tnss << "tod_trace_test::test_1(" << ni << ")";
@@ -85,19 +50,21 @@ void tod_trace_test::test_1(size_t ni) throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
-        fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Computes the trace of a square matrix (with permutation):
         \f$ d = \sum_i a_{ii} \f$
  **/
-void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
+int test_2(size_t ni) {
 
     std::ostringstream tnss;
     tnss << "tod_trace_test::test_2(" << ni << ")";
@@ -138,20 +105,21 @@ void tod_trace_test::test_2(size_t ni) throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
-        fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Computes the trace of a matricized 4-index tensor:
         \f$ d = \sum_{ij} a_{ijij} \f$
  **/
-void tod_trace_test::test_3(size_t ni, size_t nj)
-    throw(libtest::test_exception) {
+int test_3(size_t ni, size_t nj) {
 
     std::ostringstream tnss;
     tnss << "tod_trace_test::test_3(" << ni << ", " << nj << ")";
@@ -194,20 +162,21 @@ void tod_trace_test::test_3(size_t ni, size_t nj)
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
-        fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Computes the trace of a matricized 4-index tensor
         (with permutation): \f$ d = \sum_{ij} a_{iijj} \f$
  **/
-void tod_trace_test::test_4(size_t ni, size_t nj)
-    throw(libtest::test_exception) {
+int test_4(size_t ni, size_t nj) {
 
     std::ostringstream tnss;
     tnss << "tod_trace_test::test_4(" << ni << ", " << nj << ")";
@@ -251,20 +220,21 @@ void tod_trace_test::test_4(size_t ni, size_t nj)
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
-        fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Computes the trace of a matricized 6-index tensor:
         \f$ d = \sum_{ijk} a_{ijkijk} \f$
  **/
-void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
-    throw(libtest::test_exception) {
+int test_5(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "tod_trace_test::test_5(" << ni << ", " << nj << ", "
@@ -312,20 +282,21 @@ void tod_trace_test::test_5(size_t ni, size_t nj, size_t nk)
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
-        fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Computes the trace of a matricized 6-index tensor
         (with permutation): \f$ d = \sum_{ijk} a_{kkjjii} \f$
  **/
-void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
-    throw(libtest::test_exception) {
+int test_6(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "tod_trace_test::test_6(" << ni << ", " << nj << ", "
@@ -376,13 +347,53 @@ void tod_trace_test::test_6(size_t ni, size_t nj, size_t nk)
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (result), "
             << d_ref << " (reference), " << d - d_ref << " (diff)";
-        fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1(1) |
+    test_1(3) |
+    test_1(16) |
+    test_2(1) |
+    test_2(3) |
+    test_2(16) |
+
+    test_3(1, 1) |
+    test_3(1, 3) |
+    test_3(3, 1) |
+    test_3(3, 5) |
+    test_3(16, 16) |
+    test_4(1, 1) |
+    test_4(1, 3) |
+    test_4(3, 1) |
+    test_4(3, 5) |
+    test_4(16, 16) |
+
+    test_5(1, 1, 1) |
+    test_5(1, 1, 3) |
+    test_5(1, 3, 1) |
+    test_5(3, 1, 1) |
+    test_5(3, 7, 5) |
+    test_5(8, 8, 8) |
+    test_6(1, 1, 1) |
+    test_6(1, 1, 3) |
+    test_6(1, 3, 1) |
+    test_6(3, 1, 1) |
+    test_6(3, 7, 5) |
+    test_6(8, 8, 8) |
+
+    0;
+}
+
+

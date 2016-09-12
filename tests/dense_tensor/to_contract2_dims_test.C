@@ -1,25 +1,11 @@
 #include <sstream>
 #include <libtensor/dense_tensor/to_contract2_dims.h>
-#include "to_contract2_dims_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void to_contract2_dims_test::perform() throw(libtest::test_exception) {
-
-    test_ij_i_j(1, 1);
-    test_ij_i_j(5, 7);
-    test_ij_j_i(1, 1);
-    test_ij_j_i(5, 7);
-
-    test_ij_ik_jk(1, 1, 1);
-    test_ij_ik_jk(5, 6, 7);
-    test_ij_ik_jk(3, 3, 4);
-}
+using namespace libtensor;
 
 
-void to_contract2_dims_test::test_ij_i_j(size_t ni, size_t nj)
-    throw(libtest::test_exception) {
+int test_ij_i_j(size_t ni, size_t nj) {
 
     std::ostringstream tnss;
     tnss << "to_contract2_dims_test::test_ij_i_j(" << ni << ", " << nj << ")";
@@ -43,17 +29,18 @@ void to_contract2_dims_test::test_ij_i_j(size_t ni, size_t nj)
 
     to_contract2_dims<1, 1, 0> tocd(contr, dimsa, dimsb);
     if(!tocd.get_dims().equals(dimsc)) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
+        return fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
     }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void to_contract2_dims_test::test_ij_j_i(size_t ni, size_t nj)
-    throw(libtest::test_exception) {
+int test_ij_j_i(size_t ni, size_t nj) {
 
     std::ostringstream tnss;
     tnss << "to_contract2_dims_test::test_ij_j_i(" << ni << ", " << nj << ")";
@@ -79,17 +66,18 @@ void to_contract2_dims_test::test_ij_j_i(size_t ni, size_t nj)
 
     to_contract2_dims<1, 1, 0> tocd(contr, dimsa, dimsb);
     if(!tocd.get_dims().equals(dimsc)) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
+        return fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
     }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void to_contract2_dims_test::test_ij_ik_jk(size_t ni, size_t nj, size_t nk)
-    throw(libtest::test_exception) {
+int test_ij_ik_jk(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "to_contract2_dims_test::test_ij_ik_jk(" << ni << ", " << nj << ", "
@@ -115,14 +103,31 @@ void to_contract2_dims_test::test_ij_ik_jk(size_t ni, size_t nj, size_t nk)
 
     to_contract2_dims<1, 1, 1> tocd(contr, dimsa, dimsb);
     if(!tocd.get_dims().equals(dimsc)) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
+        return fail_test(tn.c_str(), __FILE__, __LINE__, "Bad dimsc.");
     }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_ij_i_j(1, 1) |
+    test_ij_i_j(5, 7) |
+    test_ij_j_i(1, 1) |
+    test_ij_j_i(5, 7) |
+
+    test_ij_ik_jk(1, 1, 1) |
+    test_ij_ik_jk(5, 6, 7) |
+    test_ij_ik_jk(3, 3, 4) |
+
+    0;
+}
+
 

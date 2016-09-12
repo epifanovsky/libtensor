@@ -7,101 +7,17 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_ewmult2.h>
-#include "tod_ewmult2_test.h"
 #include "../compare_ref.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-
-const double tod_ewmult2_test::k_thresh = 1e-14;
-
-void tod_ewmult2_test::perform() throw(libtest::test_exception) {
-
-    test_i_i_i(1);
-    test_i_i_i(6);
-    test_i_i_i(16);
-    test_i_i_i(17);
-    test_i_i_i(1, -0.5);
-    test_i_i_i(6, -2.0);
-    test_i_i_i(16, 1.2);
-    test_i_i_i(17, 0.7);
-
-    test_ij_ij_ij(1, 1);
-    test_ij_ij_ij(1, 6);
-    test_ij_ij_ij(6, 1);
-    test_ij_ij_ij(16, 16);
-    test_ij_ij_ij(6, 17);
-    test_ij_ij_ij(1, 1, -0.5);
-    test_ij_ij_ij(1, 6, -2.0);
-    test_ij_ij_ij(6, 1, 1.2);
-    test_ij_ij_ij(16, 16, 0.7);
-    test_ij_ij_ij(17, 6, -1.3);
-
-    test_ij_ij_ji(1, 1);
-    test_ij_ij_ji(1, 6);
-    test_ij_ij_ji(6, 1);
-    test_ij_ij_ji(16, 16);
-    test_ij_ij_ji(6, 17);
-    test_ij_ij_ji(1, 1, -0.5);
-    test_ij_ij_ji(1, 6, -2.0);
-    test_ij_ij_ji(6, 1, 1.2);
-    test_ij_ij_ji(16, 16, 0.7);
-    test_ij_ij_ji(17, 6, -1.3);
-
-    test_ijk_jki_kij(1, 1, 1);
-    test_ijk_jki_kij(1, 1, 6);
-    test_ijk_jki_kij(6, 1, 1);
-    test_ijk_jki_kij(6, 6, 1);
-    test_ijk_jki_kij(16, 17, 16);
-    test_ijk_jki_kij(1, 1, 1, -1.3);
-    test_ijk_jki_kij(1, 1, 6, 0.7);
-    test_ijk_jki_kij(6, 1, 1, 1.2);
-    test_ijk_jki_kij(6, 6, 1, -2.0);
-    test_ijk_jki_kij(16, 17, 16, -0.5);
-
-    test_ijk_ik_kj(1, 1, 1);
-    test_ijk_ik_kj(1, 1, 6);
-    test_ijk_ik_kj(6, 1, 1);
-    test_ijk_ik_kj(6, 6, 1);
-    test_ijk_ik_kj(16, 17, 16);
-    test_ijk_ik_kj(1, 1, 1, -1.3);
-    test_ijk_ik_kj(1, 1, 6, 0.7);
-    test_ijk_ik_kj(6, 1, 1, 1.2);
-    test_ijk_ik_kj(6, 6, 1, -2.0);
-    test_ijk_ik_kj(16, 17, 16, -0.5);
-
-    test_ijkl_kj_ikl(1, 1, 1, 1);
-    test_ijkl_kj_ikl(1, 6, 1, 1);
-    test_ijkl_kj_ikl(1, 1, 6, 1);
-    test_ijkl_kj_ikl(6, 1, 1, 6);
-    test_ijkl_kj_ikl(6, 6, 1, 1);
-    test_ijkl_kj_ikl(16, 17, 16, 15);
-    test_ijkl_kj_ikl(1, 1, 1, 1, -0.5);
-    test_ijkl_kj_ikl(1, 6, 1, 1, -2.0);
-    test_ijkl_kj_ikl(1, 1, 6, 1, 1.2);
-    test_ijkl_kj_ikl(6, 1, 1, 6, 0.7);
-    test_ijkl_kj_ikl(6, 6, 1, 1, -1.3);
-    test_ijkl_kj_ikl(16, 17, 16, 15, 1.0);
-
-    test_ijkl_ljk_jil(1, 1, 1, 1);
-    test_ijkl_ljk_jil(1, 6, 1, 1);
-    test_ijkl_ljk_jil(1, 1, 6, 1);
-    test_ijkl_ljk_jil(6, 1, 1, 6);
-    test_ijkl_ljk_jil(6, 6, 1, 1);
-    test_ijkl_ljk_jil(16, 17, 16, 15);
-    test_ijkl_ljk_jil(1, 1, 1, 1, -0.5);
-    test_ijkl_ljk_jil(1, 6, 1, 1, -2.0);
-    test_ijkl_ljk_jil(1, 1, 6, 1, 1.2);
-    test_ijkl_ljk_jil(6, 1, 1, 6, 0.7);
-    test_ijkl_ljk_jil(6, 6, 1, 1, -1.3);
-    test_ijkl_ljk_jil(16, 17, 16, 15, 1.0);
-}
+const double k_thresh = 1e-14;
 
 
 /** \test Tests $c_i = a_i b_i$
  **/
-void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
-    throw(libtest::test_exception) {
+int test_i_i_i(size_t ni, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_i_i_i(" << ni << ", " << d << ")";
@@ -176,15 +92,16 @@ void tod_ewmult2_test::test_i_i_i(size_t ni, double d)
     compare_ref<1>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests $c_{ij} = a_{ij} b_{ij}$
  **/
-void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_ij_ij(size_t ni, size_t nj, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_ij_ij_ij(" << ni << ", " << nj << ", "
@@ -263,15 +180,16 @@ void tod_ewmult2_test::test_ij_ij_ij(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests $c_{ij} = a_{ij} b_{ji}$
  **/
-void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_ij_ji(size_t ni, size_t nj, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_ij_ij_ji(" << ni << ", " << nj << ", "
@@ -353,15 +271,16 @@ void tod_ewmult2_test::test_ij_ij_ji(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests $c_{ijk} = a_{jki} b_{kij}$
  **/
-void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
-    double d) throw(libtest::test_exception) {
+int test_ijk_jki_kij(size_t ni, size_t nj, size_t nk, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_ijk_jki_kij(" << ni << ", "
@@ -445,15 +364,16 @@ void tod_ewmult2_test::test_ijk_jki_kij(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests $c_{ijk} = a_{ik} b_{kj}$
  **/
-void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
-    double d) throw(libtest::test_exception) {
+int test_ijk_ik_kj(size_t ni, size_t nj, size_t nk, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_ijk_ik_kj(" << ni << ", "
@@ -538,15 +458,16 @@ void tod_ewmult2_test::test_ijk_ik_kj(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests $c_{ijkl} = a_{kj} b_{ikl}$
  **/
-void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
-    size_t nl, double d) throw(libtest::test_exception) {
+int test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_ijkl_kj_ikl(" << ni << ", "
@@ -635,15 +556,16 @@ void tod_ewmult2_test::test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests $c_{ijkl} = a_{ljk} b_{jil}$
  **/
-void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
-    size_t nl, double d) throw(libtest::test_exception) {
+int test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
 
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_ijkl_ljk_jil(" << ni << ", "
@@ -733,9 +655,97 @@ void tod_ewmult2_test::test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_i_i_i(1, 0.0) |
+    test_i_i_i(6, 0.0) |
+    test_i_i_i(16, 0.0) |
+    test_i_i_i(17, 0.0) |
+    test_i_i_i(1, -0.5) |
+    test_i_i_i(6, -2.0) |
+    test_i_i_i(16, 1.2) |
+    test_i_i_i(17, 0.7) |
+
+    test_ij_ij_ij(1, 1, 0.0) |
+    test_ij_ij_ij(1, 6, 0.0) |
+    test_ij_ij_ij(6, 1, 0.0) |
+    test_ij_ij_ij(16, 16, 0.0) |
+    test_ij_ij_ij(6, 17, 0.0) |
+    test_ij_ij_ij(1, 1, -0.5) |
+    test_ij_ij_ij(1, 6, -2.0) |
+    test_ij_ij_ij(6, 1, 1.2) |
+    test_ij_ij_ij(16, 16, 0.7) |
+    test_ij_ij_ij(17, 6, -1.3) |
+
+    test_ij_ij_ji(1, 1, 0.0) |
+    test_ij_ij_ji(1, 6, 0.0) |
+    test_ij_ij_ji(6, 1, 0.0) |
+    test_ij_ij_ji(16, 16, 0.0) |
+    test_ij_ij_ji(6, 17, 0.0) |
+    test_ij_ij_ji(1, 1, -0.5) |
+    test_ij_ij_ji(1, 6, -2.0) |
+    test_ij_ij_ji(6, 1, 1.2) |
+    test_ij_ij_ji(16, 16, 0.7) |
+    test_ij_ij_ji(17, 6, -1.3) |
+
+    test_ijk_jki_kij(1, 1, 1, 0.0) |
+    test_ijk_jki_kij(1, 1, 6, 0.0) |
+    test_ijk_jki_kij(6, 1, 1, 0.0) |
+    test_ijk_jki_kij(6, 6, 1, 0.0) |
+    test_ijk_jki_kij(16, 17, 16, 0.0) |
+    test_ijk_jki_kij(1, 1, 1, -1.3) |
+    test_ijk_jki_kij(1, 1, 6, 0.7) |
+    test_ijk_jki_kij(6, 1, 1, 1.2) |
+    test_ijk_jki_kij(6, 6, 1, -2.0) |
+    test_ijk_jki_kij(16, 17, 16, -0.5) |
+
+    test_ijk_ik_kj(1, 1, 1, 0.0) |
+    test_ijk_ik_kj(1, 1, 6, 0.0) |
+    test_ijk_ik_kj(6, 1, 1, 0.0) |
+    test_ijk_ik_kj(6, 6, 1, 0.0) |
+    test_ijk_ik_kj(16, 17, 16, 0.0) |
+    test_ijk_ik_kj(1, 1, 1, -1.3) |
+    test_ijk_ik_kj(1, 1, 6, 0.7) |
+    test_ijk_ik_kj(6, 1, 1, 1.2) |
+    test_ijk_ik_kj(6, 6, 1, -2.0) |
+    test_ijk_ik_kj(16, 17, 16, -0.5) |
+
+    test_ijkl_kj_ikl(1, 1, 1, 1, 0.0) |
+    test_ijkl_kj_ikl(1, 6, 1, 1, 0.0) |
+    test_ijkl_kj_ikl(1, 1, 6, 1, 0.0) |
+    test_ijkl_kj_ikl(6, 1, 1, 6, 0.0) |
+    test_ijkl_kj_ikl(6, 6, 1, 1, 0.0) |
+    test_ijkl_kj_ikl(16, 17, 16, 15, 0.0) |
+    test_ijkl_kj_ikl(1, 1, 1, 1, -0.5) |
+    test_ijkl_kj_ikl(1, 6, 1, 1, -2.0) |
+    test_ijkl_kj_ikl(1, 1, 6, 1, 1.2) |
+    test_ijkl_kj_ikl(6, 1, 1, 6, 0.7) |
+    test_ijkl_kj_ikl(6, 6, 1, 1, -1.3) |
+    test_ijkl_kj_ikl(16, 17, 16, 15, 1.0) |
+
+    test_ijkl_ljk_jil(1, 1, 1, 1, 0.0) |
+    test_ijkl_ljk_jil(1, 6, 1, 1, 0.0) |
+    test_ijkl_ljk_jil(1, 1, 6, 1, 0.0) |
+    test_ijkl_ljk_jil(6, 1, 1, 6, 0.0) |
+    test_ijkl_ljk_jil(6, 6, 1, 1, 0.0) |
+    test_ijkl_ljk_jil(16, 17, 16, 15, 0.0) |
+    test_ijkl_ljk_jil(1, 1, 1, 1, -0.5) |
+    test_ijkl_ljk_jil(1, 6, 1, 1, -2.0) |
+    test_ijkl_ljk_jil(1, 1, 6, 1, 1.2) |
+    test_ijkl_ljk_jil(6, 1, 1, 6, 0.7) |
+    test_ijkl_ljk_jil(6, 6, 1, 1, -1.3) |
+    test_ijkl_ljk_jil(16, 17, 16, 15, 1.0) |
+
+    0;
+}
+
+

@@ -5,28 +5,16 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_extract.h>
 #include "../compare_ref.h"
-#include "tod_extract_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_extract_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-}
+using namespace libtensor;
 
 
 /** \test Extract a single matrix row: \f$ b_i = a_{ij} |_{j=2} \f$
  **/
-void tod_extract_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "tod_extract_test::test_1()";
+    static const char testname[] = "tod_extract_test::test_1()";
 
     typedef allocator<double> allocator;
 
@@ -74,17 +62,19 @@ void tod_extract_test::test_1() throw(libtest::test_exception) {
     compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a tensor slice with one index fixed:
         \f$ b_{ij} = a_{ikj} |_{k=0} \f$
  **/
-void tod_extract_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "tod_extract_test::test_2()";
+    static const char testname[] = "tod_extract_test::test_2()";
 
     typedef allocator<double> allocator;
 
@@ -135,17 +125,19 @@ void tod_extract_test::test_2() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a tensor slice with one index fixed and permutation:
         \f$ b_{ji} = a_{ikj} |_{k=0} \f$
  **/
-void tod_extract_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "tod_extract_test::test_3()";
+    static const char testname[] = "tod_extract_test::test_3()";
 
     typedef allocator<double> allocator;
 
@@ -199,14 +191,16 @@ void tod_extract_test::test_3() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_extract_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname = "tod_extract_test::test_4()";
+    static const char testname[] = "tod_extract_test::test_4()";
 
     typedef allocator<double> allocator;
 
@@ -214,14 +208,16 @@ void tod_extract_test::test_4() throw(libtest::test_exception) {
 
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_extract_test::test_5() throw(libtest::test_exception) {
+int test_5() {
 
-    static const char *testname = "tod_extract_test::test_5()";
+    static const char testname[] = "tod_extract_test::test_5()";
 
     typedef allocator<double> allocator;
 
@@ -229,9 +225,26 @@ void tod_extract_test::test_5() throw(libtest::test_exception) {
 
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+
+    0;
+}
+
+

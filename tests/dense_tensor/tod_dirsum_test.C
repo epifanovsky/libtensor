@@ -5,80 +5,12 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_dirsum.h>
 #include "../compare_ref.h"
-#include "tod_dirsum_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_dirsum_test::perform() throw(libtest::test_exception) {
-
-    test_ij_i_j_1(1, 1);
-    test_ij_i_j_1(2, 2);
-    test_ij_i_j_1(3, 5);
-    test_ij_i_j_1(16, 16);
-    test_ij_i_j_1(1, 1, -0.5);
-    test_ij_i_j_1(2, 2, 2.0);
-    test_ij_i_j_1(3, 5, -1.0);
-    test_ij_i_j_1(16, 16, 0.7);
-
-    test_ij_i_j_2(1, 1);
-    test_ij_i_j_2(2, 2);
-    test_ij_i_j_2(3, 5);
-    test_ij_i_j_2(16, 16);
-    test_ij_i_j_2(1, 1, -0.5);
-    test_ij_i_j_2(2, 2, 2.0);
-    test_ij_i_j_2(3, 5, -1.0);
-    test_ij_i_j_2(16, 16, 0.7);
-
-    test_ikj_ij_k_1(1, 1, 1);
-    test_ikj_ij_k_1(1, 1, 2);
-    test_ikj_ij_k_1(1, 2, 1);
-    test_ikj_ij_k_1(2, 1, 1);
-    test_ikj_ij_k_1(1, 3, 3);
-    test_ikj_ij_k_1(3, 3, 3);
-    test_ikj_ij_k_1(3, 5, 7);
-    test_ikj_ij_k_1(16, 16, 16);
-    test_ikj_ij_k_1(1, 1, 1, -0.5);
-    test_ikj_ij_k_1(1, 1, 2, 2.0);
-    test_ikj_ij_k_1(1, 2, 1, -1.0);
-    test_ikj_ij_k_1(2, 1, 1, 0.7);
-    test_ikj_ij_k_1(1, 3, 3, 1.4);
-    test_ikj_ij_k_1(3, 3, 3, 1.0);
-    test_ikj_ij_k_1(3, 5, 7, -3.4);
-    test_ikj_ij_k_1(16, 16, 16, 0.6);
-
-    test_ikjl_ij_kl_1(1, 1, 1, 1);
-    test_ikjl_ij_kl_1(1, 1, 1, 2);
-    test_ikjl_ij_kl_1(1, 2, 1, 2);
-    test_ikjl_ij_kl_1(3, 3, 3, 3);
-    test_ikjl_ij_kl_1(3, 5, 7, 9);
-    test_ikjl_ij_kl_1(9, 9, 7, 7);
-    test_ikjl_ij_kl_1(16, 16, 16, 16);
-    test_ikjl_ij_kl_1(1, 1, 1, 1, -0.7);
-    test_ikjl_ij_kl_1(1, 1, 1, 2, 1.4);
-    test_ikjl_ij_kl_1(1, 2, 1, 2, 0.1);
-    test_ikjl_ij_kl_1(3, 3, 3, 3, -2.0);
-    test_ikjl_ij_kl_1(3, 5, 7, 9, -1.0);
-    test_ikjl_ij_kl_1(16, 16, 16, 16, 0.6);
-
-    test_iklj_ij_kl_1(1, 1, 1, 1);
-    test_iklj_ij_kl_1(1, 1, 1, 2);
-    test_iklj_ij_kl_1(1, 2, 1, 2);
-    test_iklj_ij_kl_1(3, 3, 3, 3);
-    test_iklj_ij_kl_1(3, 5, 7, 9);
-    test_iklj_ij_kl_1(9, 9, 7, 7);
-    test_iklj_ij_kl_1(16, 16, 16, 16);
-    test_iklj_ij_kl_1(1, 1, 1, 1, -0.7);
-    test_iklj_ij_kl_1(1, 1, 1, 2, 1.4);
-    test_iklj_ij_kl_1(1, 2, 1, 2, 0.1);
-    test_iklj_ij_kl_1(3, 3, 3, 3, -2.0);
-    test_iklj_ij_kl_1(3, 5, 7, 9, -1.0);
-    test_iklj_ij_kl_1(16, 16, 16, 16, 0.6);
-}
+using namespace libtensor;
 
 
-void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_i_j_1(size_t ni, size_t nj, double d) {
 
     //    c_{ij} = a_i + b_j
 
@@ -160,12 +92,13 @@ void tod_dirsum_test::test_ij_i_j_1(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_i_j_2(size_t ni, size_t nj, double d) {
 
     //  c_{ij} = a_i - b_j
 
@@ -247,12 +180,13 @@ void tod_dirsum_test::test_ij_i_j_2(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
-    double d) throw(libtest::test_exception) {
+int test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk, double d) {
 
     // c_{ikj} = a_{ij} + b_k
 
@@ -342,13 +276,14 @@ void tod_dirsum_test::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
-    size_t nl, double d) throw(libtest::test_exception) {
+int test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
 
     // c_{ikjl} = a_{ij} + b_{kl}
 
@@ -439,13 +374,14 @@ void tod_dirsum_test::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dirsum_test::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
-    size_t nl, double d) throw(libtest::test_exception) {
+int test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
 
     // c_{iklj} = a_{ij} + b_{kl}
 
@@ -536,9 +472,81 @@ void tod_dirsum_test::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_ij_i_j_1(1, 1, 0.0) |
+    test_ij_i_j_1(2, 2, 0.0) |
+    test_ij_i_j_1(3, 5, 0.0) |
+    test_ij_i_j_1(16, 16, 0.0) |
+    test_ij_i_j_1(1, 1, -0.5) |
+    test_ij_i_j_1(2, 2, 2.0) |
+    test_ij_i_j_1(3, 5, -1.0) |
+    test_ij_i_j_1(16, 16, 0.7) |
+
+    test_ij_i_j_2(1, 1, 0.0) |
+    test_ij_i_j_2(2, 2, 0.0) |
+    test_ij_i_j_2(3, 5, 0.0) |
+    test_ij_i_j_2(16, 16, 0.0) |
+    test_ij_i_j_2(1, 1, -0.5) |
+    test_ij_i_j_2(2, 2, 2.0) |
+    test_ij_i_j_2(3, 5, -1.0) |
+    test_ij_i_j_2(16, 16, 0.7) |
+
+    test_ikj_ij_k_1(1, 1, 1, 0.0) |
+    test_ikj_ij_k_1(1, 1, 2, 0.0) |
+    test_ikj_ij_k_1(1, 2, 1, 0.0) |
+    test_ikj_ij_k_1(2, 1, 1, 0.0) |
+    test_ikj_ij_k_1(1, 3, 3, 0.0) |
+    test_ikj_ij_k_1(3, 3, 3, 0.0) |
+    test_ikj_ij_k_1(3, 5, 7, 0.0) |
+    test_ikj_ij_k_1(16, 16, 16, 0.0) |
+    test_ikj_ij_k_1(1, 1, 1, -0.5) |
+    test_ikj_ij_k_1(1, 1, 2, 2.0) |
+    test_ikj_ij_k_1(1, 2, 1, -1.0) |
+    test_ikj_ij_k_1(2, 1, 1, 0.7) |
+    test_ikj_ij_k_1(1, 3, 3, 1.4) |
+    test_ikj_ij_k_1(3, 3, 3, 1.0) |
+    test_ikj_ij_k_1(3, 5, 7, -3.4) |
+    test_ikj_ij_k_1(16, 16, 16, 0.6) |
+
+    test_ikjl_ij_kl_1(1, 1, 1, 1, 0.0) |
+    test_ikjl_ij_kl_1(1, 1, 1, 2, 0.0) |
+    test_ikjl_ij_kl_1(1, 2, 1, 2, 0.0) |
+    test_ikjl_ij_kl_1(3, 3, 3, 3, 0.0) |
+    test_ikjl_ij_kl_1(3, 5, 7, 9, 0.0) |
+    test_ikjl_ij_kl_1(9, 9, 7, 7, 0.0) |
+    test_ikjl_ij_kl_1(16, 16, 16, 16, 0.0) |
+    test_ikjl_ij_kl_1(1, 1, 1, 1, -0.7) |
+    test_ikjl_ij_kl_1(1, 1, 1, 2, 1.4) |
+    test_ikjl_ij_kl_1(1, 2, 1, 2, 0.1) |
+    test_ikjl_ij_kl_1(3, 3, 3, 3, -2.0) |
+    test_ikjl_ij_kl_1(3, 5, 7, 9, -1.0) |
+    test_ikjl_ij_kl_1(16, 16, 16, 16, 0.6) |
+
+    test_iklj_ij_kl_1(1, 1, 1, 1, 0.0) |
+    test_iklj_ij_kl_1(1, 1, 1, 2, 0.0) |
+    test_iklj_ij_kl_1(1, 2, 1, 2, 0.0) |
+    test_iklj_ij_kl_1(3, 3, 3, 3, 0.0) |
+    test_iklj_ij_kl_1(3, 5, 7, 9, 0.0) |
+    test_iklj_ij_kl_1(9, 9, 7, 7, 0.0) |
+    test_iklj_ij_kl_1(16, 16, 16, 16, 0.0) |
+    test_iklj_ij_kl_1(1, 1, 1, 1, -0.7) |
+    test_iklj_ij_kl_1(1, 1, 1, 2, 1.4) |
+    test_iklj_ij_kl_1(1, 2, 1, 2, 0.1) |
+    test_iklj_ij_kl_1(3, 3, 3, 3, -2.0) |
+    test_iklj_ij_kl_1(3, 5, 7, 9, -1.0) |
+    test_iklj_ij_kl_1(16, 16, 16, 16, 0.6) |
+
+    0;
+}
+
+

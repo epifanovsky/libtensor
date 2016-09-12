@@ -7,28 +7,12 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_scatter.h>
 #include "../compare_ref.h"
-#include "tod_scatter_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-void tod_scatter_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_ij_j(1, 1);
-    test_ij_j(2, 2);
-    test_ij_j(3, 5);
-    test_ij_j(16, 16);
-    test_ij_j(1, 1, -0.5);
-    test_ij_j(2, 2, 2.0);
-    test_ij_j(3, 5, -1.0);
-    test_ij_j(16, 16, 0.7);
-
-}
+using namespace libtensor;
 
 
-void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_j(size_t ni, size_t nj, double d) {
 
     // c_{ij} = a_j
 
@@ -95,9 +79,29 @@ void tod_scatter_test::test_ij_j(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_ij_j(1, 1, 0.0) |
+    test_ij_j(2, 2, 0.0) |
+    test_ij_j(3, 5, 0.0) |
+    test_ij_j(16, 16, 0.0) |
+    test_ij_j(1, 1, -0.5) |
+    test_ij_j(2, 2, 2.0) |
+    test_ij_j(3, 5, -1.0) |
+    test_ij_j(16, 16, 0.7) |
+
+    0;
+}
+
+

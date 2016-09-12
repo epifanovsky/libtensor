@@ -8,1083 +8,14 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include "../compare_ref.h"
-#include "tod_contract2_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
+using namespace libtensor;
 typedef allocator<double> allocator_t;
-
-const double tod_contract2_test::k_thresh = 5e-14;
-
-void tod_contract2_test::perform() throw(libtest::test_exception) {
-
-    allocator<double>::init(16, 16, 16777216, 16777216);
-
-    try {
-
-
-    //
-    // Test one-index contractions
-    //
-
-// test_0_p_p(1);
-// test_0_p_p(2);
-// test_0_p_p(5);
-// test_0_p_p(16);
-// test_0_p_p(1, -0.5);
-// test_0_p_p(2, -2.0);
-// test_0_p_p(5, 1.2);
-// test_0_p_p(16, 0.7);
-
-    test_i_p_pi(1, 1);
-    test_i_p_pi(1, 2);
-    test_i_p_pi(2, 1);
-    test_i_p_pi(3, 3);
-    test_i_p_pi(3, 5);
-    test_i_p_pi(16, 16);
-    test_i_p_pi(1, 1, -0.5);
-    test_i_p_pi(1, 2, 2.0);
-    test_i_p_pi(2, 1, -1.0);
-    test_i_p_pi(3, 3, 3.7);
-    test_i_p_pi(3, 5, 1.0);
-    test_i_p_pi(16, 16, 0.7);
-
-    test_i_p_ip(1, 1);
-    test_i_p_ip(1, 2);
-    test_i_p_ip(2, 1);
-    test_i_p_ip(3, 3);
-    test_i_p_ip(3, 5);
-    test_i_p_ip(16, 16);
-    test_i_p_ip(1, 1, -0.5);
-    test_i_p_ip(1, 2, 2.0);
-    test_i_p_ip(2, 1, -1.0);
-    test_i_p_ip(3, 3, 3.7);
-    test_i_p_ip(3, 5, 1.0);
-    test_i_p_ip(16, 16, 0.7);
-
-    test_i_pi_p(1, 1);
-    test_i_pi_p(1, 2);
-    test_i_pi_p(2, 1);
-    test_i_pi_p(3, 3);
-    test_i_pi_p(3, 5);
-    test_i_pi_p(16, 16);
-    test_i_pi_p(1, 1, -0.5);
-    test_i_pi_p(1, 2, 2.0);
-    test_i_pi_p(2, 1, -1.0);
-    test_i_pi_p(3, 3, 3.7);
-    test_i_pi_p(3, 5, 1.0);
-    test_i_pi_p(16, 16, 0.7);
-
-    test_i_ip_p(1, 1);
-    test_i_ip_p(1, 2);
-    test_i_ip_p(2, 1);
-    test_i_ip_p(3, 3);
-    test_i_ip_p(3, 5);
-    test_i_ip_p(16, 16);
-    test_i_ip_p(1, 1, -0.5);
-    test_i_ip_p(1, 2, 2.0);
-    test_i_ip_p(2, 1, -1.0);
-    test_i_ip_p(3, 3, 3.7);
-    test_i_ip_p(3, 5, 1.0);
-    test_i_ip_p(16, 16, 0.7);
-
-    test_ij_i_j(1, 1);
-    test_ij_i_j(1, 2);
-    test_ij_i_j(2, 1);
-    test_ij_i_j(3, 3);
-    test_ij_i_j(3, 5);
-    test_ij_i_j(16, 16);
-    test_ij_i_j(1, 1, -0.5);
-    test_ij_i_j(1, 2, 2.0);
-    test_ij_i_j(2, 1, -1.0);
-    test_ij_i_j(3, 3, 3.7);
-    test_ij_i_j(3, 5, 1.0);
-    test_ij_i_j(16, 16, 0.7);
-
-    test_ij_j_i(1, 1);
-    test_ij_j_i(1, 2);
-    test_ij_j_i(2, 1);
-    test_ij_j_i(3, 3);
-    test_ij_j_i(3, 5);
-    test_ij_j_i(16, 16);
-    test_ij_j_i(1, 1, -0.5);
-    test_ij_j_i(1, 2, 2.0);
-    test_ij_j_i(2, 1, -1.0);
-    test_ij_j_i(3, 3, 3.7);
-    test_ij_j_i(3, 5, 1.0);
-    test_ij_j_i(16, 16, 0.7);
-
-    test_ij_pi_pj(1, 1, 1);
-    test_ij_pi_pj(1, 1, 2);
-    test_ij_pi_pj(1, 2, 1);
-    test_ij_pi_pj(2, 1, 1);
-    test_ij_pi_pj(3, 3, 3);
-    test_ij_pi_pj(3, 5, 7);
-    test_ij_pi_pj(16, 16, 16);
-    test_ij_pi_pj(1, 1, 1, -0.5);
-    test_ij_pi_pj(1, 1, 2, 2.0);
-    test_ij_pi_pj(1, 2, 1, -1.0);
-    test_ij_pi_pj(2, 1, 1, 3.7);
-    test_ij_pi_pj(3, 3, 3, 1.0);
-    test_ij_pi_pj(3, 5, 7, -1.2);
-    test_ij_pi_pj(16, 16, 16, 0.7);
-
-    test_ij_pi_jp(1, 1, 1);
-    test_ij_pi_jp(1, 1, 2);
-    test_ij_pi_jp(1, 2, 1);
-    test_ij_pi_jp(2, 1, 1);
-    test_ij_pi_jp(3, 3, 3);
-    test_ij_pi_jp(3, 5, 7);
-    test_ij_pi_jp(16, 16, 16);
-    test_ij_pi_jp(1, 1, 1, -0.5);
-    test_ij_pi_jp(1, 1, 2, 2.0);
-    test_ij_pi_jp(1, 2, 1, -1.0);
-    test_ij_pi_jp(2, 1, 1, 3.7);
-    test_ij_pi_jp(3, 3, 3, 1.0);
-    test_ij_pi_jp(3, 5, 7, -1.2);
-    test_ij_pi_jp(16, 16, 16, 0.7);
-
-    test_ij_ip_pj(1, 1, 1);
-    test_ij_ip_pj(1, 1, 2);
-    test_ij_ip_pj(1, 2, 1);
-    test_ij_ip_pj(2, 1, 1);
-    test_ij_ip_pj(3, 3, 3);
-    test_ij_ip_pj(3, 5, 7);
-    test_ij_ip_pj(16, 16, 16);
-    test_ij_ip_pj(1, 1, 1, -0.5);
-    test_ij_ip_pj(1, 1, 2, 2.0);
-    test_ij_ip_pj(1, 2, 1, -1.0);
-    test_ij_ip_pj(2, 1, 1, 3.7);
-    test_ij_ip_pj(3, 3, 3, 1.0);
-    test_ij_ip_pj(3, 5, 7, -1.2);
-    test_ij_ip_pj(16, 16, 16, 0.7);
-
-    test_ij_ip_jp(1, 1, 1);
-    test_ij_ip_jp(1, 1, 2);
-    test_ij_ip_jp(1, 2, 1);
-    test_ij_ip_jp(2, 1, 1);
-    test_ij_ip_jp(3, 3, 3);
-    test_ij_ip_jp(3, 5, 7);
-    test_ij_ip_jp(16, 16, 16);
-    test_ij_ip_jp(1, 1, 1, -0.5);
-    test_ij_ip_jp(1, 1, 2, 2.0);
-    test_ij_ip_jp(1, 2, 1, -1.0);
-    test_ij_ip_jp(2, 1, 1, 3.7);
-    test_ij_ip_jp(3, 3, 3, 1.0);
-    test_ij_ip_jp(3, 5, 7, -1.2);
-    test_ij_ip_jp(16, 16, 16, 0.7);
-
-    test_ij_pj_pi(1, 1, 1);
-    test_ij_pj_pi(1, 1, 2);
-    test_ij_pj_pi(1, 2, 1);
-    test_ij_pj_pi(2, 1, 1);
-    test_ij_pj_pi(3, 3, 3);
-    test_ij_pj_pi(3, 5, 7);
-    test_ij_pj_pi(16, 16, 16);
-    test_ij_pj_pi(1, 1, 1, -0.5);
-    test_ij_pj_pi(1, 1, 2, 2.0);
-    test_ij_pj_pi(1, 2, 1, -1.0);
-    test_ij_pj_pi(2, 1, 1, 3.7);
-    test_ij_pj_pi(3, 3, 3, 1.0);
-    test_ij_pj_pi(3, 5, 7, -1.2);
-    test_ij_pj_pi(16, 16, 16, 0.7);
-
-    test_ij_pj_ip(1, 1, 1);
-    test_ij_pj_ip(1, 1, 2);
-    test_ij_pj_ip(1, 2, 1);
-    test_ij_pj_ip(2, 1, 1);
-    test_ij_pj_ip(3, 3, 3);
-    test_ij_pj_ip(3, 5, 7);
-    test_ij_pj_ip(16, 16, 16);
-    test_ij_pj_ip(1, 1, 1, -0.5);
-    test_ij_pj_ip(1, 1, 2, 2.0);
-    test_ij_pj_ip(1, 2, 1, -1.0);
-    test_ij_pj_ip(2, 1, 1, 3.7);
-    test_ij_pj_ip(3, 3, 3, 1.0);
-    test_ij_pj_ip(3, 5, 7, -1.2);
-    test_ij_pj_ip(16, 16, 16, 0.7);
-
-    test_ij_jp_ip(1, 1, 1);
-    test_ij_jp_ip(1, 1, 2);
-    test_ij_jp_ip(1, 2, 1);
-    test_ij_jp_ip(2, 1, 1);
-    test_ij_jp_ip(3, 3, 3);
-    test_ij_jp_ip(3, 5, 7);
-    test_ij_jp_ip(16, 16, 16);
-    test_ij_jp_ip(1, 1, 1, -0.5);
-    test_ij_jp_ip(1, 1, 2, 2.0);
-    test_ij_jp_ip(1, 2, 1, -1.0);
-    test_ij_jp_ip(2, 1, 1, 3.7);
-    test_ij_jp_ip(3, 3, 3, 1.0);
-    test_ij_jp_ip(3, 5, 7, -1.2);
-    test_ij_jp_ip(16, 16, 16, 0.7);
-
-    test_ij_jp_pi(1, 1, 1);
-    test_ij_jp_pi(1, 1, 2);
-    test_ij_jp_pi(1, 2, 1);
-    test_ij_jp_pi(2, 1, 1);
-    test_ij_jp_pi(3, 3, 3);
-    test_ij_jp_pi(3, 5, 7);
-    test_ij_jp_pi(16, 16, 16);
-    test_ij_jp_pi(1, 1, 1, -0.5);
-    test_ij_jp_pi(1, 1, 2, 2.0);
-    test_ij_jp_pi(1, 2, 1, -1.0);
-    test_ij_jp_pi(2, 1, 1, 3.7);
-    test_ij_jp_pi(3, 3, 3, 1.0);
-    test_ij_jp_pi(3, 5, 7, -1.2);
-    test_ij_jp_pi(16, 16, 16, 0.7);
-
-    test_ij_p_pji(1, 1, 1);
-    test_ij_p_pji(1, 1, 2);
-    test_ij_p_pji(1, 2, 1);
-    test_ij_p_pji(2, 1, 1);
-    test_ij_p_pji(3, 3, 3);
-    test_ij_p_pji(3, 5, 7);
-    test_ij_p_pji(16, 16, 16);
-    test_ij_p_pji(1, 1, 1, -0.5);
-    test_ij_p_pji(1, 1, 2, 2.0);
-    test_ij_p_pji(1, 2, 1, -1.0);
-    test_ij_p_pji(2, 1, 1, 3.7);
-    test_ij_p_pji(3, 3, 3, 1.0);
-    test_ij_p_pji(3, 5, 7, -1.2);
-    test_ij_p_pji(16, 16, 16, 0.7);
-
-    test_ij_pji_p(1, 1, 1);
-    test_ij_pji_p(1, 1, 2);
-    test_ij_pji_p(1, 2, 1);
-    test_ij_pji_p(2, 1, 1);
-    test_ij_pji_p(3, 3, 3);
-    test_ij_pji_p(3, 5, 7);
-    test_ij_pji_p(16, 16, 16);
-    test_ij_pji_p(1, 1, 1, -0.5);
-    test_ij_pji_p(1, 1, 2, 2.0);
-    test_ij_pji_p(1, 2, 1, -1.0);
-    test_ij_pji_p(2, 1, 1, 3.7);
-    test_ij_pji_p(3, 3, 3, 1.0);
-    test_ij_pji_p(3, 5, 7, -1.2);
-    test_ij_pji_p(16, 16, 16, 0.7);
-
-    test_ij_pi_pj_qi_jq(1, 1, 1, 1);
-    test_ij_pi_pj_qi_jq(1, 1, 2, 1);
-    test_ij_pi_pj_qi_jq(1, 2, 1, 3);
-    test_ij_pi_pj_qi_jq(2, 1, 1, 10);
-    test_ij_pi_pj_qi_jq(3, 3, 3, 3);
-    test_ij_pi_pj_qi_jq(3, 5, 7, 11);
-    test_ij_pi_pj_qi_jq(16, 16, 16, 16);
-    test_ij_pi_pj_qi_jq(1, 1, 1, 1, -0.5);
-    test_ij_pi_pj_qi_jq(1, 1, 2, 1, 2.0);
-    test_ij_pi_pj_qi_jq(1, 2, 1, 3, -1.0);
-    test_ij_pi_pj_qi_jq(2, 1, 1, 10, 3.7);
-    test_ij_pi_pj_qi_jq(3, 3, 3, 3, 1.0);
-    test_ij_pi_pj_qi_jq(3, 5, 7, 11, -1.2);
-    test_ij_pi_pj_qi_jq(16, 16, 16, 16, 0.7);
-
-    test_ij_pi_pj_qi_qj(1, 1, 1, 1);
-    test_ij_pi_pj_qi_qj(1, 1, 2, 1);
-    test_ij_pi_pj_qi_qj(1, 2, 1, 3);
-    test_ij_pi_pj_qi_qj(2, 1, 1, 10);
-    test_ij_pi_pj_qi_qj(3, 3, 3, 3);
-    test_ij_pi_pj_qi_qj(3, 5, 7, 11);
-    test_ij_pi_pj_qi_qj(16, 16, 16, 16);
-    test_ij_pi_pj_qi_qj(1, 1, 1, 1, -0.5);
-    test_ij_pi_pj_qi_qj(1, 1, 2, 1, 2.0);
-    test_ij_pi_pj_qi_qj(1, 2, 1, 3, -1.0);
-    test_ij_pi_pj_qi_qj(2, 1, 1, 10, 3.7);
-    test_ij_pi_pj_qi_qj(3, 3, 3, 3, 1.0);
-    test_ij_pi_pj_qi_qj(3, 5, 7, 11, -1.2);
-    test_ij_pi_pj_qi_qj(16, 16, 16, 16, 0.7);
-
-    test_ijk_ip_pkj(1, 1, 1, 1);
-    test_ijk_ip_pkj(1, 1, 2, 1);
-    test_ijk_ip_pkj(1, 2, 1, 2);
-    test_ijk_ip_pkj(2, 1, 1, 3);
-    test_ijk_ip_pkj(3, 3, 3, 3);
-    test_ijk_ip_pkj(3, 5, 7, 11);
-    test_ijk_ip_pkj(16, 16, 16, 16);
-    test_ijk_ip_pkj(1, 1, 1, 1, -0.5);
-    test_ijk_ip_pkj(1, 1, 2, 1, 2.0);
-    test_ijk_ip_pkj(1, 2, 1, 2, -1.0);
-    test_ijk_ip_pkj(2, 1, 1, 3, 3.7);
-    test_ijk_ip_pkj(3, 3, 3, 3, 1.0);
-    test_ijk_ip_pkj(3, 5, 7, 11, -1.2);
-    test_ijk_ip_pkj(16, 16, 16, 16, 0.7);
-
-    test_ijk_pi_pkj(1, 1, 1, 1);
-    test_ijk_pi_pkj(1, 1, 2, 1);
-    test_ijk_pi_pkj(1, 2, 1, 2);
-    test_ijk_pi_pkj(2, 1, 1, 3);
-    test_ijk_pi_pkj(3, 3, 3, 3);
-    test_ijk_pi_pkj(3, 5, 7, 11);
-    test_ijk_pi_pkj(16, 16, 16, 16);
-    test_ijk_pi_pkj(1, 1, 1, 1, -0.5);
-    test_ijk_pi_pkj(1, 1, 2, 1, 2.0);
-    test_ijk_pi_pkj(1, 2, 1, 2, -1.0);
-    test_ijk_pi_pkj(2, 1, 1, 3, 3.7);
-    test_ijk_pi_pkj(3, 3, 3, 3, 1.0);
-    test_ijk_pi_pkj(3, 5, 7, 11, -1.2);
-    test_ijk_pi_pkj(16, 16, 16, 16, 0.7);
-
-    test_ijk_pik_pj(1, 1, 1, 1);
-    test_ijk_pik_pj(1, 1, 2, 1);
-    test_ijk_pik_pj(1, 2, 1, 2);
-    test_ijk_pik_pj(2, 1, 1, 3);
-    test_ijk_pik_pj(3, 3, 3, 3);
-    test_ijk_pik_pj(3, 5, 7, 11);
-    test_ijk_pik_pj(16, 16, 16, 16);
-    test_ijk_pik_pj(1, 1, 1, 1, -0.5);
-    test_ijk_pik_pj(1, 1, 2, 1, 2.0);
-    test_ijk_pik_pj(1, 2, 1, 2, -1.0);
-    test_ijk_pik_pj(2, 1, 1, 3, 3.7);
-    test_ijk_pik_pj(3, 3, 3, 3, 1.0);
-    test_ijk_pik_pj(3, 5, 7, 11, -1.2);
-    test_ijk_pik_pj(16, 16, 16, 16, 0.7);
-
-    test_ijk_pj_ipk(1, 1, 1, 1);
-    test_ijk_pj_ipk(1, 1, 2, 1);
-    test_ijk_pj_ipk(1, 2, 1, 2);
-    test_ijk_pj_ipk(2, 1, 1, 3);
-    test_ijk_pj_ipk(3, 3, 3, 3);
-    test_ijk_pj_ipk(3, 5, 7, 11);
-    test_ijk_pj_ipk(16, 16, 16, 16);
-    test_ijk_pj_ipk(1, 1, 1, 1, -0.5);
-    test_ijk_pj_ipk(1, 1, 2, 1, 2.0);
-    test_ijk_pj_ipk(1, 2, 1, 2, -1.0);
-    test_ijk_pj_ipk(2, 1, 1, 3, 3.7);
-    test_ijk_pj_ipk(3, 3, 3, 3, 1.0);
-    test_ijk_pj_ipk(3, 5, 7, 11, -1.2);
-    test_ijk_pj_ipk(16, 16, 16, 16, 0.7);
-
-    test_ijk_pj_pik(1, 1, 1, 1);
-    test_ijk_pj_pik(1, 1, 2, 1);
-    test_ijk_pj_pik(1, 2, 1, 2);
-    test_ijk_pj_pik(2, 1, 1, 3);
-    test_ijk_pj_pik(3, 3, 3, 3);
-    test_ijk_pj_pik(3, 5, 7, 11);
-    test_ijk_pj_pik(16, 16, 16, 16);
-    test_ijk_pj_pik(1, 1, 1, 1, -0.5);
-    test_ijk_pj_pik(1, 1, 2, 1, 2.0);
-    test_ijk_pj_pik(1, 2, 1, 2, -1.0);
-    test_ijk_pj_pik(2, 1, 1, 3, 3.7);
-    test_ijk_pj_pik(3, 3, 3, 3, 1.0);
-    test_ijk_pj_pik(3, 5, 7, 11, -1.2);
-    test_ijk_pj_pik(16, 16, 16, 16, 0.7);
-
-    test_ijk_pkj_ip(1, 1, 1, 1);
-    test_ijk_pkj_ip(1, 1, 2, 1);
-    test_ijk_pkj_ip(1, 2, 1, 2);
-    test_ijk_pkj_ip(2, 1, 1, 3);
-    test_ijk_pkj_ip(3, 3, 3, 3);
-    test_ijk_pkj_ip(3, 5, 7, 11);
-    test_ijk_pkj_ip(16, 16, 16, 16);
-    test_ijk_pkj_ip(1, 1, 1, 1, -0.5);
-    test_ijk_pkj_ip(1, 1, 2, 1, 2.0);
-    test_ijk_pkj_ip(1, 2, 1, 2, -1.0);
-    test_ijk_pkj_ip(2, 1, 1, 3, 3.7);
-    test_ijk_pkj_ip(3, 3, 3, 3, 1.0);
-    test_ijk_pkj_ip(3, 5, 7, 11, -1.2);
-    test_ijk_pkj_ip(16, 16, 16, 16, 0.7);
-
-    test_ijk_pkj_pi(1, 1, 1, 1);
-    test_ijk_pkj_pi(1, 1, 2, 1);
-    test_ijk_pkj_pi(1, 2, 1, 2);
-    test_ijk_pkj_pi(2, 1, 1, 3);
-    test_ijk_pkj_pi(3, 3, 3, 3);
-    test_ijk_pkj_pi(3, 5, 7, 11);
-    test_ijk_pkj_pi(16, 16, 16, 16);
-    test_ijk_pkj_pi(1, 1, 1, 1, -0.5);
-    test_ijk_pkj_pi(1, 1, 2, 1, 2.0);
-    test_ijk_pkj_pi(1, 2, 1, 2, -1.0);
-    test_ijk_pkj_pi(2, 1, 1, 3, 3.7);
-    test_ijk_pkj_pi(3, 3, 3, 3, 1.0);
-    test_ijk_pkj_pi(3, 5, 7, 11, -1.2);
-    test_ijk_pkj_pi(16, 16, 16, 16, 0.7);
-
-    test_ijkl_ikp_jpl(1, 1, 1, 1, 1);
-    test_ijkl_ikp_jpl(2, 1, 1, 1, 1);
-    test_ijkl_ikp_jpl(1, 2, 1, 1, 1);
-    test_ijkl_ikp_jpl(1, 1, 2, 1, 1);
-    test_ijkl_ikp_jpl(1, 1, 1, 2, 1);
-    test_ijkl_ikp_jpl(1, 1, 1, 1, 2);
-    test_ijkl_ikp_jpl(2, 3, 2, 3, 2);
-    test_ijkl_ikp_jpl(3, 5, 1, 7, 13);
-    test_ijkl_ikp_jpl(1, 1, 1, 1, 1, 0.0);
-    test_ijkl_ikp_jpl(1, 1, 1, 1, 1, -0.5);
-    test_ijkl_ikp_jpl(2, 1, 1, 1, 1, 2.0);
-    test_ijkl_ikp_jpl(1, 2, 1, 1, 1, -1.0);
-    test_ijkl_ikp_jpl(1, 1, 2, 1, 1, 3.7);
-    test_ijkl_ikp_jpl(1, 1, 1, 2, 1, 1.0);
-    test_ijkl_ikp_jpl(1, 1, 1, 1, 2, -1.2);
-    test_ijkl_ikp_jpl(2, 3, 2, 3, 2, 12.3);
-    test_ijkl_ikp_jpl(3, 5, 1, 7, 13, -1.25);
-
-    test_ijkl_ipk_jpl(1, 1, 1, 1, 1);
-    test_ijkl_ipk_jpl(2, 1, 1, 1, 1);
-    test_ijkl_ipk_jpl(1, 2, 1, 1, 1);
-    test_ijkl_ipk_jpl(1, 1, 2, 1, 1);
-    test_ijkl_ipk_jpl(1, 1, 1, 2, 1);
-    test_ijkl_ipk_jpl(1, 1, 1, 1, 2);
-    test_ijkl_ipk_jpl(2, 3, 2, 3, 2);
-    test_ijkl_ipk_jpl(3, 5, 1, 7, 13);
-    test_ijkl_ipk_jpl(1, 1, 1, 1, 1, 0.0);
-    test_ijkl_ipk_jpl(1, 1, 1, 1, 1, -0.5);
-    test_ijkl_ipk_jpl(2, 1, 1, 1, 1, 2.0);
-    test_ijkl_ipk_jpl(1, 2, 1, 1, 1, -1.0);
-    test_ijkl_ipk_jpl(1, 1, 2, 1, 1, 3.7);
-    test_ijkl_ipk_jpl(1, 1, 1, 2, 1, 1.0);
-    test_ijkl_ipk_jpl(1, 1, 1, 1, 2, -1.2);
-    test_ijkl_ipk_jpl(2, 3, 2, 3, 2, 12.3);
-    test_ijkl_ipk_jpl(3, 5, 1, 7, 13, -1.25);
-
-    test_ijkl_ipl_jpk(1, 1, 1, 1, 1);
-    test_ijkl_ipl_jpk(2, 1, 1, 1, 1);
-    test_ijkl_ipl_jpk(1, 2, 1, 1, 1);
-    test_ijkl_ipl_jpk(1, 1, 2, 1, 1);
-    test_ijkl_ipl_jpk(1, 1, 1, 2, 1);
-    test_ijkl_ipl_jpk(1, 1, 1, 1, 2);
-    test_ijkl_ipl_jpk(2, 3, 2, 3, 2);
-    test_ijkl_ipl_jpk(3, 5, 1, 7, 13);
-    test_ijkl_ipl_jpk(1, 1, 1, 1, 1, 0.0);
-    test_ijkl_ipl_jpk(1, 1, 1, 1, 1, -0.5);
-    test_ijkl_ipl_jpk(2, 1, 1, 1, 1, 2.0);
-    test_ijkl_ipl_jpk(1, 2, 1, 1, 1, -1.0);
-    test_ijkl_ipl_jpk(1, 1, 2, 1, 1, 3.7);
-    test_ijkl_ipl_jpk(1, 1, 1, 2, 1, 1.0);
-    test_ijkl_ipl_jpk(1, 1, 1, 1, 2, -1.2);
-    test_ijkl_ipl_jpk(2, 3, 2, 3, 2, 12.3);
-    test_ijkl_ipl_jpk(3, 5, 1, 7, 13, -1.25);
-
-    test_ijkl_jkp_ipl(1, 1, 1, 1, 1);
-    test_ijkl_jkp_ipl(2, 1, 1, 1, 1);
-    test_ijkl_jkp_ipl(1, 2, 1, 1, 1);
-    test_ijkl_jkp_ipl(1, 1, 2, 1, 1);
-    test_ijkl_jkp_ipl(1, 1, 1, 2, 1);
-    test_ijkl_jkp_ipl(1, 1, 1, 1, 2);
-    test_ijkl_jkp_ipl(2, 3, 2, 3, 2);
-    test_ijkl_jkp_ipl(3, 5, 1, 7, 13);
-    test_ijkl_jkp_ipl(1, 1, 1, 1, 1, 0.0);
-    test_ijkl_jkp_ipl(1, 1, 1, 1, 1, -0.5);
-    test_ijkl_jkp_ipl(2, 1, 1, 1, 1, 2.0);
-    test_ijkl_jkp_ipl(1, 2, 1, 1, 1, -1.0);
-    test_ijkl_jkp_ipl(1, 1, 2, 1, 1, 3.7);
-    test_ijkl_jkp_ipl(1, 1, 1, 2, 1, 1.0);
-    test_ijkl_jkp_ipl(1, 1, 1, 1, 2, -1.2);
-    test_ijkl_jkp_ipl(2, 3, 2, 3, 2, 12.3);
-    test_ijkl_jkp_ipl(3, 5, 1, 7, 13, -1.25);
-
-    test_ijkl_jpl_ipk(1, 1, 1, 1, 1);
-    test_ijkl_jpl_ipk(2, 1, 1, 1, 1);
-    test_ijkl_jpl_ipk(1, 2, 1, 1, 1);
-    test_ijkl_jpl_ipk(1, 1, 2, 1, 1);
-    test_ijkl_jpl_ipk(1, 1, 1, 2, 1);
-    test_ijkl_jpl_ipk(1, 1, 1, 1, 2);
-    test_ijkl_jpl_ipk(2, 3, 2, 3, 2);
-    test_ijkl_jpl_ipk(3, 5, 1, 7, 13);
-    test_ijkl_jpl_ipk(1, 1, 1, 1, 1, 0.0);
-    test_ijkl_jpl_ipk(1, 1, 1, 1, 1, -0.5);
-    test_ijkl_jpl_ipk(2, 1, 1, 1, 1, 2.0);
-    test_ijkl_jpl_ipk(1, 2, 1, 1, 1, -1.0);
-    test_ijkl_jpl_ipk(1, 1, 2, 1, 1, 3.7);
-    test_ijkl_jpl_ipk(1, 1, 1, 2, 1, 1.0);
-    test_ijkl_jpl_ipk(1, 1, 1, 1, 2, -1.2);
-    test_ijkl_jpl_ipk(2, 3, 2, 3, 2, 12.3);
-    test_ijkl_jpl_ipk(3, 5, 1, 7, 13, -1.25);
-
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 1, 1, 1);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 1, 1, 1, 1, 2, 3);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 2, 1, 1, 1, 1, 1);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 2, 1, 1, 2, 2);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 2, 1, 1, 2);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 2, 2, 1);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 3, 2, 3, 2, 2, 3);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(3, 5, 1, 7, 13, 11, 3);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 1, 2, 3, -0.5);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 1, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 2, 1, 1, 1, 2, 2, -1.0);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 2, 1, 1, 1, 2, 3.7);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 2, 1, 2, 1, 1.0);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 2, 2, 1, -1.2);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 3, 2, 3, 2, 2, 3, 12.3);
-    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(3, 5, 1, 7, 13, 11, 3, -1.25);
-
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 1);
-    test_ijklm_ikp_jpml(2, 1, 1, 1, 1, 1);
-    test_ijklm_ikp_jpml(1, 2, 1, 1, 1, 1);
-    test_ijklm_ikp_jpml(1, 1, 2, 1, 1, 1);
-    test_ijklm_ikp_jpml(1, 1, 1, 2, 1, 1);
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 2, 1);
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 2);
-    test_ijklm_ikp_jpml(2, 3, 2, 3, 2, 3);
-    test_ijklm_ikp_jpml(3, 3, 3, 3, 3, 3);
-    test_ijklm_ikp_jpml(3, 5, 1, 7, 13, 11);
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijklm_ikp_jpml(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijklm_ikp_jpml(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijklm_ikp_jpml(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijklm_ikp_jpml(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 2, 1.2);
-    test_ijklm_ikp_jpml(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijklm_ikp_jpml(3, 3, 3, 3, 3, 3, 12.3);
-    test_ijklm_ikp_jpml(3, 5, 1, 7, 13, 11, -1.25);
-
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 1);
-    test_ijklm_ipkm_jpl(2, 1, 1, 1, 1, 1);
-    test_ijklm_ipkm_jpl(1, 2, 1, 1, 1, 1);
-    test_ijklm_ipkm_jpl(1, 1, 2, 1, 1, 1);
-    test_ijklm_ipkm_jpl(1, 1, 1, 2, 1, 1);
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 2, 1);
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 2);
-    test_ijklm_ipkm_jpl(2, 3, 2, 3, 2, 3);
-    test_ijklm_ipkm_jpl(3, 3, 3, 3, 3, 3);
-    test_ijklm_ipkm_jpl(3, 5, 1, 7, 13, 11);
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijklm_ipkm_jpl(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijklm_ipkm_jpl(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijklm_ipkm_jpl(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijklm_ipkm_jpl(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 2, 1.2);
-    test_ijklm_ipkm_jpl(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijklm_ipkm_jpl(3, 3, 3, 3, 3, 3, 12.3);
-    test_ijklm_ipkm_jpl(3, 5, 1, 7, 13, 11, -1.25);
-
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 1);
-    test_ijklm_jlp_ipkm(2, 1, 1, 1, 1, 1);
-    test_ijklm_jlp_ipkm(1, 2, 1, 1, 1, 1);
-    test_ijklm_jlp_ipkm(1, 1, 2, 1, 1, 1);
-    test_ijklm_jlp_ipkm(1, 1, 1, 2, 1, 1);
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 2, 1);
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 2);
-    test_ijklm_jlp_ipkm(2, 3, 2, 3, 2, 3);
-    test_ijklm_jlp_ipkm(3, 3, 3, 3, 3, 3);
-    test_ijklm_jlp_ipkm(3, 5, 1, 7, 13, 11);
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijklm_jlp_ipkm(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijklm_jlp_ipkm(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijklm_jlp_ipkm(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijklm_jlp_ipkm(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 2, 1.2);
-    test_ijklm_jlp_ipkm(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijklm_jlp_ipkm(3, 3, 3, 3, 3, 3, 12.3);
-    test_ijklm_jlp_ipkm(3, 5, 1, 7, 13, 11, -1.25);
-
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 1);
-    test_ijklmn_kjmp_ipln(2, 1, 1, 1, 1, 1, 1);
-    test_ijklmn_kjmp_ipln(1, 2, 1, 1, 1, 1, 1);
-    test_ijklmn_kjmp_ipln(1, 1, 2, 1, 1, 1, 1);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 2, 1, 1, 1);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 2, 1, 1);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 2, 1);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 2);
-    test_ijklmn_kjmp_ipln(2, 3, 2, 3, 2, 3, 2);
-    test_ijklmn_kjmp_ipln(3, 3, 3, 3, 3, 3, 3);
-    test_ijklmn_kjmp_ipln(3, 5, 1, 7, 13, 11, 17);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 1, 0.0);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 1, -0.5);
-    test_ijklmn_kjmp_ipln(2, 1, 1, 1, 1, 1, 1, 2.0);
-    test_ijklmn_kjmp_ipln(1, 2, 1, 1, 1, 1, 1, -1.0);
-    test_ijklmn_kjmp_ipln(1, 1, 2, 1, 1, 1, 1, 3.7);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 2, 1, 1, 1, 1.0);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 2, 1, 1, -1.2);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 2, 1, 1.2);
-    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 2, -1.3);
-    test_ijklmn_kjmp_ipln(2, 3, 2, 3, 2, 3, 2, 12.3);
-    test_ijklmn_kjmp_ipln(3, 3, 3, 3, 3, 3, 3, 0.4);
-    test_ijklmn_kjmp_ipln(3, 5, 1, 7, 13, 11, 17, -1.25);
-
-    //
-    // Test two-index contractions
-    //
-
-    test_ij_pqi_pjq(1, 1, 1, 1);
-    test_ij_pqi_pjq(1, 1, 1, 2);
-    test_ij_pqi_pjq(1, 1, 2, 1);
-    test_ij_pqi_pjq(1, 2, 1, 1);
-    test_ij_pqi_pjq(2, 1, 1, 1);
-    test_ij_pqi_pjq(3, 3, 3, 3);
-    test_ij_pqi_pjq(11, 5, 7, 3);
-    test_ij_pqi_pjq(16, 16, 16, 16);
-    test_ij_pqi_pjq(1, 1, 1, 1, -0.5);
-    test_ij_pqi_pjq(1, 1, 1, 2, 2.0);
-    test_ij_pqi_pjq(1, 1, 2, 1, -1.0);
-    test_ij_pqi_pjq(1, 2, 1, 1, 3.7);
-    test_ij_pqi_pjq(2, 1, 1, 1, 1.0);
-    test_ij_pqi_pjq(3, 3, 3, 3, 1.0);
-    test_ij_pqi_pjq(11, 5, 7, 3, -1.2);
-    test_ij_pqi_pjq(16, 16, 16, 16, 0.7);
-
-    test_ij_ipq_jqp(1, 1, 1, 1);
-    test_ij_ipq_jqp(1, 1, 1, 2);
-    test_ij_ipq_jqp(1, 1, 2, 1);
-    test_ij_ipq_jqp(1, 2, 1, 1);
-    test_ij_ipq_jqp(2, 1, 1, 1);
-    test_ij_ipq_jqp(3, 3, 3, 3);
-    test_ij_ipq_jqp(11, 5, 7, 3);
-    test_ij_ipq_jqp(16, 16, 16, 16);
-    test_ij_ipq_jqp(1, 1, 1, 1, -0.5);
-    test_ij_ipq_jqp(1, 1, 1, 2, 2.0);
-    test_ij_ipq_jqp(1, 1, 2, 1, -1.0);
-    test_ij_ipq_jqp(1, 2, 1, 1, 3.7);
-    test_ij_ipq_jqp(2, 1, 1, 1, 1.0);
-    test_ij_ipq_jqp(3, 3, 3, 3, 1.0);
-    test_ij_ipq_jqp(11, 5, 7, 3, -1.2);
-    test_ij_ipq_jqp(16, 16, 16, 16, 0.7);
-
-    test_ij_jpq_iqp(1, 1, 1, 1);
-    test_ij_jpq_iqp(1, 1, 1, 2);
-    test_ij_jpq_iqp(1, 1, 2, 1);
-    test_ij_jpq_iqp(1, 2, 1, 1);
-    test_ij_jpq_iqp(2, 1, 1, 1);
-    test_ij_jpq_iqp(3, 3, 3, 3);
-    test_ij_jpq_iqp(11, 5, 7, 3);
-    test_ij_jpq_iqp(16, 16, 16, 16);
-    test_ij_jpq_iqp(1, 1, 1, 1, -0.5);
-    test_ij_jpq_iqp(1, 1, 1, 2, 2.0);
-    test_ij_jpq_iqp(1, 1, 2, 1, -1.0);
-    test_ij_jpq_iqp(1, 2, 1, 1, 3.7);
-    test_ij_jpq_iqp(2, 1, 1, 1, 1.0);
-    test_ij_jpq_iqp(3, 3, 3, 3, 1.0);
-    test_ij_jpq_iqp(11, 5, 7, 3, -1.2);
-    test_ij_jpq_iqp(16, 16, 16, 16, 0.7);
-
-    test_ij_jipq_qp(1, 1, 1, 1);
-    test_ij_jipq_qp(1, 1, 1, 2);
-    test_ij_jipq_qp(1, 1, 2, 1);
-    test_ij_jipq_qp(1, 2, 1, 1);
-    test_ij_jipq_qp(2, 1, 1, 1);
-    test_ij_jipq_qp(3, 3, 3, 3);
-    test_ij_jipq_qp(11, 5, 7, 3);
-    test_ij_jipq_qp(16, 16, 16, 16);
-    test_ij_jipq_qp(1, 1, 1, 1, -0.5);
-    test_ij_jipq_qp(1, 1, 1, 2, 2.0);
-    test_ij_jipq_qp(1, 1, 2, 1, -1.0);
-    test_ij_jipq_qp(1, 2, 1, 1, 3.7);
-    test_ij_jipq_qp(2, 1, 1, 1, 1.0);
-    test_ij_jipq_qp(3, 3, 3, 3, 1.0);
-    test_ij_jipq_qp(11, 5, 7, 3, -1.2);
-    test_ij_jipq_qp(16, 16, 16, 16, 0.7);
-
-    test_ij_pq_ijpq(1, 1, 1, 1);
-    test_ij_pq_ijpq(2, 2, 2, 2);
-    test_ij_pq_ijpq_a(1, 1, 1, 1, 0.25);
-    test_ij_pq_ijpq_a(2, 2, 2, 2, 0.25);
-
-    test_ijk_pqj_iqpk(1, 1, 1, 1, 1);
-    test_ijk_pqj_iqpk(2, 1, 1, 1, 1);
-    test_ijk_pqj_iqpk(1, 2, 1, 1, 1);
-    test_ijk_pqj_iqpk(1, 1, 2, 1, 1);
-    test_ijk_pqj_iqpk(1, 1, 1, 2, 1);
-    test_ijk_pqj_iqpk(1, 1, 1, 1, 2);
-    test_ijk_pqj_iqpk(2, 3, 2, 3, 2);
-    test_ijk_pqj_iqpk(3, 5, 1, 13, 11);
-    test_ijk_pqj_iqpk(3, 5, 2, 13, 11);
-    test_ijk_pqj_iqpk(1, 1, 1, 1, 1, 0.0);
-    test_ijk_pqj_iqpk(1, 1, 1, 1, 1, -0.5);
-    test_ijk_pqj_iqpk(2, 1, 1, 1, 1, 2.0);
-    test_ijk_pqj_iqpk(1, 2, 1, 1, 1, -1.0);
-    test_ijk_pqj_iqpk(1, 1, 2, 1, 1, 3.7);
-    test_ijk_pqj_iqpk(1, 1, 1, 2, 1, -1.2);
-    test_ijk_pqj_iqpk(1, 1, 1, 1, 2, 0.7);
-    test_ijk_pqj_iqpk(2, 3, 2, 2, 3, 12.3);
-    test_ijk_pqj_iqpk(3, 5, 1, 13, 11, -1.25);
-    test_ijk_pqj_iqpk(3, 5, 2, 13, 11, -1.25);
-
-    test_ijk_pqji_qpk(1, 1, 1, 1, 1);
-    test_ijk_pqji_qpk(2, 1, 1, 1, 1);
-    test_ijk_pqji_qpk(1, 2, 1, 1, 1);
-    test_ijk_pqji_qpk(1, 1, 2, 1, 1);
-    test_ijk_pqji_qpk(1, 1, 1, 2, 1);
-    test_ijk_pqji_qpk(1, 1, 1, 1, 2);
-    test_ijk_pqji_qpk(2, 3, 2, 3, 2);
-    test_ijk_pqji_qpk(3, 5, 1, 13, 11);
-    test_ijk_pqji_qpk(3, 5, 2, 13, 11);
-    test_ijk_pqji_qpk(1, 1, 1, 1, 1, 0.0);
-    test_ijk_pqji_qpk(1, 1, 1, 1, 1, -0.5);
-    test_ijk_pqji_qpk(2, 1, 1, 1, 1, 2.0);
-    test_ijk_pqji_qpk(1, 2, 1, 1, 1, -1.0);
-    test_ijk_pqji_qpk(1, 1, 2, 1, 1, 3.7);
-    test_ijk_pqji_qpk(1, 1, 1, 2, 1, -1.2);
-    test_ijk_pqji_qpk(1, 1, 1, 1, 2, 0.7);
-    test_ijk_pqji_qpk(2, 3, 2, 2, 3, 12.3);
-    test_ijk_pqji_qpk(3, 5, 1, 13, 11, -1.25);
-    test_ijk_pqji_qpk(3, 5, 2, 13, 11, -1.25);
-
-    test_ijk_kjpq_iqp(1, 1, 1, 1, 1);
-    test_ijk_kjpq_iqp(2, 1, 1, 1, 1);
-    test_ijk_kjpq_iqp(1, 2, 1, 1, 1);
-    test_ijk_kjpq_iqp(1, 1, 2, 1, 1);
-    test_ijk_kjpq_iqp(1, 1, 1, 2, 1);
-    test_ijk_kjpq_iqp(1, 1, 1, 1, 2);
-    test_ijk_kjpq_iqp(2, 3, 2, 3, 2);
-    test_ijk_kjpq_iqp(3, 5, 1, 13, 11);
-    test_ijk_kjpq_iqp(3, 5, 2, 13, 11);
-    test_ijk_kjpq_iqp(1, 1, 1, 1, 1, 0.0);
-    test_ijk_kjpq_iqp(1, 1, 1, 1, 1, -0.5);
-    test_ijk_kjpq_iqp(2, 1, 1, 1, 1, 2.0);
-    test_ijk_kjpq_iqp(1, 2, 1, 1, 1, -1.0);
-    test_ijk_kjpq_iqp(1, 1, 2, 1, 1, 3.7);
-    test_ijk_kjpq_iqp(1, 1, 1, 2, 1, -1.2);
-    test_ijk_kjpq_iqp(1, 1, 1, 1, 2, 0.7);
-    test_ijk_kjpq_iqp(2, 3, 2, 2, 3, 12.3);
-    test_ijk_kjpq_iqp(3, 5, 1, 13, 11, -1.25);
-    test_ijk_kjpq_iqp(3, 5, 2, 13, 11, -1.25);
-
-    test_ijk_pkiq_pjq(1, 1, 1, 1, 1);
-    test_ijk_pkiq_pjq(2, 1, 1, 1, 1);
-    test_ijk_pkiq_pjq(1, 2, 1, 1, 1);
-    test_ijk_pkiq_pjq(1, 1, 2, 1, 1);
-    test_ijk_pkiq_pjq(1, 1, 1, 2, 1);
-    test_ijk_pkiq_pjq(1, 1, 1, 1, 2);
-    test_ijk_pkiq_pjq(2, 3, 2, 3, 2);
-    test_ijk_pkiq_pjq(3, 5, 1, 13, 11);
-    test_ijk_pkiq_pjq(3, 5, 2, 13, 11);
-    test_ijk_pkiq_pjq(1, 1, 1, 1, 1, 0.0);
-    test_ijk_pkiq_pjq(1, 1, 1, 1, 1, -0.5);
-    test_ijk_pkiq_pjq(2, 1, 1, 1, 1, 2.0);
-    test_ijk_pkiq_pjq(1, 2, 1, 1, 1, -1.0);
-    test_ijk_pkiq_pjq(1, 1, 2, 1, 1, 3.7);
-    test_ijk_pkiq_pjq(1, 1, 1, 2, 1, -1.2);
-    test_ijk_pkiq_pjq(1, 1, 1, 1, 2, 0.7);
-    test_ijk_pkiq_pjq(2, 3, 2, 2, 3, 12.3);
-    test_ijk_pkiq_pjq(3, 5, 1, 13, 11, -1.25);
-    test_ijk_pkiq_pjq(3, 5, 2, 13, 11, -1.25);
-
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1);
-    test_ijkl_iplq_kpjq(2, 1, 1, 1, 1, 1);
-    test_ijkl_iplq_kpjq(1, 2, 1, 1, 1, 1);
-    test_ijkl_iplq_kpjq(1, 1, 2, 1, 1, 1);
-    test_ijkl_iplq_kpjq(1, 1, 1, 2, 1, 1);
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 2, 1);
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 2);
-    test_ijkl_iplq_kpjq(2, 3, 2, 3, 2, 3);
-    test_ijkl_iplq_kpjq(3, 5, 1, 7, 13, 11);
-    test_ijkl_iplq_kpjq(3, 5, 2, 7, 13, 11);
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_iplq_kpjq(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_iplq_kpjq(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_iplq_kpjq(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_iplq_kpjq(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_iplq_kpjq(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_iplq_kpjq(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_iplq_kpjq(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1);
-    test_ijkl_iplq_pkjq(2, 1, 1, 1, 1, 1);
-    test_ijkl_iplq_pkjq(1, 2, 1, 1, 1, 1);
-    test_ijkl_iplq_pkjq(1, 1, 2, 1, 1, 1);
-    test_ijkl_iplq_pkjq(1, 1, 1, 2, 1, 1);
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 2, 1);
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 2);
-    test_ijkl_iplq_pkjq(2, 3, 2, 3, 2, 3);
-    test_ijkl_iplq_pkjq(3, 5, 1, 7, 13, 11);
-    test_ijkl_iplq_pkjq(3, 5, 2, 7, 13, 11);
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_iplq_pkjq(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_iplq_pkjq(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_iplq_pkjq(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_iplq_pkjq(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_iplq_pkjq(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_iplq_pkjq(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_iplq_pkjq(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1);
-    test_ijkl_iplq_pkqj(2, 1, 1, 1, 1, 1);
-    test_ijkl_iplq_pkqj(1, 2, 1, 1, 1, 1);
-    test_ijkl_iplq_pkqj(1, 1, 2, 1, 1, 1);
-    test_ijkl_iplq_pkqj(1, 1, 1, 2, 1, 1);
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 2, 1);
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 2);
-    test_ijkl_iplq_pkqj(2, 3, 2, 3, 2, 3);
-    test_ijkl_iplq_pkqj(3, 5, 1, 7, 13, 11);
-    test_ijkl_iplq_pkqj(3, 5, 2, 7, 13, 11);
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_iplq_pkqj(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_iplq_pkqj(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_iplq_pkqj(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_iplq_pkqj(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_iplq_pkqj(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_iplq_pkqj(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_iplq_pkqj(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 1);
-    test_ijkl_ipql_kpqj(2, 1, 1, 1, 1, 1);
-    test_ijkl_ipql_kpqj(1, 2, 1, 1, 1, 1);
-    test_ijkl_ipql_kpqj(1, 1, 2, 1, 1, 1);
-    test_ijkl_ipql_kpqj(1, 1, 1, 2, 1, 1);
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 2, 1);
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 2);
-    test_ijkl_ipql_kpqj(2, 3, 2, 3, 2, 3);
-    test_ijkl_ipql_kpqj(3, 5, 1, 7, 13, 11);
-    test_ijkl_ipql_kpqj(3, 5, 2, 7, 13, 11);
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_ipql_kpqj(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_ipql_kpqj(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_ipql_kpqj(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_ipql_kpqj(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_ipql_kpqj(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_ipql_kpqj(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_ipql_kpqj(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1);
-    test_ijkl_ipql_pkqj(2, 1, 1, 1, 1, 1);
-    test_ijkl_ipql_pkqj(1, 2, 1, 1, 1, 1);
-    test_ijkl_ipql_pkqj(1, 1, 2, 1, 1, 1);
-    test_ijkl_ipql_pkqj(1, 1, 1, 2, 1, 1);
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 2, 1);
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 2);
-    test_ijkl_ipql_pkqj(2, 3, 2, 3, 2, 3);
-    test_ijkl_ipql_pkqj(3, 5, 1, 7, 13, 11);
-    test_ijkl_ipql_pkqj(3, 5, 2, 7, 13, 11);
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_ipql_pkqj(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_ipql_pkqj(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_ipql_pkqj(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_ipql_pkqj(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_ipql_pkqj(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_ipql_pkqj(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_ipql_pkqj(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1);
-    test_ijkl_pilq_kpjq(2, 1, 1, 1, 1, 1);
-    test_ijkl_pilq_kpjq(1, 2, 1, 1, 1, 1);
-    test_ijkl_pilq_kpjq(1, 1, 2, 1, 1, 1);
-    test_ijkl_pilq_kpjq(1, 1, 1, 2, 1, 1);
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 2, 1);
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 2);
-    test_ijkl_pilq_kpjq(2, 3, 2, 3, 2, 3);
-    test_ijkl_pilq_kpjq(3, 5, 1, 7, 13, 11);
-    test_ijkl_pilq_kpjq(3, 5, 2, 7, 13, 11);
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_pilq_kpjq(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_pilq_kpjq(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_pilq_kpjq(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_pilq_kpjq(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_pilq_kpjq(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_pilq_kpjq(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_pilq_kpjq(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1);
-    test_ijkl_pilq_pkjq(2, 1, 1, 1, 1, 1);
-    test_ijkl_pilq_pkjq(1, 2, 1, 1, 1, 1);
-    test_ijkl_pilq_pkjq(1, 1, 2, 1, 1, 1);
-    test_ijkl_pilq_pkjq(1, 1, 1, 2, 1, 1);
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 2, 1);
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 2);
-    test_ijkl_pilq_pkjq(2, 3, 2, 3, 2, 3);
-    test_ijkl_pilq_pkjq(3, 5, 1, 7, 13, 11);
-    test_ijkl_pilq_pkjq(3, 5, 2, 7, 13, 11);
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_pilq_pkjq(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_pilq_pkjq(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_pilq_pkjq(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_pilq_pkjq(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_pilq_pkjq(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_pilq_pkjq(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_pilq_pkjq(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1);
-    test_ijkl_piql_kpqj(2, 1, 1, 1, 1, 1);
-    test_ijkl_piql_kpqj(1, 2, 1, 1, 1, 1);
-    test_ijkl_piql_kpqj(1, 1, 2, 1, 1, 1);
-    test_ijkl_piql_kpqj(1, 1, 1, 2, 1, 1);
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 2, 1);
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 2);
-    test_ijkl_piql_kpqj(2, 3, 2, 3, 2, 3);
-    test_ijkl_piql_kpqj(3, 5, 1, 7, 13, 11);
-    test_ijkl_piql_kpqj(3, 5, 2, 7, 13, 11);
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_piql_kpqj(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_piql_kpqj(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_piql_kpqj(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_piql_kpqj(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_piql_kpqj(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_piql_kpqj(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_piql_kpqj(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1);
-    test_ijkl_piql_pkqj(2, 1, 1, 1, 1, 1);
-    test_ijkl_piql_pkqj(1, 2, 1, 1, 1, 1);
-    test_ijkl_piql_pkqj(1, 1, 2, 1, 1, 1);
-    test_ijkl_piql_pkqj(1, 1, 1, 2, 1, 1);
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 2, 1);
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 2);
-    test_ijkl_piql_pkqj(2, 3, 2, 3, 2, 3);
-    test_ijkl_piql_pkqj(3, 5, 1, 7, 13, 11);
-    test_ijkl_piql_pkqj(3, 5, 2, 7, 13, 11);
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_piql_pkqj(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_piql_pkqj(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_piql_pkqj(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_piql_pkqj(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_piql_pkqj(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_piql_pkqj(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_piql_pkqj(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 1);
-    test_ijkl_pqkj_iqpl(2, 1, 1, 1, 1, 1);
-    test_ijkl_pqkj_iqpl(1, 2, 1, 1, 1, 1);
-    test_ijkl_pqkj_iqpl(1, 1, 2, 1, 1, 1);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 2, 1, 1);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 2, 1);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 2);
-    test_ijkl_pqkj_iqpl(2, 3, 2, 3, 2, 3);
-    test_ijkl_pqkj_iqpl(3, 5, 1, 7, 13, 11);
-    test_ijkl_pqkj_iqpl(3, 5, 2, 7, 13, 11);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_pqkj_iqpl(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_pqkj_iqpl(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_pqkj_iqpl(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_pqkj_iqpl(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_pqkj_iqpl(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_pqkj_iqpl(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 1);
-    test_ijkl_pqkj_qipl(2, 1, 1, 1, 1, 1);
-    test_ijkl_pqkj_qipl(1, 2, 1, 1, 1, 1);
-    test_ijkl_pqkj_qipl(1, 1, 2, 1, 1, 1);
-    test_ijkl_pqkj_qipl(1, 1, 1, 2, 1, 1);
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 2, 1);
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 2);
-    test_ijkl_pqkj_qipl(2, 3, 2, 3, 2, 3);
-    test_ijkl_pqkj_qipl(3, 5, 1, 7, 13, 11);
-    test_ijkl_pqkj_qipl(3, 5, 2, 7, 13, 11);
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 1, 0.0);
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 1, -0.5);
-    test_ijkl_pqkj_qipl(2, 1, 1, 1, 1, 1, 2.0);
-    test_ijkl_pqkj_qipl(1, 2, 1, 1, 1, 1, -1.0);
-    test_ijkl_pqkj_qipl(1, 1, 2, 1, 1, 1, 3.7);
-    test_ijkl_pqkj_qipl(1, 1, 1, 2, 1, 1, 1.0);
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 2, 1, -1.2);
-    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 2, 0.7);
-    test_ijkl_pqkj_qipl(2, 3, 2, 3, 2, 3, 12.3);
-    test_ijkl_pqkj_qipl(3, 5, 1, 7, 13, 11, -1.25);
-    test_ijkl_pqkj_qipl(3, 5, 2, 7, 13, 11, -1.25);
-
-    test_ij_ipqr_jpqr(1, 1, 1, 1, 1);
-    test_ij_ipqr_jpqr(1, 1, 1, 1, 4);
-    test_ij_ipqr_jpqr(1, 1, 1, 4, 1);
-    test_ij_ipqr_jpqr(1, 1, 4, 1, 1);
-    test_ij_ipqr_jpqr(1, 4, 1, 1, 1);
-    test_ij_ipqr_jpqr(4, 1, 1, 1, 1);
-    test_ij_ipqr_jpqr(4, 1, 1, 7, 7);
-    test_ij_ipqr_jpqr(1, 4, 1, 7, 7);
-    test_ij_ipqr_jpqr(3, 4, 5, 6, 7);
-
-    test_ij_ipqr_jpqr_a(1, 1, 1, 1, 1, 0.5);
-    test_ij_ipqr_jpqr_a(1, 1, 1, 1, 4, -1.0);
-    test_ij_ipqr_jpqr_a(1, 1, 1, 4, 1, 1.5);
-    test_ij_ipqr_jpqr_a(1, 1, 4, 1, 1, -1.2);
-    test_ij_ipqr_jpqr_a(1, 4, 1, 1, 1, 0.8);
-    test_ij_ipqr_jpqr_a(4, 1, 1, 1, 1, 1.4);
-    test_ij_ipqr_jpqr_a(4, 1, 1, 7, 7, 0.4);
-    test_ij_ipqr_jpqr_a(1, 4, 1, 7, 7, -0.6);
-    test_ij_ipqr_jpqr_a(3, 4, 5, 6, 7, -2.0);
-
-    test_ij_ipqr_pjrq(1, 1, 1, 1, 1);
-    test_ij_ipqr_pjrq(4, 1, 1, 7, 7);
-    test_ij_ipqr_pjrq(1, 1, 1, 1, 2);
-    test_ij_ipqr_pjrq(1, 1, 1, 2, 1);
-    test_ij_ipqr_pjrq(1, 1, 2, 1, 1);
-    test_ij_ipqr_pjrq(1, 2, 1, 1, 1);
-    test_ij_ipqr_pjrq(2, 1, 1, 1, 1);
-    test_ij_ipqr_pjrq(3, 3, 3, 3, 3);
-    test_ij_ipqr_pjrq(11, 5, 7, 3, 4);
-    test_ij_ipqr_pjrq(16, 16, 16, 16, 16);
-    test_ij_ipqr_pjrq(1, 1, 1, 1, 1, -0.5);
-    test_ij_ipqr_pjrq(4, 1, 1, 7, 7, 1.2);
-    test_ij_ipqr_pjrq(1, 1, 1, 1, 2, 2.0);
-    test_ij_ipqr_pjrq(1, 1, 1, 2, 1, -1.0);
-    test_ij_ipqr_pjrq(1, 1, 2, 1, 1, 3.7);
-    test_ij_ipqr_pjrq(1, 2, 1, 1, 1, 1.0);
-    test_ij_ipqr_pjrq(2, 1, 1, 1, 1, -0.9);
-    test_ij_ipqr_pjrq(3, 3, 3, 3, 3, 1.0);
-    test_ij_ipqr_pjrq(11, 5, 7, 3, 4, -1.2);
-    test_ij_ipqr_pjrq(16, 16, 16, 16, 16, 0.7);
-
-    test_ij_jpqr_iprq(1, 1, 1, 1, 1, -1.0);
-    test_ij_jpqr_iprq(1, 1, 1, 1, 3, 0.5);
-    test_ij_jpqr_iprq(1, 1, 1, 3, 1, -1.2);
-    test_ij_jpqr_iprq(1, 1, 3, 1, 1, 0.2);
-    test_ij_jpqr_iprq(1, 3, 1, 1, 1, -0.5);
-    test_ij_jpqr_iprq(3, 1, 1, 1, 1, -0.4);
-    test_ij_jpqr_iprq(3, 3, 3, 2, 4, 1.0);
-
-    test_ij_pqir_pqjr(3, 4, 5, 6, 7);
-    test_ij_pqir_pqjr_a(3, 4, 5, 6, 7, 2.0);
-    test_ij_pqir_pqjr(3, 3, 3, 3, 3);
-    test_ij_pqir_pqjr(3, 1, 3, 1, 2);
-    test_ij_pqir_pqjr(3, 3, 1, 1, 2);
-
-    test_ijkl_pi_jklp(1, 4, 5, 6, 2);
-    test_ijkl_pi_jklp(3, 4, 5, 6, 7);
-    test_ijkl_pi_jklp(10, 10, 10, 10, 6);
-    test_ijkl_pi_jklp_a(3, 4, 5, 6, 7, 1.0);
-    test_ijkl_pi_jklp_a(3, 4, 5, 6, 7, 0.0);
-    test_ijkl_pi_jklp_a(3, 4, 5, 6, 7, -2.0);
-
-    test_jikl_pi_jpkl(1, 4, 5, 6, 2);
-    test_jikl_pi_jpkl(3, 4, 5, 6, 7);
-    test_jikl_pi_jpkl_a(3, 4, 5, 6, 7, 0.0);
-    test_jikl_pi_jpkl_a(3, 4, 5, 6, 7, -2.0);
-
-    test_ijkl_ijp_klp(1, 1, 1, 1, 1);
-    test_ijkl_ijp_klp(3, 4, 5, 6, 7);
-    test_ijkl_ijp_klp(5, 6, 3, 4, 7);
-    test_ijkl_ijp_klp(1, 100, 1, 100, 100);
-    test_ijkl_ijp_klp_a(3, 4, 5, 6, 7, -2.0);
-
-    test_ijkl_ij_kl(3, 4, 5, 6);
-
-    test_ijkl_ij_lk(3, 4, 5, 6);
-
-
-    } catch(...) {
-        allocator<double>::shutdown();
-        throw;
-    }
-
-    allocator<double>::shutdown();
-}
+const double k_thresh = 5e-14;
 
 #if 0
-void tod_contract2_test::test_0_p_p(size_t np, double d)
-    throw(libtest::test_exception) {
+int test_0_p_p(size_t np, double d) {
 
     // c = \sum_p a_p b_p
 
@@ -1159,14 +90,13 @@ void tod_contract2_test::test_0_p_p(size_t np, double d)
     compare_ref<0>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
 }
 #endif
 
 
-void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_i_p_pi(size_t ni, size_t np, double d) {
 
     // c_i = \sum_p a_p b_{pi}
 
@@ -1247,13 +177,14 @@ void tod_contract2_test::test_i_p_pi(size_t ni, size_t np, double d)
     compare_ref<1>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_i_p_ip(size_t ni, size_t np, double d) {
 
     // c_i = \sum_p a_p b_{ip}
 
@@ -1334,13 +265,14 @@ void tod_contract2_test::test_i_p_ip(size_t ni, size_t np, double d)
     compare_ref<1>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_i_pi_p(size_t ni, size_t np, double d) {
 
     // c_i = \sum_p a_{pi} b_p
 
@@ -1421,13 +353,14 @@ void tod_contract2_test::test_i_pi_p(size_t ni, size_t np, double d)
     compare_ref<1>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_i_ip_p(size_t ni, size_t np, double d) {
 
     // c_i = \sum_p a_{ip} b_p
 
@@ -1508,13 +441,14 @@ void tod_contract2_test::test_i_ip_p(size_t ni, size_t np, double d)
     compare_ref<1>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_i_j(size_t ni, size_t nj, double d) {
 
     // c_{ij} = c_{ij} + d a_{i} b_{j}
 
@@ -1594,13 +528,14 @@ void tod_contract2_test::test_ij_i_j(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
-    throw(libtest::test_exception) {
+int test_ij_j_i(size_t ni, size_t nj, double d) {
 
     // c_{ij} = c_{ij} + d a_{j} b_{i}
 
@@ -1680,14 +615,14 @@ void tod_contract2_test::test_ij_j_i(size_t ni, size_t nj, double d)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pi_pj(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{pi} b_{pj}
 
@@ -1769,14 +704,14 @@ void tod_contract2_test::test_ij_pi_pj(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pi_jp(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_pi_jp(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{pi} b_{jp}
 
@@ -1858,14 +793,14 @@ void tod_contract2_test::test_ij_pi_jp(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_ip_pj(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_ip_pj(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{ip} b_{pj}
 
@@ -1947,14 +882,14 @@ void tod_contract2_test::test_ij_ip_pj(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_ip_jp(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_ip_jp(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{ip} b_{jp}
 
@@ -2036,14 +971,14 @@ void tod_contract2_test::test_ij_ip_jp(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pj_pi(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_pj_pi(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{pj} b_{pi}
 
@@ -2126,14 +1061,14 @@ void tod_contract2_test::test_ij_pj_pi(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pj_ip(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_pj_ip(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{pj} b_{ip}
 
@@ -2216,14 +1151,14 @@ void tod_contract2_test::test_ij_pj_ip(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_jp_ip(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{jp} b_{ip}
 
@@ -2306,14 +1241,14 @@ void tod_contract2_test::test_ij_jp_ip(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_jp_pi(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{jp} b_{pi}
 
@@ -2396,14 +1331,14 @@ void tod_contract2_test::test_ij_jp_pi(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_p_pji(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_p_pji(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{p} b_{pji}
 
@@ -2488,14 +1423,14 @@ void tod_contract2_test::test_ij_p_pji(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pji_p(
-    size_t ni, size_t nj, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ij_pji_p(size_t ni, size_t nj, size_t np, double d) {
 
     // c_{ij} = \sum_p a_{pji} b_{p}
 
@@ -2580,14 +1515,14 @@ void tod_contract2_test::test_ij_pji_p(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pi_pj_qi_jq(
-    size_t ni, size_t nj, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ij_pi_pj_qi_jq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     //  c_{ij} = \sum_p a^1_{pi} b^1_{pj} + \sum_q a^2_{qi} b^2_{jq}
 
@@ -2709,14 +1644,14 @@ void tod_contract2_test::test_ij_pi_pj_qi_jq(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pi_pj_qi_qj(
-    size_t ni, size_t nj, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     //  c_{ij} = \sum_p a^1_{pi} b^1_{pj} + \sum_q a^2_{qi} b^2_{qj}
 
@@ -2838,14 +1773,14 @@ void tod_contract2_test::test_ij_pi_pj_qi_qj(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_ip_pkj(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = \sum_p a_{ip} b_{pkj}
 
@@ -2933,14 +1868,14 @@ void tod_contract2_test::test_ijk_ip_pkj(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pi_pkj(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = c_{ijk} + d \sum_p a_{pi} b_{pkj}
 
@@ -3028,14 +1963,14 @@ void tod_contract2_test::test_ijk_pi_pkj(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pik_pj(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = c_{ijk} + d \sum_p a_{pik} b_{pj}
 
@@ -3123,14 +2058,14 @@ void tod_contract2_test::test_ijk_pik_pj(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pj_ipk(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = c_{ijk} + d \sum_p a_{pj} b_{ipk}
 
@@ -3218,14 +2153,14 @@ void tod_contract2_test::test_ijk_pj_ipk(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pj_pik(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_pj_pik(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = c_{ijk} + d \sum_p a_{pj} b_{pik}
 
@@ -3313,14 +2248,14 @@ void tod_contract2_test::test_ijk_pj_pik(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pkj_ip(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = \sum_p a_{pkj} b_{ip}
 
@@ -3408,14 +2343,14 @@ void tod_contract2_test::test_ijk_pkj_ip(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pkj_pi(
-    size_t ni, size_t nj, size_t nk, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijk_pkj_pi(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // c_{ijk} = \sum_p a_{pkj} b_{pi}
 
@@ -3503,14 +2438,14 @@ void tod_contract2_test::test_ijk_pkj_pi(
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pqi_pjq(
-    size_t ni, size_t nj, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // c_{ij} = \sum_{pq} a_{pqi} b_{pjq}
 
@@ -3596,13 +2531,13 @@ void tod_contract2_test::test_ij_pqi_pjq(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_ipq_jqp(
-    size_t ni, size_t nj, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // c_{ij} = \sum_{pq} a_{ipq} b_{jqp}
 
@@ -3688,13 +2623,13 @@ void tod_contract2_test::test_ij_ipq_jqp(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_jpq_iqp(
-    size_t ni, size_t nj, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // c_{ij} = \sum_{pq} a_{jpq} b_{iqp}
 
@@ -3780,13 +2715,13 @@ void tod_contract2_test::test_ij_jpq_iqp(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_jipq_qp(
-    size_t ni, size_t nj, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // c_{ij} = \sum_{pq} a_{jipq} b_{qp}
 
@@ -3876,12 +2811,13 @@ void tod_contract2_test::test_ij_jipq_qp(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
-    size_t nq) throw(libtest::test_exception) {
+int test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq) { 
 
     // c_{ij} = \sum_{pq} a_{pq} b_{ijpq}
 
@@ -3962,10 +2898,11 @@ void tod_contract2_test::test_ij_pq_ijpq(size_t ni, size_t nj, size_t np,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
-    size_t nq, double d) throw(libtest::test_exception) {
+int test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // c_{ij} = c_{ij} + d \sum_{pq} a_{pq} b_{ijpq}
 
@@ -4046,11 +2983,13 @@ void tod_contract2_test::test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
-    size_t np, size_t nq, double d) throw(libtest::test_exception) {
+int test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
+    size_t np, size_t nq, double d) {
 
     // c_{ijk} = \sum_{pq} a_{kjpq} b_{iqp}
 
@@ -4141,13 +3080,15 @@ void tod_contract2_test::test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
-    size_t np, size_t nq, double d) throw(libtest::test_exception) {
+int test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
+    size_t np, size_t nq, double d) {
 
     // c_{ijk} = c_{ijk} + d \sum_{pq} a_{pkiq} b_{pjq}
 
@@ -4240,13 +3181,15 @@ void tod_contract2_test::test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
-    size_t np, size_t nq, double d) throw(libtest::test_exception) {
+int test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
+    size_t np, size_t nq, double d) {
 
     // c_{ijk} = \sum_{pq} a_{pqj} b_{iqpk}
 
@@ -4338,13 +3281,15 @@ void tod_contract2_test::test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
-    size_t np, size_t nq, double d) throw(libtest::test_exception) {
+int test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
+    size_t np, size_t nq, double d) {
 
     // c_{ijk} = \sum_{pq} a_{pqji} b_{qpk}
 
@@ -4435,13 +3380,15 @@ void tod_contract2_test::test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
     compare_ref<3>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ikp} b_{jpl}
 
@@ -4533,13 +3480,15 @@ void tod_contract2_test::test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ikp} b_{jpl}
 
@@ -4631,13 +3580,15 @@ void tod_contract2_test::test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ipl} b_{jpk}
 
@@ -4728,13 +3679,15 @@ void tod_contract2_test::test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jkp} b_{ipl}
 
@@ -4826,13 +3779,15 @@ void tod_contract2_test::test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a_{jpl} b_{ipk}
 
@@ -4925,14 +3880,15 @@ void tod_contract2_test::test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
-    size_t nk, size_t nl, size_t np, size_t nq, size_t nr, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
+    size_t nk, size_t nl, size_t np, size_t nq, size_t nr, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a^1_{jpl} b^1_{ipk}
     //                     + d \sum_{q} a^2_{jiq} b^2_{kql}
@@ -5111,14 +4067,15 @@ void tod_contract2_test::test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t nm, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t nm, size_t np, double d) {
 
     // c_{ijklm} = c_{ijklm} + d \sum_{p} a_{ikp} b_{jpml}
 
@@ -5216,14 +4173,15 @@ void tod_contract2_test::test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
     compare_ref<5>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t nm, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t nm, size_t np, double d) {
 
     // c_{ijklm} = \sum_{p} a_{ipkm} b_{jpl}
 
@@ -5321,14 +4279,15 @@ void tod_contract2_test::test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
     compare_ref<5>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t nm, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t nm, size_t np, double d) {
 
     // c_{ijklm} = \sum_{p} a_{jlp} b_{ipkm}
 
@@ -5426,14 +4385,15 @@ void tod_contract2_test::test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
     compare_ref<5>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t nm, size_t nn, size_t np, double d)
-    throw(libtest::test_exception) {
+int test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t nm, size_t nn, size_t np, double d) {
 
     // c_{ijklmn} = c_{ijklmn} + d \sum_{p} a_{kjmp} b_{ipln}
 
@@ -5534,14 +4494,15 @@ void tod_contract2_test::test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
     compare_ref<6>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{iplq} b_{kpjq}
 
@@ -5634,14 +4595,15 @@ void tod_contract2_test::test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{iplq} b_{pkjq}
 
@@ -5734,14 +4696,15 @@ void tod_contract2_test::test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{iplq} b_{pkqj}
 
@@ -5834,14 +4797,15 @@ void tod_contract2_test::test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{ipql} b_{kpqj}
 
@@ -5934,14 +4898,15 @@ void tod_contract2_test::test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{ipql} b_{pkqj}
 
@@ -6034,14 +4999,15 @@ void tod_contract2_test::test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) { 
 
     // c_{ijkl} = \sum_{pq} a_{pilq} b_{kpjq}
 
@@ -6134,14 +5100,15 @@ void tod_contract2_test::test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{pilq} b_{pkjq}
 
@@ -6234,14 +5201,15 @@ void tod_contract2_test::test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{piql} b_{kpqj}
 
@@ -6334,14 +5302,15 @@ void tod_contract2_test::test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = \sum_{pq} a_{piql} b_{pkqj}
 
@@ -6434,14 +5403,15 @@ void tod_contract2_test::test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{pqkj} b_{iqpl}
 
@@ -6536,14 +5506,15 @@ void tod_contract2_test::test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, size_t nq, double d)
-    throw(libtest::test_exception) {
+int test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, size_t nq, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{pq} a_{pqkj} b_{qipl}
 
@@ -6638,13 +5609,15 @@ void tod_contract2_test::test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
-    size_t nq, size_t nr) throw(libtest::test_exception) {
+int test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
+    size_t nq, size_t nr) {
 
     // c_{ij} = \sum_{pqr} a_{ipqr} b_{jpqr}
 
@@ -6728,11 +5701,13 @@ void tod_contract2_test::test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
-    size_t nq, size_t nr, double d) throw(libtest::test_exception) {
+int test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
+    size_t nq, size_t nr, double d) {
 
     // c_{ij} = c_{ij} + d \sum_{pqr} a_{ipqr} b_{jpqr}
 
@@ -6815,11 +5790,12 @@ void tod_contract2_test::test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_ipqr_pjrq(
-    size_t ni, size_t nj, size_t np, size_t nq, size_t nr, double d)
-    throw(libtest::test_exception) {
+int test_ij_ipqr_pjrq(size_t ni, size_t nj, size_t np, size_t nq, size_t nr,
+    double d) {
 
     // c_{ij} = \sum_{pq} a_{ipqr} b_{pjrq}
 
@@ -6910,12 +5886,14 @@ void tod_contract2_test::test_ij_ipqr_pjrq(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
-    size_t nq, size_t nr, double d) throw(libtest::test_exception) {
+int test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
+    size_t nq, size_t nr, double d) {
 
     // c_{ij} = c_{ij} + d \sum_{pqr} a_{jpqr} b_{iprq}
 
@@ -7002,11 +5980,13 @@ void tod_contract2_test::test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
-    size_t np, size_t nq, size_t nr) throw(libtest::test_exception) {
+int test_ij_pqir_pqjr(size_t ni, size_t nj,
+    size_t np, size_t nq, size_t nr) {
 
     // c_{ij} = \sum_{pqr} a_{pqir} b_{pqjr}
 
@@ -7089,11 +6069,13 @@ void tod_contract2_test::test_ij_pqir_pqjr(size_t ni, size_t nj,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
-    size_t nq, size_t nr, double d) throw(libtest::test_exception) {
+int test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
+    size_t nq, size_t nr, double d) {
 
     // c_{ij} = c_{ij} + d \sum_{pqr} a_{pqir} b_{pqjr}
 
@@ -7176,11 +6158,13 @@ void tod_contract2_test::test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
     // Compare against the reference
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
-    size_t nk, size_t nl, size_t np) throw(libtest::test_exception) {
+int test_ijkl_pi_jklp(size_t ni, size_t nj,
+    size_t nk, size_t nl, size_t np) {
 
     //
     // c_{ijkl} = \sum_p a_{pi} b_{jklp}
@@ -7281,13 +6265,15 @@ void tod_contract2_test::test_ijkl_pi_jklp(size_t ni, size_t nj,
         cijkl_max*k_thresh);
 
     } catch(exception &e) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     //
     // c_{ijkl} = c_{ijkl} + d * \sum_p a_{pi} b_{jklp}
@@ -7388,13 +6374,15 @@ void tod_contract2_test::test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
         cijkl_max*k_thresh);
 
     } catch(exception &e) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
-    size_t nk, size_t nl, size_t np) throw(libtest::test_exception) {
+int test_jikl_pi_jpkl(size_t ni, size_t nj,
+    size_t nk, size_t nl, size_t np) {
 
     // c_{jikl} = \sum_p a_{pi} b_{jpkl}
 
@@ -7478,11 +6466,13 @@ void tod_contract2_test::test_jikl_pi_jpkl(size_t ni, size_t nj,
     // Compare against the reference
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{jikl} = c_{jikl} + d \sum_p a_{pi} b_{jpkl}
 
@@ -7566,11 +6556,13 @@ void tod_contract2_test::test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
     // Compare against the reference
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
-    size_t nk, size_t nl, size_t np) throw(libtest::test_exception) {
+int test_ijkl_ijp_klp(size_t ni, size_t nj,
+    size_t nk, size_t nl, size_t np) {
 
     // c_{ijkl} = \sum_{p} a_{ijp} b_{klp}
 
@@ -7651,11 +6643,13 @@ void tod_contract2_test::test_ijkl_ijp_klp(size_t ni, size_t nj,
     // Compare against the reference
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
-    size_t nl, size_t np, double d) throw(libtest::test_exception) {
+int test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
+    size_t nl, size_t np, double d) {
 
     // c_{ijkl} = c_{ijkl} + d \sum_{p} a_{ijp} b_{klp}
 
@@ -7736,11 +6730,12 @@ void tod_contract2_test::test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
     // Compare against the reference
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, cij_max*k_thresh);
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
-    size_t nk, size_t nl) throw(libtest::test_exception) {
+int test_ijkl_ij_kl(size_t ni, size_t nj, size_t nk, size_t nl) {
 
     //
     // c_{ijkl} = a_{ij} b_{kl}
@@ -7837,13 +6832,14 @@ void tod_contract2_test::test_ijkl_ij_kl(size_t ni, size_t nj,
         cijkl_max*k_thresh);
 
     } catch(exception &e) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
-    size_t nk, size_t nl) throw(libtest::test_exception) {
+int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
 
     //
     // c_{ijkl} = a_{ij} b_{lk}
@@ -7942,9 +6938,1082 @@ void tod_contract2_test::test_ijkl_ij_lk(size_t ni, size_t nj,
         cijkl_max*k_thresh);
 
     } catch(exception &e) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    int rc = 1;
+    allocator<double>::init(16, 16, 16777216, 16777216);
+
+    try {
+
+    rc =
+
+    //
+    // Test one-index contractions
+    //
+
+// test_0_p_p(1);
+// test_0_p_p(2);
+// test_0_p_p(5);
+// test_0_p_p(16);
+// test_0_p_p(1, -0.5);
+// test_0_p_p(2, -2.0);
+// test_0_p_p(5, 1.2);
+// test_0_p_p(16, 0.7);
+
+    test_i_p_pi(1, 1, 0.0) |
+    test_i_p_pi(1, 2, 0.0) |
+    test_i_p_pi(2, 1, 0.0) |
+    test_i_p_pi(3, 3, 0.0) |
+    test_i_p_pi(3, 5, 0.0) |
+    test_i_p_pi(16, 16, 0.0) |
+    test_i_p_pi(1, 1, -0.5) |
+    test_i_p_pi(1, 2, 2.0) |
+    test_i_p_pi(2, 1, -1.0) |
+    test_i_p_pi(3, 3, 3.7) |
+    test_i_p_pi(3, 5, 1.0) |
+    test_i_p_pi(16, 16, 0.7) |
+
+    test_i_p_ip(1, 1, 0.0) |
+    test_i_p_ip(1, 2, 0.0) |
+    test_i_p_ip(2, 1, 0.0) |
+    test_i_p_ip(3, 3, 0.0) |
+    test_i_p_ip(3, 5, 0.0) |
+    test_i_p_ip(16, 16, 0.0) |
+    test_i_p_ip(1, 1, -0.5) |
+    test_i_p_ip(1, 2, 2.0) |
+    test_i_p_ip(2, 1, -1.0) |
+    test_i_p_ip(3, 3, 3.7) |
+    test_i_p_ip(3, 5, 1.0) |
+    test_i_p_ip(16, 16, 0.7) |
+
+    test_i_pi_p(1, 1, 0.0) |
+    test_i_pi_p(1, 2, 0.0) |
+    test_i_pi_p(2, 1, 0.0) |
+    test_i_pi_p(3, 3, 0.0) |
+    test_i_pi_p(3, 5, 0.0) |
+    test_i_pi_p(16, 16, 0.0) |
+    test_i_pi_p(1, 1, -0.5) |
+    test_i_pi_p(1, 2, 2.0) |
+    test_i_pi_p(2, 1, -1.0) |
+    test_i_pi_p(3, 3, 3.7) |
+    test_i_pi_p(3, 5, 1.0) |
+    test_i_pi_p(16, 16, 0.7) |
+
+    test_i_ip_p(1, 1, 0.0) |
+    test_i_ip_p(1, 2, 0.0) |
+    test_i_ip_p(2, 1, 0.0) |
+    test_i_ip_p(3, 3, 0.0) |
+    test_i_ip_p(3, 5, 0.0) |
+    test_i_ip_p(16, 16, 0.0) |
+    test_i_ip_p(1, 1, -0.5) |
+    test_i_ip_p(1, 2, 2.0) |
+    test_i_ip_p(2, 1, -1.0) |
+    test_i_ip_p(3, 3, 3.7) |
+    test_i_ip_p(3, 5, 1.0) |
+    test_i_ip_p(16, 16, 0.7) |
+
+    test_ij_i_j(1, 1, 0.0) |
+    test_ij_i_j(1, 2, 0.0) |
+    test_ij_i_j(2, 1, 0.0) |
+    test_ij_i_j(3, 3, 0.0) |
+    test_ij_i_j(3, 5, 0.0) |
+    test_ij_i_j(16, 16, 0.0) |
+    test_ij_i_j(1, 1, -0.5) |
+    test_ij_i_j(1, 2, 2.0) |
+    test_ij_i_j(2, 1, -1.0) |
+    test_ij_i_j(3, 3, 3.7) |
+    test_ij_i_j(3, 5, 1.0) |
+    test_ij_i_j(16, 16, 0.7) |
+
+    test_ij_j_i(1, 1, 0.0) |
+    test_ij_j_i(1, 2, 0.0) |
+    test_ij_j_i(2, 1, 0.0) |
+    test_ij_j_i(3, 3, 0.0) |
+    test_ij_j_i(3, 5, 0.0) |
+    test_ij_j_i(16, 16, 0.0) |
+    test_ij_j_i(1, 1, -0.5) |
+    test_ij_j_i(1, 2, 2.0) |
+    test_ij_j_i(2, 1, -1.0) |
+    test_ij_j_i(3, 3, 3.7) |
+    test_ij_j_i(3, 5, 1.0) |
+    test_ij_j_i(16, 16, 0.7) |
+
+    test_ij_pi_pj(1, 1, 1, 0.0) |
+    test_ij_pi_pj(1, 1, 2, 0.0) |
+    test_ij_pi_pj(1, 2, 1, 0.0) |
+    test_ij_pi_pj(2, 1, 1, 0.0) |
+    test_ij_pi_pj(3, 3, 3, 0.0) |
+    test_ij_pi_pj(3, 5, 7, 0.0) |
+    test_ij_pi_pj(16, 16, 16, 0.0) |
+    test_ij_pi_pj(1, 1, 1, -0.5) |
+    test_ij_pi_pj(1, 1, 2, 2.0) |
+    test_ij_pi_pj(1, 2, 1, -1.0) |
+    test_ij_pi_pj(2, 1, 1, 3.7) |
+    test_ij_pi_pj(3, 3, 3, 1.0) |
+    test_ij_pi_pj(3, 5, 7, -1.2) |
+    test_ij_pi_pj(16, 16, 16, 0.7) |
+
+    test_ij_pi_jp(1, 1, 1, 0.0) |
+    test_ij_pi_jp(1, 1, 2, 0.0) |
+    test_ij_pi_jp(1, 2, 1, 0.0) |
+    test_ij_pi_jp(2, 1, 1, 0.0) |
+    test_ij_pi_jp(3, 3, 3, 0.0) |
+    test_ij_pi_jp(3, 5, 7, 0.0) |
+    test_ij_pi_jp(16, 16, 16, 0.0) |
+    test_ij_pi_jp(1, 1, 1, -0.5) |
+    test_ij_pi_jp(1, 1, 2, 2.0) |
+    test_ij_pi_jp(1, 2, 1, -1.0) |
+    test_ij_pi_jp(2, 1, 1, 3.7) |
+    test_ij_pi_jp(3, 3, 3, 1.0) |
+    test_ij_pi_jp(3, 5, 7, -1.2) |
+    test_ij_pi_jp(16, 16, 16, 0.7) |
+
+    test_ij_ip_pj(1, 1, 1, 0.0) |
+    test_ij_ip_pj(1, 1, 2, 0.0) |
+    test_ij_ip_pj(1, 2, 1, 0.0) |
+    test_ij_ip_pj(2, 1, 1, 0.0) |
+    test_ij_ip_pj(3, 3, 3, 0.0) |
+    test_ij_ip_pj(3, 5, 7, 0.0) |
+    test_ij_ip_pj(16, 16, 16, 0.0) |
+    test_ij_ip_pj(1, 1, 1, -0.5) |
+    test_ij_ip_pj(1, 1, 2, 2.0) |
+    test_ij_ip_pj(1, 2, 1, -1.0) |
+    test_ij_ip_pj(2, 1, 1, 3.7) |
+    test_ij_ip_pj(3, 3, 3, 1.0) |
+    test_ij_ip_pj(3, 5, 7, -1.2) |
+    test_ij_ip_pj(16, 16, 16, 0.7) |
+
+    test_ij_ip_jp(1, 1, 1, 0.0) |
+    test_ij_ip_jp(1, 1, 2, 0.0) |
+    test_ij_ip_jp(1, 2, 1, 0.0) |
+    test_ij_ip_jp(2, 1, 1, 0.0) |
+    test_ij_ip_jp(3, 3, 3, 0.0) |
+    test_ij_ip_jp(3, 5, 7, 0.0) |
+    test_ij_ip_jp(16, 16, 16, 0.0) |
+    test_ij_ip_jp(1, 1, 1, -0.5) |
+    test_ij_ip_jp(1, 1, 2, 2.0) |
+    test_ij_ip_jp(1, 2, 1, -1.0) |
+    test_ij_ip_jp(2, 1, 1, 3.7) |
+    test_ij_ip_jp(3, 3, 3, 1.0) |
+    test_ij_ip_jp(3, 5, 7, -1.2) |
+    test_ij_ip_jp(16, 16, 16, 0.7) |
+
+    test_ij_pj_pi(1, 1, 1, 0.0) |
+    test_ij_pj_pi(1, 1, 2, 0.0) |
+    test_ij_pj_pi(1, 2, 1, 0.0) |
+    test_ij_pj_pi(2, 1, 1, 0.0) |
+    test_ij_pj_pi(3, 3, 3, 0.0) |
+    test_ij_pj_pi(3, 5, 7, 0.0) |
+    test_ij_pj_pi(16, 16, 16, 0.0) |
+    test_ij_pj_pi(1, 1, 1, -0.5) |
+    test_ij_pj_pi(1, 1, 2, 2.0) |
+    test_ij_pj_pi(1, 2, 1, -1.0) |
+    test_ij_pj_pi(2, 1, 1, 3.7) |
+    test_ij_pj_pi(3, 3, 3, 1.0) |
+    test_ij_pj_pi(3, 5, 7, -1.2) |
+    test_ij_pj_pi(16, 16, 16, 0.7) |
+
+    test_ij_pj_ip(1, 1, 1, 0.0) |
+    test_ij_pj_ip(1, 1, 2, 0.0) |
+    test_ij_pj_ip(1, 2, 1, 0.0) |
+    test_ij_pj_ip(2, 1, 1, 0.0) |
+    test_ij_pj_ip(3, 3, 3, 0.0) |
+    test_ij_pj_ip(3, 5, 7, 0.0) |
+    test_ij_pj_ip(16, 16, 16, 0.0) |
+    test_ij_pj_ip(1, 1, 1, -0.5) |
+    test_ij_pj_ip(1, 1, 2, 2.0) |
+    test_ij_pj_ip(1, 2, 1, -1.0) |
+    test_ij_pj_ip(2, 1, 1, 3.7) |
+    test_ij_pj_ip(3, 3, 3, 1.0) |
+    test_ij_pj_ip(3, 5, 7, -1.2) |
+    test_ij_pj_ip(16, 16, 16, 0.7) |
+
+    test_ij_jp_ip(1, 1, 1, 0.0) |
+    test_ij_jp_ip(1, 1, 2, 0.0) |
+    test_ij_jp_ip(1, 2, 1, 0.0) |
+    test_ij_jp_ip(2, 1, 1, 0.0) |
+    test_ij_jp_ip(3, 3, 3, 0.0) |
+    test_ij_jp_ip(3, 5, 7, 0.0) |
+    test_ij_jp_ip(16, 16, 16, 0.0) |
+    test_ij_jp_ip(1, 1, 1, -0.5) |
+    test_ij_jp_ip(1, 1, 2, 2.0) |
+    test_ij_jp_ip(1, 2, 1, -1.0) |
+    test_ij_jp_ip(2, 1, 1, 3.7) |
+    test_ij_jp_ip(3, 3, 3, 1.0) |
+    test_ij_jp_ip(3, 5, 7, -1.2) |
+    test_ij_jp_ip(16, 16, 16, 0.7) |
+
+    test_ij_jp_pi(1, 1, 1, 0.0) |
+    test_ij_jp_pi(1, 1, 2, 0.0) |
+    test_ij_jp_pi(1, 2, 1, 0.0) |
+    test_ij_jp_pi(2, 1, 1, 0.0) |
+    test_ij_jp_pi(3, 3, 3, 0.0) |
+    test_ij_jp_pi(3, 5, 7, 0.0) |
+    test_ij_jp_pi(16, 16, 16, 0.0) |
+    test_ij_jp_pi(1, 1, 1, -0.5) |
+    test_ij_jp_pi(1, 1, 2, 2.0) |
+    test_ij_jp_pi(1, 2, 1, -1.0) |
+    test_ij_jp_pi(2, 1, 1, 3.7) |
+    test_ij_jp_pi(3, 3, 3, 1.0) |
+    test_ij_jp_pi(3, 5, 7, -1.2) |
+    test_ij_jp_pi(16, 16, 16, 0.7) |
+
+    test_ij_p_pji(1, 1, 1, 0.0) |
+    test_ij_p_pji(1, 1, 2, 0.0) |
+    test_ij_p_pji(1, 2, 1, 0.0) |
+    test_ij_p_pji(2, 1, 1, 0.0) |
+    test_ij_p_pji(3, 3, 3, 0.0) |
+    test_ij_p_pji(3, 5, 7, 0.0) |
+    test_ij_p_pji(16, 16, 16, 0.0) |
+    test_ij_p_pji(1, 1, 1, -0.5) |
+    test_ij_p_pji(1, 1, 2, 2.0) |
+    test_ij_p_pji(1, 2, 1, -1.0) |
+    test_ij_p_pji(2, 1, 1, 3.7) |
+    test_ij_p_pji(3, 3, 3, 1.0) |
+    test_ij_p_pji(3, 5, 7, -1.2) |
+    test_ij_p_pji(16, 16, 16, 0.7) |
+
+    test_ij_pji_p(1, 1, 1, 0.0) |
+    test_ij_pji_p(1, 1, 2, 0.0) |
+    test_ij_pji_p(1, 2, 1, 0.0) |
+    test_ij_pji_p(2, 1, 1, 0.0) |
+    test_ij_pji_p(3, 3, 3, 0.0) |
+    test_ij_pji_p(3, 5, 7, 0.0) |
+    test_ij_pji_p(16, 16, 16, 0.0) |
+    test_ij_pji_p(1, 1, 1, -0.5) |
+    test_ij_pji_p(1, 1, 2, 2.0) |
+    test_ij_pji_p(1, 2, 1, -1.0) |
+    test_ij_pji_p(2, 1, 1, 3.7) |
+    test_ij_pji_p(3, 3, 3, 1.0) |
+    test_ij_pji_p(3, 5, 7, -1.2) |
+    test_ij_pji_p(16, 16, 16, 0.7) |
+
+    test_ij_pi_pj_qi_jq(1, 1, 1, 1, 0.0) |
+    test_ij_pi_pj_qi_jq(1, 1, 2, 1, 0.0) |
+    test_ij_pi_pj_qi_jq(1, 2, 1, 3, 0.0) |
+    test_ij_pi_pj_qi_jq(2, 1, 1, 10, 0.0) |
+    test_ij_pi_pj_qi_jq(3, 3, 3, 3, 0.0) |
+    test_ij_pi_pj_qi_jq(3, 5, 7, 11, 0.0) |
+    test_ij_pi_pj_qi_jq(16, 16, 16, 16, 0.0) |
+    test_ij_pi_pj_qi_jq(1, 1, 1, 1, -0.5) |
+    test_ij_pi_pj_qi_jq(1, 1, 2, 1, 2.0) |
+    test_ij_pi_pj_qi_jq(1, 2, 1, 3, -1.0) |
+    test_ij_pi_pj_qi_jq(2, 1, 1, 10, 3.7) |
+    test_ij_pi_pj_qi_jq(3, 3, 3, 3, 1.0) |
+    test_ij_pi_pj_qi_jq(3, 5, 7, 11, -1.2) |
+    test_ij_pi_pj_qi_jq(16, 16, 16, 16, 0.7) |
+
+    test_ij_pi_pj_qi_qj(1, 1, 1, 1, 0.0) |
+    test_ij_pi_pj_qi_qj(1, 1, 2, 1, 0.0) |
+    test_ij_pi_pj_qi_qj(1, 2, 1, 3, 0.0) |
+    test_ij_pi_pj_qi_qj(2, 1, 1, 10, 0.0) |
+    test_ij_pi_pj_qi_qj(3, 3, 3, 3, 0.0) |
+    test_ij_pi_pj_qi_qj(3, 5, 7, 11, 0.0) |
+    test_ij_pi_pj_qi_qj(16, 16, 16, 16, 0.0) |
+    test_ij_pi_pj_qi_qj(1, 1, 1, 1, -0.5) |
+    test_ij_pi_pj_qi_qj(1, 1, 2, 1, 2.0) |
+    test_ij_pi_pj_qi_qj(1, 2, 1, 3, -1.0) |
+    test_ij_pi_pj_qi_qj(2, 1, 1, 10, 3.7) |
+    test_ij_pi_pj_qi_qj(3, 3, 3, 3, 1.0) |
+    test_ij_pi_pj_qi_qj(3, 5, 7, 11, -1.2) |
+    test_ij_pi_pj_qi_qj(16, 16, 16, 16, 0.7) |
+
+    test_ijk_ip_pkj(1, 1, 1, 1, 0.0) |
+    test_ijk_ip_pkj(1, 1, 2, 1, 0.0) |
+    test_ijk_ip_pkj(1, 2, 1, 2, 0.0) |
+    test_ijk_ip_pkj(2, 1, 1, 3, 0.0) |
+    test_ijk_ip_pkj(3, 3, 3, 3, 0.0) |
+    test_ijk_ip_pkj(3, 5, 7, 11, 0.0) |
+    test_ijk_ip_pkj(16, 16, 16, 16, 0.0) |
+    test_ijk_ip_pkj(1, 1, 1, 1, -0.5) |
+    test_ijk_ip_pkj(1, 1, 2, 1, 2.0) |
+    test_ijk_ip_pkj(1, 2, 1, 2, -1.0) |
+    test_ijk_ip_pkj(2, 1, 1, 3, 3.7) |
+    test_ijk_ip_pkj(3, 3, 3, 3, 1.0) |
+    test_ijk_ip_pkj(3, 5, 7, 11, -1.2) |
+    test_ijk_ip_pkj(16, 16, 16, 16, 0.7) |
+
+    test_ijk_pi_pkj(1, 1, 1, 1, 0.0) |
+    test_ijk_pi_pkj(1, 1, 2, 1, 0.0) |
+    test_ijk_pi_pkj(1, 2, 1, 2, 0.0) |
+    test_ijk_pi_pkj(2, 1, 1, 3, 0.0) |
+    test_ijk_pi_pkj(3, 3, 3, 3, 0.0) |
+    test_ijk_pi_pkj(3, 5, 7, 11, 0.0) |
+    test_ijk_pi_pkj(16, 16, 16, 16, 0.0) |
+    test_ijk_pi_pkj(1, 1, 1, 1, -0.5) |
+    test_ijk_pi_pkj(1, 1, 2, 1, 2.0) |
+    test_ijk_pi_pkj(1, 2, 1, 2, -1.0) |
+    test_ijk_pi_pkj(2, 1, 1, 3, 3.7) |
+    test_ijk_pi_pkj(3, 3, 3, 3, 1.0) |
+    test_ijk_pi_pkj(3, 5, 7, 11, -1.2) |
+    test_ijk_pi_pkj(16, 16, 16, 16, 0.7) |
+
+    test_ijk_pik_pj(1, 1, 1, 1, 0.0) |
+    test_ijk_pik_pj(1, 1, 2, 1, 0.0) |
+    test_ijk_pik_pj(1, 2, 1, 2, 0.0) |
+    test_ijk_pik_pj(2, 1, 1, 3, 0.0) |
+    test_ijk_pik_pj(3, 3, 3, 3, 0.0) |
+    test_ijk_pik_pj(3, 5, 7, 11, 0.0) |
+    test_ijk_pik_pj(16, 16, 16, 16, 0.0) |
+    test_ijk_pik_pj(1, 1, 1, 1, -0.5) |
+    test_ijk_pik_pj(1, 1, 2, 1, 2.0) |
+    test_ijk_pik_pj(1, 2, 1, 2, -1.0) |
+    test_ijk_pik_pj(2, 1, 1, 3, 3.7) |
+    test_ijk_pik_pj(3, 3, 3, 3, 1.0) |
+    test_ijk_pik_pj(3, 5, 7, 11, -1.2) |
+    test_ijk_pik_pj(16, 16, 16, 16, 0.7) |
+
+    test_ijk_pj_ipk(1, 1, 1, 1, 0.0) |
+    test_ijk_pj_ipk(1, 1, 2, 1, 0.0) |
+    test_ijk_pj_ipk(1, 2, 1, 2, 0.0) |
+    test_ijk_pj_ipk(2, 1, 1, 3, 0.0) |
+    test_ijk_pj_ipk(3, 3, 3, 3, 0.0) |
+    test_ijk_pj_ipk(3, 5, 7, 11, 0.0) |
+    test_ijk_pj_ipk(16, 16, 16, 16, 0.0) |
+    test_ijk_pj_ipk(1, 1, 1, 1, -0.5) |
+    test_ijk_pj_ipk(1, 1, 2, 1, 2.0) |
+    test_ijk_pj_ipk(1, 2, 1, 2, -1.0) |
+    test_ijk_pj_ipk(2, 1, 1, 3, 3.7) |
+    test_ijk_pj_ipk(3, 3, 3, 3, 1.0) |
+    test_ijk_pj_ipk(3, 5, 7, 11, -1.2) |
+    test_ijk_pj_ipk(16, 16, 16, 16, 0.7) |
+
+    test_ijk_pj_pik(1, 1, 1, 1, 0.0) |
+    test_ijk_pj_pik(1, 1, 2, 1, 0.0) |
+    test_ijk_pj_pik(1, 2, 1, 2, 0.0) |
+    test_ijk_pj_pik(2, 1, 1, 3, 0.0) |
+    test_ijk_pj_pik(3, 3, 3, 3, 0.0) |
+    test_ijk_pj_pik(3, 5, 7, 11, 0.0) |
+    test_ijk_pj_pik(16, 16, 16, 16, 0.0) |
+    test_ijk_pj_pik(1, 1, 1, 1, -0.5) |
+    test_ijk_pj_pik(1, 1, 2, 1, 2.0) |
+    test_ijk_pj_pik(1, 2, 1, 2, -1.0) |
+    test_ijk_pj_pik(2, 1, 1, 3, 3.7) |
+    test_ijk_pj_pik(3, 3, 3, 3, 1.0) |
+    test_ijk_pj_pik(3, 5, 7, 11, -1.2) |
+    test_ijk_pj_pik(16, 16, 16, 16, 0.7) |
+
+    test_ijk_pkj_ip(1, 1, 1, 1, 0.0) |
+    test_ijk_pkj_ip(1, 1, 2, 1, 0.0) |
+    test_ijk_pkj_ip(1, 2, 1, 2, 0.0) |
+    test_ijk_pkj_ip(2, 1, 1, 3, 0.0) |
+    test_ijk_pkj_ip(3, 3, 3, 3, 0.0) |
+    test_ijk_pkj_ip(3, 5, 7, 11, 0.0) |
+    test_ijk_pkj_ip(16, 16, 16, 16, 0.0) |
+    test_ijk_pkj_ip(1, 1, 1, 1, -0.5) |
+    test_ijk_pkj_ip(1, 1, 2, 1, 2.0) |
+    test_ijk_pkj_ip(1, 2, 1, 2, -1.0) |
+    test_ijk_pkj_ip(2, 1, 1, 3, 3.7) |
+    test_ijk_pkj_ip(3, 3, 3, 3, 1.0) |
+    test_ijk_pkj_ip(3, 5, 7, 11, -1.2) |
+    test_ijk_pkj_ip(16, 16, 16, 16, 0.7) |
+
+    test_ijk_pkj_pi(1, 1, 1, 1, 0.0) |
+    test_ijk_pkj_pi(1, 1, 2, 1, 0.0) |
+    test_ijk_pkj_pi(1, 2, 1, 2, 0.0) |
+    test_ijk_pkj_pi(2, 1, 1, 3, 0.0) |
+    test_ijk_pkj_pi(3, 3, 3, 3, 0.0) |
+    test_ijk_pkj_pi(3, 5, 7, 11, 0.0) |
+    test_ijk_pkj_pi(16, 16, 16, 16, 0.0) |
+    test_ijk_pkj_pi(1, 1, 1, 1, -0.5) |
+    test_ijk_pkj_pi(1, 1, 2, 1, 2.0) |
+    test_ijk_pkj_pi(1, 2, 1, 2, -1.0) |
+    test_ijk_pkj_pi(2, 1, 1, 3, 3.7) |
+    test_ijk_pkj_pi(3, 3, 3, 3, 1.0) |
+    test_ijk_pkj_pi(3, 5, 7, 11, -1.2) |
+    test_ijk_pkj_pi(16, 16, 16, 16, 0.7) |
+
+    test_ijkl_ikp_jpl(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ikp_jpl(2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ikp_jpl(1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_ikp_jpl(1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_ikp_jpl(1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_ikp_jpl(1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_ikp_jpl(2, 3, 2, 3, 2, 0.0) |
+    test_ijkl_ikp_jpl(3, 5, 1, 7, 13, 0.0) |
+    test_ijkl_ikp_jpl(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ikp_jpl(1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_ikp_jpl(2, 1, 1, 1, 1, 2.0) |
+    test_ijkl_ikp_jpl(1, 2, 1, 1, 1, -1.0) |
+    test_ijkl_ikp_jpl(1, 1, 2, 1, 1, 3.7) |
+    test_ijkl_ikp_jpl(1, 1, 1, 2, 1, 1.0) |
+    test_ijkl_ikp_jpl(1, 1, 1, 1, 2, -1.2) |
+    test_ijkl_ikp_jpl(2, 3, 2, 3, 2, 12.3) |
+    test_ijkl_ikp_jpl(3, 5, 1, 7, 13, -1.25) |
+
+    test_ijkl_ipk_jpl(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipk_jpl(2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipk_jpl(1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_ipk_jpl(1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_ipk_jpl(1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_ipk_jpl(1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_ipk_jpl(2, 3, 2, 3, 2, 0.0) |
+    test_ijkl_ipk_jpl(3, 5, 1, 7, 13, 0.0) |
+    test_ijkl_ipk_jpl(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipk_jpl(1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_ipk_jpl(2, 1, 1, 1, 1, 2.0) |
+    test_ijkl_ipk_jpl(1, 2, 1, 1, 1, -1.0) |
+    test_ijkl_ipk_jpl(1, 1, 2, 1, 1, 3.7) |
+    test_ijkl_ipk_jpl(1, 1, 1, 2, 1, 1.0) |
+    test_ijkl_ipk_jpl(1, 1, 1, 1, 2, -1.2) |
+    test_ijkl_ipk_jpl(2, 3, 2, 3, 2, 12.3) |
+    test_ijkl_ipk_jpl(3, 5, 1, 7, 13, -1.25) |
+
+    test_ijkl_ipl_jpk(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipl_jpk(2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipl_jpk(1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_ipl_jpk(1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_ipl_jpk(1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_ipl_jpk(1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_ipl_jpk(2, 3, 2, 3, 2, 0.0) |
+    test_ijkl_ipl_jpk(3, 5, 1, 7, 13, 0.0) |
+    test_ijkl_ipl_jpk(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipl_jpk(1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_ipl_jpk(2, 1, 1, 1, 1, 2.0) |
+    test_ijkl_ipl_jpk(1, 2, 1, 1, 1, -1.0) |
+    test_ijkl_ipl_jpk(1, 1, 2, 1, 1, 3.7) |
+    test_ijkl_ipl_jpk(1, 1, 1, 2, 1, 1.0) |
+    test_ijkl_ipl_jpk(1, 1, 1, 1, 2, -1.2) |
+    test_ijkl_ipl_jpk(2, 3, 2, 3, 2, 12.3) |
+    test_ijkl_ipl_jpk(3, 5, 1, 7, 13, -1.25) |
+
+    test_ijkl_jkp_ipl(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jkp_ipl(2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jkp_ipl(1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_jkp_ipl(1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_jkp_ipl(1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_jkp_ipl(1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_jkp_ipl(2, 3, 2, 3, 2, 0.0) |
+    test_ijkl_jkp_ipl(3, 5, 1, 7, 13, 0.0) |
+    test_ijkl_jkp_ipl(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jkp_ipl(1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_jkp_ipl(2, 1, 1, 1, 1, 2.0) |
+    test_ijkl_jkp_ipl(1, 2, 1, 1, 1, -1.0) |
+    test_ijkl_jkp_ipl(1, 1, 2, 1, 1, 3.7) |
+    test_ijkl_jkp_ipl(1, 1, 1, 2, 1, 1.0) |
+    test_ijkl_jkp_ipl(1, 1, 1, 1, 2, -1.2) |
+    test_ijkl_jkp_ipl(2, 3, 2, 3, 2, 12.3) |
+    test_ijkl_jkp_ipl(3, 5, 1, 7, 13, -1.25) |
+
+    test_ijkl_jpl_ipk(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk(2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk(1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk(1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk(1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_jpl_ipk(1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_jpl_ipk(2, 3, 2, 3, 2, 0.0) |
+    test_ijkl_jpl_ipk(3, 5, 1, 7, 13, 0.0) |
+    test_ijkl_jpl_ipk(1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk(1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_jpl_ipk(2, 1, 1, 1, 1, 2.0) |
+    test_ijkl_jpl_ipk(1, 2, 1, 1, 1, -1.0) |
+    test_ijkl_jpl_ipk(1, 1, 2, 1, 1, 3.7) |
+    test_ijkl_jpl_ipk(1, 1, 1, 2, 1, 1.0) |
+    test_ijkl_jpl_ipk(1, 1, 1, 1, 2, -1.2) |
+    test_ijkl_jpl_ipk(2, 3, 2, 3, 2, 12.3) |
+    test_ijkl_jpl_ipk(3, 5, 1, 7, 13, -1.25) |
+
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 1, 1, 1, 1, 2, 3, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 2, 1, 1, 2, 2, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 2, 1, 1, 2, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 2, 2, 1, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 3, 2, 3, 2, 2, 3, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(3, 5, 1, 7, 13, 11, 3, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 1, 2, 3, -0.5) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 1, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 2, 1, 1, 1, 2, 2, -1.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 2, 1, 1, 1, 2, 3.7) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 2, 1, 2, 1, 1.0) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(1, 1, 1, 1, 2, 2, 1, -1.2) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(2, 3, 2, 3, 2, 2, 3, 12.3) |
+    test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(3, 5, 1, 7, 13, 11, 3, -1.25) |
+
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ikp_jpml(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ikp_jpml(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ikp_jpml(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijklm_ikp_jpml(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijklm_ikp_jpml(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijklm_ikp_jpml(3, 3, 3, 3, 3, 3, 0.0) |
+    test_ijklm_ikp_jpml(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijklm_ikp_jpml(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijklm_ikp_jpml(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijklm_ikp_jpml(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijklm_ikp_jpml(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijklm_ikp_jpml(1, 1, 1, 1, 1, 2, 1.2) |
+    test_ijklm_ikp_jpml(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijklm_ikp_jpml(3, 3, 3, 3, 3, 3, 12.3) |
+    test_ijklm_ikp_jpml(3, 5, 1, 7, 13, 11, -1.25) |
+
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ipkm_jpl(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ipkm_jpl(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ipkm_jpl(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijklm_ipkm_jpl(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijklm_ipkm_jpl(3, 3, 3, 3, 3, 3, 0.0) |
+    test_ijklm_ipkm_jpl(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijklm_ipkm_jpl(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijklm_ipkm_jpl(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijklm_ipkm_jpl(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijklm_ipkm_jpl(1, 1, 1, 1, 1, 2, 1.2) |
+    test_ijklm_ipkm_jpl(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijklm_ipkm_jpl(3, 3, 3, 3, 3, 3, 12.3) |
+    test_ijklm_ipkm_jpl(3, 5, 1, 7, 13, 11, -1.25) |
+
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_jlp_ipkm(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_jlp_ipkm(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijklm_jlp_ipkm(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijklm_jlp_ipkm(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijklm_jlp_ipkm(3, 3, 3, 3, 3, 3, 0.0) |
+    test_ijklm_jlp_ipkm(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijklm_jlp_ipkm(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijklm_jlp_ipkm(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijklm_jlp_ipkm(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijklm_jlp_ipkm(1, 1, 1, 1, 1, 2, 1.2) |
+    test_ijklm_jlp_ipkm(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijklm_jlp_ipkm(3, 3, 3, 3, 3, 3, 12.3) |
+    test_ijklm_jlp_ipkm(3, 5, 1, 7, 13, 11, -1.25) |
+
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(2, 1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijklmn_kjmp_ipln(2, 3, 2, 3, 2, 3, 2, 0.0) |
+    test_ijklmn_kjmp_ipln(3, 3, 3, 3, 3, 3, 3, 0.0) |
+    test_ijklmn_kjmp_ipln(3, 5, 1, 7, 13, 11, 17, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijklmn_kjmp_ipln(2, 1, 1, 1, 1, 1, 1, 2.0) |
+    test_ijklmn_kjmp_ipln(1, 2, 1, 1, 1, 1, 1, -1.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 2, 1, 1, 1, 1, 3.7) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 2, 1, 1, 1, 1.0) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 2, 1, 1, -1.2) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 2, 1, 1.2) |
+    test_ijklmn_kjmp_ipln(1, 1, 1, 1, 1, 1, 2, -1.3) |
+    test_ijklmn_kjmp_ipln(2, 3, 2, 3, 2, 3, 2, 12.3) |
+    test_ijklmn_kjmp_ipln(3, 3, 3, 3, 3, 3, 3, 0.4) |
+    test_ijklmn_kjmp_ipln(3, 5, 1, 7, 13, 11, 17, -1.25) |
+
+    //
+    // Test two-index contractions
+    //
+
+    test_ij_pqi_pjq(1, 1, 1, 1, 0.0) |
+    test_ij_pqi_pjq(1, 1, 1, 2, 0.0) |
+    test_ij_pqi_pjq(1, 1, 2, 1, 0.0) |
+    test_ij_pqi_pjq(1, 2, 1, 1, 0.0) |
+    test_ij_pqi_pjq(2, 1, 1, 1, 0.0) |
+    test_ij_pqi_pjq(3, 3, 3, 3, 0.0) |
+    test_ij_pqi_pjq(11, 5, 7, 3, 0.0) |
+    test_ij_pqi_pjq(16, 16, 16, 16, 0.0) |
+    test_ij_pqi_pjq(1, 1, 1, 1, -0.5) |
+    test_ij_pqi_pjq(1, 1, 1, 2, 2.0) |
+    test_ij_pqi_pjq(1, 1, 2, 1, -1.0) |
+    test_ij_pqi_pjq(1, 2, 1, 1, 3.7) |
+    test_ij_pqi_pjq(2, 1, 1, 1, 1.0) |
+    test_ij_pqi_pjq(3, 3, 3, 3, 1.0) |
+    test_ij_pqi_pjq(11, 5, 7, 3, -1.2) |
+    test_ij_pqi_pjq(16, 16, 16, 16, 0.7) |
+
+    test_ij_ipq_jqp(1, 1, 1, 1, 0.0) |
+    test_ij_ipq_jqp(1, 1, 1, 2, 0.0) |
+    test_ij_ipq_jqp(1, 1, 2, 1, 0.0) |
+    test_ij_ipq_jqp(1, 2, 1, 1, 0.0) |
+    test_ij_ipq_jqp(2, 1, 1, 1, 0.0) |
+    test_ij_ipq_jqp(3, 3, 3, 3, 0.0) |
+    test_ij_ipq_jqp(11, 5, 7, 3, 0.0) |
+    test_ij_ipq_jqp(16, 16, 16, 16, 0.0) |
+    test_ij_ipq_jqp(1, 1, 1, 1, -0.5) |
+    test_ij_ipq_jqp(1, 1, 1, 2, 2.0) |
+    test_ij_ipq_jqp(1, 1, 2, 1, -1.0) |
+    test_ij_ipq_jqp(1, 2, 1, 1, 3.7) |
+    test_ij_ipq_jqp(2, 1, 1, 1, 1.0) |
+    test_ij_ipq_jqp(3, 3, 3, 3, 1.0) |
+    test_ij_ipq_jqp(11, 5, 7, 3, -1.2) |
+    test_ij_ipq_jqp(16, 16, 16, 16, 0.7) |
+
+    test_ij_jpq_iqp(1, 1, 1, 1, 0.0) |
+    test_ij_jpq_iqp(1, 1, 1, 2, 0.0) |
+    test_ij_jpq_iqp(1, 1, 2, 1, 0.0) |
+    test_ij_jpq_iqp(1, 2, 1, 1, 0.0) |
+    test_ij_jpq_iqp(2, 1, 1, 1, 0.0) |
+    test_ij_jpq_iqp(3, 3, 3, 3, 0.0) |
+    test_ij_jpq_iqp(11, 5, 7, 3, 0.0) |
+    test_ij_jpq_iqp(16, 16, 16, 16, 0.0) |
+    test_ij_jpq_iqp(1, 1, 1, 1, -0.5) |
+    test_ij_jpq_iqp(1, 1, 1, 2, 2.0) |
+    test_ij_jpq_iqp(1, 1, 2, 1, -1.0) |
+    test_ij_jpq_iqp(1, 2, 1, 1, 3.7) |
+    test_ij_jpq_iqp(2, 1, 1, 1, 1.0) |
+    test_ij_jpq_iqp(3, 3, 3, 3, 1.0) |
+    test_ij_jpq_iqp(11, 5, 7, 3, -1.2) |
+    test_ij_jpq_iqp(16, 16, 16, 16, 0.7) |
+
+    test_ij_jipq_qp(1, 1, 1, 1, 0.0) |
+    test_ij_jipq_qp(1, 1, 1, 2, 0.0) |
+    test_ij_jipq_qp(1, 1, 2, 1, 0.0) |
+    test_ij_jipq_qp(1, 2, 1, 1, 0.0) |
+    test_ij_jipq_qp(2, 1, 1, 1, 0.0) |
+    test_ij_jipq_qp(3, 3, 3, 3, 0.0) |
+    test_ij_jipq_qp(11, 5, 7, 3, 0.0) |
+    test_ij_jipq_qp(16, 16, 16, 16, 0.0) |
+    test_ij_jipq_qp(1, 1, 1, 1, -0.5) |
+    test_ij_jipq_qp(1, 1, 1, 2, 2.0) |
+    test_ij_jipq_qp(1, 1, 2, 1, -1.0) |
+    test_ij_jipq_qp(1, 2, 1, 1, 3.7) |
+    test_ij_jipq_qp(2, 1, 1, 1, 1.0) |
+    test_ij_jipq_qp(3, 3, 3, 3, 1.0) |
+    test_ij_jipq_qp(11, 5, 7, 3, -1.2) |
+    test_ij_jipq_qp(16, 16, 16, 16, 0.7) |
+
+    test_ij_pq_ijpq(1, 1, 1, 1) |
+    test_ij_pq_ijpq(2, 2, 2, 2) |
+    test_ij_pq_ijpq_a(1, 1, 1, 1, 0.25) |
+    test_ij_pq_ijpq_a(2, 2, 2, 2, 0.25) |
+
+    test_ijk_pqj_iqpk(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_pqj_iqpk(2, 1, 1, 1, 1, 0.0) |
+    test_ijk_pqj_iqpk(1, 2, 1, 1, 1, 0.0) |
+    test_ijk_pqj_iqpk(1, 1, 2, 1, 1, 0.0) |
+    test_ijk_pqj_iqpk(1, 1, 1, 2, 1, 0.0) |
+    test_ijk_pqj_iqpk(1, 1, 1, 1, 2, 0.0) |
+    test_ijk_pqj_iqpk(2, 3, 2, 3, 2, 0.0) |
+    test_ijk_pqj_iqpk(3, 5, 1, 13, 11, 0.0) |
+    test_ijk_pqj_iqpk(3, 5, 2, 13, 11, 0.0) |
+    test_ijk_pqj_iqpk(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_pqj_iqpk(1, 1, 1, 1, 1, -0.5) |
+    test_ijk_pqj_iqpk(2, 1, 1, 1, 1, 2.0) |
+    test_ijk_pqj_iqpk(1, 2, 1, 1, 1, -1.0) |
+    test_ijk_pqj_iqpk(1, 1, 2, 1, 1, 3.7) |
+    test_ijk_pqj_iqpk(1, 1, 1, 2, 1, -1.2) |
+    test_ijk_pqj_iqpk(1, 1, 1, 1, 2, 0.7) |
+    test_ijk_pqj_iqpk(2, 3, 2, 2, 3, 12.3) |
+    test_ijk_pqj_iqpk(3, 5, 1, 13, 11, -1.25) |
+    test_ijk_pqj_iqpk(3, 5, 2, 13, 11, -1.25) |
+
+    test_ijk_pqji_qpk(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_pqji_qpk(2, 1, 1, 1, 1, 0.0) |
+    test_ijk_pqji_qpk(1, 2, 1, 1, 1, 0.0) |
+    test_ijk_pqji_qpk(1, 1, 2, 1, 1, 0.0) |
+    test_ijk_pqji_qpk(1, 1, 1, 2, 1, 0.0) |
+    test_ijk_pqji_qpk(1, 1, 1, 1, 2, 0.0) |
+    test_ijk_pqji_qpk(2, 3, 2, 3, 2, 0.0) |
+    test_ijk_pqji_qpk(3, 5, 1, 13, 11, 0.0) |
+    test_ijk_pqji_qpk(3, 5, 2, 13, 11, 0.0) |
+    test_ijk_pqji_qpk(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_pqji_qpk(1, 1, 1, 1, 1, -0.5) |
+    test_ijk_pqji_qpk(2, 1, 1, 1, 1, 2.0) |
+    test_ijk_pqji_qpk(1, 2, 1, 1, 1, -1.0) |
+    test_ijk_pqji_qpk(1, 1, 2, 1, 1, 3.7) |
+    test_ijk_pqji_qpk(1, 1, 1, 2, 1, -1.2) |
+    test_ijk_pqji_qpk(1, 1, 1, 1, 2, 0.7) |
+    test_ijk_pqji_qpk(2, 3, 2, 2, 3, 12.3) |
+    test_ijk_pqji_qpk(3, 5, 1, 13, 11, -1.25) |
+    test_ijk_pqji_qpk(3, 5, 2, 13, 11, -1.25) |
+
+    test_ijk_kjpq_iqp(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_kjpq_iqp(2, 1, 1, 1, 1, 0.0) |
+    test_ijk_kjpq_iqp(1, 2, 1, 1, 1, 0.0) |
+    test_ijk_kjpq_iqp(1, 1, 2, 1, 1, 0.0) |
+    test_ijk_kjpq_iqp(1, 1, 1, 2, 1, 0.0) |
+    test_ijk_kjpq_iqp(1, 1, 1, 1, 2, 0.0) |
+    test_ijk_kjpq_iqp(2, 3, 2, 3, 2, 0.0) |
+    test_ijk_kjpq_iqp(3, 5, 1, 13, 11, 0.0) |
+    test_ijk_kjpq_iqp(3, 5, 2, 13, 11, 0.0) |
+    test_ijk_kjpq_iqp(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_kjpq_iqp(1, 1, 1, 1, 1, -0.5) |
+    test_ijk_kjpq_iqp(2, 1, 1, 1, 1, 2.0) |
+    test_ijk_kjpq_iqp(1, 2, 1, 1, 1, -1.0) |
+    test_ijk_kjpq_iqp(1, 1, 2, 1, 1, 3.7) |
+    test_ijk_kjpq_iqp(1, 1, 1, 2, 1, -1.2) |
+    test_ijk_kjpq_iqp(1, 1, 1, 1, 2, 0.7) |
+    test_ijk_kjpq_iqp(2, 3, 2, 2, 3, 12.3) |
+    test_ijk_kjpq_iqp(3, 5, 1, 13, 11, -1.25) |
+    test_ijk_kjpq_iqp(3, 5, 2, 13, 11, -1.25) |
+
+    test_ijk_pkiq_pjq(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_pkiq_pjq(2, 1, 1, 1, 1, 0.0) |
+    test_ijk_pkiq_pjq(1, 2, 1, 1, 1, 0.0) |
+    test_ijk_pkiq_pjq(1, 1, 2, 1, 1, 0.0) |
+    test_ijk_pkiq_pjq(1, 1, 1, 2, 1, 0.0) |
+    test_ijk_pkiq_pjq(1, 1, 1, 1, 2, 0.0) |
+    test_ijk_pkiq_pjq(2, 3, 2, 3, 2, 0.0) |
+    test_ijk_pkiq_pjq(3, 5, 1, 13, 11, 0.0) |
+    test_ijk_pkiq_pjq(3, 5, 2, 13, 11, 0.0) |
+    test_ijk_pkiq_pjq(1, 1, 1, 1, 1, 0.0) |
+    test_ijk_pkiq_pjq(1, 1, 1, 1, 1, -0.5) |
+    test_ijk_pkiq_pjq(2, 1, 1, 1, 1, 2.0) |
+    test_ijk_pkiq_pjq(1, 2, 1, 1, 1, -1.0) |
+    test_ijk_pkiq_pjq(1, 1, 2, 1, 1, 3.7) |
+    test_ijk_pkiq_pjq(1, 1, 1, 2, 1, -1.2) |
+    test_ijk_pkiq_pjq(1, 1, 1, 1, 2, 0.7) |
+    test_ijk_pkiq_pjq(2, 3, 2, 2, 3, 12.3) |
+    test_ijk_pkiq_pjq(3, 5, 1, 13, 11, -1.25) |
+    test_ijk_pkiq_pjq(3, 5, 2, 13, 11, -1.25) |
+
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_kpjq(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_kpjq(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_kpjq(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_iplq_kpjq(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_iplq_kpjq(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_iplq_kpjq(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_iplq_kpjq(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_iplq_kpjq(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_iplq_kpjq(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_iplq_kpjq(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_iplq_kpjq(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_iplq_kpjq(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_iplq_kpjq(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkjq(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkjq(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkjq(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_iplq_pkjq(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_iplq_pkjq(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_iplq_pkjq(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_iplq_pkjq(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_iplq_pkjq(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_iplq_pkjq(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_iplq_pkjq(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_iplq_pkjq(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_iplq_pkjq(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_iplq_pkjq(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkqj(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkqj(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkqj(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_iplq_pkqj(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_iplq_pkqj(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_iplq_pkqj(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_iplq_pkqj(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_iplq_pkqj(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_iplq_pkqj(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_iplq_pkqj(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_iplq_pkqj(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_iplq_pkqj(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_iplq_pkqj(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_kpqj(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_kpqj(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_kpqj(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_ipql_kpqj(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_ipql_kpqj(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_ipql_kpqj(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_ipql_kpqj(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_ipql_kpqj(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_ipql_kpqj(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_ipql_kpqj(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_ipql_kpqj(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_ipql_kpqj(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_ipql_kpqj(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_pkqj(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_pkqj(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_pkqj(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_ipql_pkqj(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_ipql_pkqj(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_ipql_pkqj(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_ipql_pkqj(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_ipql_pkqj(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_ipql_pkqj(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_ipql_pkqj(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_ipql_pkqj(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_ipql_pkqj(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_ipql_pkqj(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_kpjq(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_kpjq(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_kpjq(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_pilq_kpjq(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_pilq_kpjq(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_pilq_kpjq(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_pilq_kpjq(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_pilq_kpjq(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_pilq_kpjq(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_pilq_kpjq(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_pilq_kpjq(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_pilq_kpjq(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_pilq_kpjq(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_pkjq(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_pkjq(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_pkjq(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_pilq_pkjq(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_pilq_pkjq(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_pilq_pkjq(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_pilq_pkjq(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_pilq_pkjq(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_pilq_pkjq(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_pilq_pkjq(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_pilq_pkjq(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_pilq_pkjq(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_pilq_pkjq(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_kpqj(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_kpqj(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_kpqj(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_piql_kpqj(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_piql_kpqj(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_piql_kpqj(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_piql_kpqj(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_piql_kpqj(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_piql_kpqj(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_piql_kpqj(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_piql_kpqj(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_piql_kpqj(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_piql_kpqj(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_piql_kpqj(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_piql_kpqj(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_pkqj(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_pkqj(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_pkqj(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_piql_pkqj(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_piql_pkqj(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_piql_pkqj(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_piql_pkqj(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_piql_pkqj(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_piql_pkqj(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_piql_pkqj(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_piql_pkqj(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_piql_pkqj(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_piql_pkqj(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_piql_pkqj(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_piql_pkqj(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_pqkj_iqpl(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_pqkj_iqpl(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_pqkj_iqpl(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_pqkj_iqpl(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_pqkj_iqpl(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_pqkj_iqpl(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_pqkj_iqpl(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_pqkj_iqpl(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_pqkj_iqpl(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_qipl(2, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_qipl(1, 2, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_qipl(1, 1, 2, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 2, 1, 1, 0.0) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 2, 1, 0.0) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 2, 0.0) |
+    test_ijkl_pqkj_qipl(2, 3, 2, 3, 2, 3, 0.0) |
+    test_ijkl_pqkj_qipl(3, 5, 1, 7, 13, 11, 0.0) |
+    test_ijkl_pqkj_qipl(3, 5, 2, 7, 13, 11, 0.0) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 1, 0.0) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 1, -0.5) |
+    test_ijkl_pqkj_qipl(2, 1, 1, 1, 1, 1, 2.0) |
+    test_ijkl_pqkj_qipl(1, 2, 1, 1, 1, 1, -1.0) |
+    test_ijkl_pqkj_qipl(1, 1, 2, 1, 1, 1, 3.7) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 2, 1, 1, 1.0) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 2, 1, -1.2) |
+    test_ijkl_pqkj_qipl(1, 1, 1, 1, 1, 2, 0.7) |
+    test_ijkl_pqkj_qipl(2, 3, 2, 3, 2, 3, 12.3) |
+    test_ijkl_pqkj_qipl(3, 5, 1, 7, 13, 11, -1.25) |
+    test_ijkl_pqkj_qipl(3, 5, 2, 7, 13, 11, -1.25) |
+
+    test_ij_ipqr_jpqr(1, 1, 1, 1, 1) |
+    test_ij_ipqr_jpqr(1, 1, 1, 1, 4) |
+    test_ij_ipqr_jpqr(1, 1, 1, 4, 1) |
+    test_ij_ipqr_jpqr(1, 1, 4, 1, 1) |
+    test_ij_ipqr_jpqr(1, 4, 1, 1, 1) |
+    test_ij_ipqr_jpqr(4, 1, 1, 1, 1) |
+    test_ij_ipqr_jpqr(4, 1, 1, 7, 7) |
+    test_ij_ipqr_jpqr(1, 4, 1, 7, 7) |
+    test_ij_ipqr_jpqr(3, 4, 5, 6, 7) |
+
+    test_ij_ipqr_jpqr_a(1, 1, 1, 1, 1, 0.5) |
+    test_ij_ipqr_jpqr_a(1, 1, 1, 1, 4, -1.0) |
+    test_ij_ipqr_jpqr_a(1, 1, 1, 4, 1, 1.5) |
+    test_ij_ipqr_jpqr_a(1, 1, 4, 1, 1, -1.2) |
+    test_ij_ipqr_jpqr_a(1, 4, 1, 1, 1, 0.8) |
+    test_ij_ipqr_jpqr_a(4, 1, 1, 1, 1, 1.4) |
+    test_ij_ipqr_jpqr_a(4, 1, 1, 7, 7, 0.4) |
+    test_ij_ipqr_jpqr_a(1, 4, 1, 7, 7, -0.6) |
+    test_ij_ipqr_jpqr_a(3, 4, 5, 6, 7, -2.0) |
+
+    test_ij_ipqr_pjrq(1, 1, 1, 1, 1, 0.0) |
+    test_ij_ipqr_pjrq(4, 1, 1, 7, 7, 0.0) |
+    test_ij_ipqr_pjrq(1, 1, 1, 1, 2, 0.0) |
+    test_ij_ipqr_pjrq(1, 1, 1, 2, 1, 0.0) |
+    test_ij_ipqr_pjrq(1, 1, 2, 1, 1, 0.0) |
+    test_ij_ipqr_pjrq(1, 2, 1, 1, 1, 0.0) |
+    test_ij_ipqr_pjrq(2, 1, 1, 1, 1, 0.0) |
+    test_ij_ipqr_pjrq(3, 3, 3, 3, 3, 0.0) |
+    test_ij_ipqr_pjrq(11, 5, 7, 3, 4, 0.0) |
+    test_ij_ipqr_pjrq(16, 16, 16, 16, 16, 0.0) |
+    test_ij_ipqr_pjrq(1, 1, 1, 1, 1, -0.5) |
+    test_ij_ipqr_pjrq(4, 1, 1, 7, 7, 1.2) |
+    test_ij_ipqr_pjrq(1, 1, 1, 1, 2, 2.0) |
+    test_ij_ipqr_pjrq(1, 1, 1, 2, 1, -1.0) |
+    test_ij_ipqr_pjrq(1, 1, 2, 1, 1, 3.7) |
+    test_ij_ipqr_pjrq(1, 2, 1, 1, 1, 1.0) |
+    test_ij_ipqr_pjrq(2, 1, 1, 1, 1, -0.9) |
+    test_ij_ipqr_pjrq(3, 3, 3, 3, 3, 1.0) |
+    test_ij_ipqr_pjrq(11, 5, 7, 3, 4, -1.2) |
+    test_ij_ipqr_pjrq(16, 16, 16, 16, 16, 0.7) |
+
+    test_ij_jpqr_iprq(1, 1, 1, 1, 1, -1.0) |
+    test_ij_jpqr_iprq(1, 1, 1, 1, 3, 0.5) |
+    test_ij_jpqr_iprq(1, 1, 1, 3, 1, -1.2) |
+    test_ij_jpqr_iprq(1, 1, 3, 1, 1, 0.2) |
+    test_ij_jpqr_iprq(1, 3, 1, 1, 1, -0.5) |
+    test_ij_jpqr_iprq(3, 1, 1, 1, 1, -0.4) |
+    test_ij_jpqr_iprq(3, 3, 3, 2, 4, 1.0) |
+
+    test_ij_pqir_pqjr(3, 4, 5, 6, 7) |
+    test_ij_pqir_pqjr_a(3, 4, 5, 6, 7, 2.0) |
+    test_ij_pqir_pqjr(3, 3, 3, 3, 3) |
+    test_ij_pqir_pqjr(3, 1, 3, 1, 2) |
+    test_ij_pqir_pqjr(3, 3, 1, 1, 2) |
+
+    test_ijkl_pi_jklp(1, 4, 5, 6, 2) |
+    test_ijkl_pi_jklp(3, 4, 5, 6, 7) |
+    test_ijkl_pi_jklp(10, 10, 10, 10, 6) |
+    test_ijkl_pi_jklp_a(3, 4, 5, 6, 7, 1.0) |
+    test_ijkl_pi_jklp_a(3, 4, 5, 6, 7, 0.0) |
+    test_ijkl_pi_jklp_a(3, 4, 5, 6, 7, -2.0) |
+
+    test_jikl_pi_jpkl(1, 4, 5, 6, 2) |
+    test_jikl_pi_jpkl(3, 4, 5, 6, 7) |
+    test_jikl_pi_jpkl_a(3, 4, 5, 6, 7, 0.0) |
+    test_jikl_pi_jpkl_a(3, 4, 5, 6, 7, -2.0) |
+
+    test_ijkl_ijp_klp(1, 1, 1, 1, 1) |
+    test_ijkl_ijp_klp(3, 4, 5, 6, 7) |
+    test_ijkl_ijp_klp(5, 6, 3, 4, 7) |
+    test_ijkl_ijp_klp(1, 100, 1, 100, 100) |
+    test_ijkl_ijp_klp_a(3, 4, 5, 6, 7, -2.0) |
+
+    test_ijkl_ij_kl(3, 4, 5, 6) |
+
+    test_ijkl_ij_lk(3, 4, 5, 6) |
+
+    0;
+
+
+    } catch(...) {
+        allocator<double>::shutdown();
+        throw;
+    }
+
+    allocator<double>::shutdown();
+
+    return rc;
+}
+

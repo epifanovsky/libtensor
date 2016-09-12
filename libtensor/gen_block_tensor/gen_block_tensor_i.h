@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_GEN_BLOCK_TENSOR_I_H
 #define LIBTENSOR_GEN_BLOCK_TENSOR_I_H
 
-#include <cstring> // for size_t
+#include <cstdlib> // for size_t
 #include <vector>
 #include <libtensor/core/block_index_space.h>
 #include <libtensor/core/symmetry.h>

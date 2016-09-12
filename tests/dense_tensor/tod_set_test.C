@@ -3,21 +3,12 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_set.h>
-#include "tod_set_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_set_test::perform() throw(libtest::test_exception) {
-
-    test_1(1.0);
-    test_2(-2.0);
-    test_3(5.0);
-    test_4(-0.3);
-}
+using namespace libtensor;
 
 
-void tod_set_test::test_1(double d) throw(libtest::test_exception) {
+int test_1(double d) {
 
     std::ostringstream ss;
     ss << "tod_set_test::test_1(" << d << ")";
@@ -41,7 +32,7 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != 0.0) {
                 std::ostringstream ss;
                 ss << "Bad value at t1[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c1.ret_const_dataptr(p);
         }
@@ -53,18 +44,20 @@ void tod_set_test::test_1(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != d) {
                 std::ostringstream ss;
                 ss << "Bad value at t2[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c2.ret_const_dataptr(p);
         }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_set_test::test_2(double d) throw(libtest::test_exception) {
+int test_2(double d) {
 
     std::ostringstream ss;
     ss << "tod_set_test::test_2(" << d << ")";
@@ -88,7 +81,7 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != 0.0) {
                 std::ostringstream ss;
                 ss << "Bad value at t1[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c1.ret_const_dataptr(p);
         }
@@ -100,18 +93,20 @@ void tod_set_test::test_2(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != d) {
                 std::ostringstream ss;
                 ss << "Bad value at t2[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c2.ret_const_dataptr(p);
         }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_set_test::test_3(double d) throw(libtest::test_exception) {
+int test_3(double d) {
 
     std::ostringstream ss;
     ss << "tod_set_test::test_3(" << d << ")";
@@ -135,7 +130,7 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != 0.0) {
                 std::ostringstream ss;
                 ss << "Bad value at t1[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c1.ret_const_dataptr(p);
         }
@@ -147,18 +142,20 @@ void tod_set_test::test_3(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != d) {
                 std::ostringstream ss;
                 ss << "Bad value at t2[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c2.ret_const_dataptr(p);
         }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_set_test::test_4(double d) throw(libtest::test_exception) {
+int test_4(double d) {
 
     std::ostringstream ss;
     ss << "tod_set_test::test_4(" << d << ")";
@@ -182,7 +179,7 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != 0.0) {
                 std::ostringstream ss;
                 ss << "Bad value at t1[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c1.ret_const_dataptr(p);
         }
@@ -194,16 +191,29 @@ void tod_set_test::test_4(double d) throw(libtest::test_exception) {
             for(size_t i = 0; i < sz; i++) if(p[i] != d) {
                 std::ostringstream ss;
                 ss << "Bad value at t2[" << i << "].";
-                fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
+                return fail_test(tnss.c_str(), __FILE__, __LINE__, ss.str().c_str());
             }
             c2.ret_const_dataptr(p);
         }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1(1.0) |
+    test_2(-2.0) |
+    test_3(5.0) |
+    test_4(-0.3) |
+
+    0;
+}
+
 

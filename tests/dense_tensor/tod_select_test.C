@@ -7,33 +7,16 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_select.h>
 #include <libtensor/dense_tensor/impl/tod_select_impl.h>
-#include "tod_select_test.h"
+#include "../test_utils.h"
 
 
-namespace libtensor {
+using namespace libtensor;
 
-
-void tod_select_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_1<compare4absmax>(4, 1.0);
-    test_1<compare4absmax>(4, -2.0);
-    test_1<compare4min>(4, 0.5);
-    test_1<compare4min>(4, -1.0);
-
-    test_2<compare4absmin>(4, 1.0);
-    test_2<compare4absmin>(4, -0.5);
-    test_2<compare4max>(4, 2.0);
-    test_2<compare4max>(4, -1.0);
-
-}
 
 template<typename ComparePolicy>
-void tod_select_test::test_1(size_t n, double c)
-        throw(libtest::test_exception) {
+int test_1(size_t n, double c) {
 
-    static const char *testname = "tod_select_test::test_1()";
+    static const char testname[] = "tod_select_test::test_1()";
 
     typedef allocator<double> allocator_t;
     typedef typename tod_select<2, ComparePolicy>::list_type list_type;
@@ -100,7 +83,7 @@ void tod_select_test::test_1(size_t n, double c)
                 oss << "Unsorted list at element (" << it->get_index() << ", "
                         << it->get_value() << "). Found in tensor at "
                         << aidx.get_index() << ", value = " << cd[i] << ".";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         oss.str().c_str());
             }
         }
@@ -110,15 +93,17 @@ void tod_select_test::test_1(size_t n, double c)
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-template<typename ComparePolicy>
-void tod_select_test::test_2(size_t n, double c)
-        throw(libtest::test_exception) {
 
-    static const char *testname = "tod_select_test::test_2()";
+template<typename ComparePolicy>
+int test_2(size_t n, double c) {
+
+    static const char testname[] = "tod_select_test::test_2()";
 
     typedef allocator<double> allocator_t;
     typedef typename tod_select<3, ComparePolicy>::list_type list_type;
@@ -190,7 +175,7 @@ void tod_select_test::test_2(size_t n, double c)
                                 << ", " << it->get_value()
                                 << "). Found in tensor at " << aidx.get_index()
                                 << ", value = " << cd[i] << ".";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         oss.str().c_str());
             }
         }
@@ -200,8 +185,28 @@ void tod_select_test::test_2(size_t n, double c)
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_1<compare4absmax>(4, 1.0) |
+    test_1<compare4absmax>(4, -2.0) |
+    test_1<compare4min>(4, 0.5) |
+    test_1<compare4min>(4, -1.0) |
+
+    test_2<compare4absmin>(4, 1.0) |
+    test_2<compare4absmin>(4, -0.5) |
+    test_2<compare4max>(4, 2.0) |
+    test_2<compare4max>(4, -1.0) |
+
+    0;
+}
+

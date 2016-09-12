@@ -3,12 +3,12 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_random.h>
 #include "../compare_ref.h"
-#include "tod_random_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
 
-void tod_random_test::perform() throw(libtest::test_exception) {
+int main() {
 
     typedef allocator<double> allocator;
     typedef dense_tensor<3, double, allocator> tensor3;
@@ -19,32 +19,33 @@ void tod_random_test::perform() throw(libtest::test_exception) {
     tensor3 ta3(dims3), tb3(dims3);
 
     tod_random<3> randr;
-    bool test_ok=false;
+    bool test_ok = false;
     try {
         randr.perform(ta3);
         randr.perform(tb3);
-
+        test_ok = true;
         compare_ref<3>::compare("tod_random_test",ta3,tb3,0.0);
-    } catch ( libtest::test_exception& e ) {
-        test_ok=true;
-    } catch ( exception& e ) {
-        fail_test("tod_random_test", __FILE__, __LINE__, e.what());
+        test_ok = false;
+    } catch(exception& e) {
+        if(!test_ok) {
+            return fail_test("tod_random_test", __FILE__, __LINE__, e.what());
+        }
     }
-    if ( ! test_ok )
-        fail_test("tod_random_test", __FILE__, __LINE__,
+    if(!test_ok) {
+        return fail_test("tod_random_test", __FILE__, __LINE__,
             "Two identical random number sequences.");
-
+    }
 
     tod_random<3>(2.0).perform(false, ta3);
     dense_tensor_ctrl<3,double> ctrla(ta3);
     const double *cptra=ctrla.req_const_dataptr();
     for (size_t i=0; i<ta3.get_dims().get_size(); i++ ) {
         if ( (cptra[i]<0.0) || (cptra[i]>=3.0) )
-            fail_test("tod_random_test<N>",__FILE__,__LINE__,
+            return fail_test("tod_random_test<N>",__FILE__,__LINE__,
                 "Random numbers outside specified interval");
     }
+
+    return 0;
 }
 
-
-} // namespace libtensor
 
