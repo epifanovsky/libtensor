@@ -1,0 +1,9 @@
+#
+#    Include and library paths
+#
+include_directories(${LIBTEST_DIR})
+add_library(libtest STATIC IMPORTED)
+set_target_properties(libtest PROPERTIES
+    IMPORTED_LOCATION ${LIBTEST_DIR}/build/libtest/libtest.a
+)
+

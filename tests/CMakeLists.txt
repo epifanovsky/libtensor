@@ -392,7 +392,8 @@ if(WITH_CTF)
 #        LINK_FLAGS ${OpenMP_CXX_FLAGS})
 endif(WITH_CTF)
 
-include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+#include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+include_directories(${LIBTEST_DIR})
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
     COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
@@ -407,7 +408,7 @@ endif(HAVE_LIBVMM)
 foreach(TARGET ${TARGETS})
 target_link_libraries(${TARGET}
     tensor tensor_core tensor_block_sparse
-    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS} libtest)
+    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} util libtest)
 set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
 endforeach(TARGET)
 

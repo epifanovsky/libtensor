@@ -1,0 +1,16 @@
+#
+#   Set up libutil as an external library
+#
+
+include(${LIBUTIL_DIR}/cmake/DepsLibUtil.txt)
+
+#
+#   Include and library paths
+#
+include_directories(${LIBUTIL_DIR})
+add_library(util STATIC IMPORTED)
+set_target_properties(util PROPERTIES
+    IMPORTED_LOCATION ${LIBUTIL_DIR}/build/libutil/libutil.a
+)
+set(LIBUTIL_LIBS util ${LIBUTIL_DEP_LIBS})
+
