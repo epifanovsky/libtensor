@@ -1,6 +1,20 @@
-set(SRC_BENCH
+set(SRC_MKL_BENCH
     dgemm_bench
+    dsymm_bench
 )
+set(SRC_BENCH
+    contract_dgemm_bench
+    contract_simple_bench
+    contract_regular_bench
+    contract_vm_bench
+)
+
+foreach(BENCH ${SRC_MKL_BENCH})
+    add_executable(${BENCH} ${BENCH}.C)
+    set_property(TARGET ${BENCH} APPEND PROPERTY COMPILE_FLAGS "-mkl")
+    set_property(TARGET ${BENCH} APPEND PROPERTY LINK_FLAGS "-mkl")
+    target_link_libraries(${BENCH} util)
+endforeach(BENCH)
 
 foreach(BENCH ${SRC_BENCH})
 
