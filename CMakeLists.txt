@@ -29,4 +29,5 @@ add_subdirectory(libutil)
 add_subdirectory(libtensor)
 add_subdirectory(tests)
 add_subdirectory(performance_tests)
+add_subdirectory(cse2017_bench)
 
