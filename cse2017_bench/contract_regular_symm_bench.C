@@ -18,12 +18,6 @@ void warmup() {
 }
 
 
-struct contract_timings {
-    static const char k_clazz[];
-};
-const char contract_timings::k_clazz[] = "contract2";
-
-
 int run_bench(size_t n, unsigned buf_mb, unsigned nthr) {
 
     std::cout << "run_bench(" << n << ", " << buf_mb << ", " << nthr << ")"
@@ -33,9 +27,8 @@ int run_bench(size_t n, unsigned buf_mb, unsigned nthr) {
     for(size_t i = 16; i < n; i+=16) si.split(i);
     bispace<4> sijkl(si&si&si&si);
 
-    btensor<4> A(sijkl), B(sijkl), C(sijkl);
+    btensor<4> A(sijkl), C(sijkl);
     btod_set<4>(0.55).perform(A);
-    btod_set<4>(2.0).perform(B);
 
     contraction2<2, 2, 2> contr;
     contr.contract(1, 1);
@@ -51,9 +44,9 @@ int run_bench(size_t n, unsigned buf_mb, unsigned nthr) {
 
     libutil::timer tim;
     tim.start();
-    btod_contract2<2, 2, 2>(contr, A, B).perform(C);
+    btod_contract2<2, 2, 2>(contr, A, A).perform(C);
     tim.stop();
-    std::cout << "contract_regular_bench: " << tim.duration() << std::endl;
+    std::cout << "contract_regular_symm_bench: " << tim.duration() << std::endl;
 
     tp.dissociate();
 
@@ -65,7 +58,7 @@ int run_bench(size_t n, unsigned buf_mb, unsigned nthr) {
 int main(int argc, char **argv) {
 
     if(argc != 4) {
-        std::cout << "Use: \"contract_regular_bench N B T\", "
+        std::cout << "Use: \"contract_regular_symm_bench N B T\", "
                      "where N is matrix size, "
                      "B is memory buffer size (MB), "
                      "T is number of threads" << std::endl;

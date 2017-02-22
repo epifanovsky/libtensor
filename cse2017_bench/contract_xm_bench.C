@@ -6,9 +6,10 @@
 #include <libtensor/libtensor.h>
 #include <libtensor/core/batching_policy_base.h>
 #include <libtensor/core/impl/allocator_impl.h>
-#include <libtensor/core/impl/vm_allocator.h>
+#include <libtensor/core/impl/xm_allocator.h>
 #include <libtensor/block_tensor/btod_set.h>
-#include <libtensor/block_tensor/btod_contract2.h>
+#include <libtensor/block_tensor/btod_contract2_xm.h>
+#include <libtensor/libxm/xm.h>
 
 using namespace libtensor;
 
@@ -33,16 +34,11 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
 
     size_t mem_dbl = size_t(mem_mb) * 1024*1024 / sizeof(double);
     size_t blkmin = 16, blkmax = 4096*4096;
-    libtensor::allocator<double>::init(libtensor::vm_allocator<double>(),
+    typedef libtensor::lt_xm_allocator::lt_xm_allocator<double> xm_allocator;
+    libtensor::allocator<double>::init(xm_allocator(),
         blkmin, blkmin, blkmax, mem_dbl, pfprefix);
-    //  Use 1/4 of memory for contraction buffer
-    size_t buf_blk = mem_dbl / 4 / (256*256);
-    batching_policy_base::set_batch_size(buf_blk);
-    std::cout << "batching_policy_base::set_batch_size(" << buf_blk << ")"
-        << std::endl;
 
-    libutil::thread_pool tp(nthr, nthr);
-    tp.associate();
+    mkl_set_num_threads(nthr);
 
     bispace<1> si(n);
     for(size_t i = 16; i < n; i+=16) si.split(i);
@@ -56,13 +52,14 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
     contr.contract(1, 1);
     contr.contract(3, 3);
 
+    scalar_transf<double> ka(1.0), kb(1.0), kc(1.0);
+
     libutil::timer tim;
     tim.start();
-    btod_contract2<2, 2, 2>(contr, A, B).perform(C);
+    btod_contract2_xm<2, 2, 2>(contr, A, B).perform(C);
     tim.stop();
-    std::cout << "contract_vm_bench: " << tim.duration() << std::endl;
+    std::cout << "contract_xm_bench: " << tim.duration() << std::endl;
 
-    tp.dissociate();
     libtensor::allocator<double>::shutdown();
 
     std::cout << "SUCCESS" << std::endl;
@@ -73,7 +70,7 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
 int main(int argc, char **argv) {
 
     if(argc != 5) {
-        std::cout << "Use: \"contract_vm_bench N m T S\", "
+        std::cout << "Use: \"contract_xm_bench N m T S\", "
                      "where N is matrix size, "
                      "M is memory size (MB), "
                      "T is number of threads, "

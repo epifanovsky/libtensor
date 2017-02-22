@@ -6,7 +6,13 @@ set(SRC_BENCH
     contract_dgemm_bench
     contract_simple_bench
     contract_regular_bench
+    contract_regular_symm_bench
     contract_vm_bench
+    contract_vm_symm_bench
+)
+set(SRC_XM_BENCH
+    contract_xm_bench
+    contract_xm_symm_bench
 )
 
 foreach(BENCH ${SRC_MKL_BENCH})
@@ -14,6 +20,14 @@ foreach(BENCH ${SRC_MKL_BENCH})
     set_property(TARGET ${BENCH} APPEND PROPERTY COMPILE_FLAGS "-mkl")
     set_property(TARGET ${BENCH} APPEND PROPERTY LINK_FLAGS "-mkl")
     target_link_libraries(${BENCH} util)
+endforeach(BENCH)
+
+foreach(BENCH ${SRC_XM_BENCH})
+    add_executable(${BENCH} ${BENCH}.C)
+    set_property(TARGET ${BENCH} APPEND PROPERTY COMPILE_FLAGS "-mkl")
+    set_property(TARGET ${BENCH} APPEND PROPERTY LINK_FLAGS "-mkl")
+    target_link_libraries(${BENCH}
+        tensor tensor_core ${LIBTENSOR_DEP_LIBS} util)
 endforeach(BENCH)
 
 foreach(BENCH ${SRC_BENCH})

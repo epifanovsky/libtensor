@@ -48,9 +48,8 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
     for(size_t i = 16; i < n; i+=16) si.split(i);
     bispace<4> sijkl(si&si&si&si);
 
-    btensor<4> A(sijkl), B(sijkl), C(sijkl);
+    btensor<4> A(sijkl), C(sijkl);
     btod_set<4>(0.55).perform(A);
-    btod_set<4>(2.0).perform(B);
 
     contraction2<2, 2, 2> contr;
     contr.contract(1, 1);
@@ -58,9 +57,9 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
 
     libutil::timer tim;
     tim.start();
-    btod_contract2<2, 2, 2>(contr, A, B).perform(C);
+    btod_contract2<2, 2, 2>(contr, A, A).perform(C);
     tim.stop();
-    std::cout << "contract_vm_bench: " << tim.duration() << std::endl;
+    std::cout << "contract_vm_symm_bench: " << tim.duration() << std::endl;
 
     tp.dissociate();
     libtensor::allocator<double>::shutdown();
