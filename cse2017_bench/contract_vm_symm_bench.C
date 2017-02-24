@@ -20,12 +20,6 @@ void warmup() {
 }
 
 
-struct contract_timings {
-    static const char k_clazz[];
-};
-const char contract_timings::k_clazz[] = "contract2";
-
-
 int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
 
     std::cout << "run_bench(" << n << ", " << mem_mb << ", " << nthr
@@ -43,6 +37,7 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
 
     libutil::thread_pool tp(nthr, nthr);
     tp.associate();
+    {
 
     bispace<1> si(n);
     for(size_t i = 16; i < n; i+=16) si.split(i);
@@ -61,6 +56,7 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
     tim.stop();
     std::cout << "contract_vm_symm_bench: " << tim.duration() << std::endl;
 
+    }
     tp.dissociate();
     libtensor::allocator<double>::shutdown();
 
@@ -72,7 +68,7 @@ int run_bench(size_t n, unsigned mem_mb, unsigned nthr, const char *pfprefix) {
 int main(int argc, char **argv) {
 
     if(argc != 5) {
-        std::cout << "Use: \"contract_vm_bench N m T S\", "
+        std::cout << "Use: \"contract_vm_symm_bench N m T S\", "
                      "where N is matrix size, "
                      "M is memory size (MB), "
                      "T is number of threads, "

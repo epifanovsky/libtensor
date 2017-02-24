@@ -7,12 +7,15 @@ set(SRC_BENCH
     contract_simple_bench
     contract_regular_bench
     contract_regular_symm_bench
+    contract_regular_part_bench
     contract_vm_bench
     contract_vm_symm_bench
+    contract_vm_part_bench
 )
 set(SRC_XM_BENCH
     contract_xm_bench
     contract_xm_symm_bench
+    contract_xm_part_bench
 )
 
 foreach(BENCH ${SRC_MKL_BENCH})
