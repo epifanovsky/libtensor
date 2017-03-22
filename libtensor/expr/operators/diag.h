@@ -101,7 +101,7 @@ expr_rhs<N - M + K, T> diag(
     std::vector<const letter*> lab(NC, 0);
     for(size_t i = 0; i < NC; i++) {
         if(oidx[i] < K) lab[i] = &l1.letter_at(didx[oidx[i]]);
-        else lab[i] = &subexpr.letter_at(oidx[i] - 1);
+        else lab[i] = &subexpr.letter_at(oidx[i] - K);
     }
 
     expr_tree e(ndiag);

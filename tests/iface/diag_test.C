@@ -22,6 +22,7 @@ void diag_test::perform() throw(libtest::test_exception) {
         test_t_4();
         test_t_5();
         test_t_6();
+        test_t_7();
         test_e_1();
         test_x_1();
 
@@ -219,6 +220,39 @@ void diag_test::test_t_6() throw(libtest::test_exception) {
     t2(i) = diag(i, i|j, -t1(i|j));
 
     compare_ref<1>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+}
+
+
+void diag_test::test_t_7() throw(libtest::test_exception) {
+
+    static const char testname[] = "diag_test::test_t_7()";
+
+    try {
+
+    bispace<1> sp_i(5);
+    bispace<3> sp_ijk(sp_i&sp_i&sp_i);
+    bispace<5> sp_ijklm(sp_i&sp_i&sp_i&sp_i&sp_i);
+
+    btensor<5> t1(sp_ijklm);
+    btensor<3> t2(sp_ijk), t2_ref(sp_ijk);
+
+    btod_random<5>().perform(t1);
+    t1.set_immutable();
+
+    sequence<5, size_t> m01212(0);
+    m01212[0] = 0; m01212[1] = 1; m01212[2] = 2; m01212[3] = 1; m01212[4] = 2;
+
+    btod_diag<5, 3>(t1, m01212, permutation<3>().permute(1, 2).permute(0, 1),
+        1.0).perform(t2_ref);
+
+    letter i, j, k, l, m;
+    t2(k|i|j) = diag(j|k, j|l|k|m, t1(i|j|k|l|m));
+
+    compare_ref<3>::compare(testname, t2, t2_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(testname, __FILE__, __LINE__, e.what());
