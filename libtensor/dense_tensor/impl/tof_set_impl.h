@@ -40,8 +40,8 @@ void tof_set<N>::perform(bool zero, dense_tensor_wr_i<N, float> &ta) {
     }
 
     tof_set<N>::stop_timer();
-}
 */
+}
 
 } // namespace libtensor
 
