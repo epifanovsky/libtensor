@@ -29,6 +29,7 @@ libtensor_dense_tensor_suite::libtensor_dense_tensor_suite() :
     add_test("tod_scatter", m_utf_tod_scatter);
     add_test("tod_select", m_utf_tod_select);
     add_test("tod_set", m_utf_tod_set);
+    add_test("tof_set", m_utf_tof_set);
     add_test("tod_set_diag", m_utf_tod_set_diag);
     add_test("tod_set_elem", m_utf_tod_set_elem);
     add_test("tod_size", m_utf_tod_size);

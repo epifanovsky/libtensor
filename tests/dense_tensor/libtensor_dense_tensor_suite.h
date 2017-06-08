@@ -25,6 +25,7 @@
 #include "tod_scatter_test.h"
 #include "tod_select_test.h"
 #include "tod_set_test.h"
+#include "tof_set_test.h"
 #include "tod_set_diag_test.h"
 #include "tod_set_elem_test.h"
 #include "tod_size_test.h"
@@ -100,6 +101,7 @@ private:
     unit_test_factory<tod_scatter_test> m_utf_tod_scatter;
     unit_test_factory<tod_select_test> m_utf_tod_select;
     unit_test_factory<tod_set_test> m_utf_tod_set;
+    unit_test_factory<tof_set_test> m_utf_tof_set;
     unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
     unit_test_factory<tod_set_elem_test> m_utf_tod_set_elem;
     unit_test_factory<tod_size_test> m_utf_tod_size;
