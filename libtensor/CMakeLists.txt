@@ -98,7 +98,7 @@ set(SRC_INST
     dense_tensor/impl/tod_screen.C
     #dense_tensor/impl/tod_set.C
     dense_tensor/impl/to_set.C
-    dense_tensor/impl/tof_set.C
+    #dense_tensor/impl/tof_set.C
     dense_tensor/impl/tod_set_diag.C
     dense_tensor/impl/tod_set_elem.C
     dense_tensor/impl/tod_size.C

@@ -42,6 +42,8 @@ public:
 template<size_t N>
 using tod_set = to_set<N, double>;
 
+template<size_t N>
+using tof_set = to_set<N, float>;
 } // namespace libtensor
 
 #endif // LIBTENSOR_TO_SET_H
