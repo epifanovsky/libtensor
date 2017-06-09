@@ -10,15 +10,15 @@ namespace libtensor {
 
 void to_set_test::perform() throw(libtest::test_exception) {
 
-    test_1((double)1.0);
-    test_2((double)-2.0);
-    test_3((double)5.0);
-    test_4((double)-0.3);
+    test_1<double>((double)1.0);
+    test_2<double>((double)-2.0);
+    test_3<double>((double)5.0);
+    test_4<double>((double)-0.3);
 
-    test_1((float)1.0);
-    test_2((float)-2.0);
-    test_3((float)5.0);
-    test_4((float)-0.3);
+    test_1<float>((float)1.0);
+    test_2<float>((float)-2.0);
+    test_3<float>((float)5.0);
+    test_4<float>((float)-0.3);
 }
 
 
