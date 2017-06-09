@@ -22,14 +22,14 @@ namespace libtensor {
     Plain copy:
     \code
     dense_tensor_i<2, double> &t1(...), &t2(...);
-    to_copy<2> cp(t1);
+    to_copy<2, double> cp(t1);
     cp.perform(t2); // Copies the elements of t1 to t2
     \endcode
 
     Scaled copy:
     \code
     dense_tensor_i<2, double> &t1(...), &t2(...);
-    to_copy<2> cp(t1, 0.5);
+    to_copy<2, double> cp(t1, 0.5);
     cp.perform(t2); // Copies the elements of t1 multiplied by 0.5 to t2
     \endcode
 
@@ -37,7 +37,7 @@ namespace libtensor {
     \code
     dense_tensor_i<2, double> &t1(...), &t2(...);
     permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
-    to_copy<2> cp(t1, perm);
+    to_copy<2, double> cp(t1, perm);
     cp.perform(t2); // Copies transposed t1 to t2
     \endcode
 
@@ -45,7 +45,7 @@ namespace libtensor {
     \code
     dense_tensor_i<2, double> &t1(...), &t2(...);
     permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
-    to_copy<2> cp(t1, perm, 0.5);
+    to_copy<2, double> cp(t1, perm, 0.5);
     cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
     \endcode
     or
@@ -53,7 +53,7 @@ namespace libtensor {
     dense_tensor_i<2, double> &t1(...), &t2(...);
     permutation<2> perm; perm.permute(0, 1); // Sets up a permutation
     tensor_transf<2, double> tr(perm, 0.5);
-    to_copy<2> cp(t1, tr);
+    to_copy<2, double> cp(t1, tr);
     cp.perform(t2); // Copies transposed t1 scaled by 0.5 to t2
     \endcode
 

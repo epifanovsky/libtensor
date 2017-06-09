@@ -53,9 +53,11 @@ set(SRC_LINALG_GENERIC
 )
 
 set(SRC_KERNELS
-    kernels/dadd1/kern_dadd1.C
+    #kernels/dadd1/kern_dadd1.C
+    kernels/add1/kern_add1.C
     kernels/dadd2/kern_dadd2.C
-    kernels/dcopy/kern_dcopy.C
+    #kernels/dcopy/kern_dcopy.C
+    kernels/copy/kern_copy.C
     kernels/ddiv1/kern_ddiv1.C
     kernels/ddiv2/kern_ddiv2.C
     kernels/ddivadd1/kern_ddivadd1.C
