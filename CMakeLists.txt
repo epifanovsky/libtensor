@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.10)
 project(LIBTENSOR)
 
+#set(CMAKE_CXX_COMPILE_FEATURES ${CMAKE_CXX_COMPILE_FEATURES} "cxx_alias_templates")
+SET(CMAKE_CXX_FLAGS "-std=c++11")
+
 set(LIBTENSOR_DIR ${LIBTENSOR_SOURCE_DIR})
 get_filename_component(LIBTEST_DIR ${LIBTENSOR_DIR}/libtest ABSOLUTE)
 get_filename_component(LIBUTIL_DIR ${LIBTENSOR_DIR}/libutil ABSOLUTE)

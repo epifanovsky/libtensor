@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_TOD_SET_H
-#define LIBTENSOR_TOD_SET_H
+#ifndef LIBTENSOR_TO_SET_H
+#define LIBTENSOR_TO_SET_H
 
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
@@ -18,19 +18,19 @@ namespace libtensor {
 
     \ingroup libtensor_dense_tensor_tod
  **/
-template<size_t N, T>
-class to_set : public timings< tof_set<N> >, public noncopyable {
+template<size_t N, typename T>
+class to_set : public timings< to_set<N,T> >, public noncopyable {
 public:
     static const char *k_clazz; //!< Class name
 
 private:
-    float m_v; //!< Value
+    T m_v; //!< Value
 
 public:
     /** \brief Initializes the operation
         \param v Value to be assigned to the tensor elements.
      **/
-    tof_set(T v = 0.0) : m_v(v) { }
+    to_set(T v = 0.0) : m_v(v) { }
 
     /** \brief Performs the operation
         \param zero Zero tensor first
@@ -39,7 +39,9 @@ public:
     void perform(bool zero, dense_tensor_wr_i<N, T> &ta);
 };
 
+template<size_t N>
+using tod_set = to_set<N, double>;
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_TOD_SET_H
+#endif // LIBTENSOR_TO_SET_H

@@ -14,7 +14,7 @@ namespace libtensor {
 
 
 template<size_t N, size_t M, size_t K> class tod_contract2;
-template<size_t N> class tod_set;
+//template<size_t N> class tod_set;
 
 
 struct btod_traits {
