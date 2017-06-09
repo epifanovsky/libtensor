@@ -59,6 +59,7 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_set_elem_test.C
     dense_tensor/tod_set_test.C
     dense_tensor/tof_set_test.C
+    dense_tensor/to_set_test.C
     dense_tensor/tod_size_test.C
     dense_tensor/tod_trace_test.C
     dense_tensor/tod_vmpriority_test.C
