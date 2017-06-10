@@ -20,7 +20,7 @@ namespace libtensor {
     \ingroup libtensor_kernels
  **/
 template<typename Functor>
-class kern_apply : public kernel_base<linalg, 1, 1> {
+class kern_apply : public kernel_base<linalg, 1, 1, double> {
 public:
     static const char *k_clazz; //!< Kernel name
 
@@ -37,7 +37,7 @@ public:
 
     virtual void run(void *, const loop_registers<1, 1> &r);
 
-    static kernel_base<linalg, 1, 1> *match(Functor &fn,
+    static kernel_base<linalg, 1, 1, double> *match(Functor &fn,
             double c1, double c2, list_t &in, list_t &out);
 };
 
@@ -54,7 +54,7 @@ void kern_apply<Functor>::run(void *, const loop_registers<1, 1> &r) {
 
 
 template<typename Functor>
-kernel_base<linalg, 1, 1> *kern_apply<Functor>::match(Functor &fn,
+kernel_base<linalg, 1, 1, double> *kern_apply<Functor>::match(Functor &fn,
         double c1, double c2, list_t &in, list_t &out) {
 
     kern_apply zz;

@@ -134,7 +134,7 @@ void tod_dirsum<N, M>::perform(bool zero,
         r.m_ptrb_end[0] = pc + dimsc.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 2, 1> >kern(
+            std::auto_ptr< kernel_base<linalg, 2, 1, double> >kern(
                 kern_dadd2<linalg>::match(m_ka, m_kb, m_c, loop_in, loop_out));
             tod_dirsum<N, M>::start_timer(kern->get_name());
             loop_list_runner<linalg, 2, 1>(loop_in).run(0, r, *kern);

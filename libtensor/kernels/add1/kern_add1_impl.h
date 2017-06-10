@@ -21,10 +21,10 @@ void kern_add1<LA, T>::run(
 
 
 template<typename LA, typename T>
-kernel_base<LA, 1, 1> *kern_add1<LA,T>::match(T d, list_t &in,
+kernel_base<LA, 1, 1, T> *kern_add1<LA,T>::match(T d, list_t &in,
     list_t &out) {
 
-    kernel_base<LA, 1, 1> *kern = 0;
+    kernel_base<LA, 1, 1, T> *kern = 0;
 
     kern_add1 zz;
     zz.m_d = d;

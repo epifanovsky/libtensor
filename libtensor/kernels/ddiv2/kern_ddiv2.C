@@ -13,7 +13,7 @@ void kern_ddiv2::run(void*, const loop_registers<2, 1> &r) {
 }
 
 
-kernel_base<linalg, 2, 1> *kern_ddiv2::match(double d, list_t &in,
+kernel_base<linalg, 2, 1, double> *kern_ddiv2::match(double d, list_t &in,
     list_t &out) {
 
     kern_ddiv2 zz;

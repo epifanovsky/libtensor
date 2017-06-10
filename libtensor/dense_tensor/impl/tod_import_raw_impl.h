@@ -52,7 +52,7 @@ void tod_import_raw<N>::perform(dense_tensor_wr_i<N, double> &t) {
         regs.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern(
                     kern_dcopy<linalg>::match(1.0, loop_in, loop_out));
 
             loop_list_runner<linalg, 1, 1>(loop_in).run(0, regs, *kern);

@@ -8,7 +8,7 @@ namespace libtensor {
 
 
 template class kern_copy<linalg,double>;
-//template class kern_copy<linalg,float>; // disabled to desing the structure first
+template class kern_copy<linalg,float>; // disabled to desing the structure first
 
 
 } // namespace libtensor

@@ -21,17 +21,17 @@ template<typename LA> class kern_ddiv1_i_i_x;
     \ingroup libtensor_kernels
  **/
 template<typename LA>
-class kern_ddiv1 : public kernel_base<LA, 1, 1> {
+class kern_ddiv1 : public kernel_base<LA, 1, 1, double> {
     friend class kern_ddiv1_i_i_x<LA>;
 
 public:
     static const char *k_clazz; //!< Kernel name
 
 public:
-    typedef typename kernel_base<LA, 1, 1>::device_context_ref
+    typedef typename kernel_base<LA, 1, 1, double>::device_context_ref
         device_context_ref;
-    typedef typename kernel_base<LA, 1, 1>::list_t list_t;
-    typedef typename kernel_base<LA, 1, 1>::iterator_t iterator_t;
+    typedef typename kernel_base<LA, 1, 1, double>::list_t list_t;
+    typedef typename kernel_base<LA, 1, 1, double>::iterator_t iterator_t;
 
 private:
     double m_d;
@@ -45,7 +45,7 @@ public:
 
     virtual void run(device_context_ref ctx, const loop_registers<1, 1> &r);
 
-    static kernel_base<LA, 1, 1> *match(double d, list_t &in, list_t &out);
+    static kernel_base<LA, 1, 1, double> *match(double d, list_t &in, list_t &out);
 
 };
 

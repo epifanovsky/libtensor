@@ -56,6 +56,7 @@ set(SRC_KERNELS
     #kernels/dadd1/kern_dadd1.C
     kernels/add1/kern_add1.C
     kernels/dadd2/kern_dadd2.C
+    #kernels/add2/kern_add2.C
     #kernels/dcopy/kern_dcopy.C
     kernels/copy/kern_copy.C
     kernels/ddiv1/kern_ddiv1.C
@@ -83,7 +84,8 @@ set(SRC_INST
     dense_tensor/impl/tod_contract2_6.C
     dense_tensor/impl/tod_contract2_7.C
     dense_tensor/impl/tod_contract2_8.C
-    dense_tensor/impl/tod_copy.C
+    #dense_tensor/impl/tod_copy.C
+    dense_tensor/impl/to_copy.C
     dense_tensor/impl/tod_copy_wnd.C
     dense_tensor/impl/tod_diag.C
     dense_tensor/impl/tod_dirsum.C

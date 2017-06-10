@@ -21,7 +21,7 @@ void kern_dmul2_x_pq_pq<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 2, 1> *kern_dmul2_x_pq_pq<LA>::match(
+kernel_base<LA, 2, 1, double> *kern_dmul2_x_pq_pq<LA>::match(
     const kern_dmul2_x_p_p<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

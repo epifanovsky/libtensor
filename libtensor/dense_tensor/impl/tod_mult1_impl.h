@@ -94,7 +94,7 @@ void tod_mult1<N>::perform(bool zero, dense_tensor_wr_i<N, double> &ta) {
     r.m_ptra_end[0] = pb + dimsb.get_size();
     r.m_ptrb_end[0] = pa + dimsa.get_size();
 
-    std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+    std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern(
         m_recip ?
             (zero ?
                 kern_ddiv1<linalg>::match(m_c, loop_in, loop_out) :

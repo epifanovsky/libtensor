@@ -4,6 +4,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/noncopyable.h>
 #include <libtensor/core/scalar_transf_double.h>
+//#include <libtensor/core/scalar_transf_float.h>
 #include <libtensor/core/tensor_transf.h>
 #include "dense_tensor_i.h"
 
@@ -60,7 +61,7 @@ namespace libtensor {
     \ingroup libtensor_dense_tensor_tod
  **/
 template<size_t N, typename T>
-class to_copy : public timings< to_copy<N> >, public noncopyable {
+class to_copy : public timings< to_copy<N,T> >, public noncopyable {
 
 public:
     static const char *k_clazz; //!< Class name

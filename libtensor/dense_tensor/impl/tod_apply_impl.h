@@ -104,7 +104,7 @@ void tod_apply<N, Functor>::perform(
     r.m_ptrb_end[0] = pb + dimsb.get_size();
 
     {
-        std::auto_ptr< kernel_base<linalg, 1, 1> > kern(zero ?
+        std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern(zero ?
             kern_apply<Functor>::match(m_fn, m_c1, m_c2, loop_in, loop_out) :
             kern_applyadd<Functor>::match(m_fn, m_c1, m_c2, loop_in, loop_out));
         tod_apply<N, Functor>::start_timer(kern->get_name());

@@ -71,7 +71,7 @@ void tod_copy_wnd<N>::perform(
         r.m_ptrb_end[0] = pb + offendb + 1;
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern(
                 kern_dcopy<linalg>::match(1.0, lpcopy1, lpcopy2));
             loop_list_runner<linalg, 1, 1>(lpcopy1).run(0, r, *kern);
         }

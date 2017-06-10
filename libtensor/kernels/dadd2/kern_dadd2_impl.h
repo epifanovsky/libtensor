@@ -23,10 +23,10 @@ void kern_dadd2<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 2, 1> *kern_dadd2<LA>::match(double ka, double kb, double d,
+kernel_base<LA, 2, 1, double> *kern_dadd2<LA>::match(double ka, double kb, double d,
     list_t &in, list_t &out) {
 
-    kernel_base<LA, 2, 1> *kern = 0;
+    kernel_base<LA, 2, 1, double> *kern = 0;
 
     kern_dadd2 zz;
     zz.m_ka = ka;

@@ -69,7 +69,7 @@ double tod_trace<N>::calculate() {
         r.m_ptrb_end[0] = &tr + 1;
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+            std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern(
                     kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
             tod_trace<N>::start_timer(kern->get_name());
             loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);

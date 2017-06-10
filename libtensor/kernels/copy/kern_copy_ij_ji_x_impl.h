@@ -21,7 +21,7 @@ void kern_copy_ij_ji_x<LA,T>::run(
 
 
 template<typename LA, typename T>
-kernel_base<LA, 1, 1> *kern_copy_ij_ji_x<LA, T>::match(
+kernel_base<LA, 1, 1, T> *kern_copy_ij_ji_x<LA, T>::match(
     const kern_copy_i_i_x<LA,T> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

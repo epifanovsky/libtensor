@@ -25,7 +25,7 @@ void kern_copy_i_i_x<LA, T>::run(
 
 
 template<typename LA, typename T>
-kernel_base<LA, 1, 1> *kern_copy_i_i_x<LA, T>::match(const kern_copy<LA, T> &z,
+kernel_base<LA, 1, 1, T> *kern_copy_i_i_x<LA, T>::match(const kern_copy<LA, T> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -54,7 +54,7 @@ kernel_base<LA, 1, 1> *kern_copy_i_i_x<LA, T>::match(const kern_copy<LA, T> &z,
     zz.m_sib = 1;
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 1, 1> *kern = 0;
+    kernel_base<LA, 1, 1, T> *kern = 0;
 
     if((kern = kern_copy_ij_ij_x<LA, T>::match(zz, in, out))) return kern;
     if((kern = kern_copy_ij_ji_x<LA, T>::match(zz, in, out))) return kern;

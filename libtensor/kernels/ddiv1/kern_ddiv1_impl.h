@@ -21,10 +21,10 @@ void kern_ddiv1<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 1, 1> *kern_ddiv1<LA>::match(double d, list_t &in,
+kernel_base<LA, 1, 1, double> *kern_ddiv1<LA>::match(double d, list_t &in,
     list_t &out) {
 
-    kernel_base<LA, 1, 1> *kern = 0;
+    kernel_base<LA, 1, 1, double> *kern = 0;
 
     kern_ddiv1 zz;
     zz.m_d = d;

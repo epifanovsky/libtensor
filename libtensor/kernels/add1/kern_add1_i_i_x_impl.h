@@ -22,7 +22,7 @@ void kern_add1_i_i_x<LA, T>::run(
 
 
 template<typename LA, typename T>
-kernel_base<LA, 1, 1> *kern_add1_i_i_x<LA, T>::match(const kern_add1<LA, T> &z,
+kernel_base<LA, 1, 1, T> *kern_add1_i_i_x<LA, T>::match(const kern_add1<LA, T> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -51,7 +51,7 @@ kernel_base<LA, 1, 1> *kern_add1_i_i_x<LA, T>::match(const kern_add1<LA, T> &z,
     zz.m_sib = 1;
     in.splice(out.begin(), out, ii);
 
-    kernel_base<LA, 1, 1> *kern = 0;
+    kernel_base<LA, 1, 1, T> *kern = 0;
 
     if((kern = kern_add1_ij_ij_x<LA, T>::match(zz, in, out))) return kern;
     if((kern = kern_add1_ij_ji_x<LA, T>::match(zz, in, out))) return kern;

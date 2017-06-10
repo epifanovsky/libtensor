@@ -17,7 +17,7 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-class kern_ddiv2 : public kernel_base<linalg, 2, 1> {
+class kern_ddiv2 : public kernel_base<linalg, 2, 1, double> {
 public:
     static const char *k_clazz; //!< Kernel name
 
@@ -33,7 +33,7 @@ public:
 
     virtual void run(void*, const loop_registers<2, 1> &r);
 
-    static kernel_base<linalg, 2, 1> *match(double d, list_t &in, list_t &out);
+    static kernel_base<linalg, 2, 1, double> *match(double d, list_t &in, list_t &out);
 
 };
 
