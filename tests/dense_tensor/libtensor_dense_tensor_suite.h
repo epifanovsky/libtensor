@@ -10,6 +10,7 @@
 #include "to_contract2_dims_test.h"
 #include "tod_contract2_test.h"
 #include "tod_copy_test.h"
+#include "to_copy_test.h"
 #include "tod_copy_wnd_test.h"
 #include "tod_diag_test.h"
 #include "tod_dirsum_test.h"
@@ -87,6 +88,7 @@ private:
     unit_test_factory<to_contract2_dims_test> m_utf_to_contract2_dims;
     unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
     unit_test_factory<tod_copy_test> m_utf_tod_copy;
+    unit_test_factory<to_copy_test> m_utf_to_copy;
     unit_test_factory<tod_copy_wnd_test> m_utf_tod_copy_wnd;
     unit_test_factory<tod_diag_test> m_utf_tod_diag;
     unit_test_factory<tod_dirsum_test> m_utf_tod_dirsum;

@@ -75,7 +75,8 @@ set(SRC_INST
     dense_tensor/impl/to_ewmult2_dims.C
     dense_tensor/impl/tod_add.C
     dense_tensor/impl/tod_btconv.C
-    dense_tensor/impl/tod_compare.C
+    #dense_tensor/impl/tod_compare.C
+    dense_tensor/impl/to_compare.C
     dense_tensor/impl/tod_contract2_1.C
     dense_tensor/impl/tod_contract2_2.C
     dense_tensor/impl/tod_contract2_3.C

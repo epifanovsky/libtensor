@@ -41,6 +41,7 @@ set(SRC_DENSE_TENSOR
     dense_tensor/to_contract2_dims_test.C
     dense_tensor/tod_contract2_test.C
     dense_tensor/tod_copy_test.C
+    dense_tensor/to_copy_test.C
     dense_tensor/tod_copy_wnd_test.C
     dense_tensor/tod_diag_test.C
     dense_tensor/tod_dirsum_test.C
