@@ -63,7 +63,8 @@ set(SRC_KERNELS
     kernels/ddiv2/kern_ddiv2.C
     kernels/ddivadd1/kern_ddivadd1.C
     kernels/dmul1/kern_dmul1.C
-    kernels/dmul2/kern_dmul2.C
+    #kernels/dmul2/kern_dmul2.C
+    kernels/mul2/kern_mul2.C
     kernels/dmuladd1/kern_dmuladd1.C
 )
 
@@ -452,6 +453,7 @@ endif(WITH_CTF)
 add_library(tensor_core ${SRC_CORE})
 add_library(tensor ${SRC})
 add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
+target_link_libraries(${TARGETS})
 
 if(QCHEM_SOURCE_DIR)
     set(TARGETS ${TARGETS} tensor_qchem)
