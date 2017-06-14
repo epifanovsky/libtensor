@@ -8,7 +8,7 @@ namespace libtensor {
 
 
 template class kern_add1<linalg,double>;
-//template class kern_add1<linalg,float>;
+template class kern_add1<linalg,float>;
 
 
 } // namespace libtensor

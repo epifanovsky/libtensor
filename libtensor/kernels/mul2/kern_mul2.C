@@ -25,6 +25,7 @@ namespace libtensor {
 
 
 template class kern_mul2<linalg, double>;
+template class kern_mul2<linalg, float>;
 
 
 } // namespace libtensor

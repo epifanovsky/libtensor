@@ -14,9 +14,9 @@ namespace libtensor {
 
 
 void to_copy_test::perform() throw (libtest::test_exception) {
-     std::cout << "Testing to_copy<double>" << std::endl;
+     std::cout << "Testing to_copy<double>    "; //<< std::endl;
      perform_run<double>();
-     std::cout << "Testing to_copy<float>" << std::endl;
+     std::cout << "Testing to_copy<float>    "; //<< std::endl;
      perform_run<float>();
 }
 

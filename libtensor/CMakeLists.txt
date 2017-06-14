@@ -78,14 +78,22 @@ set(SRC_INST
     dense_tensor/impl/tod_btconv.C
     #dense_tensor/impl/tod_compare.C
     dense_tensor/impl/to_compare.C
-    dense_tensor/impl/tod_contract2_1.C
-    dense_tensor/impl/tod_contract2_2.C
-    dense_tensor/impl/tod_contract2_3.C
-    dense_tensor/impl/tod_contract2_4.C
-    dense_tensor/impl/tod_contract2_5.C
-    dense_tensor/impl/tod_contract2_6.C
-    dense_tensor/impl/tod_contract2_7.C
-    dense_tensor/impl/tod_contract2_8.C
+    #dense_tensor/impl/tod_contract2_1.C
+    #dense_tensor/impl/tod_contract2_2.C
+    #dense_tensor/impl/tod_contract2_3.C
+    #dense_tensor/impl/tod_contract2_4.C
+    #dense_tensor/impl/tod_contract2_5.C
+    #dense_tensor/impl/tod_contract2_6.C
+    #dense_tensor/impl/tod_contract2_7.C
+    #dense_tensor/impl/tod_contract2_8.C
+    dense_tensor/impl/to_contract2_1.C
+    dense_tensor/impl/to_contract2_2.C
+    dense_tensor/impl/to_contract2_3.C
+    dense_tensor/impl/to_contract2_4.C
+    dense_tensor/impl/to_contract2_5.C
+    dense_tensor/impl/to_contract2_6.C
+    dense_tensor/impl/to_contract2_7.C
+    dense_tensor/impl/to_contract2_8.C
     #dense_tensor/impl/tod_copy.C
     dense_tensor/impl/to_copy.C
     dense_tensor/impl/tod_copy_wnd.C
@@ -453,7 +461,7 @@ endif(WITH_CTF)
 add_library(tensor_core ${SRC_CORE})
 add_library(tensor ${SRC})
 add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
-target_link_libraries(${TARGETS})
+target_link_libraries(tensor tensor_core tensor_block_sparse)
 
 if(QCHEM_SOURCE_DIR)
     set(TARGETS ${TARGETS} tensor_qchem)

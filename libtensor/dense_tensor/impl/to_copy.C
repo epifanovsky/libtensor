@@ -1,6 +1,4 @@
 #include "to_copy_impl.h"
-#include <libtensor/kernels/kern_add1.h>
-#include <libtensor/kernels/add1/kern_add1.C>
 
 namespace libtensor {
 

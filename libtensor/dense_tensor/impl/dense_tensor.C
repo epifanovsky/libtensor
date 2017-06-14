@@ -20,4 +20,8 @@ template class dense_tensor< 1, float, allocator<float> >;
 template class dense_tensor< 2, float, allocator<float> >;
 template class dense_tensor< 3, float, allocator<float> >;
 template class dense_tensor< 4, float, allocator<float> >;
+template class dense_tensor< 5, float, allocator<float> >;
+template class dense_tensor< 6, float, allocator<float> >;
+template class dense_tensor< 7, float, allocator<float> >;
+template class dense_tensor< 8, float, allocator<float> >;
 } // namespace libtensor

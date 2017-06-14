@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <iostream>
 #include <libtest/test_exception.h>
 #include <libtensor/core/orbit.h>
 #include <libtensor/core/orbit_list.h>
@@ -41,8 +42,11 @@ public:
 template<size_t N, typename T>
 void compare_ref_x<N, T>::compare(const char *test, T d, T d_ref)
     throw(libtest::test_exception) {
-
-    if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
+    T k_thresh;
+    if(typeid(T) == typeid(double)) k_thresh = 1e-14;
+    else if(typeid(T) == typeid(float)) k_thresh = 1e-5;
+    std::cout << "k_thresh = " << k_thresh << std::endl;
+    if(fabs(d - d_ref) > fabs(d_ref * k_thresh)) {
         std::ostringstream ss;
         ss << "Result doesn't match reference: " << d << " (res), "
             << d_ref << " (ref), " << d - d_ref << " (diff)";

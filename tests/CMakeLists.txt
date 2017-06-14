@@ -40,6 +40,8 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_compare_test.C
     dense_tensor/to_contract2_dims_test.C
     dense_tensor/tod_contract2_test.C
+    dense_tensor/to_contract2_test.C
+    #dense_tensor/to_contract2_test_small.C
     dense_tensor/tod_copy_test.C
     dense_tensor/to_copy_test.C
     dense_tensor/tod_copy_wnd_test.C

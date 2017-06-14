@@ -5,7 +5,7 @@
 #include <libtensor/timings.h>
 #include <libtensor/core/contraction2.h>
 #include <libtensor/core/noncopyable.h>
-#include <libtensor/core/scalar_transf_T.h>
+#include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/dense_tensor/dense_tensor_i.h>
 #include <libtensor/kernels/loop_list_node.h>
 #include "to_contract2_dims.h"
@@ -51,13 +51,13 @@ public:
 
 private:
     struct args {
-        contraction2<N, M, K, T> contr; //!< Contraction
+        contraction2<N, M, K> contr; //!< Contraction
         dense_tensor_rd_i<k_ordera, T> &ta; //!< First tensor (A)
         dense_tensor_rd_i<k_orderb, T> &tb; //!< Second tensor (B)
         T d; //!< Scaling factor
 
         args(
-            const contraction2<N, M, K, T> &contr_,
+            const contraction2<N, M, K> &contr_,
             dense_tensor_rd_i<k_ordera, T> &ta_,
             dense_tensor_rd_i<k_orderb, T> &tb_,
             T d_) :
@@ -99,7 +99,7 @@ private:
     };
 
 private:
-    to_contract2_dims<N, M, K, T> m_dimsc; //!< Dimensions of result
+    to_contract2_dims<N, M, K> m_dimsc; //!< Dimensions of result
     std::list<args> m_argslst; //!< List of arguments
 
 public:
@@ -112,7 +112,7 @@ public:
         \param kc Scalar transformation of result (default 1.0).
      **/
     to_contract2(
-        const contraction2<N, M, K, T> &contr,
+        const contraction2<N, M, K> &contr,
         dense_tensor_rd_i<k_ordera, T> &ta,
         const scalar_transf<T> &ka,
         dense_tensor_rd_i<k_orderb, T> &tb,
@@ -126,7 +126,7 @@ public:
         \param d Scaling factor d (default 1.0).
      **/
     to_contract2(
-        const contraction2<N, M, K, T> &contr,
+        const contraction2<N, M, K> &contr,
         dense_tensor_rd_i<k_ordera, T> &ta,
         dense_tensor_rd_i<k_orderb, T> &tb,
         T d = 1.0);
@@ -140,7 +140,7 @@ public:
         \param kc Scalar transformation of result (C).
      **/
     void add_args(
-        const contraction2<N, M, K, T> &contr,
+        const contraction2<N, M, K> &contr,
         dense_tensor_rd_i<k_ordera, T> &ta,
         const scalar_transf<T> &ka,
         dense_tensor_rd_i<k_orderb, T> &tb,
@@ -154,7 +154,7 @@ public:
         \param d Scaling factor d.
      **/
     void add_args(
-        const contraction2<N, M, K, T> &contr,
+        const contraction2<N, M, K> &contr,
         dense_tensor_rd_i<k_ordera, T> &ta,
         dense_tensor_rd_i<k_orderb, T> &tb,
         T d);
@@ -179,6 +179,9 @@ private:
         const dimensions<k_orderc> &dimsc);
 };
 
+
+template<size_t N, size_t M, size_t K>
+using tod_contract2 = to_contract2<N, M, K, double>;
 
 } // namespace libtensor
 
