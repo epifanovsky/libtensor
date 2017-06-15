@@ -59,13 +59,18 @@ set(SRC_KERNELS
     #kernels/add2/kern_add2.C
     #kernels/dcopy/kern_dcopy.C
     kernels/copy/kern_copy.C
-    kernels/ddiv1/kern_ddiv1.C
-    kernels/ddiv2/kern_ddiv2.C
-    kernels/ddivadd1/kern_ddivadd1.C
-    kernels/dmul1/kern_dmul1.C
+    #kernels/ddiv1/kern_ddiv1.C
+    kernels/div1/kern_div1.C
+    #kernels/ddiv2/kern_ddiv2.C
+    kernels/div2/kern_div2.C
+    #kernels/ddivadd1/kern_ddivadd1.C
+    kernels/divadd1/kern_divadd1.C
+    #kernels/dmul1/kern_dmul1.C
+    kernels/mul1/kern_mul1.C
     #kernels/dmul2/kern_dmul2.C
     kernels/mul2/kern_mul2.C
-    kernels/dmuladd1/kern_dmuladd1.C
+    #kernels/dmuladd1/kern_dmuladd1.C
+    kernels/muladd1/kern_muladd1.C
 )
 
 set(SRC_INST
@@ -104,8 +109,10 @@ set(SRC_INST
     dense_tensor/impl/tod_extract.C
     dense_tensor/impl/tod_import_raw.C
     dense_tensor/impl/tod_import_raw_stream.C
-    dense_tensor/impl/tod_mult.C
-    dense_tensor/impl/tod_mult1.C
+    #dense_tensor/impl/tod_mult.C
+    dense_tensor/impl/to_mult.C
+    #dense_tensor/impl/tod_mult1.C
+    dense_tensor/impl/to_mult1.C
     dense_tensor/impl/tod_random.C
     dense_tensor/impl/tod_scale.C
     dense_tensor/impl/tod_scatter.C

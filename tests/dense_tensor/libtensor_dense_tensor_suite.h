@@ -21,7 +21,9 @@
 #include "tod_import_raw_test.h"
 #include "tod_import_raw_stream_test.h"
 #include "tod_mult_test.h"
+#include "to_mult_test.h"
 #include "tod_mult1_test.h"
+#include "to_mult1_test.h"
 #include "tod_random_test.h"
 #include "tod_scale_test.h"
 #include "tod_scatter_test.h"
@@ -100,7 +102,9 @@ private:
     unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
     unit_test_factory<tod_import_raw_stream_test> m_utf_tod_import_raw_stream;
     unit_test_factory<tod_mult_test> m_utf_tod_mult;
+    unit_test_factory<to_mult_test> m_utf_to_mult;
     unit_test_factory<tod_mult1_test> m_utf_tod_mult1;
+    unit_test_factory<to_mult1_test> m_utf_to_mult1;
     unit_test_factory<tod_random_test> m_utf_tod_random;
     unit_test_factory<tod_scale_test> m_utf_tod_scale;
     unit_test_factory<tod_scatter_test> m_utf_tod_scatter;

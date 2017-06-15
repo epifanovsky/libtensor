@@ -53,7 +53,9 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_import_raw_test.C
     dense_tensor/tod_import_raw_stream_test.C
     dense_tensor/tod_mult_test.C
+    dense_tensor/to_mult_test.C
     dense_tensor/tod_mult1_test.C
+    dense_tensor/to_mult1_test.C
     dense_tensor/tod_random_test.C
     dense_tensor/tod_scale_test.C
     dense_tensor/tod_scatter_test.C

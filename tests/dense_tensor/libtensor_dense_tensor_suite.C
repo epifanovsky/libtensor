@@ -25,7 +25,9 @@ libtensor_dense_tensor_suite::libtensor_dense_tensor_suite() :
     add_test("tod_import_raw", m_utf_tod_import_raw);
     add_test("tod_import_raw_stream", m_utf_tod_import_raw_stream);
     add_test("tod_mult", m_utf_tod_mult);
+    add_test("to_mult", m_utf_to_mult);
     add_test("tod_mult1", m_utf_tod_mult1);
+    add_test("to_mult1", m_utf_to_mult1);
     add_test("tod_random", m_utf_tod_random);
     add_test("tod_scale", m_utf_tod_scale);
     add_test("tod_scatter", m_utf_tod_scatter);
