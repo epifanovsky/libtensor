@@ -231,7 +231,7 @@ void gen_bto_copy<N, Traits, Timed>::compute_block(
         ia.permute(trainv.get_perm());
 
         //  Canonical index in A
-        orbit<N, double> oa(ca.req_const_symmetry(), ia, false);
+        orbit<N, element_type> oa(ca.req_const_symmetry(), ia, false);
         const index<N> &cia = oa.get_cindex();
 
         //  Transformation for block from canonical A to B

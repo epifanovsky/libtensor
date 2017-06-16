@@ -20,6 +20,7 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
 #endif
     add_test("btod_contract3", m_utf_btod_contract3);
     add_test("btod_copy", m_utf_btod_copy);
+    add_test("bto_copy", m_utf_bto_copy);
     add_test("btod_diag", m_utf_btod_diag);
 //    add_test("btod_diagonalize", m_utf_btod_diagonalize);
     add_test("btod_dirsum", m_utf_btod_dirsum);

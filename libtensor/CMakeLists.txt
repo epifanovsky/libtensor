@@ -188,7 +188,8 @@ set(SRC_BTOD
     block_tensor/impl/btod_add.C
     block_tensor/impl/btod_aux_add.C
     block_tensor/impl/btod_aux_chsym.C
-    block_tensor/impl/btod_aux_copy.C
+    #block_tensor/impl/btod_aux_copy.C
+    block_tensor/impl/bto_aux_copy.C
     block_tensor/impl/btod_aux_symmetrize.C
     block_tensor/impl/btod_aux_transform.C
     block_tensor/impl/btod_compare.C
@@ -204,7 +205,8 @@ set(SRC_BTOD
     block_tensor/impl/btod_contract2_clst_optimize.C
     block_tensor/impl/btod_contract2_nzorb.C
     block_tensor/impl/btod_contract3.C
-    block_tensor/impl/btod_copy.C
+    #block_tensor/impl/btod_copy.C
+    block_tensor/impl/bto_copy.C
     block_tensor/impl/btod_diag.C
     block_tensor/impl/btod_dirsum.C
     block_tensor/impl/btod_dotprod.C

@@ -22,6 +22,22 @@ template class so_copy<14, double>;
 template class so_copy<15, double>;
 template class so_copy<16, double>;
 
+template class so_copy<1, float>;
+template class so_copy<2, float>;
+template class so_copy<3, float>;
+template class so_copy<4, float>;
+template class so_copy<5, float>;
+template class so_copy<6, float>;
+template class so_copy<7, float>;
+template class so_copy<8, float>;
+template class so_copy<9, float>;
+template class so_copy<10, float>;
+template class so_copy<11, float>;
+template class so_copy<12, float>;
+template class so_copy<13, float>;
+template class so_copy<14, float>;
+template class so_copy<15, float>;
+template class so_copy<16, float>;
 
 } // namespace libtensor
 

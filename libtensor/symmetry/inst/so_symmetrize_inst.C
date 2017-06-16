@@ -15,6 +15,19 @@ template class so_symmetrize<7, double>;
 template class so_symmetrize<8, double>;
 
 
+template class so_symmetrize<1, float>;
+template class so_symmetrize<2, float>;
+template class so_symmetrize<3, float>;
+template class so_symmetrize<4, float>;
+template class so_symmetrize<5, float>;
+template class so_symmetrize<6, float>;
+template class so_symmetrize<7, float>;
+template class so_symmetrize<8, float>;
+
+
+
+
+
 } // namespace libtensor
 
 

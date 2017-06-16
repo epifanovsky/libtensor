@@ -211,6 +211,7 @@ set(SRC_BLOCK_TENSOR
     block_tensor/btod_contract2_test.C
     block_tensor/btod_contract3_test.C
     block_tensor/btod_copy_test.C
+    block_tensor/bto_copy_test.C
     block_tensor/btod_diag_test.C
     block_tensor/btod_diagonalize_test.C
     block_tensor/btod_dirsum_test.C

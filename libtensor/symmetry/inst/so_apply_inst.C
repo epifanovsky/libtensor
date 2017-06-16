@@ -11,6 +11,14 @@ template class so_apply<4, double>;
 template class so_apply<5, double>;
 template class so_apply<6, double>;
 
+
+template class so_apply<1, float>;
+template class so_apply<2, float>;
+template class so_apply<3, float>;
+template class so_apply<4, float>;
+template class so_apply<5, float>;
+template class so_apply<6, float>;
+
 } // namespace libtensor
 
 

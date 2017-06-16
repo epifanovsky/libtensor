@@ -16,6 +16,7 @@
 #endif
 #include "btod_contract3_test.h"
 #include "btod_copy_test.h"
+#include "bto_copy_test.h"
 #include "btod_diag_test.h"
 #include "btod_diagonalize_test.h"
 #include "btod_dirsum_test.h"
@@ -128,6 +129,7 @@ private:
 #endif
     unit_test_factory<btod_contract3_test> m_utf_btod_contract3;
     unit_test_factory<btod_copy_test> m_utf_btod_copy;
+    unit_test_factory<bto_copy_test> m_utf_bto_copy;
     unit_test_factory<btod_diag_test> m_utf_btod_diag;
     unit_test_factory<btod_diagonalize_test> m_utf_btod_diagonalize;
     unit_test_factory<btod_dirsum_test> m_utf_btod_dirsum;

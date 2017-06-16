@@ -12,5 +12,13 @@ template class subgroup_orbits<6, double>;
 template class subgroup_orbits<7, double>;
 template class subgroup_orbits<8, double>;
 
+template class subgroup_orbits<1, float>;
+template class subgroup_orbits<2, float>;
+template class subgroup_orbits<3, float>;
+template class subgroup_orbits<4, float>;
+template class subgroup_orbits<5, float>;
+template class subgroup_orbits<6, float>;
+template class subgroup_orbits<7, float>;
+template class subgroup_orbits<8, float>;
 
 } // namespace libtensor
