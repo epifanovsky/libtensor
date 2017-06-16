@@ -28,10 +28,12 @@
 #include "btod_mult1_test.h"
 #include "btod_print_test.h"
 #include "btod_random_test.h"
+#include "bto_random_test.h"
 #include "btod_read_test.h"
 #include "btod_scale_test.h"
 #include "btod_select_test.h"
 #include "btod_set_test.h"
+#include "bto_set_test.h"
 #include "btod_set_diag_test.h"
 #include "btod_set_elem_test.h"
 #include "btod_shift_diag_test.h"
@@ -138,10 +140,12 @@ private:
     unit_test_factory<btod_mult1_test> m_utf_btod_mult1;
     unit_test_factory<btod_print_test> m_utf_btod_print;
     unit_test_factory<btod_random_test> m_utf_btod_random;
+    unit_test_factory<bto_random_test> m_utf_bto_random;
     unit_test_factory<btod_read_test> m_utf_btod_read;
     unit_test_factory<btod_scale_test> m_utf_btod_scale;
     unit_test_factory<btod_select_test> m_utf_btod_select;
     unit_test_factory<btod_set_test> m_utf_btod_set;
+    unit_test_factory<bto_set_test> m_utf_bto_set;
     unit_test_factory<btod_set_diag_test> m_utf_btod_set_diag;
     unit_test_factory<btod_set_elem_test> m_utf_btod_set_elem;
     unit_test_factory<btod_shift_diag_test> m_utf_btod_shift_diag;

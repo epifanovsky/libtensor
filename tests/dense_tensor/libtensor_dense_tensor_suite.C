@@ -8,8 +8,10 @@ libtensor_dense_tensor_suite::libtensor_dense_tensor_suite() :
 
     add_test("dense_tensor", m_utf_dense_tensor);
     add_test("tod_add", m_utf_tod_add);
+    add_test("to_add", m_utf_to_add);
     add_test("tod_apply", m_utf_tod_apply);
     add_test("tod_btconv", m_utf_tod_btconv);
+    add_test("to_btconv", m_utf_to_btconv);
     add_test("tod_compare", m_utf_tod_compare);
     add_test("to_contract2_dims", m_utf_to_contract2_dims);
     add_test("tod_contract2", m_utf_tod_contract2);
@@ -29,6 +31,7 @@ libtensor_dense_tensor_suite::libtensor_dense_tensor_suite() :
     add_test("tod_mult1", m_utf_tod_mult1);
     add_test("to_mult1", m_utf_to_mult1);
     add_test("tod_random", m_utf_tod_random);
+    add_test("to_random", m_utf_to_random);
     add_test("tod_scale", m_utf_tod_scale);
     add_test("tod_scatter", m_utf_tod_scatter);
     add_test("tod_select", m_utf_tod_select);

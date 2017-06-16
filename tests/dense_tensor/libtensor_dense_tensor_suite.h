@@ -4,8 +4,10 @@
 #include <libtest/test_suite.h>
 #include "dense_tensor_test.h"
 #include "tod_add_test.h"
+#include "to_add_test.h"
 #include "tod_apply_test.h"
 #include "tod_btconv_test.h"
+#include "to_btconv_test.h"
 #include "tod_compare_test.h"
 #include "to_contract2_dims_test.h"
 #include "tod_contract2_test.h"
@@ -25,6 +27,7 @@
 #include "tod_mult1_test.h"
 #include "to_mult1_test.h"
 #include "tod_random_test.h"
+#include "to_random_test.h"
 #include "tod_scale_test.h"
 #include "tod_scatter_test.h"
 #include "tod_select_test.h"
@@ -85,8 +88,10 @@ class libtensor_dense_tensor_suite : public libtest::test_suite {
 private:
     unit_test_factory<dense_tensor_test> m_utf_dense_tensor;
     unit_test_factory<tod_add_test> m_utf_tod_add;
+    unit_test_factory<to_add_test> m_utf_to_add;
     unit_test_factory<tod_apply_test> m_utf_tod_apply;
     unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
+    unit_test_factory<to_btconv_test> m_utf_to_btconv;
     unit_test_factory<tod_compare_test> m_utf_tod_compare;
     unit_test_factory<to_contract2_dims_test> m_utf_to_contract2_dims;
     unit_test_factory<tod_contract2_test> m_utf_tod_contract2;
@@ -106,6 +111,7 @@ private:
     unit_test_factory<tod_mult1_test> m_utf_tod_mult1;
     unit_test_factory<to_mult1_test> m_utf_to_mult1;
     unit_test_factory<tod_random_test> m_utf_tod_random;
+    unit_test_factory<to_random_test> m_utf_to_random;
     unit_test_factory<tod_scale_test> m_utf_tod_scale;
     unit_test_factory<tod_scatter_test> m_utf_tod_scatter;
     unit_test_factory<tod_select_test> m_utf_tod_select;

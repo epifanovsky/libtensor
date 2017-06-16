@@ -35,8 +35,10 @@ set(SRC_DENSE_TENSOR
     dense_tensor/libtensor_dense_tensor_suite.C
     dense_tensor/dense_tensor_test.C
     dense_tensor/tod_add_test.C
+    dense_tensor/to_add_test.C
     dense_tensor/tod_apply_test.C
     dense_tensor/tod_btconv_test.C
+    dense_tensor/to_btconv_test.C
     dense_tensor/tod_compare_test.C
     dense_tensor/to_contract2_dims_test.C
     dense_tensor/tod_contract2_test.C
@@ -57,6 +59,7 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_mult1_test.C
     dense_tensor/to_mult1_test.C
     dense_tensor/tod_random_test.C
+    dense_tensor/to_random_test.C
     dense_tensor/tod_scale_test.C
     dense_tensor/tod_scatter_test.C
     dense_tensor/tod_select_test.C
@@ -220,12 +223,14 @@ set(SRC_BLOCK_TENSOR
     block_tensor/btod_mult1_test.C
     block_tensor/btod_print_test.C
     block_tensor/btod_random_test.C
+    block_tensor/bto_random_test.C
     block_tensor/btod_read_test.C
     block_tensor/btod_scale_test.C
     block_tensor/btod_select_test.C
     block_tensor/btod_set_diag_test.C
     block_tensor/btod_set_elem_test.C
     block_tensor/btod_set_test.C
+    block_tensor/bto_set_test.C
     block_tensor/btod_shift_diag_test.C
     block_tensor/btod_sum_test.C
     block_tensor/btod_symcontract3_test.C

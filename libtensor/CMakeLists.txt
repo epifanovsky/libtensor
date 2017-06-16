@@ -79,8 +79,10 @@ set(SRC_INST
     dense_tensor/impl/to_diag_dims.C
     dense_tensor/impl/to_dirsum_dims.C
     dense_tensor/impl/to_ewmult2_dims.C
-    dense_tensor/impl/tod_add.C
-    dense_tensor/impl/tod_btconv.C
+    #dense_tensor/impl/tod_add.C
+    dense_tensor/impl/to_add.C
+    #dense_tensor/impl/tod_btconv.C
+    dense_tensor/impl/to_btconv.C
     #dense_tensor/impl/tod_compare.C
     dense_tensor/impl/to_compare.C
     #dense_tensor/impl/tod_contract2_1.C
@@ -113,7 +115,8 @@ set(SRC_INST
     dense_tensor/impl/to_mult.C
     #dense_tensor/impl/tod_mult1.C
     dense_tensor/impl/to_mult1.C
-    dense_tensor/impl/tod_random.C
+    #dense_tensor/impl/tod_random.C
+    dense_tensor/impl/to_random.C
     dense_tensor/impl/tod_scale.C
     dense_tensor/impl/tod_scatter.C
     dense_tensor/impl/tod_screen.C
@@ -206,15 +209,18 @@ set(SRC_BTOD
     block_tensor/impl/btod_dirsum.C
     block_tensor/impl/btod_dotprod.C
     block_tensor/impl/btod_ewmult2.C
-    block_tensor/impl/btod_export.C
+    #block_tensor/impl/btod_export.C
+    block_tensor/impl/bto_export.C
     block_tensor/impl/btod_extract.C
     block_tensor/impl/btod_mult.C
     block_tensor/impl/btod_mult1.C
-    block_tensor/impl/btod_random.C
+    #block_tensor/impl/btod_random.C
+    block_tensor/impl/bto_random.C
     block_tensor/impl/btod_scale.C
     block_tensor/impl/btod_set_diag.C
     block_tensor/impl/btod_set_elem.C
-    block_tensor/impl/btod_set.C
+    #block_tensor/impl/btod_set.C
+    block_tensor/impl/bto_set.C
     block_tensor/impl/btod_shift_diag.C
     block_tensor/impl/btod_size.C
     block_tensor/impl/btod_sum.C
@@ -223,6 +229,7 @@ set(SRC_BTOD
     block_tensor/impl/btod_symmetrize3.C
     block_tensor/impl/btod_symmetrize4.C
     block_tensor/impl/btod_trace.C
+    block_tensor/impl/bto_traits.C
     block_tensor/impl/btod_unfold_block_list.C
     block_tensor/impl/btod_unfold_symmetry.C
     block_tensor/impl/btod_vmpriority.C

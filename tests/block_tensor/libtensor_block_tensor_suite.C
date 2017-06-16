@@ -32,10 +32,12 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
     add_test("btod_mult1", m_utf_btod_mult1);
     add_test("btod_print", m_utf_btod_print);
     add_test("btod_random", m_utf_btod_random);
+    add_test("bto_random", m_utf_bto_random);
     add_test("btod_read", m_utf_btod_read);
     add_test("btod_scale", m_utf_btod_scale);
     add_test("btod_select", m_utf_btod_select);
     add_test("btod_set", m_utf_btod_set);
+    add_test("bto_set", m_utf_bto_set);
     add_test("btod_set_diag", m_utf_btod_set_diag);
     add_test("btod_set_elem", m_utf_btod_set_elem);
     add_test("btod_shift_diag", m_utf_btod_shift_diag);
