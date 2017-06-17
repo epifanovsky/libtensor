@@ -20,8 +20,11 @@ libtensor_dense_tensor_suite::libtensor_dense_tensor_suite() :
     add_test("to_copy", m_utf_to_copy);
     add_test("tod_copy_wnd", m_utf_tod_copy_wnd);
     add_test("tod_diag", m_utf_tod_diag);
+    add_test("to_diag", m_utf_to_diag);
     add_test("tod_dirsum", m_utf_tod_dirsum);
+    add_test("to_dirsum", m_utf_to_dirsum);
     add_test("tod_dotprod", m_utf_tod_dotprod);
+    add_test("to_dotprod", m_utf_to_dotprod);
     add_test("tod_ewmult2", m_utf_tod_ewmult2);
     add_test("tod_extract", m_utf_tod_extract);
     add_test("tod_import_raw", m_utf_tod_import_raw);

@@ -43,7 +43,7 @@ struct bto_traits {
 
     template<size_t N, typename Functor>
     struct to_apply_type {
-        typedef tod_apply<N, Functor> type;  //FIXME
+        typedef to_apply<N, Functor, T> type;
     };
 
     template<size_t N>
@@ -69,7 +69,7 @@ struct bto_traits {
 
     template<size_t N, size_t M>
     struct to_dirsum_type {
-        typedef tod_dirsum<N, M> type; //FIXME
+        typedef to_dirsum<N, M, T> type; 
     };
 
     template<size_t N>

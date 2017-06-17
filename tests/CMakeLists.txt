@@ -48,8 +48,11 @@ set(SRC_DENSE_TENSOR
     dense_tensor/to_copy_test.C
     dense_tensor/tod_copy_wnd_test.C
     dense_tensor/tod_diag_test.C
+    dense_tensor/to_diag_test.C
     dense_tensor/tod_dirsum_test.C
+    dense_tensor/to_dirsum_test.C
     dense_tensor/tod_dotprod_test.C
+    dense_tensor/to_dotprod_test.C
     dense_tensor/tod_ewmult2_test.C
     dense_tensor/tod_extract_test.C
     dense_tensor/tod_import_raw_test.C

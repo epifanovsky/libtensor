@@ -39,7 +39,7 @@ namespace libtensor {
 
     \ingroup libtensor_block_tensor_btod
  **/
-template<size_t N, typename ComparePolicy=compare4absmin>
+template<size_t N, typename ComparePolicy=compare4absmin<double> >
 class btod_select : public noncopyable {
 public:
     static const char *k_clazz; //!< Class name

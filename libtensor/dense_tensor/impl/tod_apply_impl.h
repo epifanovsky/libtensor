@@ -6,18 +6,18 @@
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/core/bad_dimensions.h>
 #include "../dense_tensor_ctrl.h"
-#include "../tod_apply.h"
+#include "../to_apply.h"
 
 namespace libtensor {
 
 
-template<size_t N, typename Functor>
-const char *tod_apply<N, Functor>::k_clazz = "tod_apply<N, Functor>";
+template<size_t N, typename Functor, typename T>
+const char *to_apply<N, Functor, T>::k_clazz = "to_apply<N, Functor, T>";
 
 
-template<size_t N, typename Functor>
-tod_apply<N, Functor>::tod_apply(
-        dense_tensor_rd_i<N, double> &ta,
+template<size_t N, typename Functor, typename T>
+to_apply<N, Functor, T>::to_apply(
+        dense_tensor_rd_i<N, T> &ta,
         const Functor &fn,
         const scalar_transf_type &tr1,
         const tensor_transf_type &tr2) :
@@ -29,18 +29,18 @@ tod_apply<N, Functor>::tod_apply(
 }
 
 
-template<size_t N, typename Functor>
-tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
-    const Functor &fn, double c) :
+template<size_t N, typename Functor, typename T>
+to_apply<N, Functor, T>::to_apply(dense_tensor_rd_i<N, T> &ta,
+    const Functor &fn, T c) :
 
     m_ta(ta), m_fn(fn), m_c1(c), m_c2(1.0), m_dimsb(m_ta.get_dims()) {
 
 }
 
 
-template<size_t N, typename Functor>
-tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
-    const Functor &fn, const permutation<N> &p, double c) :
+template<size_t N, typename Functor, typename T>
+to_apply<N, Functor, T>::to_apply(dense_tensor_rd_i<N, T> &ta,
+    const Functor &fn, const permutation<N> &p, T c) :
 
     m_ta(ta), m_fn(fn), m_c1(c), m_c2(1.0), m_permb(p),
     m_dimsb(mk_dimsb(ta, p)) {
@@ -48,24 +48,24 @@ tod_apply<N, Functor>::tod_apply(dense_tensor_rd_i<N, double> &ta,
 }
 
 
-template<size_t N, typename Functor>
-void tod_apply<N, Functor>::perform(
-        bool zero, dense_tensor_wr_i<N, double> &tb) {
+template<size_t N, typename Functor, typename T>
+void to_apply<N, Functor, T>::perform(
+        bool zero, dense_tensor_wr_i<N, T> &tb) {
 
     static const char *method =
-        "perform(bool, dense_tensor_wr_i<N, double>&)";
+        "perform(bool, dense_tensor_wr_i<N, T>&)";
 
     if(!tb.get_dims().equals(m_dimsb)) {
         throw bad_dimensions(g_ns, k_clazz, method, __FILE__, __LINE__, "tb");
     }
     if(! zero && m_c2 == 0.0) return;
 
-    tod_apply<N, Functor>::start_timer();
+    to_apply<N, Functor, T>::start_timer();
 
     try {
 
-    dense_tensor_rd_ctrl<N, double> ca(m_ta);
-    dense_tensor_wr_ctrl<N, double> cb(tb);
+    dense_tensor_rd_ctrl<N, T> ca(m_ta);
+    dense_tensor_wr_ctrl<N, T> cb(tb);
     ca.req_prefetch();
     cb.req_prefetch();
 
@@ -94,37 +94,37 @@ void tod_apply<N, Functor>::perform(
         inode->stepb(0) = dimsb.get_increment(idxb - 1);
     }
 
-    const double *pa = ca.req_const_dataptr();
-    double *pb = cb.req_dataptr();
+    const T *pa = ca.req_const_dataptr();
+    T *pb = cb.req_dataptr();
 
-    loop_registers<1, 1> r;
+    loop_registers_x<1, 1, T> r;
     r.m_ptra[0] = pa;
     r.m_ptrb[0] = pb;
     r.m_ptra_end[0] = pa + dimsa.get_size();
     r.m_ptrb_end[0] = pb + dimsb.get_size();
 
     {
-        std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern(zero ?
-            kern_apply<Functor>::match(m_fn, m_c1, m_c2, loop_in, loop_out) :
-            kern_applyadd<Functor>::match(m_fn, m_c1, m_c2, loop_in, loop_out));
-        tod_apply<N, Functor>::start_timer(kern->get_name());
-        loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
-        tod_apply<N, Functor>::stop_timer(kern->get_name());
+        std::auto_ptr< kernel_base<linalg, 1, 1, T> > kern(zero ?
+            kern_apply<Functor, T>::match(m_fn, m_c1, m_c2, loop_in, loop_out) :
+            kern_applyadd<Functor, T>::match(m_fn, m_c1, m_c2, loop_in, loop_out));
+        to_apply<N, Functor, T>::start_timer(kern->get_name());
+        loop_list_runner_x<linalg, 1, 1, T>(loop_in).run(0, r, *kern);
+        to_apply<N, Functor, T>::stop_timer(kern->get_name());
     }
 
     ca.ret_const_dataptr(pa);
     cb.ret_dataptr(pb);
 
     } catch(...) {
-        tod_apply<N, Functor>::stop_timer();
+        to_apply<N, Functor, T>::stop_timer();
         throw;
     }
-    tod_apply<N, Functor>::stop_timer();
+    to_apply<N, Functor, T>::stop_timer();
 }
 
 
-template<size_t N, typename Functor>
-dimensions<N> tod_apply<N, Functor>::mk_dimsb(dense_tensor_rd_i<N, double> &ta,
+template<size_t N, typename Functor, typename T>
+dimensions<N> to_apply<N, Functor, T>::mk_dimsb(dense_tensor_rd_i<N, T> &ta,
     const permutation<N> &perm) {
 
     dimensions<N> dims(ta.get_dims());

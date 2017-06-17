@@ -15,7 +15,8 @@
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_select.h>
-#include <libtensor/dense_tensor/impl/tod_select_impl.h>
+//#include <libtensor/dense_tensor/impl/tod_select_impl.h>
+#include <libtensor/dense_tensor/impl/to_select_impl.h>
 #include "btod_select_test.h"
 
 
@@ -35,50 +36,50 @@ void btod_select_test::perform() throw(libtest::test_exception) {
 
     try {
 
-    test_1<compare4absmax>(2);
-    test_1<compare4absmin>(4);
-    test_1<compare4max>(7);
-    test_1<compare4min>(9);
+    test_1<compare4absmax<double> >(2);
+    test_1<compare4absmin<double> >(4);
+    test_1<compare4max<double> >(7);
+    test_1<compare4min<double> >(9);
 
-    test_2<compare4absmax>(3);
-    test_2<compare4absmin>(9);
-    test_2<compare4max>(27);
-    test_2<compare4min>(45);
+    test_2<compare4absmax<double> >(3);
+    test_2<compare4absmin<double> >(9);
+    test_2<compare4max<double> >(27);
+    test_2<compare4min<double> >(45);
 
-    test_3a<compare4absmax>(4, true);
-    test_3a<compare4absmin>(8, false);
-    test_3a<compare4max>(16, false);
-    test_3a<compare4min>(32, true);
+    test_3a<compare4absmax<double> >(4, true);
+    test_3a<compare4absmin<double> >(8, false);
+    test_3a<compare4max<double> >(16, false);
+    test_3a<compare4min<double> >(32, true);
 
-    test_3b<compare4absmax>(5);
-    test_3b<compare4absmin>(10);
-    test_3b<compare4max>(13);
-    test_3b<compare4min>(11);
+    test_3b<compare4absmax<double> >(5);
+    test_3b<compare4absmin<double> >(10);
+    test_3b<compare4max<double> >(13);
+    test_3b<compare4min<double> >(11);
 
-    test_3c<compare4absmax>(6, false);
-    test_3c<compare4absmin>(7, true);
-    test_3c<compare4max>(12, true);
-    test_3c<compare4min>(22, false);
+    test_3c<compare4absmax<double> >(6, false);
+    test_3c<compare4absmin<double> >(7, true);
+    test_3c<compare4max<double> >(12, true);
+    test_3c<compare4min<double> >(22, false);
 
-    test_4a<compare4absmax>(5, true);
-    test_4a<compare4absmin>(10, false);
-    test_4a<compare4max>(15, true);
-    test_4a<compare4min>(30, false);
+    test_4a<compare4absmax<double> >(5, true);
+    test_4a<compare4absmin<double> >(10, false);
+    test_4a<compare4max<double> >(15, true);
+    test_4a<compare4min<double> >(30, false);
 
-    test_4b<compare4absmax>(9);
-    test_4b<compare4absmin>(16);
-    test_4b<compare4max>(21);
-    test_4b<compare4min>(14);
+    test_4b<compare4absmax<double> >(9);
+    test_4b<compare4absmin<double> >(16);
+    test_4b<compare4max<double> >(21);
+    test_4b<compare4min<double> >(14);
 
-    test_4c<compare4absmax>(7, true);
-    test_4c<compare4absmin>(17, false);
-    test_4c<compare4max>(25, false);
-    test_4c<compare4min>(33, true);
+    test_4c<compare4absmax<double> >(7, true);
+    test_4c<compare4absmin<double> >(17, false);
+    test_4c<compare4max<double> >(25, false);
+    test_4c<compare4min<double> >(33, true);
 
-    test_5<compare4absmax>(7);
-    test_5<compare4absmin>(12);
-    test_5<compare4max>(19);
-    test_5<compare4min>(3);
+    test_5<compare4absmax<double> >(7);
+    test_5<compare4absmin<double> >(12);
+    test_5<compare4max<double> >(19);
+    test_5<compare4min<double> >(3);
 
     }
     catch (...) {

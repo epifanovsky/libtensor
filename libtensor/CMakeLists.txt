@@ -55,8 +55,8 @@ set(SRC_LINALG_GENERIC
 set(SRC_KERNELS
     #kernels/dadd1/kern_dadd1.C
     kernels/add1/kern_add1.C
-    kernels/dadd2/kern_dadd2.C
-    #kernels/add2/kern_add2.C
+    #kernels/dadd2/kern_dadd2.C
+    kernels/add2/kern_add2.C
     #kernels/dcopy/kern_dcopy.C
     kernels/copy/kern_copy.C
     #kernels/ddiv1/kern_ddiv1.C
@@ -103,31 +103,47 @@ set(SRC_INST
     dense_tensor/impl/to_contract2_8.C
     #dense_tensor/impl/tod_copy.C
     dense_tensor/impl/to_copy.C
-    dense_tensor/impl/tod_copy_wnd.C
-    dense_tensor/impl/tod_diag.C
-    dense_tensor/impl/tod_dirsum.C
-    dense_tensor/impl/tod_dotprod.C
-    dense_tensor/impl/tod_ewmult2.C
-    dense_tensor/impl/tod_extract.C
-    dense_tensor/impl/tod_import_raw.C
-    dense_tensor/impl/tod_import_raw_stream.C
+    #dense_tensor/impl/tod_copy_wnd.C
+    dense_tensor/impl/to_copy_wnd.C
+    #dense_tensor/impl/tod_diag.C
+    dense_tensor/impl/to_diag.C
+    #dense_tensor/impl/tod_dirsum.C
+    dense_tensor/impl/to_dirsum.C
+    #dense_tensor/impl/tod_dotprod.C
+    dense_tensor/impl/to_dotprod.C
+    #dense_tensor/impl/tod_ewmult2.C
+    dense_tensor/impl/to_ewmult2.C
+    #dense_tensor/impl/tod_extract.C
+    dense_tensor/impl/to_extract.C
+    #dense_tensor/impl/tod_import_raw.C
+    dense_tensor/impl/to_import_raw.C
+    #dense_tensor/impl/tod_import_raw_stream.C
+    dense_tensor/impl/to_import_raw_stream.C
     #dense_tensor/impl/tod_mult.C
     dense_tensor/impl/to_mult.C
     #dense_tensor/impl/tod_mult1.C
     dense_tensor/impl/to_mult1.C
     #dense_tensor/impl/tod_random.C
     dense_tensor/impl/to_random.C
-    dense_tensor/impl/tod_scale.C
-    dense_tensor/impl/tod_scatter.C
-    dense_tensor/impl/tod_screen.C
+    #dense_tensor/impl/tod_scale.C
+    dense_tensor/impl/to_scale.C
+    #dense_tensor/impl/tod_scatter.C
+    dense_tensor/impl/to_scatter.C
+    #dense_tensor/impl/tod_screen.C
+    dense_tensor/impl/to_screen.C
     #dense_tensor/impl/tod_set.C
     dense_tensor/impl/to_set.C
     #dense_tensor/impl/tof_set.C
-    dense_tensor/impl/tod_set_diag.C
-    dense_tensor/impl/tod_set_elem.C
-    dense_tensor/impl/tod_size.C
-    dense_tensor/impl/tod_trace.C
-    dense_tensor/impl/tod_vmpriority.C
+    #dense_tensor/impl/tod_set_diag.C
+    dense_tensor/impl/to_set_diag.C
+    #dense_tensor/impl/tod_set_elem.C
+    dense_tensor/impl/to_set_elem.C
+    #dense_tensor/impl/tod_size.C
+    dense_tensor/impl/to_size.C
+    #dense_tensor/impl/tod_trace.C
+    dense_tensor/impl/to_trace.C
+    #dense_tensor/impl/tod_vmpriority.C
+    dense_tensor/impl/to_vmpriority.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C

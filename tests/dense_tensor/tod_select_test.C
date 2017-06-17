@@ -17,15 +17,15 @@ void tod_select_test::perform() throw(libtest::test_exception) {
 
     srand48(time(0));
 
-    test_1<compare4absmax>(4, 1.0);
-    test_1<compare4absmax>(4, -2.0);
-    test_1<compare4min>(4, 0.5);
-    test_1<compare4min>(4, -1.0);
+    test_1<compare4absmax<double> >(4, 1.0);
+    test_1<compare4absmax<double> >(4, -2.0);
+    test_1<compare4min<double> >(4, 0.5);
+    test_1<compare4min<double> >(4, -1.0);
 
-    test_2<compare4absmin>(4, 1.0);
-    test_2<compare4absmin>(4, -0.5);
-    test_2<compare4max>(4, 2.0);
-    test_2<compare4max>(4, -1.0);
+    test_2<compare4absmin<double> >(4, 1.0);
+    test_2<compare4absmin<double> >(4, -0.5);
+    test_2<compare4max<double> >(4, 2.0);
+    test_2<compare4max<double> >(4, -1.0);
 
 }
 

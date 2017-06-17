@@ -16,8 +16,11 @@
 #include "to_copy_test.h"
 #include "tod_copy_wnd_test.h"
 #include "tod_diag_test.h"
+#include "to_diag_test.h"
 #include "tod_dirsum_test.h"
+#include "to_dirsum_test.h"
 #include "tod_dotprod_test.h"
+#include "to_dotprod_test.h"
 #include "tod_ewmult2_test.h"
 #include "tod_extract_test.h"
 #include "tod_import_raw_test.h"
@@ -100,8 +103,11 @@ private:
     unit_test_factory<to_copy_test> m_utf_to_copy;
     unit_test_factory<tod_copy_wnd_test> m_utf_tod_copy_wnd;
     unit_test_factory<tod_diag_test> m_utf_tod_diag;
+    unit_test_factory<to_diag_test> m_utf_to_diag;
     unit_test_factory<tod_dirsum_test> m_utf_tod_dirsum;
+    unit_test_factory<to_dirsum_test> m_utf_to_dirsum;
     unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
+    unit_test_factory<to_dotprod_test> m_utf_to_dotprod;
     unit_test_factory<tod_ewmult2_test> m_utf_tod_ewmult2;
     unit_test_factory<tod_extract_test> m_utf_tod_extract;
     unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
