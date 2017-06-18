@@ -6,6 +6,7 @@
 #include "tod_add_test.h"
 #include "to_add_test.h"
 #include "tod_apply_test.h"
+#include "to_apply_test.h"
 #include "tod_btconv_test.h"
 #include "to_btconv_test.h"
 #include "tod_compare_test.h"
@@ -15,6 +16,7 @@
 #include "tod_copy_test.h"
 #include "to_copy_test.h"
 #include "tod_copy_wnd_test.h"
+#include "to_copy_wnd_test.h"
 #include "tod_diag_test.h"
 #include "to_diag_test.h"
 #include "tod_dirsum_test.h"
@@ -22,9 +24,13 @@
 #include "tod_dotprod_test.h"
 #include "to_dotprod_test.h"
 #include "tod_ewmult2_test.h"
+#include "to_ewmult2_test.h"
 #include "tod_extract_test.h"
+#include "to_extract_test.h"
 #include "tod_import_raw_test.h"
+#include "to_import_raw_test.h"
 #include "tod_import_raw_stream_test.h"
+#include "to_import_raw_stream_test.h"
 #include "tod_mult_test.h"
 #include "to_mult_test.h"
 #include "tod_mult1_test.h"
@@ -32,16 +38,24 @@
 #include "tod_random_test.h"
 #include "to_random_test.h"
 #include "tod_scale_test.h"
+#include "to_scale_test.h"
 #include "tod_scatter_test.h"
+#include "to_scatter_test.h"
 #include "tod_select_test.h"
+#include "to_select_test.h"
 #include "tod_set_test.h"
 #include "tof_set_test.h"
 #include "to_set_test.h"
 #include "tod_set_diag_test.h"
+#include "to_set_diag_test.h"
 #include "tod_set_elem_test.h"
+#include "to_set_elem_test.h"
 #include "tod_size_test.h"
+#include "to_size_test.h"
 #include "tod_trace_test.h"
+#include "to_trace_test.h"
 #include "tod_vmpriority_test.h"
+#include "to_vmpriority_test.h"
 
 using libtest::unit_test_factory;
 
@@ -93,6 +107,7 @@ private:
     unit_test_factory<tod_add_test> m_utf_tod_add;
     unit_test_factory<to_add_test> m_utf_to_add;
     unit_test_factory<tod_apply_test> m_utf_tod_apply;
+    unit_test_factory<to_apply_test> m_utf_to_apply;
     unit_test_factory<tod_btconv_test> m_utf_tod_btconv;
     unit_test_factory<to_btconv_test> m_utf_to_btconv;
     unit_test_factory<tod_compare_test> m_utf_tod_compare;
@@ -102,6 +117,7 @@ private:
     unit_test_factory<tod_copy_test> m_utf_tod_copy;
     unit_test_factory<to_copy_test> m_utf_to_copy;
     unit_test_factory<tod_copy_wnd_test> m_utf_tod_copy_wnd;
+    unit_test_factory<to_copy_wnd_test> m_utf_to_copy_wnd;
     unit_test_factory<tod_diag_test> m_utf_tod_diag;
     unit_test_factory<to_diag_test> m_utf_to_diag;
     unit_test_factory<tod_dirsum_test> m_utf_tod_dirsum;
@@ -109,9 +125,13 @@ private:
     unit_test_factory<tod_dotprod_test> m_utf_tod_dotprod;
     unit_test_factory<to_dotprod_test> m_utf_to_dotprod;
     unit_test_factory<tod_ewmult2_test> m_utf_tod_ewmult2;
+    unit_test_factory<to_ewmult2_test> m_utf_to_ewmult2;
     unit_test_factory<tod_extract_test> m_utf_tod_extract;
+    unit_test_factory<to_extract_test> m_utf_to_extract;
     unit_test_factory<tod_import_raw_test> m_utf_tod_import_raw;
+    unit_test_factory<to_import_raw_test> m_utf_to_import_raw;
     unit_test_factory<tod_import_raw_stream_test> m_utf_tod_import_raw_stream;
+    unit_test_factory<to_import_raw_stream_test> m_utf_to_import_raw_stream;
     unit_test_factory<tod_mult_test> m_utf_tod_mult;
     unit_test_factory<to_mult_test> m_utf_to_mult;
     unit_test_factory<tod_mult1_test> m_utf_tod_mult1;
@@ -119,16 +139,24 @@ private:
     unit_test_factory<tod_random_test> m_utf_tod_random;
     unit_test_factory<to_random_test> m_utf_to_random;
     unit_test_factory<tod_scale_test> m_utf_tod_scale;
+    unit_test_factory<to_scale_test> m_utf_to_scale;
     unit_test_factory<tod_scatter_test> m_utf_tod_scatter;
+    unit_test_factory<to_scatter_test> m_utf_to_scatter;
     unit_test_factory<tod_select_test> m_utf_tod_select;
+    unit_test_factory<to_select_test> m_utf_to_select;
     unit_test_factory<tod_set_test> m_utf_tod_set;
     unit_test_factory<tof_set_test> m_utf_tof_set;
     unit_test_factory<to_set_test> m_utf_to_set;
     unit_test_factory<tod_set_diag_test> m_utf_tod_set_diag;
+    unit_test_factory<to_set_diag_test> m_utf_to_set_diag;
     unit_test_factory<tod_set_elem_test> m_utf_tod_set_elem;
+    unit_test_factory<to_set_elem_test> m_utf_to_set_elem;
     unit_test_factory<tod_size_test> m_utf_tod_size;
+    unit_test_factory<to_size_test> m_utf_to_size;
     unit_test_factory<tod_trace_test> m_utf_tod_trace;
+    unit_test_factory<to_trace_test> m_utf_to_trace;
     unit_test_factory<tod_vmpriority_test> m_utf_tod_vmpriority;
+    unit_test_factory<to_vmpriority_test> m_utf_to_vmpriority;
 
 public:
     //! Creates the suite

@@ -37,6 +37,7 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_add_test.C
     dense_tensor/to_add_test.C
     dense_tensor/tod_apply_test.C
+    dense_tensor/to_apply_test.C
     dense_tensor/tod_btconv_test.C
     dense_tensor/to_btconv_test.C
     dense_tensor/tod_compare_test.C
@@ -47,6 +48,7 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_copy_test.C
     dense_tensor/to_copy_test.C
     dense_tensor/tod_copy_wnd_test.C
+    dense_tensor/to_copy_wnd_test.C
     dense_tensor/tod_diag_test.C
     dense_tensor/to_diag_test.C
     dense_tensor/tod_dirsum_test.C
@@ -54,9 +56,13 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_dotprod_test.C
     dense_tensor/to_dotprod_test.C
     dense_tensor/tod_ewmult2_test.C
+    dense_tensor/to_ewmult2_test.C
     dense_tensor/tod_extract_test.C
+    dense_tensor/to_extract_test.C
     dense_tensor/tod_import_raw_test.C
+    dense_tensor/to_import_raw_test.C
     dense_tensor/tod_import_raw_stream_test.C
+    dense_tensor/to_import_raw_stream_test.C
     dense_tensor/tod_mult_test.C
     dense_tensor/to_mult_test.C
     dense_tensor/tod_mult1_test.C
@@ -64,16 +70,24 @@ set(SRC_DENSE_TENSOR
     dense_tensor/tod_random_test.C
     dense_tensor/to_random_test.C
     dense_tensor/tod_scale_test.C
+    dense_tensor/to_scale_test.C
     dense_tensor/tod_scatter_test.C
+    dense_tensor/to_scatter_test.C
     dense_tensor/tod_select_test.C
+    dense_tensor/to_select_test.C
     dense_tensor/tod_set_diag_test.C
+    dense_tensor/to_set_diag_test.C
     dense_tensor/tod_set_elem_test.C
+    dense_tensor/to_set_elem_test.C
     dense_tensor/tod_set_test.C
     dense_tensor/tof_set_test.C
     dense_tensor/to_set_test.C
     dense_tensor/tod_size_test.C
+    dense_tensor/to_size_test.C
     dense_tensor/tod_trace_test.C
+    dense_tensor/to_trace_test.C
     dense_tensor/tod_vmpriority_test.C
+    dense_tensor/to_vmpriority_test.C
 )
 
 set(SRC_DIAG_TENSOR

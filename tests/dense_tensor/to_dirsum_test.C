@@ -9,24 +9,16 @@
 
 namespace libtensor {
 
-
 void to_dirsum_test::perform() throw(libtest::test_exception) {
-    std::cout << "Testing to_dirsum_test_x<double>   ";
-    to_dirsum_test_x<double> d_test;
-    d_test.perform();
-    std::cout << "Testing to_dirsum_test_x<float>   ";
-    to_dirsum_test_x<float> f_test;
-    f_test.perform();
+    std::cout << "Testing to_dirsum<double>  ";
+    to_dirsum_test_x<double> t_double;
+    t_double.perform();
+    std::cout << "Testing to_dirsum<float>  ";
+    to_dirsum_test_x<float> t_float;
+    t_float.perform();
 }
 
-
-template<>
-const double to_dirsum_test_x<double>::k_thresh =1e-14;
-template<>
-const float to_dirsum_test_x<float>::k_thresh =1e-5;
-
-
-template<typename T>
+template <typename T>
 void to_dirsum_test_x<T>::perform() throw(libtest::test_exception) {
 
     test_ij_i_j_1(1, 1);
@@ -94,7 +86,7 @@ void to_dirsum_test_x<T>::perform() throw(libtest::test_exception) {
 }
 
 
-template<typename T>
+template <typename T>
 void to_dirsum_test_x<T>::test_ij_i_j_1(size_t ni, size_t nj, T d)
     throw(libtest::test_exception) {
 
@@ -175,14 +167,14 @@ void to_dirsum_test_x<T>::test_ij_i_j_1(size_t ni, size_t nj, T d)
 
     //    Compare against the reference
 
-    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
+    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
 }
 
-template<typename T>
+template <typename T>
 void to_dirsum_test_x<T>::test_ij_i_j_2(size_t ni, size_t nj, T d)
     throw(libtest::test_exception) {
 
@@ -263,14 +255,14 @@ void to_dirsum_test_x<T>::test_ij_i_j_2(size_t ni, size_t nj, T d)
 
     //  Compare against the reference
 
-    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
+    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
 }
 
-template<typename T>
+template <typename T>
 void to_dirsum_test_x<T>::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
     T d) throw(libtest::test_exception) {
 
@@ -359,7 +351,7 @@ void to_dirsum_test_x<T>::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 
     //    Compare against the reference
 
-    compare_ref_x<3, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
+    compare_ref_x<3, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -367,7 +359,7 @@ void to_dirsum_test_x<T>::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 }
 
 
-template<typename T>
+template <typename T>
 void to_dirsum_test_x<T>::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
     size_t nl, T d) throw(libtest::test_exception) {
 
@@ -457,7 +449,7 @@ void to_dirsum_test_x<T>::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 
     //    Compare against the reference
 
-    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
+    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -465,7 +457,7 @@ void to_dirsum_test_x<T>::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 }
 
 
-template<typename T>
+template <typename T>
 void to_dirsum_test_x<T>::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
     size_t nl, T d) throw(libtest::test_exception) {
 
@@ -555,14 +547,12 @@ void to_dirsum_test_x<T>::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
 
     //    Compare against the reference
 
-    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
+    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
 }
 
-template class to_dirsum_test_x<double>;
-template class to_dirsum_test_x<float>;
 
 } // namespace libtensor
