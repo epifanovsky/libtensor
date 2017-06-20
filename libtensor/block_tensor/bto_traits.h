@@ -54,7 +54,7 @@ struct bto_traits {
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
         typedef to_contract2<N, M, K, T> type;
-        typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type; //FIXME?
+        typedef bto_contract2_clst_optimize<N, M, K, T> clst_optimize_type; 
     };
 
     template<size_t N>
@@ -64,7 +64,7 @@ struct bto_traits {
 
     template<size_t N, size_t M>
     struct to_diag_type {
-        typedef tod_diag<N, M> type; //FIXME
+        typedef to_diag<N, M, T> type;
     };
 
     template<size_t N, size_t M>
@@ -74,17 +74,17 @@ struct bto_traits {
 
     template<size_t N>
     struct to_dotprod_type {
-        typedef tod_dotprod<N> type; //FIXME
+        typedef to_dotprod<N, T> type; 
     };
 
     template<size_t N, size_t M, size_t K>
     struct to_ewmult2_type {
-        typedef tod_ewmult2<N, M, K> type; //FIXME
+        typedef to_ewmult2<N, M, K, T> type;
     };
 
     template<size_t N, size_t M>
     struct to_extract_type {
-        typedef tod_extract<N, M> type; //FIXME
+        typedef to_extract<N, M, T> type;
     };
 
     template<size_t N>
@@ -104,27 +104,27 @@ struct bto_traits {
 
     template<size_t N>
     struct to_scale_type {
-        typedef tod_scale<N> type; //FIXME
+        typedef to_scale<N, T> type; 
     };
 
     template<size_t N, size_t M>
     struct to_scatter_type {
-        typedef tod_scatter<N, M> type; //FIXME
+        typedef to_scatter<N, M, T> type; 
     };
 
     template<size_t N, typename ComparePolicy>
     struct to_select_type {
-        typedef tod_select<N, ComparePolicy> type; //FIXME
+        typedef to_select<N, T, ComparePolicy> type;
     };
 
     template<size_t N>
     struct to_set_diag_type {
-        typedef tod_set_diag<N> type; //FIXME
+        typedef to_set_diag<N, T> type;
     };
 
     template<size_t N>
     struct to_set_elem_type {
-        typedef tod_set_elem<N> type; //FIXME
+        typedef to_set_elem<N, T> type;
     };
 
     template<size_t N>
@@ -134,17 +134,17 @@ struct bto_traits {
 
     template<size_t N>
     struct to_size_type {
-        typedef tod_size<N> type; //FIXME
+        typedef to_size<N, T> type;
     };
 
     template<size_t N>
     struct to_trace_type {
-        typedef tod_trace<N> type; //FIXME
+        typedef to_trace<N, T> type;
     };
 
     template<size_t N>
     struct to_vmpriority_type {
-        typedef tod_vmpriority<N> type; //FIXME
+        typedef to_vmpriority<N, T> type;
     };
 
     static bool is_zero(T d) {

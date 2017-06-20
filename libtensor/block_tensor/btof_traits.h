@@ -47,42 +47,42 @@ struct bto_traits<float> {
         typedef to_compare<N, float> type;
     };
 
-/*    template<size_t N, size_t M, size_t K>
+    template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
         typedef to_contract2<N, M, K, float> type;
-        typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
-    };*/
+        typedef bto_contract2_clst_optimize<N, M, K, float> clst_optimize_type;
+    };
 
     template<size_t N>
     struct to_copy_type {
         typedef to_copy<N, float> type;
     };
 
-/*    template<size_t N, size_t M>
+    template<size_t N, size_t M>
     struct to_diag_type {
-        typedef tod_diag<N, M> type;
+        typedef to_diag<N, M, float> type;
     };
 
     template<size_t N, size_t M>
     struct to_dirsum_type {
-        typedef tod_dirsum<N, M> type;
+        typedef to_dirsum<N, M, float> type;
     };
 
     template<size_t N>
     struct to_dotprod_type {
-        typedef tod_dotprod<N> type;
+        typedef to_dotprod<N, float> type;
     };
 
     template<size_t N, size_t M, size_t K>
     struct to_ewmult2_type {
-        typedef tod_ewmult2<N, M, K> type;
+        typedef to_ewmult2<N, M, K, float> type;
     };
 
     template<size_t N, size_t M>
     struct to_extract_type {
-        typedef tod_extract<N, M> type;
+        typedef to_extract<N, M, float> type;
     };
-*/
+
     template<size_t N>
     struct to_mult_type {
         typedef to_mult<N, float> type;
@@ -97,51 +97,51 @@ struct bto_traits<float> {
     struct to_random_type {
         typedef to_random<N, float> type;
     };
-/*
+
     template<size_t N>
     struct to_scale_type {
-        typedef tod_scale<N> type;
+        typedef to_scale<N, float> type;
     };
 
     template<size_t N, size_t M>
     struct to_scatter_type {
-        typedef tod_scatter<N, M> type;
+        typedef to_scatter<N, M, float> type;
     };
 
     template<size_t N, typename ComparePolicy>
     struct to_select_type {
-        typedef tod_select<N, ComparePolicy> type;
+        typedef to_select<N, float, ComparePolicy> type;
     };
 
     template<size_t N>
     struct to_set_diag_type {
-        typedef tod_set_diag<N> type;
+        typedef to_set_diag<N, float> type;
     };
 
     template<size_t N>
     struct to_set_elem_type {
-        typedef tod_set_elem<N> type;
+        typedef to_set_elem<N, float> type;
     };
-*/
+
     template<size_t N>
     struct to_set_type {
         typedef to_set<N, float> type;
     };
 
-/*    template<size_t N>
+    template<size_t N>
     struct to_size_type {
-        typedef tod_size<N> type;
+        typedef to_size<N, float> type;
     };
 
     template<size_t N>
     struct to_trace_type {
-        typedef tod_trace<N> type;
+        typedef to_trace<N, float> type;
     };
 
     template<size_t N>
     struct to_vmpriority_type {
-        typedef tod_vmpriority<N> type;
-    };*/
+        typedef to_vmpriority<N, float> type;
+    };
 
     static bool is_zero(float d) {
         return d == 0.0;

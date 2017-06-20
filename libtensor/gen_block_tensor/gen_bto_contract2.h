@@ -139,7 +139,7 @@ public:
     void compute_block(
         bool zero,
         const index<NC> &idxc,
-        const tensor_transf<NC, double> &trc,
+        const tensor_transf<NC, element_type> &trc,
         wr_block_type &blk);
 
 private:

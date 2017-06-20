@@ -65,8 +65,8 @@ private:
     block_index_space<NB> m_bis; //!< Block %index space of the result
     index<NA> m_idxbl;//!< Index for extraction of the block
     index<NA> m_idxibl;//!< Index for extraction inside the block
-    symmetry<NB, double> m_sym; //!< Symmetry of the result
-    assignment_schedule<NB, double> m_sch; //!< Assignment schedule
+    symmetry<NB, element_type> m_sym; //!< Symmetry of the result
+    assignment_schedule<NB, element_type> m_sch; //!< Assignment schedule
 
 public:
     gen_bto_extract(
@@ -78,11 +78,11 @@ public:
         return m_bis;
     }
 
-    const symmetry<NB, double> &get_symmetry() const {
+    const symmetry<NB, element_type> &get_symmetry() const {
         return m_sym;
     }
 
-    const assignment_schedule<NB, double> &get_schedule() const {
+    const assignment_schedule<NB, element_type> &get_schedule() const {
         return m_sch;
     }
 
