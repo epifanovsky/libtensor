@@ -26,6 +26,7 @@ public:
     typedef void *device_context_ref; //!< Reference type to device context
 
 
+using linalg_cblas_level1<double>::k_clazz;
 using linalg_cblas_level1<double>::add_i_i_x_x;
 using linalg_cblas_level1<double>::copy_i_i;
 using linalg_cblas_level1<double>::div1_i_i_x;

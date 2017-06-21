@@ -24,6 +24,7 @@ libtensor_linalg_suite::libtensor_linalg_suite() :
     add_test("linalg_mul2_ij_ip_pj_x", m_utf_linalg_mul2_ij_ip_pj_x);
     add_test("linalg_mul2_ij_pi_jp_x", m_utf_linalg_mul2_ij_pi_jp_x);
     add_test("linalg_mul2_ij_pi_pj_x", m_utf_linalg_mul2_ij_pi_pj_x);
+    add_test("linalg_blas_version", m_utf_linalg_blas_version);
 }
 
 

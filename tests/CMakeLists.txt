@@ -297,6 +297,7 @@ set(SRC_LINALG
     linalg/linalg_mul2_ij_ip_pj_x_test.C
     linalg/linalg_mul2_ij_pi_jp_x_test.C
     linalg/linalg_mul2_ij_pi_pj_x_test.C
+    linalg/linalg_blas_version_test.C
 )
 
 set(SRC_EXPR
