@@ -14,6 +14,7 @@ template <typename T>
 class to_dirsum_test_x : public libtest::unit_test {
 public:
     virtual void perform() throw(libtest::test_exception);
+    const static T k_thresh;
 
 private:
     // c_{ij} = a_i + b_j

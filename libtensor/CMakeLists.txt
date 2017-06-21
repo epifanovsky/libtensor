@@ -189,8 +189,10 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    btod/btod_diagonalize.C
-    btod/btod_tridiagonalize.C
+    #btod/btod_diagonalize.C
+    btod/bto_diagonalize.C
+    #btod/btod_tridiagonalize.C
+    btod/bto_tridiagonalize.C
 )
 
 set(SRC_GEN_BTOD

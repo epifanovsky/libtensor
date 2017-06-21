@@ -82,7 +82,7 @@ void compare_ref_x<N, T>::compare(const char *test, block_tensor_rd_i<N, T> &t,
     block_tensor_rd_i<N, T> &t_ref, T thresh)
     throw(exception, libtest::test_exception) {
 
-    btod_compare<N> cmp(t, t_ref, thresh);
+    bto_compare<N, T> cmp(t, t_ref, thresh);
     if(!cmp.compare()) {
         std::ostringstream str;
         str << "In " << test << ": ";

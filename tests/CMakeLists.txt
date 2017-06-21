@@ -226,14 +226,19 @@ set(SRC_BLOCK_TENSOR
     block_tensor/btod_apply_test.C
     block_tensor/btod_compare_test.C
     block_tensor/btod_contract2_test.C
+    block_tensor/bto_contract2_test.C
     block_tensor/btod_contract3_test.C
     block_tensor/btod_copy_test.C
     block_tensor/bto_copy_test.C
     block_tensor/btod_diag_test.C
+    block_tensor/bto_diag_test.C
     block_tensor/btod_diagonalize_test.C
     block_tensor/btod_dirsum_test.C
+    block_tensor/bto_dirsum_test.C
     block_tensor/btod_dotprod_test.C
+    block_tensor/bto_dotprod_test.C
     block_tensor/btod_ewmult2_test.C
+    block_tensor/bto_ewmult2_test.C
     block_tensor/btod_extract_test.C
     block_tensor/btod_import_raw_test.C
     block_tensor/btod_import_raw_stream_test.C
@@ -244,6 +249,7 @@ set(SRC_BLOCK_TENSOR
     block_tensor/bto_random_test.C
     block_tensor/btod_read_test.C
     block_tensor/btod_scale_test.C
+    block_tensor/bto_scale_test.C
     block_tensor/btod_select_test.C
     block_tensor/btod_set_diag_test.C
     block_tensor/btod_set_elem_test.C
@@ -253,6 +259,7 @@ set(SRC_BLOCK_TENSOR
     block_tensor/btod_sum_test.C
     block_tensor/btod_symcontract3_test.C
     block_tensor/btod_symmetrize2_test.C
+    block_tensor/bto_symmetrize2_test.C
     block_tensor/btod_symmetrize3_test.C
     block_tensor/btod_symmetrize4_test.C
     block_tensor/btod_trace_test.C

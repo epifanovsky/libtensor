@@ -15,6 +15,7 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
     add_test("btod_apply", m_utf_btod_apply);
     add_test("btod_compare", m_utf_btod_compare);
     add_test("btod_contract2", m_utf_btod_contract2);
+    add_test("bto_contract2", m_utf_bto_contract2);
 #ifdef USE_LIBXM
     add_test("btod_contract2_xm", m_utf_btod_contract2_xm);
 #endif
@@ -22,10 +23,14 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
     add_test("btod_copy", m_utf_btod_copy);
     add_test("bto_copy", m_utf_bto_copy);
     add_test("btod_diag", m_utf_btod_diag);
+    add_test("bto_diag", m_utf_bto_diag);
 //    add_test("btod_diagonalize", m_utf_btod_diagonalize);
     add_test("btod_dirsum", m_utf_btod_dirsum);
+    add_test("bto_dirsum", m_utf_bto_dirsum);
     add_test("btod_dotprod", m_utf_btod_dotprod);
+    add_test("bto_dotprod", m_utf_bto_dotprod);
     add_test("btod_ewmult2", m_utf_btod_ewmult2);
+    add_test("bto_ewmult2", m_utf_bto_ewmult2);
     add_test("btod_extract", m_utf_btod_extract);
     add_test("btod_import_raw", m_utf_btod_import_raw);
     add_test("btod_import_raw_stream", m_utf_btod_import_raw_stream);
@@ -36,6 +41,7 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
     add_test("bto_random", m_utf_bto_random);
     add_test("btod_read", m_utf_btod_read);
     add_test("btod_scale", m_utf_btod_scale);
+    add_test("bto_scale", m_utf_bto_scale);
     add_test("btod_select", m_utf_btod_select);
     add_test("btod_set", m_utf_btod_set);
     add_test("bto_set", m_utf_bto_set);
@@ -45,6 +51,7 @@ libtensor_block_tensor_suite::libtensor_block_tensor_suite() :
     add_test("btod_sum", m_utf_btod_sum);
     add_test("btod_symcontract3", m_utf_btod_symcontract3);
     add_test("btod_symmetrize2", m_utf_btod_symmetrize2);
+    add_test("bto_symmetrize2", m_utf_bto_symmetrize2);
     add_test("btod_symmetrize3", m_utf_btod_symmetrize3);
 //    add_test("btod_symmetrize4", m_utf_btod_symmetrize4);
     add_test("btod_trace", m_utf_btod_trace);

@@ -131,6 +131,9 @@ endif(ARMADILLO_FOUND)
 set(CMAKE_PREFIX_PATH ${SAVED_CMAKE_PREFIX_PATH})
 unset(SAVED_CMAKE_PREFIX_PATH)
 
+add_definitions(-DUSE_CBLAS)
+set(USE_CBLAS TRUE)
+
 #   Libtensor dependencies (libraries)
 #
 include_directories(${BLAS_LAPACK_INCLUDE})

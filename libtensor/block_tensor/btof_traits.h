@@ -16,7 +16,7 @@ namespace libtensor {
 
 //template<size_t N, size_t M, size_t K> class tod_contract2;
 //template<size_t N> class tod_set;
-
+/*
 template<>
 struct bto_traits<float> {
 
@@ -160,7 +160,7 @@ struct bto_traits<float> {
     }
 
 };
-
+*/
 
 } // namespace libtensor
 

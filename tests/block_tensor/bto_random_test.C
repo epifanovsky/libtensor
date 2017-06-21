@@ -26,7 +26,7 @@ template<>
 const double bto_random_test_x<double>::k_thresh = 1e-15;
 
 template<>
-const float bto_random_test_x<float>::k_thresh = 1e-7;
+const float bto_random_test_x<float>::k_thresh = 2e-7;
 
 template<typename T>
 void bto_random_test_x<T>::perform() throw(libtest::test_exception)

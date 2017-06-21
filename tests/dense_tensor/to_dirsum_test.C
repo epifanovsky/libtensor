@@ -18,6 +18,11 @@ void to_dirsum_test::perform() throw(libtest::test_exception) {
     t_float.perform();
 }
 
+template<>
+const double to_dirsum_test_x<double>::k_thresh =1e-14;
+template<>
+const float to_dirsum_test_x<float>::k_thresh =1e-6;
+
 template <typename T>
 void to_dirsum_test_x<T>::perform() throw(libtest::test_exception) {
 
@@ -167,7 +172,7 @@ void to_dirsum_test_x<T>::test_ij_i_j_1(size_t ni, size_t nj, T d)
 
     //    Compare against the reference
 
-    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -255,7 +260,7 @@ void to_dirsum_test_x<T>::test_ij_i_j_2(size_t ni, size_t nj, T d)
 
     //  Compare against the reference
 
-    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+    compare_ref_x<2, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -351,7 +356,7 @@ void to_dirsum_test_x<T>::test_ikj_ij_k_1(size_t ni, size_t nj, size_t nk,
 
     //    Compare against the reference
 
-    compare_ref_x<3, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+    compare_ref_x<3, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -449,7 +454,7 @@ void to_dirsum_test_x<T>::test_ikjl_ij_kl_1(size_t ni, size_t nj, size_t nk,
 
     //    Compare against the reference
 
-    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
@@ -547,7 +552,7 @@ void to_dirsum_test_x<T>::test_iklj_ij_kl_1(size_t ni, size_t nj, size_t nk,
 
     //    Compare against the reference
 
-    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, 1e-15);
+    compare_ref_x<4, T>::compare(tns.c_str(), tc, tc_ref, k_thresh);
 
     } catch(exception &e) {
         fail_test(tns.c_str(), __FILE__, __LINE__, e.what());

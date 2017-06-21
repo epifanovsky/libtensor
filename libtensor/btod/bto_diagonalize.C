@@ -4,47 +4,49 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/block_tensor/block_tensor.h>
 #include <libtensor/block_tensor/block_tensor_ctrl.h>
-#include <libtensor/block_tensor/btod_add.h>
-#include <libtensor/block_tensor/btod_contract2.h>
-#include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/block_tensor/btod_diag.h>
-#include <libtensor/block_tensor/btod_extract.h>
-#include <libtensor/block_tensor/btod_scale.h>
-#include <libtensor/block_tensor/btod_set_diag.h>
-#include <libtensor/block_tensor/btod_set_elem.h>
-#include <libtensor/block_tensor/btod_set.h>
+#include <libtensor/block_tensor/bto_add.h>
+#include <libtensor/block_tensor/bto_contract2.h>
+#include <libtensor/block_tensor/bto_copy.h>
+#include <libtensor/block_tensor/bto_diag.h>
+#include <libtensor/block_tensor/bto_extract.h>
+#include <libtensor/block_tensor/bto_scale.h>
+#include <libtensor/block_tensor/bto_set_diag.h>
+#include <libtensor/block_tensor/bto_set_elem.h>
+#include <libtensor/block_tensor/bto_set.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include "btod_diagonalize.h"
+#include "bto_diagonalize.h"
 
 namespace libtensor
 {
 
-btod_diagonalize::btod_diagonalize(block_tensor_i<2, double> &bta,
-        block_tensor_i<2, double> &S,double tol,int maxiter) :
+template <typename T>
+bto_diagonalize<T>::bto_diagonalize(block_tensor_i<2, T> &bta,
+        block_tensor_i<2, T> &S,T tol,int maxiter) :
 m_bta(bta),m_S(S),m_tol(tol),m_maxiter(maxiter),m_iter(0), doneiter(0),
 checked(0){
 
 }
 
-void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
-        block_tensor_i <2, double> &eigvector,
-        block_tensor_i <1, double> &eigvalue)
+template <typename T>
+void bto_diagonalize<T>::perform(block_tensor_i<2, T> &btb,
+        block_tensor_i <2, T> &eigvector,
+        block_tensor_i <1, T> &eigvalue)
     {
 
-    typedef allocator<double> allocator_t;
+    typedef allocator<T> allocator_t;
 
-    btod_set_diag<2> (1).perform(eigvector);
+    bto_set_diag<2, T> (1).perform(eigvector);
 
-    block_tensor<2, double, allocator_t> Q(btb.get_bis());//orthogonal matrix
-    block_tensor<2, double, allocator_t> P(btb.get_bis());//rotation matrix
-    block_tensor<2, double, allocator_t> Ptransp(btb.get_bis());//transposed
+    block_tensor<2, T, allocator_t> Q(btb.get_bis());//orthogonal matrix
+    block_tensor<2, T, allocator_t> P(btb.get_bis());//rotation matrix
+    block_tensor<2, T, allocator_t> Ptransp(btb.get_bis());//transposed
                                                                 //rot matrix
-    block_tensor<2, double, allocator_t> temp(btb.get_bis());// temporary matrix
+    block_tensor<2, T, allocator_t> temp(btb.get_bis());// temporary matrix
 
-    block_tensor_ctrl<2, double> cab(btb);
+    block_tensor_ctrl<2, T> cab(btb);
 
     //copy the input tensor
-    btod_copy<2>(m_bta).perform(btb);
+    bto_copy<2, T>(m_bta).perform(btb);
 
     const dimensions<2> *dimsa;
     dimsa = &(m_bta.get_bis().get_dims());
@@ -73,11 +75,11 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
             idxc[1]++;
         }
 
-        double elem;//x i
+        T elem;//x i
 
         {
-        dense_tensor_rd_ctrl<2, double> cbtbs(cab.req_const_block(idxc));
-        const double *pas = cbtbs.req_const_dataptr();
+        dense_tensor_rd_ctrl<2, T> cbtbs(cab.req_const_block(idxc));
+        const T *pas = cbtbs.req_const_dataptr();
 
 
         elem = *(pas + posc1 + posc0 * btb.get_bis().get_block_dims(idxc).
@@ -99,8 +101,8 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
     while(m_iter < m_maxiter && doneiter==0)
     {
 
-        btod_set<2>(0).perform(Q);
-        btod_set_diag<2> (1).perform(Q);
+        bto_set<2, T>(0).perform(Q);
+        bto_set_diag<2, T> (1).perform(Q);
 
         index<2> idx;
 
@@ -114,8 +116,8 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         for(size_t i = 0; i < size - 1;i++)
         {
 
-        btod_set<2>(0).perform(P);
-        btod_set_diag<2> (1).perform(P);
+        bto_set<2, T>(0).perform(P);
+        bto_set_diag<2, T> (1).perform(P);
 
         idx[0]=0;idx[1]=0;
         pos=i;
@@ -139,11 +141,11 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         }
 
 
-        double x;//x i
+        T x;//x i
 
         {
-        dense_tensor_rd_ctrl<2, double> cbtb(cab.req_const_block(idx));
-        const double *pa = cbtb.req_const_dataptr();
+        dense_tensor_rd_ctrl<2, T> cbtb(cab.req_const_block(idx));
+        const T *pa = cbtb.req_const_dataptr();
 
         x = *(pa + pos + pos * btb.get_bis().get_block_dims(idx).get_dim(1));
 
@@ -151,7 +153,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         cab.ret_const_block(idx);
         }
 
-        double b;
+        T b;
 
         //get ii+1 element
 
@@ -162,8 +164,8 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
             pos1=btb.get_bis().get_block_dims(idx).get_dim(1) - 1;
 
             {
-            dense_tensor_rd_ctrl<2, double> cbtb2(cab.req_const_block(idx));
-            const double *pa2 = cbtb2.req_const_dataptr();
+            dense_tensor_rd_ctrl<2, T> cbtb2(cab.req_const_block(idx));
+            const T *pa2 = cbtb2.req_const_dataptr();
 
             b = *(pa2 + pos1 + pos0 * btb.get_bis().get_block_dims(idx).
                     get_dim(1));
@@ -180,8 +182,8 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
 
 
             {
-            dense_tensor_rd_ctrl<2, double> cbtb2(cab.req_const_block(idx));
-            const double *pa2 = cbtb2.req_const_dataptr();
+            dense_tensor_rd_ctrl<2, T> cbtb2(cab.req_const_block(idx));
+            const T *pa2 = cbtb2.req_const_dataptr();
 
             b = *(pa2 + pos1 + pos0 * btb.get_bis().get_block_dims(idx).
                     get_dim(1));
@@ -192,8 +194,8 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         }
 
         //get sinus and cosinus
-        double c = x/sqrt(b*b+x*x);
-        double s = b/sqrt(b*b+x*x);
+        T c = x/sqrt(b*b+x*x);
+        T s = b/sqrt(b*b+x*x);
 
         index<2> idxibl;
         index<2> idx1;
@@ -222,7 +224,7 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
         idxibl[0]=pos;
         idxibl[1]=pos;
 
-        btod_set_elem<2>().perform(P,idx,idxibl,c);
+        bto_set_elem<2, T>().perform(P,idx,idxibl,c);
 
         if(pos==prevsize)
         {
@@ -231,19 +233,19 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
             idx[1]=idx1[1]+1;
             idxibl[0]=0;
             idxibl[1]=0;
-            btod_set_elem<2>().perform(P,idx,idxibl,c);
+            bto_set_elem<2, T>().perform(P,idx,idxibl,c);
             //set i i+1 element
             idx[0]=idx1[0];
             idx[1]=idx1[1]+1;
             idxibl[0]=P.get_bis().get_block_dims(idx).get_dim(0)-1;
             idxibl[1]=0;
-            btod_set_elem<2>().perform(P,idx,idxibl,s);
+            bto_set_elem<2, T>().perform(P,idx,idxibl,s);
             //set i+1 i element
             idx[0]=idx1[0]+1;
             idx[1]=idx1[1];
             idxibl[0]=0;
             idxibl[1]=P.get_bis().get_block_dims(idx).get_dim(1)-1;
-            btod_set_elem<2>().perform(P,idx,idxibl,-s);
+            bto_set_elem<2, T>().perform(P,idx,idxibl,-s);
         }
         else
         {
@@ -252,45 +254,45 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
             idx[1]=idx1[1];
             idxibl[0]=pos+1;
             idxibl[1]=pos+1;
-            btod_set_elem<2>().perform(P,idx,idxibl,c);
+            bto_set_elem<2, T>().perform(P,idx,idxibl,c);
             //set i i+1 element
             idx[0]=idx1[0];
             idx[1]=idx1[1];
             idxibl[0]=pos;
             idxibl[1]=pos+1;
-            btod_set_elem<2>().perform(P,idx,idxibl,s);
+            bto_set_elem<2, T>().perform(P,idx,idxibl,s);
             //set i+1 i element
             idx[0]=idx1[0];
             idx[1]=idx1[1];
             idxibl[0]=pos+1;
             idxibl[1]=pos;
-            btod_set_elem<2>().perform(P,idx,idxibl,-s);
+            bto_set_elem<2, T>().perform(P,idx,idxibl,-s);
         }
 
         //get transposed matrix
         permutation<2> perm;
         perm.permute(0, 1);
-        btod_copy<2>(P,perm).perform(Ptransp);
+        bto_copy<2, T>(P,perm).perform(Ptransp);
 
         //get Q matrix
         contraction2<1,1,1> contrq;
         contrq.contract(1,0);
-        btod_contract2<1,1,1>(contrq,Q,Ptransp).perform(temp);
-        btod_copy<2>(temp).perform(Q);
+        bto_contract2<1,1,1, T>(contrq,Q,Ptransp).perform(temp);
+        bto_copy<2, T>(temp).perform(Q);
 
         //update matrix by rotations
-        btod_contract2<1,1,1>(contrq,P,btb).perform(temp);
-        btod_copy<2>(temp).perform(btb);
+        bto_contract2<1,1,1, T>(contrq,P,btb).perform(temp);
+        bto_copy<2, T>(temp).perform(btb);
         }
         contraction2<1,1,1> contr;
         contr.contract(1,0);
-        btod_contract2<1,1,1>(contr,btb,Q).perform(temp);
+        bto_contract2<1,1,1, T>(contr,btb,Q).perform(temp);
 
-        btod_copy<2>(temp).perform(btb);
+        bto_copy<2, T>(temp).perform(btb);
 
         //computation of eigenvectors
-        btod_contract2<1,1,1>(contr,eigvector,Q).perform(temp);
-        btod_copy<2>(temp).perform(eigvector);
+        bto_contract2<1,1,1, T>(contr,eigvector,Q).perform(temp);
+        bto_copy<2, T>(temp).perform(eigvector);
         //check if the process has been converged
 
         doneiter = 1;
@@ -313,10 +315,10 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
                 idxc[1]++;
             }
 
-            double elem;//x i
+            T elem;//x i
             {
-            dense_tensor_rd_ctrl<2, double> cbtbs(cab.req_const_block(idxc));
-            const double *pas = cbtbs.req_const_dataptr();
+            dense_tensor_rd_ctrl<2, T> cbtbs(cab.req_const_block(idxc));
+            const T *pas = cbtbs.req_const_dataptr();
 
             elem = *(pas + posc1 + posc0 * btb.get_bis().get_block_dims(idxc).
                     get_dim(1));
@@ -345,23 +347,24 @@ void btod_diagonalize::perform(block_tensor_i<2, double> &btb,
     //get eigenvalues
     sequence<2, size_t> msk;
     msk[0] = 1; msk[1] = 1;
-    btod_diag<2, 1>(btb, msk).perform(eigvalue);
+    bto_diag<2, 1, T>(btb, msk).perform(eigvalue);
     //get matrix of eigenvectors
     contraction2<1,1,1> contr;
     contr.contract(1,0);
-    btod_contract2<1,1,1>(contr,m_S,eigvector).perform(temp);
-    btod_copy<2>(temp).perform(eigvector);
+    bto_contract2<1,1,1, T>(contr,m_S,eigvector).perform(temp);
+    bto_copy<2, T>(temp).perform(eigvector);
     }
 
 
 
-void btod_diagonalize::print(block_tensor_i<2, double> &btb,
-block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
+template <typename T>
+void bto_diagonalize<T>::print(block_tensor_i<2, T> &btb,
+block_tensor_i <2, T> &eigvector,block_tensor_i <1, T> &eigvalue)
 {
-    block_tensor_ctrl<2, double> ctrla(m_bta);
-    block_tensor_ctrl<2, double> ctrlb(btb);
-    block_tensor_ctrl<2, double> ctrlevec(eigvector);
-    block_tensor_ctrl<1, double> ctrleigval(eigvalue);
+    block_tensor_ctrl<2, T> ctrla(m_bta);
+    block_tensor_ctrl<2, T> ctrlb(btb);
+    block_tensor_ctrl<2, T> ctrlevec(eigvector);
+    block_tensor_ctrl<1, T> ctrleigval(eigvalue);
 
     size_t size = m_bta.get_bis().get_dims().get_dim(1);
     std::cout<<"The tridiagonal matrix A is:"<<std::endl;
@@ -393,8 +396,8 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
             if(ctrla.req_is_zero_block(idxi)==false)
             {
                 {
-            dense_tensor_rd_ctrl<2, double> catrl(ctrla.req_const_block(idxi));
-            const double *pa = catrl.req_const_dataptr();
+            dense_tensor_rd_ctrl<2, T> catrl(ctrla.req_const_block(idxi));
+            const T *pa = catrl.req_const_dataptr();
             std::cout<<*(pa + pos0 * m_bta.get_bis().get_block_dims(idxi).
                     get_dim(1) + pos1)<<" ";
             catrl.ret_const_dataptr(pa);
@@ -459,9 +462,9 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
             if(ctrlb.req_is_zero_block(idxi)==false)
             {
                 {
-                    dense_tensor_rd_ctrl<2, double> catrl(
+                    dense_tensor_rd_ctrl<2, T> catrl(
                             ctrlb.req_const_block(idxi));
-                    const double *pa = catrl.req_const_dataptr();
+                    const T *pa = catrl.req_const_dataptr();
                     std::cout<<*(pa + pos0 * btb.get_bis().get_block_dims(idxi).
                             get_dim(1) + pos1)<<" ";
                     catrl.ret_const_dataptr(pa);
@@ -509,9 +512,9 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
             if(ctrlevec.req_is_zero_block(idxi)==false)
             {
                 {
-            dense_tensor_rd_ctrl<2, double> catrl(
+            dense_tensor_rd_ctrl<2, T> catrl(
                     ctrlevec.req_const_block(idxi));
-            const double *pa = catrl.req_const_dataptr();
+            const T *pa = catrl.req_const_dataptr();
             std::cout<<*(pa + pos0 * eigvector.get_bis().get_block_dims(idxi).
                     get_dim(1) + pos1)<<" ";
             catrl.ret_const_dataptr(pa);
@@ -561,22 +564,23 @@ block_tensor_i <2, double> &eigvector,block_tensor_i <1, double> &eigvalue)
 
 }
 
-void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
-        block_tensor_i <2, double> &eigvector,
-        block_tensor_i <1, double> &eigvalue,double tol)
+template <typename T>
+void bto_diagonalize<T>::check(block_tensor_i <2, T> &bta ,
+        block_tensor_i <2, T> &eigvector,
+        block_tensor_i <1, T> &eigvalue,T tol)
 {
     if(tol==0.0)
     {
         tol = m_tol;
     }
-    typedef allocator<double> allocator_t;
-    block_tensor_ctrl<1, double> ctrleigval(eigvalue);
+    typedef allocator<T> allocator_t;
+    block_tensor_ctrl<1, T> ctrleigval(eigvalue);
 
-    block_tensor<1, double, allocator_t> zero(eigvalue.get_bis());
-    block_tensor<1, double, allocator_t> vector(eigvalue.get_bis());
-    block_tensor<1, double, allocator_t> temp(eigvalue.get_bis());
+    block_tensor<1, T, allocator_t> zero(eigvalue.get_bis());
+    block_tensor<1, T, allocator_t> vector(eigvalue.get_bis());
+    block_tensor<1, T, allocator_t> temp(eigvalue.get_bis());
 
-    block_tensor_ctrl<1, double> ctrlzero(zero);
+    block_tensor_ctrl<1, T> ctrlzero(zero);
     checked = 1;
 
     index<1> idxv;
@@ -587,7 +591,7 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
         {
 
             //get eigenvalue
-            double lamda;
+            T lamda;
             lamda = get_eigenvalue(eigvalue,k);
 
             //get eigen vector
@@ -595,11 +599,11 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
 
             contraction2<1,0,1> contr;
             contr.contract(1,0);
-            btod_contract2<1,0,1>(contr,bta,vector).perform(temp);
+            bto_contract2<1,0,1, T>(contr,bta,vector).perform(temp);
 
-            btod_scale<1>(vector,lamda).perform();
+            bto_scale<1, T>(vector,lamda).perform();
 
-            btod_add<1> op(temp);
+            bto_add<1, T> op(temp);
             op.add_op(vector,-1);
             op.perform(zero);
 
@@ -618,13 +622,13 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
                     }
                     if(ctrlzero.req_is_zero_block(idxv2) == false)
                     {
-                        double value;
+                        T value;
 
                         {
-                    dense_tensor_rd_ctrl<1, double> cavp2(
+                    dense_tensor_rd_ctrl<1, T> cavp2(
                             ctrlzero.req_const_block(idxv2));
 
-                    const double *pav2 = cavp2.req_const_dataptr();
+                    const T *pav2 = cavp2.req_const_dataptr();
 
                     value = *(pav2 + pos2);
                     if(value < 0)
@@ -649,16 +653,17 @@ void btod_diagonalize::check(block_tensor_i <2, double> &bta ,
         }
 }
 
-void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
+template <typename T>
+void bto_diagonalize<T>::sort(block_tensor_i <1, T> &eigvalue,size_t *map)
         {
-    block_tensor_ctrl<1, double> ctrleigvalue(eigvalue);
+    block_tensor_ctrl<1, T> ctrleigvalue(eigvalue);
             for(size_t i = 0; i < eigvalue.get_bis().get_dims().get_dim(0);i++)
             {
                 map[i] = i;
             }
 
-            double x1;
-            double x2;
+            T x1;
+            T x2;
 
             //Bubble sorts the eigenvalues in decreasing order
             int j=0;
@@ -691,10 +696,10 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
                             if(ctrleigvalue.req_is_zero_block(idxv2) == false)
                             {
                                 {
-                            dense_tensor_rd_ctrl<1, double> cavp2(ctrleigvalue.
+                            dense_tensor_rd_ctrl<1, T> cavp2(ctrleigvalue.
                                     req_const_block(idxv2));
 
-                            const double *pav2 = cavp2.req_const_dataptr();
+                            const T *pav2 = cavp2.req_const_dataptr();
 
                             x1=*(pav2 + pos2);
 
@@ -723,10 +728,10 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
                                         false)
                                 {
                                     {
-                                dense_tensor_rd_ctrl<1, double> cavp2(ctrleigvalue.
+                                dense_tensor_rd_ctrl<1, T> cavp2(ctrleigvalue.
                                         req_const_block(idxv2));
 
-                                const double *pav2 = cavp2.req_const_dataptr();
+                                const T *pav2 = cavp2.req_const_dataptr();
 
                                 x2=*(pav2 + pos2);
 
@@ -749,12 +754,13 @@ void btod_diagonalize::sort(block_tensor_i <1, double> &eigvalue,size_t *map)
             } while(j!=0);
         }
 
-double btod_diagonalize::get_eigenvalue(block_tensor_i <1, double> &eigvalue,
+template <typename T>
+T bto_diagonalize<T>::get_eigenvalue(block_tensor_i <1, T> &eigvalue,
         size_t k)
 {
-    block_tensor_ctrl<1, double> ctrleigval(eigvalue);
+    block_tensor_ctrl<1, T> ctrleigval(eigvalue);
     index<1> idxv;
-    double answer;
+    T answer;
     bool done;
     done = false;
     idxv[0]=0;
@@ -776,9 +782,9 @@ double btod_diagonalize::get_eigenvalue(block_tensor_i <1, double> &eigvalue,
                     if(ctrleigval.req_is_zero_block(idxv) == false)
                     {
                         {
-                    dense_tensor_rd_ctrl<1, double> cavp(ctrleigval.req_const_block(idxv));
+                    dense_tensor_rd_ctrl<1, T> cavp(ctrleigval.req_const_block(idxv));
 
-                    const double *pav = cavp.req_const_dataptr();
+                    const T *pav = cavp.req_const_dataptr();
 
                     answer=*(pav + pos);
                 cavp.ret_const_dataptr(pav);
@@ -792,8 +798,9 @@ double btod_diagonalize::get_eigenvalue(block_tensor_i <1, double> &eigvalue,
 return answer;
 }
 
-void btod_diagonalize::get_eigenvector(block_tensor_i <2, double> &eigvector,size_t k,
-        block_tensor_i <1, double> &output)
+template <typename T>
+void bto_diagonalize<T>::get_eigenvector(block_tensor_i <2, T> &eigvector,size_t k,
+        block_tensor_i <1, T> &output)
         {
         bool done;
         index<2> idx;
@@ -820,8 +827,13 @@ void btod_diagonalize::get_eigenvector(block_tensor_i <2, double> &eigvector,siz
         index<2> idxibl;
         idxibl[0] = 0; idxibl[1] = pos;
 
-        btod_extract<2, 1>(eigvector, msk, idx, idxibl).perform(output);
+        bto_extract<2, 1, T>(eigvector, msk, idx, idxibl).perform(output);
         }
+
+
+
+template class bto_diagonalize<double>;
+template class bto_diagonalize<float>;
 
 }//namespace libtensor
 
