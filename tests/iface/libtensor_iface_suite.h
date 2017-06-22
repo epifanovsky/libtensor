@@ -22,6 +22,7 @@
 #include "set_test.h"
 #include "symm_test.h"
 #include "trace_test.h"
+#include "expr_test_float_double.h"
 
 using libtest::unit_test_factory;
 
@@ -81,6 +82,7 @@ private:
     unit_test_factory<set_test> m_utf_set;
     unit_test_factory<symm_test> m_utf_symm;
     unit_test_factory<trace_test> m_utf_trace;
+    unit_test_factory<expr_test_new> m_utf_expr_float_double;
 
 public:
     //! Creates the suite

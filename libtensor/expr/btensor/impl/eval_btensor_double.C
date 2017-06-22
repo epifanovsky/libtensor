@@ -24,13 +24,14 @@ using namespace eval_btensor_double;
 
 namespace {
 
+template<typename T>
 class eval_btensor_double_impl {
 public:
     enum {
-        Nmax = eval_btensor<double>::Nmax
+        Nmax = eval_btensor<T>::Nmax
     };
 
-    typedef eval_tree_builder_btensor::eval_order_t eval_order_t;
+    typedef typename eval_tree_builder_btensor<T>::eval_order_t eval_order_t;
 
 private:
     expr_tree &m_tree;
@@ -55,6 +56,7 @@ private:
 };
 
 
+template<typename T>
 class eval_node {
 public:
     static const char k_clazz[]; //!< Class name
@@ -76,32 +78,34 @@ public:
 };
 
 
-const char eval_node::k_clazz[] = "eval_node";
+template<typename T>
+const char eval_node<T>::k_clazz[] = "eval_node";
 
-
-void eval_node::evaluate_scalar(expr_tree::node_id_t lhs) {
+template<typename T>
+void eval_node<T>::evaluate_scalar(expr_tree::node_id_t lhs) {
 
     const node &n = m_tree.get_vertex(m_rhs);
 
     if(n.get_op().compare(node_dot_product::k_op_type) == 0) {
-        eval_btensor_double::dot_product(m_tree, m_rhs).evaluate(lhs);
+        eval_btensor_double::dot_product<T>(m_tree, m_rhs).evaluate(lhs);
     } else if(n.get_op().compare(node_trace::k_op_type) == 0) {
-        eval_btensor_double::trace(m_tree, m_rhs).evaluate(lhs);
+        eval_btensor_double::trace<T>(m_tree, m_rhs).evaluate(lhs);
     }
 }
 
 
+template<typename T>
 template<size_t N>
-void eval_node::evaluate(expr_tree::node_id_t lhs, bool add) {
+void eval_node<T>::evaluate(expr_tree::node_id_t lhs, bool add) {
 
-    tensor_transf<N, double> tr;
+    tensor_transf<N, T> tr;
     expr_tree::node_id_t rhs = transf_from_node(m_tree, m_rhs, tr);
     const node &n = m_tree.get_vertex(rhs);
 
-    eval_btensor_double::autoselect<N>(m_tree, rhs, tr).evaluate(lhs, add);
+    eval_btensor_double::autoselect<N, T>(m_tree, rhs, tr).evaluate(lhs, add);
 }
 
-
+template<typename T>
 class eval_assign_tensor {
 private:
     const expr_tree &m_tree;
@@ -117,12 +121,12 @@ public:
 
     template<size_t N>
     void dispatch() {
-        eval_node(m_tree, m_rhs).evaluate<N>(m_lhs, m_add);
+        eval_node<T>(m_tree, m_rhs).template evaluate<N>(m_lhs, m_add);
     }
 
 };
 
-
+template<typename T>
 class eval_scale_tensor {
 private:
     const expr_tree &m_tree;
@@ -137,15 +141,15 @@ public:
 
     template<size_t N>
     void dispatch() {
-        eval_btensor_double::scale<N>(m_tree, m_rhs).evaluate(m_lhs);
+        eval_btensor_double::scale<N, T>(m_tree, m_rhs).evaluate(m_lhs);
     }
 
 };
 
+template<typename T>
+void eval_btensor_double_impl<T>::evaluate() {
 
-void eval_btensor_double_impl::evaluate() {
-
-    for (eval_order_t::const_iterator i = m_order.begin();
+    for (typename eval_order_t::const_iterator i = m_order.begin();
             i != m_order.end(); i++) {
 
         const node &n = m_tree.get_vertex(*i);
@@ -162,7 +166,8 @@ void eval_btensor_double_impl::evaluate() {
 }
 
 
-void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
+template<typename T>
+void eval_btensor_double_impl<T>::handle_assign(expr_tree::node_id_t id) {
 
     const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
     const node_assign &n = m_tree.get_vertex(id).recast_as<node_assign>();
@@ -181,7 +186,7 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
         verify_tensor(lhs);
 
         // Evaluate r.h.s. before performing the assignment
-        eval_assign_tensor e(m_tree, out[0], out[1], n.is_add());
+        eval_assign_tensor<T> e(m_tree, out[0], out[1], n.is_add());
         dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
 
         // Put l.h.s. at position of assignment and erase subtree
@@ -194,13 +199,14 @@ void eval_btensor_double_impl::handle_assign(expr_tree::node_id_t id) {
         verify_scalar(lhs);
 
         // Evaluate r.h.s. and assign
-        eval_node(m_tree, out[1]).evaluate_scalar(out[0]);
+        eval_node<T>(m_tree, out[1]).evaluate_scalar(out[0]);
 
     }
 }
 
 
-void eval_btensor_double_impl::handle_scale(expr_tree::node_id_t id) {
+template<typename T>
+void eval_btensor_double_impl<T>::handle_scale(expr_tree::node_id_t id) {
 
     const expr_tree::edge_list_t &out = m_tree.get_edges_out(id);
     const node_scale &n = m_tree.get_vertex(id).recast_as<node_scale>();
@@ -215,16 +221,17 @@ void eval_btensor_double_impl::handle_scale(expr_tree::node_id_t id) {
 
     verify_tensor(lhs);
 
-    eval_scale_tensor e(m_tree, out[0], out[1]);
+    eval_scale_tensor<T> e(m_tree, out[0], out[1]);
     dispatch_1<1, Nmax>::dispatch(e, lhs.get_n());
 }
 
 
-void eval_btensor_double_impl::verify_scalar(const node &t) {
+template<typename T>
+void eval_btensor_double_impl<T>::verify_scalar(const node &t) {
 
     if(t.check_type<node_scalar_base>()) {
         const node_scalar_base &ti = t.recast_as<node_scalar_base>();
-        if(ti.get_type() != typeid(double)) {
+        if(ti.get_type() != typeid(T)) {
             throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
                 "verify_scalar()", __FILE__, __LINE__);
         }
@@ -237,11 +244,13 @@ void eval_btensor_double_impl::verify_scalar(const node &t) {
 }
 
 
-void eval_btensor_double_impl::verify_tensor(const node &t) {
+template<typename T>
+void eval_btensor_double_impl<T>::verify_tensor(const node &t) {
 
     if(t.check_type<node_ident>()) {
         const node_ident &ti = t.recast_as<node_ident>();
-        if(ti.get_type() != typeid(double)) {
+     //       std::cout << "Types:  " << ti.get_type().name() << " vs " << typeid(T).name() << std::endl;
+        if(ti.get_type() != typeid(T)) {
             throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
                 "verify_tensor()", __FILE__, __LINE__);
         }
@@ -249,9 +258,11 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
     }
     if(t.check_type<node_interm_base>()) {
         const node_interm_base &ti = t.recast_as<node_interm_base>();
-        if(ti.get_t() != typeid(double)) {
+        if(ti.get_t() != typeid(T)) { 
+           // std::cout << "Types:  " << ti.get_t().name() << " is not " << typeid(T).name() << std::endl;
             throw not_implemented("libtensor::expr", "eval_btensor_double_impl",
                 "verify_tensor()", __FILE__, __LINE__);
+    
         }
         return;
     }
@@ -265,31 +276,39 @@ void eval_btensor_double_impl::verify_tensor(const node &t) {
 } // unnamed namespace
 
 
-eval_btensor<double>::~eval_btensor<double>() {
+template<typename T>
+eval_btensor<T>::~eval_btensor<T>() {
 
 }
 
 
-bool eval_btensor<double>::can_evaluate(const expr_tree &e) const {
+template<typename T>
+bool eval_btensor<T>::can_evaluate(const expr_tree &e) const {
 
-    return tensor_type_check<Nmax, double, btensor_i>(e);
+    return tensor_type_check<Nmax, T, btensor_i>(e);
 }
 
 
-void eval_btensor<double>::evaluate(const expr_tree &tree) const {
+template<typename T>
+void eval_btensor<T>::evaluate(const expr_tree &tree) const {
 
-    eval_tree_builder_btensor bld(tree);
+    eval_tree_builder_btensor<T> bld(tree);
     bld.build();
 
-    eval_btensor_double_impl(bld.get_tree(), bld.get_order()).evaluate();
+    eval_btensor_double_impl<T>(bld.get_tree(), bld.get_order()).evaluate();
 }
 
 
-void eval_btensor<double>::use_libxm(bool usexm) {
+template<typename T>
+void eval_btensor<T>::use_libxm(bool usexm) {
 
     eval_btensor_double::use_libxm = usexm;
 }
 
+template class eval_btensor<double>;
+template class eval_btensor<float>;
+template class eval_btensor_double_impl<double>;
+template class eval_btensor_double_impl<float>;
 
 } // namespace expr
 } // namespace libtensor

@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_EXPR_EVAL_BTENSOR_H
-#define LIBTENSOR_EXPR_EVAL_BTENSOR_H
+#ifndef LIBTENSOR_EXPR_EVAL_BTENSOR_FLOAT_H
+#define LIBTENSOR_EXPR_EVAL_BTENSOR_FLOAT_H
 
 #include <libtensor/expr/dag/expr_tree.h>
 #include <libtensor/expr/eval/eval_i.h>
@@ -8,16 +8,12 @@ namespace libtensor {
 namespace expr {
 
 
-/** \brief Processor of evaluation plan for btensor result type
-    \tparam T Tensor element type.
+/** \brief Processor of evaluation plan for btensor result type (float)
 
     \ingroup libtensor_expr_btensor
  **/
-//template<typename T> class eval_btensor;
-//template class eval_btensor<T>;
-
-template<typename T>
-class eval_btensor : public eval_i {
+template<>
+class eval_btensor<float> : public eval_i {
 public:
     enum {
         Nmax = 8
@@ -26,7 +22,7 @@ public:
 public:
     /** \brief Virtual destructor
      **/
-    virtual ~eval_btensor();
+    virtual ~eval_btensor<float>();
 
     /** \brief Checks if this evaluator can handle the given expression
      **/
@@ -47,7 +43,5 @@ public:
 } // namespace expr
 } // namespace libtensor
 
-//#include "eval_btensor_double.h"
-//#include "eval_btensor_float.h"
 
-#endif // LIBTENSOR_EXPR_EVAL_BTENSOR_H
+#endif // LIBTENSOR_EXPR_EVAL_BTENSOR_FLOAT_H

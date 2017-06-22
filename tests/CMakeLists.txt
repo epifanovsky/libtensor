@@ -333,6 +333,7 @@ set(SRC_IFACE
     iface/eval_register_test.C
     iface/ewmult_test.C
     iface/expr_test.C
+    iface/expr_test_float_double.C
     iface/expr_tensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C

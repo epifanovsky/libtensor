@@ -1,4 +1,4 @@
-#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/bto_copy.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -12,22 +12,22 @@ namespace eval_btensor_double {
 namespace {
 
 
-template<size_t N>
-class eval_copy_impl : public eval_btensor_evaluator_i<N, double> {
+template<size_t N, typename T>
+class eval_copy_impl : public eval_btensor_evaluator_i<N, T> {
 private:
     enum {
-        Nmax = copy<N>::Nmax
+        Nmax = copy<N, T>::Nmax
     };
 
 public:
-    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
+    typedef typename eval_btensor_evaluator_i<N, T>::bti_traits bti_traits;
 
 private:
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
     eval_copy_impl(const expr_tree &tree, expr_tree::node_id_t id,
-        const tensor_transf<N, double> &tr);
+        const tensor_transf<N, T> &tr);
 
     virtual ~eval_copy_impl();
 
@@ -38,18 +38,18 @@ public:
 };
 
 
-template<size_t N>
-eval_copy_impl<N>::eval_copy_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
+template<size_t N, typename T>
+eval_copy_impl<N, T>::eval_copy_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, T> &tr) {
 
-    btensor_from_node<N, double> bta(tree, id);
-    m_op = new btod_copy<N>(bta.get_btensor(), tr.get_perm(),
+    btensor_from_node<N, T> bta(tree, id);
+    m_op = new bto_copy<N, T>(bta.get_btensor(), tr.get_perm(),
         tr.get_scalar_tr().get_coeff());
 }
 
 
-template<size_t N>
-eval_copy_impl<N>::~eval_copy_impl() {
+template<size_t N, typename T>
+eval_copy_impl<N, T>::~eval_copy_impl() {
 
     delete m_op;
 }
@@ -58,17 +58,17 @@ eval_copy_impl<N>::~eval_copy_impl() {
 } // unnamed namespace
 
 
-template<size_t N>
-copy<N>::copy(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr) :
+template<size_t N, typename T>
+copy<N, T>::copy(const expr_tree &tree, node_id_t &id,
+    const tensor_transf<N, T> &tr) :
 
-    m_impl(new eval_copy_impl<N>(tree, id, tr)) {
+    m_impl(new eval_copy_impl<N, T>(tree, id, tr)) {
 
 }
 
 
-template<size_t N>
-copy<N>::~copy() {
+template<size_t N, typename T>
+copy<N, T>::~copy() {
 
     delete m_impl;
 }
@@ -81,7 +81,7 @@ template<size_t N>
 struct aux_copy {
     const expr_tree *tree;
     expr_tree::node_id_t id;
-    const tensor_transf<N, double> *tr;
+    const tensor_transf<N, T> *tr;
     const node *t;
     copy<N> *e;
     aux_copy() {
@@ -90,19 +90,27 @@ struct aux_copy {
     }
 };
 } // namespace aux
-template class instantiate_template_1<1, eval_btensor<double>::Nmax,
+template class instantiate_template_1<1, eval_btensor<T>::Nmax,
     aux::aux_copy>;
 #endif
-template class copy<1>;
-template class copy<2>;
-template class copy<3>;
-template class copy<4>;
-template class copy<5>;
-template class copy<6>;
-template class copy<7>;
-template class copy<8>;
+template class copy<1, double>;
+template class copy<2, double>;
+template class copy<3, double>;
+template class copy<4, double>;
+template class copy<5, double>;
+template class copy<6, double>;
+template class copy<7, double>;
+template class copy<8, double>;
 
+template class copy<1, float>;
+template class copy<2, float>;
+template class copy<3, float>;
+template class copy<4, float>;
+template class copy<5, float>;
+template class copy<6, float>;
+template class copy<7, float>;
+template class copy<8, float>;
 
-} // namespace eval_btensor_double
+} // namespace eval_btensor_T
 } // namespace expr
 } // namespace libtensor

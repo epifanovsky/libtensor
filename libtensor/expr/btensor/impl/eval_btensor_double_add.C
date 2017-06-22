@@ -1,6 +1,6 @@
 #include <memory>
 #include <vector>
-#include <libtensor/block_tensor/btod_sum.h>
+#include <libtensor/block_tensor/bto_sum.h>
 #include <libtensor/expr/common/metaprog.h> // for instantiate_template_1
 #include <libtensor/expr/dag/node_add.h>
 #include <libtensor/expr/dag/node_transform.h>
@@ -17,23 +17,23 @@ namespace {
 using std::auto_ptr;
 
 
-template<size_t N>
-class eval_add_impl : public eval_btensor_evaluator_i<N, double> {
+template<size_t N, typename T>
+class eval_add_impl : public eval_btensor_evaluator_i<N, T> {
 private:
     enum {
-        Nmax = add<N>::Nmax
+        Nmax = add<N, T>::Nmax
     };
 
 public:
-    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
+    typedef typename eval_btensor_evaluator_i<N, T>::bti_traits bti_traits;
 
 private:
-    std::vector<eval_btensor_evaluator_i<N, double>*> m_sub; //!< Subexpressions
+    std::vector<eval_btensor_evaluator_i<N, T>*> m_sub; //!< Subexpressions
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
     eval_add_impl(const expr_tree &tree, expr_tree::node_id_t id,
-        const tensor_transf<N, double> &tr);
+        const tensor_transf<N, T> &tr);
 
     virtual ~eval_add_impl();
 
@@ -44,24 +44,24 @@ public:
 };
 
 
-template<size_t N>
-eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
+template<size_t N, typename T>
+eval_add_impl<N, T>::eval_add_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, T> &tr) {
 
     const node_add &n = tree.get_vertex(id).template recast_as<node_add>();
     const expr_tree::edge_list_t &e = tree.get_edges_out(id);
 
     for(size_t i = 0; i < e.size(); i++) {
-        tensor_transf<N, double> trsub;
+        tensor_transf<N, T> trsub;
         expr_tree::node_id_t rhs = transf_from_node(tree, e[i], trsub);
         trsub.transform(tr);
-        m_sub.push_back(new autoselect<N>(tree, rhs, trsub));
+        m_sub.push_back(new autoselect<N, T>(tree, rhs, trsub));
     }
 
-    auto_ptr< btod_sum<N> > op;
+    auto_ptr< bto_sum<N, T> > op;
     for(size_t i = 0; i < m_sub.size(); i++) {
         if(i == 0) {
-            op.reset(new btod_sum<N>(m_sub[0]->get_bto()));
+            op.reset(new bto_sum<N, T>(m_sub[0]->get_bto()));
         } else {
             op->add_op(m_sub[i]->get_bto());
         }
@@ -70,8 +70,8 @@ eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
 }
 
 
-template<size_t N>
-eval_add_impl<N>::~eval_add_impl() {
+template<size_t N, typename T>
+eval_add_impl<N, T>::~eval_add_impl() {
 
     delete m_op;
     for(size_t i = 0; i < m_sub.size(); i++) delete m_sub[i];
@@ -81,17 +81,17 @@ eval_add_impl<N>::~eval_add_impl() {
 } // unnamed namespace
 
 
-template<size_t N>
-add<N>::add(const expr_tree &tree, node_id_t id,
-    const tensor_transf<N, double> &tr) :
+template<size_t N, typename T>
+add<N, T>::add(const expr_tree &tree, node_id_t id,
+    const tensor_transf<N, T> &tr) :
 
-    m_impl(new eval_add_impl<N>(tree, id, tr)) {
+    m_impl(new eval_add_impl<N, T>(tree, id, tr)) {
 
 }
 
 
-template<size_t N>
-add<N>::~add() {
+template<size_t N, typename T>
+add<N, T>::~add() {
 
     delete m_impl;
 }
@@ -114,15 +114,23 @@ struct aux_add {
 template class instantiate_template_1<1, eval_btensor<double>::Nmax,
     aux::aux_add>;
 #endif
-template class add<1>;
-template class add<2>;
-template class add<3>;
-template class add<4>;
-template class add<5>;
-template class add<6>;
-template class add<7>;
-template class add<8>;
+template class add<1, double>;
+template class add<2, double>;
+template class add<3, double>;
+template class add<4, double>;
+template class add<5, double>;
+template class add<6, double>;
+template class add<7, double>;
+template class add<8, double>;
 
+template class add<1, float>;
+template class add<2, float>;
+template class add<3, float>;
+template class add<4, float>;
+template class add<5, float>;
+template class add<6, float>;
+template class add<7, float>;
+template class add<8, float>;
 
 } // namespace eval_btensor_double
 } // namespace expr

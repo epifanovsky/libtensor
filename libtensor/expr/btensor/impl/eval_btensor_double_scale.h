@@ -8,11 +8,11 @@ namespace expr {
 namespace eval_btensor_double {
 
 
-template<size_t N>
+template<size_t N, typename T>
 class scale {
 public:
     enum {
-        Nmax = eval_btensor<double>::Nmax
+        Nmax = eval_btensor<T>::Nmax
     };
 
     typedef expr_tree::node_id_t node_id_t; //!< Node ID type

@@ -1,4 +1,4 @@
-#include <libtensor/block_tensor/btod_diag.h>
+#include <libtensor/block_tensor/bto_diag.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_diag.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -12,25 +12,25 @@ namespace eval_btensor_double {
 namespace {
 
 
-template<size_t N>
-class eval_diag_impl : public eval_btensor_evaluator_i<N, double> {
+template<size_t N, typename T>
+class eval_diag_impl : public eval_btensor_evaluator_i<N, T> {
 private:
     enum {
-        Nmax = diag<N>::Nmax
+        Nmax = diag<N, T>::Nmax
     };
 
 public:
-    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
+    typedef typename eval_btensor_evaluator_i<N, T>::bti_traits bti_traits;
 
 private:
     struct dispatch_diag {
         eval_diag_impl &eval;
-        const tensor_transf<N, double> &trc;
+        const tensor_transf<N, T> &trc;
         size_t na;
 
         dispatch_diag(
             eval_diag_impl &eval_,
-            const tensor_transf<N, double> &trc_,
+            const tensor_transf<N, T> &trc_,
             size_t na_) :
             eval(eval_), trc(trc_), na(na_)
         { }
@@ -45,7 +45,7 @@ private:
 
 public:
     eval_diag_impl(const expr_tree &tr, expr_tree::node_id_t id,
-        const tensor_transf<N, double> &trc);
+        const tensor_transf<N, T> &trc);
 
     virtual ~eval_diag_impl();
 
@@ -54,14 +54,14 @@ public:
     }
 
     template<size_t NA, size_t NB>
-    void init(const tensor_transf<N, double> &trc);
+    void init(const tensor_transf<N, T> &trc);
 
 };
 
 
-template<size_t N>
-eval_diag_impl<N>::eval_diag_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, double> &trc) :
+template<size_t N, typename T>
+eval_diag_impl<N, T>::eval_diag_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, T> &trc) :
 
     m_tree(tree), m_id(id), m_op(0) {
 
@@ -77,21 +77,21 @@ eval_diag_impl<N>::eval_diag_impl(const expr_tree &tree,
 }
 
 
-template<size_t N>
-eval_diag_impl<N>::~eval_diag_impl() {
+template<size_t N, typename T>
+eval_diag_impl<N, T>::~eval_diag_impl() {
 
     delete m_op;
 }
 
 
-template<size_t N> template<size_t NA, size_t M>
-void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
+template<size_t N, typename T> template<size_t NA, size_t M>
+void eval_diag_impl<N, T>::init(const tensor_transf<N, T> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node_diag &nd =
             m_tree.get_vertex(m_id).template recast_as<node_diag>();
 
-    btensor_from_node<NA, double> bta(m_tree, e[0]);
+    btensor_from_node<NA, T> bta(m_tree, e[0]);
 
     sequence<NA, size_t> m(0);
 
@@ -101,14 +101,14 @@ void eval_diag_impl<N>::init(const tensor_transf<N, double> &trc) {
         if(idx[i] < didx.size()) m[i] = didx[idx[i]] + 1;
     }
 
-    double d = bta.get_transf().get_scalar_tr().get_coeff() *
+    T d = bta.get_transf().get_scalar_tr().get_coeff() *
         trc.get_scalar_tr().get_coeff();
-    m_op = new btod_diag<NA, NA - M + 1>(bta.get_btensor(), m, trc.get_perm(), d);
+    m_op = new bto_diag<NA, NA - M + 1, T>(bta.get_btensor(), m, trc.get_perm(), d);
 }
 
 
-template<size_t N> template<size_t NA>
-void eval_diag_impl<N>::dispatch_diag::dispatch() {
+template<size_t N, typename T> template<size_t NA>
+void eval_diag_impl<N, T>::dispatch_diag::dispatch() {
 
     eval.template init<NA, NA + 1 - N>(trc);
 }
@@ -117,17 +117,17 @@ void eval_diag_impl<N>::dispatch_diag::dispatch() {
 } // unnamed namespace
 
 
-template<size_t N>
-diag<N>::diag(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<N, double> &tr) :
+template<size_t N, typename T>
+diag<N, T>::diag(const expr_tree &tree, node_id_t &id,
+    const tensor_transf<N, T> &tr) :
 
-    m_impl(new eval_diag_impl<N>(tree, id, tr)) {
+    m_impl(new eval_diag_impl<N, T>(tree, id, tr)) {
 
 }
 
 
-template<size_t N>
-diag<N>::~diag() {
+template<size_t N, typename T>
+diag<N, T>::~diag() {
 
     delete m_impl;
 }
@@ -140,7 +140,7 @@ template<size_t N>
 struct aux_diag {
     const expr_tree *tree;
     expr_tree::node_id_t id;
-    const tensor_transf<N, double> *tr;
+    const tensor_transf<N, T> *tr;
     const node *t;
     diag<N> *e;
     aux_diag() {
@@ -149,19 +149,27 @@ struct aux_diag {
     }
 };
 } // namespace aux
-template class instantiate_template_1<1, eval_btensor<double>::Nmax,
+template class instantiate_template_1<1, eval_btensor<T>::Nmax,
     aux::aux_diag>;
 #endif
-template class diag<1>;
-template class diag<2>;
-template class diag<3>;
-template class diag<4>;
-template class diag<5>;
-template class diag<6>;
-template class diag<7>;
-template class diag<8>;
+template class diag<1, double>;
+template class diag<2, double>;
+template class diag<3, double>;
+template class diag<4, double>;
+template class diag<5, double>;
+template class diag<6, double>;
+template class diag<7, double>;
+template class diag<8, double>;
 
+template class diag<1, float>;
+template class diag<2, float>;
+template class diag<3, float>;
+template class diag<4, float>;
+template class diag<5, float>;
+template class diag<6, float>;
+template class diag<7, float>;
+template class diag<8, float>;
 
-} // namespace eval_btensor_double
+} // namespace eval_btensor_T
 } // namespace expr
 } // namespace libtensor
