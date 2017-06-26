@@ -345,11 +345,10 @@ void expr_test_x<T>::test_6() throw(libtest::test_exception) {
 
     letter i, j, k, l, a, b;
 
-    T multiplier = 0.5;
 
     i4_oooo(i|j|k|l) =
           i_oooo(i|j|k|l)
-        + multiplier * contract(a|b, i_oovv(k|l|a|b), t2(i|j|a|b))
+        + 0.5 * contract(a|b, i_oovv(k|l|a|b), t2(i|j|a|b))
         + asymm(i, j, contract(a, i_ooov(k|l|i|a), t1(j|a)))
         + contract(a|b, i_oovv(k|l|a|b), t1(i|a)*t1(j|b));
 
@@ -453,14 +452,13 @@ void expr_test_x<T>::test_7() throw(libtest::test_exception) {
 
     letter i, j, k, a, b, c;
 
-    T multiplier1 = 0.5, multiplier2 = 2.0;
 
     i1_ovov(i|a|j|b) =
           i_ovov(i|a|j|b)
         - contract(c, i_ovvv(i|a|b|c), t1(j|c))
         - contract(k, i_ooov(i|k|j|b), t1(k|a))
-        + multiplier1 * contract(k|c,
-                          t2(j|k|c|a) + multiplier2 * t1(j|c)*t1(k|a),
+        + 0.5 * contract(k|c,
+                          t2(j|k|c|a) + 2.0 * t1(j|c)*t1(k|a),
                                i_oovv(i|k|b|c));
 
     bto_copy<4, T> op1(i_ovov);
@@ -793,10 +791,10 @@ void expr_test_x<T>::test_11() throw(libtest::test_exception) {
 
     T multiplier1 = 0.5, multiplier2 = 2.0;
 
-    td2(i|j|a|b) = multiplier2 * div(
+    td2(i|j|a|b) = 2.0 * div(
           asymm(i, j, asymm(a, b,
               contract(k|c, t_oovv(i|k|a|c), i_ovov(k|b|j|c))))
-        - multiplier1 * (contract(c|d, t_oovv(i|j|c|d), i_vvvv(a|b|c|d))
+        - 0.5 * (contract(c|d, t_oovv(i|j|c|d), i_vvvv(a|b|c|d))
                 + contract(k|l, i_oooo(i|j|k|l), t_oovv(k|l|a|b))),
           symm(i, j, dirsum(df_ov(i|a), df_ov(j|b))));
 
