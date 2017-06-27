@@ -12,7 +12,7 @@ namespace libtensor {
     \ingroup libtensor_linalg
  **/
 class linalg_qchem_level1 :
-    public linalg_generic_level1,
+    public linalg_generic_level1<double>,
     public linalg_timings<linalg_qchem_level1> {
 
 public:
