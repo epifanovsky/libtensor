@@ -1,6 +1,6 @@
 #include <libtensor/block_tensor/bto_contract2.h>
 #ifdef WITH_LIBXM
-#include <libtensor/block_tensor/bto_contract2_xm.h>
+#include <libtensor/block_tensor/btod_contract2_xm.h>
 #endif // WITH_LIBXM
 #include <libtensor/block_tensor/bto_ewmult2.h>
 #include <libtensor/block_tensor/bto_scale.h>
@@ -202,7 +202,8 @@ void eval_contract_impl<NC, T>::init_contract(
     contr.permute_b(btb.get_transf().get_perm());
     contr.permute_c(trc.get_perm());
 
-#ifdef WITH_LIBXM
+//#ifdef WITH_LIBXM
+#if 0
     if(use_libxm) {
         m_op = new bto_contract2_xm<N, M, K, T>(contr,
             bta.get_btensor(), bta.get_transf().get_scalar_tr().get_coeff(),
