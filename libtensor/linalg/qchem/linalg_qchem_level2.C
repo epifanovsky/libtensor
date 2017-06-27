@@ -1,11 +1,10 @@
-#include <qchem.h>
-#include <libmathtools/general/blas_include.h>
+#include <liblas/liblas.h>
 #include "linalg_qchem_level2.h"
 
 namespace libtensor {
 
 
-const char *linalg_qchem_level2::k_clazz = "linalg";
+const char linalg_qchem_level2::k_clazz[] = "linalg";
 
 
 void linalg_qchem_level2::copy_ij_ji(
@@ -15,15 +14,17 @@ void linalg_qchem_level2::copy_ij_ji(
     double *c, size_t sic) {
 
     timings_base::start_timer("dcopy");
+    INTEGER ni_ = ni, nj_ = nj, one = 1;
+    INTEGER sja_ = sja, sic_ = sic;
     if(ni < nj) {
         double *c1 = c;
         for(size_t i = 0; i < ni; i++, c1 += sic) {
-            CL_DCOPY(nj, (double*)a + i, sja, c1, 1);
+            dcopy(&nj_, (double*)a + i, &sja_, c1, &one);
         }
     } else {
         const double *a1 = a;
         for(size_t j = 0; j < nj; j++, a1 += sja) {
-            CL_DCOPY(ni, (double*)a1, 1, c + j, sic);
+            dcopy(&ni_, (double*)a1, &one, c + j, &sic_);
         }
     }
     timings_base::stop_timer("dcopy");
@@ -39,7 +40,10 @@ void linalg_qchem_level2::mul2_i_ip_p_x(
     double d) {
 
     timings_base::start_timer("dgemv");
-    CL_DGEMV('T', np, ni, d, (double*)a, sia, (double*)b, spb, 1.0, c, sic);
+    INTEGER np_ = np, ni_ = ni, sia_ = sia, spb_ = spb, sic_ = sic;
+    double one = 1.0;
+    dgemv("T", &np_, &ni_, &d, (double*)a, &sia_, (double*)b, &spb_,
+        &one, c, &sic_);
     timings_base::stop_timer("dgemv");
 }
 
@@ -53,7 +57,10 @@ void linalg_qchem_level2::mul2_i_pi_p_x(
     double d) {
 
     timings_base::start_timer("dgemv");
-    CL_DGEMV('N', ni, np, d, (double*)a, spa, (double*)b, spb, 1.0, c, sic);
+    INTEGER ni_ = ni, np_ = np, spa_ = spa, spb_ = spb, sic_ = sic;
+    double one = 1.0;
+    dgemv("N", &ni_, &np_, &d, (double*)a, &spa_, (double*)b, &spb_,
+        &one, c, &sic_);
     timings_base::stop_timer("dgemv");
 }
 
@@ -67,7 +74,8 @@ void linalg_qchem_level2::mul2_ij_i_j_x(
     double d) {
 
     timings_base::start_timer("dger");
-    CL_DGER(nj, ni, d, (double*)b, sjb, (double*)a, sia, c, sic);
+    INTEGER ni_ = ni, nj_ = nj, sia_ = sia, sjb_ = sjb, sic_ = sic;
+    dger(&nj_, &ni_, &d, (double*)b, &sjb_, (double*)a, &sia_, c, &sic_);
     timings_base::stop_timer("dger");
 }
 

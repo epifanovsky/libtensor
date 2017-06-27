@@ -16,7 +16,7 @@ class linalg_qchem_level3 :
     public linalg_timings<linalg_qchem_level3> {
 
 public:
-    static const char *k_clazz; //!< Class name
+    static const char k_clazz[]; //!< Class name
 
 private:
     typedef linalg_timings<linalg_qchem_level3> timings_base;

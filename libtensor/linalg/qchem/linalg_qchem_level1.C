@@ -1,12 +1,11 @@
 #include <cstdlib>
-#include <qchem.h>
-#include <libmathtools/general/blas_include.h>
+#include <liblas/liblas.h>
 #include "linalg_qchem_level1.h"
 
 namespace libtensor {
 
 
-const char *linalg_qchem_level1::k_clazz = "linalg";
+const char linalg_qchem_level1::k_clazz[] = "linalg";
 
 
 void linalg_qchem_level1::add_i_i_x_x(
@@ -18,7 +17,9 @@ void linalg_qchem_level1::add_i_i_x_x(
     double d) {
 
     timings_base::start_timer("daxpy");
-    CL_DAXPY(ni, d * ka, (double*)a, sia, c, sic);
+    INTEGER ni_ = ni, sia_ = sia, sic_ = sic;
+    double d_ = d * ka;
+    daxpy(&ni_, &d, (double*)a, &sia_, c, &sic_);
     double db = d * kb * b;
     if(sic == 1) {
         for(size_t i = 0; i < ni; i++) c[i] += db;
@@ -41,7 +42,8 @@ void linalg_qchem_level1::copy_i_i(
         timings_base::stop_timer("memcpy");
     } else {
         timings_base::start_timer("dcopy");
-        CL_DCOPY(ni, (double*)a, sia, c, sic);
+        INTEGER ni_ = ni, sia_ = sia, sic_ = sic;
+        dcopy(&ni_, (double*)a, &sia_, c, &sic_);
         timings_base::stop_timer("dcopy");
     }
 }
@@ -54,7 +56,8 @@ void linalg_qchem_level1::mul1_i_x(
     double *c, size_t sic) {
 
     timings_base::start_timer("dscal");
-    CL_DSCAL(ni, a, c, sic);
+    INTEGER ni_ = ni, sic_ = sic;
+    dscal(&ni_, &a, c, &sic_);
     timings_base::stop_timer("dscal");
 }
 
@@ -66,7 +69,8 @@ double linalg_qchem_level1::mul2_x_p_p(
     const double *b, size_t spb) {
 
     timings_base::start_timer("ddot");
-    double d = CL_DDOT(np, (double*)a, spa, (double*)b, spb);
+    INTEGER np_ = np, spa_ = spa, spb_ = spb;
+    double d = ddot(&np_, (double*)a, &spa_, (double*)b, &spb_);
     timings_base::stop_timer("ddot");
     return d;
 }
@@ -105,7 +109,8 @@ void linalg_qchem_level1::mul2_i_i_x(
         timings_base::stop_timer("nonblas");
     } else {
         timings_base::start_timer("daxpy");
-        CL_DAXPY(ni, b, (double*)a, sia, c, sic);
+        int ni_ = ni, sia_ = sia, sic_ = sic;
+        daxpy(&ni_, &b, (double*)a, &sia_, c, &sic_);
         timings_base::stop_timer("daxpy");
     }
 }

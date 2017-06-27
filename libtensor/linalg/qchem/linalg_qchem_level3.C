@@ -1,11 +1,10 @@
-#include <qchem.h>
-#include <libmathtools/general/blas_include.h>
+#include <liblas/liblas.h>
 #include "linalg_qchem_level3.h"
 
 namespace libtensor {
 
 
-const char *linalg_qchem_level3::k_clazz = "linalg";
+const char linalg_qchem_level3::k_clazz[] = "linalg";
 
 
 void linalg_qchem_level3::mul2_ij_ip_jp_x(
@@ -17,8 +16,11 @@ void linalg_qchem_level3::mul2_ij_ip_jp_x(
     double d) {
 
     timings_base::start_timer("dgemm");
-    CL_DGEMM('T', 'N', nj, ni, np, d, (double*)b, sjb, (double*)a,
-        sia, 1.0, c, sic);
+    INTEGER ni_ = ni, nj_ = nj, np_ = np;
+    INTEGER sjb_ = sjb, sia_ = sia, sic_ = sic;
+    double one = 1.0;
+    dgemm("T", "N", &nj_, &ni_, &np_, &d, (double*)b, &sjb_, (double*)a,
+        &sia_, &one, c, &sic_);
     timings_base::stop_timer("dgemm");
 }
 
@@ -32,8 +34,11 @@ void linalg_qchem_level3::mul2_ij_ip_pj_x(
     double d) {
 
     timings_base::start_timer("dgemm");
-    CL_DGEMM('N', 'N', nj, ni, np, d, (double*)b, spb, (double*)a,
-        sia, 1.0, c, sic);
+    INTEGER ni_ = ni, nj_ = nj, np_ = np;
+    INTEGER spb_ = spb, sia_ = sia, sic_ = sic;
+    double one = 1.0;
+    dgemm("N", "N", &nj_, &ni_, &np_, &d, (double*)b, &spb_, (double*)a,
+        &sia_, &one, c, &sic_);
     timings_base::stop_timer("dgemm");
 }
 
@@ -47,8 +52,11 @@ void linalg_qchem_level3::mul2_ij_pi_jp_x(
     double d) {
 
     timings_base::start_timer("dgemm");
-    CL_DGEMM('T', 'T', nj, ni, np, d, (double*)b, sjb, (double*)a,
-        spa, 1.0, c, sic);
+    INTEGER ni_ = ni, nj_ = nj, np_ = np;
+    INTEGER sjb_ = sjb, spa_ = spa, sic_ = sic;
+    double one = 1.0;
+    dgemm("T", "T", &nj_, &ni_, &np_, &d, (double*)b, &sjb_, (double*)a,
+        &spa_, &one, c, &sic_);
     timings_base::stop_timer("dgemm");
 }
 
@@ -62,8 +70,11 @@ void linalg_qchem_level3::mul2_ij_pi_pj_x(
     double d) {
 
     timings_base::start_timer("dgemm");
-    CL_DGEMM('N', 'T', nj, ni, np, d, (double*)b, spb, (double*)a,
-        spa, 1.0, c, sic);
+    INTEGER ni_ = ni, nj_ = nj, np_ = np;
+    INTEGER spb_ = spb, spa_ = spa, sic_ = sic;
+    double one = 1.0;
+    dgemm("N", "T", &nj_, &ni_, &np_, &d, (double*)b, &spb_, (double*)a,
+        &spa_, &one, c, &sic_);
     timings_base::stop_timer("dgemm");
 }
 
