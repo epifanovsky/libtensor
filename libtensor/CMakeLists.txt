@@ -41,9 +41,10 @@ set(SRC_LINALG_MKL
 )
 
 set(SRC_LINALG_QCHEM
-    linalg/qchem/linalg_qchem_level1.C
-    linalg/qchem/linalg_qchem_level2.C
-    linalg/qchem/linalg_qchem_level3.C
+    linalg/qchem/linalg_qchem_level1_double.C
+    linalg/qchem/linalg_qchem_level2_double.C
+    linalg/qchem/linalg_qchem_level3_double.C
+    linalg/qchem/linalg_qchem_level3_float.C
 )
 
 set(SRC_LINALG_GENERIC

@@ -1,13 +1,13 @@
 #include <liblas/liblas.h>
-#include "linalg_qchem_level2.h"
+#include "linalg_qchem_level2_double.h"
 
 namespace libtensor {
 
 
-const char linalg_qchem_level2::k_clazz[] = "linalg";
+const char linalg_qchem_level2_double::k_clazz[] = "linalg";
 
 
-void linalg_qchem_level2::copy_ij_ji(
+void linalg_qchem_level2_double::copy_ij_ji(
     void*,
     size_t ni, size_t nj,
     const double *a, size_t sja,
@@ -31,7 +31,7 @@ void linalg_qchem_level2::copy_ij_ji(
 }
 
 
-void linalg_qchem_level2::mul2_i_ip_p_x(
+void linalg_qchem_level2_double::mul2_i_ip_p_x(
     void*,
     size_t ni, size_t np,
     const double *a, size_t sia,
@@ -48,7 +48,7 @@ void linalg_qchem_level2::mul2_i_ip_p_x(
 }
 
 
-void linalg_qchem_level2::mul2_i_pi_p_x(
+void linalg_qchem_level2_double::mul2_i_pi_p_x(
     void*,
     size_t ni, size_t np,
     const double *a, size_t spa,
@@ -65,7 +65,7 @@ void linalg_qchem_level2::mul2_i_pi_p_x(
 }
 
 
-void linalg_qchem_level2::mul2_ij_i_j_x(
+void linalg_qchem_level2_double::mul2_ij_i_j_x(
     void*,
     size_t ni, size_t nj,
     const double *a, size_t sia,

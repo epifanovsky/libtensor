@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LINALG_BASE_LEVEL3_QCHEM_H
-#define LIBTENSOR_LINALG_BASE_LEVEL3_QCHEM_H
+#ifndef LIBTENSOR_LINALG_QCHEM_LEVEL3_DOUBLE_H
+#define LIBTENSOR_LINALG_QCHEM_LEVEL3_DOUBLE_H
 
 #include "../linalg_timings.h"
 #include "../generic/linalg_generic_level3.h"
@@ -11,15 +11,15 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_qchem_level3 :
+class linalg_qchem_level3_double :
     public linalg_generic_level3<double>,
-    public linalg_timings<linalg_qchem_level3> {
+    public linalg_timings<linalg_qchem_level3_double> {
 
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    typedef linalg_timings<linalg_qchem_level3> timings_base;
+    typedef linalg_timings<linalg_qchem_level3_double> timings_base;
 
 public:
     static void mul2_ij_ip_jp_x(
@@ -59,4 +59,4 @@ public:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LINALG_BASE_LEVEL3_QCHEM_H
+#endif // LIBTENSOR_LINALG_QCHEM_LEVEL3_DOUBLE_H

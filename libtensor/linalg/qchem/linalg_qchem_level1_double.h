@@ -1,5 +1,5 @@
-#ifndef LIBTENSOR_LINALG_QCHEM_LEVEL1_H
-#define LIBTENSOR_LINALG_QCHEM_LEVEL1_H
+#ifndef LIBTENSOR_LINALG_QCHEM_LEVEL1_DOUBLE_H
+#define LIBTENSOR_LINALG_QCHEM_LEVEL1_DOUBLE_H
 
 #include "../linalg_timings.h"
 #include "../generic/linalg_generic_level1.h"
@@ -11,15 +11,15 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_qchem_level1 :
+class linalg_qchem_level1_double :
     public linalg_generic_level1<double>,
-    public linalg_timings<linalg_qchem_level1> {
+    public linalg_timings<linalg_qchem_level1_double> {
 
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    typedef linalg_timings<linalg_qchem_level1> timings_base;
+    typedef linalg_timings<linalg_qchem_level1_double> timings_base;
 
 public:
     static void add_i_i_x_x(
@@ -73,4 +73,4 @@ private:
 
 } // namespace libtensor
 
-#endif // LIBTENSOR_LINALG_QCHEM_LEVEL1_H
+#endif // LIBTENSOR_LINALG_QCHEM_LEVEL1_DOUBLE_H

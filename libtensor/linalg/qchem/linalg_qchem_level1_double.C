@@ -1,14 +1,14 @@
 #include <cstdlib>
 #include <liblas/liblas.h>
-#include "linalg_qchem_level1.h"
+#include "linalg_qchem_level1_double.h"
 
 namespace libtensor {
 
 
-const char linalg_qchem_level1::k_clazz[] = "linalg";
+const char linalg_qchem_level1_double::k_clazz[] = "linalg";
 
 
-void linalg_qchem_level1::add_i_i_x_x(
+void linalg_qchem_level1_double::add_i_i_x_x(
     void*,
     size_t ni,
     const double *a, size_t sia, double ka,
@@ -30,7 +30,7 @@ void linalg_qchem_level1::add_i_i_x_x(
 }
 
 
-void linalg_qchem_level1::copy_i_i(
+void linalg_qchem_level1_double::copy_i_i(
     void*,
     size_t ni,
     const double *a, size_t sia,
@@ -49,7 +49,7 @@ void linalg_qchem_level1::copy_i_i(
 }
 
 
-void linalg_qchem_level1::mul1_i_x(
+void linalg_qchem_level1_double::mul1_i_x(
     void*,
     size_t ni,
     double a,
@@ -62,7 +62,7 @@ void linalg_qchem_level1::mul1_i_x(
 }
 
 
-double linalg_qchem_level1::mul2_x_p_p(
+double linalg_qchem_level1_double::mul2_x_p_p(
     void*,
     size_t np,
     const double *a, size_t spa,
@@ -76,7 +76,7 @@ double linalg_qchem_level1::mul2_x_p_p(
 }
 
 
-void linalg_qchem_level1::mul2_i_i_x(
+void linalg_qchem_level1_double::mul2_i_i_x(
     void*,
     size_t ni,
     const double *a, size_t sia,
@@ -116,7 +116,7 @@ void linalg_qchem_level1::mul2_i_i_x(
 }
 
 
-void linalg_qchem_level1::mul2_i_i_x_p11(size_t ni,
+void linalg_qchem_level1_double::mul2_i_i_x_p11(size_t ni,
     const double *a, double b, double *c) {
 
     #pragma ivdep
@@ -126,7 +126,7 @@ void linalg_qchem_level1::mul2_i_i_x_p11(size_t ni,
 }
 
 
-void linalg_qchem_level1::mul2_i_i_x_pxx(size_t ni,
+void linalg_qchem_level1_double::mul2_i_i_x_pxx(size_t ni,
     const double *a, size_t sia, double b, double *c, size_t sic) {
 
     for(size_t i = 0; i < ni; i++) {
@@ -135,7 +135,7 @@ void linalg_qchem_level1::mul2_i_i_x_pxx(size_t ni,
 }
 
 
-void linalg_qchem_level1::mul2_i_i_x_m11(size_t ni,
+void linalg_qchem_level1_double::mul2_i_i_x_m11(size_t ni,
     const double *a, double b, double *c) {
 
     #pragma ivdep
@@ -145,7 +145,7 @@ void linalg_qchem_level1::mul2_i_i_x_m11(size_t ni,
 }
 
 
-void linalg_qchem_level1::mul2_i_i_x_mxx(size_t ni,
+void linalg_qchem_level1_double::mul2_i_i_x_mxx(size_t ni,
     const double *a, size_t sia, double b, double *c, size_t sic) {
 
     for(size_t i = 0; i < ni; i++) {
