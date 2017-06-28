@@ -331,7 +331,7 @@ void linalg_mkl_level1<float>::div1_i_i_x(
         size_t len = 256;
         while(ni > 0) {
             if(ni < len) len = ni;
-            vdDiv(len, c, a, buf);
+            vsDiv(len, c, a, buf);
             cblas_sscal(len, d, buf, 1);
             ::memcpy(c, buf, len * sizeof(float));
             ni -= len;
@@ -403,7 +403,7 @@ void linalg_mkl_level1<float>::mul2_i_i_i_x(
         size_t len = 256;
         while(ni > 0) {
             if(ni < len) len = ni;
-            vdMul(len, a, b, buf);
+            vsMul(len, a, b, buf);
             cblas_saxpy(len, d, buf, 1, c, sic);
             ni -= len;
             a += len;
@@ -467,7 +467,7 @@ void linalg_mkl_level1<float>::rng_set_i_x(
     }
 
     if(sia == 1) {
-        if(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+        if(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
             ni, a, 0.0, c) != VSL_STATUS_OK) {
             throw 0;
         }
@@ -476,7 +476,7 @@ void linalg_mkl_level1<float>::rng_set_i_x(
         size_t ni1 = ni, off = 0;
         while(ni1 > 0) {
             size_t batsz = std::min(ni1, size_t(256));
-            if(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+            if(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
                 batsz, buf, 0.0, c) != VSL_STATUS_OK) {
                 throw 0;
             }
@@ -517,7 +517,7 @@ void linalg_mkl_level1<float>::rng_add_i_x(
     size_t ni1 = ni, off = 0;
     while(ni1 > 0) {
         size_t batsz = std::min(ni1, size_t(256));
-        if(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+        if(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
             batsz, buf, 0.0, c) != VSL_STATUS_OK) {
             throw 0;
         }
