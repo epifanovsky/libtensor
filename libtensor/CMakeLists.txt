@@ -443,12 +443,16 @@ if(WITH_CTF)
 endif(WITH_CTF)
 
 add_library(tensor_core ${SRC_CORE})
+target_link_libraries(tensor_core util)
 add_library(tensor ${SRC})
+target_link_libraries(tensor tensor_core)
 add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
+target_link_libraries(tensor_block_sparse tensor_core)
 
 if(QCHEM_SOURCE_DIR)
     set(TARGETS ${TARGETS} tensor_qchem)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
+    target_link_libraries(tensor_qchem tensor_core)
 endif(QCHEM_SOURCE_DIR)
 
 set_property(TARGET ${TARGETS} APPEND PROPERTY
