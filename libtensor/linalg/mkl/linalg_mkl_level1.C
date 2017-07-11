@@ -12,6 +12,8 @@ namespace libtensor {
 
 template<>
 const char linalg_mkl_level1<double>::k_clazz[] = "mkl";
+template<>
+const char linalg_mkl_level1<float>::k_clazz[] = "mkl";
 
 
 template<>
