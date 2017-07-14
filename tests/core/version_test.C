@@ -1,11 +1,11 @@
 #include <sstream>
 #include <libtensor/version.h>
-#include "version_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
 
-void version_test::perform() throw(libtest::test_exception) {
+int main() {
 
     std::ostringstream ss;
     ss << version::get_major() << "." << version::get_minor() << "-"
@@ -16,10 +16,10 @@ void version_test::perform() throw(libtest::test_exception) {
         std::ostringstream sserr;
         sserr << "Version inconsistency: " << ver << " (actual) vs. "
             << ver_ref << " (ref).";
-        fail_test("version_test::perform()", __FILE__, __LINE__,
+        return fail_test("version_test::perform()", __FILE__, __LINE__,
             sserr.str().c_str());
     }
+
+    return 0;
 }
 
-
-} // namespace libtensor

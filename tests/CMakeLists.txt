@@ -1,68 +1,3 @@
-set(SRC_CORE
-    core/libtensor_core_tests.C
-    core/libtensor_core_suite.C
-    core/abs_index_test.C
-    core/block_index_space_test.C
-    core/block_index_space_product_builder_test.C
-    core/block_index_subspace_builder_test.C
-    core/block_map_test.C
-    core/combined_orbits_test.C
-    core/contraction2_list_builder_test.C
-    core/contraction2_test.C
-    core/dimensions_test.C
-    core/immutable_test.C
-    core/index_test.C
-    core/index_range_test.C
-    core/magic_dimensions_test.C
-    core/mask_test.C
-    core/orbit_test.C
-    core/orbit_list_test.C
-    core/permutation_test.C
-    core/permutation_builder_test.C
-    core/permutation_generator_test.C
-    core/sequence_test.C
-    core/sequence_generator_test.C
-    core/short_orbit_test.C
-    core/subgroup_orbits_test.C
-    core/symmetry_test.C
-    core/symmetry_element_set_test.C
-    core/transf_list_test.C
-    core/version_test.C
-)
-
-set(SRC_DENSE_TENSOR
-    dense_tensor/libtensor_dense_tensor_tests.C
-    dense_tensor/libtensor_dense_tensor_suite.C
-    dense_tensor/dense_tensor_test.C
-    dense_tensor/tod_add_test.C
-    dense_tensor/tod_apply_test.C
-    dense_tensor/tod_btconv_test.C
-    dense_tensor/tod_compare_test.C
-    dense_tensor/to_contract2_dims_test.C
-    dense_tensor/tod_contract2_test.C
-    dense_tensor/tod_copy_test.C
-    dense_tensor/tod_copy_wnd_test.C
-    dense_tensor/tod_diag_test.C
-    dense_tensor/tod_dirsum_test.C
-    dense_tensor/tod_dotprod_test.C
-    dense_tensor/tod_ewmult2_test.C
-    dense_tensor/tod_extract_test.C
-    dense_tensor/tod_import_raw_test.C
-    dense_tensor/tod_import_raw_stream_test.C
-    dense_tensor/tod_mult_test.C
-    dense_tensor/tod_mult1_test.C
-    dense_tensor/tod_random_test.C
-    dense_tensor/tod_scale_test.C
-    dense_tensor/tod_scatter_test.C
-    dense_tensor/tod_select_test.C
-    dense_tensor/tod_set_diag_test.C
-    dense_tensor/tod_set_elem_test.C
-    dense_tensor/tod_set_test.C
-    dense_tensor/tod_size_test.C
-    dense_tensor/tod_trace_test.C
-    dense_tensor/tod_vmpriority_test.C
-)
-
 set(SRC_DIAG_TENSOR
     diag_tensor/libtensor_diag_tensor_tests.C
     diag_tensor/libtensor_diag_tensor_suite.C
@@ -242,26 +177,6 @@ if(USE_LIBXM)
         block_tensor/btod_contract2_xm_test.C)
 endif(USE_LIBXM)
 
-set(SRC_LINALG
-    linalg/libtensor_linalg_tests.C
-    linalg/libtensor_linalg_suite.C
-    linalg/linalg_add_i_i_x_x_test.C
-    linalg/linalg_copy_ij_ji_test.C
-    linalg/linalg_mul2_x_p_p_test.C
-    linalg/linalg_mul2_i_i_i_x_test.C
-    linalg/linalg_mul2_i_i_x_test.C
-    linalg/linalg_mul2_x_pq_pq_test.C
-    linalg/linalg_mul2_x_pq_qp_test.C
-    linalg/linalg_mul2_i_ip_p_x_test.C
-    linalg/linalg_mul2_i_pi_p_x_test.C
-    linalg/linalg_mul2_ij_i_j_x_test.C
-    linalg/linalg_mul2_i_ipq_qp_x_test.C
-    linalg/linalg_mul2_ij_ip_jp_x_test.C
-    linalg/linalg_mul2_ij_ip_pj_x_test.C
-    linalg/linalg_mul2_ij_pi_jp_x_test.C
-    linalg/linalg_mul2_ij_pi_pj_x_test.C
-)
-
 set(SRC_EXPR
     expr/libtensor_expr_tests.C
     expr/libtensor_expr_suite.C
@@ -344,14 +259,11 @@ set(SRC_BLOCK_SPARSE_BENCHMARK
 )
 
 set(TARGETS
-    libtensor_core_tests
-    libtensor_dense_tensor_tests
     libtensor_diag_tensor_tests
     libtensor_diag_block_tensor_tests
     libtensor_block_tensor_tests
     libtensor_expr_tests
     libtensor_iface_tests
-    libtensor_linalg_tests
     libtensor_symmetry_tests
 #    libtensor_block_sparse_benchmark
 #    libtensor_block_sparse_tests
@@ -365,15 +277,13 @@ if(WITH_CTF)
     )
 endif(WITH_CTF)
 
-add_executable(libtensor_core_tests ${SRC_CORE})
-add_executable(libtensor_block_tensor_tests ${SRC_BLOCK_TENSOR})
-add_executable(libtensor_expr_tests ${SRC_EXPR})
-add_executable(libtensor_iface_tests ${SRC_IFACE})
-add_executable(libtensor_linalg_tests ${SRC_LINALG})
-add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
-add_executable(libtensor_dense_tensor_tests ${SRC_DENSE_TENSOR})
-add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
-add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
+#add_executable(libtensor_block_tensor_tests ${SRC_BLOCK_TENSOR})
+#add_executable(libtensor_expr_tests ${SRC_EXPR})
+#add_executable(libtensor_iface_tests ${SRC_IFACE})
+#add_executable(libtensor_symmetry_tests ${SRC_SYMMETRY})
+#add_executable(libtensor_diag_tensor_tests ${SRC_DIAG_TENSOR})
+#add_executable(libtensor_diag_block_tensor_tests ${SRC_DIAG_BLOCK_TENSOR})
+
 #add_executable(libtensor_block_sparse_benchmark ${SRC_BLOCK_SPARSE_BENCHMARK})
 #add_executable(libtensor_block_sparse_tests ${SRC_BLOCK_SPARSE})
 #add_executable(sparse_block_tree_benchmark block_sparse/sparse_block_tree_benchmark.C block_sparse/timer.C)
@@ -395,27 +305,42 @@ endif(WITH_CTF)
 if(LIBTENSOR_PACKAGE)
     include_directories("${LIBTEST_DIR}")
 else(LIBTENSOR_PACKAGE)
-    include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+#    include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 endif(LIBTENSOR_PACKAGE)
 
-set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
-if(HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
-else(HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
-endif(HAVE_LIBVMM)
+#set_property(TARGET ${TARGETS} APPEND PROPERTY
+#    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
+#if(HAVE_LIBVMM)
+#    set_property(TARGET ${TARGETS} APPEND PROPERTY
+#        COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
+#else(HAVE_LIBVMM)
+#    set_property(TARGET ${TARGETS} APPEND PROPERTY
+#        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
+#endif(HAVE_LIBVMM)
 
-foreach(TARGET ${TARGETS})
-target_link_libraries(${TARGET}
-    tensor tensor_core tensor_block_sparse
-    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} libtest)
-set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
-endforeach(TARGET)
+#foreach(TARGET ${TARGETS})
+#target_link_libraries(${TARGET}
+#    tensor tensor_core tensor_block_sparse
+#    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} libtest)
+#set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
+#endforeach(TARGET)
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling
 #set_property(TARGET libtensor_block_sparse_benchmark APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
 #set_property(TARGET sparse_block_tree_benchmark  APPEND PROPERTY CMAKE_CXX_FLAGS_RELEASE -g)
+
+
+macro(libtensor_add_tests SUITE)
+    foreach(TEST ${ARGN})
+        add_executable(${TEST} ${TEST}.C)
+        target_link_libraries(${TEST} tensor)
+        add_test(NAME "libtensor/${SUITE}/${TEST}" COMMAND ${TEST})
+    endforeach()
+endmacro()
+
+add_subdirectory(linalg)
+add_subdirectory(core)
+add_subdirectory(symmetry)
+add_subdirectory(dense_tensor)
+

@@ -1,31 +1,15 @@
 #include <libtensor/symmetry/inst/combine_label.h>
 #include <libtensor/symmetry/product_table_container.h>
-#include "combine_label_test.h"
+#include "se_label_test_base.h"
+#include "../test_utils.h"
 
-namespace libtensor {
 
-void combine_label_test::perform() throw(libtest::test_exception) {
+using namespace libtensor;
 
-    std::string s6("S6");
-    setup_pg_table(s6);
-
-    try {
-
-         test_1(s6);
-         test_2(s6);
-
-    } catch (libtest::test_exception) {
-        clear_pg_table(s6);
-        throw;
-    }
-
-    clear_pg_table(s6);
-}
 
 /** \test Tests setting evaluation rules
  **/
-void combine_label_test::test_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+int test_1(const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "combine_label_test::test_1(" << table_id << ")";
@@ -48,41 +32,43 @@ void combine_label_test::test_1(
 
     combine_label<2, double> cl(el1);
     if (cl.get_table_id() != table_id)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Table ID.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "Table ID.");
 
     cl.add(el2);
 
     const evaluation_rule<2> &rule = cl.get_rule();
     const eval_sequence_list<2> &sl = rule.get_sequences();
     if (sl.size() != 3)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# seq.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# seq.");
 
     evaluation_rule<2>::iterator it = rule.begin();
     if (it == rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule");
     const product_rule<2> &pr = rule.get_product(it);
     it++;
     if (it != rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
 
     product_rule<2>::iterator ip = pr.begin();
     if (ip == pr.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
     ip++;
     if (ip == pr.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
     ip++;
     if (ip == pr.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
     ip++;
     if (ip != pr.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# terms.");
+
+    return 0;
 }
+
 
 /** \test Four blocks, all labeled, different index types, basic rules only
  **/
-void combine_label_test::test_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+int test_2(const std::string &table_id) {
     
     std::ostringstream tnss;
     tnss << "combine_label_test::test_2(" << table_id << ")";
@@ -114,32 +100,47 @@ void combine_label_test::test_2(
 
     combine_label<4, double> cl(el1);
     if (cl.get_table_id() != table_id)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Table ID.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "Table ID.");
 
     cl.add(el2);
 
     const evaluation_rule<4> &rule = cl.get_rule();
     const eval_sequence_list<4> &sl = rule.get_sequences();
     if (sl.size() != 8)
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# seq.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# seq.");
 
     evaluation_rule<4>::iterator it = rule.begin();
     if (it == rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "Empty rule.");
     it++;
     if (it == rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
     it++;
     if (it == rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
     it++;
     if (it == rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
     it++;
     if (it != rule.end())
-        fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
+        return fail_test(tns.c_str(), __FILE__, __LINE__, "# products.");
 
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    std::string s6("S6");
+    setup_pg_table(s6);
+
+    int rc =
+        test_1(s6) ||
+        test_2(s6) ||
+        0;
+
+    clear_pg_table(s6);
+
+    return rc;
+}
+

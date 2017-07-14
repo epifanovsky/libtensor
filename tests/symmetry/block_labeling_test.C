@@ -1,23 +1,14 @@
 #include <libtensor/symmetry/block_labeling.h>
-#include "block_labeling_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-void block_labeling_test::perform() throw(libtest::test_exception) {
-
-    test_basic_1();
-    test_basic_2();
-    test_copy_1();
-    test_permute_1();
-    test_transfer_1();
-    test_transfer_2();
-}
 
 /** \test Tests assigning labels.
  **/
-void block_labeling_test::test_basic_1() throw(libtest::test_exception) {
+int test_basic_1() {
 
-    static const char *testname = "block_labeling_test::test_basic_1()";
+    static const char testname[] = "block_labeling_test::test_basic_1()";
 
     try {
 
@@ -37,49 +28,51 @@ void block_labeling_test::test_basic_1() throw(libtest::test_exception) {
         el.assign(m0100, 0, 0);
 
         if (el.get_dim_type(1) == el.get_dim_type(2)) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Equal types for dims 1 and 2.");
         }
         if (el.get_dim_type(2) != el.get_dim_type(3)) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Non-equal types for dims 2 and 3.");
         }
         if (el.get_label(el.get_dim_type(1), 0) != 0) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (1, 0).");
         }
         if (el.get_label(el.get_dim_type(1), 1) !=
                 (block_labeling<4>::label_t) -1) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (1, 1).");
         }
         if (el.get_label(el.get_dim_type(2), 0) != 0) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (2, 0).");
         }
         if (el.get_label(el.get_dim_type(2), 1) != 2) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (2, 1).");
         }
         if (el.get_label(el.get_dim_type(2), 2) != 1) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (2, 2).");
         }
         if (el.get_label(el.get_dim_type(2), 3) != 3) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (2, 3).");
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \test Tests assigning labels and matching them
  **/
-void block_labeling_test::test_basic_2() throw(libtest::test_exception) {
+int test_basic_2() {
 
-    static const char *testname = "block_labeling_test::test_basic_2()";
+    static const char testname[] = "block_labeling_test::test_basic_2()";
 
     try {
 
@@ -102,38 +95,40 @@ void block_labeling_test::test_basic_2() throw(libtest::test_exception) {
         el.match();
 
         if (el.get_dim_type(1) == el.get_dim_type(2)) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Equal types for dims 1 and 2.");
         }
         if (el.get_dim_type(2) != el.get_dim_type(3)) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Non-equal types for dims 2 and 3.");
         }
         if (el.get_label(el.get_dim_type(1), 0) != 0) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (1, 0).");
         }
         if (el.get_label(el.get_dim_type(1), 1) != 2) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Unexpected label at (1, 1).");
         }
         for (block_labeling<4>::label_t i = 0; i < 4; i++) {
             if (el.get_label(el.get_dim_type(2), i) != i) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Unexpected label in dim 2.");
             }
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \test Copy labeling (3-dim)
  **/
-void block_labeling_test::test_copy_1() throw(libtest::test_exception) {
+int test_copy_1() {
 
-    static const char *testname = "block_labeling_test::test_copy_1()";
+    static const char testname[] = "block_labeling_test::test_copy_1()";
 
     try {
 
@@ -163,13 +158,13 @@ void block_labeling_test::test_copy_1() throw(libtest::test_exception) {
             size_t cur_type_a = elema.get_dim_type(i);
 
             if (elem.get_dim(cur_type) != elema.get_dim(cur_type_a))
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Dimensions do not match.");
 
             for (size_t j = 0; j < elem.get_dim(cur_type); j++) {
                 if (elem.get_label(cur_type, j) !=
                         elema.get_label(cur_type_a, j))
-                    fail_test(testname, __FILE__, __LINE__,
+                    return fail_test(testname, __FILE__, __LINE__,
                             "Labels do not match.");
             }
 
@@ -178,7 +173,7 @@ void block_labeling_test::test_copy_1() throw(libtest::test_exception) {
             for (size_t j = i + 1; j < 3; j++) {
                 if (elem.get_dim_type(j) == cur_type) {
                     if (elema.get_dim_type(j) != cur_type_a)
-                        fail_test(testname, __FILE__, __LINE__,
+                        return fail_test(testname, __FILE__, __LINE__,
                                 "Wrong dim type.");
 
                     done[j] = true;
@@ -187,16 +182,18 @@ void block_labeling_test::test_copy_1() throw(libtest::test_exception) {
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Permutation of labeling (3-dim)
  **/
-void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
+int test_permute_1() {
 
-    static const char *testname = "block_labeling_test::test_permute_1()";
+    static const char testname[] = "block_labeling_test::test_permute_1()";
 
     try {
 
@@ -243,20 +240,20 @@ void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
             size_t cur_type_b = elemb.get_dim_type(mapb[i]);
 
             if (elem.get_dim(cur_type) != elema.get_dim(cur_type_a))
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Dimensions do not match (a)");
             if (elem.get_dim(cur_type) != elemb.get_dim(cur_type_b))
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Dimensions do not match (b)");
 
             for (size_t j = 0; j < elem.get_dim(cur_type); j++) {
                 if (elem.get_label(cur_type, j) !=
                         elema.get_label(cur_type_a, j))
-                    fail_test(testname, __FILE__, __LINE__,
+                    return fail_test(testname, __FILE__, __LINE__,
                             "Labels do not match (a)");
                 if (elem.get_label(cur_type, j) !=
                         elemb.get_label(cur_type_b, j))
-                    fail_test(testname, __FILE__, __LINE__,
+                    return fail_test(testname, __FILE__, __LINE__,
                             "Labels do not match (b)");
             }
 
@@ -265,10 +262,10 @@ void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
             for (size_t j = i + 1; j < 3; j++) {
                 if (elem.get_dim_type(j) == cur_type) {
                     if (elema.get_dim_type(mapa[j]) != cur_type_a)
-                        fail_test(testname, __FILE__, __LINE__,
+                        return fail_test(testname, __FILE__, __LINE__,
                                 "Wrong dim type (a)");
                     if (elema.get_dim_type(mapb[j]) != cur_type_b)
-                        fail_test(testname, __FILE__, __LINE__,
+                        return fail_test(testname, __FILE__, __LINE__,
                                 "Wrong dim type (b)");
 
                     done[j] = true;
@@ -277,15 +274,17 @@ void block_labeling_test::test_permute_1() throw(libtest::test_exception) {
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \test Transfer of labeling (1-dim to 3-dim)
  **/
-void block_labeling_test::test_transfer_1() throw(libtest::test_exception) {
+int test_transfer_1() {
 
-    static const char *testname = "block_labeling_test::test_transfer_1()";
+    static const char testname[] = "block_labeling_test::test_transfer_1()";
 
     try {
 
@@ -315,26 +314,28 @@ void block_labeling_test::test_transfer_1() throw(libtest::test_exception) {
         size_t typeb = elemb.get_dim_type(mapa[0]);
 
         if (elema.get_dim(typea) != elemb.get_dim(typeb))
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                     "Dimensions do not match.");
 
         for (size_t j = 0; j < elema.get_dim(typea); j++) {
             if (elema.get_label(typea, j) !=
                     elemb.get_label(typeb, j))
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Labels do not match.");
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \test Transfer of labelings(3-dim to 2-dim)
  **/
-void block_labeling_test::test_transfer_2() throw(libtest::test_exception) {
+int test_transfer_2() {
 
-    static const char *testname = "block_labeling_test::test_transfer_2()";
+    static const char testname[] = "block_labeling_test::test_transfer_2()";
 
     try {
 
@@ -370,19 +371,36 @@ void block_labeling_test::test_transfer_2() throw(libtest::test_exception) {
             size_t typeb = elemb.get_dim_type(mapa[i]);
 
             if (elema.get_dim(typea) != elemb.get_dim(typeb))
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Dimensions do not match.");
 
             for (size_t j = 0; j < elema.get_dim(typea); j++) {
                 if (elema.get_label(typea, j) !=
                         elemb.get_label(typeb, j))
-                    fail_test(testname, __FILE__, __LINE__,
+                    return fail_test(testname, __FILE__, __LINE__,
                             "Labels do not match.");
             }
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
-} // namespace libtensor
+
+
+int main() {
+
+    return
+
+    test_basic_1() |
+    test_basic_2() |
+    test_copy_1() |
+    test_permute_1() |
+    test_transfer_1() |
+    test_transfer_2() |
+
+    0;
+}
+

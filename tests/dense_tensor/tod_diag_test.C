@@ -5,32 +5,16 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_diag.h>
 #include "../compare_ref.h"
-#include "tod_diag_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_diag_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
-    test_7();
-    test_8();
-    test_9();
-}
+using namespace libtensor;
 
 
 /** \test Extract a single diagonal: \f$ b_i = a_{ii} \f$
  **/
-void tod_diag_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "tod_diag_test::test_1()";
+    static const char testname[] = "tod_diag_test::test_1()";
 
     typedef allocator<double> allocator;
 
@@ -77,17 +61,19 @@ void tod_diag_test::test_1() throw(libtest::test_exception) {
     compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a single diagonal with one index intact:
         \f$ b_{ij} = a_{iij} \f$
  **/
-void tod_diag_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "tod_diag_test::test_2()";
+    static const char testname[] = "tod_diag_test::test_2()";
 
     typedef allocator<double> allocator;
 
@@ -137,17 +123,19 @@ void tod_diag_test::test_2() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a single diagonal with one index intact:
         \f$ b_{ij} = a_{iji} \f$
  **/
-void tod_diag_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "tod_diag_test::test_3()";
+    static const char testname[] = "tod_diag_test::test_3()";
 
     typedef allocator<double> allocator;
 
@@ -197,17 +185,19 @@ void tod_diag_test::test_3() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a single diagonal with one index intact:
         \f$ b_{ji} = a_{jii} \f$
  **/
-void tod_diag_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname = "tod_diag_test::test_4()";
+    static const char testname[] = "tod_diag_test::test_4()";
 
     typedef allocator<double> allocator;
 
@@ -257,17 +247,19 @@ void tod_diag_test::test_4() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a single diagonal with one index intact and permuted:
         output \f$ b_{ij} = a_{jii} \f$
  **/
-void tod_diag_test::test_5() throw(libtest::test_exception) {
+int test_5() {
 
-    static const char *testname = "tod_diag_test::test_5()";
+    static const char testname[] = "tod_diag_test::test_5()";
 
     typedef allocator<double> allocator;
 
@@ -319,16 +311,18 @@ void tod_diag_test::test_5() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \test Extract a single diagonal with one index intact and permuted:
         output \f$ b_{jik} = a_{ikjk} \f$
  **/
-void tod_diag_test::test_6() throw(libtest::test_exception) {
+int test_6() {
 
-    static const char *testname = "tod_diag_test::test_6()";
+    static const char testname[] = "tod_diag_test::test_6()";
 
     typedef allocator<double> allocator;
 
@@ -382,17 +376,19 @@ void tod_diag_test::test_6() throw(libtest::test_exception) {
     compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a two diagonals and permute:
         output \f$ b_{ji} = a_{ijij} \f$
  **/
-void tod_diag_test::test_7() throw(libtest::test_exception) {
+int test_7() {
 
-    static const char *testname = "tod_diag_test::test_7()";
+    static const char testname[] = "tod_diag_test::test_7()";
 
     typedef allocator<double> allocator;
 
@@ -444,17 +440,19 @@ void tod_diag_test::test_7() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract a two diagonals with one index intact and permuted:
         output \f$ b_{kji} = a_{ikjiij} \f$
  **/
-void tod_diag_test::test_8() throw(libtest::test_exception) {
+int test_8() {
 
-    static const char *testname = "tod_diag_test::test_8()";
+    static const char testname[] = "tod_diag_test::test_8()";
 
     typedef allocator<double> allocator;
 
@@ -512,17 +510,19 @@ void tod_diag_test::test_8() throw(libtest::test_exception) {
     compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Extract two diagonals with one index intact and permuted:
         output \f$ b_{ijk} = a_{kiijj} \f$
  **/
-void tod_diag_test::test_9() throw(libtest::test_exception) {
+int test_9() {
 
-    static const char *testname = "tod_diag_test::test_9()";
+    static const char testname[] = "tod_diag_test::test_9()";
 
     typedef allocator<double> allocator;
 
@@ -578,9 +578,30 @@ void tod_diag_test::test_9() throw(libtest::test_exception) {
     compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+    test_6() |
+    test_7() |
+    test_8() |
+    test_9() |
+
+    0;
+}
+
+

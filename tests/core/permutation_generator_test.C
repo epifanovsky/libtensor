@@ -1,23 +1,14 @@
 #include <libtensor/core/permutation_generator.h>
-#include "permutation_generator_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void permutation_generator_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3();
-
-}
+using namespace libtensor;
 
 
 /** \test Tests the generation of permutations
  **/
-void permutation_generator_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "permutation_generator_test::test_1()";
+    static const char testname[] = "permutation_generator_test::test_1()";
 
     permutation_generator<4> pg;
     std::vector< permutation<4> > res;
@@ -28,11 +19,11 @@ void permutation_generator_test::test_1() throw(libtest::test_exception) {
         } while (pg.next());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     if (res.size() != 24)
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
                 "Wrong number of permutations.");
 
     for (size_t i = 0; i < res.size(); i++) {
@@ -42,18 +33,21 @@ void permutation_generator_test::test_1() throw(libtest::test_exception) {
                 if (res[i][k] != res[j][k]) break;
             }
             if (k == 4) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Identical permutations.");
             }
         }
     }
+
+    return 0;
 }
+
 
 /** \test Tests the generation of permutations of a part of a sequence
  **/
-void permutation_generator_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "permutation_generator_test::test_2()";
+    static const char testname[] = "permutation_generator_test::test_2()";
 
     mask<6> msk;
     msk[1] = msk[3] = msk[4] = true;
@@ -68,11 +62,11 @@ void permutation_generator_test::test_2() throw(libtest::test_exception) {
         } while (pg.next());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     if (res.size() != 6)
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
                 "Wrong number of permutations.");
 
     for (size_t i = 0; i < res.size(); i++) {
@@ -82,18 +76,21 @@ void permutation_generator_test::test_2() throw(libtest::test_exception) {
                 if (res[i][k] != res[j][k]) break;
             }
             if (k == 6) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                         "Identical permutations.");
             }
         }
     }
+
+    return 0;
 }
+
 
 /** \test Tests the generation of permutations
  **/
-void permutation_generator_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "permutation_generator_test::test_3()";
+    static const char testname[] = "permutation_generator_test::test_3()";
 
     permutation_generator<4> pg;
 
@@ -104,13 +101,13 @@ void permutation_generator_test::test_3() throw(libtest::test_exception) {
             const permutation<4> &p1 = pg.get_perm();
             size_t i = 0;
             for (; i < 4 && p1[i] == p0[i]; i++) ;
-            if (i == 4) fail_test(testname, __FILE__, __LINE__, "p0 == p1");
+            if (i == 4) return fail_test(testname, __FILE__, __LINE__, "p0 == p1");
             i++;
             for (; i < 4 && p1[i] == p0[i]; i++) ;
-            if (i == 4) fail_test(testname, __FILE__, __LINE__, "p1 invalid");
+            if (i == 4) return fail_test(testname, __FILE__, __LINE__, "p1 invalid");
             i++;
             for (; i < 4 && p1[i] == p0[i]; i++) ;
-            if (i != 4) fail_test(testname, __FILE__, __LINE__,
+            if (i != 4) return fail_test(testname, __FILE__, __LINE__,
                     "p0^-1 p1 not pair permutation");
 
             p0.reset();
@@ -118,8 +115,20 @@ void permutation_generator_test::test_3() throw(libtest::test_exception) {
         }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+
+    0;
+}
+

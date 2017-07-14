@@ -1,28 +1,13 @@
 #include <sstream>
 #include <libtensor/core/contraction2.h>
-#include "contraction2_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void contraction2_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
-    test_7();
-    test_8();
-    test_9();
-    test_10();
-}
+using namespace libtensor;
 
 
-void contraction2_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "contraction2_test::test_1()";
+    static const char testname[] = "contraction2_test::test_1()";
 
     try {
 
@@ -30,31 +15,33 @@ void contraction2_test::test_1() throw(libtest::test_exception) {
     contraction2<2, 2, 2> c(perm);
 
     if(c.is_complete()) {
-        fail_test("contraction2_test::test_1()", __FILE__, __LINE__,
+        return fail_test("contraction2_test::test_1()", __FILE__, __LINE__,
             "Empty contraction declares complete");
     }
 
     c.contract(2, 2);
     if(c.is_complete()) {
-        fail_test("contraction2_test::test_1()", __FILE__, __LINE__,
+        return fail_test("contraction2_test::test_1()", __FILE__, __LINE__,
             "Incomplete contraction declares complete");
     }
 
     c.contract(3, 3);
     if(!c.is_complete()) {
-        fail_test("contraction2_test::test_1()", __FILE__, __LINE__,
+        return fail_test("contraction2_test::test_1()", __FILE__, __LINE__,
             "Complete contraction declares incomplete");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "contraction2_test::test_2()";
+    static const char testname[] = "contraction2_test::test_2()";
 
     try {
 
@@ -76,7 +63,7 @@ void contraction2_test::test_2() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Index connections (1) are broken at position "
                 << i << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -86,7 +73,7 @@ void contraction2_test::test_2() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Index connections (2) are broken at position "
                 << i << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -99,19 +86,21 @@ void contraction2_test::test_2() throw(libtest::test_exception) {
         }
     }
     if(!eq) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Inconsistent contraction after permute_ab.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "contraction2_test::test_3()";
+    static const char testname[] = "contraction2_test::test_3()";
 
     try {
 
@@ -134,7 +123,7 @@ void contraction2_test::test_3() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Index connections (1) are broken at position "
                 << i << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -144,7 +133,7 @@ void contraction2_test::test_3() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Index connections (2) are broken at position "
                 << i << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -157,19 +146,21 @@ void contraction2_test::test_3() throw(libtest::test_exception) {
         }
     }
     if(!eq) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Inconsistent contraction after permute_ab.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname = "contraction2_test::test_4()";
+    static const char testname[] = "contraction2_test::test_4()";
 
     try {
 
@@ -189,20 +180,22 @@ void contraction2_test::test_4() throw(libtest::test_exception) {
             ss << "Incorrect connection at position " << i << ": "
                 << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_5() throw(libtest::test_exception) {
+int test_5() {
 
-    static const char *testname = "contraction2_test::test_5()";
+    static const char testname[] = "contraction2_test::test_5()";
 
     try {
 
@@ -220,20 +213,22 @@ void contraction2_test::test_5() throw(libtest::test_exception) {
             ss << "Incorrect connection at position " << i << ": "
                 << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_6() throw(libtest::test_exception) {
+int test_6() {
 
-    static const char *testname = "contraction2_test::test_6()";
+    static const char testname[] = "contraction2_test::test_6()";
 
     //  c_{ab} = \sum_{ic} a_{iabc} b_{ic}
 
@@ -256,20 +251,22 @@ void contraction2_test::test_6() throw(libtest::test_exception) {
             ss << "Incorrect connection at position " << i << ": "
                 << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_7() throw(libtest::test_exception) {
+int test_7() {
 
-    static const char *testname = "contraction2_test::test_7()";
+    static const char testname[] = "contraction2_test::test_7()";
 
     try {
 
@@ -280,7 +277,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
     size_t conn_ref[12] = { 8, 6, 10, 5, 9, 3, 1, 11, 0, 4, 2, 7 };
 
     if(!c1.is_complete()) {
-        fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
+        return fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
     }
 
     for(size_t i = 0; i < 12; i++) {
@@ -290,7 +287,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(1) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -303,7 +300,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(2) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -316,7 +313,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(3) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -329,7 +326,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(4) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -337,7 +334,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
     contraction2<2, 2, 2> c2(c1);
 
     if(!c2.is_complete()) {
-        fail_test(testname, __FILE__, __LINE__, "!c2.is_complete()");
+        return fail_test(testname, __FILE__, __LINE__, "!c2.is_complete()");
     }
 
     for(size_t i = 0; i < 12; i++) {
@@ -347,7 +344,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(5) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -360,7 +357,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(6) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -373,7 +370,7 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(7) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -386,20 +383,22 @@ void contraction2_test::test_7() throw(libtest::test_exception) {
             ss << "(8) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_8() throw(libtest::test_exception) {
+int test_8() {
 
-    static const char *testname = "contraction2_test::test_8()";
+    static const char testname[] = "contraction2_test::test_8()";
 
     try {
 
@@ -409,7 +408,7 @@ void contraction2_test::test_8() throw(libtest::test_exception) {
     c1.contract(3, 3);
 
     if(!c1.is_complete()) {
-        fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
+        return fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
     }
 
     c1.permute_a(permutation<4>().permute(0, 2));
@@ -424,7 +423,7 @@ void contraction2_test::test_8() throw(libtest::test_exception) {
             ss << "(1) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -438,20 +437,22 @@ void contraction2_test::test_8() throw(libtest::test_exception) {
             ss << "(2) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_9() throw(libtest::test_exception) {
+int test_9() {
 
-    static const char *testname = "contraction2_test::test_9()";
+    static const char testname[] = "contraction2_test::test_9()";
 
     try {
 
@@ -460,7 +461,7 @@ void contraction2_test::test_9() throw(libtest::test_exception) {
     c1.contract(3, 1);
 
     if(!c1.is_complete()) {
-        fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
+        return fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
     }
 
     size_t conn_ref1[10] = { 6, 4, 8, 5, 1, 3, 0, 9, 2, 7 };
@@ -472,7 +473,7 @@ void contraction2_test::test_9() throw(libtest::test_exception) {
             ss << "(1) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref1[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -489,7 +490,7 @@ void contraction2_test::test_9() throw(libtest::test_exception) {
             ss << "(2) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref2[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -503,20 +504,22 @@ void contraction2_test::test_9() throw(libtest::test_exception) {
             ss << "(3) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref2[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void contraction2_test::test_10() throw(libtest::test_exception) {
+int test_10() {
 
-    static const char *testname = "contraction2_test::test_10()";
+    static const char testname[] = "contraction2_test::test_10()";
 
     try {
 
@@ -525,7 +528,7 @@ void contraction2_test::test_10() throw(libtest::test_exception) {
     c1.contract(1, 3);
 
     if(!c1.is_complete()) {
-        fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
+        return fail_test(testname, __FILE__, __LINE__, "!c1.is_complete()");
     }
 
     size_t conn_ref1[10] = { 7, 4, 8, 6, 1, 9, 3, 0, 2, 5 };
@@ -537,7 +540,7 @@ void contraction2_test::test_10() throw(libtest::test_exception) {
             ss << "(1) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref1[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -554,7 +557,7 @@ void contraction2_test::test_10() throw(libtest::test_exception) {
             ss << "(2) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref2[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
@@ -568,15 +571,34 @@ void contraction2_test::test_10() throw(libtest::test_exception) {
             ss << "(3) Incorrect connection at position " << i
                 << ": " << conn[i] << " vs. " << conn_ref2[i]
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+    test_6() |
+    test_7() |
+    test_8() |
+    test_9() |
+    test_10() |
+
+    0;
+}
+

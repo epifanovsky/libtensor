@@ -13,36 +13,18 @@
 #include <libtensor/dense_tensor/tod_random.h>
 #include <libtensor/symmetry/se_perm.h>
 #include "../compare_ref.h"
-#include "tod_btconv_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_btconv_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
-    test_7();
-    test_8();
-    test_9();
-    test_10();
-    test_11();
-    test_12();
-
-}
+using namespace libtensor;
 
 
-void tod_btconv_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
     //
     // All zero blocks, no symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_1()";
+    static const char testname[] = "tod_btconv_test::test_1()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -96,18 +78,20 @@ void tod_btconv_test::test_1() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
     //
     // Block [0,0] is non-zero, no symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_2()";
+    static const char testname[] = "tod_btconv_test::test_2()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -179,18 +163,20 @@ void tod_btconv_test::test_2() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
     //
     // Block [1,1] is non-zero, no symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_3()";
+    static const char testname[] = "tod_btconv_test::test_3()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -264,18 +250,20 @@ void tod_btconv_test::test_3() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
     //
     // Diagonal blocks are non-zero, no symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_4()";
+    static const char testname[] = "tod_btconv_test::test_4()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -369,18 +357,20 @@ void tod_btconv_test::test_4() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_5() throw(libtest::test_exception) {
+int test_5() {
 
     //
     // Diagonal blocks are non-zero, permutational symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_5()";
+    static const char testname[] = "tod_btconv_test::test_5()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -496,18 +486,20 @@ void tod_btconv_test::test_5() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_6() throw(libtest::test_exception) {
+int test_6() {
 
     //
     // Off-diagonal blocks are non-zero, no symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_6()";
+    static const char testname[] = "tod_btconv_test::test_6()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -601,18 +593,20 @@ void tod_btconv_test::test_6() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_7() throw(libtest::test_exception) {
+int test_7() {
 
     //
     // Off-diagonal blocks are non-zero, permutational symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_7()";
+    static const char testname[] = "tod_btconv_test::test_7()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -702,18 +696,20 @@ void tod_btconv_test::test_7() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_8() throw(libtest::test_exception) {
+int test_8() {
 
     //
     // All blocks are non-zero, permutational symmetry
     //
 
-    static const char *testname = "tod_btconv_test::test_8()";
+    static const char testname[] = "tod_btconv_test::test_8()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<2, double, allocator_t> tensor_t;
@@ -858,18 +854,20 @@ void tod_btconv_test::test_8() throw(libtest::test_exception) {
         compare_ref<2>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_9() throw(libtest::test_exception) {
+int test_9() {
 
     //
     // Fully symmetric four-index tensor, one non-zero block
     //
 
-    static const char *testname = "tod_btconv_test::test_9()";
+    static const char testname[] = "tod_btconv_test::test_9()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
@@ -999,18 +997,20 @@ void tod_btconv_test::test_9() throw(libtest::test_exception) {
         compare_ref<4>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_10() throw(libtest::test_exception) {
+int test_10() {
 
     //
     // Non-symmetric four-index tensor, one non-zero block
     //
 
-    static const char *testname = "tod_btconv_test::test_10()";
+    static const char testname[] = "tod_btconv_test::test_10()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
@@ -1092,18 +1092,20 @@ void tod_btconv_test::test_10() throw(libtest::test_exception) {
         compare_ref<4>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_11() throw(libtest::test_exception) {
+int test_11() {
 
     //
     // Pairwise-symmetric four-index tensor, one non-zero block
     //
 
-    static const char *testname = "tod_btconv_test::test_11()";
+    static const char testname[] = "tod_btconv_test::test_11()";
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;
@@ -1210,19 +1212,21 @@ void tod_btconv_test::test_11() throw(libtest::test_exception) {
         compare_ref<4>::compare(testname, t, t_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-void tod_btconv_test::test_12() throw(libtest::test_exception) {
+int test_12() {
 
     //
     // Anti-symmetric three-index tensor. Three non-zero blocks:
     // [0,1,2], [0,2,2], [1,1,1]
     //
 
-    static const char *testname = "tod_btconv_test::test_12()";
+    static const char testname[] = "tod_btconv_test::test_12()";
 
     typedef allocator<double> allocator_t;
 
@@ -1334,9 +1338,31 @@ void tod_btconv_test::test_12() throw(libtest::test_exception) {
         compare_ref<3>::compare(testname, ta, ta_ref, 0.0);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+    test_6() |
+    test_7() |
+    test_8() |
+    test_9() |
+    test_10() |
+    test_11() |
+    test_12() |
+
+    0;
+}
+
+

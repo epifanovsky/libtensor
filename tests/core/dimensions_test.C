@@ -1,20 +1,12 @@
 #include <libtensor/core/dimensions.h>
-#include "dimensions_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void dimensions_test::perform() throw(libtest::test_exception) {
-
-    test_ctor();
-    test_contains();
-    test_comp();
-}
+using namespace libtensor;
 
 
-void dimensions_test::test_ctor() throw(libtest::test_exception) {
+int test_ctor() {
 
-    static const char *testname = "dimensions_test::test_ctor()";
+    static const char testname[] = "dimensions_test::test_ctor()";
 
     try {
 
@@ -24,42 +16,44 @@ void dimensions_test::test_ctor() throw(libtest::test_exception) {
     dimensions<2> d1(ir1);
 
     if(d1[0] != 2) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect number of elements along d1[0]");
     }
     if(d1[1] != 3) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect number of elements along d1[1]");
     }
     if(d1.get_size() != 6) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect total number of elements in d1");
     }
 
     dimensions<2> d2(d1);
 
     if(d2[0] != 2) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect number of elements along d2[0]");
     }
     if(d2[1] != 3) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect number of elements along d2[1]");
     }
     if(d2.get_size() != 6) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect total number of elements in d2");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dimensions_test::test_contains() throw(libtest::test_exception) {
+int test_contains() {
 
-    static const char *testname = "dimensions_test::test_contains()";
+    static const char testname[] = "dimensions_test::test_contains()";
 
     try {
 
@@ -69,61 +63,63 @@ void dimensions_test::test_contains() throw(libtest::test_exception) {
 
     i1[0] = 0; i1[1] = 0;
     if(!d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(0,0) returns false");
     }
 
     i1[1] = 1;
     if(!d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(0,1) returns false");
     }
 
     i1[1] = 12;
     if(!d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(0,12) returns false");
     }
 
     i1[1] = 13;
     if(d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(0,13) returns true");
     }
 
     i1[0] = 1; i1[1] = 0;
     if(!d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(1,0) returns false");
     }
 
     i1[0] = 10;
     if(!d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(10,0) returns false");
     }
 
     i1[0] = 11;
     if(d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(11,0) returns true");
     }
 
     i1[1] = 100;
     if(d1.contains(i1)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "(11,13).contains(11,100) returns true");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dimensions_test::test_comp() throw(libtest::test_exception) {
+int test_comp() {
 
-    static const char *testname = "dimensions_test::test_comp()";
+    static const char testname[] = "dimensions_test::test_comp()";
 
     try {
 
@@ -133,28 +129,39 @@ void dimensions_test::test_comp() throw(libtest::test_exception) {
     dimensions<2> d1(ir1), d2(d1), d3(ir2);
 
     if(!(d1 == d2)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Operator == on identical dimensions returned false.");
     }
     if(d1 == d3) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Operator == on different dimensions returned true.");
     }
     if(d1 != d2) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Operator != on identical dimensions returned true.");
     }
 
     if(!(d1 != d3)) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Operator != on different dimensions returned false.");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_ctor() |
+    test_contains() |
+    test_comp() |
+
+    0;
+}
 

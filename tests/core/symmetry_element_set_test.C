@@ -1,19 +1,11 @@
 #include <typeinfo>
 #include <libtensor/core/symmetry_element_set.h>
-#include "symmetry_element_set_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void symmetry_element_set_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3();
-}
+using namespace libtensor;
 
 
-namespace symmetry_element_set_test_ns {
+namespace {
 
 template<size_t N>
 class sym_elem_1 : public symmetry_element_i<N, double> {
@@ -50,44 +42,45 @@ template<size_t N>
 size_t sym_elem_1<N>::m_count = 0;
 
 }
-using namespace symmetry_element_set_test_ns;
 
 
 /** \test Tests the construction and iterators on the empty set
  **/
-void symmetry_element_set_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "symmetry_element_set_test::test_1()";
+    static const char testname[] = "symmetry_element_set_test::test_1()";
 
     try {
 
     symmetry_element_set<2, double> set("sym_elem_1");
     if(!set.is_empty()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!set.is_empty() in empty set.");
     }
     symmetry_element_set<2, double>::iterator i1 = set.begin();
     if(i1 != set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "set.begin() != set.end() in empty set.");
     }
     symmetry_element_set<2, double>::const_iterator i2 = set.begin();
     if(i2 != set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "set.begin() != set.end() in empty set (const).");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests the addition and life time of one element
  **/
-void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "symmetry_element_set_test::test_2()";
+    static const char testname[] = "symmetry_element_set_test::test_2()";
 
     try {
 
@@ -97,7 +90,7 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 
     //  One instance is local (e1) + one inside set
     if(sym_elem_1<2>::get_count() != 2) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "sym_elem_1<2>::get_count() != 2 (1).");
     }
 
@@ -105,7 +98,7 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 
     symmetry_element_set<2, double>::iterator i1 = set.begin();
     if(i1 == set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "set.begin() == set.end() in non-empty set.");
     }
 
@@ -115,7 +108,7 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
         sym_elem_1<2> &e1a = dynamic_cast< sym_elem_1<2>& >(
             set.get_elem(i1));
     } catch(std::bad_cast&) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Element in the set has the wrong type.");
     }
 
@@ -123,21 +116,21 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
 
     sym_elem_1<2> &e1a = dynamic_cast< sym_elem_1<2>& >(set.get_elem(i1));
     if(e1a.get_m() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Element in the set is incorrectly initialized.");
     }
 
     //  Make sure that the element was properly cloned
 
     if(e1a.get_n() == 0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Element in the set is not cloned properly.");
     }
 
     //  Check that there is only one element in the set
     i1++;
     if(i1 != set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "The set contains more than one element.");
     }
 
@@ -146,33 +139,35 @@ void symmetry_element_set_test::test_2() throw(libtest::test_exception) {
     i1 = set.begin();
     set.remove(i1);
     if(!set.is_empty()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!set.is_empty() in empty set.");
     }
     if(set.begin() != set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "set.begin() != set.end() in empty set.");
     }
 
     //  Check for memory leaks. Only one local instance should exist
 
     if(sym_elem_1<2>::get_count() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "sym_elem_1<2>::get_count() != 1 (1).");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests the addition and life time of one element
         (use const iterators)
  **/
-void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "symmetry_element_set_test::test_3()";
+    static const char testname[] = "symmetry_element_set_test::test_3()";
 
     try {
 
@@ -182,7 +177,7 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 
     //  One instance is local (e1) + one inside set
     if(sym_elem_1<2>::get_count() != 2) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "sym_elem_1<2>::get_count() != 2 (1).");
     }
 
@@ -190,7 +185,7 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
 
     symmetry_element_set<2, double>::const_iterator i1 = set.begin();
     if(i1 == set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "set.begin() == set.end() in non-empty set.");
     }
 
@@ -200,7 +195,7 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
         const sym_elem_1<2> &e1a = dynamic_cast< const sym_elem_1<2>& >(
             set.get_elem(i1));
     } catch(std::bad_cast&) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Element in the set has the wrong type.");
     }
 
@@ -209,46 +204,58 @@ void symmetry_element_set_test::test_3() throw(libtest::test_exception) {
     const sym_elem_1<2> &e1a =
         dynamic_cast< const sym_elem_1<2>& >(set.get_elem(i1));
     if(e1a.get_m() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Element in the set is incorrectly initialized.");
     }
 
     //  Make sure that the element was properly cloned
 
     if(e1a.get_n() == 0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Element in the set is not cloned properly.");
     }
 
     //  Check that there is only one element in the set
     i1++;
     if(i1 != set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "The set contains more than one element.");
     }
 
     //  Remove all elements and check the iterator
     set.clear();
     if(!set.is_empty()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "!set.is_empty() in empty set.");
     }
     if(set.begin() != set.end()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "set.begin() != set.end() in empty set.");
     }
 
     //  Check for memory leaks. Only one local instance should exist
 
     if(sym_elem_1<2>::get_count() != 1) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "sym_elem_1<2>::get_count() != 1 (1).");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+
+    0;
+}
+

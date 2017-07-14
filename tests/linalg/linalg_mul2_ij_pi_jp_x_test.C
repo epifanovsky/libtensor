@@ -3,28 +3,15 @@
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_mul2_ij_pi_jp_x_test.h"
+#include "test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-
-void linalg_mul2_ij_pi_jp_x_test::perform() throw(libtest::test_exception) {
-
-    test_mul2_ij_pi_jp_x(1, 1, 1, 1, 1, 1);
-    test_mul2_ij_pi_jp_x(1, 2, 3, 2, 3, 1);
-    test_mul2_ij_pi_jp_x(2, 1, 3, 1, 3, 2);
-    test_mul2_ij_pi_jp_x(16, 16, 1, 16, 1, 16);
-    test_mul2_ij_pi_jp_x(3, 17, 2, 17, 2, 3);
-    test_mul2_ij_pi_jp_x(2, 2, 2, 2, 3, 4);
-    test_mul2_ij_pi_jp_x(2, 2, 2, 4, 3, 2);
-}
-
-
-void linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x(size_t ni, size_t nj,
-    size_t np, size_t sic, size_t sjb, size_t spa) {
+int test_mul2_ij_pi_jp_x(
+    size_t ni, size_t nj, size_t np, size_t sic, size_t sjb, size_t spa) {
 
     std::ostringstream ss;
-    ss << "linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x("
+    ss << "test_mul2_ij_pi_jp_x("
         << ni << ", " << nj << ", " << np << ", " << sic << ", "
         << sjb << ", " << spa << ")";
     std::string tnss = ss.str();
@@ -47,7 +34,7 @@ void linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x(size_t ni, size_t nj,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__,
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
                 "Incorrect result (d = 0.0).");
         }
     }
@@ -60,7 +47,7 @@ void linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x(size_t ni, size_t nj,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__,
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
                 "Incorrect result (d = 1.0).");
         }
     }
@@ -73,7 +60,7 @@ void linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x(size_t ni, size_t nj,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__,
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
                 "Incorrect result (d = -1.0).");
         }
     }
@@ -86,7 +73,7 @@ void linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x(size_t ni, size_t nj,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__,
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
                 "Incorrect result (d = rnd).");
         }
     }
@@ -99,15 +86,31 @@ void linalg_mul2_ij_pi_jp_x_test::test_mul2_ij_pi_jp_x(size_t ni, size_t nj,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__,
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
                 "Incorrect result (d = -rnd).");
         }
     }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_mul2_ij_pi_jp_x(1, 1, 1, 1, 1, 1) |
+    test_mul2_ij_pi_jp_x(1, 2, 3, 2, 3, 1) |
+    test_mul2_ij_pi_jp_x(2, 1, 3, 1, 3, 2) |
+    test_mul2_ij_pi_jp_x(16, 16, 1, 16, 1, 16) |
+    test_mul2_ij_pi_jp_x(3, 17, 2, 17, 2, 3) |
+    test_mul2_ij_pi_jp_x(2, 2, 2, 2, 3, 4) |
+    test_mul2_ij_pi_jp_x(2, 2, 2, 4, 3, 2) |
+
+    0;
+}
+

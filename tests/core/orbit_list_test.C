@@ -3,31 +3,19 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/core/orbit_list.h>
 #include <libtensor/symmetry/se_perm.h>
-#include "orbit_list_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-void orbit_list_test::perform() throw(libtest::test_exception) {
 
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
-    test_7();
-    test_8();
-    test_9();
-}
-
-void orbit_list_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
     //
     //  dim [3,3], split [3,3]
     //  (1)(2), 9 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_1()";
+    static const char testname[] = "orbit_list_test::test_1()";
 
     try {
 
@@ -47,7 +35,7 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -69,24 +57,27 @@ void orbit_list_test::test_1() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_2() throw(libtest::test_exception) {
+
+int test_2() {
 
     //
     //  dim [3,3], split [3,3]
     //  (1)(1), 6 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_2()";
+    static const char testname[] = "orbit_list_test::test_2()";
 
     try {
 
@@ -110,7 +101,7 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -133,24 +124,27 @@ void orbit_list_test::test_2() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_3() throw(libtest::test_exception) {
+
+int test_3() {
 
     //
     //  dim [3,3,3,3], split [3,3,3,3]
     //  (1)(1)(2)(3), 54 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_3()";
+    static const char testname[] = "orbit_list_test::test_3()";
 
     try {
 
@@ -174,7 +168,7 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -197,24 +191,27 @@ void orbit_list_test::test_3() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_4() throw(libtest::test_exception) {
+
+int test_4() {
 
     //
     //  dim [3,3,3,3], split [3,3,3,3]
     //  (1)(2)(2)(3), 54 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_4()";
+    static const char testname[] = "orbit_list_test::test_4()";
 
     try {
 
@@ -238,7 +235,7 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -261,24 +258,27 @@ void orbit_list_test::test_4() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_5() throw(libtest::test_exception) {
+
+int test_5() {
 
     //
     //  dim [3,3,3,3], split [3,3,3,3]
     //  (1)(1)(1)(2), 33 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_5()";
+    static const char testname[] = "orbit_list_test::test_5()";
 
     try {
 
@@ -302,7 +302,7 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -326,24 +326,27 @@ void orbit_list_test::test_5() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_6() throw(libtest::test_exception) {
+
+int test_6() {
 
     //
     //  dim [3,3,3,3], split [3,3,3,3]
     //  (1)(1)(2)(2), 36 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_6()";
+    static const char testname[] = "orbit_list_test::test_6()";
 
     try {
 
@@ -371,7 +374,7 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -394,24 +397,27 @@ void orbit_list_test::test_6() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_7() throw(libtest::test_exception) {
+
+int test_7() {
 
     //
     //  dim [3,3,3,3], split [3,3,3,3]
     //  (1)(1)(1)(2), (1) fully symmetric, 30 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_7()";
+    static const char testname[] = "orbit_list_test::test_7()";
 
     try {
 
@@ -439,7 +445,7 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -462,24 +468,27 @@ void orbit_list_test::test_7() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_8() throw(libtest::test_exception) {
+
+int test_8() {
 
     //
     //  dim [3,3,3,3], split [3,3,3,3]
     //  (1)(1)(1)(1), (1) fully symmetric, 15 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_8()";
+    static const char testname[] = "orbit_list_test::test_8()";
 
     try {
 
@@ -507,7 +516,7 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -531,24 +540,27 @@ void orbit_list_test::test_8() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_list_test::test_9() throw(libtest::test_exception) {
+
+int test_9() {
 
     //
     //  dim [3,6,3,6], split [2,3,2,3]
     //  (1)(2)(1)(2), 18 orbits
     //
 
-    static const char *testname = "orbit_list_test::test_9()";
+    static const char testname[] = "orbit_list_test::test_9()";
 
     try {
 
@@ -580,7 +592,7 @@ void orbit_list_test::test_9() throw(libtest::test_exception) {
         std::ostringstream ss;
         ss << "Invalid number of orbits: " << orblst.get_size()
             << " vs. " << norb_ref << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
 
@@ -603,14 +615,33 @@ void orbit_list_test::test_9() throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can_ref = " << can_ref << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-} // namespace libtensor
+
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+    test_6() |
+    test_7() |
+    test_8() |
+    test_9() |
+
+    0;
+}
+

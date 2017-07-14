@@ -6,32 +6,17 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_add.h>
 #include "../compare_ref.h"
-#include "tod_add_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-const double tod_add_test::k_thresh = 1e-14;
+using namespace libtensor;
 
 
-void tod_add_test::perform() throw(libtest::test_exception) {
-
-    test_exc();
-
-    test_add_to_self_pqrs(2, 3, 4, 5);
-    test_add_two_pqrs_pqrs(2, 3, 4, 5);
-    test_add_two_pqrs_qprs(2, 3, 4, 5);
-    test_add_two_pqrs_prsq(3, 1, 1, 1);
-    test_add_two_pqrs_prsq(2, 3, 4, 5);
-    test_add_two_pqrs_qpsr(2, 3, 4, 5);
-    test_add_two_ijkl_kjli(1, 2, 13, 2, 0.5, -1.0);
-    test_add_mult(3, 2, 5, 4);
-}
+const double k_thresh = 1e-14;
 
 
-void tod_add_test::test_exc() throw(libtest::test_exception) {
+int test_exc() {
 
-    static const char *testname = "tod_add_test::test_exc()";
+    static const char testname[] = "tod_add_test::test_exc()";
 
     typedef allocator<double> allocator;
 
@@ -58,7 +43,7 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
     }
 
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Expected an exception due to heterogeneous operands");
     }
 
@@ -71,18 +56,19 @@ void tod_add_test::test_exc() throw(libtest::test_exception) {
     }
 
     if(!ok) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Expected an exception due to heterogeneous result tensor");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
-    throw(libtest::test_exception) {
+int test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_to_self_pqrs(" << p << "," << q << ","
@@ -128,13 +114,14 @@ void tod_add_test::test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s)
     compare_ref<4>::compare(tn.c_str(), tc, tc_ref, ta_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
-    size_t s) throw(libtest::test_exception) {
+int test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r, size_t s) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_to_pqrs_pqrs(" << p << "," << q << ","
@@ -184,13 +171,14 @@ void tod_add_test::test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r,
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
-    size_t s) throw(libtest::test_exception) {
+int test_add_two_pqrs_qprs(size_t p, size_t q, size_t r, size_t s) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_two_pqrs_qprs(" << p << "," << q << ","
@@ -253,13 +241,14 @@ void tod_add_test::test_add_two_pqrs_qprs(size_t p, size_t q, size_t r,
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
-    size_t s) throw(libtest::test_exception) {
+int test_add_two_pqrs_prsq(size_t p, size_t q, size_t r, size_t s) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_two_pqrs_prsq(";
@@ -323,13 +312,14 @@ void tod_add_test::test_add_two_pqrs_prsq(size_t p, size_t q, size_t r,
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
-    size_t s) throw(libtest::test_exception) {
+int test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r, size_t s) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_two_pqrs_qpsr(";
@@ -393,13 +383,15 @@ void tod_add_test::test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r,
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t2_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
-    size_t nl, double c1, double c2) throw(libtest::test_exception) {
+int test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
+    size_t nl, double c1, double c2) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_two_ijkl_kjli(" << ni << ", " << nj << ", "
@@ -466,13 +458,14 @@ void tod_add_test::test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     compare_ref<4>::compare(tn.c_str(), t3, t3_ref, t3_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
-    throw(libtest::test_exception) {
+int test_add_mult(size_t p, size_t q, size_t r, size_t s) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_mult(" << p << "," << q << "," << r << ","
@@ -545,13 +538,14 @@ void tod_add_test::test_add_mult(size_t p, size_t q, size_t r, size_t s)
     compare_ref<4>::compare(tn.c_str(), t1, t1_ref, t_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
-    throw(libtest::test_exception) {
+int test_add_two_pq_qp(size_t p, size_t q) {
 
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_two_pq_qp(" << p << "," << q << ")";
@@ -611,9 +605,29 @@ void tod_add_test::test_add_two_pq_qp(size_t p, size_t q)
     compare_ref<2>::compare(tn.c_str(), t1, t1_ref, t_max * k_thresh);
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_exc() |
+
+    test_add_to_self_pqrs(2, 3, 4, 5) |
+    test_add_two_pqrs_pqrs(2, 3, 4, 5) |
+    test_add_two_pqrs_qprs(2, 3, 4, 5) |
+    test_add_two_pqrs_prsq(3, 1, 1, 1) |
+    test_add_two_pqrs_prsq(2, 3, 4, 5) |
+    test_add_two_pqrs_qpsr(2, 3, 4, 5) |
+    test_add_two_ijkl_kjli(1, 2, 13, 2, 0.5, -1.0) |
+    test_add_mult(3, 2, 5, 4) |
+
+    0;
+}
+
+

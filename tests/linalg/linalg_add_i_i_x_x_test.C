@@ -3,28 +3,14 @@
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/linalg/generic/linalg_generic.h>
 #include <libtensor/exception.h>
-#include "linalg_add_i_i_x_x_test.h"
+#include "test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-
-void linalg_add_i_i_x_x_test::perform() throw(libtest::test_exception) {
-
-    test_add_i_i_x_x(1, 1, 1);
-    test_add_i_i_x_x(2, 1, 1);
-    test_add_i_i_x_x(16, 1, 1);
-    test_add_i_i_x_x(17, 1, 1);
-    test_add_i_i_x_x(2, 2, 3);
-    test_add_i_i_x_x(2, 3, 2);
-}
-
-
-void linalg_add_i_i_x_x_test::test_add_i_i_x_x(size_t ni, size_t sia,
-    size_t sic) {
+int test_add_i_i_x_x(size_t ni, size_t sia, size_t sic) {
 
     std::ostringstream ss;
-    ss << "linalg_add_i_i_x_x_test::test_add_i_i_x_x("
-        << ni << ", " << sia << ", " << sic << ")";
+    ss << "test_add_i_i_x_x(" << ni << ", " << sia << ", " << sic << ")";
     std::string tnss = ss.str();
 
     try {
@@ -46,14 +32,31 @@ void linalg_add_i_i_x_x_test::test_add_i_i_x_x(size_t ni, size_t sia,
 
     for(size_t i = 0; i < szc; i++) {
         if(!cmp(c[i] - c_ref[i], c_ref[i])) {
-            fail_test(tnss.c_str(), __FILE__, __LINE__, "Incorrect result.");
+            return fail_test(tnss.c_str(), __FILE__, __LINE__,
+                "Incorrect result.");
         }
     }
 
     } catch(exception &e) {
-        fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_add_i_i_x_x(1, 1, 1) |
+    test_add_i_i_x_x(2, 1, 1) |
+    test_add_i_i_x_x(16, 1, 1) |
+    test_add_i_i_x_x(17, 1, 1) |
+    test_add_i_i_x_x(2, 2, 3) |
+    test_add_i_i_x_x(2, 3, 2) |
+
+    0;
+}
+
+

@@ -5,50 +5,12 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_mult.h>
 #include "../compare_ref.h"
-#include "tod_mult_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
 
-void tod_mult_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_pq_pq_1(1, 12, false); test_pq_pq_1(12, 1, false);
-    test_pq_pq_1(1, 12, true);  test_pq_pq_1(12, 1, true);
-    test_pq_pq_1(10, 10, false); test_pq_pq_1(10, 10, true);
-    test_pq_pq_2(1, 12, false, 0.1);
-    test_pq_pq_2(12, 1, false, -0.2);
-    test_pq_pq_2(10, 10, false, 1.0);
-    test_pq_pq_2(1, 12, true, -0.6);
-    test_pq_pq_2(12, 1, true, 0.8);
-    test_pq_pq_2(10, 10, true, 12.0);
-    test_pq_qp(false, 0.1);
-    test_pq_qp(true, -1.0);
-    test_qp_pq(false, -1.1);
-    test_qp_pq(true, 0.4);
-    test_qp_qp(false, -1.1);
-    test_qp_qp(true, 0.4);
-    test_pqrs_qprs(2, 4, 5, 6, false, 0.1);
-    test_pqrs_qprs(3, 5, 2, 3, true, -0.1);
-    test_pqrs_qprs(2, 3, 1, 1, false, -0.1);
-    test_pqrs_qprs(3, 1, 2, 1, true, 0.1);
-    test_pqrs_qrps(4, 3, 2, 5, false, 1.0);
-    test_pqrs_qrps(2, 6, 4, 3, true, 0.3);
-    test_pqrs_qrps(4, 1, 2, 1, false, -0.2);
-    test_pqrs_qrps(1, 2, 4, 1, true, -0.6);
-    test_pqsr_pqrs(2, 4, 6, 5, false, 1.1);
-    test_pqsr_pqrs(3, 2, 5, 4, true, -1.2);
-    test_pqsr_pqrs(4, 1, 3, 1, false, 0.3);
-    test_pqsr_pqrs(2, 4, 1, 1, true, -0.4);
-    test_prsq_qrps(4, 2, 3, 5, false, -0.4);
-    test_prsq_qrps(5, 3, 6, 4, true, 0.7);
-    test_prsq_qrps(4, 3, 1, 1, false, 0.3);
-    test_prsq_qrps(1, 4, 3, 1, true, -0.4);
-}
-
-void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
-        throw(libtest::test_exception) {
+int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_pq_pq_1("
@@ -104,15 +66,15 @@ void tod_mult_test::test_pq_pq_1(size_t ni, size_t nj, bool recip)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 
-void tod_mult_test::test_pq_pq_2(
-        size_t ni, size_t nj, bool recip, double coeff)
-        throw(libtest::test_exception) {
+int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_pq_pq_2("
@@ -166,14 +128,14 @@ void tod_mult_test::test_pq_pq_2(
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-
-void tod_mult_test::test_pq_qp(bool recip, double coeff)
-        throw(libtest::test_exception) {
+int test_pq_qp(bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_3(" << recip << ", " << coeff << ")";
@@ -232,12 +194,14 @@ void tod_mult_test::test_pq_qp(bool recip, double coeff)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult_test::test_qp_pq(bool recip, double coeff)
-        throw(libtest::test_exception) {
+
+int test_qp_pq(bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_4(" << recip << ", " << coeff << ")";
@@ -296,12 +260,14 @@ void tod_mult_test::test_qp_pq(bool recip, double coeff)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult_test::test_qp_qp(bool recip, double coeff)
-        throw(libtest::test_exception) {
+
+int test_qp_qp(bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_5(" << recip << ", " << coeff << ")";
@@ -361,13 +327,14 @@ void tod_mult_test::test_qp_qp(bool recip, double coeff)
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult_test::test_pqrs_qprs(
-        size_t ni, size_t nj, size_t nk, size_t nl,
-        bool recip, double coeff) throw(libtest::test_exception) {
+int test_pqrs_qprs(
+    size_t ni, size_t nj, size_t nk, size_t nl, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_pqrs_qprs(" << ni << ", " << nj << ", " << nk
@@ -442,13 +409,14 @@ void tod_mult_test::test_pqrs_qprs(
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult_test::test_pqrs_qrps(
-        size_t ni, size_t nj, size_t nk, size_t nl,
-        bool recip, double coeff) throw(libtest::test_exception) {
+int test_pqrs_qrps(
+    size_t ni, size_t nj, size_t nk, size_t nl, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_pqrs_qrps(" << ni << ", " << nj << ", " << nk
@@ -522,13 +490,14 @@ void tod_mult_test::test_pqrs_qrps(
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult_test::test_pqsr_pqrs(
-        size_t ni, size_t nj, size_t nk, size_t nl,
-        bool recip, double coeff) throw(libtest::test_exception) {
+int test_pqsr_pqrs(
+    size_t ni, size_t nj, size_t nk, size_t nl, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_pqsr_pqrs(" << ni << ", " << nj << ", " << nk
@@ -603,12 +572,15 @@ void tod_mult_test::test_pqsr_pqrs(
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
-        bool recip, double coeff) throw(libtest::test_exception) {
+
+int test_prsq_qrps(
+    size_t ni, size_t nj, size_t nk, size_t nl, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_prsq_qrps(" << ni << ", " << nj << ", " << nk
@@ -692,9 +664,54 @@ void tod_mult_test::test_prsq_qrps(size_t ni, size_t nj, size_t nk, size_t nl,
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_pq_pq_1(1, 12, false) |
+    test_pq_pq_1(12, 1, false) |
+    test_pq_pq_1(1, 12, true) |
+    test_pq_pq_1(12, 1, true) |
+    test_pq_pq_1(10, 10, false) |
+    test_pq_pq_1(10, 10, true) |
+    test_pq_pq_2(1, 12, false, 0.1) |
+    test_pq_pq_2(12, 1, false, -0.2) |
+    test_pq_pq_2(10, 10, false, 1.0) |
+    test_pq_pq_2(1, 12, true, -0.6) |
+    test_pq_pq_2(12, 1, true, 0.8) |
+    test_pq_pq_2(10, 10, true, 12.0) |
+    test_pq_qp(false, 0.1) |
+    test_pq_qp(true, -1.0) |
+    test_qp_pq(false, -1.1) |
+    test_qp_pq(true, 0.4) |
+    test_qp_qp(false, -1.1) |
+    test_qp_qp(true, 0.4) |
+    test_pqrs_qprs(2, 4, 5, 6, false, 0.1) |
+    test_pqrs_qprs(3, 5, 2, 3, true, -0.1) |
+    test_pqrs_qprs(2, 3, 1, 1, false, -0.1) |
+    test_pqrs_qprs(3, 1, 2, 1, true, 0.1) |
+    test_pqrs_qrps(4, 3, 2, 5, false, 1.0) |
+    test_pqrs_qrps(2, 6, 4, 3, true, 0.3) |
+    test_pqrs_qrps(4, 1, 2, 1, false, -0.2) |
+    test_pqrs_qrps(1, 2, 4, 1, true, -0.6) |
+    test_pqsr_pqrs(2, 4, 6, 5, false, 1.1) |
+    test_pqsr_pqrs(3, 2, 5, 4, true, -1.2) |
+    test_pqsr_pqrs(4, 1, 3, 1, false, 0.3) |
+    test_pqsr_pqrs(2, 4, 1, 1, true, -0.4) |
+    test_prsq_qrps(4, 2, 3, 5, false, -0.4) |
+    test_prsq_qrps(5, 3, 6, 4, true, 0.7) |
+    test_prsq_qrps(4, 3, 1, 1, false, 0.3) |
+    test_prsq_qrps(1, 4, 3, 1, true, -0.4) |
+
+    0;
+}
+

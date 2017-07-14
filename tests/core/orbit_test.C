@@ -5,30 +5,14 @@
 #include <libtensor/symmetry/product_table_container.h>
 #include <libtensor/symmetry/se_perm.h>
 #include <libtensor/symmetry/se_label.h>
-#include "orbit_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void orbit_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
-    test_7();
-    test_8();
-    test_9();
-    test_10();
-    test_11();
-}
+using namespace libtensor;
 
 
-void orbit_test::test_1() {
+int test_1() {
 
-    static const char *testname = "orbit_test::test_1()";
+    static const char testname[] = "orbit_test::test_1()";
 
     try {
 
@@ -49,13 +33,13 @@ void orbit_test::test_1() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         if(orb.get_acindex() != aio.get_abs_index()) {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
@@ -66,24 +50,26 @@ void orbit_test::test_1() {
             ss << "Incorrect block permutation for " << io
                 << ": " << tr.get_perm() << " vs. " << pref
                 << " (ref).";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         if(tr.get_scalar_tr().get_coeff() != 1.0) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 "Incorrect block transformation (coeff).");
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void orbit_test::test_2() {
+int test_2() {
 
-    static const char *testname = "orbit_test::test_2()";
+    static const char testname[] = "orbit_test::test_2()";
 
     try {
 
@@ -108,7 +94,7 @@ void orbit_test::test_2() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
         bool can = io[0] <= io[1];
         size_t abscanidx = orb.get_acindex();
@@ -118,18 +104,18 @@ void orbit_test::test_2() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<2, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -138,7 +124,7 @@ void orbit_test::test_2() {
             io2.permute(pref);
             abs_index<2> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Inconsistent orbit composition (2).");
             }
             if(!tr.get_perm().equals(pref)) {
@@ -146,24 +132,26 @@ void orbit_test::test_2() {
                 ss << "Incorrect block permutation for " << io
                     << ": " << tr.get_perm() << " vs. " << pref
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_test::test_3() {
+int test_3() {
 
-    static const char *testname = "orbit_test::test_3()";
+    static const char testname[] = "orbit_test::test_3()";
 
     try {
 
@@ -188,7 +176,7 @@ void orbit_test::test_3() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         bool can = io[0] <= io[1];
@@ -199,18 +187,18 @@ void orbit_test::test_3() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<4, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -219,7 +207,7 @@ void orbit_test::test_3() {
             io2.permute(pref);
             abs_index<4> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Inconsistent orbit composition (2).");
             }
             if(!tr.get_perm().equals(pref)) {
@@ -227,24 +215,26 @@ void orbit_test::test_3() {
                 ss << "Incorrect block permutation for " << io
                     << ": " << tr.get_perm() << " vs. " << pref
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_test::test_4() {
+int test_4() {
 
-    static const char *testname = "orbit_test::test_4()";
+    static const char testname[] = "orbit_test::test_4()";
 
     try {
 
@@ -270,7 +260,7 @@ void orbit_test::test_4() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         bool can = io[1] <= io[2];
@@ -281,18 +271,18 @@ void orbit_test::test_4() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<4, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -301,7 +291,7 @@ void orbit_test::test_4() {
             io2.permute(pref);
             abs_index<4> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Inconsistent orbit composition (2).");
             }
             if(!tr.get_perm().equals(pref)) {
@@ -309,24 +299,26 @@ void orbit_test::test_4() {
                 ss << "Incorrect block permutation for " << io
                     << ": " << tr.get_perm() << " vs. " << pref
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_test::test_5() {
+int test_5() {
 
-    static const char *testname = "orbit_test::test_5()";
+    static const char testname[] = "orbit_test::test_5()";
 
     try {
 
@@ -352,7 +344,7 @@ void orbit_test::test_5() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         bool can = (io[0] == io[1] && io[0] <= io[2]) ||
@@ -364,18 +356,18 @@ void orbit_test::test_5() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<4, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -394,7 +386,7 @@ void orbit_test::test_5() {
                 ss << "Unexpected canonical index for " << io
                     << ": " << abscanidx << " vs. " << io2
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(!tr.get_perm().equals(p3)) {
@@ -402,24 +394,26 @@ void orbit_test::test_5() {
                 ss << "Incorrect block permutation for " << io
                     << ": " << tr.get_perm() << " vs. " << p3
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_test::test_6() {
+int test_6() {
 
-    static const char *testname = "orbit_test::test_6()";
+    static const char testname[] = "orbit_test::test_6()";
 
     try {
 
@@ -448,7 +442,7 @@ void orbit_test::test_6() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         bool can = (io[0] <= io[1] && io[2] <= io[3]);
@@ -459,18 +453,18 @@ void orbit_test::test_6() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<4, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -493,7 +487,7 @@ void orbit_test::test_6() {
                 ss << "Unexpected canonical index for " << io
                     << ": " << abscanidx << " vs. " << io2
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(!tr.get_perm().equals(pref)) {
@@ -501,24 +495,26 @@ void orbit_test::test_6() {
                 ss << "Incorrect block permutation for " << io
                     << ": " << tr.get_perm() << " vs. " << pref
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_test::test_7() {
+int test_7() {
 
-    static const char *testname = "orbit_test::test_7()";
+    static const char testname[] = "orbit_test::test_7()";
 
     try {
 
@@ -547,7 +543,7 @@ void orbit_test::test_7() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         bool can = (io[0] <= io[1] && io[1] <= io[2]);
@@ -559,18 +555,18 @@ void orbit_test::test_7() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<4, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -589,7 +585,7 @@ void orbit_test::test_7() {
                 ss << "Unexpected canonical index for " << io
                     << ": " << canidx.get_index() << " vs. " << io2
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(!io3.equals(io)) {
@@ -597,24 +593,27 @@ void orbit_test::test_7() {
                 ss << "Incorrect block permutation for " << io3
                     << "->" << io << ": " << tr.get_perm()
                     << ".";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void orbit_test::test_8() {
 
-    static const char *testname = "orbit_test::test_8()";
+int test_8() {
+
+    static const char testname[] = "orbit_test::test_8()";
 
     try {
 
@@ -643,7 +642,7 @@ void orbit_test::test_8() {
         if(!orb.is_allowed()) {
             std::ostringstream ss;
             ss << "Orbit not allowed: " << io << ".";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
         bool can = (io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
@@ -654,18 +653,18 @@ void orbit_test::test_8() {
             std::ostringstream ss;
             ss << "Failure to detect a canonical index: " << io
                 << " (can = " << can << ").";
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 ss.str().c_str());
         }
 
         const tensor_transf<4, double> &tr = orb.get_transf(io);
         if(can) {
             if(!tr.get_perm().is_identity()) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block permutation (1).");
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (1).");
             }
         } else {
@@ -688,7 +687,7 @@ void orbit_test::test_8() {
                 ss << "Unexpected canonical index for " << io
                     << ": " << canidx.get_index() << " vs. " << io2
                     << " (ref).";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(!io3.equals(io)) {
@@ -696,25 +695,27 @@ void orbit_test::test_8() {
                 ss << "Incorrect block permutation for " << io3
                     << "->" << io << ": " << tr.get_perm()
                     << ".";
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     ss.str().c_str());
             }
             if(tr.get_scalar_tr().get_coeff() != 1.0) {
-                fail_test(testname, __FILE__, __LINE__,
+                return fail_test(testname, __FILE__, __LINE__,
                     "Incorrect block scaling coeff (2).");
             }
         }
     } while(aio.inc());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void orbit_test::test_9() {
+int test_9() {
 
-    static const char *testname = "orbit_test::test_9()";
+    static const char testname[] = "orbit_test::test_9()";
 
     typedef point_group_table::label_t label_t;
     label_t ap = 0, app = 1;
@@ -729,7 +730,7 @@ void orbit_test::test_9() {
     product_table_container::get_instance().add(cs);
 
     } catch (exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     try {
@@ -762,14 +763,14 @@ void orbit_test::test_9() {
     if(!o00.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit not allowed: " << i00 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o00.get_acindex() != ai00.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i00
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr00 = o00.get_transf(i00);
@@ -778,11 +779,11 @@ void orbit_test::test_9() {
         ss << "Incorrect block permutation for " << i00
             << ": " << tr00.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr00.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
@@ -792,14 +793,14 @@ void orbit_test::test_9() {
     if(o01.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit allowed: " << i01 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o01.get_acindex() != ai01.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i01
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr01 = o01.get_transf(i01);
@@ -808,11 +809,11 @@ void orbit_test::test_9() {
         ss << "Incorrect block permutation for " << i01
             << ": " << tr01.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr01.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
@@ -822,14 +823,14 @@ void orbit_test::test_9() {
     if(o10.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit allowed: " << i10 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o10.get_acindex() != ai10.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i10
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr10 = o10.get_transf(i10);
@@ -838,11 +839,11 @@ void orbit_test::test_9() {
         ss << "Incorrect block permutation for " << i10
             << ": " << tr10.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr10.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
@@ -852,14 +853,14 @@ void orbit_test::test_9() {
     if(!o11.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit not allowed: " << i11 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o11.get_acindex() != ai11.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i11
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr11 = o11.get_transf(i11);
@@ -868,29 +869,28 @@ void orbit_test::test_9() {
         ss << "Incorrect block permutation for " << i11
             << ": " << tr11.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr11.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
     } catch(exception &e) {
         product_table_container::get_instance().erase(testname);
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    } catch(libtest::test_exception) {
-        product_table_container::get_instance().erase(testname);
-        throw;
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     product_table_container::get_instance().erase(testname);
+
+    return 0;
 }
 
 
-void orbit_test::test_10() {
+int test_10() {
 
-    static const char *testname = "orbit_test::test_10()";
+    static const char testname[] = "orbit_test::test_10()";
 
     typedef point_group_table::label_t label_t;
     label_t ap = 0, app = 1;
@@ -905,7 +905,7 @@ void orbit_test::test_10() {
     product_table_container::get_instance().add(cs);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     try {
@@ -943,14 +943,14 @@ void orbit_test::test_10() {
     if(!o00.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit not allowed: " << i00 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o00.get_acindex() != ai00.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i00
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr00 = o00.get_transf(i00);
@@ -959,11 +959,11 @@ void orbit_test::test_10() {
         ss << "Incorrect block permutation for " << i00
             << ": " << tr00.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr00.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
@@ -973,14 +973,14 @@ void orbit_test::test_10() {
     if(o01.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit allowed: " << i01 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o01.get_acindex() != ai01.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i01
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr01 = o01.get_transf(i01);
@@ -989,11 +989,11 @@ void orbit_test::test_10() {
         ss << "Incorrect block permutation for " << i01
             << ": " << tr01.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr01.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
@@ -1003,14 +1003,14 @@ void orbit_test::test_10() {
     if(o10.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit allowed: " << i10 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o10.get_acindex() != ai01.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i10
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr10 = o10.get_transf(i10);
@@ -1019,11 +1019,11 @@ void orbit_test::test_10() {
         ss << "Incorrect block permutation for " << i10
             << ": " << tr10.get_perm() << " vs. " << p1
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr10.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
@@ -1033,14 +1033,14 @@ void orbit_test::test_10() {
     if(!o11.is_allowed()) {
         std::ostringstream ss;
         ss << "Orbit not allowed: " << i11 << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(o11.get_acindex() != ai11.get_abs_index()) {
         std::ostringstream ss;
         ss << "Failure to detect a canonical index: " << i11
             << ".";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     const tensor_transf<2, double> &tr11 = o11.get_transf(i11);
@@ -1049,29 +1049,28 @@ void orbit_test::test_10() {
         ss << "Incorrect block permutation for " << i11
             << ": " << tr11.get_perm() << " vs. " << p0
             << " (ref).";
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             ss.str().c_str());
     }
     if(tr11.get_scalar_tr().get_coeff() != 1.0) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect block transformation (coeff).");
     }
 
     } catch(exception &e) {
         product_table_container::get_instance().erase(testname);
-        fail_test(testname, __FILE__, __LINE__, e.what());
-    } catch(libtest::test_exception) {
-        product_table_container::get_instance().erase(testname);
-        throw;
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     product_table_container::get_instance().erase(testname);
+
+    return 0;
 }
 
 
-void orbit_test::test_11() {
+int test_11() {
 
-    static const char *testname = "orbit_test::test_11()";
+    static const char testname[] = "orbit_test::test_11()";
 
     try {
 
@@ -1110,14 +1109,34 @@ void orbit_test::test_11() {
                 << " (" << tr.get_perm() << ", "
                 << tr.get_scalar_tr().get_coeff() << "); "
                 << "expected " << idx3 << ".";
-            fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+    test_6() |
+    test_7() |
+    test_8() |
+    test_9() |
+    test_10() |
+    test_11() |
+
+    0;
+}
+

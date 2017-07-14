@@ -5,28 +5,12 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_mult1.h>
 #include "../compare_ref.h"
-#include "tod_mult1_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
 
-void tod_mult1_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_pq_pq_1(5, 10, false); test_pq_pq_1(5, 10, true);
-    test_pq_pq_1(5, 1, false); test_pq_pq_1(1, 5, true);
-    test_pq_pq_2(5, 10, false, 0.2); test_pq_pq_2(5, 10, true, -0.5);
-    test_pq_pq_2(5, 1, false, -0.1); test_pq_pq_2(1, 5, true, 0.2);
-    test_pqrs_qrps(5, 7, 3, 4, false, 0.2);
-    test_pqrs_qrps(4, 3, 5, 6, true, -0.7);
-    test_pqrs_qrps(6, 7, 1, 1, false, -1.1);
-    test_pqrs_qrps(1, 8, 5, 1, true, 0.4);
-}
-
-void tod_mult1_test::test_pq_pq_1(
-        size_t ni, size_t nj,
-        bool recip) throw(libtest::test_exception) {
+int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
 
     std::ostringstream tnss;
     tnss << "tod_mult1_test::test_pq_pq_1(" << ni << ", " << nj << ", "
@@ -78,13 +62,13 @@ void tod_mult1_test::test_pq_pq_1(
     compare_ref<2>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult1_test::test_pq_pq_2(
-        size_t ni, size_t nj,
-        bool recip, double coeff) throw(libtest::test_exception) {
+int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult1_test::test_pq_pq_2(" << ni << ", " << nj << ", "
@@ -136,13 +120,14 @@ void tod_mult1_test::test_pq_pq_2(
     compare_ref<2>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
-void tod_mult1_test::test_pqrs_qrps(
-        size_t ni, size_t nj, size_t nk, size_t nl,
-        bool recip, double coeff) throw(libtest::test_exception) {
+int test_pqrs_qrps(
+    size_t ni, size_t nj, size_t nk, size_t nl, bool recip, double coeff) {
 
     std::ostringstream tnss;
     tnss << "tod_mult1_test::test_pqrs_qrps(" << ni << ", " << nj << ", "
@@ -214,9 +199,32 @@ void tod_mult1_test::test_pqrs_qrps(
     compare_ref<4>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_pq_pq_1(5, 10, false) |
+    test_pq_pq_1(5, 10, true) |
+    test_pq_pq_1(5, 1, false) |
+    test_pq_pq_1(1, 5, true) |
+    test_pq_pq_2(5, 10, false, 0.2) |
+    test_pq_pq_2(5, 10, true, -0.5) |
+    test_pq_pq_2(5, 1, false, -0.1) |
+    test_pq_pq_2(1, 5, true, 0.2) |
+    test_pqrs_qrps(5, 7, 3, 4, false, 0.2) |
+    test_pqrs_qrps(4, 3, 5, 6, true, -0.7) |
+    test_pqrs_qrps(6, 7, 1, 1, false, -1.1) |
+    test_pqrs_qrps(1, 8, 5, 1, true, 0.4) |
+
+    0;
+}
+

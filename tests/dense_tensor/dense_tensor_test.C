@@ -3,28 +3,14 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/impl/dense_tensor_impl.h>
-#include "dense_tensor_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-namespace tensor_test_ns { }
-using namespace tensor_test_ns;
+using namespace libtensor;
 
 
-void dense_tensor_test::perform() throw(libtest::test_exception) {
+int test_ctor() {
 
-    test_ctor();
-    test_immutable();
-    test_operation();
-    test_1();
-    test_2();
-}
-
-
-void dense_tensor_test::test_ctor() throw(libtest::test_exception) {
-
-    static const char *testname = "tensor_test::test_ctor()";
+    static const char testname[] = "dense_tensor_test::test_ctor()";
 
     typedef allocator<double> allocator;
 
@@ -38,32 +24,32 @@ void dense_tensor_test::test_ctor() throw(libtest::test_exception) {
     dense_tensor<2, double, allocator> t1(d1);
 
     if(t1.is_immutable()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "A new tensor must be mutable (t1)");
     }
 
     if(t1.get_dims()[0] != 3) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 0 (t1)");
     }
     if(t1.get_dims()[1] != 4) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 1 (t1)");
     }
 
     dense_tensor<2, double, allocator> t2(t1);
 
     if(t2.is_immutable()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "A new tensor must be mutable (t2)");
     }
 
     if(t2.get_dims()[0] != 3) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 0 (t2)");
     }
     if(t2.get_dims()[1] != 4) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 1 (t2)");
     }
 
@@ -71,27 +57,28 @@ void dense_tensor_test::test_ctor() throw(libtest::test_exception) {
     dense_tensor<2, double, allocator> t3(pt2);
 
     if(t3.is_immutable()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "A new tensor must be mutable (t3)");
     }
 
     if(t3.get_dims()[0] != 3) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 0 (t3)");
     }
     if(t3.get_dims()[1] != 4) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Incorrect tensor dimension 1 (t3)");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-namespace tensor_test_ns {
-
+namespace {
 
 /** Checks that requesting a non-const data pointer causes an exception
  **/
@@ -127,13 +114,12 @@ public:
 
 };
 
+} // unnamed namespace
 
-} // namespace tensor_test_ns
 
+int test_immutable() {
 
-void dense_tensor_test::test_immutable() throw(libtest::test_exception) {
-
-    static const char *testname = "tensor_test::test_immutable()";
+    static const char testname[] = "dense_tensor_test::test_immutable()";
 
     typedef allocator<int> allocator;
 
@@ -147,30 +133,31 @@ void dense_tensor_test::test_immutable() throw(libtest::test_exception) {
     dense_tensor<2, int, allocator> t1(d1);
 
     if(t1.is_immutable()) {
-        fail_test(testname, __FILE__, __LINE__, "New tensor t1 is not mutable");
+        return fail_test(testname, __FILE__, __LINE__, "New tensor t1 is not mutable");
     }
 
     t1.set_immutable();
 
     if(!t1.is_immutable()) {
-        fail_test(testname, __FILE__, __LINE__, "Setting t1 immutable failed");
+        return fail_test(testname, __FILE__, __LINE__, "Setting t1 immutable failed");
     }
 
     op_chk_imm op;
     op.perform(t1);
     if(!op.is_ok()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Requesting non-const pointer in t1 must fail");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 namespace {
-
 
 /** Sets all elements a given value
  **/
@@ -284,13 +271,12 @@ public:
 
 };
 
-
 } // unnamed namespace
 
 
-void dense_tensor_test::test_operation()throw (libtest::test_exception) {
+int test_operation() {
 
-    static const char *testname = "tensor_test::test_operation()";
+    static const char testname[] = "dense_tensor_test::test_operation()";
 
     typedef allocator<int> allocator;
 
@@ -309,32 +295,34 @@ void dense_tensor_test::test_operation()throw (libtest::test_exception) {
     op1.perform(t1);
     chkop1.perform(t1);
     if(!chkop1.is_ok()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Operation failed to set all elements to 1 (t1)");
     }
     op100.perform(t1);
     chkop100.perform(t1);
     if(!chkop100.is_ok()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Operation failed to set all elements to 100 (t1)");
     }
 
     op_chk_dblreq op_dblreq;
     op_dblreq.perform(t1);
     if(!op_dblreq.is_ok()) {
-        fail_test(testname, __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "Double requests for data must cause an exception");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dense_tensor_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "tensor_test::test_1()";
+    static const char testname[] = "dense_tensor_test::test_1()";
 
     typedef allocator<double> allocator;
 
@@ -361,16 +349,18 @@ void dense_tensor_test::test_1() throw(libtest::test_exception) {
     p1 = 0;
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Opens and closes 33 sessions with a tensor
  **/
-void dense_tensor_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "tensor_test::test_2()";
+    static const char testname[] = "dense_tensor_test::test_2()";
 
     typedef allocator<double> allocator;
 
@@ -463,8 +453,10 @@ void dense_tensor_test::test_2() throw(libtest::test_exception) {
     c32.ret_const_dataptr(p32);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
@@ -518,9 +510,9 @@ public:
 } // unnamed namespace
 
 
-void dense_tensor_test::test_mp_1() throw(libtest::test_exception) {
+int test_mp_1() {
 
-    static const char *testname = "dense_tensor_test::test_mp_1()";
+    static const char testname[] = "dense_tensor_test::test_mp_1()";
 
     typedef allocator<double> allocator_t;
 
@@ -543,21 +535,23 @@ void dense_tensor_test::test_mp_1() throw(libtest::test_exception) {
     const double *p2 = c1.req_const_dataptr();
     for(size_t i = 0; i < sz; i++) {
         if(p2[i] != (double)i) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 "Data corruption detected.");
         }
     }
     c1.ret_const_dataptr(p2);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dense_tensor_test::test_mp_2() throw(libtest::test_exception) {
+int test_mp_2() {
 
-    static const char *testname = "dense_tensor_test::test_mp_2()";
+    static const char testname[] = "dense_tensor_test::test_mp_2()";
 
     typedef allocator<double> allocator_t;
 
@@ -581,7 +575,7 @@ void dense_tensor_test::test_mp_2() throw(libtest::test_exception) {
     const double *p3 = c2.req_const_dataptr();
     for(size_t i = 0; i < sz; i++) {
         if(p2[i] != (double)i || p3[i] != (double)i) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 "Data corruption detected (1).");
         }
     }
@@ -596,7 +590,7 @@ void dense_tensor_test::test_mp_2() throw(libtest::test_exception) {
     p3 = c2.req_const_dataptr();
     for(size_t i = 0; i < sz; i++) {
         if(p2[i] != (double)(i * 2) || p3[i] != (double)(i * 2)) {
-            fail_test(testname, __FILE__, __LINE__,
+            return fail_test(testname, __FILE__, __LINE__,
                 "Data corruption detected (2).");
         }
     }
@@ -604,14 +598,16 @@ void dense_tensor_test::test_mp_2() throw(libtest::test_exception) {
     c2.ret_const_dataptr(p3); p3 = 0;
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dense_tensor_test::test_mp_3() throw(libtest::test_exception) {
+int test_mp_3() {
 
-    static const char *testname = "dense_tensor_test::test_mp_3()";
+    static const char testname[] = "dense_tensor_test::test_mp_3()";
 
     typedef allocator<double> allocator_t;
 
@@ -641,29 +637,43 @@ void dense_tensor_test::test_mp_3() throw(libtest::test_exception) {
     if(!thra.is_ok()) {
         std::ostringstream ss;
         ss << "Thread A failed (" << thra.get_error() << ").";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!thrb.is_ok()) {
         std::ostringstream ss;
         ss << "Thread B failed (" << thrb.get_error() << ").";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!thrc.is_ok()) {
         std::ostringstream ss;
         ss << "Thread C failed (" << thrc.get_error() << ").";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
     if(!thrd.is_ok()) {
         std::ostringstream ss;
         ss << "Thread D failed (" << thrd.get_error() << ").";
-        fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, ss.str().c_str());
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_ctor() |
+    test_immutable() |
+    test_operation() |
+    test_1() |
+    test_2() |
+
+    0;
+}
+
 

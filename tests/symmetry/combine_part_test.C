@@ -1,41 +1,16 @@
 #include <libtensor/core/scalar_transf_double.h>
 #include <libtensor/symmetry/inst/combine_part.h>
-#include "../compare_ref.h"
-#include "combine_part_test.h"
-
-namespace libtensor {
+#include "../test_utils.h"
 
 
-void combine_part_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2(true);
-    test_2(false);
-    test_3(true, true);
-    test_3(true, false);
-    test_3(false, true);
-    test_3(false, false);
-    test_4a(true, true, true);
-    test_4a(true, false, true);
-    test_4a(false, true, true);
-    test_4a(false, false, true);
-    test_4a(true, true, false);
-    test_4a(true, false, false);
-    test_4a(false, true, false);
-    test_4a(false, false, false);
-    test_4b(true, true);
-    test_4b(true, false);
-    test_4b(false, true);
-    test_4b(false, false);
-}
+using namespace libtensor;
 
 
 /** \test Tests that calling combine part on an empty set throws an exception
  **/
-void combine_part_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname =
-            "combine_part_test::test_1()";
+    static const char testname[] = "combine_part_test::test_1()";
 
     typedef se_part<2, double> se2_t;
     typedef combine_part<2, double> combine_t;
@@ -59,14 +34,16 @@ void combine_part_test::test_1() throw(libtest::test_exception) {
     }
 
     if (! exc) {
-        fail_test(testname, __FILE__, __LINE__, "No exception.");
+        return fail_test(testname, __FILE__, __LINE__, "No exception.");
     }
+
+    return 0;
 }
 
 
 /** \test Combine a set with a single element in 2-space
  **/
-void combine_part_test::test_2(bool symm) throw(libtest::test_exception) {
+int test_2(bool symm) {
 
     std::ostringstream tnss;
     tnss << "combine_part_test::test_2(" << symm << ")";
@@ -102,35 +79,37 @@ void combine_part_test::test_2(bool symm) throw(libtest::test_exception) {
         comb.perform(elem);
 
         if (! elem.map_exists(i00, i11)) {
-            fail_test(tns.c_str(), __FILE__, __LINE__,
+            return fail_test(tns.c_str(), __FILE__, __LINE__,
                     "Map i00->i11 missing.");
         }
         if (elem.get_transf(i00, i11) != tr1) {
-            fail_test(tns.c_str(), __FILE__, __LINE__,
+            return fail_test(tns.c_str(), __FILE__, __LINE__,
                     "Wrong transformation at i00->i11.");
         }
         if (elem.get_transf(i11, i00) != tr2) {
-            fail_test(tns.c_str(), __FILE__, __LINE__,
+            return fail_test(tns.c_str(), __FILE__, __LINE__,
                     "Wrong transformation at i11->i00.");
         }
         if (! elem.is_forbidden(i01)) {
-            fail_test(tns.c_str(), __FILE__, __LINE__,
+            return fail_test(tns.c_str(), __FILE__, __LINE__,
                     "i01 not forbidden.");
         }
         if (! elem.is_forbidden(i10)) {
-            fail_test(tns.c_str(), __FILE__, __LINE__,
+            return fail_test(tns.c_str(), __FILE__, __LINE__,
                     "i10 not forbidden.");
         }
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
+
 
 /** \test Combine a set with 2 partitions in 1-space to a partition in 2-space
  **/
-void combine_part_test::test_3(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+int test_3(bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "combine_part_test::test_3(" << symm1 << ", "
@@ -208,14 +187,16 @@ void combine_part_test::test_3(
         compare_ref<3>::compare(tns.c_str(), bis, set2, set_ref);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
+
 
 /** \test Combine two partitions in 2-space into 1 partition in 2-space
  **/
-void combine_part_test::test_4a(bool symm1, bool symm2,
-        bool forbidden) throw(libtest::test_exception) {
+int test_4a(bool symm1, bool symm2, bool forbidden) {
 
     std::ostringstream tnss;
     tnss << "combine_part_test::test_4a(" << symm1 << ", "
@@ -274,18 +255,19 @@ void combine_part_test::test_4a(bool symm1, bool symm2,
         compare_ref<2>::compare(tns.c_str(), bis, set2, set_ref);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
+
 
 /** \test Combine two partitions in 2-space into 1 partition in 2-space
  **/
-void combine_part_test::test_4b(bool symm1,
-        bool symm2) throw(libtest::test_exception) {
+int test_4b(bool symm1, bool symm2) {
 
     std::ostringstream tnss;
-    tnss << "combine_part_test::test_4b(" << symm1 << ", "
-            << symm2 << ")";
+    tnss << "combine_part_test::test_4b(" << symm1 << ", " << symm2 << ")";
     std::string tns = tnss.str();
 
     typedef se_part<2, double> se_t;
@@ -329,9 +311,38 @@ void combine_part_test::test_4b(bool symm1,
         compare_ref<2>::compare(tns.c_str(), bis, set2, set_ref);
 
     } catch(exception &e) {
-        fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tns.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2(true) |
+    test_2(false) |
+    test_3(true, true) |
+    test_3(true, false) |
+    test_3(false, true) |
+    test_3(false, false) |
+    test_4a(true, true, true) |
+    test_4a(true, false, true) |
+    test_4a(false, true, true) |
+    test_4a(false, false, true) |
+    test_4a(true, true, false) |
+    test_4a(true, false, false) |
+    test_4a(false, true, false) |
+    test_4a(false, false, false) |
+    test_4b(true, true) |
+    test_4b(true, false) |
+    test_4b(false, true) |
+    test_4b(false, false) |
+
+    0;
+}
+
+

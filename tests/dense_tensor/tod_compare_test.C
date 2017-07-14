@@ -6,27 +6,12 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_compare.h>
-#include "tod_compare_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-void tod_compare_test::perform() throw(libtest::test_exception) {
-    srand48(time(NULL));
 
-    test_exc();
-
-    index<4> i1, i2; i2[0]=2; i2[1]=3; i2[2]=4; i2[3]=5;
-    index<4> idiff; idiff[0]=0; idiff[1]=1; idiff[2]=2; idiff[3]=3;
-    index_range<4> ir(i1,i2);
-    dimensions<4> dim(ir);
-    test_operation(dim, idiff);
-
-    test_0();
-    test_1();
-
-}
-
-void tod_compare_test::test_exc() throw(libtest::test_exception) {
+int test_exc() {
 
     typedef dense_tensor<4, double, allocator<double> > tensor4;
 
@@ -45,13 +30,15 @@ void tod_compare_test::test_exc() throw(libtest::test_exception) {
     }
 
     if(!ok) {
-        fail_test("tod_compare_test::test_exc()", __FILE__, __LINE__,
+        return fail_test("tod_compare_test::test_exc()", __FILE__, __LINE__,
         "Expected an exception with heterogeneous arguments");
     }
+
+    return 0;
 }
 
-void tod_compare_test::test_operation(const dimensions<4> &dim,
-    const index<4> &idx) throw(libtest::test_exception) {
+int test_operation(const dimensions<4> &dim,
+    const index<4> &idx) {
 
     typedef dense_tensor<4, double, allocator<double> > tensor4;
     typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
@@ -81,34 +68,35 @@ void tod_compare_test::test_operation(const dimensions<4> &dim,
 
     tod_compare<4> op1(t1, t2, 1e-7);
     if(op1.compare()) {
-        fail_test("tod_compare_test::test_operation()", __FILE__,
+        return fail_test("tod_compare_test::test_operation()", __FILE__,
         __LINE__, "tod_compare failed to find the difference");
     }
     if(abs_index<4>::get_abs_index(op1.get_diff_index(), dim) != diffptr) {
-        fail_test("tod_compare_test::test_operation()", __FILE__,
+        return fail_test("tod_compare_test::test_operation()", __FILE__,
         __LINE__, "tod_compare returned an incorrect index");
     }
     if(op1.get_diff_elem_1() != diff1 || op1.get_diff_elem_2() != diff2) {
-        fail_test("tod_compare_test::test_operation()", __FILE__,
+        return fail_test("tod_compare_test::test_operation()", __FILE__,
         __LINE__, "tod_compare returned an incorrect "
         "element value");
     }
 
     tod_compare<4> op2(t1, t2, 1e-5);
     if(!op2.compare()) {
-        fail_test("tod_compare_test::test_operation()", __FILE__,
+        return fail_test("tod_compare_test::test_operation()", __FILE__,
         __LINE__, "tod_compare found a difference below "
         "the threshold");
     }
 
+    return 0;
 }
 
 
 /** \test Tests tod_compare<0>
  **/
-void tod_compare_test::test_0() throw(libtest::test_exception) {
+int test_0() {
 
-    static const char *testname = "tod_compare_test::test_0()";
+    static const char testname[] = "tod_compare_test::test_0()";
 
     typedef allocator<double> allocator;
 
@@ -132,24 +120,26 @@ void tod_compare_test::test_0() throw(libtest::test_exception) {
 
     tod_compare<0> comp1(t1, t2, 0.0);
     if(!comp1.compare()) {
-        fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
+        return fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
     }
     tod_compare<0> comp2(t1, t3, 0.0);
     if(comp2.compare()) {
-        fail_test(testname, __FILE__, __LINE__, "comp2.compare()");
+        return fail_test(testname, __FILE__, __LINE__, "comp2.compare()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests tod_compare<2>
  **/
-void tod_compare_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "tod_compare_test::test_1()";
+    static const char testname[] = "tod_compare_test::test_1()";
 
     typedef allocator<double> allocator;
 
@@ -180,14 +170,34 @@ void tod_compare_test::test_1() throw(libtest::test_exception) {
 
     tod_compare<2> comp1(t1, t2, 1e-10);
     if(!comp1.compare()) {
-        fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
+        return fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(NULL));
+
+    index<4> i1, i2; i2[0]=2; i2[1]=3; i2[2]=4; i2[3]=5;
+    index<4> idiff; idiff[0]=0; idiff[1]=1; idiff[2]=2; idiff[3]=3;
+    index_range<4> ir(i1,i2);
+    dimensions<4> dim(ir);
+
+    return
+
+    test_exc() |
+    test_operation(dim, idiff) |
+
+    test_0() |
+    test_1() |
+
+    0;
+}
 

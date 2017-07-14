@@ -2,12 +2,11 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_vmpriority.h>
-#include "tod_vmpriority_test.h"
 
-namespace libtensor {
+using namespace libtensor;
 
 
-void tod_vmpriority_test::perform() throw(libtest::test_exception) {
+int main() {
 
     typedef allocator<double> allocator_t;
 
@@ -21,6 +20,4 @@ void tod_vmpriority_test::perform() throw(libtest::test_exception) {
     tod_vmpriority<4>(t).unset_priority();
 }
 
-
-} // namespace libtensor
 

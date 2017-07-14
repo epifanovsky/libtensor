@@ -9,43 +9,13 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_set_diag.h>
 #include "../compare_ref.h"
-#include "tod_set_diag_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_set_diag_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(NULL));
-
-    index<2> i2a, i2b;
-    i2b[0] = 10; i2b[1] = 10;
-    dimensions<2> dims2_10(index_range<2>(i2a, i2b));
-    run_test1(dims2_10, 0.0, true);
-    run_test1(dims2_10, 0.0, false);
-    run_test1(dims2_10, 11.5, true);
-    run_test1(dims2_10, 11.5, false);
-
-    index<4> i4a, i4b;
-    i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
-    dimensions<4> dims4(index_range<4>(i4a, i4b));
-    sequence<4, size_t> m1(0), m2(0);
-    m1[1] = 1; m1[3] = 1;
-    m2[0] = 1; m2[1] = 2; m2[2] = 1; m2[3] = 2;
-    run_test2(dims4, m1, 0.0, true);
-    run_test2(dims4, m1, 0.0, false);
-    run_test2(dims4, m1, 5.0, true);
-    run_test2(dims4, m1, 5.0, false);
-    run_test2(dims4, m2, 0.0, true);
-    run_test2(dims4, m2, 0.0, false);
-    run_test2(dims4, m2, 5.0, true);
-    run_test2(dims4, m2, 5.0, false);
-}
+using namespace libtensor;
 
 
 template<size_t N>
-void tod_set_diag_test::run_test1(const dimensions<N> &dims, double d,
-    bool zero) throw(libtest::test_exception) {
+int run_test1(const dimensions<N> &dims, double d, bool zero) {
 
     std::ostringstream tnss;
     tnss << "tod_set_diag_test::run_test1(" << dims << ", " << d << ","
@@ -100,15 +70,17 @@ void tod_set_diag_test::run_test1(const dimensions<N> &dims, double d,
     compare_ref<N>::compare(tnss.str().c_str(), t, t_ref, 0.0);
 
     } catch(exception &e) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 template<size_t N>
-void tod_set_diag_test::run_test2(const dimensions<N> &dims,
-    const sequence<N, size_t> &msk, double d,
-    bool zero) throw(libtest::test_exception) {
+int run_test2(
+    const dimensions<N> &dims, const sequence<N, size_t> &msk, double d,
+    bool zero) {
 
     std::ostringstream tnss;
     tnss << "tod_set_diag_test::run_test2(" << dims << ", [";
@@ -167,9 +139,45 @@ void tod_set_diag_test::run_test2(const dimensions<N> &dims,
     compare_ref<N>::compare(tnss.str().c_str(), t, t_ref, 0.0);
 
     } catch(exception &e) {
-        fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tnss.str().c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(NULL));
+
+    index<2> i2a, i2b;
+    i2b[0] = 10; i2b[1] = 10;
+    dimensions<2> dims2_10(index_range<2>(i2a, i2b));
+
+    index<4> i4a, i4b;
+    i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
+    dimensions<4> dims4(index_range<4>(i4a, i4b));
+    sequence<4, size_t> m1(0), m2(0);
+    m1[1] = 1; m1[3] = 1;
+    m2[0] = 1; m2[1] = 2; m2[2] = 1; m2[3] = 2;
+
+    return
+
+    run_test1(dims2_10, 0.0, true) |
+    run_test1(dims2_10, 0.0, false) |
+    run_test1(dims2_10, 11.5, true) |
+    run_test1(dims2_10, 11.5, false) |
+
+    run_test2(dims4, m1, 0.0, true) |
+    run_test2(dims4, m1, 0.0, false) |
+    run_test2(dims4, m1, 5.0, true) |
+    run_test2(dims4, m1, 5.0, false) |
+    run_test2(dims4, m2, 0.0, true) |
+    run_test2(dims4, m2, 0.0, false) |
+    run_test2(dims4, m2, 5.0, true) |
+    run_test2(dims4, m2, 5.0, false) |
+
+    0;
+}
+
+

@@ -4,96 +4,23 @@
 #include <libtensor/dense_tensor/tod_apply.h>
 #include <libtensor/dense_tensor/impl/tod_apply_impl.h>
 #include "../compare_ref.h"
-#include "tod_apply_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-namespace tod_apply_test_ns {
+namespace {
 
 struct sin_functor {
     double operator()(const double &x) { return sin(x); }
 };
 
-}
+} // unnamed namespace
 
-void tod_apply_test::perform() throw(libtest::test_exception) {
-
-    test_exc();
-
-    tod_apply_test_ns::sin_functor sin;
-    index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
-    index_range<2> ir2(i2a, i2b); dimensions<2> dims2(ir2);
-    permutation<2> perm2, perm2t;
-    perm2t.permute(0, 1);
-
-    test_plain(sin, dims2);
-    test_plain_additive(sin, dims2, 1.0);
-    test_plain_additive(sin, dims2, -1.0);
-    test_plain_additive(sin, dims2, 2.5);
-
-    test_scaled(sin, dims2, 1.0);
-    test_scaled(sin, dims2, 0.5);
-    test_scaled(sin, dims2, -3.14);
-    test_scaled_additive(sin, dims2, 1.0, 1.0);
-    test_scaled_additive(sin, dims2, 0.5, 1.0);
-    test_scaled_additive(sin, dims2, -3.14, 1.0);
-    test_scaled_additive(sin, dims2, 1.0, -1.0);
-    test_scaled_additive(sin, dims2, 0.5, -1.0);
-    test_scaled_additive(sin, dims2, -3.14, -1.0);
-    test_scaled_additive(sin, dims2, 1.0, 2.5);
-    test_scaled_additive(sin, dims2, 0.5, 2.5);
-    test_scaled_additive(sin, dims2, -3.14, 2.5);
-
-    test_perm(sin, dims2, perm2);
-    test_perm(sin, dims2, perm2t);
-    test_perm_additive(sin, dims2, perm2, 1.0);
-    test_perm_additive(sin, dims2, perm2, -1.0);
-    test_perm_additive(sin, dims2, perm2, 2.5);
-    test_perm_additive(sin, dims2, perm2t, 1.0);
-    test_perm_additive(sin, dims2, perm2t, -1.0);
-    test_perm_additive(sin, dims2, perm2t, 2.5);
-
-    test_perm_scaled(sin, dims2, perm2, 1.0);
-    test_perm_scaled(sin, dims2, perm2t, 1.0);
-    test_perm_scaled(sin, dims2, perm2, 0.5);
-    test_perm_scaled(sin, dims2, perm2t, 0.5);
-    test_perm_scaled(sin, dims2, perm2, -3.14);
-    test_perm_scaled(sin, dims2, perm2t, -3.14);
-    test_perm_scaled_additive(sin, dims2, perm2, 1.0, 1.0);
-    test_perm_scaled_additive(sin, dims2, perm2t, 1.0, 1.0);
-    test_perm_scaled_additive(sin, dims2, perm2, 0.5, 1.0);
-    test_perm_scaled_additive(sin, dims2, perm2t, 0.5, 1.0);
-    test_perm_scaled_additive(sin, dims2, perm2, -3.14, 1.0);
-    test_perm_scaled_additive(sin, dims2, perm2t, -3.14, 1.0);
-    test_perm_scaled_additive(sin, dims2, perm2, 1.0, -1.0);
-    test_perm_scaled_additive(sin, dims2, perm2t, 1.0, -1.0);
-    test_perm_scaled_additive(sin, dims2, perm2, 0.5, -1.0);
-    test_perm_scaled_additive(sin, dims2, perm2t, 0.5, -1.0);
-    test_perm_scaled_additive(sin, dims2, perm2, -3.14, -1.0);
-    test_perm_scaled_additive(sin, dims2, perm2t, -3.14, -1.0);
-    test_perm_scaled_additive(sin, dims2, perm2, 1.0, 2.5);
-    test_perm_scaled_additive(sin, dims2, perm2t, 1.0, 2.5);
-    test_perm_scaled_additive(sin, dims2, perm2, 0.5, 2.5);
-    test_perm_scaled_additive(sin, dims2, perm2t, 0.5, 2.5);
-    test_perm_scaled_additive(sin, dims2, perm2, -3.14, 2.5);
-    test_perm_scaled_additive(sin, dims2, perm2t, -3.14, 2.5);
-
-    index<4> i4a, i4b;
-    i4b[0] = 4; i4b[1] = 5; i4b[2] = 6; i4b[3] = 7;
-    dimensions<4> dims4(index_range<4>(i4a, i4b));
-    permutation<4> perm4, perm4c;
-    perm4c.permute(0, 1).permute(1, 2).permute(2, 3);
-
-    test_perm(sin, dims4, perm4);
-    test_perm(sin, dims4, perm4c);
-
-}
 
 template<size_t N, typename Functor>
-void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
-    throw(libtest::test_exception) {
+int test_plain(Functor &fn, const dimensions<N> &dims) {
 
-    static const char *testname = "tod_apply_test::test_plain()";
+    static const char testname[] = "tod_apply_test::test_plain()";
 
     typedef allocator<double> allocator;
 
@@ -134,15 +61,16 @@ void tod_apply_test::test_plain(Functor &fn, const dimensions<N> &dims)
     compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 template<size_t N, typename Functor>
-void tod_apply_test::test_plain_additive(Functor &fn,
-    const dimensions<N> &dims, double d) throw(libtest::test_exception) {
+int test_plain_additive(Functor &fn, const dimensions<N> &dims, double d) {
 
-    static const char *testname = "tod_apply_test::test_plain_additive()";
+    static const char testname[] = "tod_apply_test::test_plain_additive()";
 
     typedef allocator<double> allocator;
 
@@ -187,15 +115,16 @@ void tod_apply_test::test_plain_additive(Functor &fn,
     compare_ref<N>::compare(ss.str().c_str(), tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
 template<size_t N, typename Functor>
-void tod_apply_test::test_scaled(Functor &fn,
-    const dimensions<N> &dims, double c) throw(libtest::test_exception) {
+int test_scaled(Functor &fn, const dimensions<N> &dims, double c) {
 
-    static const char *testname = "tod_apply_test::test_scaled()";
+    static const char testname[] = "tod_apply_test::test_scaled()";
 
     typedef allocator<double> allocator;
 
@@ -237,16 +166,18 @@ void tod_apply_test::test_scaled(Functor &fn,
     compare_ref<N>::compare(ss.str().c_str(), tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
-template<size_t N, typename Functor>
-void tod_apply_test::test_scaled_additive(Functor &fn,
-    const dimensions<N> &dims, double c, double d)
-    throw(libtest::test_exception) {
 
-    static const char *testname = "tod_apply_test::test_scaled_additive()";
+template<size_t N, typename Functor>
+int test_scaled_additive(Functor &fn, const dimensions<N> &dims, double c,
+    double d) {
+
+    static const char testname[] = "tod_apply_test::test_scaled_additive()";
 
     typedef allocator<double> allocator;
 
@@ -291,15 +222,18 @@ void tod_apply_test::test_scaled_additive(Functor &fn,
     compare_ref<N>::compare(ss.str().c_str(), tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
-template<size_t N, typename Functor>
-void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
-    const permutation<N> &perm) throw(libtest::test_exception) {
 
-    static const char *testname = "tod_apply_test::test_perm()";
+template<size_t N, typename Functor>
+int test_perm(Functor &fn, const dimensions<N> &dims,
+    const permutation<N> &perm) {
+
+    static const char testname[] = "tod_apply_test::test_perm()";
 
     typedef allocator<double> allocator;
 
@@ -348,15 +282,18 @@ void tod_apply_test::test_perm(Functor &fn, const dimensions<N> &dims,
     compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
-template<size_t N, typename Functor>
-void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
-    const permutation<N> &perm, double d) throw(libtest::test_exception) {
 
-    static const char *testname = "tod_apply_test::test_perm_additive()";
+template<size_t N, typename Functor>
+int test_perm_additive(Functor &fn, const dimensions<N> &dims,
+    const permutation<N> &perm, double d) {
+
+    static const char testname[] = "tod_apply_test::test_perm_additive()";
 
     typedef allocator<double> allocator;
 
@@ -406,15 +343,18 @@ void tod_apply_test::test_perm_additive(Functor &fn, const dimensions<N> &dims,
     compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
-template<size_t N, typename Functor>
-void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
-    const permutation<N> &perm, double c) throw(libtest::test_exception) {
 
-    static const char *testname = "tod_apply_test::test_perm_scaled()";
+template<size_t N, typename Functor>
+int test_perm_scaled(Functor &fn, const dimensions<N> &dims,
+    const permutation<N> &perm, double c) {
+
+    static const char testname[] = "tod_apply_test::test_perm_scaled()";
 
     typedef allocator<double> allocator;
 
@@ -463,16 +403,18 @@ void tod_apply_test::test_perm_scaled(Functor &fn, const dimensions<N> &dims,
     compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
-template<size_t N, typename Functor>
-void tod_apply_test::test_perm_scaled_additive(Functor &fn,
-    const dimensions<N> &dims, const permutation<N> &perm, double c, double d)
-    throw(libtest::test_exception) {
 
-    static const char *testname =
+template<size_t N, typename Functor>
+int test_perm_scaled_additive(Functor &fn, const dimensions<N> &dims,
+    const permutation<N> &perm, double c, double d) {
+
+    static const char testname[] =
         "tod_apply_test::test_perm_scaled_additive()";
 
     typedef allocator<double> allocator;
@@ -523,11 +465,14 @@ void tod_apply_test::test_perm_scaled_additive(Functor &fn,
     compare_ref<N>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &exc) {
-        fail_test(testname, __FILE__, __LINE__, exc.what());
+        return fail_test(testname, __FILE__, __LINE__, exc.what());
     }
+
+    return 0;
 }
 
-void tod_apply_test::test_exc() throw(libtest::test_exception) {
+
+int test_exc() {
 
     typedef allocator<double> allocator;
 
@@ -540,19 +485,95 @@ void tod_apply_test::test_exc() throw(libtest::test_exception) {
 
     bool ok = false;
     try {
-        tod_apply_test_ns::sin_functor sin;
-        tod_apply<4, tod_apply_test_ns::sin_functor> tc(t1, sin);
+        sin_functor sin;
+        tod_apply<4, sin_functor> tc(t1, sin);
         tc.perform(true, t2);
     } catch(exception &e) {
         ok = true;
     }
 
     if(!ok) {
-        fail_test("tod_apply_test::test_exc()", __FILE__, __LINE__,
+        return fail_test("tod_apply_test::test_exc()", __FILE__, __LINE__,
         "Expected an exception with heterogeneous arguments");
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    sin_functor sin;
+    index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
+    index_range<2> ir2(i2a, i2b); dimensions<2> dims2(ir2);
+    permutation<2> perm2, perm2t;
+    perm2t.permute(0, 1);
+
+    index<4> i4a, i4b;
+    i4b[0] = 4; i4b[1] = 5; i4b[2] = 6; i4b[3] = 7;
+    dimensions<4> dims4(index_range<4>(i4a, i4b));
+    permutation<4> perm4, perm4c;
+    perm4c.permute(0, 1).permute(1, 2).permute(2, 3);
+
+    return
+
+    test_exc() |
+
+    test_plain(sin, dims2) |
+    test_plain_additive(sin, dims2, 1.0) |
+    test_plain_additive(sin, dims2, -1.0) |
+    test_plain_additive(sin, dims2, 2.5) |
+
+    test_scaled(sin, dims2, 1.0) |
+    test_scaled(sin, dims2, 0.5) |
+    test_scaled(sin, dims2, -3.14) |
+    test_scaled_additive(sin, dims2, 1.0, 1.0) |
+    test_scaled_additive(sin, dims2, 0.5, 1.0) |
+    test_scaled_additive(sin, dims2, -3.14, 1.0) |
+    test_scaled_additive(sin, dims2, 1.0, -1.0) |
+    test_scaled_additive(sin, dims2, 0.5, -1.0) |
+    test_scaled_additive(sin, dims2, -3.14, -1.0) |
+    test_scaled_additive(sin, dims2, 1.0, 2.5) |
+    test_scaled_additive(sin, dims2, 0.5, 2.5) |
+    test_scaled_additive(sin, dims2, -3.14, 2.5) |
+
+    test_perm(sin, dims2, perm2) |
+    test_perm(sin, dims2, perm2t) |
+    test_perm_additive(sin, dims2, perm2, 1.0) |
+    test_perm_additive(sin, dims2, perm2, -1.0) |
+    test_perm_additive(sin, dims2, perm2, 2.5) |
+    test_perm_additive(sin, dims2, perm2t, 1.0) |
+    test_perm_additive(sin, dims2, perm2t, -1.0) |
+    test_perm_additive(sin, dims2, perm2t, 2.5) |
+
+    test_perm_scaled(sin, dims2, perm2, 1.0) |
+    test_perm_scaled(sin, dims2, perm2t, 1.0) |
+    test_perm_scaled(sin, dims2, perm2, 0.5) |
+    test_perm_scaled(sin, dims2, perm2t, 0.5) |
+    test_perm_scaled(sin, dims2, perm2, -3.14) |
+    test_perm_scaled(sin, dims2, perm2t, -3.14) |
+    test_perm_scaled_additive(sin, dims2, perm2, 1.0, 1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2t, 1.0, 1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2, 0.5, 1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2t, 0.5, 1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2, -3.14, 1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2t, -3.14, 1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2, 1.0, -1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2t, 1.0, -1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2, 0.5, -1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2t, 0.5, -1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2, -3.14, -1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2t, -3.14, -1.0) |
+    test_perm_scaled_additive(sin, dims2, perm2, 1.0, 2.5) |
+    test_perm_scaled_additive(sin, dims2, perm2t, 1.0, 2.5) |
+    test_perm_scaled_additive(sin, dims2, perm2, 0.5, 2.5) |
+    test_perm_scaled_additive(sin, dims2, perm2t, 0.5, 2.5) |
+    test_perm_scaled_additive(sin, dims2, perm2, -3.14, 2.5) |
+    test_perm_scaled_additive(sin, dims2, perm2t, -3.14, 2.5) |
+
+    test_perm(sin, dims4, perm4) |
+    test_perm(sin, dims4, perm4c) |
+
+    0;
+}
 

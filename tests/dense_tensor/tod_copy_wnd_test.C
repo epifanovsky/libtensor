@@ -5,24 +5,12 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_copy_wnd.h>
 #include "../compare_ref.h"
-#include "tod_copy_wnd_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_copy_wnd_test::perform() throw (libtest::test_exception) {
-
-    linalg::rng_setup(0);
-
-    test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-}
+using namespace libtensor;
 
 
-void tod_copy_wnd_test::test_1() {
+int test_1() {
 
     static const char testname[] = "tod_copy_wnd_test::test_1()";
 
@@ -85,12 +73,14 @@ void tod_copy_wnd_test::test_1() {
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_copy_wnd_test::test_2() {
+int test_2() {
 
     static const char testname[] = "tod_copy_wnd_test::test_2()";
 
@@ -154,12 +144,14 @@ void tod_copy_wnd_test::test_2() {
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_copy_wnd_test::test_3() {
+int test_3() {
 
     static const char testname[] = "tod_copy_wnd_test::test_3()";
 
@@ -223,12 +215,14 @@ void tod_copy_wnd_test::test_3() {
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_copy_wnd_test::test_4() {
+int test_4() {
 
     static const char testname[] = "tod_copy_wnd_test::test_4()";
 
@@ -293,12 +287,14 @@ void tod_copy_wnd_test::test_4() {
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_copy_wnd_test::test_5() {
+int test_5() {
 
     static const char testname[] = "tod_copy_wnd_test::test_5()";
 
@@ -367,10 +363,26 @@ void tod_copy_wnd_test::test_5() {
         compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    linalg::rng_setup(0);
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3() |
+    test_4() |
+    test_5() |
+
+    0;
+}
+
 

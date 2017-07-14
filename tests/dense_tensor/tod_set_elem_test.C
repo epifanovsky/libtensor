@@ -5,22 +5,14 @@
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_set_elem.h>
 #include "../compare_ref.h"
-#include "tod_set_elem_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_set_elem_test::perform() throw(libtest::test_exception) {
-
-    srand48(time(0));
-
-    test_1();
-}
+using namespace libtensor;
 
 
-void tod_set_elem_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "tod_set_elem_test::test_1()";
+    static const char testname[] = "tod_set_elem_test::test_1()";
 
     typedef allocator<double> allocator_t;
 
@@ -67,9 +59,22 @@ void tod_set_elem_test::test_1() throw(libtest::test_exception) {
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    srand48(time(0));
+
+    return
+
+    test_1() |
+
+    0;
+}
+
+

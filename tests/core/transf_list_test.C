@@ -6,28 +6,12 @@
 #include <libtensor/symmetry/se_label.h>
 #include <libtensor/symmetry/se_part.h>
 #include <libtensor/symmetry/se_perm.h>
-#include "transf_list_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void transf_list_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-    test_3a();
-    test_3b();
-    test_3c();
-    test_4();
-    test_5a();
-    test_5b();
-    test_5c();
-    test_6a();
-}
+using namespace libtensor;
 
 
 namespace {
-
 
 template<size_t N>
 std::ostream &operator<<(std::ostream &os, const tensor_transf<N, double> &tr) {
@@ -84,16 +68,15 @@ std::string trlist_compare(const char *testname, const index<N> &idx,
     return std::string();
 }
 
-
 } // unnamed namespace
 
 
 /** \brief Tests transformation lists for diagonal and non-diagonal blocks
         of a two-index tensor with empty symmetry.
  **/
-void transf_list_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "transf_list_test::test_1()";
+    static const char testname[] = "transf_list_test::test_1()";
 
     try {
 
@@ -125,26 +108,28 @@ void transf_list_test::test_1() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i00, trl00, trlist00_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i01, trl01, trlist01_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i10, trl10, trlist01_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i11, trl11, trlist00_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \brief Tests transformation lists for diagonal and non-diagonal blocks
         of a two-index tensor with S2(+) symmetry.
  **/
-void transf_list_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "transf_list_test::test_2()";
+    static const char testname[] = "transf_list_test::test_2()";
 
     try {
 
@@ -187,26 +172,28 @@ void transf_list_test::test_2() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i00, trl00, trlist00_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i01, trl01, trlist01_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i10, trl10, trlist01_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i11, trl11, trlist00_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \brief Tests transformation lists for a diagonal block of a three-index
         tensor with S3(+) symmetry (indirect relation to self).
  **/
-void transf_list_test::test_3a() throw(libtest::test_exception) {
+int test_3a() {
 
-    static const char *testname = "transf_list_test::test_3a()";
+    static const char testname[] = "transf_list_test::test_3a()";
 
     try {
 
@@ -264,22 +251,24 @@ void transf_list_test::test_3a() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i000, trl000, trlist000_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i010, trl010, trlist010_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \brief Tests transformation lists for a diagonal block of a three-index
         tensor with S3(-) symmetry (indirect relation to self).
  **/
-void transf_list_test::test_3b() throw(libtest::test_exception) {
+int test_3b() {
 
-    static const char *testname = "transf_list_test::test_3b()";
+    static const char testname[] = "transf_list_test::test_3b()";
 
     try {
 
@@ -341,22 +330,24 @@ void transf_list_test::test_3b() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i000, trl000, trlist000_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i010, trl010, trlist010_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \brief Tests transformation lists for a diagonal block of a three-index
         tensor with S3(-) symmetry (indirect relation to self).
  **/
-void transf_list_test::test_3c() throw(libtest::test_exception) {
+int test_3c() {
 
-    static const char *testname = "transf_list_test::test_3c()";
+    static const char testname[] = "transf_list_test::test_3c()";
 
     try {
 
@@ -418,22 +409,24 @@ void transf_list_test::test_3c() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i000, trl000, trlist000_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i010, trl010, trlist010_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \brief Tests transformation lists for diagonal and non-diagonal blocks
         of a two-index tensor with partition symmetry.
  **/
-void transf_list_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname = "transf_list_test::test_4()";
+    static const char testname[] = "transf_list_test::test_4()";
 
     try {
 
@@ -477,25 +470,27 @@ void transf_list_test::test_4() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i00, trl00, trlist00_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i01, trl01, trlist01_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i10, trl10, trlist01_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
     s = trlist_compare(testname, i11, trl11, trlist00_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \brief Tests transformation lists for non-diagonal blocks
         of a two-index tensor with S2 (+) and partition symmetry.
  **/
-void transf_list_test::test_5a() throw(libtest::test_exception) {
+int test_5a() {
 
-    static const char *testname = "transf_list_test::test_5a()";
+    static const char testname[] = "transf_list_test::test_5a()";
 
     try {
 
@@ -532,7 +527,7 @@ void transf_list_test::test_5a() throw(libtest::test_exception) {
         if (! trl2.is_found(tr)) {
             std::ostringstream oss;
             oss << "Transformation " << tr;
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
     for (transf_list<2, double>::iterator it = trl2.begin();
@@ -542,21 +537,23 @@ void transf_list_test::test_5a() throw(libtest::test_exception) {
         if (! trl1.is_found(tr)) {
             std::ostringstream oss;
             oss << "Transformation " << tr;
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \brief Tests transformation lists for non-diagonal blocks
         of a four-index tensor with S2 x S2 (+) and partition symmetry.
  **/
-void transf_list_test::test_5b() throw(libtest::test_exception) {
+int test_5b() {
 
-    static const char *testname = "transf_list_test::test_5b()";
+    static const char testname[] = "transf_list_test::test_5b()";
 
     try {
 
@@ -612,7 +609,7 @@ void transf_list_test::test_5b() throw(libtest::test_exception) {
         if (! trl2.is_found(tr)) {
             std::ostringstream oss;
             oss << "Transformation " << tr;
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
     for (transf_list<4, double>::iterator it = trl2.begin();
@@ -622,21 +619,23 @@ void transf_list_test::test_5b() throw(libtest::test_exception) {
         if (! trl1.is_found(tr)) {
             std::ostringstream oss;
             oss << "Transformation " << tr;
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 /** \brief Tests transformation lists for non-diagonal blocks
         of a four-index tensor with S2 x S2 (+), label and partition symmetry.
  **/
-void transf_list_test::test_5c() throw(libtest::test_exception) {
+int test_5c() {
 
-    static const char *testname = "transf_list_test::test_5c()";
+    static const char testname[] = "transf_list_test::test_5c()";
 
     { // Setup point group table
     std::vector<std::string> im(4);
@@ -726,7 +725,7 @@ void transf_list_test::test_5c() throw(libtest::test_exception) {
         if (! trl2.is_found(tr)) {
             std::ostringstream oss;
             oss << "Transformation " << tr;
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
     for (transf_list<4, double>::iterator it = trl2.begin();
@@ -736,25 +735,27 @@ void transf_list_test::test_5c() throw(libtest::test_exception) {
         if (! trl1.is_found(tr)) {
             std::ostringstream oss;
             oss << "Transformation " << tr;
-            fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
+            return fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
     }
 
     } catch(exception &e) {
         product_table_container::get_instance().erase("pg");
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
 
     product_table_container::get_instance().erase("pg");
+
+    return 0;
 }
 
 
 /** \brief Tests transformation lists for a diagonal block of a 6-index
         tensor with S3(-)*S3(-) symmetry.
  **/
-void transf_list_test::test_6a() throw(libtest::test_exception) {
+int test_6a() {
 
-    static const char *testname = "transf_list_test::test_6a()";
+    static const char testname[] = "transf_list_test::test_6a()";
 
     try {
 
@@ -840,12 +841,31 @@ void transf_list_test::test_6a() throw(libtest::test_exception) {
 
     std::string s;
     s = trlist_compare(testname, i000000, trl, trlist_ref);
-    if(!s.empty()) fail_test(testname, __FILE__, __LINE__, s.c_str());
+    if(!s.empty()) return fail_test(testname, __FILE__, __LINE__, s.c_str());
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_1() |
+    test_2() |
+    test_3a() |
+    test_3b() |
+    test_3c() |
+    test_4() |
+    test_5a() |
+    test_5b() |
+    test_5c() |
+    test_6a() |
+
+    0;
+}
+

@@ -1,64 +1,69 @@
 #include <sstream>
 #include <string>
 #include <libtensor/core/index.h>
-#include "index_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
+using namespace libtensor;
 
-void index_test::perform() throw(libtest::test_exception) {
-    test_ctor();
-    test_less();
-    test_print();
-    test_op();
-}
 
-void index_test::test_ctor() throw(libtest::test_exception) {
+int test_ctor() {
+
     index<2> i1;
+    return 0;
 }
 
-void index_test::test_less() throw(libtest::test_exception) {
+
+int test_less() {
+
+    static const char testname[] = "index_test::test_less()";
+
     index<2> i1, i2;
 
     i1[0] = 1; i1[1] = 1;
     i2[0] = 2; i2[1] = 2;
     if(!i1.less(i2)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less doesn't return (1,1)<(2,2)");
     }
     if(i2.less(i1)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less returns (2,2)<(1,1)");
     }
     i1[0] = 2;
     if(!i1.less(i2)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less doesn't return (2,1)<(2,2)");
     }
     if(i2.less(i1)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less returns (2,2)<(2,1)");
     }
     i1[1] = 2;
     if(i1.less(i2)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less returns (2,2)<(2,2)");
     }
 
     i1[0] = 0; i1[1] = 10;
     i2[0] = 10; i2[1] = 12;
     if(!i1.less(i2)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less returns (10,12)<(0,10)");
     }
     i1[1] = 12;
     if(!i1.less(i2)) {
-        fail_test("index_test::test_less()", __FILE__, __LINE__,
+        return fail_test(testname, __FILE__, __LINE__,
             "less returns (10,12)<(0,12)");
     }
 
+    return 0;
 }
 
-void index_test::test_print() throw(libtest::test_exception) {
+
+int test_print() {
+
+    static const char testname[] = "index_test::test_print()";
+
     std::ostringstream ss1;
     index<1> i1;
     ss1 << i1;
@@ -66,8 +71,7 @@ void index_test::test_print() throw(libtest::test_exception) {
         std::ostringstream err;
         err << "output error: expected \'[0]\', received \'";
         err << ss1.str() << "\'";
-        fail_test("index_test::test_print()", __FILE__, __LINE__,
-            err.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, err.str().c_str());
     }
 
     std::ostringstream ss2;
@@ -77,8 +81,7 @@ void index_test::test_print() throw(libtest::test_exception) {
         std::ostringstream err;
         err << "output error: expected \'[25]\', received \'";
         err << ss2.str() << "\'";
-        fail_test("index_test::test_print()", __FILE__, __LINE__,
-            err.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, err.str().c_str());
     }
 
     std::ostringstream ss3;
@@ -88,8 +91,7 @@ void index_test::test_print() throw(libtest::test_exception) {
         std::ostringstream err;
         err << "output error: expected \'[3][25]\', received \'";
         err << ss3.str() << "\'";
-        fail_test("index_test::test_print()", __FILE__, __LINE__,
-            err.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, err.str().c_str());
     }
 
     std::ostringstream ss4;
@@ -99,8 +101,7 @@ void index_test::test_print() throw(libtest::test_exception) {
         std::ostringstream err;
         err << "output error: expected \'[0,0]\', received \'";
         err << ss4.str() << "\'";
-        fail_test("index_test::test_print()", __FILE__, __LINE__,
-            err.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, err.str().c_str());
     }
 
     std::ostringstream ss5;
@@ -110,13 +111,14 @@ void index_test::test_print() throw(libtest::test_exception) {
         std::ostringstream err;
         err << "output error: expected \'[3,4]\', received \'";
         err << ss5.str() << "\'";
-        fail_test("index_test::test_print()", __FILE__, __LINE__,
-            err.str().c_str());
+        return fail_test(testname, __FILE__, __LINE__, err.str().c_str());
     }
 
 }
 
-void index_test::test_op() throw(libtest::test_exception) {
+int test_op() {
+
+    static const char testname[] = "index_test::test_op()";
 
     index<2> i1, i2, i3, i4;
     i1[0] = 3; i1[1] = 5;
@@ -125,69 +127,66 @@ void index_test::test_op() throw(libtest::test_exception) {
     i4[0] = 3; i4[1] = 6;
 
     if (! (i1 == i2))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator==(i1, i2)");
+        return fail_test(testname, __FILE__, __LINE__, "operator==(i1, i2)");
 
     if (i1 != i2)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator!=(i1, i2)");
+        return fail_test(testname, __FILE__, __LINE__, "operator!=(i1, i2)");
 
     if (i1 == i3)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator==(i1, i3)");
+        return fail_test(testname, __FILE__, __LINE__, "operator==(i1, i3)");
 
     if (! (i1 != i3))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator!=(i1, i3)");
+        return fail_test(testname, __FILE__, __LINE__, "operator!=(i1, i3)");
 
     if (i1 < i2)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator<(i1, i2)");
+        return fail_test(testname, __FILE__, __LINE__, "operator<(i1, i2)");
 
     if (i1 < i3)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator<(i1, i3)");
+        return fail_test(testname, __FILE__, __LINE__, "operator<(i1, i3)");
 
     if (! (i1 < i4))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator<(i1, i4)");
+        return fail_test(testname, __FILE__, __LINE__, "operator<(i1, i4)");
 
     if (! (i1 <= i2))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator<=(i1, i2)");
+        return fail_test(testname, __FILE__, __LINE__, "operator<=(i1, i2)");
 
     if (i1 <= i3)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator<=(i1, i3)");
+        return fail_test(testname, __FILE__, __LINE__, "operator<=(i1, i3)");
 
     if (! (i1 <= i4))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator<=(i1, i4)");
+        return fail_test(testname, __FILE__, __LINE__, "operator<=(i1, i4)");
 
     if (i1 > i2)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator>(i1, i2)");
+        return fail_test(testname, __FILE__, __LINE__, "operator>(i1, i2)");
 
     if (! (i1 > i3))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator>(i1, i3)");
+        return fail_test(testname, __FILE__, __LINE__, "operator>(i1, i3)");
 
     if (i1 > i4)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator>(i1, i4)");
+        return fail_test(testname, __FILE__, __LINE__, "operator>(i1, i4)");
 
     if (! (i1 >= i2))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator>=(i1, i2)");
+        return fail_test(testname, __FILE__, __LINE__, "operator>=(i1, i2)");
 
     if (! (i1 >= i3))
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator>=(i1, i3)");
+        return fail_test(testname, __FILE__, __LINE__, "operator>=(i1, i3)");
 
     if (i1 > i4)
-        fail_test("index_test::test_op()",
-                __FILE__, __LINE__, "operator>=(i1, i4)");
+        return fail_test(testname, __FILE__, __LINE__, "operator>=(i1, i4)");
+
+    return 0;
 }
 
-} // namespace libtensor
+
+int main() {
+
+    return
+
+    test_ctor() |
+    test_less() |
+    test_print() |
+    test_op() |
+
+    0;
+}
 

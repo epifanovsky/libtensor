@@ -6,60 +6,12 @@
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
 #include <libtensor/dense_tensor/tod_dotprod.h>
-#include "tod_dotprod_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void tod_dotprod_test::perform() throw(libtest::test_exception) {
-
-    test_i_i(1);
-    test_i_i(4);
-    test_i_i(16);
-    test_i_i(200);
-
-    test_ij_ij(1, 1);
-    test_ij_ij(1, 4);
-    test_ij_ij(4, 4);
-    test_ij_ij(10, 20);
-
-    test_ij_ji(1, 1);
-    test_ij_ji(1, 4);
-    test_ij_ji(4, 4);
-    test_ij_ji(10, 21);
-    test_ij_ji(10, 21);
-
-    test_ijk_ijk(1, 1, 1);
-    test_ijk_ijk(1, 1, 4);
-    test_ijk_ijk(1, 4, 4);
-    test_ijk_ijk(4, 4, 4);
-    test_ijk_ijk(10, 11, 12);
-    test_ijk_ijk(20, 21, 22);
-
-    test_ijk_ikj(1, 1, 1);
-    test_ijk_ikj(1, 1, 4);
-    test_ijk_ikj(1, 4, 4);
-    test_ijk_ikj(4, 4, 4);
-    test_ijk_ikj(10, 11, 12);
-    test_ijk_ikj(20, 21, 22);
-
-    test_ijk_jik(1, 1, 1);
-    test_ijk_jik(1, 1, 4);
-    test_ijk_jik(1, 4, 4);
-    test_ijk_jik(4, 4, 4);
-    test_ijk_jik(10, 11, 12);
-    test_ijk_jik(20, 21, 22);
-
-    test_ijk_jki(1, 1, 1);
-    test_ijk_jki(1, 1, 4);
-    test_ijk_jki(1, 4, 4);
-    test_ijk_jki(4, 4, 4);
-    test_ijk_jki(10, 11, 12);
-    test_ijk_jki(20, 21, 22);
-}
+using namespace libtensor;
 
 
-void tod_dotprod_test::test_i_i(size_t ni) throw(libtest::test_exception) {
+int test_i_i(size_t ni) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_i_i(" << ni << ")";
@@ -113,23 +65,24 @@ void tod_dotprod_test::test_i_i(size_t ni) throw(libtest::test_exception) {
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dotprod_test::test_ij_ij(size_t ni, size_t nj)
-    throw (libtest::test_exception) {
+int test_ij_ij(size_t ni, size_t nj) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_ij_ij(" << ni << ", " << nj << ")";
@@ -193,29 +146,30 @@ void tod_dotprod_test::test_ij_ij(size_t ni, size_t nj)
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c3 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (3) doesn't match reference: " << c3 << " (result), "
                 << c_ref << " (reference), " << c3 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dotprod_test::test_ij_ji(size_t ni, size_t nj)
-    throw (libtest::test_exception) {
+int test_ij_ji(size_t ni, size_t nj) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_ij_ji(" << ni << ", " << nj << ")";
@@ -282,23 +236,24 @@ void tod_dotprod_test::test_ij_ji(size_t ni, size_t nj)
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dotprod_test::test_ijk_ijk(size_t ni, size_t nj, size_t nk)
-    throw (libtest::test_exception) {
+int test_ijk_ijk(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_ijk_ijk(" << ni << ", " << nj << ", "
@@ -366,35 +321,36 @@ void tod_dotprod_test::test_ijk_ijk(size_t ni, size_t nj, size_t nk)
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c3 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (3) doesn't match reference: " << c3 << " (result), "
                 << c_ref << " (reference), " << c3 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c4 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (4) doesn't match reference: " << c4 << " (result), "
                 << c_ref << " (reference), " << c4 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dotprod_test::test_ijk_ikj(size_t ni, size_t nj, size_t nk)
-    throw (libtest::test_exception) {
+int test_ijk_ikj(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_ijk_ikj(" << ni << ", " << nj << ", "
@@ -468,35 +424,36 @@ void tod_dotprod_test::test_ijk_ikj(size_t ni, size_t nj, size_t nk)
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c3 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (3) doesn't match reference: " << c3 << " (result), "
                 << c_ref << " (reference), " << c3 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c4 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (4) doesn't match reference: " << c4 << " (result), "
                 << c_ref << " (reference), " << c4 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dotprod_test::test_ijk_jik(size_t ni, size_t nj, size_t nk)
-    throw (libtest::test_exception) {
+int test_ijk_jik(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_ijk_jik(" << ni << ", " << nj << ", "
@@ -570,35 +527,36 @@ void tod_dotprod_test::test_ijk_jik(size_t ni, size_t nj, size_t nk)
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c3 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (3) doesn't match reference: " << c3 << " (result), "
                 << c_ref << " (reference), " << c3 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c4 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (4) doesn't match reference: " << c4 << " (result), "
                 << c_ref << " (reference), " << c4 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void tod_dotprod_test::test_ijk_jki(size_t ni, size_t nj, size_t nk)
-    throw (libtest::test_exception) {
+int test_ijk_jki(size_t ni, size_t nj, size_t nk) {
 
     std::ostringstream tnss;
     tnss << "tod_dotprod_test::test_ijk_jki(" << ni << ", " << nj << ", "
@@ -672,31 +630,84 @@ void tod_dotprod_test::test_ijk_jki(size_t ni, size_t nj, size_t nk)
             std::ostringstream ss;
             ss << "Result (1) doesn't match reference: " << c1 << " (result), "
                 << c_ref << " (reference), " << c1 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c2 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (2) doesn't match reference: " << c2 << " (result), "
                 << c_ref << " (reference), " << c2 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c3 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (3) doesn't match reference: " << c3 << " (result), "
                 << c_ref << " (reference), " << c3 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
         if(fabs(c4 - c_ref) > 1e-14 * fabs(c_ref)) {
             std::ostringstream ss;
             ss << "Result (4) doesn't match reference: " << c4 << " (result), "
                 << c_ref << " (reference), " << c4 - c_ref << " (diff)";
-            fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
+            return fail_test(tn.c_str(), __FILE__, __LINE__, ss.str().c_str());
         }
 
     } catch(exception &e) {
-        fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
+        return fail_test(tn.c_str(), __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    return
+
+    test_i_i(1) |
+    test_i_i(4) |
+    test_i_i(16) |
+    test_i_i(200) |
+
+    test_ij_ij(1, 1) |
+    test_ij_ij(1, 4) |
+    test_ij_ij(4, 4) |
+    test_ij_ij(10, 20) |
+
+    test_ij_ji(1, 1) |
+    test_ij_ji(1, 4) |
+    test_ij_ji(4, 4) |
+    test_ij_ji(10, 21) |
+    test_ij_ji(10, 21) |
+
+    test_ijk_ijk(1, 1, 1) |
+    test_ijk_ijk(1, 1, 4) |
+    test_ijk_ijk(1, 4, 4) |
+    test_ijk_ijk(4, 4, 4) |
+    test_ijk_ijk(10, 11, 12) |
+    test_ijk_ijk(20, 21, 22) |
+
+    test_ijk_ikj(1, 1, 1) |
+    test_ijk_ikj(1, 1, 4) |
+    test_ijk_ikj(1, 4, 4) |
+    test_ijk_ikj(4, 4, 4) |
+    test_ijk_ikj(10, 11, 12) |
+    test_ijk_ikj(20, 21, 22) |
+
+    test_ijk_jik(1, 1, 1) |
+    test_ijk_jik(1, 1, 4) |
+    test_ijk_jik(1, 4, 4) |
+    test_ijk_jik(4, 4, 4) |
+    test_ijk_jik(10, 11, 12) |
+    test_ijk_jik(20, 21, 22) |
+
+    test_ijk_jki(1, 1, 1) |
+    test_ijk_jki(1, 1, 4) |
+    test_ijk_jki(1, 4, 4) |
+    test_ijk_jki(4, 4, 4) |
+    test_ijk_jki(10, 11, 12) |
+    test_ijk_jki(20, 21, 22) |
+
+    0;
+}
+
+

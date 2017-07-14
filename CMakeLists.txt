@@ -3,7 +3,7 @@ project(LIBTENSOR)
 
 set(LIBTENSOR_DIR ${LIBTENSOR_SOURCE_DIR})
 get_filename_component(LIBTEST_DIR ${LIBTENSOR_DIR}/../libtest ABSOLUTE)
-get_filename_component(LIBUTIL_DIR ${LIBTENSOR_DIR}/../libutil ABSOLUTE)
+get_filename_component(LIBUTIL_DIR ${LIBTENSOR_DIR} ABSOLUTE)
 get_filename_component(LIBVMM_DIR ${LIBTENSOR_DIR}/../libvmm ABSOLUTE)
 
 include(${LIBTENSOR_DIR}/cmake/CheckFortranSourceCompiles.cmake)
@@ -33,6 +33,8 @@ include(${LIBTENSOR_DIR}/cmake/DepsLibTensor.txt)
 
 include_directories(${LIBTENSOR_DIR} ${ARMADILLO_INCLUDE_DIRS})
 
+enable_testing()
+add_subdirectory(libutil)
 add_subdirectory(libtensor)
 add_subdirectory(tests)
 #add_subdirectory(performance_tests)
