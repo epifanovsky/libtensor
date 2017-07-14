@@ -114,6 +114,7 @@ int test_print() {
         return fail_test(testname, __FILE__, __LINE__, err.str().c_str());
     }
 
+    return 0;
 }
 
 int test_op() {
