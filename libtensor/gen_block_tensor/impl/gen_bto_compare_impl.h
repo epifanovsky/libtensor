@@ -25,7 +25,11 @@ gen_bto_compare<N, Traits>::gen_bto_compare(
         "gen_block_tensor_rd_i<N, bti_traits>&, "
         "const element_type &, bool)";
 
-    if(!m_bt1.get_bis().equals(m_bt2.get_bis())) {
+    block_index_space<N> bis1 = m_bt1.get_bis();
+    block_index_space<N> bis2 = m_bt2.get_bis();
+    bis1.match_splits();
+    bis2.match_splits();
+    if(!bis1.equals(bis2)) {
         throw bad_block_index_space(g_ns, k_clazz, method, __FILE__, __LINE__,
             "bt1, bt2");
     }
