@@ -1,84 +1,52 @@
-# Scalar type is double
-SCALAR_TYPE= XM_SCALAR_DOUBLE
-# Scalar type is float
-#SCALAR_TYPE= XM_SCALAR_FLOAT
-# Scalar type is double complex
-#SCALAR_TYPE= XM_SCALAR_DOUBLE_COMPLEX
-# Scalar type is float complex
-#SCALAR_TYPE= XM_SCALAR_FLOAT_COMPLEX
+CC= cc
+CFLAGS= -Wall -Wextra -g -fopenmp -Isrc
+LDFLAGS= -L/usr/local/lib
+LIBS= -lblas -lm
 
-# Clang with Netlib BLAS on FreeBSD (debug build)
-CC= clang
-CFLAGS= -D$(SCALAR_TYPE) -Weverything -Wno-gnu-imaginary-constant -Wno-padded -Wno-used-but-marked-unused -Wno-missing-noreturn -Wno-format-nonliteral -fcolor-diagnostics -g -DHAVE_ARC4RANDOM -DHAVE_BITSTRING_H -DHAVE_TREE_H
-LDFLAGS= -L/usr/local/lib -L/usr/local/lib/gcc48
-LIBS= -lblas -lgfortran -lpthread -lm
-
-# Intel Compiler with MKL on Linux (release build)
+# Intel Compiler (release build)
 #CC= icc
-#CFLAGS= -D$(SCALAR_TYPE) -DNDEBUG -Wall -Wextra -O3 -I./compat -mkl=parallel
+#CFLAGS= -DNDEBUG -Wall -Wextra -O3 -fopenmp -mkl=sequential -Isrc
 #LDFLAGS=
-#LIBS= -lpthread -lm
+#LIBS= -lm
 
-# Intel Compiler with CUDA on Linux (release build)
-#CC= icc
-#CFLAGS= -D$(SCALAR_TYPE) -DNDEBUG -Wall -Wextra -O3 -I./compat
-#LDFLAGS= -L/usr/usc/cuda/default/lib64
-#LIBS= -lnvblas -lpthread -lm
-
-# GNU gcc with Netlib BLAS on Linux (debug build)
-#CC= gcc
-#CFLAGS= -D$(SCALAR_TYPE) -Wall -Wextra -g -I./compat
+# Intel Compiler with MPI (release build)
+#CC= mpicc
+#CFLAGS= -DXM_USE_MPI -DNDEBUG -Wall -Wextra -O3 -fopenmp -mkl=sequential -Isrc
 #LDFLAGS=
-#LIBS= -lblas -lpthread -lm
+#LIBS= -lm
 
-# Clang with Netlib BLAS on OpenBSD (debug build)
-#CC= clang
-#CFLAGS= -D$(SCALAR_TYPE) -Weverything -Wno-padded -Wno-used-but-marked-unused -Wno-missing-noreturn -Wno-format-nonliteral -fcolor-diagnostics -g -DHAVE_ARC4RANDOM -DHAVE_BITSTRING_H -DHAVE_TREE_H
-#LDFLAGS= -L/usr/local/lib
-#LIBS= -lblas -lg2c -lpthread -lm
-
-BENCHMARK= benchmark
-BENCHMARK_O= benchmark.o
+EXAMPLE= example
+EXAMPLE_O= example.o
 TEST= test
 TEST_O= test.o
-TEST3= test3
-TEST3_O= test3.o
 
-AUX_O= aux.o
-XM_A= xm.a
-XM_O= alloc.o xm.o
+XM_A= src/libxm.a
 
-AR= ar rcu
-RANLIB= ranlib
-RM= rm -f
+all: $(EXAMPLE) $(TEST)
 
-all: $(BENCHMARK) $(TEST) $(TEST3)
+$(EXAMPLE): $(XM_A) $(EXAMPLE_O)
+	$(CC) -o $@ $(CFLAGS) $(EXAMPLE_O) $(XM_A) $(LDFLAGS) $(LIBS)
 
-$(BENCHMARK): $(AUX_O) $(XM_A) $(BENCHMARK_O)
-	$(CC) -o $@ $(CFLAGS) $(BENCHMARK_O) $(AUX_O) $(XM_A) $(LDFLAGS) $(LIBS)
+$(TEST): $(XM_A) $(TEST_O)
+	$(CC) -o $@ $(CFLAGS) $(TEST_O) $(XM_A) $(LDFLAGS) $(LIBS)
 
-$(TEST): $(AUX_O) $(XM_A) $(TEST_O)
-	$(CC) -o $@ $(CFLAGS) $(TEST_O) $(AUX_O) $(XM_A) $(LDFLAGS) $(LIBS)
+$(XM_A):
+	cd src && CC="$(CC)" CFLAGS="$(CFLAGS)" $(MAKE)
 
-$(TEST3): $(AUX_O) $(XM_A) $(TEST3_O)
-	$(CC) -o $@ $(CFLAGS) $(TEST3_O) $(AUX_O) $(XM_A) $(LDFLAGS) $(LIBS)
+check: $(TEST)
+	./$(TEST)
 
-$(XM_A): $(XM_O)
-	$(AR) $@ $(XM_O)
-	$(RANLIB) $@
-
-check: $(TEST) $(TEST3)
-	@./test3 2>/dev/null
-	@./test 30 2>/dev/null
+checkmpi: $(TEST)
+	mpirun -np 3 ./$(TEST)
+	mpirun -np 2 ./$(TEST)
+	mpirun -np 1 ./$(TEST)
 
 dist:
 	git archive --format=tar.gz --prefix=libxm/ -o libxm.tgz HEAD
 
 clean:
-	$(RM) $(XM_A) $(XM_O) $(AUX_O)
-	$(RM) $(BENCHMARK) $(BENCHMARK_O)
-	$(RM) $(TEST) $(TEST_O)
-	$(RM) $(TEST3) $(TEST3_O)
-	$(RM) *.core mapping libxm.tgz
+	cd src && $(MAKE) clean
+	rm -f $(EXAMPLE) $(EXAMPLE_O) $(TEST) $(TEST_O)
+	rm -f *.core xmpagefile libxm.tgz
 
-.PHONY: all check clean dist
+.PHONY: all check checkmpi clean dist

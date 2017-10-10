@@ -10,20 +10,17 @@
 
 #include <libtensor/core/impl/xm_allocator.h>
 #include <libtensor/block_tensor/btod_contract2_xm.h>
-#include <libtensor/libxm/xm.h>
+#include <libtensor/libxm/src/xm.h>
 
 namespace libtensor {
-
 
 template<size_t N, size_t M, size_t K>
 const char btod_contract2_xm_clazz<N, M, K>::k_clazz[] =
     "btod_contract2_xm<N, M, K>";
 
-
 template<size_t N, size_t M, size_t K>
 const char btod_contract2_xm<N, M, K>::k_clazz[] =
     "btod_contract2_xm<N, M, K>";
-
 
 template<size_t N, size_t M, size_t K>
 btod_contract2_xm<N, M, K>::btod_contract2_xm(
@@ -38,7 +35,6 @@ btod_contract2_xm<N, M, K>::btod_contract2_xm(
         btb, scalar_transf<double>(),
         scalar_transf<double>()) {
 }
-
 
 template<size_t N, size_t M, size_t K>
 btod_contract2_xm<N, M, K>::btod_contract2_xm(
@@ -57,7 +53,6 @@ btod_contract2_xm<N, M, K>::btod_contract2_xm(
         scalar_transf<double>(kc)) {
 }
 
-
 template<size_t N>
 xm_dim_t dimensions_to_xm(const dimensions<N> &dims)
 {
@@ -67,42 +62,20 @@ xm_dim_t dimensions_to_xm(const dimensions<N> &dims)
     return (d);
 }
 
-
 template<size_t NA, typename bti_traits>
-dimensions<NA> get_tensor_dims(gen_block_tensor_rd_i<NA, bti_traits> &bta)
+xm_block_space_t *make_blockspace(gen_block_tensor_rd_i<NA, bti_traits> &bta)
 {
     block_index_space<NA> bisa(bta.get_bis());
-    dimensions<NA> dims = bisa.get_block_index_dims();
-
-    return (dims);
-}
-
-
-template<size_t NA, typename bti_traits>
-dimensions<NA> get_tensor_part_dims(gen_block_tensor_rd_i<NA, bti_traits> &bta)
-{
-    block_index_space<NA> bisa(bta.get_bis());
-    dimensions<NA> dims = bisa.get_block_index_dims();
-    gen_block_tensor_rd_ctrl<NA, bti_traits> ctrl(bta);
-    const symmetry<NA, double> &sym = ctrl.req_const_symmetry();
-
-    for (typename symmetry<NA, double>::iterator i = sym.begin();
-            i != sym.end(); i++) {
-        if ((*i)->get_id() == "part") {
-            if ((*i)->is_empty()) {
-                throw std::runtime_error("part symmetry type is empty");
-            }
-            typename symmetry_element_set<NA, double>::const_iterator j =
-                (*i)->begin();
-            dimensions<NA> pdims =
-                dynamic_cast<se_part<NA, double> *>(*j)->get_pdims();
-            return (pdims);
-        }
+    dimensions<NA> ltdims = bisa.get_dims();
+    xm_dim_t dims = dimensions_to_xm(ltdims);
+    xm_block_space_t *bs = xm_block_space_create(dims);
+    for (size_t i = 0; i < NA; i++) {
+        split_points sp = bisa.get_splits(bisa.get_type(i));
+        for (size_t j = 0; j < sp.get_num_points(); j++)
+            xm_block_space_split(bs, NA-i-1, sp[j]);
     }
-    index<NA> i1, i2;
-    return dimensions<NA>(index_range<NA>(i1, i2));
+    return bs;
 }
-
 
 template<size_t NA, typename bti_traits>
 void setup_input_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
@@ -111,7 +84,6 @@ void setup_input_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
     gen_block_tensor_rd_ctrl<NA, bti_traits> ctrl(bta);
     block_index_space<NA> bisa(bta.get_bis());
     dimensions<NA> bisa_dims = bisa.get_block_index_dims();
-    xm_dim_t dima = xm_tensor_get_dim(a);
 
     std::vector<size_t> nzblk;
     ctrl.req_nonzero_blocks(nzblk);
@@ -130,9 +102,9 @@ void setup_input_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
             for (size_t j = 0; j < NA; j++)
                 blkdim.i[j] = lt_blkdim[NA-j-1];
             uintptr_t data_ptr;
-	    libtensor::allocator<double>::pointer_type p = dynamic_cast< dense_tensor<NA, double, libtensor::allocator<double> >& >(lt_blk).get_vm_ptr();
+            libtensor::allocator<double>::pointer_type p = dynamic_cast< dense_tensor<NA, double, libtensor::allocator<double> >& >(lt_blk).get_vm_ptr();
             memcpy(&data_ptr, &p, sizeof(data_ptr));
-            xm_tensor_set_source_block(a, &idx, &blkdim, data_ptr);
+            xm_tensor_set_canonical_block_raw(a, idx, data_ptr);
         }
         ctrl.ret_const_block(lt_absidx.get_index());
 
@@ -151,29 +123,11 @@ void setup_input_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
                 size_t p = transf.get_perm()[j];
                 perm.i[NA-j-1] = NA-p-1;
             }
-            xm_tensor_set_block(a, &idx2, &idx, &perm,
+            xm_tensor_set_derivative_block(a, idx2, idx, perm,
                 transf.get_scalar_tr().get_coeff());
         }
     }
-
-    xm_dim_t dim = xm_tensor_get_dim(a);
-    size_t nblk = xm_dim_dot(&dim);
-    xm_dim_t idx = xm_dim_zero(NA);
-    for (size_t i = 0; i < nblk; i++) {
-        if (!xm_tensor_block_is_initialized(a, &idx)) {
-            index<NA> lt_idx;
-            for (size_t j = 0; j < NA; j++)
-                lt_idx[j] = idx.i[NA-j-1];
-            dimensions<NA> lt_blkdim = bisa.get_block_dims(lt_idx);
-            xm_dim_t blkdim = xm_dim_zero(NA);
-            for (size_t j = 0; j < NA; j++)
-                blkdim.i[j] = lt_blkdim[NA-j-1];
-            xm_tensor_set_zero_block(a, &idx, &blkdim);
-        }
-        xm_dim_inc(&idx, &dim);
-    }
 }
-
 
 template<size_t NA, typename bti_traits>
 void setup_output_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
@@ -198,11 +152,10 @@ void setup_output_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
 
         dense_tensor_wr_i<NA, double> &lt_blk = ctrl.req_block(lt_idx);
         {
-            tod_set<NA>().perform(true, lt_blk);
             uintptr_t data_ptr;
-	    libtensor::allocator<double>::pointer_type p = dynamic_cast< dense_tensor<NA, double, libtensor::allocator<double> >& >(lt_blk).get_vm_ptr();
+            libtensor::allocator<double>::pointer_type p = dynamic_cast< dense_tensor<NA, double, libtensor::allocator<double> >& >(lt_blk).get_vm_ptr();
             memcpy(&data_ptr, &p, sizeof(data_ptr));
-            xm_tensor_set_source_block(a, &idx, &blkdim, data_ptr);
+            xm_tensor_set_canonical_block_raw(a, idx, data_ptr);
         }
         ctrl.ret_block(lt_idx);
 
@@ -222,29 +175,11 @@ void setup_output_tensor(struct xm_tensor *a, struct xm_allocator *allocator,
                 size_t p = transf.get_perm()[j];
                 perm.i[NA-j-1] = NA-p-1;
             }
-            xm_tensor_set_block(a, &idx2, &idx, &perm,
+            xm_tensor_set_derivative_block(a, idx2, idx, perm,
                 transf.get_scalar_tr().get_coeff());
         }
     }
-
-    xm_dim_t dim = xm_tensor_get_dim(a);
-    size_t nblk = xm_dim_dot(&dim);
-    xm_dim_t idx = xm_dim_zero(NA);
-    for (size_t i = 0; i < nblk; i++) {
-        if (!xm_tensor_block_is_initialized(a, &idx)) {
-            index<NA> lt_idx;
-            for (size_t j = 0; j < NA; j++)
-                lt_idx[j] = idx.i[NA-j-1];
-            dimensions<NA> lt_blkdim = bisa.get_block_dims(lt_idx);
-            xm_dim_t blkdim = xm_dim_zero(NA);
-            for (size_t j = 0; j < NA; j++)
-                blkdim.i[j] = lt_blkdim[NA-j-1];
-            xm_tensor_set_zero_block(a, &idx, &blkdim);
-        }
-        xm_dim_inc(&idx, &dim);
-    }
 }
-
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2_xm<N, M, K>::perform(
@@ -258,36 +193,45 @@ void btod_contract2_xm<N, M, K>::perform(
         so_copy<NC, double>(m_symc.get_symmetry()).perform(ctrl.req_symmetry());
     }
 
-    perform(out, btc);
-}
+    perform(btc);
 
+    {
+        gen_block_tensor_ctrl<NC, bti_traits> ctrl(btc);
+        orbit_list<NC, double> ol1(ctrl.req_const_symmetry());
+        for (typename orbit_list<NC, double>::iterator io1 = ol1.begin();
+                io1 != ol1.end(); ++io1) {
+            index<NC> lt_idx;
+            ol1.get_index(io1, lt_idx);
+            {
+                tensor_transf<NC, double> transf;
+                dense_tensor_rd_i<NC, double> &lt_blk =
+                    ctrl.req_const_block(lt_idx);
+                out.put(lt_idx, lt_blk, transf);
+                ctrl.ret_const_block(lt_idx);
+            }
+        }
+    }
+}
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2_xm<N, M, K>::perform(
-    gen_block_stream_i<NC, bti_traits> &out,
     gen_block_tensor_i<NC, bti_traits> &btc) {
 
     if (N + K > XM_MAX_DIM || M + K > XM_MAX_DIM || N + M > XM_MAX_DIM) {
         throw std::runtime_error("tensor n_dim > XM_MAX_DIM");
     }
 
-    struct xm_allocator *allocator;
-    struct xm_tensor *a, *b, *c;
-    xm_dim_t dima, dimb, dimc, pdima, pdimb, pdimc;
+    xm_allocator_t *allocator;
+    xm_block_space_t *bsa, *bsb, *bsc;
+    xm_tensor_t *a, *b, *c;
     char idxbuf[32 * 3], *idxa, *idxb, *idxc;
+    int type = XM_SCALAR_DOUBLE;
 
     allocator = lt_xm_allocator::alloc_data::get_instance().xm_allocator_inst;
 
     idxa = idxbuf;
     idxb = idxa + 32;
     idxc = idxb + 32;
-
-    dima = dimensions_to_xm(get_tensor_dims(m_bta));
-    dimb = dimensions_to_xm(get_tensor_dims(m_btb));
-    dimc = dimensions_to_xm(get_tensor_dims(btc));
-    pdima = dimensions_to_xm(get_tensor_part_dims(m_bta));
-    pdimb = dimensions_to_xm(get_tensor_part_dims(m_btb));
-    pdimc = dimensions_to_xm(get_tensor_part_dims(btc));
 
     // setup contraction index strings
     char idx_letter = 'a';
@@ -327,19 +271,22 @@ void btod_contract2_xm<N, M, K>::perform(
         idxc[NC-i-1] = t;
     }
 
-    if ((a = xm_tensor_create(allocator, &dima, "a")) == NULL) {
-        throw std::runtime_error("xm_tensor_create(a)");
-    }
-    if ((b = xm_tensor_create(allocator, &dimb, "b")) == NULL) {
-        throw std::runtime_error("xm_tensor_create(b)");
-    }
-    if ((c = xm_tensor_create(allocator, &dimc, "c")) == NULL) {
-        throw std::runtime_error("xm_tensor_create(c)");
-    }
+    bsa = make_blockspace(m_bta);
+    bsb = make_blockspace(m_btb);
+    bsc = make_blockspace(btc);
 
-    xm_tensor_set_part_dim(a, &pdima);
-    xm_tensor_set_part_dim(b, &pdimb);
-    xm_tensor_set_part_dim(c, &pdimc);
+    if ((a = xm_tensor_create(bsa, type, allocator)) == NULL) {
+        throw std::runtime_error("xm_tensor_create");
+    }
+    if ((b = xm_tensor_create(bsb, type, allocator)) == NULL) {
+        throw std::runtime_error("xm_tensor_create");
+    }
+    if ((c = xm_tensor_create(bsc, type, allocator)) == NULL) {
+        throw std::runtime_error("xm_tensor_create");
+    }
+    xm_block_space_free(bsa);
+    xm_block_space_free(bsb);
+    xm_block_space_free(bsc);
 
     // setup tensor a
     setup_input_tensor<NA, bti_traits>(a, allocator, m_bta);
@@ -348,50 +295,19 @@ void btod_contract2_xm<N, M, K>::perform(
     // setup tensor c
     setup_output_tensor<NC, bti_traits>(c, allocator, btc);
 
-    threading_policy::enable_blas_only();
+    threading_policy::enable_omp_only();
 
     // contract
     double alpha = m_ka.get_coeff() * m_kb.get_coeff() * m_kc.get_coeff();
-    if (xm_contract(alpha, a, b, 0.0, c, idxa, idxb, idxc)) {
-        throw std::runtime_error("xm_contract");
-    }
+    xm_contract(alpha, a, b, 0.0, c, idxa, idxb, idxc);
 
     threading_policy::pop();
-
-    {
-        gen_block_tensor_ctrl<NC, bti_traits> ctrl(btc);
-        orbit_list<NC, double> ol1(ctrl.req_const_symmetry());
-        for (typename orbit_list<NC, double>::iterator io1 = ol1.begin();
-                io1 != ol1.end(); ++io1) {
-            index<NC> lt_idx;
-            ol1.get_index(io1, lt_idx);
-            {
-                tensor_transf<NC, double> transf;
-                dense_tensor_rd_i<NC, double> &lt_blk =
-                    ctrl.req_const_block(lt_idx);
-                out.put(lt_idx, lt_blk, transf);
-                ctrl.ret_const_block(lt_idx);
-            }
-        }
-    }
 
     // free all
     xm_tensor_free(a);
     xm_tensor_free(b);
     xm_tensor_free(c);
 }
-
-
-template<size_t N, size_t M, size_t K>
-void btod_contract2_xm<N, M, K>::perform(
-    gen_block_tensor_i<NC, bti_traits> &btc) {
-
-    gen_bto_aux_copy<NC, btod_traits> out(get_symmetry(), btc);
-    out.open();
-    perform(out);
-    out.close();
-}
-
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2_xm<N, M, K>::perform(
@@ -413,7 +329,6 @@ void btod_contract2_xm<N, M, K>::perform(
     out.close();
 }
 
-
 template<size_t N, size_t M, size_t K>
 void btod_contract2_xm<N, M, K>::perform(
     block_tensor_i<NC, double> &btc,
@@ -421,7 +336,6 @@ void btod_contract2_xm<N, M, K>::perform(
 
     perform(btc, scalar_transf<double>(d));
 }
-
 
 template<size_t N, size_t M, size_t K>
 void btod_contract2_xm<N, M, K>::compute_block(
@@ -432,7 +346,6 @@ void btod_contract2_xm<N, M, K>::compute_block(
 
     m_gbto.compute_block(zero, ic, trc, blkc);
 }
-
 
 } // namespace libtensor
 

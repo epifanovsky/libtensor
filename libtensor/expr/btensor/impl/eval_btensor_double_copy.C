@@ -1,4 +1,7 @@
 #include <libtensor/block_tensor/btod_copy.h>
+#ifdef WITH_LIBXM
+#include <libtensor/block_tensor/btod_copy_xm.h>
+#endif // WITH_LIBXM
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/iface/node_ident_any_tensor.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -8,6 +11,10 @@
 namespace libtensor {
 namespace expr {
 namespace eval_btensor_double {
+
+
+extern bool use_libxm;
+
 
 namespace {
 
@@ -43,8 +50,18 @@ eval_copy_impl<N>::eval_copy_impl(const expr_tree &tree,
     expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
 
     btensor_from_node<N, double> bta(tree, id);
+#ifdef WITH_LIBXM
+    if(use_libxm) {
+        m_op = new btod_copy_xm<N>(bta.get_btensor(), tr.get_perm(),
+            tr.get_scalar_tr().get_coeff());
+    } else {
+        m_op = new btod_copy<N>(bta.get_btensor(), tr.get_perm(),
+            tr.get_scalar_tr().get_coeff());
+    }
+#else // WITH_LIBXM
     m_op = new btod_copy<N>(bta.get_btensor(), tr.get_perm(),
         tr.get_scalar_tr().get_coeff());
+#endif // WITH_LIBXM
 }
 
 

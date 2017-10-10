@@ -117,11 +117,6 @@ public:
 
     /** \brief Computes the contraction into an output stream
      **/
-    virtual void perform(gen_block_stream_i<NC, bti_traits> &out,
-        gen_block_tensor_i<NC, bti_traits> &btc);
-
-    /** \brief Computes the contraction into an output stream
-     **/
     virtual void perform(gen_block_stream_i<NC, bti_traits> &out);
 
     //@}

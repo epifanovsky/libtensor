@@ -402,8 +402,14 @@ set(SRC_ARMA
 )
 
 set(SRC_XM
-    libxm/xm.c
-    libxm/alloc.c
+    libxm/src/alloc.c
+    libxm/src/blockspace.c
+    libxm/src/contract.c
+    libxm/src/dim.c
+    libxm/src/scalar.c
+    libxm/src/tensor.c
+    libxm/src/util.c
+    libxm/src/xm.c
     block_tensor/impl/btod_contract2_1_xm.C
     block_tensor/impl/btod_contract2_2_xm.C
     block_tensor/impl/btod_contract2_3_xm.C
@@ -412,6 +418,7 @@ set(SRC_XM
     block_tensor/impl/btod_contract2_6_xm.C
     block_tensor/impl/btod_contract2_7_xm.C
     block_tensor/impl/btod_contract2_8_xm.C
+    block_tensor/impl/btod_copy_xm.C
 )
 
 if(USE_ACML)
@@ -441,6 +448,10 @@ if(WITH_CTF)
     set(SRC ${SRC} ${SRC_CTF})
     set_property(SOURCE ${SRC_CTF} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
 endif(WITH_CTF)
+
+if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN" AND CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+    set_property(SOURCE block_tensor/impl/btod_ewmult2.C APPEND PROPERTY COMPILE_FLAGS "-Wa,-mbig-obj")
+endif()
 
 add_library(tensor_core ${SRC_CORE})
 target_link_libraries(tensor_core util)

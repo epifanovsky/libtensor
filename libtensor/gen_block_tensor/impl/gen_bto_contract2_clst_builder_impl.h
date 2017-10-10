@@ -294,7 +294,7 @@ void gen_bto_contract2_clst_builder<N, M, K, Traits>::build_list(
             ibla->at(0) != iblb->at(0)) {
 
             while(ibla != ibla_end && ibla->at(0) < iblb->at(0)) ++ibla;
-            while(iblb != iblb_end && iblb->at(0) < ibla->at(0)) ++iblb;
+            while(ibla != ibla_end && iblb != iblb_end && iblb->at(0) < ibla->at(0)) ++iblb;
         }
         if(ibla == ibla_end || iblb == iblb_end) break;
 

@@ -1,6 +1,9 @@
 #include <memory>
 #include <vector>
 #include <libtensor/block_tensor/btod_copy.h>
+#ifdef WITH_LIBXM
+#include <libtensor/block_tensor/btod_copy_xm.h>
+#endif // WITH_LIBXM
 #include <libtensor/block_tensor/btod_set.h>
 #include <libtensor/block_tensor/btod_set_diag.h>
 #include <libtensor/block_tensor/btod_shift_diag.h>
@@ -19,6 +22,8 @@
 namespace libtensor {
 namespace expr {
 namespace eval_btensor_double {
+
+extern bool use_libxm;
 
 namespace {
 using std::auto_ptr;
@@ -81,7 +86,18 @@ eval_set_impl<N>::eval_set_impl(const expr_tree &tree,
     perform_op(n, op, val, *bt);
 
     m_bt = bt.release();
-    m_op = new btod_copy<N>(*m_bt, tr.get_perm(), tr.get_scalar_tr().get_coeff());
+#ifdef WITH_LIBXM
+    if(use_libxm) {
+        m_op = new btod_copy_xm<N>(*m_bt, tr.get_perm(),
+            tr.get_scalar_tr().get_coeff());
+    } else {
+        m_op = new btod_copy<N>(*m_bt, tr.get_perm(),
+            tr.get_scalar_tr().get_coeff());
+    }
+#else // WITH_LIBXM
+    m_op = new btod_copy<N>(*m_bt, tr.get_perm(),
+        tr.get_scalar_tr().get_coeff());
+#endif // WITH_LIBXM
 }
 
 

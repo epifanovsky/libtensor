@@ -9,7 +9,7 @@
 #include <libutil/threads/mutex.h>
 #include <libtensor/defs.h>
 #include <libtensor/core/batching_policy_base.h>
-#include <libtensor/libxm/alloc.h>
+#include <libtensor/libxm/src/alloc.h>
 
 namespace libtensor {
 namespace lt_xm_allocator {
@@ -48,8 +48,12 @@ public:
     static void init(size_t base_sz, size_t min_sz, size_t max_sz,
         size_t mem_limit, const char *prefix = 0) {
 
-        std::string pref = prefix ? prefix : "";
-        std::string path = prefix ? pref + "/" + "mapping" : "mapping";
+        std::string path;
+
+        if (prefix) {
+            std::string pref = prefix;
+            path = pref + "/" + "xmpagefile";
+        }
 
         if (alloc_data::get_instance().xm_allocator_inst == NULL) {
             alloc_data::get_instance().xm_allocator_inst =
