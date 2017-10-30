@@ -433,8 +433,6 @@ else(USE_ACML)
     set(SRC_LINALG ${SRC_LINALG_GENERIC})
 endif(USE_ACML)
 
-set(TARGETS tensor_core tensor tensor_block_sparse)
-
 set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
     ${SRC_DIAG_TENSOR} ${SRC_INST} ${SRC_EXPR})
 if(WITH_ARMADILLO)
@@ -454,26 +452,24 @@ if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN" AND CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBI
 endif()
 
 add_library(tensor_core ${SRC_CORE})
+target_compile_definitions(tensor_core PUBLIC
+    $<$<CONFIG:Debug>:LIBTENSOR_DEBUG> LIBTENSOR_TIMINGS)
+target_include_directories(tensor_core PUBLIC "${LIBTENSOR_SOURCE_DIR}")
 target_link_libraries(tensor_core util)
+if(TARGET vmm)
+    target_link_libraries(tensor_core vmm)
+else(TARGET vmm)
+    target_compile_definitions(tensor_core PRIVATE WITHOUT_LIBVMM)
+endif(TARGET vmm)
 add_library(tensor ${SRC})
 target_link_libraries(tensor tensor_core)
+if(WITH_ARMADILLO)
+    target_link_libraries(tensor armadillo)
+endif(WITH_ARMADILLO)
 add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
-target_link_libraries(tensor_block_sparse tensor_core)
+target_link_libraries(tensor_block_sparse tensor)
 
 if(QCHEM_SOURCE_DIR)
-    set(TARGETS ${TARGETS} tensor_qchem)
     add_library(tensor_qchem ${SRC_LINALG_GENERIC} ${SRC_LINALG_QCHEM})
     target_link_libraries(tensor_qchem tensor_core)
 endif(QCHEM_SOURCE_DIR)
-
-set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
-set_property(TARGET ${TARGETS} APPEND PROPERTY
-    COMPILE_DEFINITIONS LIBTENSOR_TIMINGS)
-if(HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBVMM_DEBUG>)
-else(HAVE_LIBVMM)
-    set_property(TARGET ${TARGETS} APPEND PROPERTY
-        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
-endif(HAVE_LIBVMM)
