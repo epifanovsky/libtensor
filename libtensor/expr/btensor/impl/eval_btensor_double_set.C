@@ -63,39 +63,38 @@ private:
 
 
 template<size_t N>
-eval_set_impl<N, float>::eval_set_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, float> &tr) {
+additive_gen_bto<N, typename eval_set_impl<N, float>::bti_traits> *create_op(
+    btensor_i<N, float> &bt, const tensor_transf<N, float> &tr,
+    bool use_libxm) {
 
-    const node_set &n = tree.get_vertex(id).template recast_as<node_set>();
-
-    // Retrieve tensor argument and respective tensor operation
-    const expr_tree::edge_list_t &e = tree.get_edges_out(id);
-    tensor_transf<N, float> trx;
-    expr_tree::node_id_t rhs = transf_from_node(tree, e[0], trx);
-
-    autoselect<N, float> eval(tree, rhs, trx);
-    additive_gen_bto<N, bti_traits> &op = eval.get_bto();
-
-    // Retrieve scalar argument
-    const node_const_scalar<float> &ns = tree.get_vertex(e[1]).
-            template recast_as< node_const_scalar<float> >();
-    const float &val = ns.get_scalar();
-
-    // Create tensor
-    std::auto_ptr< btensor<N, float> > bt(new btensor<N, float>(op.get_bis()));
-    perform_op(n, op, val, *bt);
-
-    m_bt = bt.release();
-    m_op = new bto_copy<N, float>(*m_bt, tr.get_perm(),
+    return new bto_copy<N, float>(bt, tr.get_perm(),
         tr.get_scalar_tr().get_coeff());
 }
 
 
 template<size_t N>
-eval_set_impl<N, double>::eval_set_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
+additive_gen_bto<N, typename eval_set_impl<N, double>::bti_traits> *create_op(
+    btensor_i<N, double> &bt, const tensor_transf<N, double> &tr,
+    bool use_libxm) {
 
-    typedef double T;
+#ifdef WITH_LIBXM
+    if(use_libxm) {
+        return new btod_copy_xm<N>(bt, tr.get_perm(),
+            tr.get_scalar_tr().get_coeff());
+    } else {
+        return new bto_copy<N, double>(bt, tr.get_perm(),
+            tr.get_scalar_tr().get_coeff());
+    }
+#else // WITH_LIBXM
+    return new bto_copy<N, double>(bt, tr.get_perm(),
+        tr.get_scalar_tr().get_coeff());
+#endif // WITH_LIBXM
+}
+
+
+template<size_t N, typename T>
+eval_set_impl<N, T>::eval_set_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, T> &tr) {
 
     const node_set &n = tree.get_vertex(id).template recast_as<node_set>();
 
@@ -117,18 +116,7 @@ eval_set_impl<N, double>::eval_set_impl(const expr_tree &tree,
     perform_op(n, op, val, *bt);
 
     m_bt = bt.release();
-#ifdef WITH_LIBXM
-    if(use_libxm) {
-        m_op = new btod_copy_xm<N>(*m_bt, tr.get_perm(),
-            tr.get_scalar_tr().get_coeff());
-    } else {
-        m_op = new bto_copy<N, T>(*m_bt, tr.get_perm(),
-            tr.get_scalar_tr().get_coeff());
-    }
-#else // WITH_LIBXM
-    m_op = new bto_copy<N, T>(*m_bt, tr.get_perm(),
-        tr.get_scalar_tr().get_coeff());
-#endif // WITH_LIBXM
+    m_op = create_op(*m_bt, tr, use_libxm);
 }
 
 

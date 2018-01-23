@@ -8,7 +8,6 @@ typedef linalg_acml linalg;
 } // namespace libtensor
 
 #elif defined(USE_CBLAS)
-#warning "CBLAS"
 #include "cblas/linalg_cblas.h"
 namespace libtensor {
 typedef linalg_cblas linalg;
@@ -40,7 +39,6 @@ typedef linalg_qchem linalg;
 
 #else
 #include "generic/linalg_generic.h"
-#warning "GENERIC"
 namespace libtensor {
 typedef linalg_generic linalg;
 } // namespace libtensor

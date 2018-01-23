@@ -46,32 +46,41 @@ public:
 
 
 template<size_t N>
-eval_copy_impl<N, float>::eval_copy_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, float> &tr) {
+additive_gen_bto<N, typename eval_copy_impl<N, float>::bti_traits> *create_op(
+    const expr_tree &tree, expr_tree::node_id_t id,
+    const tensor_transf<N, float> &tr) {
 
     btensor_from_node<N, float> bta(tree, id);
-    m_op = new bto_copy<N, float>(bta.get_btensor(), tr.get_perm(),
+    return new bto_copy<N, float>(bta.get_btensor(), tr.get_perm(),
         tr.get_scalar_tr().get_coeff());
 }
 
-
 template<size_t N>
-eval_copy_impl<N, double>::eval_copy_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
+additive_gen_bto<N, typename eval_copy_impl<N, double>::bti_traits> *create_op(
+    const expr_tree &tree, expr_tree::node_id_t id,
+    const tensor_transf<N, double> &tr) {
 
     btensor_from_node<N, double> bta(tree, id);
 #ifdef WITH_LIBXM
     if(use_libxm) {
-        m_op = new btod_copy_xm<N>(bta.get_btensor(), tr.get_perm(),
+        return new btod_copy_xm<N>(bta.get_btensor(), tr.get_perm(),
             tr.get_scalar_tr().get_coeff());
     } else {
-        m_op = new bto_copy<N, double>(bta.get_btensor(), tr.get_perm(),
+        return new bto_copy<N, double>(bta.get_btensor(), tr.get_perm(),
             tr.get_scalar_tr().get_coeff());
     }
 #else // WITH_LIBXM
-    m_op = new bto_copy<N, double>(bta.get_btensor(), tr.get_perm(),
+    return new bto_copy<N, double>(bta.get_btensor(), tr.get_perm(),
         tr.get_scalar_tr().get_coeff());
 #endif // WITH_LIBXM
+}
+
+
+template<size_t N, typename T>
+eval_copy_impl<N, T>::eval_copy_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, T> &tr) {
+
+    m_op = create_op(tree, id, tr);
 }
 
 

@@ -28,8 +28,6 @@ if(LIBTENSOR_STANDALONE)
     add_subdirectory(libutil)
 endif(LIBTENSOR_STANDALONE)
 
-add_subdirectory(libtest)
-add_subdirectory(libutil)
 add_subdirectory(libtensor)
 add_subdirectory(tests)
 #add_subdirectory(performance_tests)
