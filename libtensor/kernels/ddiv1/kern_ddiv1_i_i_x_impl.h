@@ -20,7 +20,7 @@ void kern_ddiv1_i_i_x<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 1, 1> *kern_ddiv1_i_i_x<LA>::match(const kern_ddiv1<LA> &z,
+kernel_base<LA, 1, 1, double> *kern_ddiv1_i_i_x<LA>::match(const kern_ddiv1<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

@@ -462,9 +462,9 @@ if(MKL_VERSION VERSION_EQUAL "11.0")
             endif(WITH_OPENMP)
         else(APPLE)
             set(MKL_LIBRARIES -Wl,--start-group mkl_intel mkl_thread mkl_core
-                -Wl,--end-group dl)
+                -Wl,--end-group pthread dl)
             set(MKL_LIBRARIES_EXPLICIT -Wl,--start-group ${MKL_INTEL_PATH}
-                ${MKL_THREAD_PATH} ${MKL_CORE_PATH} -Wl,--end-group dl)
+                ${MKL_THREAD_PATH} ${MKL_CORE_PATH} -Wl,--end-group pthread dl)
         endif(APPLE)
     endif(MKL_SCALAPACK)
 endif(MKL_VERSION VERSION_EQUAL "11.0")

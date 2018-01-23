@@ -15,6 +15,7 @@ namespace expr {
 
     \ingroup libtensor_expr_opt
  **/
+template<typename T>
 void opt_merge_adjacent_transf(graph &g);
 
 

@@ -23,7 +23,7 @@ void combine_perm(const std::vector<size_t> &p1, const std::vector<size_t> &p2,
 
 } // unnamed namespace
 
-
+template<typename T>
 void opt_merge_adjacent_transf(graph &g) {
 
     typedef graph::node_id_t node_id_t;
@@ -45,19 +45,19 @@ void opt_merge_adjacent_transf(graph &g) {
         const node_transform_base &nj0 =
             g.get_vertex(eo[0]).recast_as<node_transform_base>();
 
-        if(ni0.get_type() == typeid(double) &&
-            nj0.get_type() == typeid(double)) {
+        if(ni0.get_type() == typeid(T) &&
+            nj0.get_type() == typeid(T)) { // do we need this if statement?
 
-            const node_transform<double> &ni =
-                ni0.recast_as< node_transform<double> >();
-            const node_transform<double> &nj =
-                nj0.recast_as< node_transform<double> >();
+            const node_transform<T> &ni =
+                ni0.recast_as< node_transform<T> >();
+            const node_transform<T> &nj =
+                nj0.recast_as< node_transform<T> >();
 
             std::vector<size_t> perm;
             combine_perm(nj.get_perm(), ni.get_perm(), perm);
-            scalar_transf<double> c(nj.get_coeff());
+            scalar_transf<T> c(nj.get_coeff());
             c.transform(ni.get_coeff());
-            g.replace(nidj, node_transform<double>(perm, c));
+            g.replace(nidj, node_transform<T>(perm, c));
             g.erase(nidi, nidj);
             for(size_t j = 0; j < ei.size(); j++) g.replace(ei[j], nidi, nidj);
             erase.push_back(nidi);
@@ -67,6 +67,8 @@ void opt_merge_adjacent_transf(graph &g) {
     for(size_t i = 0; i < erase.size(); i++) g.erase(erase[i]);
 }
 
+template void opt_merge_adjacent_transf<double>(graph &);
+template void opt_merge_adjacent_transf<float>(graph &);
 
 } // namespace expr
 } // namespace libtensor

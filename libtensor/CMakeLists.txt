@@ -41,9 +41,10 @@ set(SRC_LINALG_MKL
 )
 
 set(SRC_LINALG_QCHEM
-    linalg/qchem/linalg_qchem_level1.C
-    linalg/qchem/linalg_qchem_level2.C
-    linalg/qchem/linalg_qchem_level3.C
+    linalg/qchem/linalg_qchem_level1_double.C
+    linalg/qchem/linalg_qchem_level2_double.C
+    linalg/qchem/linalg_qchem_level3_double.C
+    linalg/qchem/linalg_qchem_level3_float.C
 )
 
 set(SRC_LINALG_GENERIC
@@ -53,15 +54,24 @@ set(SRC_LINALG_GENERIC
 )
 
 set(SRC_KERNELS
-    kernels/dadd1/kern_dadd1.C
-    kernels/dadd2/kern_dadd2.C
-    kernels/dcopy/kern_dcopy.C
-    kernels/ddiv1/kern_ddiv1.C
-    kernels/ddiv2/kern_ddiv2.C
-    kernels/ddivadd1/kern_ddivadd1.C
-    kernels/dmul1/kern_dmul1.C
-    kernels/dmul2/kern_dmul2.C
-    kernels/dmuladd1/kern_dmuladd1.C
+    #kernels/dadd1/kern_dadd1.C
+    kernels/add1/kern_add1.C
+    #kernels/dadd2/kern_dadd2.C
+    kernels/add2/kern_add2.C
+    #kernels/dcopy/kern_dcopy.C
+    kernels/copy/kern_copy.C
+    #kernels/ddiv1/kern_ddiv1.C
+    kernels/div1/kern_div1.C
+    #kernels/ddiv2/kern_ddiv2.C
+    kernels/div2/kern_div2.C
+    #kernels/ddivadd1/kern_ddivadd1.C
+    kernels/divadd1/kern_divadd1.C
+    #kernels/dmul1/kern_dmul1.C
+    kernels/mul1/kern_mul1.C
+    #kernels/dmul2/kern_dmul2.C
+    kernels/mul2/kern_mul2.C
+    #kernels/dmuladd1/kern_dmuladd1.C
+    kernels/muladd1/kern_muladd1.C
 )
 
 set(SRC_INST
@@ -70,38 +80,71 @@ set(SRC_INST
     dense_tensor/impl/to_diag_dims.C
     dense_tensor/impl/to_dirsum_dims.C
     dense_tensor/impl/to_ewmult2_dims.C
-    dense_tensor/impl/tod_add.C
-    dense_tensor/impl/tod_btconv.C
-    dense_tensor/impl/tod_compare.C
-    dense_tensor/impl/tod_contract2_1.C
-    dense_tensor/impl/tod_contract2_2.C
-    dense_tensor/impl/tod_contract2_3.C
-    dense_tensor/impl/tod_contract2_4.C
-    dense_tensor/impl/tod_contract2_5.C
-    dense_tensor/impl/tod_contract2_6.C
-    dense_tensor/impl/tod_contract2_7.C
-    dense_tensor/impl/tod_contract2_8.C
-    dense_tensor/impl/tod_copy.C
-    dense_tensor/impl/tod_copy_wnd.C
-    dense_tensor/impl/tod_diag.C
-    dense_tensor/impl/tod_dirsum.C
-    dense_tensor/impl/tod_dotprod.C
-    dense_tensor/impl/tod_ewmult2.C
-    dense_tensor/impl/tod_extract.C
-    dense_tensor/impl/tod_import_raw.C
-    dense_tensor/impl/tod_import_raw_stream.C
-    dense_tensor/impl/tod_mult.C
-    dense_tensor/impl/tod_mult1.C
-    dense_tensor/impl/tod_random.C
-    dense_tensor/impl/tod_scale.C
-    dense_tensor/impl/tod_scatter.C
-    dense_tensor/impl/tod_screen.C
-    dense_tensor/impl/tod_set.C
-    dense_tensor/impl/tod_set_diag.C
-    dense_tensor/impl/tod_set_elem.C
-    dense_tensor/impl/tod_size.C
-    dense_tensor/impl/tod_trace.C
-    dense_tensor/impl/tod_vmpriority.C
+    #dense_tensor/impl/tod_add.C
+    dense_tensor/impl/to_add.C
+    #dense_tensor/impl/tod_btconv.C
+    dense_tensor/impl/to_btconv.C
+    #dense_tensor/impl/tod_compare.C
+    dense_tensor/impl/to_compare.C
+    #dense_tensor/impl/tod_contract2_1.C
+    #dense_tensor/impl/tod_contract2_2.C
+    #dense_tensor/impl/tod_contract2_3.C
+    #dense_tensor/impl/tod_contract2_4.C
+    #dense_tensor/impl/tod_contract2_5.C
+    #dense_tensor/impl/tod_contract2_6.C
+    #dense_tensor/impl/tod_contract2_7.C
+    #dense_tensor/impl/tod_contract2_8.C
+    dense_tensor/impl/to_contract2_1.C
+    dense_tensor/impl/to_contract2_2.C
+    dense_tensor/impl/to_contract2_3.C
+    dense_tensor/impl/to_contract2_4.C
+    dense_tensor/impl/to_contract2_5.C
+    dense_tensor/impl/to_contract2_6.C
+    dense_tensor/impl/to_contract2_7.C
+    dense_tensor/impl/to_contract2_8.C
+    #dense_tensor/impl/tod_copy.C
+    dense_tensor/impl/to_copy.C
+    #dense_tensor/impl/tod_copy_wnd.C
+    dense_tensor/impl/to_copy_wnd.C
+    #dense_tensor/impl/tod_diag.C
+    dense_tensor/impl/to_diag.C
+    #dense_tensor/impl/tod_dirsum.C
+    dense_tensor/impl/to_dirsum.C
+    #dense_tensor/impl/tod_dotprod.C
+    dense_tensor/impl/to_dotprod.C
+    #dense_tensor/impl/tod_ewmult2.C
+    dense_tensor/impl/to_ewmult2.C
+    #dense_tensor/impl/tod_extract.C
+    dense_tensor/impl/to_extract.C
+    #dense_tensor/impl/tod_import_raw.C
+    dense_tensor/impl/to_import_raw.C
+    #dense_tensor/impl/tod_import_raw_stream.C
+    dense_tensor/impl/to_import_raw_stream.C
+    #dense_tensor/impl/tod_mult.C
+    dense_tensor/impl/to_mult.C
+    #dense_tensor/impl/tod_mult1.C
+    dense_tensor/impl/to_mult1.C
+    #dense_tensor/impl/tod_random.C
+    dense_tensor/impl/to_random.C
+    #dense_tensor/impl/tod_scale.C
+    dense_tensor/impl/to_scale.C
+    #dense_tensor/impl/tod_scatter.C
+    dense_tensor/impl/to_scatter.C
+    #dense_tensor/impl/tod_screen.C
+    dense_tensor/impl/to_screen.C
+    #dense_tensor/impl/tod_set.C
+    dense_tensor/impl/to_set.C
+    #dense_tensor/impl/tof_set.C
+    #dense_tensor/impl/tod_set_diag.C
+    dense_tensor/impl/to_set_diag.C
+    #dense_tensor/impl/tod_set_elem.C
+    dense_tensor/impl/to_set_elem.C
+    #dense_tensor/impl/tod_size.C
+    dense_tensor/impl/to_size.C
+    #dense_tensor/impl/tod_trace.C
+    dense_tensor/impl/to_trace.C
+    #dense_tensor/impl/tod_vmpriority.C
+    dense_tensor/impl/to_vmpriority.C
     symmetry/point_group_table.C
     symmetry/product_table_container.C
     symmetry/product_table_i.C
@@ -147,8 +190,10 @@ set(SRC_INST
     symmetry/inst/so_symmetrize_se_label_inst.C
     symmetry/inst/so_symmetrize_se_part_inst.C
     symmetry/inst/so_symmetrize_se_perm_inst.C
-    btod/btod_diagonalize.C
-    btod/btod_tridiagonalize.C
+    #btod/btod_diagonalize.C
+    btod/bto_diagonalize.C
+    #btod/btod_tridiagonalize.C
+    btod/bto_tridiagonalize.C
 )
 
 set(SRC_GEN_BTOD
@@ -158,51 +203,97 @@ set(SRC_GEN_BTOD
 
 set(SRC_BTOD
     block_tensor/impl/block_tensor.C
-    block_tensor/impl/btod_addition_schedule.C
-    block_tensor/impl/btod_add.C
-    block_tensor/impl/btod_aux_add.C
-    block_tensor/impl/btod_aux_chsym.C
-    block_tensor/impl/btod_aux_copy.C
-    block_tensor/impl/btod_aux_symmetrize.C
-    block_tensor/impl/btod_aux_transform.C
-    block_tensor/impl/btod_compare.C
-    block_tensor/impl/btod_contract2_1.C
-    block_tensor/impl/btod_contract2_2.C
-    block_tensor/impl/btod_contract2_3.C
-    block_tensor/impl/btod_contract2_4.C
-    block_tensor/impl/btod_contract2_5.C
-    block_tensor/impl/btod_contract2_6.C
-    block_tensor/impl/btod_contract2_7.C
-    block_tensor/impl/btod_contract2_8.C
-    block_tensor/impl/btod_contract2_clst_builder.C
-    block_tensor/impl/btod_contract2_clst_optimize.C
-    block_tensor/impl/btod_contract2_nzorb.C
-    block_tensor/impl/btod_contract3.C
-    block_tensor/impl/btod_copy.C
-    block_tensor/impl/btod_diag.C
-    block_tensor/impl/btod_dirsum.C
-    block_tensor/impl/btod_dotprod.C
-    block_tensor/impl/btod_ewmult2.C
-    block_tensor/impl/btod_export.C
-    block_tensor/impl/btod_extract.C
-    block_tensor/impl/btod_mult.C
-    block_tensor/impl/btod_mult1.C
-    block_tensor/impl/btod_random.C
-    block_tensor/impl/btod_scale.C
-    block_tensor/impl/btod_set_diag.C
-    block_tensor/impl/btod_set_elem.C
-    block_tensor/impl/btod_set.C
-    block_tensor/impl/btod_shift_diag.C
-    block_tensor/impl/btod_size.C
-    block_tensor/impl/btod_sum.C
-    block_tensor/impl/btod_symcontract3.C
-    block_tensor/impl/btod_symmetrize2.C
-    block_tensor/impl/btod_symmetrize3.C
-    block_tensor/impl/btod_symmetrize4.C
-    block_tensor/impl/btod_trace.C
-    block_tensor/impl/btod_unfold_block_list.C
-    block_tensor/impl/btod_unfold_symmetry.C
-    block_tensor/impl/btod_vmpriority.C
+    #block_tensor/impl/btod_addition_schedule.C
+    block_tensor/impl/bto_addition_schedule.C
+    #block_tensor/impl/btod_add.C
+    block_tensor/impl/bto_add.C
+    #block_tensor/impl/btod_aux_add.C
+    block_tensor/impl/bto_aux_add.C
+    #block_tensor/impl/btod_aux_chsym.C
+    block_tensor/impl/bto_aux_chsym.C
+    #block_tensor/impl/btod_aux_copy.C
+    block_tensor/impl/bto_aux_copy.C
+    #block_tensor/impl/btod_aux_symmetrize.C
+    block_tensor/impl/bto_aux_symmetrize.C
+    #block_tensor/impl/btod_aux_transform.C
+    block_tensor/impl/bto_aux_transform.C
+    #block_tensor/impl/btod_compare.C
+    block_tensor/impl/bto_compare.C
+    #block_tensor/impl/btod_contract2_1.C
+    #block_tensor/impl/btod_contract2_2.C
+    #block_tensor/impl/btod_contract2_3.C
+    #block_tensor/impl/btod_contract2_4.C
+    #block_tensor/impl/btod_contract2_5.C
+    #block_tensor/impl/btod_contract2_6.C
+    #block_tensor/impl/btod_contract2_7.C
+    #block_tensor/impl/btod_contract2_8.C
+    #block_tensor/impl/btod_contract2_clst_builder.C
+    block_tensor/impl/bto_contract2_1.C
+    block_tensor/impl/bto_contract2_2.C
+    block_tensor/impl/bto_contract2_3.C
+    block_tensor/impl/bto_contract2_4.C
+    block_tensor/impl/bto_contract2_5.C
+    block_tensor/impl/bto_contract2_6.C
+    block_tensor/impl/bto_contract2_7.C
+    block_tensor/impl/bto_contract2_8.C
+    block_tensor/impl/bto_contract2_clst_builder.C
+    #block_tensor/impl/btod_contract2_clst_optimize.C
+    block_tensor/impl/bto_contract2_clst_optimize.C
+    #block_tensor/impl/btod_contract2_nzorb.C
+    block_tensor/impl/bto_contract2_nzorb.C
+    #block_tensor/impl/btod_contract3.C 
+    block_tensor/impl/bto_contract3.C 
+    #block_tensor/impl/btod_copy.C
+    block_tensor/impl/bto_copy.C
+    #block_tensor/impl/btod_diag.C
+    block_tensor/impl/bto_diag.C
+    #block_tensor/impl/btod_dirsum.C
+    block_tensor/impl/bto_dirsum.C
+    #block_tensor/impl/btod_dotprod.C
+    block_tensor/impl/bto_dotprod.C
+    #block_tensor/impl/btod_ewmult2.C
+    block_tensor/impl/bto_ewmult2.C
+    #block_tensor/impl/btod_export.C
+    block_tensor/impl/bto_export.C
+    #block_tensor/impl/btod_extract.C
+    block_tensor/impl/bto_extract.C
+    #block_tensor/impl/btod_mult.C
+    block_tensor/impl/bto_mult.C
+    #block_tensor/impl/btod_mult1.C
+    block_tensor/impl/bto_mult1.C
+    #block_tensor/impl/btod_random.C
+    block_tensor/impl/bto_random.C
+    #block_tensor/impl/btod_scale.C
+    block_tensor/impl/bto_scale.C
+    #block_tensor/impl/btod_set_diag.C
+    block_tensor/impl/bto_set_diag.C
+    #block_tensor/impl/btod_set_elem.C
+    block_tensor/impl/bto_set_elem.C
+    #block_tensor/impl/btod_set.C
+    block_tensor/impl/bto_set.C
+    #block_tensor/impl/btod_shift_diag.C
+    block_tensor/impl/bto_shift_diag.C
+    #block_tensor/impl/btod_size.C
+    block_tensor/impl/bto_size.C
+    #block_tensor/impl/btod_sum.C
+    block_tensor/impl/bto_sum.C
+    #block_tensor/impl/btod_symcontract3.C
+    block_tensor/impl/bto_symcontract3.C 
+    #block_tensor/impl/btod_symmetrize2.C
+    block_tensor/impl/bto_symmetrize2.C
+    #block_tensor/impl/btod_symmetrize3.C 
+    block_tensor/impl/bto_symmetrize3.C 
+    #block_tensor/impl/btod_symmetrize4.C
+    block_tensor/impl/bto_symmetrize4.C
+    #block_tensor/impl/btod_trace.C
+    block_tensor/impl/bto_trace.C
+    block_tensor/impl/bto_traits.C
+    #block_tensor/impl/btod_unfold_block_list.C
+    block_tensor/impl/bto_unfold_block_list.C
+    #block_tensor/impl/btod_unfold_symmetry.C
+    block_tensor/impl/bto_unfold_symmetry.C
+    #block_tensor/impl/btod_vmpriority.C
+    block_tensor/impl/bto_vmpriority.C
 )
 
 set(SRC_BLOCK_SPARSE

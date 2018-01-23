@@ -10,7 +10,8 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_cblas_level3 : public linalg_generic_level3 {
+template<typename T>
+class linalg_cblas_level3 : public linalg_generic_level3<T> {
 public:
     static const char *k_clazz; //!< Class name
 
@@ -18,34 +19,34 @@ public:
     static void mul2_ij_ip_jp_x(
         void*,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t sia,
-        const double *b, size_t sjb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t sjb,
+        T *c, size_t sic,
+        T d);
 
     static void mul2_ij_ip_pj_x(
         void*,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t sia,
-        const double *b, size_t spb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t spb,
+        T *c, size_t sic,
+        T d);
 
     static void mul2_ij_pi_jp_x(
         void*,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t sjb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t spa,
+        const T *b, size_t sjb,
+        T *c, size_t sic,
+        T d);
 
     static void mul2_ij_pi_pj_x(
         void*,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t spb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t spa,
+        const T *b, size_t spb,
+        T *c, size_t sic,
+        T d);
 
 };
 

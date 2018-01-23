@@ -7,11 +7,11 @@ namespace libtensor {
 namespace expr {
 namespace eval_btensor_double {
 
-
+template<typename T>
 class trace {
 public:
     enum {
-        Nmax = eval_btensor<double>::Nmax
+        Nmax = eval_btensor<T>::Nmax
     };
 
     typedef expr_tree::node_id_t node_id_t; //!< Node ID type

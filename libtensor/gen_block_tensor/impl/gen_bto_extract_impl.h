@@ -57,8 +57,8 @@ private:
     gen_bto_extract<N, M, Traits, Timed> &m_bto;
     temp_block_tensor_type &m_btb;
     gen_block_stream_i<N - M, bti_traits> &m_out;
-    const assignment_schedule<N - M, double> &m_sch;
-    typename assignment_schedule<N - M, double>::iterator m_i;
+    const assignment_schedule<N - M, element_type> &m_sch;
+    typename assignment_schedule<N - M, element_type>::iterator m_i;
 
 public:
     gen_bto_extract_task_iterator(
@@ -303,8 +303,8 @@ void gen_bto_extract<N, M, Traits, Timed>::make_schedule() {
 
     permutation<NB> pinv(m_tr.get_perm(), true);
 
-    orbit_list<NB, double> olb(m_sym);
-    for (typename orbit_list<NB, double>::iterator iob = olb.begin();
+    orbit_list<NB, element_type> olb(m_sym);
+    for (typename orbit_list<NB, element_type>::iterator iob = olb.begin();
             iob != olb.end(); iob++) {
 
         index<NA> idxa;

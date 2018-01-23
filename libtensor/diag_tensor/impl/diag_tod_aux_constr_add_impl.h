@@ -67,7 +67,7 @@ void diag_tod_aux_constr_add<N>::perform(
 
     {
         diag_tod_aux_constr_add::start_timer("copy");
-        std::auto_ptr< kernel_base<linalg, 1, 1> > kern_add(
+        std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern_add(
             kern_dadd1<linalg>::match(d, lpadd1, lpadd2));
         loop_list_runner<linalg, 1, 1>(lpadd1).run(0, radd, *kern_add);
         diag_tod_aux_constr_add::stop_timer("copy");

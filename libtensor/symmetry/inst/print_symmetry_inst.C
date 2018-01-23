@@ -12,6 +12,15 @@ std::ostream &operator<<(std::ostream &os, const scalar_transf<double> &tr) {
 }
 
 
+template<>
+std::ostream &operator<<(std::ostream &os, const scalar_transf<float> &tr) {
+
+    os << tr.get_coeff();
+    return os;
+}
+
+
+
 } // namespace libtensor
 
 

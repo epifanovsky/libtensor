@@ -12,7 +12,7 @@ void kern_dmuladd1::run(void*, const loop_registers<1, 1> &r) {
 }
 
 
-kernel_base<linalg, 1, 1> *kern_dmuladd1::match(double d, list_t &in,
+kernel_base<linalg, 1, 1, double> *kern_dmuladd1::match(double d, list_t &in,
     list_t &out) {
 
     kern_dmuladd1 zz;

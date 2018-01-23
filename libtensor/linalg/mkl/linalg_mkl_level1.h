@@ -11,64 +11,66 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
+template<typename T>
 class linalg_mkl_level1 :
-    public linalg_generic_level1,
-    public linalg_timings<linalg_mkl_level1> {
+    public linalg_generic_level1<double>,
+    public linalg_generic_level1<float>,
+    public linalg_timings<linalg_mkl_level1<T> > {
 
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    typedef linalg_timings<linalg_mkl_level1> timings_base;
+    typedef linalg_timings<linalg_mkl_level1<T> > timings_base;
 
 public:
     static void add_i_i_x_x(
         void*,
         size_t ni,
-        const double *a, size_t sia, double ka,
-        double b, double kb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia, T ka,
+        T b, T kb,
+        T *c, size_t sic,
+        T d);
 
     static void copy_i_i(
         void*,
         size_t ni,
-        const double *a, size_t sia,
-        double *c, size_t sic);
+        const T *a, size_t sia,
+        T *c, size_t sic);
 
     static void div1_i_i_x(
         void *ctx,
         size_t ni,
-        const double *a, size_t sia,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        T *c, size_t sic,
+        T d);
 
     static void mul1_i_x(
         void*,
         size_t ni,
-        double a,
-        double *c, size_t sic);
+        T a,
+        T *c, size_t sic);
 
-    static double mul2_x_p_p(
+    static T mul2_x_p_p(
         void*,
         size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t spb);
+        const T *a, size_t spa,
+        const T *b, size_t spb);
 
     static void mul2_i_i_x(
         void*,
         size_t ni,
-        const double *a, size_t sia,
-        double b,
-        double *c, size_t sic);
+        const T *a, size_t sia,
+        T b,
+        T *c, size_t sic);
 
     static void mul2_i_i_i_x(
         void*,
         size_t ni,
-        const double *a, size_t sia,
-        const double *b, size_t sib,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t sib,
+        T *c, size_t sic,
+        T d);
 
     static void rng_setup(
         void*);
@@ -76,14 +78,14 @@ public:
     static void rng_set_i_x(
         void*,
         size_t ni,
-        double *a, size_t sia,
-        double c);
+        T *a, size_t sia,
+        T c);
 
     static void rng_add_i_x(
         void*,
         size_t ni,
-        double *a, size_t sia,
-        double c);
+        T *a, size_t sia,
+        T c);
 
 };
 

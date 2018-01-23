@@ -12,14 +12,18 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-template<size_t N, size_t M>
-struct loop_registers {
-    const double *m_ptra[N]; //!< Position in input arrays
-    double *m_ptrb[M]; //!< Position in output arrays
-    const double *m_ptra_end[N]; //!< End of input arrays (for overflow control)
-    double *m_ptrb_end[M]; //!< End of output arrays (for overflow control)
+template<size_t N, size_t M, typename T>
+struct loop_registers_x {
+    const T *m_ptra[N]; //!< Position in input arrays
+    T *m_ptrb[M]; //!< Position in output arrays
+    const T *m_ptra_end[N]; //!< End of input arrays (for overflow control)
+    T *m_ptrb_end[M]; //!< End of output arrays (for overflow control)
 };
 
+
+
+template<size_t N, size_t M>
+using loop_registers = loop_registers_x<N,M,double>;
 
 } // namespace libtensor
 

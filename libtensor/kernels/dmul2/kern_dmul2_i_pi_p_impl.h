@@ -25,7 +25,7 @@ void kern_dmul2_i_pi_p<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 2, 1> *kern_dmul2_i_pi_p<LA>::match(
+kernel_base<LA, 2, 1, double> *kern_dmul2_i_pi_p<LA>::match(
     const kern_dmul2_i_i_x<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;
@@ -59,7 +59,7 @@ kernel_base<LA, 2, 1> *kern_dmul2_i_pi_p<LA>::match(
     zz.m_sic = z.m_sic;
     in.splice(out.begin(), out, ip);
 
-    kernel_base<LA, 2, 1> *kern = 0;
+    kernel_base<LA, 2, 1, double> *kern = 0;
 
     if((kern = kern_dmul2_ij_pi_jp<LA>::match(zz, in, out))) return kern;
     if((kern = kern_dmul2_ij_pi_pj<LA>::match(zz, in, out))) return kern;

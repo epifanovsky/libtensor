@@ -17,6 +17,20 @@ class symmetry_operation_impl< so_apply<5, double>, se_label<5, double> >;
 template
 class symmetry_operation_impl< so_apply<6, double>, se_label<6, double> >;
 
+
+template
+class symmetry_operation_impl< so_apply<1, float>, se_label<1, float> >;
+template
+class symmetry_operation_impl< so_apply<2, float>, se_label<2, float> >;
+template
+class symmetry_operation_impl< so_apply<3, float>, se_label<3, float> >;
+template
+class symmetry_operation_impl< so_apply<4, float>, se_label<4, float> >;
+template
+class symmetry_operation_impl< so_apply<5, float>, se_label<5, float> >;
+template
+class symmetry_operation_impl< so_apply<6, float>, se_label<6, float> >;
+
 } // namespace libtensor
 
 

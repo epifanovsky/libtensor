@@ -1,5 +1,5 @@
 #include <libtensor/core/permutation_builder.h>
-#include <libtensor/block_tensor/btod_dirsum.h>
+#include <libtensor/block_tensor/bto_dirsum.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_dirsum.h>
 #include <libtensor/expr/eval/eval_exception.h>
@@ -13,26 +13,26 @@ namespace eval_btensor_double {
 namespace {
 
 
-template<size_t NC>
-class eval_dirsum_impl : public eval_btensor_evaluator_i<NC, double> {
+template<size_t NC, typename T>
+class eval_dirsum_impl : public eval_btensor_evaluator_i<NC, T> {
 public:
     enum {
-        Nmax = dirsum<NC>::Nmax
+        Nmax = dirsum<NC, T>::Nmax
     };
 
 public:
-    typedef typename eval_btensor_evaluator_i<NC, double>::bti_traits
+    typedef typename eval_btensor_evaluator_i<NC, T>::bti_traits
         bti_traits;
 
 private:
     struct dispatch_dirsum {
         eval_dirsum_impl &eval;
-        const tensor_transf<NC, double> &trc;
+        const tensor_transf<NC, T> &trc;
         size_t na, nb;
 
         dispatch_dirsum(
             eval_dirsum_impl &eval_,
-            const tensor_transf<NC, double> &trc_,
+            const tensor_transf<NC, T> &trc_,
             size_t na_, size_t nb_) :
             eval(eval_), trc(trc_), na(na_), nb(nb_)
         { }
@@ -47,7 +47,7 @@ private:
 
 public:
     eval_dirsum_impl(const expr_tree &tr, expr_tree::node_id_t id,
-        const tensor_transf<NC, double> &trc);
+        const tensor_transf<NC, T> &trc);
 
     virtual ~eval_dirsum_impl();
 
@@ -56,14 +56,14 @@ public:
     }
 
     template<size_t NA, size_t NB>
-    void init(const tensor_transf<NC, double> &trc);
+    void init(const tensor_transf<NC, T> &trc);
 
 };
 
 
-template<size_t NC>
-eval_dirsum_impl<NC>::eval_dirsum_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<NC, double> &trc) :
+template<size_t NC, typename T>
+eval_dirsum_impl<NC, T>::eval_dirsum_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<NC, T> &trc) :
 
     m_tree(tree), m_id(id), m_op(0) {
 
@@ -82,31 +82,31 @@ eval_dirsum_impl<NC>::eval_dirsum_impl(const expr_tree &tree,
 }
 
 
-template<size_t NC>
-eval_dirsum_impl<NC>::~eval_dirsum_impl() {
+template<size_t NC, typename T>
+eval_dirsum_impl<NC, T>::~eval_dirsum_impl() {
 
     delete m_op;
 }
 
 
-template<size_t NC> template<size_t NA, size_t NB>
-void eval_dirsum_impl<NC>::init(const tensor_transf<NC, double> &trc) {
+template<size_t NC, typename T> template<size_t NA, size_t NB>
+void eval_dirsum_impl<NC, T>::init(const tensor_transf<NC, T> &trc) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node_dirsum &nd =
     		m_tree.get_vertex(m_id).template recast_as<node_dirsum>();
 
-    btensor_from_node<NA, double> bta(m_tree, e[0]);
-    btensor_from_node<NB, double> btb(m_tree, e[1]);
+    btensor_from_node<NA, T> bta(m_tree, e[0]);
+    btensor_from_node<NB, T> btb(m_tree, e[1]);
 
-    m_op = new btod_dirsum<NA, NB>(bta.get_btensor(),
+    m_op = new bto_dirsum<NA, NB, T>(bta.get_btensor(),
         bta.get_transf().get_scalar_tr(), btb.get_btensor(),
         btb.get_transf().get_scalar_tr(), trc);
 }
 
 
-template<size_t NC> template<size_t NA>
-void eval_dirsum_impl<NC>::dispatch_dirsum::dispatch() {
+template<size_t NC, typename T> template<size_t NA>
+void eval_dirsum_impl<NC, T>::dispatch_dirsum::dispatch() {
 
     enum {
         NB = NC - NA
@@ -118,17 +118,17 @@ void eval_dirsum_impl<NC>::dispatch_dirsum::dispatch() {
 } // unnamed namespace
 
 
-template<size_t NC>
-dirsum<NC>::dirsum(const expr_tree &tree, node_id_t &id,
-    const tensor_transf<NC, double> &tr) :
+template<size_t NC, typename T>
+dirsum<NC, T>::dirsum(const expr_tree &tree, node_id_t &id,
+    const tensor_transf<NC, T> &tr) :
 
-    m_impl(new eval_dirsum_impl<NC>(tree, id, tr)) {
+    m_impl(new eval_dirsum_impl<NC, T>(tree, id, tr)) {
 
 }
 
 
-template<size_t NC>
-dirsum<NC>::~dirsum() {
+template<size_t NC, typename T>
+dirsum<NC, T>::~dirsum() {
 
     delete m_impl;
 }
@@ -141,7 +141,7 @@ template<size_t NC>
 struct aux_dirsum {
     const expr_tree *tree;
     expr_tree::node_id_t id;
-    const tensor_transf<NC, double> *tr;
+    const tensor_transf<NC, T> *tr;
     const node *t;
     dirsum<NC> *e;
     aux_dirsum() {
@@ -150,19 +150,27 @@ struct aux_dirsum {
     }
 };
 } // namespace aux
-template class instantiate_template_1<1, eval_btensor<double>::Nmax,
+template class instantiate_template_1<1, eval_btensor<T>::Nmax,
     aux::aux_dirsum>;
 #endif
-template class dirsum<1>;
-template class dirsum<2>;
-template class dirsum<3>;
-template class dirsum<4>;
-template class dirsum<5>;
-template class dirsum<6>;
-template class dirsum<7>;
-template class dirsum<8>;
+template class dirsum<1, double>;
+template class dirsum<2, double>;
+template class dirsum<3, double>;
+template class dirsum<4, double>;
+template class dirsum<5, double>;
+template class dirsum<6, double>;
+template class dirsum<7, double>;
+template class dirsum<8, double>;
 
+template class dirsum<1, float>;
+template class dirsum<2, float>;
+template class dirsum<3, float>;
+template class dirsum<4, float>;
+template class dirsum<5, float>;
+template class dirsum<6, float>;
+template class dirsum<7, float>;
+template class dirsum<8, float>;
 
-} // namespace eval_btensor_double
+} // namespace eval_btensor_T
 } // namespace expr
 } // namespace libtensor
