@@ -1,12 +1,12 @@
 #include <memory>
 #include <vector>
-#include <libtensor/block_tensor/btod_copy.h>
+#include <libtensor/block_tensor/bto_copy.h>
 #ifdef WITH_LIBXM
 #include <libtensor/block_tensor/btod_copy_xm.h>
 #endif // WITH_LIBXM
-#include <libtensor/block_tensor/btod_set.h>
-#include <libtensor/block_tensor/btod_set_diag.h>
-#include <libtensor/block_tensor/btod_shift_diag.h>
+#include <libtensor/block_tensor/bto_set.h>
+#include <libtensor/block_tensor/bto_set_diag.h>
+#include <libtensor/block_tensor/bto_shift_diag.h>
 #include <libtensor/expr/dag/node_const_scalar.h>
 #include <libtensor/expr/dag/node_set.h>
 #include <libtensor/expr/dag/node_transform.h>
@@ -29,23 +29,23 @@ namespace {
 using std::auto_ptr;
 
 
-template<size_t N>
-class eval_set_impl : public eval_btensor_evaluator_i<N, double> {
+template<size_t N, typename T>
+class eval_set_impl : public eval_btensor_evaluator_i<N, T> {
 private:
     enum {
-        Nmax = set<N>::Nmax
+        Nmax = set<N, T>::Nmax
     };
 
 public:
-    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
+    typedef typename eval_btensor_evaluator_i<N, T>::bti_traits bti_traits;
 
 private:
-    btensor_i<N, double> *m_bt; //!< Tensor
+    btensor_i<N, T> *m_bt; //!< Tensor
     additive_gen_bto<N, bti_traits> *m_op; //!< Block tensor operation
 
 public:
     eval_set_impl(const expr_tree &tree, expr_tree::node_id_t id,
-        const tensor_transf<N, double> &tr);
+        const tensor_transf<N, T> &tr);
 
     virtual ~eval_set_impl();
 
@@ -57,32 +57,63 @@ private:
     static void perform_op(
         const node_set &n,
         additive_gen_bto<N, bti_traits> &bto,
-        double v,
-        btensor<N, double> &bt);
+        T v,
+        btensor<N, T> &bt);
 };
 
 
 template<size_t N>
-eval_set_impl<N>::eval_set_impl(const expr_tree &tree,
-    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
+eval_set_impl<N, float>::eval_set_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, float> &tr) {
 
     const node_set &n = tree.get_vertex(id).template recast_as<node_set>();
 
     // Retrieve tensor argument and respective tensor operation
     const expr_tree::edge_list_t &e = tree.get_edges_out(id);
-    tensor_transf<N, double> trx;
+    tensor_transf<N, float> trx;
     expr_tree::node_id_t rhs = transf_from_node(tree, e[0], trx);
 
-    autoselect<N> eval(tree, rhs, trx);
+    autoselect<N, float> eval(tree, rhs, trx);
     additive_gen_bto<N, bti_traits> &op = eval.get_bto();
 
     // Retrieve scalar argument
-    const node_const_scalar<double> &ns = tree.get_vertex(e[1]).
-            template recast_as< node_const_scalar<double> >();
-    const double &val = ns.get_scalar();
+    const node_const_scalar<float> &ns = tree.get_vertex(e[1]).
+            template recast_as< node_const_scalar<float> >();
+    const float &val = ns.get_scalar();
 
     // Create tensor
-    std::auto_ptr< btensor<N, double> > bt(new btensor<N, double>(op.get_bis()));
+    std::auto_ptr< btensor<N, float> > bt(new btensor<N, float>(op.get_bis()));
+    perform_op(n, op, val, *bt);
+
+    m_bt = bt.release();
+    m_op = new bto_copy<N, float>(*m_bt, tr.get_perm(),
+        tr.get_scalar_tr().get_coeff());
+}
+
+
+template<size_t N>
+eval_set_impl<N, double>::eval_set_impl(const expr_tree &tree,
+    expr_tree::node_id_t id, const tensor_transf<N, double> &tr) {
+
+    typedef double T;
+
+    const node_set &n = tree.get_vertex(id).template recast_as<node_set>();
+
+    // Retrieve tensor argument and respective tensor operation
+    const expr_tree::edge_list_t &e = tree.get_edges_out(id);
+    tensor_transf<N, T> trx;
+    expr_tree::node_id_t rhs = transf_from_node(tree, e[0], trx);
+
+    autoselect<N, T> eval(tree, rhs, trx);
+    additive_gen_bto<N, bti_traits> &op = eval.get_bto();
+
+    // Retrieve scalar argument
+    const node_const_scalar<T> &ns = tree.get_vertex(e[1]).
+            template recast_as< node_const_scalar<T> >();
+    const T &val = ns.get_scalar();
+
+    // Create tensor
+    std::auto_ptr< btensor<N, T> > bt(new btensor<N, T>(op.get_bis()));
     perform_op(n, op, val, *bt);
 
     m_bt = bt.release();
@@ -91,35 +122,35 @@ eval_set_impl<N>::eval_set_impl(const expr_tree &tree,
         m_op = new btod_copy_xm<N>(*m_bt, tr.get_perm(),
             tr.get_scalar_tr().get_coeff());
     } else {
-        m_op = new btod_copy<N>(*m_bt, tr.get_perm(),
+        m_op = new bto_copy<N, T>(*m_bt, tr.get_perm(),
             tr.get_scalar_tr().get_coeff());
     }
 #else // WITH_LIBXM
-    m_op = new btod_copy<N>(*m_bt, tr.get_perm(),
+    m_op = new bto_copy<N, T>(*m_bt, tr.get_perm(),
         tr.get_scalar_tr().get_coeff());
 #endif // WITH_LIBXM
 }
 
 
-template<size_t N>
-eval_set_impl<N>::~eval_set_impl() {
+template<size_t N, typename T>
+eval_set_impl<N, T>::~eval_set_impl() {
 
     delete m_op;
     delete m_bt;
 }
 
 
-template<size_t N>
-void eval_set_impl<N>::perform_op(
+template<size_t N, typename T>
+void eval_set_impl<N, T>::perform_op(
     const node_set &n,
     additive_gen_bto<N, bti_traits> &bto,
-    double val,
-    btensor<N, double> &bt) {
+    T val,
+    btensor<N, T> &bt) {
 
     const std::vector<size_t> &idx = n.get_idx();
     if (idx.size() != N) {
         throw eval_exception(__FILE__, __LINE__,
-                "libtensor::expr::eval_btensor_double", "eval_set_impl<N>",
+                "libtensor::expr::eval_btensor_T", "eval_set_impl<N>",
                 "perform_op()", "Number of tensor indexes");
     }
 
@@ -134,15 +165,15 @@ void eval_set_impl<N>::perform_op(
 
     if (diagidx.size() == 0) {
 
-        const symmetry<N, double> &sym = bto.get_symmetry();
+        const symmetry<N, T> &sym = bto.get_symmetry();
         {
-            block_tensor_wr_ctrl<N, double> c(bt);
-            so_copy<N, double>(sym).perform(c.req_symmetry());
+            block_tensor_wr_ctrl<N, T> c(bt);
+            so_copy<N, T>(sym).perform(c.req_symmetry());
         }
-        btod_set<N>(val).perform(bt);
+        bto_set<N, T>(val).perform(bt);
 
         if (n.add()) {
-            addition_schedule<N, btod_traits> asch(sym, sym);
+            addition_schedule<N, bto_traits<T> > asch(sym, sym);
             {
                 gen_block_tensor_rd_ctrl<N, bti_traits> cb(bt);
                 std::vector<size_t> nzblk;
@@ -150,8 +181,8 @@ void eval_set_impl<N>::perform_op(
                 asch.build(bto.get_schedule(), nzblk);
             }
 
-            scalar_transf<double> c(1.0);
-            gen_bto_aux_add<N, btod_traits> out(sym, asch, bt, c);
+            scalar_transf<T> c(1.0);
+            gen_bto_aux_add<N, bto_traits<T> > out(sym, asch, bt, c);
             out.open();
             bto.perform(out);
             out.close();
@@ -159,7 +190,7 @@ void eval_set_impl<N>::perform_op(
     }
     else {
 
-        gen_bto_aux_copy<N, btod_traits> out(bto.get_symmetry(), bt);
+        gen_bto_aux_copy<N, bto_traits<T> > out(bto.get_symmetry(), bt);
         out.open();
         bto.perform(out);
         out.close();
@@ -172,8 +203,8 @@ void eval_set_impl<N>::perform_op(
             msk[i] = j->second;
         }
 
-        if (n.add()) btod_shift_diag<N>(msk, val).perform(bt);
-        else btod_set_diag<N>(msk, val).perform(bt);
+        if (n.add()) bto_shift_diag<N, T>(msk, val).perform(bt);
+        else bto_set_diag<N, T>(msk, val).perform(bt);
     }
 }
 
@@ -181,32 +212,40 @@ void eval_set_impl<N>::perform_op(
 } // unnamed namespace
 
 
-template<size_t N>
-set<N>::set(const expr_tree &tree, node_id_t id,
-    const tensor_transf<N, double> &tr) :
+template<size_t N, typename T>
+set<N, T>::set(const expr_tree &tree, node_id_t id,
+    const tensor_transf<N, T> &tr) :
 
-    m_impl(new eval_set_impl<N>(tree, id, tr)) {
+    m_impl(new eval_set_impl<N, T>(tree, id, tr)) {
 
 }
 
 
-template<size_t N>
-set<N>::~set() {
+template<size_t N, typename T>
+set<N, T>::~set() {
 
     delete m_impl;
 }
 
 
-template class set<1>;
-template class set<2>;
-template class set<3>;
-template class set<4>;
-template class set<5>;
-template class set<6>;
-template class set<7>;
-template class set<8>;
+template class set<1, double>;
+template class set<2, double>;
+template class set<3, double>;
+template class set<4, double>;
+template class set<5, double>;
+template class set<6, double>;
+template class set<7, double>;
+template class set<8, double>;
 
+template class set<1, float>;
+template class set<2, float>;
+template class set<3, float>;
+template class set<4, float>;
+template class set<5, float>;
+template class set<6, float>;
+template class set<7, float>;
+template class set<8, float>;
 
-} // namespace eval_btensor_double
+} // namespace eval_btensor_T
 } // namespace expr
 } // namespace libtensor

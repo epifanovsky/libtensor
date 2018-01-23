@@ -21,7 +21,7 @@ void kern_dmul2_ij_ip_pj<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 2, 1> *kern_dmul2_ij_ip_pj<LA>::match(
+kernel_base<LA, 2, 1, double> *kern_dmul2_ij_ip_pj<LA>::match(
     const kern_dmul2_i_p_pi<LA> &z, list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

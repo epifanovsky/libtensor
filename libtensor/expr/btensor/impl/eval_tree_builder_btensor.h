@@ -7,6 +7,7 @@ namespace libtensor {
 namespace expr {
 
 
+template<typename T>
 class eval_tree_builder_btensor {
 public:
     static const char k_clazz[]; //!< Class name

@@ -309,7 +309,7 @@ void gen_bto_diag<N, M, Traits, Timed>::make_schedule() {
 
     orbit_list<N, element_type> ola(ctrla.req_const_symmetry());
     orbit_list<M, element_type> olb(m_sym);
-    for (typename orbit_list<M, double>::iterator iob = olb.begin();
+    for (typename orbit_list<M, element_type>::iterator iob = olb.begin();
             iob != olb.end(); iob++) {
 
         index<N> idxa;
@@ -319,7 +319,7 @@ void gen_bto_diag<N, M, Traits, Timed>::make_schedule() {
 
         for(size_t i = 0; i < N; i++) idxa[i] = idxb[map[i]];
 
-        orbit<N, double> oa(ctrla.req_const_symmetry(), idxa);
+        orbit<N, element_type> oa(ctrla.req_const_symmetry(), idxa);
         if(! ola.contains(oa.get_acindex())) continue;
 
         abs_index<N> cidxa(oa.get_acindex(), bidimsa);

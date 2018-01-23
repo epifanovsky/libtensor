@@ -1,5 +1,6 @@
 #ifndef LIBTENSOR_LINALG_TIMINGS_H
 #define LIBTENSOR_LINALG_TIMINGS_H
+#define LIBTENSOR_LINALG_TIMINGS
 
 #include <libutil/timings/timings.h>
 

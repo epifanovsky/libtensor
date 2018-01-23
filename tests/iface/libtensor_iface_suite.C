@@ -19,6 +19,7 @@ libtensor_iface_suite::libtensor_iface_suite() :
     add_test("eval_register", m_utf_eval_register);
     add_test("ewmult", m_utf_ewmult);
     add_test("expr", m_utf_expr);
+    add_test("expr_float_double", m_utf_expr_float_double);
     add_test("expr_tensor", m_utf_expr_tensor);
     add_test("letter", m_utf_letter);
     add_test("letter_expr", m_utf_letter_expr);

@@ -101,7 +101,7 @@ void gen_bto_sum<N, Traits>::perform(gen_block_stream_i<N, bti_traits> &out) {
         for(typename std::list<op_type>::iterator iop = m_ops.begin();
             iop != m_ops.end(); ++iop) {
 
-            tensor_transf<N, double> tr(permutation<N>(), iop->second);
+            tensor_transf<N, element_type> tr(permutation<N>(), iop->second);
 
             gen_bto_aux_chsym<N, Traits> out1(iop->first->get_symmetry(),
                 m_sym, out);

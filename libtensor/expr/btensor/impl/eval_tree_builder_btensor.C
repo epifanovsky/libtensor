@@ -19,7 +19,8 @@
 namespace libtensor {
 namespace expr {
 
-const char eval_tree_builder_btensor::k_clazz[] = "eval_tree_builder_btensor";
+template<typename T>
+const char eval_tree_builder_btensor<T>::k_clazz[] = "eval_tree_builder_btensor";
 
 
 namespace {
@@ -28,10 +29,11 @@ typedef graph::node_id_t node_id_t;
 
 /** \brief Inserts an intermediate assignment at current position in graph
  **/
+template<typename T>
 class interm_inserter {
 public:
     enum {
-        Nmax = eval_tree_builder_btensor::Nmax
+        Nmax = eval_tree_builder_btensor<T>::Nmax
     };
 
 private:
@@ -58,7 +60,7 @@ private:
 
         node_id_t id0 = m_g.add(node_assign(m_g.get_vertex(m_nid).get_n(),
                 false));
-        node_id_t id1 = m_g.add(node_interm<N, double>());
+        node_id_t id1 = m_g.add(node_interm<N, T>());
 
         graph::edge_list_t ei = m_g.get_edges_in(m_nid);
         for(size_t i = 0; i < ei.size(); i++) m_g.replace(ei[i], m_nid, id0);
@@ -109,6 +111,7 @@ void assume_adds(graph &g) {
     for(size_t i = 0; i < erase.size(); i++) g.erase(erase[i]);
 }
 
+template<typename T>
 void insert_intermediates(graph &g, graph::node_id_t n0) {
 
     if(g.get_vertex(n0).check_type<node_scale>()) return;
@@ -164,7 +167,7 @@ void insert_intermediates(graph &g, graph::node_id_t n0) {
         if(g.get_vertex(n).check_type<node_transform_base>()) continue;
 
         //  Otherwise insert an intermediate
-        if(l == 0) interm_inserter(g, n).add();
+        if(l == 0) interm_inserter<T>(g, n).add();
     }
 }
 
@@ -184,8 +187,8 @@ void make_eval_order_depth_first(graph &g, node_id_t n,
 
 } // unnamed namespace
 
-
-void eval_tree_builder_btensor::build() {
+template<typename T>
+void eval_tree_builder_btensor<T>::build() {
 
     static const char method[] = "build()";
 
@@ -203,16 +206,18 @@ void eval_tree_builder_btensor::build() {
     }
 
     opt_merge_equiv_ident(m_tree);
-    opt_merge_adjacent_transf(m_tree);
+    opt_merge_adjacent_transf<T>(m_tree);
     opt_add_before_transf(m_tree);
-    opt_merge_adjacent_transf(m_tree);
+    opt_merge_adjacent_transf<T>(m_tree);
     opt_merge_adjacent_add(m_tree);
 
-    insert_intermediates(m_tree, m_tree.get_root());
+    insert_intermediates<T>(m_tree, m_tree.get_root());
 
     make_eval_order_depth_first(m_tree, m_tree.get_root(), m_order);
 }
 
+template class eval_tree_builder_btensor<double>;
+template class eval_tree_builder_btensor<float>;
 
 } // namespace expr
 } // namespace libtensor

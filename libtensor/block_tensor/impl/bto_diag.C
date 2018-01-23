@@ -1,0 +1,123 @@
+#include <libtensor/gen_block_tensor/impl/gen_bto_diag_impl.h>
+#include "bto_diag_impl.h"
+
+namespace libtensor {
+
+
+template class gen_bto_diag< 2, 1, bto_traits<double>, bto_diag<2, 1, double> >;
+template class gen_bto_diag< 3, 1, bto_traits<double>, bto_diag<3, 1, double> >;
+template class gen_bto_diag< 3, 2, bto_traits<double>, bto_diag<3, 2, double> >;
+template class gen_bto_diag< 4, 1, bto_traits<double>, bto_diag<4, 1, double> >;
+template class gen_bto_diag< 4, 2, bto_traits<double>, bto_diag<4, 2, double> >;
+template class gen_bto_diag< 4, 3, bto_traits<double>, bto_diag<4, 3, double> >;
+template class gen_bto_diag< 5, 1, bto_traits<double>, bto_diag<5, 1, double> >;
+template class gen_bto_diag< 5, 2, bto_traits<double>, bto_diag<5, 2, double> >;
+template class gen_bto_diag< 5, 3, bto_traits<double>, bto_diag<5, 3, double> >;
+template class gen_bto_diag< 5, 4, bto_traits<double>, bto_diag<5, 4, double> >;
+template class gen_bto_diag< 6, 1, bto_traits<double>, bto_diag<6, 1, double> >;
+template class gen_bto_diag< 6, 2, bto_traits<double>, bto_diag<6, 2, double> >;
+template class gen_bto_diag< 6, 3, bto_traits<double>, bto_diag<6, 3, double> >;
+template class gen_bto_diag< 6, 4, bto_traits<double>, bto_diag<6, 4, double> >;
+template class gen_bto_diag< 6, 5, bto_traits<double>, bto_diag<6, 5, double> >;
+template class gen_bto_diag< 7, 1, bto_traits<double>, bto_diag<7, 1, double> >;
+template class gen_bto_diag< 7, 2, bto_traits<double>, bto_diag<7, 2, double> >;
+template class gen_bto_diag< 7, 3, bto_traits<double>, bto_diag<7, 3, double> >;
+template class gen_bto_diag< 7, 4, bto_traits<double>, bto_diag<7, 4, double> >;
+template class gen_bto_diag< 7, 5, bto_traits<double>, bto_diag<7, 5, double> >;
+template class gen_bto_diag< 7, 6, bto_traits<double>, bto_diag<7, 6, double> >;
+template class gen_bto_diag< 8, 1, bto_traits<double>, bto_diag<8, 1, double> >;
+template class gen_bto_diag< 8, 2, bto_traits<double>, bto_diag<8, 2, double> >;
+template class gen_bto_diag< 8, 3, bto_traits<double>, bto_diag<8, 3, double> >;
+template class gen_bto_diag< 8, 4, bto_traits<double>, bto_diag<8, 4, double> >;
+template class gen_bto_diag< 8, 5, bto_traits<double>, bto_diag<8, 5, double> >;
+template class gen_bto_diag< 8, 6, bto_traits<double>, bto_diag<8, 6, double> >;
+template class gen_bto_diag< 8, 7, bto_traits<double>, bto_diag<8, 7, double> >;
+
+template class bto_diag<2, 1, double>;
+template class bto_diag<3, 1, double>;
+template class bto_diag<3, 2, double>;
+template class bto_diag<4, 1, double>;
+template class bto_diag<4, 2, double>;
+template class bto_diag<4, 3, double>;
+template class bto_diag<5, 1, double>;
+template class bto_diag<5, 2, double>;
+template class bto_diag<5, 3, double>;
+template class bto_diag<5, 4, double>;
+template class bto_diag<6, 1, double>;
+template class bto_diag<6, 2, double>;
+template class bto_diag<6, 3, double>;
+template class bto_diag<6, 4, double>;
+template class bto_diag<6, 5, double>;
+template class bto_diag<7, 1, double>;
+template class bto_diag<7, 2, double>;
+template class bto_diag<7, 3, double>;
+template class bto_diag<7, 4, double>;
+template class bto_diag<7, 5, double>;
+template class bto_diag<7, 6, double>;
+template class bto_diag<8, 1, double>;
+template class bto_diag<8, 2, double>;
+template class bto_diag<8, 3, double>;
+template class bto_diag<8, 4, double>;
+template class bto_diag<8, 5, double>;
+template class bto_diag<8, 6, double>;
+template class bto_diag<8, 7, double>;
+
+template class gen_bto_diag< 2, 1, bto_traits<float>, bto_diag<2, 1, float> >;
+template class gen_bto_diag< 3, 1, bto_traits<float>, bto_diag<3, 1, float> >;
+template class gen_bto_diag< 3, 2, bto_traits<float>, bto_diag<3, 2, float> >;
+template class gen_bto_diag< 4, 1, bto_traits<float>, bto_diag<4, 1, float> >;
+template class gen_bto_diag< 4, 2, bto_traits<float>, bto_diag<4, 2, float> >;
+template class gen_bto_diag< 4, 3, bto_traits<float>, bto_diag<4, 3, float> >;
+template class gen_bto_diag< 5, 1, bto_traits<float>, bto_diag<5, 1, float> >;
+template class gen_bto_diag< 5, 2, bto_traits<float>, bto_diag<5, 2, float> >;
+template class gen_bto_diag< 5, 3, bto_traits<float>, bto_diag<5, 3, float> >;
+template class gen_bto_diag< 5, 4, bto_traits<float>, bto_diag<5, 4, float> >;
+template class gen_bto_diag< 6, 1, bto_traits<float>, bto_diag<6, 1, float> >;
+template class gen_bto_diag< 6, 2, bto_traits<float>, bto_diag<6, 2, float> >;
+template class gen_bto_diag< 6, 3, bto_traits<float>, bto_diag<6, 3, float> >;
+template class gen_bto_diag< 6, 4, bto_traits<float>, bto_diag<6, 4, float> >;
+template class gen_bto_diag< 6, 5, bto_traits<float>, bto_diag<6, 5, float> >;
+template class gen_bto_diag< 7, 1, bto_traits<float>, bto_diag<7, 1, float> >;
+template class gen_bto_diag< 7, 2, bto_traits<float>, bto_diag<7, 2, float> >;
+template class gen_bto_diag< 7, 3, bto_traits<float>, bto_diag<7, 3, float> >;
+template class gen_bto_diag< 7, 4, bto_traits<float>, bto_diag<7, 4, float> >;
+template class gen_bto_diag< 7, 5, bto_traits<float>, bto_diag<7, 5, float> >;
+template class gen_bto_diag< 7, 6, bto_traits<float>, bto_diag<7, 6, float> >;
+template class gen_bto_diag< 8, 1, bto_traits<float>, bto_diag<8, 1, float> >;
+template class gen_bto_diag< 8, 2, bto_traits<float>, bto_diag<8, 2, float> >;
+template class gen_bto_diag< 8, 3, bto_traits<float>, bto_diag<8, 3, float> >;
+template class gen_bto_diag< 8, 4, bto_traits<float>, bto_diag<8, 4, float> >;
+template class gen_bto_diag< 8, 5, bto_traits<float>, bto_diag<8, 5, float> >;
+template class gen_bto_diag< 8, 6, bto_traits<float>, bto_diag<8, 6, float> >;
+template class gen_bto_diag< 8, 7, bto_traits<float>, bto_diag<8, 7, float> >;
+
+template class bto_diag<2, 1, float>;
+template class bto_diag<3, 1, float>;
+template class bto_diag<3, 2, float>;
+template class bto_diag<4, 1, float>;
+template class bto_diag<4, 2, float>;
+template class bto_diag<4, 3, float>;
+template class bto_diag<5, 1, float>;
+template class bto_diag<5, 2, float>;
+template class bto_diag<5, 3, float>;
+template class bto_diag<5, 4, float>;
+template class bto_diag<6, 1, float>;
+template class bto_diag<6, 2, float>;
+template class bto_diag<6, 3, float>;
+template class bto_diag<6, 4, float>;
+template class bto_diag<6, 5, float>;
+template class bto_diag<7, 1, float>;
+template class bto_diag<7, 2, float>;
+template class bto_diag<7, 3, float>;
+template class bto_diag<7, 4, float>;
+template class bto_diag<7, 5, float>;
+template class bto_diag<7, 6, float>;
+template class bto_diag<8, 1, float>;
+template class bto_diag<8, 2, float>;
+template class bto_diag<8, 3, float>;
+template class bto_diag<8, 4, float>;
+template class bto_diag<8, 5, float>;
+template class bto_diag<8, 6, float>;
+template class bto_diag<8, 7, float>;
+
+} // namespace libtensor

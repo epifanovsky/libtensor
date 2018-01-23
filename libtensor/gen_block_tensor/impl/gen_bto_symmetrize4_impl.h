@@ -245,7 +245,7 @@ std::cout << "symidx = ";
 for(size_t i = 0; i < N; i++) std::cout << symidx[i] << " ";
 std::cout << std::endl;
     scalar_transf<element_type> tr0, tr1(-1.0);
-    so_symmetrize<N, double>(m_op.get_symmetry(), idxgrp, symidx,
+    so_symmetrize<N, element_type>(m_op.get_symmetry(), idxgrp, symidx,
         m_symm ? tr0 : tr1, tr0).perform(m_sym);
 }
 
@@ -474,7 +474,7 @@ void gen_bto_symmetrize4<N, Traits, Timed>::make_schedule_blk(
             permutation<N> p1(pc3), p2(pc3);
             idx2.permute(pshift2);
             p2.permute(pshift2);
-            orbit<N, double> o1(sym0, idx1), o2(sym0, idx2);
+            orbit<N, element_type> o1(sym0, idx1), o2(sym0, idx2);
             if(sch0.contains(o1.get_acindex())) {
                 tensor_transf<N, element_type> tr(o1.get_transf(idx1));
                 tr.permute(permutation<N>(p1, true));
@@ -500,8 +500,8 @@ void gen_bto_symmetrize4<N, Traits, Timed>::make_schedule_blk(
 
         typename std::list<schrec>::iterator i = sch1.begin();
         abs_index<N> aidx(i->ai, ai.get_dims());
-        double c = 0.0;
-        tensor_transf<N, double> tr0(i->tr);
+        element_type c = 0.0;
+        tensor_transf<N, element_type> tr0(i->tr);
 
         do {
             if(i->ai != aidx.get_abs_index()) {

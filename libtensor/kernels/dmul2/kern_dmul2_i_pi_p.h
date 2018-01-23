@@ -18,7 +18,7 @@ template<typename LA> class kern_dmul2_ij_pj_pi;
     \ingroup libtensor_kernels
  **/
 template<typename LA>
-class kern_dmul2_i_pi_p : public kernel_base<LA, 2, 1> {
+class kern_dmul2_i_pi_p : public kernel_base<LA, 2, 1, double> {
     friend class kern_dmul2_ij_pi_jp<LA>;
     friend class kern_dmul2_ij_pi_pj<LA>;
     friend class kern_dmul2_ij_pj_ip<LA>;
@@ -28,10 +28,10 @@ public:
     static const char *k_clazz; //!< Kernel name
 
 public:
-    typedef typename kernel_base<LA, 2, 1>::device_context_ref
+    typedef typename kernel_base<LA, 2, 1, double>::device_context_ref
         device_context_ref;
-    typedef typename kernel_base<LA, 2, 1>::list_t list_t;
-    typedef typename kernel_base<LA, 2, 1>::iterator_t iterator_t;
+    typedef typename kernel_base<LA, 2, 1, double>::list_t list_t;
+    typedef typename kernel_base<LA, 2, 1, double>::iterator_t iterator_t;
 
 private:
     double m_d;
@@ -47,7 +47,7 @@ public:
 
     virtual void run(device_context_ref ctx, const loop_registers<2, 1> &r);
 
-    static kernel_base<LA, 2, 1> *match(const kern_dmul2_i_i_x<LA> &z,
+    static kernel_base<LA, 2, 1, double> *match(const kern_dmul2_i_i_x<LA> &z,
         list_t &in, list_t &out);
 
 };

@@ -78,8 +78,8 @@ private:
     tensor_transf<NB, element_type> m_trb; //!< Tensor transformation of B
     tensor_transf_type m_trc; //!< Tensor transformation of result (C)
     block_index_space<NC> m_bisc; //!< Block index space of result
-    symmetry<NC, double> m_symc; //!< Symmetry of result
-    assignment_schedule<NC, double> m_sch; //!< Assignment schedule
+    symmetry<NC, element_type> m_symc; //!< Symmetry of result
+    assignment_schedule<NC, element_type> m_sch; //!< Assignment schedule
 
 public:
     //!    \name Construction and destruction
@@ -110,13 +110,13 @@ public:
 
     /** \brief Returns the symmetry of the result
      **/
-    const symmetry<NC, double> &get_symmetry() const {
+    const symmetry<NC, element_type> &get_symmetry() const {
         return m_symc;
     }
 
     /** \brief Returns the list of canonical non-zero blocks of the result
      **/
-    const assignment_schedule<N + M + K, double> &get_schedule() const {
+    const assignment_schedule<N + M + K, element_type> &get_schedule() const {
         return m_sch;
     }
 

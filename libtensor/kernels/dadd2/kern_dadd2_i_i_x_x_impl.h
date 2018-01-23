@@ -21,7 +21,7 @@ void kern_dadd2_i_i_x_x<LA>::run(
 
 
 template<typename LA>
-kernel_base<LA, 2, 1> *kern_dadd2_i_i_x_x<LA>::match(const kern_dadd2<LA> &z,
+kernel_base<LA, 2, 1, double> *kern_dadd2_i_i_x_x<LA>::match(const kern_dadd2<LA> &z,
     list_t &in, list_t &out) {
 
     if(in.empty()) return 0;

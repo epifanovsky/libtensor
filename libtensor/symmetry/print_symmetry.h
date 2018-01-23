@@ -55,10 +55,10 @@ template<size_t N, typename T>
 std::ostream &operator<<(std::ostream &os, const symmetry<N, T> &sym) {
 
     size_t i = 1;
-    for (typename symmetry<N, double>::iterator it = sym.begin();
+    for (typename symmetry<N, T>::iterator it = sym.begin();
             it != sym.end(); it++, i++) {
 
-        const symmetry_element_set<N, double> &set = sym.get_subset(it);
+        const symmetry_element_set<N, T> &set = sym.get_subset(it);
         os << " " << std::setw(2) << i << ". " << set << std::endl;
     }
     return os;
@@ -135,8 +135,8 @@ std::ostream &operator<<(std::ostream &os, const se_part<N, T> &se) {
     return os;
 }
 
-template<size_t N> 
-std::ostream &operator<<(std::ostream &out, const se_perm<N, double> &sp) {
+template<size_t N, typename T> 
+std::ostream &operator<<(std::ostream &out, const se_perm<N, T> &sp) {
 
     out << sp.get_perm() << " " << sp.get_transf();
     return out;

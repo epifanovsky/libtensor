@@ -1,16 +1,16 @@
-#include "tod_import_raw_impl.h"
+#include "to_import_raw_impl.h"
 
 namespace libtensor {
 
 
-template class tod_import_raw<1>;
-template class tod_import_raw<2>;
-template class tod_import_raw<3>;
-template class tod_import_raw<4>;
-template class tod_import_raw<5>;
-template class tod_import_raw<6>;
-template class tod_import_raw<7>;
-template class tod_import_raw<8>;
+template class to_import_raw<1, double>;
+template class to_import_raw<2, double>;
+template class to_import_raw<3, double>;
+template class to_import_raw<4, double>;
+template class to_import_raw<5, double>;
+template class to_import_raw<6, double>;
+template class to_import_raw<7, double>;
+template class to_import_raw<8, double>;
 
 
 } // namespace libtensor

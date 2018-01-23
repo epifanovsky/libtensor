@@ -69,7 +69,7 @@ double diag_tod_aux_dotprod<N>::calculate() {
     rmul.m_ptrb_end[0] = &d + 1;
 
     {
-        std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
+        std::auto_ptr< kernel_base<linalg, 2, 1, double> > kern(
             kern_dmul2<linalg>::match(1.0, lpmul1, lpmul2));
         diag_tod_aux_dotprod::start_timer(kern->get_name());
         loop_list_runner<linalg, 2, 1>(lpmul1).run(0, rmul, *kern);

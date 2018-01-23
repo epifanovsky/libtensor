@@ -23,6 +23,27 @@ template class symmetry_operation_impl< so_symmetrize<8, double>,
     se_label<8, double> >;
 
 
+template class symmetry_operation_impl< so_symmetrize<1, float>,
+    se_label<1, float> >;
+template class symmetry_operation_impl< so_symmetrize<2, float>,
+    se_label<2, float> >;
+template class symmetry_operation_impl< so_symmetrize<3, float>,
+    se_label<3, float> >;
+template class symmetry_operation_impl< so_symmetrize<4, float>,
+    se_label<4, float> >;
+template class symmetry_operation_impl< so_symmetrize<5, float>,
+    se_label<5, float> >;
+template class symmetry_operation_impl< so_symmetrize<6, float>,
+    se_label<6, float> >;
+template class symmetry_operation_impl< so_symmetrize<7, float>,
+    se_label<7, float> >;
+template class symmetry_operation_impl< so_symmetrize<8, float>,
+    se_label<8, float> >;
+
+
+
+
+
 } // namespace libtensor
 
 

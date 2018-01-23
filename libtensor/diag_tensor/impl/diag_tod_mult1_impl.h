@@ -79,7 +79,7 @@ void diag_tod_mult1<N>::perform(bool zero, diag_tensor_wr_i<N, double> &dta) {
             rmul.m_ptra_end[0] = pa0 + sza0;
             rmul.m_ptrb_end[0] = pa + sza0;
 
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_mul(
+            std::auto_ptr< kernel_base<linalg, 1, 1, double> > kern_mul(
                 m_recip ?
                     (zero ?
                         kern_ddiv1<linalg>::match(1.0, lpmul1, lpmul2) :
