@@ -34,7 +34,6 @@ void linalg_generic_level1<T>::copy_i_i(
     const T *a, size_t sia,
     T *c, size_t sic) {
 
-    std::cout << "generic!!!"<< std::endl;
     timings_base::start_timer("copy_i_i");
     for(size_t i = 0; i < ni; i++) c[i * sic] = a[i * sia];
     timings_base::stop_timer("copy_i_i");
