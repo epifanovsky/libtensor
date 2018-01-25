@@ -58,7 +58,7 @@ private:
 private:
     holder_base *m_tensor; //!< Tensor held inside
 
-public:
+protected:
     /** \brief Creates any_tensor and places a tensor object inside
      **/
     template<typename Tensor>
@@ -70,6 +70,7 @@ public:
         m_tensor(other.m_tensor ? other.m_tensor->clone() : 0)
     { }
 
+public:
     /** \brief Destructor
      **/
     virtual ~any_tensor();

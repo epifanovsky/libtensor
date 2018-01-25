@@ -14,7 +14,7 @@ namespace expr {
 
     \ingroup libtensor_iface
  **/
-template<size_t N, typename T = double>
+template<size_t N, typename T>
 class expr_tensor :
     public any_tensor<N, T>,
     public expr_lhs<N, T>,
