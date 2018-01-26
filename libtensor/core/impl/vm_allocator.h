@@ -14,7 +14,8 @@ namespace libtensor {
 template<typename T>
 class vm_allocator {
 public:
-    typedef typename libvmm::evmm<T>::vm_pointer_type pointer_type; //!< Pointer type
+    typedef libvmm::evmm<char> vmm;
+    typedef typename vmm::vm_pointer_type pointer_type; //!< Pointer type
 
 public:
     static const pointer_type invalid_pointer; //!< Invalid pointer constant
@@ -28,21 +29,19 @@ public:
     /** \brief Initializes the virtual memory manager
 
         \param base_sz Exponential base for block size increment.
-        \param min_sz Smallest block size in data elements.
-        \param max_sz Largest block size in data elements.
-        \param mem_limit Memory limit in data elements.
+        \param min_sz Smallest block size in bytes.
+        \param max_sz Largest block size in bytes.
+        \param mem_limit Memory limit in bytes.
      **/
     static void init(size_t base_sz, size_t min_sz, size_t max_sz,
         size_t mem_limit, const char *prefix = 0) {
 
         if(prefix == 0) {
-            typename libvmm::evmm<T>::page_file_factory_type pff;
-            libvmm::evmm<T>::get_instance().
-                init(base_sz, min_sz, max_sz, mem_limit, pff);
+            typename vmm::page_file_factory_type pff;
+            vmm::get_instance().init(base_sz, min_sz, max_sz, mem_limit, pff);
         } else {
-            typename libvmm::evmm<T>::page_file_factory_type pff(prefix);
-            libvmm::evmm<T>::get_instance().
-                init(base_sz, min_sz, max_sz, mem_limit, pff);
+            typename vmm::page_file_factory_type pff(prefix);
+            vmm::get_instance().init(base_sz, min_sz, max_sz, mem_limit, pff);
         }
 
         m_base_sz = base_sz;
@@ -58,7 +57,7 @@ public:
         This method frees all the memory allocated by the memory manager.
      **/
     static void shutdown() {
-        libvmm::evmm<T>::get_instance().shutdown();
+        vmm::get_instance().shutdown();
     }
 
     /** \brief Returns the real size of a block, in bytes, including alignment
@@ -66,12 +65,13 @@ public:
      **/
     static size_t get_block_size(size_t sz) {
         size_t real_sz = m_min_sz;
+        sz *= sizeof(T);
         if(sz > m_max_sz) {
             real_sz = sz;
         } else {
             while(real_sz < sz) real_sz *= m_base_sz;
         }
-        return real_sz * sizeof(T);
+        return real_sz;
     }
 
     /** \brief Allocates a block of memory
@@ -79,7 +79,7 @@ public:
         \return Pointer to the block of memory.
      **/
     static pointer_type allocate(size_t sz) {
-        return libvmm::evmm<T>::get_instance().allocate(sz);
+        return vmm::get_instance().allocate(sz * sizeof(T));
     }
 
     /** \brief Deallocates (frees) a block of memory previously
@@ -87,7 +87,7 @@ public:
         \param p Pointer to the block of memory.
      **/
     static void deallocate(pointer_type p) {
-        libvmm::evmm<T>::get_instance().deallocate(p);
+        vmm::get_instance().deallocate(p);
     }
 
     /** \brief Prefetches a block of memory (does nothing in this
@@ -95,7 +95,7 @@ public:
         \param p Pointer to the block of memory.
      **/
     static void prefetch(pointer_type p) {
-        libvmm::evmm<T>::get_instance().prefetch(p);
+        vmm::get_instance().prefetch(p);
     }
 
     /** \brief Locks a block of memory in physical space for read-only
@@ -104,7 +104,7 @@ public:
         \return Constant physical pointer to the memory.
      **/
     static const T *lock_ro(pointer_type p) {
-        return libvmm::evmm<T>::get_instance().lock_ro(p);
+        return reinterpret_cast<const T*>(vmm::get_instance().lock_ro(p));
     }
 
     /** \brief Unlocks a block of memory previously locked by lock_ro()
@@ -112,7 +112,7 @@ public:
         \param p Pointer to the block of memory.
      **/
     static void unlock_ro(pointer_type p) {
-        libvmm::evmm<T>::get_instance().unlock_ro(p);
+        vmm::get_instance().unlock_ro(p);
     }
 
     /** \brief Locks a block of memory in physical space for read-write
@@ -121,7 +121,7 @@ public:
         \return Physical pointer to the memory.
      **/
     static T *lock_rw(pointer_type p) {
-        return libvmm::evmm<T>::get_instance().lock_rw(p);
+        return reinterpret_cast<T*>(vmm::get_instance().lock_rw(p));
     }
 
     /** \brief Unlocks a block of memory previously locked by lock_rw()
@@ -129,21 +129,21 @@ public:
         \param p Pointer to the block of memory.
      **/
     static void unlock_rw(pointer_type p) {
-        libvmm::evmm<T>::get_instance().unlock_rw(p);
+        vmm::get_instance().unlock_rw(p);
     }
 
     /** \brief Sets a priority flag on a memory block (stub)
         \param p Pointer to a block of memory.
      **/
     static void set_priority(pointer_type p) {
-        libvmm::evmm<T>::get_instance().set_priority(p);
+        vmm::get_instance().set_priority(p);
     }
 
     /** \brief Unsets a priority flag on a memory block (stub)
         \param p Pointer to a block of memory.
      **/
     static void unset_priority(pointer_type p) {
-        libvmm::evmm<T>::get_instance().unset_priority(p);
+        vmm::get_instance().unset_priority(p);
     }
 
 };
@@ -151,7 +151,7 @@ public:
 
 template<typename T>
 const typename vm_allocator<T>::pointer_type
-    vm_allocator<T>::invalid_pointer = libvmm::evmm<T>::invalid_pointer;
+    vm_allocator<T>::invalid_pointer = libvmm::evmm<char>::invalid_pointer;
 
 template<typename T> size_t vm_allocator<T>::m_base_sz;
 template<typename T> size_t vm_allocator<T>::m_min_sz;
