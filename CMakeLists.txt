@@ -5,6 +5,14 @@ if(NOT LIBUTIL_SOURCE_DIR)
 set(LIBUTIL_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR})
 endif(NOT LIBUTIL_SOURCE_DIR)
 
+if(NOT LIBTENSOR_DIR)
+set(LIBTENSOR_DIR ${LIBTENSOR_SOURCE_DIR})
+endif(NOT LIBTENSOR_DIR)
+
+if(NOT LIBUTIL_DIR)
+set(LIBUTIL_DIR ${LIBTENSOR_SOURCE_DIR})
+endif(NOT LIBUTIL_DIR)
+
 include(cmake/CheckFortranSourceCompiles.cmake)
 include(cmake/CheckFortranSourceRuns.cmake)
 
