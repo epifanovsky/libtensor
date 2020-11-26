@@ -24,7 +24,6 @@ template<typename T> class tls : public tls_builtin<T> { };
 
 
 #elif defined(USE_PTHREADS)
-
 #include "posix/tls_posix.h"
 namespace libutil {
 template<typename T> class tls : public tls_posix<T> { };

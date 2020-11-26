@@ -19,7 +19,6 @@ class mutex;
 
 
 #if defined(USE_PTHREADS)
-
 #include "posix/mutex_posix.h"
 namespace libutil {
 class mutex : public mutex_base<mutex_posix> { };
@@ -34,6 +33,8 @@ class mutex : public mutex_base<mutex_windows> { };
 } // namespace libutil
 
 #endif
+
+
 
 
 #endif // LIBUTIL_MUTEX_H
