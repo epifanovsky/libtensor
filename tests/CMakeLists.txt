@@ -259,9 +259,9 @@ set(SRC_BLOCK_SPARSE_BENCHMARK
 )
 
 set(TARGETS
-    libtensor_diag_tensor_tests
-    libtensor_diag_block_tensor_tests
-    libtensor_block_tensor_tests
+    # libtensor_diag_tensor_tests
+    # libtensor_diag_block_tensor_tests
+    # libtensor_block_tensor_tests
     libtensor_expr_tests
     libtensor_iface_tests
     libtensor_symmetry_tests
@@ -269,13 +269,13 @@ set(TARGETS
 #    libtensor_block_sparse_tests
 #    sparse_block_tree_benchmark
 )
-if(WITH_CTF)
-    set(TARGETS ${TARGETS}
-        libtensor_ctf_dense_tensor_tests
-        libtensor_ctf_block_tensor_tests
-        libtensor_ctf_iface_tests
-    )
-endif(WITH_CTF)
+# if(WITH_CTF)
+#     set(TARGETS ${TARGETS}
+#         libtensor_ctf_dense_tensor_tests
+#         libtensor_ctf_block_tensor_tests
+#         libtensor_ctf_iface_tests
+#     )
+# endif(WITH_CTF)
 
 #add_executable(libtensor_block_tensor_tests ${SRC_BLOCK_TENSOR})
 #add_executable(libtensor_expr_tests ${SRC_EXPR})
@@ -308,7 +308,7 @@ else(LIBTENSOR_PACKAGE)
 #    include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
 endif(LIBTENSOR_PACKAGE)
 
-#set_property(TARGET ${TARGETS} APPEND PROPERTY
+# set_property(TARGET ${TARGETS} APPEND PROPERTY
 #    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
 #if(HAVE_LIBVMM)
 #    set_property(TARGET ${TARGETS} APPEND PROPERTY
@@ -318,12 +318,12 @@ endif(LIBTENSOR_PACKAGE)
 #        COMPILE_DEFINITIONS WITHOUT_LIBVMM)
 #endif(HAVE_LIBVMM)
 
-#foreach(TARGET ${TARGETS})
-#target_link_libraries(${TARGET}
+# foreach(TARGET ${TARGETS})
+# target_link_libraries(${TARGET}
 #    tensor tensor_core tensor_block_sparse
 #    ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} libtest)
 #set_property(TARGET ${TARGET} APPEND PROPERTY LINK_FLAGS ${OpenMP_CXX_FLAGS})
-#endforeach(TARGET)
+# endforeach(TARGET)
 
 # Need custom flags for this so that expensive bounds checking code is not enabled, so we add it after
 # Want optimization but also debug symbols for profiling

@@ -1,5 +1,5 @@
 set(TESTS
-    abs_index_test
+    # abs_index_test
     block_index_space_product_builder_test
     block_index_space_test
     block_index_subspace_builder_test
