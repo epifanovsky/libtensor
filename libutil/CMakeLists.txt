@@ -40,7 +40,7 @@ endif()
 add_library(util ${SRC} ${SRC_THREADS})
 target_link_libraries(util ${LIBUTIL_DEP_LIBS})
 
-include_directories(${LIBUTIL_DIR})
+include_directories(${LIBUTIL_SOURCE_DIR})
 
 set_target_properties(util PROPERTIES
     COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBUTIL_DEBUG>)

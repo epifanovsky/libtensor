@@ -416,70 +416,13 @@ set(SRC_EXPR
 #     block_tensor/impl/btod_copy_xm.C
 # )
 
-# if(USE_ACML)
-#     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ACML})
-# elseif(USE_CBLAS OR USE_GSL)
-# set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_CBLAS})
-# elseif(USE_ESSL)
-#     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_ESSL})
-# elseif(USE_MKL)
-#     set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_MKL})
-# else(USE_ACML)
-#     set(SRC_LINALG ${SRC_LINALG_GENERIC})
-# endif(USE_ACML)
-
 set(SRC_LINALG ${SRC_LINALG_GENERIC} ${SRC_LINALG_CBLAS})
-
-# message("SRC linalg" ${SRC_LINALG})
 
 set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
     ${SRC_INST} ${SRC_EXPR})
-# option(LIBTENSOR_SPARSE "Build block sparse and diagonal tensor data structures" ON)
-# if (LIBTENSOR_SPARSE)
-#     set(SRC ${SRC} ${SRC_DIAG_TENSOR})
-# endif()
-# if(WITH_ARMADILLO)
-#     set(SRC ${SRC} ${SRC_ARMA})
-# endif(WITH_ARMADILLO)
-# if(WITH_XM)
-#     set(SRC ${SRC} ${SRC_XM})
-#     add_definitions(-DWITH_LIBXM)
-# endif(WITH_XM)
-# if(WITH_CTF)
-#     set(SRC ${SRC} ${SRC_CTF})
-#     set_property(SOURCE ${SRC_CTF} APPEND PROPERTY COMPILE_FLAGS "-std=c++0x")
-# endif(WITH_CTF)
-
-# if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN" AND CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-#     set_property(SOURCE block_tensor/impl/btod_ewmult2.C APPEND PROPERTY COMPILE_FLAGS "-Wa,-mbig-obj")
-# endif()
-
-# add_library(tensor_core ${SRC_CORE})
-# target_compile_definitions(tensor_core PUBLIC
-    # $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
-# if(WITH_TIMINGS)
-#     target_compile_definitions(tensor_core PUBLIC LIBTENSOR_TIMINGS)
-# endif(WITH_TIMINGS)
-
-# target_include_directories(tensor_core PRIVATE "${LIBTENSOR_SOURCE_DIR}")
-# target_link_libraries(tensor_core util ${BLAS_LAPACK_LIBRARIES})
-
-# if(TARGET vmm)
-#     target_link_libraries(tensor_core vmm)
-# else(TARGET vmm)
-#     target_compile_definitions(tensor_core PRIVATE WITHOUT_LIBVMM)
-# endif(TARGET vmm)
 
 add_library(tensor ${SRC} ${SRC_CORE})
 target_include_directories(tensor PRIVATE "${LIBTENSOR_SOURCE_DIR}")
 target_link_libraries(tensor PUBLIC ${BLAS_LAPACK_LIBRARIES})
 target_compile_definitions(tensor PUBLIC
     $<$<CONFIG:Debug>:LIBTENSOR_DEBUG> PRIVATE WITHOUT_LIBVMM)
-
-# if(WITH_ARMADILLO)
-#     target_link_libraries(tensor armadillo)
-# endif(WITH_ARMADILLO)
-# if (LIBTENSOR_SPARSE)
-#     add_library(tensor_block_sparse ${SRC_BLOCK_SPARSE})
-#     target_link_libraries(tensor_block_sparse tensor)
-# endif()
