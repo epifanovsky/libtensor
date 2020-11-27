@@ -454,15 +454,15 @@ set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
 #     set_property(SOURCE block_tensor/impl/btod_ewmult2.C APPEND PROPERTY COMPILE_FLAGS "-Wa,-mbig-obj")
 # endif()
 
-add_library(tensor_core ${SRC_CORE})
-target_compile_definitions(tensor_core PUBLIC
-    $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
+# add_library(tensor_core ${SRC_CORE})
+# target_compile_definitions(tensor_core PUBLIC
+    # $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
 # if(WITH_TIMINGS)
 #     target_compile_definitions(tensor_core PUBLIC LIBTENSOR_TIMINGS)
 # endif(WITH_TIMINGS)
 
-target_include_directories(tensor_core PUBLIC "${LIBTENSOR_SOURCE_DIR}")
-target_link_libraries(tensor_core util ${BLAS_LAPACK_LIBRARIES})
+# target_include_directories(tensor_core PRIVATE "${LIBTENSOR_SOURCE_DIR}")
+# target_link_libraries(tensor_core util ${BLAS_LAPACK_LIBRARIES})
 
 # if(TARGET vmm)
 #     target_link_libraries(tensor_core vmm)
@@ -470,9 +470,11 @@ target_link_libraries(tensor_core util ${BLAS_LAPACK_LIBRARIES})
 #     target_compile_definitions(tensor_core PRIVATE WITHOUT_LIBVMM)
 # endif(TARGET vmm)
 
-target_compile_definitions(tensor_core PRIVATE WITHOUT_LIBVMM)
-add_library(tensor ${SRC})
-target_link_libraries(tensor tensor_core ${BLAS_LAPACK_LIBRARIES})
+add_library(tensor ${SRC} ${SRC_CORE})
+target_include_directories(tensor PRIVATE "${LIBTENSOR_SOURCE_DIR}")
+target_link_libraries(tensor PUBLIC ${BLAS_LAPACK_LIBRARIES})
+target_compile_definitions(tensor PUBLIC
+    $<$<CONFIG:Debug>:LIBTENSOR_DEBUG> PRIVATE WITHOUT_LIBVMM)
 
 # if(WITH_ARMADILLO)
 #     target_link_libraries(tensor armadillo)

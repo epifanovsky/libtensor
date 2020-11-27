@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(LIBTENSOR CXX)
+project(LIBTENSOR VERSION 2.5.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -66,6 +66,11 @@ else()
 endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 
+if (APPLE)
+	string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})
+	string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
+	string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS ${CMAKE_MODULE_LINKER_FLAGS})
+endif()
 
 # include(${LIBUTIL_SOURCE_DIR}/cmake/SetupLibUtil.txt)
 set(LIBUTIL_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR})
@@ -83,3 +88,67 @@ if (LIBTENSOR_TESTS)
     add_subdirectory(tests)
     # add_subdirectory(performance_tests)
 endif()
+
+# TODO: needs to be optimized, taking almost everything for now
+set(PN "libtensor")
+#### Installation ####
+if (INSTALL_DEVEL_HEADERS)
+    install(DIRECTORY "libtensor/core"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/btod"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/block_tensor"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/gen_block_tensor"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/dense_tensor"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/symmetry"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/expr"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/kernels"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "libtensor/linalg"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
+            FILES_MATCHING PATTERN "*.h")
+endif()
+
+install(DIRECTORY "libutil"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FILES_MATCHING PATTERN "*.h")
+
+install(FILES libtensor/libtensor.h libtensor/defs.h libtensor/exception.h
+        libtensor/version.h libtensor/timings.h libtensor/not_implemented.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN})
+
+install(TARGETS tensor util
+        EXPORT "${PN}Targets"
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+target_compile_definitions(tensor INTERFACE USING_${PN})
+target_include_directories(tensor INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+set(CMAKECONFIG_INSTALL_DIR "share/cmake/${PN}")
+configure_package_config_file(cmake/${PN}Config.cmake.in
+                         "${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake"
+                         INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${PN}ConfigVersion.cmake
+                            VERSION ${${PN}_VERSION}
+                            COMPATIBILITY AnyNewerVersion)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/${PN}ConfigVersion.cmake
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+
+install(EXPORT "${PN}Targets"
+        NAMESPACE "${PN}::"
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR})
