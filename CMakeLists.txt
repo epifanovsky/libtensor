@@ -62,13 +62,6 @@ else()
 endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 
-# Fix for BLAS library linking for conda macOS builds
-if (APPLE)
-	string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})
-	string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
-	string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS ${CMAKE_MODULE_LINKER_FLAGS})
-endif()
-
 set(LIBUTIL_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR})
 
 add_subdirectory(libutil)
