@@ -2,8 +2,8 @@
 .cproject
 .settings
 .svn
+.vscode
 .DS_Store
 build
 tests/libtensor_tests
 docs
-

@@ -6,7 +6,7 @@ set(TESTS
     tod_btconv_test
     tod_compare_test
     tod_contract2_test
-    tod_copy_test
+    # tod_copy_test
     tod_copy_wnd_test
     tod_diag_test
     tod_dirsum_test

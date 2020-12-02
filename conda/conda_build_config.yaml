@@ -1,0 +1,16 @@
+# <<<  Compiler Stuff  >>>
+cxx_compiler:
+    - clangxx                          # [osx]
+    - gxx                              # [linux]
+target_platform:
+    - osx-64                           # [osx]
+    - linux-64                         # [linux]
+CONDA_BUILD_SYSROOT:
+    - /Users/runner/MacOSX10.9.sdk     # [osx]
+cxx_compiler_version:
+    - 7.3.0                            # [linux]
+    - 4                                # [osx]
+
+# <<< Other Stuff >>>
+mkl:
+    - 2019.*

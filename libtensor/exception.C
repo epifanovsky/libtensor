@@ -121,8 +121,7 @@ const char *exception::what() const throw() {
 }
 
 
-void throw_exc(const char *clazz, const char *method, const char *error)
-    throw(exception) {
+void throw_exc(const char *clazz, const char *method, const char *error) {
 
     throw generic_exception("libtensor", clazz, method, 0, 0, error);
 }
