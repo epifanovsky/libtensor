@@ -14,7 +14,6 @@ option_with_print(BUILD_SHARED_LIBS "Build shared libraries instead of static on
 option_with_print(ENABLE_OPENMP "Enables OpenMP parallelization" ON)
 option_with_print(INSTALL_DEVEL_HEADERS "Install devel headers" ON)
 option_with_default(CMAKE_BUILD_TYPE "Build type (Release or Debug)" Release)
-option_with_default(BUILD_FPIC "Compile static libraries with position independent code" ON)
 option_with_default(CMAKE_INSTALL_LIBDIR "Directory to which libraries installed" lib)
 
 if(UNIX)
@@ -47,7 +46,6 @@ elseif (APPLE)
 endif()
 find_package(BLAS REQUIRED)
 include_directories(cblas)
-add_definitions(-DUSE_CBLAS)
 
 if    (BLA_VENDOR STREQUAL "Apple")
 elseif(BLA_VENDOR STREQUAL "OpenBLAS")
@@ -62,8 +60,8 @@ else()
 endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 set(LIBUTIL_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR})
-
 add_subdirectory(libutil)
 add_subdirectory(libtensor)
 
@@ -137,3 +135,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake
 install(EXPORT "${PN}Targets"
         NAMESPACE "${PN}::"
         DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+
+configure_file("${LIBTENSOR_SOURCE_DIR}/libtensor/libtensor.pc.in" "libtensor.pc" @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtensor.pc
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

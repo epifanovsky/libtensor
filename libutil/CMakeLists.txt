@@ -14,10 +14,6 @@ set(SRC
     timings/timer.C
 )
 
-set(SRC_THREADS_WINDOWS
-    threads/windows/tls_windows.C
-)
-
 set(SRC_THREADS_POSIX
     threads/posix/cond_posix.C
     threads/posix/mutex_posix.C
@@ -26,19 +22,14 @@ set(SRC_THREADS_POSIX
     threads/posix/tls_posix.C
 )
 
-if(CMAKE_USE_WIN32_THREADS_INIT)
-    set(SRC_THREADS ${SRC_THREADS_WINDOWS})
-elseif(CMAKE_USE_PTHREADS_INIT)
-    set(SRC_THREADS ${SRC_THREADS_POSIX})
-    if(HAVE_PTHREADS_SPINLOCK)
-        set(SRC_THREADS ${SRC_THREADS} threads/posix/spinlock_posix.C)
-    elseif(HAVE_MACOS_SPINLOCK)
-        set(SRC_THREADS ${SRC_THREADS} threads/macos/spinlock_macos.C)
-    endif()
+set(SRC_THREADS ${SRC_THREADS_POSIX})
+if(HAVE_PTHREADS_SPINLOCK)
+set(SRC_THREADS ${SRC_THREADS} threads/posix/spinlock_posix.C)
+elseif(HAVE_MACOS_SPINLOCK)
+set(SRC_THREADS ${SRC_THREADS} threads/macos/spinlock_macos.C)
 endif()
 
-add_library(util ${SRC} ${SRC_THREADS})
-target_link_libraries(util ${LIBUTIL_DEP_LIBS})
+add_library(util OBJECT ${SRC} ${SRC_THREADS})
 
 include_directories(${LIBUTIL_SOURCE_DIR})
 
