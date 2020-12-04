@@ -1,31 +1,36 @@
-cmake_minimum_required(VERSION 3.0)
-project(LIBTENSOR VERSION 3.0.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.2.0)
+project(libtensorlight VERSION 3.0.0 LANGUAGES CXX)
+enable_testing()
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
+
+option(CMAKE_BUILD_TYPE "Build type (Release or Debug)" Release)
+option(BUILD_SHARED_LIBS "Build shared libraries instead of static ones" ON)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-include(psi4OptionsTools)
 include(SetupCompiler)
-
-option_with_print(BUILD_SHARED_LIBS "Build shared libraries instead of static ones (CMake default is static)" ON)
-option_with_print(ENABLE_OPENMP "Enables OpenMP parallelization" ON)
-option_with_print(INSTALL_DEVEL_HEADERS "Install devel headers" ON)
-option_with_default(CMAKE_BUILD_TYPE "Build type (Release or Debug)" Release)
-option_with_default(CMAKE_INSTALL_LIBDIR "Directory to which libraries installed" lib)
 
 if(UNIX)
     add_definitions(-DPOSIX)
 endif(UNIX)
 
 # OpenMP
+option(ENABLE_OPENMP "Enables OpenMP parallelization" ON)
 if(ENABLE_OPENMP)
     find_package(OpenMP REQUIRED)
     if (OPENMP_FOUND)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
     endif()
 endif()
 
@@ -61,20 +66,19 @@ endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
-set(LIBUTIL_SOURCE_DIR ${LIBTENSOR_SOURCE_DIR})
+set(LIBUTIL_SOURCE_DIR ${libtensorlight_SOURCE_DIR})
 add_subdirectory(libutil)
 add_subdirectory(libtensor)
 
-enable_testing()
 option(LIBTENSOR_TESTS "Build libtensor tests" ON)
 if (LIBTENSOR_TESTS)
     add_subdirectory(tests)
-    # add_subdirectory(performance_tests)
 endif()
 
 # TODO: needs to be optimized, taking almost everything for now
-set(PN "libtensor")
+set(PN "libtensorlight")
 #### Installation ####
+option(INSTALL_DEVEL_HEADERS "Install devel headers" ON)
 if (INSTALL_DEVEL_HEADERS)
     install(DIRECTORY "libtensor/core"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
@@ -113,13 +117,14 @@ install(FILES libtensor/libtensor.h libtensor/defs.h libtensor/exception.h
         libtensor/version.h libtensor/timings.h libtensor/not_implemented.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN})
 
-install(TARGETS tensor util
+set(CMAKE_INSTALL_LIBDIR lib CACHE STRING "Directory to which libraries installed")
+install(TARGETS tensorlight util
         EXPORT "${PN}Targets"
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-target_compile_definitions(tensor INTERFACE USING_${PN})
-target_include_directories(tensor INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_definitions(tensorlight INTERFACE USING_${PN})
+target_include_directories(tensorlight INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 set(CMAKECONFIG_INSTALL_DIR "share/cmake/${PN}")
 configure_package_config_file(cmake/${PN}Config.cmake.in
@@ -136,6 +141,6 @@ install(EXPORT "${PN}Targets"
         NAMESPACE "${PN}::"
         DESTINATION ${CMAKECONFIG_INSTALL_DIR})
 
-configure_file("${LIBTENSOR_SOURCE_DIR}/libtensor/libtensor.pc.in" "libtensor.pc" @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtensor.pc
+configure_file("${libtensorlight_SOURCE_DIR}/libtensor/libtensorlight.pc.in" "libtensorlight.pc" @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtensorlight.pc
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

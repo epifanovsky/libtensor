@@ -13,14 +13,27 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-        sudo apt-get install libopenblas-dev
+        sudo apt-get install libopenblas-dev ninja-build ccache
+    - uses: actions/cache@v1
+      env:
+        cache-name: cache-artifacts
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-deploy-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-deploy-
+          ${{ runner.os }}-
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
 
     - name: Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: |
+        export PATH="/usr/local/opt/ccache/libexec:$PATH"
+        export PATH="/usr/lib/ccache:$PATH"
+        cmake $GITHUB_WORKSPACE -GNinja -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/build

@@ -5,7 +5,7 @@
 
 @PACKAGE_INIT@
 
-set(PN libtensor)
+set(PN libtensorlight)
 set (_valid_components
     static
     shared
@@ -15,7 +15,7 @@ set (_valid_components
 unset(_temp_h CACHE)
 find_path(_temp_h
           NAMES libtensor.h
-          PATHS ${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@/libtensor
+          PATHS ${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@/libtensorlight
           NO_DEFAULT_PATH)
 if(_temp_h)
     #set(${PN}_INCLUDE_DIR "${_temp_h}")
@@ -39,15 +39,11 @@ elseif(_seek_static GREATER -1)
 endif()
 unset(_temp CACHE)
 find_library(_temp
-             NAMES tensor
+             NAMES tensorlight
              PATHS ${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_LIBDIR@
              NO_DEFAULT_PATH)
-find_library(_temp2
-             NAMES util
-             PATHS ${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_LIBDIR@
-             NO_DEFAULT_PATH)
-if(_temp AND _temp2)
-    set(${PN}_LIBRARY "${_temp}" "${_temp2}")
+if(_temp)
+    set(${PN}_LIBRARY "${_temp}")
     if(_seek_shared GREATER -1)
         set(${PN}_shared_FOUND 1)
     elseif(_seek_static GREATER -1)

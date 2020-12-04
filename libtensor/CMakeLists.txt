@@ -293,8 +293,8 @@ set(SRC_EXPR
 set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
     ${SRC_INST} ${SRC_EXPR})
 
-add_library(tensor ${SRC} ${SRC_CORE})
-target_include_directories(tensor PRIVATE "${LIBTENSOR_SOURCE_DIR}")
-target_link_libraries(tensor PUBLIC ${BLAS_LAPACK_LIBRARIES} util)
-target_compile_definitions(tensor PUBLIC
-    $<$<CONFIG:Debug>:LIBTENSOR_DEBUG> PRIVATE WITHOUT_LIBVMM)
+add_library(tensorlight ${SRC} ${SRC_CORE})
+target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}")
+target_link_libraries(tensorlight PUBLIC ${BLAS_LAPACK_LIBRARIES} util)
+target_compile_definitions(tensorlight PUBLIC
+	$<$<CONFIG:Debug>:libtensorlight_DEBUG> PRIVATE WITHOUT_LIBVMM)
