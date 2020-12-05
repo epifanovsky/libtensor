@@ -26,7 +26,7 @@ void bto_contract2_sym_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims), bis_ref(dims);
@@ -86,13 +86,13 @@ void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-        index<3> i3_1, i3_2;
+        libtensor::index<3> i3_1, i3_2;
         i3_2[0] = 10; i3_2[1] = 10; i3_2[2] = 8;
         dimensions<3> dims3(index_range<3>(i3_1, i3_2));
-        index<4> i4_1, i4_2;
+        libtensor::index<4> i4_1, i4_2;
         i4_2[0] = 10; i4_2[1] = 10; i4_2[2] = 10; i4_2[3] = 10;
         dimensions<4> dims4(index_range<4>(i4_1, i4_2));
-        index<5> i5_1, i5_2;
+        libtensor::index<5> i5_1, i5_2;
         i5_2[0] = 10; i5_2[1] = 10; i5_2[2] = 10; i5_2[3] = 10; i5_2[4] = 8;
         dimensions<5> dims5(index_range<5>(i5_1, i5_2));
 
@@ -164,10 +164,10 @@ void bto_contract2_sym_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i2_1, i2_2;
+        libtensor::index<2> i2_1, i2_2;
         i2_2[0] = 10; i2_2[1] = 10;
         dimensions<2> dims2(index_range<2>(i2_1, i2_2));
-        index<4> i4_1, i4_2;
+        libtensor::index<4> i4_1, i4_2;
         i4_2[0] = 8; i4_2[1] = 8; i4_2[2] = 10; i4_2[3] = 10;
         dimensions<4> dims4(index_range<4>(i4_1, i4_2));
 
@@ -243,7 +243,7 @@ void bto_contract2_sym_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i4_1, i4_2;
+        libtensor::index<4> i4_1, i4_2;
         i4_2[0] = 8; i4_2[1] = 8; i4_2[2] = 10; i4_2[3] = 10;
         dimensions<4> dims4(index_range<4>(i4_1, i4_2));
 

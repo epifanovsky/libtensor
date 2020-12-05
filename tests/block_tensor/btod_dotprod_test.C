@@ -62,7 +62,7 @@ void btod_dotprod_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -111,7 +111,7 @@ void btod_dotprod_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -153,7 +153,7 @@ void btod_dotprod_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -207,7 +207,7 @@ void btod_dotprod_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -263,7 +263,7 @@ void btod_dotprod_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -336,7 +336,7 @@ void btod_dotprod_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -418,7 +418,7 @@ void btod_dotprod_test::test_7() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -485,7 +485,7 @@ void btod_dotprod_test::test_8() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -602,7 +602,7 @@ void btod_dotprod_test::test_9() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -683,7 +683,7 @@ void btod_dotprod_test::test_10a() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -780,7 +780,7 @@ void btod_dotprod_test::test_10b() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -866,7 +866,7 @@ void btod_dotprod_test::test_10c(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -885,7 +885,7 @@ void btod_dotprod_test::test_10c(
         scalar_transf<double> tr(1.0);
         se_part<2, double> sp(bis, m, 2);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = i01[1] = i11[0] = i11[1] = 1;
         sp.add_map(i00, i11, tr);
         sp.mark_forbidden(i01);
@@ -943,7 +943,7 @@ void btod_dotprod_test::test_11() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis1(dims), bis2(dims);
@@ -999,7 +999,7 @@ void btod_dotprod_test::test_12() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis1(dims), bis2(dims);
@@ -1055,7 +1055,7 @@ void btod_dotprod_test::test_13a() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);
@@ -1127,7 +1127,7 @@ void btod_dotprod_test::test_13b() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);

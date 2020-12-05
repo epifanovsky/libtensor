@@ -16,7 +16,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -28,7 +28,7 @@ int test_1() {
 
     abs_index<2> aio(dims);
     do {
-        const index<2> &io = aio.get_index();
+        const libtensor::index<2> &io = aio.get_index();
         orbit<2, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -73,7 +73,7 @@ int test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -89,7 +89,7 @@ int test_2() {
 
     abs_index<2> aio(dims);
     do {
-        const index<2> &io = aio.get_index();
+        const libtensor::index<2> &io = aio.get_index();
         orbit<2, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -120,7 +120,7 @@ int test_2() {
             }
         } else {
             permutation<2> pref; pref.permute(0, 1);
-            index<2> io2(io);
+            libtensor::index<2> io2(io);
             io2.permute(pref);
             abs_index<2> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
@@ -155,7 +155,7 @@ int test_3() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -171,7 +171,7 @@ int test_3() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         orbit<4, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -203,7 +203,7 @@ int test_3() {
             }
         } else {
             permutation<4> pref; pref.permute(0, 1);
-            index<4> io2(io);
+            libtensor::index<4> io2(io);
             io2.permute(pref);
             abs_index<4> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
@@ -238,7 +238,7 @@ int test_4() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -255,7 +255,7 @@ int test_4() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         orbit<4, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -287,7 +287,7 @@ int test_4() {
             }
         } else {
             permutation<4> pref; pref.permute(1, 2);
-            index<4> io2(io);
+            libtensor::index<4> io2(io);
             io2.permute(pref);
             abs_index<4> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
@@ -322,7 +322,7 @@ int test_5() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -339,7 +339,7 @@ int test_5() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         orbit<4, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -373,7 +373,7 @@ int test_5() {
         } else {
             permutation<4> p2, p3;
             p2.permute(0, 1); p2.permute(1, 2);
-            index<4> io2(io);
+            libtensor::index<4> io2(io);
             while(!(io2[0] == io2[1] && io2[0] <= io2[2]) &&
                 !(io2[0] < io2[1] && io2[0] < io2[2])) {
                 io2.permute(p2);
@@ -417,7 +417,7 @@ int test_6() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -437,7 +437,7 @@ int test_6() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         orbit<4, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -471,7 +471,7 @@ int test_6() {
             permutation<4> p1, p2, pref;
             p1.permute(0, 1);
             p2.permute(2, 3);
-            index<4> io2(io);
+            libtensor::index<4> io2(io);
             if(io2[0] > io2[1]) {
                 io2.permute(p1);
                 pref.permute(p1);
@@ -518,7 +518,7 @@ int test_7() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -538,7 +538,7 @@ int test_7() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         orbit<4, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -573,11 +573,11 @@ int test_7() {
             permutation<4> p1, p2;
             p1.permute(0, 1);
             p2.permute(1, 2);
-            index<4> io2(io);
+            libtensor::index<4> io2(io);
             if(io2[0] > io2[1]) io2.permute(p1);
             if(io2[1] > io2[2]) io2.permute(p2);
             if(io2[0] > io2[1]) io2.permute(p1);
-            index<4> io3(io2);
+            libtensor::index<4> io3(io2);
             io3.permute(tr.get_perm());
             abs_index<4> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
@@ -617,7 +617,7 @@ int test_8() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -637,7 +637,7 @@ int test_8() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         orbit<4, double> orb(sym, io);
         if(!orb.is_allowed()) {
             std::ostringstream ss;
@@ -672,14 +672,14 @@ int test_8() {
             p1.permute(0, 1);
             p2.permute(1, 2);
             p3.permute(2, 3);
-            index<4> io2(io);
+            libtensor::index<4> io2(io);
             if(io2[0] > io2[1]) io2.permute(p1);
             if(io2[1] > io2[2]) io2.permute(p2);
             if(io2[2] > io2[3]) io2.permute(p3);
             if(io2[0] > io2[1]) io2.permute(p1);
             if(io2[1] > io2[2]) io2.permute(p2);
             if(io2[0] > io2[1]) io2.permute(p1);
-            index<4> io3(io2);
+            libtensor::index<4> io3(io2);
             io3.permute(tr.get_perm());
             abs_index<4> aio2(io2, dims);
             if(abscanidx != aio2.get_abs_index()) {
@@ -735,7 +735,7 @@ int test_9() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -757,7 +757,7 @@ int test_9() {
 
     permutation<2> p0;
 
-    index<2> i00;
+    libtensor::index<2> i00;
     abs_index<2> ai00(i00, bidims);
     orbit<2, double> o00(sym, i00);
     if(!o00.is_allowed()) {
@@ -787,7 +787,7 @@ int test_9() {
             "Incorrect block transformation (coeff).");
     }
 
-    index<2> i01; i01[1] = 1;
+    libtensor::index<2> i01; i01[1] = 1;
     abs_index<2> ai01(i01, bidims);
     orbit<2, double> o01(sym, i01);
     if(o01.is_allowed()) {
@@ -817,7 +817,7 @@ int test_9() {
             "Incorrect block transformation (coeff).");
     }
 
-    index<2> i10; i10[0] = 1;
+    libtensor::index<2> i10; i10[0] = 1;
     abs_index<2> ai10(i10, bidims);
     orbit<2, double> o10(sym, i10);
     if(o10.is_allowed()) {
@@ -847,7 +847,7 @@ int test_9() {
             "Incorrect block transformation (coeff).");
     }
 
-    index<2> i11; i11[0] = 1; i11[1] = 1;
+    libtensor::index<2> i11; i11[0] = 1; i11[1] = 1;
     abs_index<2> ai11(i11, bidims);
     orbit<2, double> o11(sym, i11);
     if(!o11.is_allowed()) {
@@ -910,7 +910,7 @@ int test_10() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -937,7 +937,7 @@ int test_10() {
     permutation<2> p0, p1;
     p1.permute(0, 1);
 
-    index<2> i00;
+    libtensor::index<2> i00;
     abs_index<2> ai00(i00, bidims);
     orbit<2, double> o00(sym, i00);
     if(!o00.is_allowed()) {
@@ -967,7 +967,7 @@ int test_10() {
             "Incorrect block transformation (coeff).");
     }
 
-    index<2> i01; i01[1] = 1;
+    libtensor::index<2> i01; i01[1] = 1;
     abs_index<2> ai01(i01, bidims);
     orbit<2, double> o01(sym, i01);
     if(o01.is_allowed()) {
@@ -997,7 +997,7 @@ int test_10() {
             "Incorrect block transformation (coeff).");
     }
 
-    index<2> i10; i10[0] = 1;
+    libtensor::index<2> i10; i10[0] = 1;
     abs_index<2> ai10(i10, bidims);
     orbit<2, double> o10(sym, i10);
     if(o10.is_allowed()) {
@@ -1027,7 +1027,7 @@ int test_10() {
             "Incorrect block transformation (coeff).");
     }
 
-    index<2> i11; i11[0] = 1; i11[1] = 1;
+    libtensor::index<2> i11; i11[0] = 1; i11[1] = 1;
     abs_index<2> ai11(i11, bidims);
     orbit<2, double> o11(sym, i11);
     if(!o11.is_allowed()) {
@@ -1074,7 +1074,7 @@ int test_11() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     mask<4> m1111;
     m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
@@ -1093,12 +1093,12 @@ int test_11() {
     sym.insert(se2);
     sym.insert(se3);
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 1; idx[1] = 1; idx[2] = 0; idx[3] = 2;
 
     orbit<4, double> orb(sym, idx);
     for(orbit<4, double>::iterator i = orb.begin(); i != orb.end(); ++i) {
-        index<4> idx2, idx3(orb.get_cindex());
+        libtensor::index<4> idx2, idx3(orb.get_cindex());
         abs_index<4>::get_index(orb.get_abs_index(i), bidims, idx2);
         const tensor_transf<4, double> &tr = orb.get_transf(i);
         tr.apply(idx3);

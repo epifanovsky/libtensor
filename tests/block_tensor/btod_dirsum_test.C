@@ -117,9 +117,9 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 
     size_t ni = 9, nj = 7;
 
-    index<1> ia1, ia2; ia2[0] = ni - 1;
-    index<1> ib1, ib2; ib2[0] = nj - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = ni - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = nj - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -184,8 +184,8 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 
     size_t ni = 9;
 
-    index<1> ia1, ia2; ia2[0] = ni - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = ni - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = ni - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = ni - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
     block_index_space<1> bisa(dima);
@@ -272,8 +272,8 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 
     size_t ni = 9;
 
-    index<1> ia1, ia2; ia2[0] = ni - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = ni - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = ni - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = ni - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
     block_index_space<1> bisa(dima);
@@ -361,11 +361,11 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 
     size_t ni = 9, nj = 9, nk = 7;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<1> ib1, ib2;
+    libtensor::index<1> ib1, ib2;
     ib2[0] = nk - 1;
-    index<3> ic1, ic2;
+    libtensor::index<3> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
@@ -436,11 +436,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 
     size_t ni = 9, nj = 9, nk = 7, nl = 7;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nk - 1; ic2[2] = nj - 1; ic2[3] = nl - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -513,11 +513,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 
     size_t ni = 7, nj = 11, nk = 7, nl = 5;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nk - 1; ic2[2] = nj - 1; ic2[3] = nl - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -557,7 +557,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 
     // set zero blocks
     {
-        index<2> idxa, idxb;
+        libtensor::index<2> idxa, idxb;
         idxa[1]=1;
         idxb[0]=1;
         block_tensor_ctrl<2,double> bctrla(bta), bctrlb(btb);
@@ -616,11 +616,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
 
     size_t ni = 8, nj = 8, nk = 8, nl = 8;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nk - 1; ic2[2] = nj - 1; ic2[3] = nl - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -743,11 +743,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 
     size_t ni = 8, nj = 16, nk = 8, nl = 10;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nk - 1; ic2[2] = nj - 1; ic2[3] = nl - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -783,7 +783,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
         mskc[0] = true; mskc[1] = true; mskc[2] = true; mskc[3] = true;
 
         se_part<2, double> spa(bisa, msk1, 2), spb(bisb, msk1, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         spa.add_map(i00, i11);
@@ -794,7 +794,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
         ctrlb.req_symmetry().insert(spb);
 
         se_part<4, double> spc(bisc, mskc, 2);
-        index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+        libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
             i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
         i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
@@ -901,11 +901,11 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
 
     size_t ni = 8, nj = 16, nk = 8, nl = 10;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nk - 1; ic2[2] = nj - 1; ic2[3] = nl - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -1048,9 +1048,9 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 
     size_t ni = 10, nj = 12;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = ni - 1; ic2[2] = nj - 1; ic2[3] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<4> dimc(index_range<4>(ic1, ic2));
@@ -1082,7 +1082,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
     {
         mska[0] = true; mska[1] = true;
         se_part<2, double> sp(bisa, mska, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         sp.add_map(i00, i11);
@@ -1097,7 +1097,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 
     // set zero blocks
     {
-        index<2> idxa;
+        libtensor::index<2> idxa;
         idxa[1] = 1;
         block_tensor_ctrl<2, double> bctrla(bta);
         bctrla.req_zero_block(idxa);
@@ -1183,11 +1183,11 @@ void btod_dirsum_test::test_ikmjln_ij_kl_mn(bool rnd, double d)
 
     size_t ni = 10, nj = 12;
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = nj - 1; ib2[2] = ni - 1; ib2[3] = nj - 1;
-    index<6> ic1, ic2;
+    libtensor::index<6> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = ni - 1; ic2[2] = ni - 1;
     ic2[3] = nj - 1; ic2[4] = nj - 1; ic2[5] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
@@ -1224,7 +1224,7 @@ void btod_dirsum_test::test_ikmjln_ij_kl_mn(bool rnd, double d)
     // Set symmetry
     {
         se_part<2, double> sp(bisa, m11, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         sp.add_map(i00, i11);
@@ -1239,7 +1239,7 @@ void btod_dirsum_test::test_ikmjln_ij_kl_mn(bool rnd, double d)
 
     // set zero blocks
     {
-        index<2> idxa;
+        libtensor::index<2> idxa;
         idxa[1] = 1;
         block_tensor_ctrl<2, double> bctrla(bta);
         bctrla.req_zero_block(idxa);

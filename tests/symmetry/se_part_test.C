@@ -33,14 +33,14 @@ void se_part_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 9; i2[1] = 9;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m11;
         m11[0] = true; m11[1] = true;
         bis.split(m11, 5);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i01[0] = 0; i01[1] = 1;
         i10[0] = 1; i10[1] = 0;
         i11[0] = 1; i11[1] = 1;
@@ -65,7 +65,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
                     "!elem1.is_allowed(i11)");
         }
 
-        index<2> i00a(i00), i01a(i01), i10a(i10), i11a(i11);
+        libtensor::index<2> i00a(i00), i01a(i01), i10a(i10), i11a(i11);
         elem1.apply(i00a);
         if(!i00a.equals(i11)) {
             fail_test(testname, __FILE__, __LINE__, "!i00a.equals(i11)");
@@ -83,7 +83,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, "!i11a.equals(i00)");
         }
 
-        index<2> i00b(i00), i01b(i01), i10b(i10), i11b(i11);
+        libtensor::index<2> i00b(i00), i01b(i01), i10b(i10), i11b(i11);
         tensor_transf<2, double> tr00, tr01, tr10, tr11;
         elem1.apply(i00b, tr00);
         elem1.apply(i01b, tr01);
@@ -148,7 +148,7 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 9; i2[1] = 9;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m11;
@@ -157,7 +157,7 @@ void se_part_test::test_2() throw(libtest::test_exception) {
         bis.split(m11, 5);
         bis.split(m11, 7);
 
-        index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
+        libtensor::index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
         i30, i31, i32, i33;
         i01[0] = 0; i01[1] = 1;
         i02[0] = 0; i02[1] = 2;
@@ -178,7 +178,7 @@ void se_part_test::test_2() throw(libtest::test_exception) {
         se_part<2, double> elem1(bis, m11, 2);
         elem1.add_map(i00, i11);
 
-        index<2> i00a(i00), i01a(i01), i02a(i02), i03a(i03),
+        libtensor::index<2> i00a(i00), i01a(i01), i02a(i02), i03a(i03),
                 i10a(i10), i11a(i11), i12a(i12), i13a(i13),
                 i20a(i20), i21a(i21), i22a(i22), i23a(i23),
                 i30a(i30), i31a(i31), i32a(i32), i33a(i33);
@@ -262,7 +262,7 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1100, m0011, m1111;
@@ -278,7 +278,7 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
         bis.split(m0011, 13);
         bis.split(m0011, 16);
 
-        index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
+        libtensor::index<4> i0000, i0011, i0033, i0101, i0110, i0134, i1001, i1100, i1111,
         i2200, i2233, i2301, i2334;
         i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
         i0033[0] = 0; i0033[1] = 0; i0033[2] = 3; i0033[3] = 3;
@@ -299,14 +299,14 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
         elem1.add_map(i1100, i1111, scalar_transf<double>(0.5));
         elem1.add_map(i0110, i1001);
 
-        std::set< index<4> > orbit;
+        std::set< libtensor::index<4> > orbit;
 
         //  [0000]->[2200]->[0033]->[2233]
         orbit.insert(i0000);
         orbit.insert(i2200);
         orbit.insert(i0033);
         orbit.insert(i2233);
-        index<4> i0000a(i0000);
+        libtensor::index<4> i0000a(i0000);
         while(!orbit.empty()) {
             elem1.apply(i0000a);
             if(orbit.find(i0000a) == orbit.end()) {
@@ -325,7 +325,7 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
         orbit.insert(i0134);
         orbit.insert(i2301);
         orbit.insert(i2334);
-        index<4> i0101a(i0101);
+        libtensor::index<4> i0101a(i0101);
         while(!orbit.empty()) {
             elem1.apply(i0101a);
             if(orbit.find(i0101a) == orbit.end()) {
@@ -353,7 +353,7 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 19;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1110, m0001, m1111;
@@ -368,7 +368,7 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
         bis.split(m0001, 13);
         bis.split(m0001, 16);
 
-        index<4> i0000, i0011, i0023, i0101, i0110, i0124, i1001, i1100, i1111,
+        libtensor::index<4> i0000, i0011, i0023, i0101, i0110, i0124, i1001, i1100, i1111,
         i2200, i2223, i2301, i2324;
         i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
         i0023[0] = 0; i0023[1] = 0; i0023[2] = 2; i0023[3] = 3;
@@ -389,14 +389,14 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
         elem1.add_map(i1100, i1111, scalar_transf<double>(-1.));
         elem1.add_map(i0110, i1001);
 
-        std::set< index<4> > orbit;
+        std::set< libtensor::index<4> > orbit;
 
         //  [0000]->[2200]->[0033]->[2233]
         orbit.insert(i0000);
         orbit.insert(i2200);
         orbit.insert(i0023);
         orbit.insert(i2223);
-        index<4> i0000a(i0000);
+        libtensor::index<4> i0000a(i0000);
         while(!orbit.empty()) {
             elem1.apply(i0000a);
             if(orbit.find(i0000a) == orbit.end()) {
@@ -415,7 +415,7 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
         orbit.insert(i0124);
         orbit.insert(i2301);
         orbit.insert(i2324);
-        index<4> i0101a(i0101);
+        libtensor::index<4> i0101a(i0101);
         while(!orbit.empty()) {
             elem1.apply(i0101a);
             if(orbit.find(i0101a) == orbit.end()) {
@@ -443,7 +443,7 @@ void se_part_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1111;
@@ -452,7 +452,7 @@ void se_part_test::test_4() throw(libtest::test_exception) {
         bis.split(m1111, 5);
         bis.split(m1111, 7);
 
-        index<4> i0000, i0011, i0101, i0110, i1001, i1100, i1111;
+        libtensor::index<4> i0000, i0011, i0101, i0110, i1001, i1100, i1111;
         i0011[0] = 0; i0011[1] = 0; i0011[2] = 1; i0011[3] = 1;
         i0101[0] = 0; i0101[1] = 1; i0101[2] = 0; i0101[3] = 1;
         i0110[0] = 0; i0110[1] = 1; i0110[2] = 1; i0110[3] = 0;
@@ -498,7 +498,7 @@ void se_part_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 9; i2[1] = 9;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m11;
@@ -507,7 +507,7 @@ void se_part_test::test_5() throw(libtest::test_exception) {
         bis.split(m11, 5);
         bis.split(m11, 7);
 
-        index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
+        libtensor::index<2> i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23,
         i30, i31, i32, i33;
         i01[0] = 0; i01[1] = 1;
         i02[0] = 0; i02[1] = 2;
@@ -530,7 +530,7 @@ void se_part_test::test_5() throw(libtest::test_exception) {
         elem1.mark_forbidden(i01);
         elem1.mark_forbidden(i10);
 
-        index<2> i00a(i00), i01a(i01), i02a(i02), i03a(i03),
+        libtensor::index<2> i00a(i00), i01a(i01), i02a(i02), i03a(i03),
                 i10a(i10), i11a(i11), i12a(i12), i13a(i13),
                 i20a(i20), i21a(i21), i22a(i22), i23a(i23),
                 i30a(i30), i31a(i31), i32a(i32), i33a(i33);
@@ -605,7 +605,7 @@ void se_part_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 7; i2[1] = 9;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m01, m10, m11;
@@ -618,7 +618,7 @@ void se_part_test::test_6() throw(libtest::test_exception) {
         bis.split(m01, 5);
         bis.split(m01, 7);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i01[0] = 0; i01[1] = 1;
         i10[0] = 1; i10[1] = 0;
         i11[0] = 1; i11[1] = 1;
@@ -764,7 +764,7 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1100, m0011, m1111;
@@ -780,7 +780,7 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
         bis.split(m0011, 13);
         bis.split(m0011, 16);
 
-        index<4> i0000, i0011, i0001, i0010;
+        libtensor::index<4> i0000, i0011, i0001, i0010;
         i0011[2] = 1; i0011[3] = 1; i0010[2] = 1; i0001[3] = 1;
         scalar_transf<double> tr0;
 
@@ -791,7 +791,7 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
         permutation<4> perm; perm.permute(0, 1); // leaves mask unaffected
 
         bis.permute(perm);
-        index<4> i1b, i2b;
+        libtensor::index<4> i1b, i2b;
         i2b[2] = 1; i2b[3] = 1;
         dimensions<4> pdims(index_range<4>(i1b, i2b));
 
@@ -825,7 +825,7 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1100, m0011, m1111;
@@ -841,7 +841,7 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
         bis.split(m0011, 13);
         bis.split(m0011, 16);
 
-        index<4> i0000, i0011, i0001, i0010, i0101, i0100;
+        libtensor::index<4> i0000, i0011, i0001, i0010, i0101, i0100;
         i0011[2] = 1; i0011[3] = 1; i0010[2] = 1; i0001[3] = 1;
         i0100[1] = 1; i0101[1] = 1; i0101[3] = 1;
 
@@ -853,7 +853,7 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
         permutation<4> perm; perm.permute(0, 1).permute(1, 2);
 
         bis.permute(perm);
-        index<4> i1b, i2b;
+        libtensor::index<4> i1b, i2b;
         i2b[1] = 1; i2b[3] = 1;
         dimensions<4> pdims(index_range<4>(i1b, i2b));
         mask<4> msk;
@@ -888,7 +888,7 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1100, m0011, m1111;
@@ -904,7 +904,7 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
         bis.split(m0011, 13);
         bis.split(m0011, 16);
 
-        index<4> i0000, i0011, i0001, i0010;
+        libtensor::index<4> i0000, i0011, i0001, i0010;
         i0011[2] = 1; i0011[3] = 1; i0010[2] = 1; i0001[3] = 1;
 
         scalar_transf<double> tr0;
@@ -916,7 +916,7 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
         permutation<4> perm; perm.permute(2, 3);
 
         bis.permute(perm);
-        index<4> i1b, i2b;
+        libtensor::index<4> i1b, i2b;
         i2b[2] = 1; i2b[3] = 1;
         dimensions<4> pdims(index_range<4>(i1b, i2b));
 
@@ -950,7 +950,7 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 19; i2[3] = 19;
         block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
         mask<4> m1100, m0011, m1111;
@@ -966,7 +966,7 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
         bis.split(m0011, 13);
         bis.split(m0011, 16);
 
-        index<4> i0000, i0110, i1001, i0101, i1010, i1111;
+        libtensor::index<4> i0000, i0110, i1001, i0101, i1010, i1111;
         i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
         i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
         i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
@@ -981,7 +981,7 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
         permutation<4> perm; perm.permute(0, 1);
 
         bis.permute(perm);
-        index<4> i1b, i2b;
+        libtensor::index<4> i1b, i2b;
         i2b[0] = 1; i2b[1] = 1; i2b[2] = 1; i2b[3] = 1;
         dimensions<4> pdims(index_range<4>(i1b, i2b));
 
@@ -1016,7 +1016,7 @@ void se_part_test::test_perm_5() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 9; i2[1] = 19;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m01, m10, m11;
@@ -1031,7 +1031,7 @@ void se_part_test::test_perm_5() throw(libtest::test_exception) {
         bis.split(m01, 13);
         bis.split(m01, 16);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         scalar_transf<double> tr0;
@@ -1078,7 +1078,7 @@ void se_part_test::test_exc() throw(libtest::test_exception) {
 
     static const char *testname = "se_part_test::test_exc()";
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     block_index_space<2> bisa(dimensions<2>(index_range<2>(i1, i2)));
     block_index_space<2> bisb(dimensions<2>(index_range<2>(i1, i2)));

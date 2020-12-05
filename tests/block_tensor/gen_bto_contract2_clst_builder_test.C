@@ -41,7 +41,7 @@ void gen_bto_contract2_clst_builder_test::test_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -50,7 +50,7 @@ void gen_bto_contract2_clst_builder_test::test_1() {
     bis.split(m1111, 5);
     dimensions<4> bidims = bis.get_block_index_dims();
 
-    index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+    libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
         i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
     i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
     i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
@@ -131,7 +131,7 @@ void gen_bto_contract2_clst_builder_test::test_2() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -142,7 +142,7 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     bis.split(m1111, 7);
     dimensions<4> bidims = bis.get_block_index_dims();
 
-    index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+    libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
         i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
     i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
     i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
@@ -179,7 +179,7 @@ void gen_bto_contract2_clst_builder_test::test_2() {
     for(size_t jj = ii; jj < 2; jj++)
     for(size_t kk = 0; kk < 2; kk++)
     for(size_t ll = kk; ll < 2; ll++) {
-        index<4> idx1, idx2;
+        libtensor::index<4> idx1, idx2;
         idx1[0] = ii; idx1[1] = jj; idx1[2] = kk; idx1[3] = ll;
         idx2[0] = ii; idx2[1] = 2 + jj; idx2[2] = kk; idx2[3] = 2 + ll;
         bla.add(idx1);
@@ -188,7 +188,7 @@ void gen_bto_contract2_clst_builder_test::test_2() {
         blb.add(idx2);
     }
 
-    index<4> i0302, i0303, i0313, i1212;
+    libtensor::index<4> i0302, i0303, i0313, i1212;
     i0302[0] = 0; i0302[1] = 3; i0302[2] = 0; i0302[3] = 2;
     i0303[0] = 0; i0303[1] = 3; i0303[2] = 0; i0303[3] = 3;
     i0313[0] = 0; i0313[1] = 3; i0313[2] = 1; i0313[3] = 3;
@@ -239,7 +239,7 @@ void gen_bto_contract2_clst_builder_test::test_3() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     dimensions<4> dimsa(index_range<4>(i1, i2));
     i2[0] = 5; i2[1] = 5; i2[2] = 11; i2[3] = 11;
@@ -281,7 +281,7 @@ void gen_bto_contract2_clst_builder_test::test_3() {
         blb.add(olb.get_abs_index(i));
     }
 
-    index<4> i0000;
+    libtensor::index<4> i0000;
 
     contraction2<2, 2, 2> contr;
     contr.contract(2, 0);

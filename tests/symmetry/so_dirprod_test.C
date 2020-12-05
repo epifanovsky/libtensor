@@ -36,11 +36,11 @@ void so_dirprod_test::test_empty_1() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
+        libtensor::index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsa(index_range<2>(i2a, i2b));
-        index<1> i1a, i1b; i1b[0] = 10;
+        libtensor::index<1> i1a, i1b; i1b[0] = 10;
         dimensions<1> dimsb(index_range<1>(i1a, i1b));
-        index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+        libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
         dimensions<3> dimsc(index_range<3>(i3a, i3b));
 
         block_index_space<2> bisa(dimsa);
@@ -83,11 +83,11 @@ void so_dirprod_test::test_empty_2(bool s) throw(libtest::test_exception) {
 
     try {
 
-        index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
+        libtensor::index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsa(index_range<2>(i2a, i2b));
-        index<1> i1a, i1b; i1b[0] = 10;
+        libtensor::index<1> i1a, i1b; i1b[0] = 10;
         dimensions<1> dimsb(index_range<1>(i1a, i1b));
-        index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+        libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
         dimensions<3> dimsc(index_range<3>(i3a, i3b));
 
         block_index_space<2> bisa(dimsa);
@@ -130,11 +130,11 @@ void so_dirprod_test::test_empty_3(bool s) throw(libtest::test_exception) {
 
     try {
 
-        index<1> i1a, i1b; i1b[0] = 10;
+        libtensor::index<1> i1a, i1b; i1b[0] = 10;
         dimensions<1> dimsa(index_range<1>(i1a, i1b));
-        index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
+        libtensor::index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsb(index_range<2>(i2a, i2b));
-        index<3> i3a, i3b; i3b[0] = 10; i3b[1] = 5; i3b[2] = 5;
+        libtensor::index<3> i3a, i3b; i3b[0] = 10; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsc(index_range<3>(i3a, i3b));
 
         block_index_space<1> bisa(dimsa);
@@ -179,10 +179,10 @@ void so_dirprod_test::test_se_1(
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsa(index_range<2>(i2a, i2b));
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;
         dimensions<4> dimsc(index_range<4>(i4a, i4b));
 
@@ -236,13 +236,13 @@ void so_dirprod_test::test_se_2(
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsa(index_range<2>(i2a, i2b));
-        index<3> i3a, i3b;
+        libtensor::index<3> i3a, i3b;
         i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsb(index_range<3>(i3a, i3b));
-        index<5> i5a, i5b;
+        libtensor::index<5> i5a, i5b;
         i5b[0] = 5; i5b[1] = 5; i5b[2] = 5; i5b[3] = 5; i5b[4] = 5;
         dimensions<5> dimsc(index_range<5>(i5a, i5b));
 
@@ -269,7 +269,7 @@ void so_dirprod_test::test_se_2(
         symmetry<5, double> symc(bisc), symc_ref(bisc);
 
         se_part<2, double> ela(bisa, ma, 2);
-        index<2> i00a, i01a, i02a, i03a;
+        libtensor::index<2> i00a, i01a, i02a, i03a;
         scalar_transf<double> tr0, tr1(-1.);
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
@@ -277,7 +277,7 @@ void so_dirprod_test::test_se_2(
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         se_part<3, double> elb(bisb, mb, 2);
-        index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
+        libtensor::index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
         i04b[0] = 1; i03b[1] = 1; i03b[2] = 1;
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1;
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1;
@@ -288,7 +288,7 @@ void so_dirprod_test::test_se_2(
         elb.mark_forbidden(i05b); elb.mark_forbidden(i06b);
 
         se_part<5, double> elc(bisc, mc, 2);
-        index<5> i00c, i01c, i02c, i03c, i04c, i05c, i06c, i07c,
+        libtensor::index<5> i00c, i01c, i02c, i03c, i04c, i05c, i06c, i07c,
             i08c, i09c, i10c, i11c, i12c, i13c, i14c, i15c,
             i16c, i17c, i18c, i19c, i20c, i21c, i22c, i23c,
             i24c, i25c, i26c, i27c, i28c, i29c, i30c, i31c;
@@ -387,13 +387,13 @@ void so_dirprod_test::test_perm_1(
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsa(index_range<2>(i2a, i2b));
-        index<3> i3a, i3b;
+        libtensor::index<3> i3a, i3b;
         i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsb(index_range<3>(i3a, i3b));
-        index<5> i5a, i5b;
+        libtensor::index<5> i5a, i5b;
         i5b[0] = 5; i5b[1] = 5; i5b[2] = 5; i5b[3] = 5; i5b[4] = 5;
         dimensions<5> dimsc(index_range<5>(i5a, i5b));
 
@@ -420,7 +420,7 @@ void so_dirprod_test::test_perm_1(
         symmetry<5, double> symc(bisc), symc_ref(bisc);
 
         se_part<2, double> ela(bisa, ma, 2);
-        index<2> i00a, i01a, i02a, i03a;
+        libtensor::index<2> i00a, i01a, i02a, i03a;
         scalar_transf<double> tr0, tr1(-1.);
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
@@ -428,7 +428,7 @@ void so_dirprod_test::test_perm_1(
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         se_part<3, double> elb(bisb, mb, 2);
-        index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
+        libtensor::index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
         i04b[0] = 1; i03b[1] = 1; i03b[2] = 1;
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1;
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1;
@@ -439,7 +439,7 @@ void so_dirprod_test::test_perm_1(
         elb.mark_forbidden(i05b); elb.mark_forbidden(i06b);
 
         se_part<5, double> elc(bisc, mc, 2);
-        index<5> i00c, i01c, i02c, i03c, i04c, i05c, i06c, i07c,
+        libtensor::index<5> i00c, i01c, i02c, i03c, i04c, i05c, i06c, i07c,
             i08c, i09c, i10c, i11c, i12c, i13c, i14c, i15c,
             i16c, i17c, i18c, i19c, i20c, i21c, i22c, i23c,
             i24c, i25c, i26c, i27c, i28c, i29c, i30c, i31c;
@@ -509,13 +509,13 @@ void so_dirprod_test::test_perm_2(
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         dimensions<2> dimsa(index_range<2>(i2a, i2b));
-        index<3> i3a, i3b;
+        libtensor::index<3> i3a, i3b;
         i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsb(index_range<3>(i3a, i3b));
-        index<5> i5a, i5b;
+        libtensor::index<5> i5a, i5b;
         i5b[0] = 5; i5b[1] = 5; i5b[2] = 5; i5b[3] = 5; i5b[4] = 5;
         dimensions<5> dimsc(index_range<5>(i5a, i5b));
 
@@ -543,14 +543,14 @@ void so_dirprod_test::test_perm_2(
 
         se_part<2, double> ela(bisa, ma, 2);
         scalar_transf<double> tr0, tr1(-1.);
-        index<2> i00a, i01a, i02a, i03a;
+        libtensor::index<2> i00a, i01a, i02a, i03a;
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
         ela.add_map(i00a, i03a, s1 ? tr0 : tr1);
         ela.mark_forbidden(i01a); ela.mark_forbidden(i02a);
 
         se_part<3, double> elb(bisb, mb, 2);
-        index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
+        libtensor::index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
         i04b[0] = 1; i03b[1] = 1; i03b[2] = 1;
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1;
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1;
@@ -561,7 +561,7 @@ void so_dirprod_test::test_perm_2(
         elb.mark_forbidden(i05b); elb.mark_forbidden(i06b);
 
         se_part<5, double> elc(bisc, mc, 2);
-        index<5> i00c, i01c, i02c, i03c, i04c, i05c, i06c, i07c,
+        libtensor::index<5> i00c, i01c, i02c, i03c, i04c, i05c, i06c, i07c,
             i08c, i09c, i10c, i11c, i12c, i13c, i14c, i15c,
             i16c, i17c, i18c, i19c, i20c, i21c, i22c, i23c,
             i24c, i25c, i26c, i27c, i28c, i29c, i30c, i31c;
@@ -629,9 +629,9 @@ void so_dirprod_test::test_vac_1() throw(libtest::test_exception) {
 
     try {
 
-        index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
+        libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsa(index_range<3>(i3a, i3b));
-        index<0> i0a, i0b;
+        libtensor::index<0> i0a, i0b;
         dimensions<0> dimsb(index_range<0>(i0a, i0b));
 
         block_index_space<3> bisa(dimsa);
@@ -667,9 +667,9 @@ void so_dirprod_test::test_vac_2() throw(libtest::test_exception) {
 
     try {
 
-        index<0> i0a, i0b;
+        libtensor::index<0> i0a, i0b;
         dimensions<0> dimsa(index_range<0>(i0a, i0b));
-        index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
+        libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsb(index_range<3>(i3a, i3b));
 
         block_index_space<0> bisa(dimsa);

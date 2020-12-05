@@ -29,7 +29,7 @@ void gen_bto_symcontract2_sym_test::test_1() {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 5;
         dimensions<3> dimsa(index_range<3>(ia1, ia2));
         block_index_space<3> bisa(dimsa);
@@ -42,7 +42,7 @@ void gen_bto_symcontract2_sym_test::test_1() {
 
         block_index_space<3> bisb(bisa);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 10; ic2[3] = 10;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bis_ref(dimsc);
@@ -86,7 +86,7 @@ void gen_bto_symcontract2_sym_test::test_2() {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 5;
         dimensions<3> dimsa(index_range<3>(ia1, ia2));
         block_index_space<3> bisa(dimsa);
@@ -99,7 +99,7 @@ void gen_bto_symcontract2_sym_test::test_2() {
 
         block_index_space<3> bisb(bisa);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 10; ic2[3] = 10;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bis_ref(dimsc);
@@ -143,7 +143,7 @@ void gen_bto_symcontract2_sym_test::test_3() {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 5;
         dimensions<3> dimsa(index_range<3>(ia1, ia2));
         block_index_space<3> bisa(dimsa);
@@ -156,7 +156,7 @@ void gen_bto_symcontract2_sym_test::test_3() {
 
         block_index_space<3> bisb(bisa);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 10; ic2[3] = 10;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bis_ref(dimsc);

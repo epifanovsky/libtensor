@@ -38,7 +38,7 @@ void btod_set_elem_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -52,7 +52,7 @@ void btod_set_elem_test::test_1() throw(libtest::test_exception) {
 
     //  Test [0,0] in [0,0]
     //
-    index<2> i00;
+    libtensor::index<2> i00;
     btod_set_elem<2>().perform(bt, i00, i00, 2.0);
     tod_set_elem<2>().perform(t_ref, i00, 2.0);
     tod_btconv<2>(bt).perform(t);
@@ -60,7 +60,7 @@ void btod_set_elem_test::test_1() throw(libtest::test_exception) {
 
     //  Test [3,2] in [0,0]
     //
-    index<2> i32; i32[0] = 3; i32[1] = 2;
+    libtensor::index<2> i32; i32[0] = 3; i32[1] = 2;
     btod_set_elem<2>().perform(bt, i00, i32, -2.0);
     tod_set_elem<2>().perform(t_ref, i32, -2.0);
     tod_btconv<2>(bt).perform(t);
@@ -80,7 +80,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -98,7 +98,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 
     //  Test element [0,0] in block [0,0]
     //
-    index<2> i00;
+    libtensor::index<2> i00;
     btod_set_elem<2>().perform(bt, i00, i00, 2.0);
     tod_set_elem<2>().perform(t_ref, i00, 2.0);
     tod_btconv<2>(bt).perform(t);
@@ -106,7 +106,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 
     //  Test element [1,2] in block [0,0]
     //
-    index<2> i12; i12[0] = 1; i12[1] = 2;
+    libtensor::index<2> i12; i12[0] = 1; i12[1] = 2;
     btod_set_elem<2>().perform(bt, i00, i12, -2.0);
     tod_set_elem<2>().perform(t_ref, i12, -2.0);
     tod_btconv<2>(bt).perform(t);
@@ -114,7 +114,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 
     //  Test element [0,1] in block [1,0]
     //
-    index<2> i01, i10, i31;
+    libtensor::index<2> i01, i10, i31;
     i01[1] = 1; i10[0] = 1;
     i31[0] = 3; i31[1] = 1;
     btod_set_elem<2>().perform(bt, i10, i01, 1.5);
@@ -124,7 +124,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 
     //  Test element [1,2] in block [1,1]
     //
-    index<2> i11, i46;
+    libtensor::index<2> i11, i46;
     i11[0] = 1; i11[1] = 1;
     i46[0] = 4; i46[1] = 6;
     btod_set_elem<2>().perform(bt, i11, i12, -0.3);
@@ -146,7 +146,7 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -173,7 +173,7 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 
     //  Test element [0,0] in block [0,0]
     //
-    index<2> i00;
+    libtensor::index<2> i00;
     btod_set_elem<2>().perform(bt, i00, i00, 2.0);
     tod_set_elem<2>().perform(t_ref, i00, 2.0);
     tod_btconv<2>(bt).perform(t);
@@ -181,8 +181,8 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 
     //  Test element [1,2] in block [0,0]
     //
-    index<2> i12; i12[0] = 1; i12[1] = 2;
-    index<2> i21; i21[0] = 2; i21[1] = 1;
+    libtensor::index<2> i12; i12[0] = 1; i12[1] = 2;
+    libtensor::index<2> i21; i21[0] = 2; i21[1] = 1;
     btod_set_elem<2>().perform(bt, i00, i12, -2.0);
     tod_set_elem<2>().perform(t_ref, i12, -2.0);
     tod_set_elem<2>().perform(t_ref, i21, -2.0);
@@ -191,7 +191,7 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 
     //  Test element [0,1] in block [1,0]
     //
-    index<2> i01, i10, i31, i13;
+    libtensor::index<2> i01, i10, i31, i13;
     i01[1] = 1; i10[0] = 1;
     i31[0] = 3; i31[1] = 1;
     i13[0] = 1; i13[1] = 3;
@@ -203,7 +203,7 @@ void btod_set_elem_test::test_3() throw(libtest::test_exception) {
 
     //  Test element [1,2] in block [1,1]
     //
-    index<2> i11, i45, i54;
+    libtensor::index<2> i11, i45, i54;
     i11[0] = 1; i11[1] = 1;
     i45[0] = 4; i45[1] = 5;
     i54[0] = 5; i54[1] = 4;

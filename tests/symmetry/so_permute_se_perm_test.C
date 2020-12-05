@@ -25,7 +25,7 @@ void so_permute_se_perm_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 8; i4b[1] = 8; i4b[2] = 8; i4b[3] = 8;
 
     block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));

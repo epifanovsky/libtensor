@@ -54,7 +54,7 @@ void btod_symcontract3_test::test_contr_1() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bisa(dims);
@@ -127,12 +127,12 @@ void btod_symcontract3_test::test_contr_2() {
 
     try {
 
-        index<2> i2;
+        libtensor::index<2> i2;
         i2[0] = 10; i2[1] = 10;
-        dimensions<2> dims2(index_range<2>(index<2>(), i2));
-        index<3> i3;
+        dimensions<2> dims2(index_range<2>(libtensor::index<2>(), i2));
+        libtensor::index<3> i3;
         i3[0] = 10; i3[1] = 10; i3[2] = 10;
-        dimensions<3> dims3(index_range<3>(index<3>(), i3));
+        dimensions<3> dims3(index_range<3>(libtensor::index<3>(), i3));
 
         block_index_space<2> bisa(dims2);
         mask<2> m11;
@@ -214,18 +214,18 @@ void btod_symcontract3_test::test_contr_3() {
 
         size_t ni = 5, nj = ni, nk = 9, nl = nk, np = nk, nq = nk, nr = 11;
 
-        index<3> ia;
+        libtensor::index<3> ia;
         ia[0] = nk - 1; ia[1] = np - 1; ia[2] = nr - 1;
-        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
-        index<4> ib;
+        dimensions<3> dimsa(index_range<3>(libtensor::index<3>(), ia));
+        libtensor::index<4> ib;
         ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
-        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
-        index<4> ic;
+        dimensions<4> dimsb(index_range<4>(libtensor::index<4>(), ib));
+        libtensor::index<4> ic;
         ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
-        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
-        index<4> ii;
+        dimensions<4> dimsc(index_range<4>(libtensor::index<4>(), ic));
+        libtensor::index<4> ii;
         ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
-        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+        dimensions<4> dimsi(index_range<4>(libtensor::index<4>(), ii));
 
         block_index_space<3> bisa(dimsa);
         mask<3> m110, m001;
@@ -317,18 +317,18 @@ void btod_symcontract3_test::test_contr_4() {
 
         size_t ni = 5, nj = ni, nk = 9, nl = nk, np = nk, nq = nk, nr = 11;
 
-        index<3> ia;
+        libtensor::index<3> ia;
         ia[0] = nk - 1; ia[1] = np - 1; ia[2] = nr - 1;
-        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
-        index<4> ib;
+        dimensions<3> dimsa(index_range<3>(libtensor::index<3>(), ia));
+        libtensor::index<4> ib;
         ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
-        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
-        index<4> ic;
+        dimensions<4> dimsb(index_range<4>(libtensor::index<4>(), ib));
+        libtensor::index<4> ic;
         ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
-        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
-        index<4> ii;
+        dimensions<4> dimsc(index_range<4>(libtensor::index<4>(), ic));
+        libtensor::index<4> ii;
         ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
-        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+        dimensions<4> dimsi(index_range<4>(libtensor::index<4>(), ii));
 
         block_index_space<3> bisa(dimsa);
         mask<3> m110, m001;
@@ -424,18 +424,18 @@ void btod_symcontract3_test::test_contr_5() {
 
         size_t ni = 5, nj = ni, nk = 9, nl = nk, np = nk, nq = nk, nr = 11;
 
-        index<3> ia;
+        libtensor::index<3> ia;
         ia[0] = nk - 1; ia[1] = np - 1; ia[2] = nr - 1;
-        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
-        index<4> ib;
+        dimensions<3> dimsa(index_range<3>(libtensor::index<3>(), ia));
+        libtensor::index<4> ib;
         ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
-        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
-        index<4> ic;
+        dimensions<4> dimsb(index_range<4>(libtensor::index<4>(), ib));
+        libtensor::index<4> ic;
         ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
-        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
-        index<4> ii;
+        dimensions<4> dimsc(index_range<4>(libtensor::index<4>(), ic));
+        libtensor::index<4> ii;
         ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
-        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+        dimensions<4> dimsi(index_range<4>(libtensor::index<4>(), ii));
 
         block_index_space<3> bisa(dimsa);
         mask<3> m110, m001;
@@ -545,18 +545,18 @@ void btod_symcontract3_test::test_contr_6() {
 
         size_t ni = 5, nj = ni, nk = ni, nl = ni, np = 9, nq = np, nr = 11;
 
-        index<3> ia;
+        libtensor::index<3> ia;
         ia[0] = nk - 1; ia[1] = np - 1; ia[2] = nr - 1;
-        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
-        index<4> ib;
+        dimensions<3> dimsa(index_range<3>(libtensor::index<3>(), ia));
+        libtensor::index<4> ib;
         ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
-        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
-        index<4> ic;
+        dimensions<4> dimsb(index_range<4>(libtensor::index<4>(), ib));
+        libtensor::index<4> ic;
         ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
-        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
-        index<4> ii;
+        dimensions<4> dimsc(index_range<4>(libtensor::index<4>(), ic));
+        libtensor::index<4> ii;
         ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
-        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+        dimensions<4> dimsi(index_range<4>(libtensor::index<4>(), ii));
 
         block_index_space<3> bisa(dimsa);
         mask<3> m100, m010, m001;
@@ -662,18 +662,18 @@ void btod_symcontract3_test::test_contr_7() {
 
         size_t ni = 5, nj = ni, nk = 9, nl = nk, np = nk, nq = nk, nr = 11;
 
-        index<3> ia;
+        libtensor::index<3> ia;
         ia[0] = nq - 1; ia[1] = nk - 1; ia[2] = nr - 1;
-        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
-        index<4> ib;
+        dimensions<3> dimsa(index_range<3>(libtensor::index<3>(), ia));
+        libtensor::index<4> ib;
         ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
-        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
-        index<4> ic;
+        dimensions<4> dimsb(index_range<4>(libtensor::index<4>(), ib));
+        libtensor::index<4> ic;
         ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
-        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
-        index<4> ii;
+        dimensions<4> dimsc(index_range<4>(libtensor::index<4>(), ic));
+        libtensor::index<4> ii;
         ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
-        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+        dimensions<4> dimsi(index_range<4>(libtensor::index<4>(), ii));
 
         block_index_space<3> bisa(dimsa);
         mask<3> m110, m001;

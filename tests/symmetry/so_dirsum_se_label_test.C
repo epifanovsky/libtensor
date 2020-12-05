@@ -48,7 +48,7 @@ void so_dirsum_se_label_test::test_empty_1(
     typedef so_dirsum<2, 3, double> so_t;
     typedef symmetry_operation_impl<so_t, se5_t> so_se_t;
 
-    index<5> i1c, i2c;
+    libtensor::index<5> i1c, i2c;
     i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[3] = 3; i2c[4] = 3;
     block_index_space<5> bisc(dimensions<5>(index_range<5>(i1c, i2c)));
 
@@ -91,8 +91,8 @@ void so_dirsum_se_label_test::test_empty_2(const std::string &table_id,
     typedef so_dirsum<2, 1, double> so_t;
     typedef symmetry_operation_impl<so_t, se3_t> so_se_t;
 
-    index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
-    index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+    libtensor::index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
+    libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
     block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
     block_index_space<3> bisc(dimensions<3>(index_range<3>(i1c, i2c)));
@@ -161,8 +161,8 @@ void so_dirsum_se_label_test::test_empty_3(const std::string &table_id,
     typedef so_dirsum<1, 2, double> so_t;
     typedef symmetry_operation_impl<so_t, se3_t> so_se_t;
 
-    index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
-    index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+    libtensor::index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
+    libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
     block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
     block_index_space<3> bisc(dimensions<3>(index_range<3>(i1c, i2c)));
@@ -231,9 +231,9 @@ void so_dirsum_se_label_test::test_nn_1(
     typedef so_dirsum<1, 2, double> so_t;
     typedef symmetry_operation_impl<so_t, se3_t> so_se_t;
 
-    index<1> i1a, i2a; i2a[0] = 3; ;
-    index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
-    index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+    libtensor::index<1> i1a, i2a; i2a[0] = 3; ;
+    libtensor::index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
+    libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
     block_index_space<1> bisa(dimensions<1>(index_range<1>(i1a, i2a)));
     block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
@@ -292,7 +292,7 @@ void so_dirsum_se_label_test::test_nn_1(
     }
 
     std::vector<bool> rx(bidimsc.get_size(), false);
-    index<3> idx;
+    libtensor::index<3> idx;
     size_t ii = 0, ij = 1, ik = 2;
     for (size_t i = 0; i < 4; i++) {
         idx[ii] = i;
@@ -337,9 +337,9 @@ void so_dirsum_se_label_test::test_nn_2(
     typedef so_dirsum<1, 2, double> so_t;
     typedef symmetry_operation_impl<so_t, se3_t> so_se_t;
 
-    index<1> i1a, i2a; i2a[0] = 3; ;
-    index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
-    index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+    libtensor::index<1> i1a, i2a; i2a[0] = 3; ;
+    libtensor::index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
+    libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
     block_index_space<1> bisa(dimensions<1>(index_range<1>(i1a, i2a)));
     block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
@@ -401,7 +401,7 @@ void so_dirsum_se_label_test::test_nn_2(
     std::vector<bool> rx(bidimsc.get_size(), false);
     size_t ii = 2, ij = 0, ik = 1;
 
-    index<3> idx;
+    libtensor::index<3> idx;
     for (size_t i = 0; i < 4; i++) {
         idx[ii] = i;
         idx[ij] = 0; idx[ik] = 2;
@@ -439,8 +439,8 @@ void so_dirsum_se_label_test::test_nn_3(
     typedef so_dirsum<2, 2, double> so_t;
     typedef symmetry_operation_impl<so_t, se4_t> so_se_t;
 
-    index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
-    index<4> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[3] = 3;
+    libtensor::index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
+    libtensor::index<4> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[3] = 3;
 
     block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
     block_index_space<4> bisc(dimensions<4>(index_range<4>(i1c, i2c)));
@@ -501,7 +501,7 @@ void so_dirsum_se_label_test::test_nn_3(
     }
 
     std::vector<bool> rx(bidimsc.get_size(), false);
-    index<4> idx;
+    libtensor::index<4> idx;
     size_t ii = 0, ij = 1, ik = 2, il = 3;
     idx[ii] = 1; idx[ij] = 2;
     for (size_t k = 0; k < 4; k++) {

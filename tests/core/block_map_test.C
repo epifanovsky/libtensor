@@ -37,7 +37,7 @@ int test_create() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 12;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -46,7 +46,7 @@ int test_create() {
     bis.split(m10, 4);
     bis.split(m01, 6);
 
-    index<2> i00, i11;
+    libtensor::index<2> i00, i11;
     i11[0] = 1; i11[1] = 1;
 
     i2[0] = 3; i2[1] = 5;
@@ -119,7 +119,7 @@ int test_immutable() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 6; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -128,7 +128,7 @@ int test_immutable() {
     bis.split(m10, 3);
     bis.split(m01, 5);
 
-    index<2> i00, i11;
+    libtensor::index<2> i00, i11;
     i11[0] = 1; i11[1] = 1;
 
     i2[0] = 3; i2[1] = 5;
@@ -169,7 +169,7 @@ int test_get_all_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 8; i2[1] = 12;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -178,7 +178,7 @@ int test_get_all_1() {
     bis.split(m10, 4);
     bis.split(m01, 6);
 
-    index<2> i00, i11;
+    libtensor::index<2> i00, i11;
     i11[0] = 1; i11[1] = 1;
 
     i2[0] = 3; i2[1] = 5;

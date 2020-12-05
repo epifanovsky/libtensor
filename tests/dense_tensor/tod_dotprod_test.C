@@ -21,9 +21,9 @@ int test_i_i(size_t ni) {
 
     try {
 
-        index<1> ia1, ia2;
+        libtensor::index<1> ia1, ia2;
         ia2[0] = ni - 1;
-        index<1> ib1, ib2;
+        libtensor::index<1> ib1, ib2;
         ib2[0] = ni - 1;
         dimensions<1> dima(index_range<1>(ia1, ia2));
         dimensions<1> dimb(index_range<1>(ib1, ib2));
@@ -92,9 +92,9 @@ int test_ij_ij(size_t ni, size_t nj) {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nj - 1;
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = ni - 1; ib2[1] = nj - 1;
         dimensions<2> dima(index_range<2>(ia1, ia2));
         dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -119,7 +119,7 @@ int test_ij_ij(size_t ni, size_t nj) {
 
             abs_index<2> aia(dima);
             do {
-                index<2> ib(aia.get_index());
+                libtensor::index<2> ib(aia.get_index());
                 abs_index<2> aib(ib, dimb);
                 size_t iia = aia.get_abs_index();
                 size_t iib = aib.get_abs_index();
@@ -179,9 +179,9 @@ int test_ij_ji(size_t ni, size_t nj) {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nj - 1;
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = nj - 1; ib2[1] = ni - 1;
         dimensions<2> dima(index_range<2>(ia1, ia2));
         dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -208,7 +208,7 @@ int test_ij_ji(size_t ni, size_t nj) {
             p10.permute(0, 1);
             abs_index<2> aia(dima);
             do {
-                index<2> ib(aia.get_index());
+                libtensor::index<2> ib(aia.get_index());
                 ib.permute(p10);
                 abs_index<2> aib(ib, dimb);
                 size_t iia = aia.get_abs_index();
@@ -264,9 +264,9 @@ int test_ijk_ijk(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nj - 1; ia2[2] = nk - 1;
-        index<3> ib1, ib2;
+        libtensor::index<3> ib1, ib2;
         ib2[0] = ni - 1; ib2[1] = nj - 1; ib2[2] = nk - 1;
         dimensions<3> dima(index_range<3>(ia1, ia2));
         dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -291,7 +291,7 @@ int test_ijk_ijk(size_t ni, size_t nj, size_t nk) {
 
             abs_index<3> aia(dima);
             do {
-                index<3> ib(aia.get_index());
+                libtensor::index<3> ib(aia.get_index());
                 abs_index<3> aib(ib, dimb);
                 size_t iia = aia.get_abs_index();
                 size_t iib = aib.get_abs_index();
@@ -361,9 +361,9 @@ int test_ijk_ikj(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nj - 1; ia2[2] = nk - 1;
-        index<3> ib1, ib2;
+        libtensor::index<3> ib1, ib2;
         ib2[0] = ni - 1; ib2[1] = nk - 1; ib2[2] = nj - 1;
         dimensions<3> dima(index_range<3>(ia1, ia2));
         dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -390,7 +390,7 @@ int test_ijk_ikj(size_t ni, size_t nj, size_t nk) {
             p021.permute(1, 2);
             abs_index<3> aia(dima);
             do {
-                index<3> ib(aia.get_index());
+                libtensor::index<3> ib(aia.get_index());
                 ib.permute(p021);
                 abs_index<3> aib(ib, dimb);
                 size_t iia = aia.get_abs_index();
@@ -464,9 +464,9 @@ int test_ijk_jik(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nj - 1; ia2[2] = nk - 1;
-        index<3> ib1, ib2;
+        libtensor::index<3> ib1, ib2;
         ib2[0] = nj - 1; ib2[1] = ni - 1; ib2[2] = nk - 1;
         dimensions<3> dima(index_range<3>(ia1, ia2));
         dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -493,7 +493,7 @@ int test_ijk_jik(size_t ni, size_t nj, size_t nk) {
             p102.permute(0, 1);
             abs_index<3> aia(dima);
             do {
-                index<3> ib(aia.get_index());
+                libtensor::index<3> ib(aia.get_index());
                 ib.permute(p102);
                 abs_index<3> aib(ib, dimb);
                 size_t iia = aia.get_abs_index();
@@ -567,9 +567,9 @@ int test_ijk_jki(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = ni - 1; ia2[1] = nj - 1; ia2[2] = nk - 1;
-        index<3> ib1, ib2;
+        libtensor::index<3> ib1, ib2;
         ib2[0] = nj - 1; ib2[1] = nk - 1; ib2[2] = ni - 1;
         dimensions<3> dima(index_range<3>(ia1, ia2));
         dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -596,7 +596,7 @@ int test_ijk_jki(size_t ni, size_t nj, size_t nk) {
             p120.permute(0, 1).permute(1, 2);
             abs_index<3> aia(dima);
             do {
-                index<3> ib(aia.get_index());
+                libtensor::index<3> ib(aia.get_index());
                 ib.permute(p120);
                 abs_index<3> aib(ib, dimb);
                 size_t iia = aia.get_abs_index();

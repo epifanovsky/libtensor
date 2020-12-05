@@ -32,17 +32,17 @@ void bto_contract2_bis_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
 
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 9; ib2[1] = 3;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
         block_index_space<2> bisb(dimsb);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);
@@ -80,7 +80,7 @@ void bto_contract2_bis_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -88,7 +88,7 @@ void bto_contract2_bis_test::test_2() throw(libtest::test_exception) {
         ma1[2] = true;
         bisa.split(ma1, 4);
 
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 9; ib2[1] = 3;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
         block_index_space<2> bisb(dimsb);
@@ -96,7 +96,7 @@ void bto_contract2_bis_test::test_2() throw(libtest::test_exception) {
         mb1[0] = true;
         bisb.split(mb1, 4);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);
@@ -137,7 +137,7 @@ void bto_contract2_bis_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -147,7 +147,7 @@ void bto_contract2_bis_test::test_3() throw(libtest::test_exception) {
         bisa.split(ma1, 2);
         bisa.split(ma2, 4);
 
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 9; ib2[1] = 3;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
         block_index_space<2> bisb(dimsb);
@@ -155,7 +155,7 @@ void bto_contract2_bis_test::test_3() throw(libtest::test_exception) {
         mb1[0] = true;
         bisb.split(mb1, 4);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);
@@ -195,7 +195,7 @@ void bto_contract2_bis_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 10; ia2[3] = 10;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -239,7 +239,7 @@ void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 10; ia2[3] = 10;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -248,7 +248,7 @@ void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
         bisa.split(ma1, 3);
         bisa.split(ma1, 5);
 
-        index<5> ib1, ib2;
+        libtensor::index<5> ib1, ib2;
         ib2[0] = 10; ib2[1] = 10; ib2[2] = 10; ib2[3] = 10; ib2[4] = 8;
         dimensions<5> dimsb(index_range<5>(ib1, ib2));
         block_index_space<5> bisb(dimsb);
@@ -259,7 +259,7 @@ void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
         bisb.split(mb1, 5);
         bisb.split(mb2, 4);
 
-        index<3> ic1, ic2;
+        libtensor::index<3> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 8;
         dimensions<3> dimsc(index_range<3>(ic1, ic2));
         block_index_space<3> bisc_ref(dimsc);
@@ -300,7 +300,7 @@ void bto_contract2_bis_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 10; ia2[1] = 20;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
         block_index_space<2> bisa(dimsa);
@@ -313,7 +313,7 @@ void bto_contract2_bis_test::test_6() throw(libtest::test_exception) {
 
         block_index_space<2> bisb(bisa);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 20; ic2[3] = 20;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);

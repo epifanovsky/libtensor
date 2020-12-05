@@ -24,9 +24,9 @@ void so_reduce_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 5; i1b[1] = 5; i1b[2] = 10; i1b[3] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 5;
     dimensions<4> dims1(index_range<4>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -38,7 +38,7 @@ void so_reduce_test::test_1() throw(libtest::test_exception) {
     symmetry<2, double> sym2_ref(bis2);
     mask<4> msk; msk[2] = true; msk[3] = true;
     sequence<4, size_t> seq(0);
-    index<4> bia, bib; bib[0] = bib[1] = bib[2] = bib[3] = 0;
+    libtensor::index<4> bia, bib; bib[0] = bib[1] = bib[2] = bib[3] = 0;
     index_range<4> bir(bia, bib);
     index_range<4> ir(i1a, i1b);
     so_reduce<4, 2, double> so(sym1, msk, seq, bir, ir);
@@ -66,9 +66,9 @@ void so_reduce_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<5> i1a, i1b;
+    libtensor::index<5> i1a, i1b;
     i1b[0] = 5; i1b[1] = 5; i1b[2] = 10; i1b[3] = 8; i1b[4] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 5;
     dimensions<5> dims1(index_range<5>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -87,7 +87,7 @@ void so_reduce_test::test_2() throw(libtest::test_exception) {
     symmetry<2, double> sym2_ref(bis2);
     mask<5> msk; msk[2] = msk[3] = msk[4] = true;
     sequence<5, size_t> seq(0); seq[3] = 1;
-    index<5> bia, bib; bib[0] = bib[1] = bib[2] = bib[3] = bib[4] = 0;
+    libtensor::index<5> bia, bib; bib[0] = bib[1] = bib[2] = bib[3] = bib[4] = 0;
     index_range<5> bir(bia, bib), ir(i1a, i1b);
     so_reduce<5, 3, double>(sym1, msk, seq, bir, ir).perform(sym2);
 
@@ -113,9 +113,9 @@ void so_reduce_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 5;
-    index<0> i0a, i0b;
+    libtensor::index<0> i0a, i0b;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<0> dims0(index_range<0>(i0a, i0b));
     block_index_space<2> bis1(dims2);
@@ -126,7 +126,7 @@ void so_reduce_test::test_3() throw(libtest::test_exception) {
     symmetry<0, double> sym2(bis2);
     mask<2> msk; msk[0] = msk[1] = true;
     sequence<2, size_t> seq(0);
-    index<2> bia, bib; bib[0] = bib[1] = 0;
+    libtensor::index<2> bia, bib; bib[0] = bib[1] = 0;
     index_range<2> bir(bia, bib), ir(i2a, i2b);
     so_reduce<2, 2, double> so(sym1, msk, seq, bir, ir);
     so.perform(sym2);
@@ -145,7 +145,7 @@ void so_reduce_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     block_index_space<2> bis1(dims2);
@@ -155,7 +155,7 @@ void so_reduce_test::test_4() throw(libtest::test_exception) {
     symmetry<2, double> sym2(bis1);
     mask<2> msk;
     sequence<2, size_t> seq(0);
-    index<2> bia, bib; bib[0] = bib[1] = 0;
+    libtensor::index<2> bia, bib; bib[0] = bib[1] = 0;
     index_range<2> bir(bia, bib), ir(i2a, i2b);
     so_reduce<2, 0, double> so(sym1, msk, seq, bir, ir);
     so.perform(sym2);

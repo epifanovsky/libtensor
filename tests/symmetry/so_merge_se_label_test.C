@@ -105,7 +105,7 @@ void so_merge_se_label_test::test_nm1_1(
     typedef so_merge<3, 1, double> so_merge_t;
     typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
-    index<3> i1a, i1b;
+    libtensor::index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
     dimensions<3> bidims1(index_range<3>(i1a, i1b));
     se3_t el1(bidims1, table_id);
@@ -144,7 +144,7 @@ void so_merge_se_label_test::test_nm1_1(
     const dimensions<2> &bidims2 = el2.get_labeling().get_block_index_dims();
     std::vector<bool> rx(bidims2.get_size(), false);
 
-    index<2> idx;
+    libtensor::index<2> idx;
     size_t ii = 0, ij = 1;
     idx[ii] = 2;
     for (size_t j = 0; j < 4; j++) {
@@ -174,7 +174,7 @@ void so_merge_se_label_test::test_nm1_2(
     typedef so_merge<3, 2, double> so_merge_t;
     typedef symmetry_operation_impl<so_merge_t, se1_t> so_merge_se_t;
 
-    index<3> i1a, i1b;
+    libtensor::index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
     dimensions<3> bidims1(index_range<3>(i1a, i1b));
     mask<3> m; m[0] = m[1] = m[2] = true;
@@ -231,7 +231,7 @@ void so_merge_se_label_test::test_2n2nn_1(
     typedef so_merge<4, 2, double> so_merge_t;
     typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
 
@@ -289,7 +289,7 @@ void so_merge_se_label_test::test_2n2nn_2(const std::string &table_id,
     typedef so_merge<4, 2, double> so_merge_t;
     typedef symmetry_operation_impl<so_merge_t, se2_t> so_merge_se_t;
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
 
@@ -360,7 +360,7 @@ void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
     typedef so_merge<5, 2, double> so_merge_t;
     typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
-    index<5> i1a, i1b;
+    libtensor::index<5> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3;
     dimensions<5> bidims1(index_range<5>(i1a, i1b));
 
@@ -415,7 +415,7 @@ void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
     std::vector<bool> rx(bidims2.get_size(), false);
 
     if (! product) {
-        index<3> idx;
+        libtensor::index<3> idx;
         for (size_t i = 0; i < 4; i++) {
             idx[0] = i;
             idx[2] = 3;
@@ -447,7 +447,7 @@ void so_merge_se_label_test::test_nmk_2(const std::string &table_id,
     typedef so_merge<5, 2, double> so_merge_t;
     typedef symmetry_operation_impl<so_merge_t, se3_t> so_merge_se_t;
 
-    index<5> i1a, i1b;
+    libtensor::index<5> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3;
     dimensions<5> bidims1(index_range<5>(i1a, i1b));
 
@@ -499,7 +499,7 @@ void so_merge_se_label_test::test_nmk_2(const std::string &table_id,
     const dimensions<3> &bidims2 = el2.get_labeling().get_block_index_dims();
     std::vector<bool> rx(bidims2.get_size(), false);
 
-    index<3> idx;
+    libtensor::index<3> idx;
     idx[2] = 2;
     for (size_t i = 0; i < 4; i++) {
         idx[0] = i;

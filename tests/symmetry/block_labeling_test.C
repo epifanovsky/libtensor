@@ -12,7 +12,7 @@ int test_basic_1() {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 1; i2[1] = 1; i2[2] = 3; i2[3] = 3;
         dimensions<4> bidims(index_range<4>(i1, i2));
         block_labeling<4> el(bidims);
@@ -76,7 +76,7 @@ int test_basic_2() {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 1; i2[1] = 1; i2[2] = 3; i2[3] = 3;
         dimensions<4> bidims(index_range<4>(i1, i2));
         block_labeling<4> el(bidims);
@@ -132,7 +132,7 @@ int test_copy_1() {
 
     try {
 
-        index<3> i1, i2;
+        libtensor::index<3> i1, i2;
         i2[0] = 3; i2[1] = 3; i2[2] = 5;
         dimensions<3> bidims(index_range<3>(i1, i2));
         block_labeling<3> elem(bidims);
@@ -197,7 +197,7 @@ int test_permute_1() {
 
     try {
 
-        index<3> i1, i2;
+        libtensor::index<3> i1, i2;
         i2[0] = 3; i2[1] = 3; i2[2] = 5;
         dimensions<3> bidims(index_range<3>(i1, i2));
         block_labeling<3> elem(bidims);
@@ -288,8 +288,8 @@ int test_transfer_1() {
 
     try {
 
-        index<1> i1a, i2a;
-        index<3> i1b, i2b;
+        libtensor::index<1> i1a, i2a;
+        libtensor::index<3> i1b, i2b;
         i2a[0] = 5;
         i2b[0] = 3; i2b[1] = 3; i2b[2] = 5;
         dimensions<1> bidimsa(index_range<1>(i1a, i2a));
@@ -339,8 +339,8 @@ int test_transfer_2() {
 
     try {
 
-        index<3> i1a, i2a;
-        index<2> i1b, i2b;
+        libtensor::index<3> i1a, i2a;
+        libtensor::index<2> i1b, i2b;
         i2a[0] = 3; i2a[1] = 3; i2a[2] = 5;
         i2b[0] = 5; i2b[1] = 3;
         dimensions<3> bidimsa(index_range<3>(i1a, i2a));

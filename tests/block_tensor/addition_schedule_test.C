@@ -137,7 +137,7 @@ void addition_schedule_test::test_1() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<2> i1, i2;
+//  libtensor::index<2> i1, i2;
 //  i2[0] = 9; i2[1] = 9;
 //  dimensions<2> dims(index_range<2>(i1, i2));
 //  block_index_space<2> bis(dims);
@@ -196,7 +196,7 @@ void addition_schedule_test::test_2() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<2> i1, i2;
+//  libtensor::index<2> i1, i2;
 //  i2[0] = 9; i2[1] = 9;
 //  dimensions<2> dims(index_range<2>(i1, i2));
 //  block_index_space<2> bis(dims);
@@ -260,7 +260,7 @@ void addition_schedule_test::test_3() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<2> i1, i2;
+//  libtensor::index<2> i1, i2;
 //  i2[0] = 9; i2[1] = 9;
 //  dimensions<2> dims(index_range<2>(i1, i2));
 //  block_index_space<2> bis(dims);
@@ -325,7 +325,7 @@ void addition_schedule_test::test_4() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<2> i1, i2;
+//  libtensor::index<2> i1, i2;
 //  i2[0] = 9; i2[1] = 9;
 //  dimensions<2> dims(index_range<2>(i1, i2));
 //  block_index_space<2> bis(dims);
@@ -390,7 +390,7 @@ void addition_schedule_test::test_5() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<4> i1, i2;
+//  libtensor::index<4> i1, i2;
 //  i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
 //  dimensions<4> dims(index_range<4>(i1, i2));
 //  block_index_space<4> bis(dims);
@@ -451,7 +451,7 @@ void addition_schedule_test::test_6() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<4> i1, i2;
+//  libtensor::index<4> i1, i2;
 //  i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
 //  dimensions<4> dims(index_range<4>(i1, i2));
 //  block_index_space<4> bis(dims);
@@ -514,7 +514,7 @@ void addition_schedule_test::test_7() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<4> i1, i2;
+//  libtensor::index<4> i1, i2;
 //  i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
 //  dimensions<4> dims(index_range<4>(i1, i2));
 //  block_index_space<4> bis(dims);
@@ -577,7 +577,7 @@ void addition_schedule_test::test_8() throw(libtest::test_exception) {
 //
 //  try {
 //
-//  index<4> i1, i2;
+//  libtensor::index<4> i1, i2;
 //  i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
 //  dimensions<4> dims(index_range<4>(i1, i2));
 //  block_index_space<4> bis(dims);

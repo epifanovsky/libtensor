@@ -76,7 +76,7 @@ void btod_symmetrize2_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -138,7 +138,7 @@ void btod_symmetrize2_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -201,7 +201,7 @@ void btod_symmetrize2_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 20; i2[1] = 10; i2[2] = 20; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -273,7 +273,7 @@ void btod_symmetrize2_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -343,7 +343,7 @@ void btod_symmetrize2_test::test_5(bool symm) throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 20; i2[1] = 20; i2[2] = 20; i2[3] = 20;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -421,7 +421,7 @@ void btod_symmetrize2_test::test_6a(bool symm, bool label,
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -461,7 +461,7 @@ void btod_symmetrize2_test::test_6a(bool symm, bool label,
 
     if (part) {
         se_part<2, double> sp(bis, m, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         sp.add_map(i00, i01);
@@ -545,7 +545,7 @@ void btod_symmetrize2_test::test_6b(bool symm, bool label,
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -589,7 +589,7 @@ void btod_symmetrize2_test::test_6b(bool symm, bool label,
 
     if (part) {
         se_part<4, double> sp(bis, m, 2);
-        index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+        libtensor::index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
             i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
         i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
@@ -680,11 +680,11 @@ void btod_symmetrize2_test::test_7() {
     m1100[0] = true; m1100[1] = true; m0011[2] = true; m0011[3] = true;
     m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 9; i2b[1] = 19;
     dimensions<2> dims_ia(dimensions<2>(index_range<2>(i2a, i2b)));
     block_index_space<2> bis_ia(dims_ia);
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 9; i4b[1] = 9; i4b[2] = 19; i4b[3] = 19;
     dimensions<4> dims_ijab(dimensions<4>(index_range<4>(i4a, i4b)));
     block_index_space<4> bis_ijab(dims_ijab);
@@ -709,7 +709,7 @@ void btod_symmetrize2_test::test_7() {
     {
         block_tensor_ctrl<2, double> ctrl(bt1);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
 

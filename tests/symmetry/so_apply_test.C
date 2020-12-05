@@ -42,7 +42,7 @@ void so_apply_test::test_1(bool keep_zero,
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 5; i2[1] = 5; i2[2] = 10; i2[3] = 10;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
@@ -76,7 +76,7 @@ void so_apply_test::test_2(bool keep_zero,
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 5; i2[1] = 5; i2[2] = 10; i2[3] = 10;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
@@ -117,7 +117,7 @@ void so_apply_test::test_3(bool keep_zero,
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 5; i2[1] = 5; i2[2] = 10; i2[3] = 10;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 

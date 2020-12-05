@@ -12,8 +12,8 @@ int test_0a() {
 
     try {
 
-    index<1> i1a, i1b;
-    index<0> i0a, i0b;
+    libtensor::index<1> i1a, i1b;
+    libtensor::index<0> i0a, i0b;
     i1b[0] = 5;
 
     dimensions<1> dimsa(index_range<1>(i1a, i1b));
@@ -51,8 +51,8 @@ int test_0b() {
 
     try {
 
-    index<1> i1a, i1b;
-    index<0> i0a, i0b;
+    libtensor::index<1> i1a, i1b;
+    libtensor::index<0> i0a, i0b;
     i1b[0] = 5;
 
     dimensions<0> dimsa(index_range<0>(i0a, i0b));
@@ -89,8 +89,8 @@ int test_1a() {
 
     try {
 
-    index<1> i1a, i1b, i2a, i2b;
-    index<2> i3a, i3b;
+    libtensor::index<1> i1a, i1b, i2a, i2b;
+    libtensor::index<2> i3a, i3b;
 
     i1b[0] = 5; i2b[0] = 4;
     i3b[0] = 5; i3b[1] = 4;
@@ -127,8 +127,8 @@ int test_1b() {
 
     try {
 
-    index<1> i1a, i1b, i2a, i2b;
-    index<2> i3a, i3b;
+    libtensor::index<1> i1a, i1b, i2a, i2b;
+    libtensor::index<2> i3a, i3b;
 
     i1b[0] = 5; i2a[0] = 4;
     i3b[0] = 4; i3b[1] = 5;
@@ -165,9 +165,9 @@ int test_2a() {
 
     try {
 
-    index<1> i1a, i1b;
-    index<2> i2a, i2b;
-    index<3> i3a, i3b;
+    libtensor::index<1> i1a, i1b;
+    libtensor::index<2> i2a, i2b;
+    libtensor::index<3> i3a, i3b;
 
     i1b[0] = 8;
     i2b[0] = 5; i2b[1] = 5;
@@ -221,9 +221,9 @@ int test_2b() {
 
     try {
 
-    index<1> i1a, i1b;
-    index<2> i2a, i2b;
-    index<3> i3a, i3b;
+    libtensor::index<1> i1a, i1b;
+    libtensor::index<2> i2a, i2b;
+    libtensor::index<3> i3a, i3b;
 
     i1b[0] = 8;
     i2b[0] = 5; i2b[1] = 5;
@@ -277,8 +277,8 @@ int test_3a() {
 
     try {
 
-    index<2> i2a, i2b;
-    index<4> i4a, i4b;
+    libtensor::index<2> i2a, i2b;
+    libtensor::index<4> i4a, i4b;
 
     i2b[0] = 5; i2b[1] = 5;
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;
@@ -327,8 +327,8 @@ int test_3b() {
 
     try {
 
-    index<2> i2a, i2b;
-    index<4> i4a, i4b;
+    libtensor::index<2> i2a, i2b;
+    libtensor::index<4> i4a, i4b;
 
     i2b[0] = 5; i2b[1] = 5;
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;

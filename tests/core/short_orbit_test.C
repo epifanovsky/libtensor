@@ -16,7 +16,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -28,7 +28,7 @@ int test_1() {
 
     abs_index<2> aio(dims);
     do {
-        const index<2> &io = aio.get_index();
+        const libtensor::index<2> &io = aio.get_index();
         short_orbit<2, double> orb(sym, io);
         if(orb.get_acindex() != aio.get_abs_index()) {
             std::ostringstream ss;
@@ -52,7 +52,7 @@ int test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -68,7 +68,7 @@ int test_2() {
 
     abs_index<2> aio(dims);
     do {
-        const index<2> &io = aio.get_index();
+        const libtensor::index<2> &io = aio.get_index();
         short_orbit<2, double> orb(sym, io);
         bool can = io[0] <= io[1];
         size_t abscanidx = orb.get_acindex();

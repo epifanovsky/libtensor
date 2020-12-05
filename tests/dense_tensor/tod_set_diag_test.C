@@ -150,11 +150,11 @@ int main() {
 
     srand48(time(NULL));
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<2> dims2_10(index_range<2>(i2a, i2b));
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
     dimensions<4> dims4(index_range<4>(i4a, i4b));
     sequence<4, size_t> m1(0), m2(0);

@@ -15,7 +15,7 @@ int test_1() {
     typedef se_part<2, double> se2_t;
     typedef combine_part<2, double> combine_t;
 
-    index<2> i1c, i2c;
+    libtensor::index<2> i1c, i2c;
     i2c[0] = 3; i2c[1] = 3;
     block_index_space<2> bisc(dimensions<2>(index_range<2>(i1c, i2c)));
 
@@ -54,13 +54,13 @@ int test_2(bool symm) {
 
     try {
 
-        index<2> i1, i2; i2[0] = 3; i2[1] = 3;
+        libtensor::index<2> i1, i2; i2[0] = 3; i2[1] = 3;
 
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
         mask<2> m; m[0] = true; m[1] = true;
         bis.split(m, 1); bis.split(m, 2); bis.split(m, 3);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
 
@@ -121,8 +121,8 @@ int test_3(bool symm1, bool symm2) {
 
     try {
 
-        index<3> i1, i2; i2[0] = 3; i2[1] = 3; i2[2] = 3;
-        index<3> i1p, i2p; i2p[0] = 3; i2p[1] = 1; i2p[2] = 1;
+        libtensor::index<3> i1, i2; i2[0] = 3; i2[1] = 3; i2[2] = 3;
+        libtensor::index<3> i1p, i2p; i2p[0] = 3; i2p[1] = 1; i2p[2] = 1;
 
         block_index_space<3> bis(dimensions<3>(index_range<3>(i1, i2)));
         mask<3> m; m[0] = true; m[1] = true; m[2] = true;
@@ -130,7 +130,7 @@ int test_3(bool symm1, bool symm2) {
 
         dimensions<3> pdims(index_range<3>(i1p, i2p));
 
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111,
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111,
         i200, i201, i210, i211, i300, i301, i310, i311;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
@@ -208,13 +208,13 @@ int test_4a(bool symm1, bool symm2, bool forbidden) {
 
     try {
 
-        index<2> i1, i2; i2[0] = 3; i2[1] = 3;
+        libtensor::index<2> i1, i2; i2[0] = 3; i2[1] = 3;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
 
         mask<2> m; m[0] = true; m[1] = true;
         bis.split(m, 1); bis.split(m, 2); bis.split(m, 3);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         se_t elema(bis, m, 2), elemb(bis, m, 2), elem_ref(bis, m, 2);
@@ -275,13 +275,13 @@ int test_4b(bool symm1, bool symm2) {
 
     try {
 
-        index<2> i1, i2; i2[0] = 3; i2[1] = 3;
+        libtensor::index<2> i1, i2; i2[0] = 3; i2[1] = 3;
         block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
 
         mask<2> m; m[0] = true; m[1] = true;
         bis.split(m, 1); bis.split(m, 2); bis.split(m, 3);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         scalar_transf<double> tr1(symm1 ? 1. : -1.), tr2(symm2 ? 1. : -1.);

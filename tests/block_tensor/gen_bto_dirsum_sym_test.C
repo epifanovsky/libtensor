@@ -26,7 +26,7 @@ void gen_bto_dirsum_sym_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
         block_index_space<2> bisa(dimsa);
@@ -38,7 +38,7 @@ void gen_bto_dirsum_sym_test::test_1() throw(libtest::test_exception) {
 
         block_index_space<2> bisb(bisa);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 10; ic2[3] = 10;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bis_ref(dimsc);
@@ -86,7 +86,7 @@ void gen_bto_dirsum_sym_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
         block_index_space<2> bisa(dimsa);
@@ -98,7 +98,7 @@ void gen_bto_dirsum_sym_test::test_2() throw(libtest::test_exception) {
 
         block_index_space<2> bisb(bisa);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 10; ic2[3] = 10;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bis_ref(dimsc);
@@ -144,13 +144,13 @@ void gen_bto_dirsum_sym_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-        index<3> ia1, ia2;
+        libtensor::index<3> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 10;
         dimensions<3> dimsa(index_range<3>(ia1, ia2));
-        index<1> ib1, ib2;
+        libtensor::index<1> ib1, ib2;
         ib2[0] = 8;
         dimensions<1> dimsb(index_range<1>(ib1, ib2));
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 10; ic2[3] = 8;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
 
@@ -213,11 +213,11 @@ void gen_bto_dirsum_sym_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-        index<1> ia1, ia2;
+        libtensor::index<1> ia1, ia2;
         ia2[0] = 8;
         dimensions<1> dimsa(index_range<1>(ia1, ia2));
 
-        index<2> ic1, ic2;
+        libtensor::index<2> ic1, ic2;
         ic2[0] = 8; ic2[1] = 8;
         dimensions<2> dimsc(index_range<2>(ic1, ic2));
 

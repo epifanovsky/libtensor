@@ -23,7 +23,7 @@ int test_1(size_t n, double c) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
     dense_tensor<2, double, allocator_t> t(dims);
@@ -112,7 +112,7 @@ int test_2(size_t n, double c) {
 
     permutation<3> perm; perm.permute(0, 1).permute(1, 2);
     permutation<3> pinv(perm, true);
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 3; i2[1] = 4; i2[2] = 2;
     dimensions<3> dims(index_range<3>(i1, i2));
     dense_tensor<3, double, allocator_t> t(dims);
@@ -159,7 +159,7 @@ int test_2(size_t n, double c) {
             for (typename list_type::const_iterator it2 = li.begin();
                     it2 != it; it2++) {
 
-                index<3> idx(it2->get_index());
+                libtensor::index<3> idx(it2->get_index());
                 idx.permute(pinv);
                 abs_index<3> aidx(idx, dims);
                 if (val == it2->get_value() &&

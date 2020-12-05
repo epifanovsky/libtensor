@@ -18,7 +18,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
     dense_tensor<2, double, allocator_t> t(dims), t_ref(dims);
@@ -37,7 +37,7 @@ int test_1() {
 
     // Test [0,0]
     //
-    index<2> i00;
+    libtensor::index<2> i00;
     abs_index<2> ai00(i00, dims);
     double q = drand48();
     d_ref = tc_ref.req_dataptr();
@@ -48,7 +48,7 @@ int test_1() {
 
     // Test [3, 2]
     //
-    index<2> i32; i32[0] = 3; i32[1] = 2;
+    libtensor::index<2> i32; i32[0] = 3; i32[1] = 2;
     abs_index<2> ai32(i32, dims);
     q = drand48();
     d_ref = tc_ref.req_dataptr();

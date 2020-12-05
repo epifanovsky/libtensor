@@ -28,7 +28,7 @@ void so_permute_se_part_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 7; i4b[1] = 7; i4b[2] = 7; i4b[3] = 7;
 
     block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));
@@ -39,7 +39,7 @@ void so_permute_se_part_test::test_1() throw(libtest::test_exception) {
     bis4.split(m4, 4);
     bis4.split(m4, 6);
 
-    index<4> i0000, i0011, i1100, i0110, i1001, i0101, i1010, i1111;
+    libtensor::index<4> i0000, i0011, i1100, i0110, i1001, i0101, i1010, i1111;
     i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
     i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
     i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;
@@ -78,7 +78,7 @@ void so_permute_se_part_test::test_2a() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 7; i4b[1] = 7; i4b[2] = 7; i4b[3] = 7;
 
     block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));
@@ -90,7 +90,7 @@ void so_permute_se_part_test::test_2a() throw(libtest::test_exception) {
     bis4.split(m1111, 4);
     bis4.split(m1111, 6);
 
-    index<4> i0000, i0001, i0010, i0100, i1000,
+    libtensor::index<4> i0000, i0001, i0010, i0100, i1000,
         i0011, i0101, i0110, i1001, i1010, i1100,
         i0111, i1011, i1101, i1110, i1111;
     i1000[0] = 1; i0100[1] = 1; i0010[2] = 1; i0001[3] = 1;
@@ -148,7 +148,7 @@ void so_permute_se_part_test::test_2b() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 7; i4b[1] = 7; i4b[2] = 7; i4b[3] = 7;
 
     block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));
@@ -159,7 +159,7 @@ void so_permute_se_part_test::test_2b() throw(libtest::test_exception) {
     bis4.split(m1111, 4);
     bis4.split(m1111, 6);
 
-    index<4> i0000, i0001, i0010, i0100, i1000,
+    libtensor::index<4> i0000, i0001, i0010, i0100, i1000,
         i0011, i0101, i0110, i1001, i1010, i1100,
         i0111, i1011, i1101, i1110, i1111;
     i1000[0] = 1; i0100[1] = 1; i0010[2] = 1; i0001[3] = 1;
@@ -218,7 +218,7 @@ void so_permute_se_part_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 7; i4b[1] = 7; i4b[2] = 7; i4b[3] = 7;
 
     block_index_space<4> bis4(dimensions<4>(index_range<4>(i4a, i4b)));
@@ -227,7 +227,7 @@ void so_permute_se_part_test::test_3() throw(libtest::test_exception) {
     m4[0] = true; m4[1] = true; m4[2] = true; m4[3] = true;
     bis4.split(m4, 2); bis4.split(m4, 4); bis4.split(m4, 6);
 
-    index<4> i0000, i0011, i1100, i0110, i1001, i0101, i1010, i1111;
+    libtensor::index<4> i0000, i0011, i1100, i0110, i1001, i0101, i1010, i1111;
     i1100[0] = 1; i1100[1] = 1; i0011[2] = 1; i0011[3] = 1;
     i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
     i1010[0] = 1; i0101[1] = 1; i1010[2] = 1; i0101[3] = 1;

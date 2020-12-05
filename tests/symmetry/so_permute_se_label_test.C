@@ -41,7 +41,7 @@ void so_permute_se_label_test::test_1(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 8; i2[3] = 8;
 
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));

@@ -67,7 +67,7 @@ void btod_scale_test::test_0() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -121,7 +121,7 @@ void btod_scale_test::test_i(size_t i) throw(libtest::test_exception) {
 
     try {
 
-    index<1> ia, ib;
+    libtensor::index<1> ia, ib;
     ia[0] = i - 1;
     dimensions<1> d(index_range<1>(ia, ib));
     mask<1> m; m[0] = true;
@@ -144,7 +144,7 @@ void btod_scale_test::test_i(size_t i) throw(libtest::test_exception) {
     test_generic(tn.c_str(), bt2a, -1.5);
     test_generic(tn.c_str(), bt3a, 2.2);
 
-    index<1> i0, i1, i2;
+    libtensor::index<1> i0, i1, i2;
     i1[0] = 1; i2[0] = 2;
 
     //  Test the correct zero block structure
@@ -200,7 +200,7 @@ void btod_scale_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);

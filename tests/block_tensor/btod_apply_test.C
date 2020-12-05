@@ -104,7 +104,7 @@ void btod_apply_test::test_zero_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -151,7 +151,7 @@ void btod_apply_test::test_zero_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -205,7 +205,7 @@ void btod_apply_test::test_zero_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -257,7 +257,7 @@ void btod_apply_test::test_nosym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -301,7 +301,7 @@ void btod_apply_test::test_nosym_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -348,7 +348,7 @@ void btod_apply_test::test_nosym_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -396,7 +396,7 @@ void btod_apply_test::test_nosym_4() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -447,7 +447,7 @@ void btod_apply_test::test_sym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -501,7 +501,7 @@ void btod_apply_test::test_sym_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -556,9 +556,9 @@ void btod_apply_test::test_sym_3() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1a, i2a;
+    libtensor::index<3> i1a, i2a;
     i2a[0] = 5; i2a[1] = 10; i2a[2] = 10;
-    index<3> i1b, i2b;
+    libtensor::index<3> i1b, i2b;
     i2b[0] = 10; i2b[1] = 10; i2b[2] = 5;
     dimensions<3> dima(index_range<3>(i1a, i2a));
     dimensions<3> dimb(index_range<3>(i1b, i2b));
@@ -623,7 +623,7 @@ void btod_apply_test::test_sym_4() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -709,7 +709,7 @@ void btod_apply_test::test_sym_5() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dima(index_range<2>(i1, i2));
     block_index_space<2> bisa(dima);
@@ -793,7 +793,7 @@ void btod_apply_test::test_add_nosym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -839,7 +839,7 @@ void btod_apply_test::test_add_nosym_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -892,7 +892,7 @@ void btod_apply_test::test_add_nosym_3() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -948,7 +948,7 @@ void btod_apply_test::test_add_nosym_4() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -1000,7 +1000,7 @@ void btod_apply_test::test_add_eqsym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -1054,7 +1054,7 @@ void btod_apply_test::test_add_eqsym_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -1112,9 +1112,9 @@ void btod_apply_test::test_add_eqsym_3() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1a, i2a;
+    libtensor::index<3> i1a, i2a;
     i2a[0] = 5; i2a[1] = 10; i2a[2] = 10;
-    index<3> i1b, i2b;
+    libtensor::index<3> i1b, i2b;
     i2b[0] = 10; i2b[1] = 10; i2b[2] = 5;
     dimensions<3> dima(index_range<3>(i1a, i2a));
     dimensions<3> dimb(index_range<3>(i1b, i2b));
@@ -1184,7 +1184,7 @@ void btod_apply_test::test_add_eqsym_4() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1253,7 +1253,7 @@ void btod_apply_test::test_add_eqsym_5() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1a, i2a, i1b, i2b;
+    libtensor::index<4> i1a, i2a, i1b, i2b;
     i2a[0] = 9; i2a[1] = 9; i2a[2] = 11; i2a[3] = 11;
     i2b[0] = 9; i2b[1] = 11; i2b[2] = 9; i2b[3] = 11;
     dimensions<4> dima(index_range<4>(i1a, i2a));
@@ -1326,7 +1326,7 @@ void btod_apply_test::test_add_nesym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -1379,7 +1379,7 @@ void btod_apply_test::test_add_nesym_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -1432,7 +1432,7 @@ void btod_apply_test::test_add_nesym_3() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1500,7 +1500,7 @@ void btod_apply_test::test_add_nesym_4() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1568,7 +1568,7 @@ void btod_apply_test::test_add_nesym_5() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1636,7 +1636,7 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1666,7 +1666,7 @@ void btod_apply_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 
     //  Load random data for input
 
-    index<4> i0000, i0001, i0011, i0012, i0101, i0112, i1111, i2222;
+    libtensor::index<4> i0000, i0001, i0011, i0012, i0101, i0112, i1111, i2222;
     i0001[3] = 1;
     i0011[2] = 1; i0011[3] = 1;
     i0012[2] = 1; i0012[3] = 2;
@@ -1719,7 +1719,7 @@ void btod_apply_test::test_add_nesym_6() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1794,7 +1794,7 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1823,7 +1823,7 @@ void btod_apply_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
 
     //  Load random data for input
 
-    index<4> i0012, i0102, i0120;
+    libtensor::index<4> i0012, i0102, i0120;
     i0012[2] = 1; i0012[3] = 2;
     i0102[1] = 1; i0102[3] = 2;
     i0120[1] = 1; i0120[2] = 2;
@@ -1869,7 +1869,7 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1898,7 +1898,7 @@ void btod_apply_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
 
     //  Load random data for input
 
-    index<4> i0012, i0102, i0120;
+    libtensor::index<4> i0012, i0102, i0120;
     i0012[2] = 1; i0012[3] = 2;
     i0102[1] = 1; i0102[3] = 2;
     i0120[1] = 1; i0120[2] = 2;
@@ -1944,7 +1944,7 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
     dimensions<4> dima(index_range<4>(i1, i2));
     dimensions<4> dimb(dima);
@@ -1973,7 +1973,7 @@ void btod_apply_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 
     //  Load random data for input
 
-    index<4> i0012, i0102, i0120;
+    libtensor::index<4> i0012, i0102, i0120;
     i0012[2] = 1; i0012[3] = 2;
     i0102[1] = 1; i0102[3] = 2;
     i0120[1] = 1; i0120[2] = 2;

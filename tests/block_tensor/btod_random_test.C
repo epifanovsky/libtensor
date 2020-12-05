@@ -24,7 +24,7 @@ void btod_random_test::perform() throw(libtest::test_exception)
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 3; i2[1] = 4;    i2[2] = 3; i2[3] = 4;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);

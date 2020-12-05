@@ -51,7 +51,7 @@ int test_0() {
 
     try {
 
-//    index<0> i1, i2;
+//    libtensor::index<0> i1, i2;
 //    dimensions<0> dims(index_range<0>(i1, i2));
 //    test_generic(testname, dims, 1.0);
 //    test_generic(testname, dims, 0.0);
@@ -74,7 +74,7 @@ int test_i(size_t i) {
 
     try {
 
-    index<1> i1, i2;
+    libtensor::index<1> i1, i2;
     i2[0] = i - 1;
     dimensions<1> dims(index_range<1>(i1, i2));
     test_generic(tn.c_str(), dims, 1.0);
@@ -98,7 +98,7 @@ int test_ij(size_t i, size_t j) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = i - 1; i2[1] = j - 1;
     dimensions<2> dims(index_range<2>(i1, i2));
     test_generic(tn.c_str(), dims, 1.0);
@@ -123,7 +123,7 @@ int test_ijkl(size_t i, size_t j, size_t k, size_t l) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = i - 1; i2[1] = j - 1; i2[2] = k - 1; i2[3] = l - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     test_generic(tn.c_str(), dims, 1.0);

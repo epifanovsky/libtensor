@@ -23,7 +23,7 @@ void block_tensor_test::test_nonzero_blocks_1() {
 
     try {
 
-    index<2> i0, i1, i2;
+    libtensor::index<2> i0, i1, i2;
     i2[0] = 4; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -47,7 +47,7 @@ void block_tensor_test::test_nonzero_blocks_1() {
     }
 
     {
-        index<2> i00;
+        libtensor::index<2> i00;
         gen_block_tensor_wr_ctrl<2, bti_traits> ca1(bta);
         dense_tensor_wr_i<2, double> &b00 = ca1.req_block(i00);
         tod_random<2>().perform(b00);
@@ -85,7 +85,7 @@ void block_tensor_test::test_nonzero_blocks_2() {
 
     try {
 
-    index<2> i0, i1, i2;
+    libtensor::index<2> i0, i1, i2;
     i2[0] = 4; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -112,7 +112,7 @@ void block_tensor_test::test_nonzero_blocks_2() {
     }
 
     {
-        index<2> i00, i10;
+        libtensor::index<2> i00, i10;
         i10[0] = 1; i10[1] = 0;
         gen_block_tensor_wr_ctrl<2, bti_traits> ca1(bta);
         dense_tensor_wr_i<2, double> &b00 = ca1.req_block(i00);

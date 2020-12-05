@@ -15,7 +15,7 @@ int test_1(const std::string &table_id) {
     tnss << "combine_label_test::test_1(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 3;
     dimensions<2> bidims(index_range<2>(i1, i2));
 
@@ -74,7 +74,7 @@ int test_2(const std::string &table_id) {
     tnss << "combine_label_test::test_2(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 3; i2[1] = 3; i2[2] = 3; i2[3] = 3;
     dimensions<4> bidims(index_range<4>(i1, i2));
 

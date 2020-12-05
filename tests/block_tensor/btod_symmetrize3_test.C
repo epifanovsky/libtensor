@@ -56,7 +56,7 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);
@@ -129,7 +129,7 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);
@@ -199,7 +199,7 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);
@@ -274,7 +274,7 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -349,7 +349,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);
@@ -364,7 +364,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
     //  Set up initial symmetry and fill in random input
 
     {
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
@@ -400,7 +400,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
     symb_ref.insert(se_perm<3, double>(
         permutation<3>().permute(0, 2), tr0));
     {
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
@@ -452,7 +452,7 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-    index<6> i1, i2;
+    libtensor::index<6> i1, i2;
     i2[0] = 5; i2[1] = 5; i2[2] = 5; i2[3] = 7; i2[4] = 7; i2[5] = 7;
     dimensions<6> dims(index_range<6>(i1, i2));
     block_index_space<6> bis(dims);
@@ -539,7 +539,7 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
     try {
 
-    index<6> i1, i2;
+    libtensor::index<6> i1, i2;
     i2[0] = 5; i2[1] = 5; i2[2] = 5; i2[3] = 7; i2[4] = 7; i2[5] = 7;
     dimensions<6> dims(index_range<6>(i1, i2));
     block_index_space<6> bis(dims);
@@ -635,7 +635,7 @@ void btod_symmetrize3_test::test_8a() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 4; i4b[1] = 4; i4b[2] = 6; i4b[3] = 6;
     dimensions<4> dims_oovv(index_range<4>(i4a, i4b));
     block_index_space<4> bis_oovv(dims_oovv);
@@ -654,7 +654,7 @@ void btod_symmetrize3_test::test_8a() throw(libtest::test_exception) {
     bis_ovvv.split(m1000, 3);
     bis_ovvv.split(m0111, 3);
     bis_ovvv.split(m0111, 4);
-    index<6> i6a, i6b;
+    libtensor::index<6> i6a, i6b;
     i6b[0] = 4; i6b[1] = 4; i6b[2] = 4; i6b[3] = 6; i6b[4] = 6; i6b[5] = 6;
     dimensions<6> dims_ooovvv(index_range<6>(i6a, i6b));
     block_index_space<6> bis_ooovvv(dims_ooovvv);
@@ -760,7 +760,7 @@ void btod_symmetrize3_test::test_8b() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 4; i4b[1] = 4; i4b[2] = 6; i4b[3] = 6;
     dimensions<4> dims_oovv(index_range<4>(i4a, i4b));
     block_index_space<4> bis_oovv(dims_oovv);
@@ -779,7 +779,7 @@ void btod_symmetrize3_test::test_8b() throw(libtest::test_exception) {
     bis_ovvv.split(m1000, 3);
     bis_ovvv.split(m0111, 3);
     bis_ovvv.split(m0111, 4);
-    index<6> i6a, i6b;
+    libtensor::index<6> i6a, i6b;
     i6b[0] = 4; i6b[1] = 4; i6b[2] = 4; i6b[3] = 6; i6b[4] = 6; i6b[5] = 6;
     dimensions<6> dims_ooovvv(index_range<6>(i6a, i6b));
     block_index_space<6> bis_ooovvv(dims_ooovvv);
@@ -860,7 +860,7 @@ void btod_symmetrize3_test::test_8b() throw(libtest::test_exception) {
     const assignment_schedule<6, double> &asch = sym1b.get_schedule();
     for(assignment_schedule<6, double>::iterator i = asch.begin();
         i != asch.end(); ++i) {
-        index<6> idx;
+        libtensor::index<6> idx;
         abs_index<6>::get_index(asch.get_abs_index(i), bidims, idx);
         dense_tensor_wr_i<6, double> &blk = cc.req_block(idx);
         sym1b.compute_block(idx, blk);
@@ -885,7 +885,7 @@ void btod_symmetrize3_test::test_9() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -962,7 +962,7 @@ void btod_symmetrize3_test::test_10() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10;
     dimensions<3> dims(index_range<3>(i1, i2));
     block_index_space<3> bis(dims);

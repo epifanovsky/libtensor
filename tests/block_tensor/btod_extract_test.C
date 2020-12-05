@@ -53,9 +53,9 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -70,11 +70,11 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 
     mask<2> msk;
     msk[0] = false; msk[1] = true;
-    index<2> idx;
+    libtensor::index<2> idx;
     idx[0] = 2; idx [1] = 0;
-    index<2> idxbl;
+    libtensor::index<2> idxbl;
     idxbl[0] = 0; idxbl[1] = 0;
-    index<2> idxibl;
+    libtensor::index<2> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1];
 
     //  Fill in random data
@@ -108,9 +108,9 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 5;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -126,11 +126,11 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
     mask<3> msk;
     msk[0] = true; msk[1] = false; msk[2] = true;
 
-    index<3> idx;
+    libtensor::index<3> idx;
     idx[0] = 0; idx [1] = 4; idx[2] =0;
-    index<3> idxbl;
+    libtensor::index<3> idxbl;
     idxbl[0] = 0; idxbl[1] = 0;idxbl[2] = 0;
-    index<3> idxibl;
+    libtensor::index<3> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1];idxibl[2] = idx[2];
 
     //  Fill in random data
@@ -165,9 +165,9 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 5;i3b[2]=7;
-    index<5> i5a, i5b;
+    libtensor::index<5> i5a, i5b;
     i5b[0] = 12; i5b[1] = 10; i5b[2] = 5;i5b[3] = 8;i5b[4] = 7;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<5> dims5(index_range<5>(i5a, i5b));
@@ -183,11 +183,11 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
     mask<5> msk;
     msk[0] = false; msk[1] = true;msk[2] = true;msk[3] = false; msk[4] = true;
 
-    index<5> idx;
+    libtensor::index<5> idx;
     idx[0] = 11; idx [1] = 0; idx[2] = 0;idx[3] = 1;idx[4] = 0;
-    index<5> idxbl;
+    libtensor::index<5> idxbl;
     idxbl[0] = 0; idxbl[1] = 0;idxbl[2] = 0;idxbl[3]=0;idxbl[4]=0;
-    index<5> idxibl;
+    libtensor::index<5> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1];idxibl[2] = idx[2];
     idxibl[3] = idx[3]; idxibl[4] = idx[4];
 
@@ -221,9 +221,9 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 11; i2b[1] = 8;
-    index<5> i5a, i5b;
+    libtensor::index<5> i5a, i5b;
     i5b[0] = 7; i5b[1] = 11; i5b[2] = 20;i5b[3] = 8;i5b[4] = 7;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<5> dims5(index_range<5>(i5a, i5b));
@@ -239,11 +239,11 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
     mask<5> msk;
     msk[0] = false; msk[1] = true;msk[2] = false;msk[3] = true; msk[4] = false;
 
-    index<5> idx;
+    libtensor::index<5> idx;
     idx[0] = 0; idx [1] = 0; idx[2] = 19;idx[3] = 0;idx[4] = 5;
-    index<5> idxbl;
+    libtensor::index<5> idxbl;
     idxbl[0] = 0; idxbl[1] = 0;idxbl[2] = 0;idxbl[3]=0;idxbl[4]=0;
-    index<5> idxibl;
+    libtensor::index<5> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1];idxibl[2] = idx[2];
     idxibl[3] = idx[3]; idxibl[4] = idx[4];
 
@@ -279,9 +279,9 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -304,11 +304,11 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 
     mask<2> msk;
     msk[0] = false; msk[1] = true;
-    index<2> idx;
+    libtensor::index<2> idx;
     idx[0] = 7; idx [1] = 0;
-    index<2> idxbl;
+    libtensor::index<2> idxbl;
     idxbl[0] = 1; idxbl[1] = 0;
-    index<2> idxibl;
+    libtensor::index<2> idxibl;
     idxibl[0] = idx[0]-4; idxibl[1] = idx[1];
 
     //  Fill in random data
@@ -342,9 +342,9 @@ void btod_extract_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 5;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -372,11 +372,11 @@ void btod_extract_test::test_6() throw(libtest::test_exception) {
     mask<3> msk;
     msk[0] = true; msk[1] = false;msk[2] = true;
 
-    index<3> idx;
+    libtensor::index<3> idx;
     idx[0] = 0; idx [1] = 7; idx[2] =0;
-    index<3> idxbl;
+    libtensor::index<3> idxbl;
     idxbl[0] = 0; idxbl[1] = 1;idxbl[2] = 0;
-    index<3> idxibl;
+    libtensor::index<3> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1]-5;idxibl[2] = idx[2];
 
     //  Fill in random data
@@ -413,9 +413,9 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 5;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 10; i4b[1] = 10; i4b[2] = 5;i4b[3] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -445,11 +445,11 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
     mask<4> msk;
     msk[0] = true; msk[1] = false;msk[2] = false;msk[3] = true;
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 0; idx [1] = 7; idx[2] =2;idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 0; idxbl[1] = 1;idxbl[2] = 0;idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1] -5;idxibl[2] = idx[2];
     idxibl[3] = idx[3];
 
@@ -484,9 +484,9 @@ void btod_extract_test::test_8() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 12; i2b[1] = 12;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 12; i4b[1] = 12; i4b[2] = 12;i4b[3] = 12;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -515,11 +515,11 @@ void btod_extract_test::test_8() throw(libtest::test_exception) {
     mask<4> msk;
     msk[0] = true; msk[1] = false;msk[2] = false;msk[3] = true;
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 0; idx [1] = 5; idx[2] =11;idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 0; idxbl[1] = 1;idxbl[2] = 3;idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1] -3;idxibl[2] = idx[2] - 9;
     idxibl[3] = idx[3];
 
@@ -556,9 +556,9 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 10;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -574,11 +574,11 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
     mask<3> msk;
     msk[0] = true; msk[1] = false; msk[2] = true;
 
-    index<3> idx;
+    libtensor::index<3> idx;
     idx[0] = 0; idx [1] = 4; idx[2] =0;
-    index<3> idxbl;
+    libtensor::index<3> idxbl;
     idxbl[0] = 0; idxbl[1] = 0;idxbl[2] = 0;
-    index<3> idxibl;
+    libtensor::index<3> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1];idxibl[2] = idx[2];
 
     //  Fill in random data
@@ -616,9 +616,9 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 12; i2b[1] = 12;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 12; i4b[1] = 12; i4b[2] = 12;i4b[3] = 12;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -665,11 +665,11 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
     mask<4> msk;
     msk[0] = true; msk[1] = false; msk[2] = false; msk[3] = true;
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 0; idx[1] = 5; idx[2] =11; idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 0; idxbl[1] = 1; idxbl[2] = 3; idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1] -3; idxibl[2] = idx[2] - 9;
     idxibl[3] = idx[3];
 
@@ -708,9 +708,9 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 10;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -735,11 +735,11 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
     mask<3> msk;
     msk[0] = true; msk[1] = false; msk[2] = true;
 
-    index<3> idx;
+    libtensor::index<3> idx;
     idx[0] = 0; idx [1] = 4; idx[2] =0;
-    index<3> idxbl;
+    libtensor::index<3> idxbl;
     idxbl[0] = 0; idxbl[1] = 0; idxbl[2] = 0;
-    index<3> idxibl;
+    libtensor::index<3> idxibl;
     idxibl[0] = idx[0]; idxibl[1] = idx[1]; idxibl[2] = idx[2];
 
     //  Fill in random data
@@ -779,9 +779,9 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 12; i2b[1] = 12;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 12; i4b[1] = 12; i4b[2] = 12; i4b[3] = 12;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -821,11 +821,11 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
     mask<4> msk;
     msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 5; idx[1] = 0; idx[2] = 11; idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 1; idxbl[1] = 0; idxbl[2] = 3; idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0] - 3; idxibl[1] = idx[1]; idxibl[2] = idx[2] - 9;
     idxibl[3] = idx[3];
 
@@ -866,9 +866,9 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 12; i2b[1] = 12;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 12; i4b[1] = 12; i4b[2] = 12; i4b[3] = 12;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -912,11 +912,11 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
     mask<4> msk;
     msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 5; idx[1] = 0; idx[2] = 11; idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 1; idxbl[1] = 0; idxbl[2] = 3; idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0] - 3; idxibl[1] = idx[1]; idxibl[2] = idx[2] - 9;
     idxibl[3] = idx[3];
 
@@ -959,9 +959,9 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 12; i2b[1] = 12;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 12; i4b[1] = 12; i4b[2] = 12; i4b[3] = 12;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1001,11 +1001,11 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
     mask<4> msk;
     msk[0] = false; msk[1] = true; msk[2] = false; msk[3] = true;
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 5; idx[1] = 0; idx[2] = 11; idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 1; idxbl[1] = 0; idxbl[2] = 3; idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0] - 3; idxibl[1] = idx[1]; idxibl[2] = idx[2] - 9;
     idxibl[3] = idx[3];
 
@@ -1048,9 +1048,9 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 11; i2b[1] = 7;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 7; i4b[1] = 7; i4b[2] = 7; i4b[3] = 11;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1089,11 +1089,11 @@ void btod_extract_test::test_13a() throw(libtest::test_exception) {
     permutation<2> perm;
     perm.permute(0, 1);
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 4; idx[1] = 0; idx[2] = 3; idx[3] = 0;
-    index<4> idxbl;
+    libtensor::index<4> idxbl;
     idxbl[0] = 1; idxbl[1] = 0; idxbl[2] = 0; idxbl[3] = 0;
-    index<4> idxibl;
+    libtensor::index<4> idxibl;
     idxibl[0] = idx[0] - 4; idxibl[1] = idx[1]; idxibl[2] = idx[2];
     idxibl[3] = idx[3];
 
