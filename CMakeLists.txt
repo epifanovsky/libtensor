@@ -30,6 +30,7 @@ if(NOT UNIX)
     message(FATAL_ERROR "Only unix platforms are supported.")
 endif()
 include(InspectThreads)
+include(InspectStdlib)
 
 #
 # BLAS
@@ -58,19 +59,6 @@ else()
 endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 
-#
-# Random-number generator
-#
-check_cxx_source_compiles("
-#include<cstdlib>
-int main() {
-  double d = drand48();
-  return 0;
-}
-" HAVE_DRAND48)
-if(HAVE_DRAND48)
-    add_definitions(-DHAVE_DRAND48)
-endif(HAVE_DRAND48)
 
 #
 # Libxm

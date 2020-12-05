@@ -65,11 +65,13 @@ int main() {
 
 endif()
 
-
 #   Test built-in thread-local storage
 
 #    Test Intel-style TLS
 check_cxx_source_compiles("
+#if defined(__CYGWIN__)
+#error Cygwin g++ does not support __declspec(thread)
+#endif
 int main() {
     __declspec(thread) static int a;
     return 0;
@@ -88,74 +90,19 @@ template<typename T> class C { static __thread int a; };
 template<typename T> __thread int C<T>::a;
 " HAVE_GCC_THREAD_LOCAL)
 
-#if(HAVE_CPP_DECLSPEC_THREAD)
-#    add_definitions(-DHAVE_CPP_DECLSPEC_THREAD -DUSE_BUILTIN_TLS)
-#elseif(HAVE_GCC_THREAD_LOCAL)
-if(HAVE_GCC_THREAD_LOCAL)
-    add_definitions(-DHAVE_GCC_THREAD_LOCAL -DUSE_BUILTIN_TLS)
-endif(HAVE_GCC_THREAD_LOCAL)
-
-
-#
-#   Timer functions
-#
-check_cxx_source_compiles("
-#include <sys/time.h>
-int main() {
-    struct timeval t;
-    gettimeofday(&t, 0);
-    return 0;
-}
-" HAVE_GETTIMEOFDAY)
-
-if(HAVE_GETTIMEOFDAY)
-    add_definitions(-DHAVE_GETTIMEOFDAY)
-endif(HAVE_GETTIMEOFDAY)
-
-check_cxx_source_compiles("
-#include <sys/times.h>
-int main() {
-    struct tms t;
-    clock_t c = times(&t);
-    return 0;
-}
-" HAVE_SYS_TIMES)
-
-if(HAVE_SYS_TIMES)
-    add_definitions(-DHAVE_SYS_TIMES)
-endif(HAVE_SYS_TIMES)
-
-check_cxx_source_compiles("
-#include <ctime>
-int main() {
-    struct timespec t;
-    t.tv_sec = 0; t.tv_nsec = 10;
-    nanosleep(&t, 0);
-    return 0;
-}
-" HAVE_NANOSLEEP)
-
-if(HAVE_NANOSLEEP)
-    add_definitions(-DHAVE_NANOSLEEP)
-endif(HAVE_NANOSLEEP)
-
-#
-#   Test stack tracing capability
-#
-
-check_cxx_source_compiles("
-#include <cstdlib>
-#include <execinfo.h>
-int main() {
-    void *array[100];
-    int size;
-    char **symbols;
-    size = backtrace(array, 100);
-    symbols = backtrace_symbols(array, size);
-    free(symbols);
-}
-" HAVE_EXECINFO_BACKTRACE)
-
-if(HAVE_EXECINFO_BACKTRACE)
-    add_definitions(-DHAVE_EXECINFO_BACKTRACE)
-endif(HAVE_EXECINFO_BACKTRACE)
+if(HAVE_CPP_DECLSPEC_THREAD)
+    #  Intel Composer 2013 for Mac OS has a bug, use pthreads TLS
+    if(APPLE AND (ICC13 OR ICC14))
+    #  Intel Composer 2016 + llvm for Mac OS has bugs, use pthreads TLS
+    #  (https://bugs.llvm.org/show_bug.cgi?id=25737)
+    elseif(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    elseif(CLANG)
+        if(HAVE_GCC_THREAD_LOCAL)
+            add_definitions(-DHAVE_GCC_THREAD_LOCAL -DUSE_BUILTIN_TLS)
+        endif()
+    else()
+        add_definitions(-DHAVE_CPP_DECLSPEC_THREAD -DUSE_BUILTIN_TLS)
+    endif()
+elseif(HAVE_GCC_THREAD_LOCAL)
+    add_definitions(-DUSE_BUILTIN_TLS -DHAVE_GCC_THREAD_LOCAL)
+endif()
