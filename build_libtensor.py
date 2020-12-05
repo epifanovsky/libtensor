@@ -40,8 +40,8 @@ def configure(build_dir, source_dir, install_dir, build_type=None, features=[],
 
     if "mpi" in features:
         args += ["-DWITH_MPI=ON"]
-    if "libxc" not in features:
-        args += ["-DWITH_LIBXC=OFF"]
+    if "libxc" in features:
+        args += ["-DWITH_LIBXM=ON"]
     if "mkl" in features:
         # Use sequential Intel MKL version
         args += ["-DBLA_VENDOR=Intel10_64lp_seq"]

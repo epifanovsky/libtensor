@@ -76,7 +76,7 @@ endif(HAVE_DRAND48)
 # Libxm
 #
 add_definitions(-DWITHOUT_LIBVMM)
-option(WITH_LIBXM "Compile libxm support into libtensor" ON)
+option(WITH_LIBXM "Compile libxm support into libtensor" OFF)
 option(WITH_MPI   "Compile MPI support into libtensor" OFF)
 if (WITH_LIBXM)
     add_definitions(-DWITH_LIBXM)
