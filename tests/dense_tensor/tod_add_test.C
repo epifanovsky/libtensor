@@ -22,7 +22,7 @@ int test_exc() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2;
     i2[1] = 3;
     i2[2] = 5;
@@ -79,7 +79,7 @@ int test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = p;
     i2[1] = q;
     i2[2] = r;
@@ -132,7 +132,7 @@ int test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r, size_t s) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = p;
     i2[1] = q;
     i2[2] = r;
@@ -189,7 +189,7 @@ int test_add_two_pqrs_qprs(size_t p, size_t q, size_t r, size_t s) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = p;
     i2[1] = q;
     i2[2] = r;
@@ -259,7 +259,7 @@ int test_add_two_pqrs_prsq(size_t p, size_t q, size_t r, size_t s) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = p;
     i2[1] = q;
     i2[2] = r;
@@ -330,7 +330,7 @@ int test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r, size_t s) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = p;
     i2[1] = q;
     i2[2] = r;
@@ -402,7 +402,7 @@ int test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = nl - 1;
     dimensions<4> dims_ijkl(index_range<4> (i1, i2));
     size_t sz = dims_ijkl.get_size();
@@ -434,7 +434,7 @@ int test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     double t3_max = 0.0;
     abs_index<4> ai(dims_ijkl);
     do {
-        index<4> i1(ai.get_index()), i2(ai.get_index()), i3(ai.get_index());
+        libtensor::index<4> i1(ai.get_index()), i2(ai.get_index()), i3(ai.get_index());
         i2.permute(perm);
         i3.permute(perm);
 
@@ -476,7 +476,7 @@ int test_add_mult(size_t p, size_t q, size_t r, size_t s) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = p; i2[1] = q; i2[2] = r; i2[3] = s;
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir), dim3(ir);
@@ -555,7 +555,7 @@ int test_add_two_pq_qp(size_t p, size_t q) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = p;
     i2[1] = q;
     index_range<2> ir(i1, i2);

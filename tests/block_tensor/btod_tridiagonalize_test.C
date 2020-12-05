@@ -41,10 +41,10 @@ void btod_tridiagonalize_test::test_1() throw(libtest::test_exception) {
         //initial symmetric matrix
         double matrix[9] = { 1, 3, 4, 3, 2, 8, 4, 8, 3};
 
-        index<2> i1a, i1b;
+        libtensor::index<2> i1a, i1b;
         i1b[0] = 2; i1b[1] = 2;
 
-        index<1> i2a, i2b;
+        libtensor::index<1> i2a, i2b;
         i2b[0] = 2;
 
         dimensions<2> dims1(index_range<2>(i1a, i1b));
@@ -89,10 +89,10 @@ void btod_tridiagonalize_test::test_2() throw(libtest::test_exception) {
         double matrix[16] = { 4, 1, -2, 2, 1, 2, 0, 1, -2, 0, 3, -2, 2,1,-2,-1};
         //matrix with data
 
-        index<2> i1a, i1b;
+        libtensor::index<2> i1a, i1b;
         i1b[0] = 3; i1b[1] = 3;
 
-        index<1> i2a, i2b;
+        libtensor::index<1> i2a, i2b;
         i2b[0] = 3;
 
         dimensions<2> dims1(index_range<2>(i1a, i1b));
@@ -142,10 +142,10 @@ void btod_tridiagonalize_test::test_3() throw(libtest::test_exception) {
                 0,1,3,9};
             //matrix with data
 
-            index<2> i1a, i1b;
+            libtensor::index<2> i1a, i1b;
             i1b[0] = 4; i1b[1] = 4;
 
-            index<1> i2a, i2b;
+            libtensor::index<1> i2a, i2b;
             i2b[0] = 4;
 
             dimensions<2> dims1(index_range<2>(i1a, i1b));

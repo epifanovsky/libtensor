@@ -10,14 +10,14 @@ namespace libtensor {
 
 /** \brief Namespace name
  **/
-extern const char *g_ns;
+extern const char* g_ns;
 
-}
+}  // namespace libtensor
 
 #ifdef __MINGW32__
 #include <cstdlib>
 inline void srand48(long seed) { srand(seed); }
-inline double drand48() { return (double(rand())/RAND_MAX); }
+inline double drand48() { return (double(rand()) / RAND_MAX); }
 inline long lrand48() { return rand(); }
 #endif
 
@@ -279,7 +279,6 @@ inline long lrand48() { return rand(); }
     -# \ref libtensor_block_tensor in directory \c block_tensor/
     -# \ref libtensor_iface in directory \c iface/
     -# \ref libtensor_gen_block_tensor in directory \c gen_block_tensor/
-    -# \ref libtensor_diag_tensor in directory \c diag_tensor/
     -# \ref libtensor_kernels in directory \c kernels/
     -# \ref libtensor_linalg in directory \c linalg/
 
@@ -305,12 +304,6 @@ inline long lrand48() { return rand(); }
 /** \defgroup libtensor_dense_tensor_tod Tensor operations on dense tensors (double)
     \brief Operations on tensors with real double precision elements
     \ingroup libtensor_dense_tensor
- **/
-
-/** \defgroup libtensor_diag_tensor Generalized diagonal tensors
-    \brief Implementation of "diagonal" tensors
-
-    \ingroup libtensor
  **/
 
 /** \defgroup libtensor_gen_block_tensor Generalized block tensors
@@ -346,5 +339,5 @@ inline long lrand48() { return rand(); }
     \ingroup libtensor
  **/
 
-#endif // LIBTENSOR_DEFS_H
+#endif  // LIBTENSOR_DEFS_H
 

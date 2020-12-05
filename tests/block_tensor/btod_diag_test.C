@@ -89,9 +89,9 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -137,9 +137,9 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -192,9 +192,9 @@ void btod_diag_test::test_zero_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 10; i4b[1] = 10; i4b[2] = 10; i4b[3] = 10;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -248,9 +248,9 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -312,9 +312,9 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -389,9 +389,9 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -462,9 +462,9 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -542,9 +542,9 @@ void btod_diag_test::test_nosym_5(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 8; i2b[1] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 8; i4a[1] = 8; i4a[2] = 10; i4a[3] = 10;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -618,9 +618,9 @@ void btod_diag_test::test_nosym_6(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
-    index<5> i5a, i5b;
+    libtensor::index<5> i5a, i5b;
     i5b[0] = 5; i5b[1] = 10; i5b[2] = 5; i5b[3] = 5; i5b[4] = 10;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<5> dims5(index_range<5>(i5a, i5b));
@@ -697,9 +697,9 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -776,9 +776,9 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 5;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 10; i3b[2] = 5;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -864,9 +864,9 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -944,9 +944,9 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 10; i4b[2] = 5; i4b[3] = 10;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1031,9 +1031,9 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 7; i3b[1] = 7; i3b[2] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 7; i4b[1] = 10; i4b[2] = 7; i4b[3] = 10;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1120,9 +1120,9 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 10; i3b[1] = 10; i3b[2] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 10; i4b[1] = 10; i4b[2] = 10; i4b[3] = 10;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1211,9 +1211,9 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 
     {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -1304,9 +1304,9 @@ void btod_diag_test::test_sym_8(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<3> i1a, i1b;
+    libtensor::index<3> i1a, i1b;
     i1b[0] = i1b[1] = i1b[2] = 9;
-    index<4> i2a, i2b;
+    libtensor::index<4> i2a, i2b;
     i2b[0] = i2b[1] = i2b[2] = i2b[3] = 9;
     dimensions<3> dims1(index_range<3>(i1a, i1b));
     dimensions<4> dims2(index_range<4>(i2a, i2b));
@@ -1331,7 +1331,7 @@ void btod_diag_test::test_sym_8(bool add) throw(libtest::test_exception) {
     p3.permute(2, 3);
     se_perm<4, double> se1a(p1, tr), se1b(p2, tr), se1c(p3, tr);
     se_part<4, double> se2(bis2, msk2, 2);
-    index<4> i0, i1;
+    libtensor::index<4> i0, i1;
     i1[2] = i1[3] = 1;
     se2.add_map(i0, i1, tr);
     i0[0] = i0[1] = 1;
@@ -1430,9 +1430,9 @@ void btod_diag_test::test_sym_9(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 10; i4b[1] = 10; i4b[2] = 10; i4b[3] = 10;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1531,9 +1531,9 @@ void btod_diag_test::test_sym_10(bool add) throw(libtest::test_exception) {
 
     {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 8; i2b[1] = 10;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 10; i4b[1] = 10; i4b[2] = 8; i4b[3] = 8;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -1661,9 +1661,9 @@ void btod_diag_test::test_sym_11(bool add) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = i2b[1] = 9;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = i4b[1] = i4b[2] = i4b[3] = 9;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));

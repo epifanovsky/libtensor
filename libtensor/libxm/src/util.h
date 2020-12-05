@@ -21,9 +21,17 @@
 
 #include "dim.h"
 
+#ifndef __dead
+#if defined(__GNUC__)
+#define __dead __attribute__((__noreturn__))
+#else
+#define __dead
+#endif
+#endif /* __dead */
+
 #define fatal(x) xm_fatal("%s: %s", __func__, (x))
 
-void xm_fatal(const char *, ...);
+void xm_fatal(const char *, ...) __dead;
 void xm_make_masks(const char *, const char *, xm_dim_t *, xm_dim_t *);
 
 #endif /* UTIL_H_INCLUDED */

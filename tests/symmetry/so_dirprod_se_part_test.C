@@ -40,7 +40,7 @@ void so_dirprod_se_part_test::test_empty_1() throw(libtest::test_exception) {
 
     try {
 
-        index<5> i1c, i2c;
+        libtensor::index<5> i1c, i2c;
         i2c[0] = 3; i2c[1] = 3; i2c[2] = 3; i2c[3] = 3; i2c[4] = 3;
         block_index_space<5> bisc(dimensions<5>(index_range<5>(i1c, i2c)));
 
@@ -88,8 +88,8 @@ void so_dirprod_se_part_test::test_empty_2(
 
     try {
 
-        index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
-        index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+        libtensor::index<2> i1a, i2a; i2a[0] = 3; i2a[1] = 3;
+        libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
         block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i2a)));
         block_index_space<3> bisc(dimensions<3>(index_range<3>(i1c, i2c)));
@@ -99,7 +99,7 @@ void so_dirprod_se_part_test::test_empty_2(
         mask<3> mc; mc[0] = true; mc[1] = true; mc[2] = true;
         bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         scalar_transf<double> tr0;
@@ -109,7 +109,7 @@ void so_dirprod_se_part_test::test_empty_2(
         elema.mark_forbidden(i01);
         elema.mark_forbidden(i10);
 
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
@@ -175,8 +175,8 @@ void so_dirprod_se_part_test::test_empty_3(
 
     try {
 
-        index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
-        index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+        libtensor::index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
+        libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
         block_index_space<3> bisc(dimensions<3>(index_range<3>(i1c, i2c)));
@@ -186,7 +186,7 @@ void so_dirprod_se_part_test::test_empty_3(
         mask<3> mc; mc[0] = true; mc[1] = true; mc[2] = true;
         bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         scalar_transf<double> tr1(-1.);
@@ -196,7 +196,7 @@ void so_dirprod_se_part_test::test_empty_3(
         elemb.mark_forbidden(i00);
         elemb.mark_forbidden(i10);
 
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
@@ -263,9 +263,9 @@ void so_dirprod_se_part_test::test_nn_1(
 
     try {
 
-        index<1> i1a, i2a; i2a[0] = 3; ;
-        index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
-        index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+        libtensor::index<1> i1a, i2a; i2a[0] = 3; ;
+        libtensor::index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
+        libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
         block_index_space<1> bisa(dimensions<1>(index_range<1>(i1a, i2a)));
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
@@ -278,12 +278,12 @@ void so_dirprod_se_part_test::test_nn_1(
         mask<3> mc; mc[0] = true; mc[1] = true; mc[2] = true;
         bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
 
-        index<1> i0, i1; i1[0] = 1;
+        libtensor::index<1> i0, i1; i1[0] = 1;
         scalar_transf<double> tr0, tr1(-1.);
         se1_t elema(bisa, ma, 2);
         elema.add_map(i0, i1, symm1 ? tr0 : tr1);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         se2_t elemb(bisb, mb, 2);
@@ -291,7 +291,7 @@ void so_dirprod_se_part_test::test_nn_1(
         elemb.mark_forbidden(i01);
         elemb.mark_forbidden(i10);
 
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
@@ -351,9 +351,9 @@ void so_dirprod_se_part_test::test_nn_2(
 
     try {
 
-        index<1> i1a, i2a; i2a[0] = 3; ;
-        index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
-        index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
+        libtensor::index<1> i1a, i2a; i2a[0] = 3; ;
+        libtensor::index<2> i1b, i2b; i2b[0] = 3; i2b[1] = 3;
+        libtensor::index<3> i1c, i2c; i2c[0] = 3; i2c[1] = 3; i2c[2] = 3;
 
         block_index_space<1> bisa(dimensions<1>(index_range<1>(i1a, i2a)));
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i1b, i2b)));
@@ -366,12 +366,12 @@ void so_dirprod_se_part_test::test_nn_2(
         mask<3> mc; mc[0] = true; mc[1] = true; mc[2] = true;
         bisc.split(mc, 1); bisc.split(mc, 2); bisc.split(mc, 3);
 
-        index<1> i0, i1; i1[0] = 1;
+        libtensor::index<1> i0, i1; i1[0] = 1;
         scalar_transf<double> tr0, tr1(-1.);
         se1_t elema(bisa, ma, 2);
         elema.add_map(i0, i1, symm1 ? tr0 : tr1);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         se2_t elemb(bisb, mb, 2);
@@ -379,7 +379,7 @@ void so_dirprod_se_part_test::test_nn_2(
         elemb.mark_forbidden(i01);
         elemb.mark_forbidden(i10);
 
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;

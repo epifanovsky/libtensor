@@ -44,7 +44,7 @@ void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> ia, ib; ib[2] = ib[3] = 2;
+        libtensor::index<4> ia, ib; ib[2] = ib[3] = 2;
         index_range<4> ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(set1, msk,
                 seq, ir, ir, set2);
@@ -80,7 +80,7 @@ void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
 
         mask<5> msk; msk[2] = msk[3] = msk[4] = true;
         sequence<5, size_t> seq(0); seq[3] = 1;
-        index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
+        libtensor::index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
         index_range<5> ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(set1, msk,
                 seq, ir, ir, set2);
@@ -112,7 +112,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1a, i1b;
+        libtensor::index<2> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5;
         block_index_space<2> bisa(dimensions<2>(index_range<2>(i1a, i1b)));
         mask<2> ma;
@@ -121,7 +121,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<1> i2a, i2b;
+        libtensor::index<1> i2a, i2b;
         i2b[0] = 5;
         block_index_space<1> bisb(dimensions<1>(index_range<1>(i2a, i2b)));
         mask<1> mb; mb[0] = true;
@@ -131,7 +131,7 @@ throw(libtest::test_exception) {
 
 
         se2_t ela(bisa, ma, 2);
-        index<2> i00a, i01a, i02a, i03a;
+        libtensor::index<2> i00a, i01a, i02a, i03a;
         i02a[0] = 1; i01a[1] = 1;
         i03a[0] = 1; i03a[1] = 1;
         scalar_transf<double> tr0, tr1(-1.);
@@ -140,7 +140,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i02a);
 
         se1_t elb(bisb, mb, 2);
-        index<1> i00b, i01b;
+        libtensor::index<1> i00b, i01b;
         i01b[0] = 1;
         elb.add_map(i00b, i01b, sign ? tr0 : tr1);
 
@@ -153,7 +153,7 @@ throw(libtest::test_exception) {
 
         mask<2> m; m[1] = true;
         sequence<2, size_t> seq(0);
-        index<2> bia, bib, ia, ib;
+        libtensor::index<2> bia, bib, ia, ib;
         bib[0] = bib[1] = 3;
         index_range<2> bir(bia, bib);
         index_range<2> ir(ia, ib);
@@ -189,7 +189,7 @@ void so_reduce_se_part_test::test_nm1_2(
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 9; i1b[3] = 9;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> m1a, m2a, ma;
@@ -204,7 +204,7 @@ void so_reduce_se_part_test::test_nm1_2(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 9; i2b[1] = 9;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb; mb[0] = true; mb[1] = true;
@@ -215,7 +215,7 @@ void so_reduce_se_part_test::test_nm1_2(
         bisb.split(mb, 8);
 
         se4_t ela(bisa, ma, 2);
-        index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
+        libtensor::index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
             i09a, i10a, i11a, i12a, i13a, i14a, i15a;
         i08a[0] = 1; i07a[1] = 1; i07a[2] = 1; i07a[3] = 1; // 1000
         i09a[0] = 1; i06a[1] = 1; i06a[2] = 1; i09a[3] = 1; // 1001
@@ -237,7 +237,7 @@ void so_reduce_se_part_test::test_nm1_2(
         ela.mark_forbidden(i13a); ela.mark_forbidden(i14a);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00b, i01b, i02b, i03b;
+        libtensor::index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
         elb.add_map(i00b, i03b, s1 == s2 ? tr0 : tr1);
@@ -251,8 +251,8 @@ void so_reduce_se_part_test::test_nm1_2(
         setb_ref.insert(elb);
 
         sequence<4, size_t> seq(0);
-        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
-        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        libtensor::index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        libtensor::index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
         index_range<4> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, m2a,
                 seq, bir, ir, setb);
@@ -289,7 +289,7 @@ void so_reduce_se_part_test::test_nm1_3(
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 9; i1b[3] = 9;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> m1a, m2a;
@@ -303,7 +303,7 @@ void so_reduce_se_part_test::test_nm1_3(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb; mb[0] = true; mb[1] = true;
@@ -313,7 +313,7 @@ void so_reduce_se_part_test::test_nm1_3(
 
 
         se4_t ela(bisa, m2a, 2);
-        index<4> i00a, i04a, i08a, i10a;
+        libtensor::index<4> i00a, i04a, i08a, i10a;
         i08a[0] = 1; i04a[1] = 1; // 1000
         i10a[0] = 1; i10a[1] = 1; // 1100
         scalar_transf<double> tr0, tr1(-1.);
@@ -322,7 +322,7 @@ void so_reduce_se_part_test::test_nm1_3(
         ela.mark_forbidden(i04a); ela.mark_forbidden(i08a);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00b, i01b, i02b, i03b;
+        libtensor::index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
         elb.add_map(i00b, i03b, sign ? tr0 : tr1);
@@ -337,8 +337,8 @@ void so_reduce_se_part_test::test_nm1_3(
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
-        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        libtensor::index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        libtensor::index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
         index_range<4> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, msk,
                 seq, bir, ir, setb);
@@ -373,7 +373,7 @@ void so_reduce_se_part_test::test_nm1_4(
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 9; i1b[2] = 9; i1b[3] = 9;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> m1a, m2a;
@@ -387,7 +387,7 @@ void so_reduce_se_part_test::test_nm1_4(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 9;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> m1b, m2b;
@@ -402,14 +402,14 @@ void so_reduce_se_part_test::test_nm1_4(
         bisb.split(m2b, 5);
 
         se4_t ela(bisa, m2a, 2);
-        index<4> i00a, i08a;
+        libtensor::index<4> i00a, i08a;
         i08a[0] = 1;
         scalar_transf<double> tr0, tr1(-1.);
 
         ela.add_map(i00a, i08a, sign ? tr0 : tr1);
 
         se2_t elb(bisb, m2b, 2);
-        index<2> i00b, i02b;
+        libtensor::index<2> i00b, i02b;
         i02b[0] = 1;
         elb.add_map(i00b, i02b, sign ? tr0 : tr1);
 
@@ -422,8 +422,8 @@ void so_reduce_se_part_test::test_nm1_4(
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> bia, bib; bib[0] = 3; bib[1] = bib[2] = bib[3] = 5;
-        index<4> ia, ib; ib[0] = 0; ib[1] = ib[2] = ib[3] = 1;
+        libtensor::index<4> bia, bib; bib[0] = 3; bib[1] = bib[2] = bib[3] = 5;
+        libtensor::index<4> ia, ib; ib[0] = 0; ib[1] = ib[2] = ib[3] = 1;
         index_range<4> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, msk,
                 seq, bir, ir, setb);
@@ -458,7 +458,7 @@ void so_reduce_se_part_test::test_nm1_5(
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 9; i1b[3] = 9;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> m1a, m2a, m3a;
@@ -473,7 +473,7 @@ void so_reduce_se_part_test::test_nm1_5(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> m1b, m2b;
@@ -483,7 +483,7 @@ void so_reduce_se_part_test::test_nm1_5(
         bisb.split(m1b, 5);
 
         se4_t ela(bisa, m3a, 2);
-        index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a;
+        libtensor::index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a;
         i04a[1] = 1; i03a[2] = 1; i03a[3] = 1;
         i05a[1] = 1; i02a[2] = 1; i05a[3] = 1;
         i06a[1] = 1; i06a[2] = 1; i01a[3] = 1;
@@ -495,7 +495,7 @@ void so_reduce_se_part_test::test_nm1_5(
         ela.mark_forbidden(i05a); ela.mark_forbidden(i06a);
 
         se2_t elb(bisb, m2b, 2);
-        index<2> i00b, i01b;
+        libtensor::index<2> i00b, i01b;
         i01b[1] = 1;
         elb.add_map(i00b, i01b, sign ? tr0 : tr1);
 
@@ -507,8 +507,8 @@ void so_reduce_se_part_test::test_nm1_5(
         setb_ref.insert(elb);
 
         sequence<4, size_t> seq(0);
-        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
-        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        libtensor::index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        libtensor::index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
         index_range<4> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, m1a,
                 seq, bir, ir, setb);
@@ -543,7 +543,7 @@ void so_reduce_se_part_test::test_nm1_6(
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 9; i1b[3] = 9;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> m1a, m2a;
@@ -557,7 +557,7 @@ void so_reduce_se_part_test::test_nm1_6(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> m1b;
@@ -567,7 +567,7 @@ void so_reduce_se_part_test::test_nm1_6(
         bisb.split(m1b, 5);
 
         se4_t ela(bisa, m1a, 2);
-        index<4> i00a, i01a, i02a, i03a;
+        libtensor::index<4> i00a, i01a, i02a, i03a;
         i02a[2] = 1; i01a[3] = 1;
         i03a[2] = 1; i03a[3] = 1;
         scalar_transf<double> tr0, tr1(-1.);
@@ -589,8 +589,8 @@ void so_reduce_se_part_test::test_nm1_6(
 
         mask<4> msk; msk[2] = msk[3] = true;
         sequence<4, size_t> seq(0);
-        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
-        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        libtensor::index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        libtensor::index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
         index_range<4> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, msk,
                 seq, bir, ir, setb);
@@ -633,7 +633,7 @@ void so_reduce_se_part_test::test_nm1_7(
 
     try {
 
-        index<3> i1a, i1b;
+        libtensor::index<3> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 9;
         block_index_space<3> bisa(dimensions<3>(index_range<3>(i1a, i1b)));
         mask<3> m1a, m2a;
@@ -643,7 +643,7 @@ void so_reduce_se_part_test::test_nm1_7(
         bisa.split(m1a, 5);
         bisa.split(m2a, 5);
 
-        index<1> i2a, i2b;
+        libtensor::index<1> i2a, i2b;
         i2b[0] = 9;
         block_index_space<1> bisb(dimensions<1>(index_range<1>(i2a, i2b)));
         mask<1> m1b;
@@ -651,7 +651,7 @@ void so_reduce_se_part_test::test_nm1_7(
         bisb.split(m1b, 5);
 
         se3_t ela(bisa, m1a, 2);
-        index<3> i000, i010, i100, i110;
+        libtensor::index<3> i000, i010, i100, i110;
         i100[0] = 1; i010[1] = 1;
         i110[0] = 1; i110[1] = 1;
         scalar_transf<double> tr0, tr1(-1.);
@@ -672,8 +672,8 @@ void so_reduce_se_part_test::test_nm1_7(
 
         mask<3> msk; msk[0] = msk[1] = true;
         sequence<3, size_t> seq(0);
-        index<3> bia, bib; bib[0] = bib[1] = 3; bib[2] = 1;
-        index<3> ia, ib; ib[0] = ib[1] = 0; ib[2] = 4;
+        libtensor::index<3> bia, bib; bib[0] = bib[1] = 3; bib[2] = 1;
+        libtensor::index<3> ia, ib; ib[0] = ib[1] = 0; ib[2] = 4;
         index_range<3> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, msk,
                 seq, bir, ir, setb);
@@ -715,7 +715,7 @@ void so_reduce_se_part_test::test_nmk_1(
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 9; i1b[3] = 9;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> m1a, m2a, m3a;
@@ -730,7 +730,7 @@ void so_reduce_se_part_test::test_nmk_1(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 9;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> m1b, m2b, m3b;
@@ -747,7 +747,7 @@ void so_reduce_se_part_test::test_nmk_1(
 
 
         se4_t ela(bisa, m3a, 2);
-        index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
+        libtensor::index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
             i09a, i10a, i11a, i12a, i13a, i14a, i15a;
         i08a[0] = 1; i07a[1] = 1; i07a[2] = 1; i07a[3] = 1;
         i09a[0] = 1; i06a[1] = 1; i06a[2] = 1; i09a[3] = 1;
@@ -768,7 +768,7 @@ void so_reduce_se_part_test::test_nmk_1(
         ela.mark_forbidden(i13a); ela.mark_forbidden(i14a);
 
         se2_t elb(bisb, m3b, 2);
-        index<2> i00b, i01b, i02b, i03b;
+        libtensor::index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
         elb.add_map(i00b, i03b, sign ? tr0 : tr1);
@@ -783,8 +783,8 @@ void so_reduce_se_part_test::test_nmk_1(
 
         mask<4> msk; msk[3] = msk[1] = true;
         sequence<4, size_t> seq(0); seq[1] = 1;
-        index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
-        index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
+        libtensor::index<4> bia, bib; bib[0] = bib[1] = 3; bib[2] = bib[3] = 5;
+        libtensor::index<4> ia, ib; ib[0] = ib[1] = 0; ib[2] = ib[3] = 1;
         index_range<4> bir(bia, bib), ir(ia, ib);
         symmetry_operation_params<so_reduce_t> params(seta, msk,
                 seq, bir, ir, setb);
@@ -818,7 +818,7 @@ void so_reduce_se_part_test::test_nmk_2(
 
     try {
 
-        index<6> i1a, i1b;
+        libtensor::index<6> i1a, i1b;
         i1b[0] = 5; i1b[1] = 9; i1b[2] = 9;
         i1b[3] = 5; i1b[4] = 9; i1b[5] = 9;
         block_index_space<6> bisa(dimensions<6>(index_range<6>(i1a, i1b)));
@@ -836,7 +836,7 @@ void so_reduce_se_part_test::test_nmk_2(
         bisa.split(m2a, 3);
         bisa.split(m2a, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb;
@@ -848,7 +848,7 @@ void so_reduce_se_part_test::test_nmk_2(
         scalar_transf<double> tr0, tr1(-1.);
 
         se6_t ela(bisa, m3a, 2);
-        index<6> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a,
+        libtensor::index<6> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a,
             i08a, i09a, i10a, i11a, i12a, i13a, i14a, i15a,
             i16a, i17a, i18a, i19a, i20a, i21a, i22a, i23a,
             i24a, i25a, i26a, i27a, i28a, i29a, i30a, i31a,
@@ -958,7 +958,7 @@ void so_reduce_se_part_test::test_nmk_2(
         ela.mark_forbidden(i61a); ela.mark_forbidden(i62a);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00b, i01b, i02b, i03b;
+        libtensor::index<2> i00b, i01b, i02b, i03b;
         i02b[0] = 1; i01b[1] = 1;
         i03b[0] = 1; i03b[1] = 1;
         elb.add_map(i00b, i03b, s1 == s2 ? tr0 : tr1);
@@ -973,7 +973,7 @@ void so_reduce_se_part_test::test_nmk_2(
 
         mask<6> msk; msk[1] = true; msk[4] = msk[2] = msk[5] = true;
         sequence<6, size_t> seq(0); seq[2] = seq[5] = 1;
-        index<6> bia, bib, ia, ib;
+        libtensor::index<6> bia, bib, ia, ib;
         bib[0] = bib[3] = 3; bib[1] = bib[2] = bib[4] = bib[5] = 5;
         ib[0] = ib[3] = 0; ib[1] = ib[2] = ib[4] = ib[5] = 1;
         index_range<6> bir(bia, bib), ir(ia, ib);

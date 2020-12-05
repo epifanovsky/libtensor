@@ -39,7 +39,7 @@ void so_reduce_se_perm_test::test_empty_1() throw(libtest::test_exception) {
 
     mask<4> msk; msk[0] = msk[1] = true;
     sequence<4, size_t> seq(0);
-    index<4> i1a, i1b; i1b[0] = i1b[1] = i1b[2] = i1b[3] = 3;
+    libtensor::index<4> i1a, i1b; i1b[0] = i1b[1] = i1b[2] = i1b[3] = 3;
     index_range<4> ir(i1a, i1b);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -74,7 +74,7 @@ void so_reduce_se_perm_test::test_empty_2() throw(libtest::test_exception) {
 
     mask<6> msk; msk[0] = msk[2] = msk[1] = msk[3] = true;
     sequence<6, size_t> seq(0); seq[1] = seq[3] = 1;
-    index<6> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = ib[5] = 4;
+    libtensor::index<6> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = ib[5] = 4;
     index_range<6> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -118,7 +118,7 @@ void so_reduce_se_perm_test::test_nm1_1(
 
     mask<2> msk; msk[0] = true;
     sequence<2, size_t> seq(0);
-    index<2> ia, ib; ib[0] = ib[1] = 2;
+    libtensor::index<2> ia, ib; ib[0] = ib[1] = 2;
     index_range<2> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -161,7 +161,7 @@ void so_reduce_se_perm_test::test_nm1_2(
 
     mask<4> msk; msk[2] = msk[3] = true;
     sequence<4, size_t> seq(0);
-    index<4> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = 2;
+    libtensor::index<4> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = 2;
     index_range<4> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -225,7 +225,7 @@ void so_reduce_se_perm_test::test_nmk_1(
 
     mask<5> msk; msk[2] = msk[3] = msk[4] = true;
     sequence<5, size_t> seq(0); seq[4] = 1;
-    index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
+    libtensor::index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = 4;
     index_range<5> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -289,7 +289,7 @@ void so_reduce_se_perm_test::test_nmk_2(
 
     mask<6> msk; msk[3] = msk[4] = msk[5] = true;
     sequence<6, size_t> seq; seq[3] = 1; seq[4] = 2;
-    index<6> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = ib[5] = 4;
+    libtensor::index<6> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = ib[4] = ib[5] = 4;
     index_range<6> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -359,7 +359,7 @@ void so_reduce_se_perm_test::test_nmk_3(
 
     mask<8> msk; msk[2] = msk[3] = msk[6] = msk[7] = true;
     sequence<8, size_t> seq(0); seq[3] = 1; seq[7] = 1;
-    index<8> i1, i2;
+    libtensor::index<8> i1, i2;
     i2[0] = i2[1] = i2[2] = i2[3] = i2[4] = i2[5] = i2[6] = i2[7] = 3;
     index_range<8> ir(i1, i2);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
@@ -371,7 +371,7 @@ void so_reduce_se_perm_test::test_nmk_3(
             "Expected a non-empty set.");
     }
 
-    index<4> i1a, i1b; i1b[0] = i1b[1] = i1b[2] = i1b[3] = 3;
+    libtensor::index<4> i1a, i1b; i1b[0] = i1b[1] = i1b[2] = i1b[3] = 3;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1a, i1b)));
     mask<4> m;
     m[0] = m[1] = m[2] = m[3] = true;

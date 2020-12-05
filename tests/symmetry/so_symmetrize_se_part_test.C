@@ -100,7 +100,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5; i1b[3] = 5;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> ma;
@@ -109,7 +109,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
+        libtensor::index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
             i09a, i10a, i11a, i12a, i13a, i14a, i15a;
         i08a[0] = 1; i07a[1] = 1; i07a[2] = 1; i07a[3] = 1;
         i09a[0] = 1; i06a[1] = 1; i06a[2] = 1; i09a[3] = 1;
@@ -183,7 +183,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 9; i1b[1] = 9; i1b[2] = 19; i1b[3] = 19;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> ma, mb;
@@ -195,7 +195,7 @@ throw(libtest::test_exception) {
         bisa.split(mb, 10);
         bisa.split(mb, 16);
 
-        index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
+        libtensor::index<4> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a, i08a,
             i09a, i10a, i11a, i12a, i13a, i14a, i15a;
         i08a[0] = 1; i07a[1] = 1; i07a[2] = 1; i07a[3] = 1;
         i09a[0] = 1; i06a[1] = 1; i06a[2] = 1; i09a[3] = 1;

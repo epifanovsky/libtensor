@@ -55,7 +55,7 @@ void btod_sum_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -96,7 +96,7 @@ void btod_sum_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -147,7 +147,7 @@ void btod_sum_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -196,7 +196,7 @@ void btod_sum_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 5; i2[1] = 10; i2[2] = 5; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -247,7 +247,7 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
     dimensions<4> dims_iiaa(index_range<4>(i1, i2));
     i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
@@ -315,7 +315,7 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
     dimensions<4> dims_iiaa(index_range<4>(i1, i2));
     i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
@@ -406,7 +406,7 @@ void btod_sum_test::test_7() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -465,7 +465,7 @@ void btod_sum_test::test_8() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -522,10 +522,10 @@ void btod_sum_test::test_9a() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 10;
     dimensions<2> dims_ia(index_range<2>(i2a, i2b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 10; i4b[3] = 10;
     dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
 
@@ -589,10 +589,10 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 10;
     dimensions<2> dims_ia(index_range<2>(i2a, i2b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 10; i4b[3] = 10;
     dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
 
@@ -669,7 +669,7 @@ void btod_sum_test::test_10a() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis1(dims), bis2(dims);
@@ -716,7 +716,7 @@ void btod_sum_test::test_10b() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis1(dims), bis2(dims);

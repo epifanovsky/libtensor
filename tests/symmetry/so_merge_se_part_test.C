@@ -107,7 +107,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<3> i1a, i1b;
+        libtensor::index<3> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5;
         block_index_space<3> bisa(dimensions<3>(index_range<3>(i1a, i1b)));
         mask<3> ma;
@@ -116,7 +116,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb;
@@ -126,7 +126,7 @@ throw(libtest::test_exception) {
         bisb.split(mb, 5);
 
         se3_t ela(bisa, ma, 2);
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
@@ -141,7 +141,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i101);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         elb.add_map(i00, i11, sign ? tr0 : tr1);
@@ -188,7 +188,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<3> i1a, i1b;
+        libtensor::index<3> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5;
         block_index_space<3> bisa(dimensions<3>(index_range<3>(i1a, i1b)));
         mask<3> ma;
@@ -197,7 +197,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<1> i2a, i2b;
+        libtensor::index<1> i2a, i2b;
         i2b[0] = 5;
         block_index_space<1> bisb(dimensions<1>(index_range<1>(i2a, i2b)));
         mask<1> mb;
@@ -207,7 +207,7 @@ throw(libtest::test_exception) {
         bisb.split(mb, 5);
 
         se3_t ela(bisa, ma, 2);
-        index<3> i000, i001, i010, i011, i100, i101, i110, i111;
+        libtensor::index<3> i000, i001, i010, i011, i100, i101, i110, i111;
         i100[0] = 1; i011[1] = 1; i011[2] = 1;
         i101[0] = 1; i010[1] = 1; i101[2] = 1;
         i110[0] = 1; i110[1] = 1; i001[2] = 1;
@@ -222,7 +222,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i101);
 
         se1_t elb(bisb, mb, 2);
-        index<1> i0, i1;
+        libtensor::index<1> i0, i1;
         i1[0] = 1;
         elb.add_map(i0, i1, sign ? tr0 : tr1);
 
@@ -266,7 +266,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5; i1b[3] = 5;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> ma; ma[0] = true; ma[1] = true; ma[2] = true; ma[3] = true;
@@ -274,7 +274,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb; mb[0] = true; mb[1] = true;
@@ -283,7 +283,7 @@ throw(libtest::test_exception) {
         bisb.split(mb, 5);
 
         se4_t ela(bisa, ma, 2);
-        index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+        libtensor::index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
         i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
         i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
         i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
@@ -311,7 +311,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i1110);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         elb.add_map(i00, i11, s1 == s2 ? tr0 : tr1);
@@ -359,7 +359,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5; i1b[3] = 5;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> ma; ma[0] = true; ma[1] = true; ma[2] = true; ma[3] = true;
@@ -367,7 +367,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb; mb[0] = true; mb[1] = true;
@@ -376,7 +376,7 @@ throw(libtest::test_exception) {
         bisb.split(mb, 5);
 
         se4_t ela(bisa, ma, 2);
-        index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+        libtensor::index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
         i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
         i1000[0] = 1; i0111[1] = 1; i0111[2] = 1; i0111[3] = 1;
         i1001[0] = 1; i0110[1] = 1; i0110[2] = 1; i1001[3] = 1;
@@ -409,7 +409,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i1010);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         if (s1 == s2)
@@ -459,7 +459,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1a, i1b;
+        libtensor::index<4> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5; i1b[3] = 5;
         block_index_space<4> bisa(dimensions<4>(index_range<4>(i1a, i1b)));
         mask<4> ma; ma[0] = true; ma[1] = true; ma[2] = true; ma[3] = true;
@@ -467,7 +467,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5;
         block_index_space<2> bisb(dimensions<2>(index_range<2>(i2a, i2b)));
         mask<2> mb; mb[0] = true; mb[1] = true;
@@ -477,7 +477,7 @@ throw(libtest::test_exception) {
 
         mask<4> m; m[0] = m[1] = true;
         se4_t ela(bisa, m, 2);
-        index<4> i0000, i0100, i1000, i1100;
+        libtensor::index<4> i0000, i0100, i1000, i1100;
         i1000[0] = 1; i0100[1] = 1;
         i1100[0] = 1; i1100[1] = 1;
         scalar_transf<double> tr0, tr1(-1.);
@@ -486,7 +486,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i1000);
 
         se2_t elb(bisb, mb, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         elb.mark_forbidden(i01);
@@ -533,7 +533,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<5> i1a, i1b;
+        libtensor::index<5> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5; i1b[3] = 5; i1b[4] = 5;
         block_index_space<5> bisa(dimensions<5>(index_range<5>(i1a, i1b)));
         mask<5> ma;
@@ -542,7 +542,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<3> i2a, i2b;
+        libtensor::index<3> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5; i2b[2] = 5;
         block_index_space<3> bisb(dimensions<3>(index_range<3>(i2a, i2b)));
         mask<3> mb; mb[0] = true; mb[1] = true; mb[2] = true;
@@ -551,7 +551,7 @@ throw(libtest::test_exception) {
         bisb.split(mb, 5);
 
         se5_t ela(bisa, ma, 2);
-        index<5> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a,
+        libtensor::index<5> i00a, i01a, i02a, i03a, i04a, i05a, i06a, i07a,
             i08a, i09a, i10a, i11a, i12a, i13a, i14a, i15a,
             i16a, i17a, i18a, i19a, i20a, i21a, i22a, i23a,
             i24a, i25a, i26a, i27a, i28a, i29a, i30a, i31a;
@@ -601,7 +601,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(i25a);
 
         se3_t elb(bisb, mb, 2);
-        index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
+        libtensor::index<3> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b;
         i04b[0] = 1; i03b[1] = 1; i03b[2] = 1; // 100
         i05b[0] = 1; i02b[1] = 1; i05b[2] = 1; // 101
         i06b[0] = 1; i06b[1] = 1; i01b[2] = 1; // 110
@@ -667,7 +667,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<6> i1a, i1b;
+        libtensor::index<6> i1a, i1b;
         i1b[0] = 5; i1b[1] = 5; i1b[2] = 5;
         i1b[3] = 5; i1b[4] = 5; i1b[5] = 5;
         block_index_space<6> bisa(dimensions<6>(index_range<6>(i1a, i1b)));
@@ -678,7 +678,7 @@ throw(libtest::test_exception) {
         bisa.split(ma, 3);
         bisa.split(ma, 5);
 
-        index<4> i2a, i2b;
+        libtensor::index<4> i2a, i2b;
         i2b[0] = 5; i2b[1] = 5; i2b[2] = 5; i2b[3] = 5;
         block_index_space<4> bisb(dimensions<4>(index_range<4>(i2a, i2b)));
         mask<4> mb; mb[0] = true; mb[1] = true; mb[2] = true; mb[3] = true;
@@ -687,7 +687,7 @@ throw(libtest::test_exception) {
         bisb.split(mb, 5);
 
         se6_t ela(bisa, ma, 2);
-        index<6> ia[64];
+        libtensor::index<6> ia[64];
         for (size_t i = 0; i < 64; i++) {
             size_t x = i;
             ia[i][0] = x / 32; x = x % 32;
@@ -740,7 +740,7 @@ throw(libtest::test_exception) {
         ela.mark_forbidden(ia[62]); ela.mark_forbidden(ia[63]);
 
         se4_t elb(bisb, mb, 2);
-        index<4> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b,
+        libtensor::index<4> i00b, i01b, i02b, i03b, i04b, i05b, i06b, i07b,
             i08b, i09b, i10b, i11b, i12b, i13b, i14b, i15b;
         i08b[0] = 1; i07b[1] = 1; i07b[2] = 1; i07b[3] = 1; // 1000
         i09b[0] = 1; i06b[1] = 1; i06b[2] = 1; i09b[3] = 1; // 1001

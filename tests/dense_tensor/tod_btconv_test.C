@@ -34,7 +34,7 @@ int test_1() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -101,7 +101,7 @@ int test_2() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -127,8 +127,8 @@ int test_2() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_00;
-            index<2> istart = bis.get_block_start(i_00);
+            libtensor::index<2> i_00;
+            libtensor::index<2> istart = bis.get_block_start(i_00);
             dimensions<2> dims_00 = bis.get_block_dims(i_00);
             dense_tensor_wr_i<2, double> &blk_00 = btctrl.req_block(i_00);
             {
@@ -136,7 +136,7 @@ int test_2() {
                 double *p_00 = tctrl_00.req_dataptr();
                 abs_index<2> aii(dims_00);
                 do {
-                    index<2> ii(aii.get_index()), iii(istart);
+                    libtensor::index<2> ii(aii.get_index()), iii(istart);
                     for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
                     abs_index<2> aiii(iii, dims);
                     pt_ref[aiii.get_abs_index()] =
@@ -186,7 +186,7 @@ int test_3() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -213,9 +213,9 @@ int test_3() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_11;
+            libtensor::index<2> i_11;
             i_11[0] = 1; i_11[1] = 1;
-            index<2> istart = bis.get_block_start(i_11);
+            libtensor::index<2> istart = bis.get_block_start(i_11);
             dimensions<2> dims_11 = bis.get_block_dims(i_11);
             dense_tensor_wr_i<2, double> &blk_11 = btctrl.req_block(i_11);
             {
@@ -223,7 +223,7 @@ int test_3() {
                 double *p_11 = tctrl_11.req_dataptr();
                 abs_index<2> aii(dims_11);
                 do {
-                    index<2> ii(aii.get_index()), iii(istart);
+                    libtensor::index<2> ii(aii.get_index()), iii(istart);
                     for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
                     abs_index<2> aiii(iii, dims);
                     pt_ref[aiii.get_abs_index()] =
@@ -273,7 +273,7 @@ int test_4() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -300,10 +300,10 @@ int test_4() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_00, i_11;
+            libtensor::index<2> i_00, i_11;
             i_11[0] = 1; i_11[1] = 1;
-            index<2> istart_00 = bis.get_block_start(i_00);
-            index<2> istart_11 = bis.get_block_start(i_11);
+            libtensor::index<2> istart_00 = bis.get_block_start(i_00);
+            libtensor::index<2> istart_11 = bis.get_block_start(i_11);
             dimensions<2> dims_00 = bis.get_block_dims(i_00);
             dimensions<2> dims_11 = bis.get_block_dims(i_11);
             double *p = NULL;
@@ -314,7 +314,7 @@ int test_4() {
                 p = tctrl_00.req_dataptr();
                 abs_index<2> aii(dims_00);
                 do {
-                    index<2> ii(aii.get_index()), iii(istart_00);
+                    libtensor::index<2> ii(aii.get_index()), iii(istart_00);
                     for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
                     abs_index<2> aiii(iii, dims);
                     pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] =
@@ -330,7 +330,7 @@ int test_4() {
                 p = tctrl_11.req_dataptr();
                 abs_index<2> aii(dims_11);
                 do {
-                    index<2> ii(aii.get_index()), iii(istart_11);
+                    libtensor::index<2> ii(aii.get_index()), iii(istart_11);
                     for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
                     abs_index<2> aiii(iii, dims);
                     pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] =
@@ -380,7 +380,7 @@ int test_5() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -412,9 +412,9 @@ int test_5() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_00, i_11;
-            index<2> istart_00 = bis.get_block_start(i_00);
-            index<2> istart_11 = bis.get_block_start(i_11);
+            libtensor::index<2> i_00, i_11;
+            libtensor::index<2> istart_00 = bis.get_block_start(i_00);
+            libtensor::index<2> istart_11 = bis.get_block_start(i_11);
             dimensions<2> dims_00 = bis.get_block_dims(i_00);
             dimensions<2> dims_11 = bis.get_block_dims(i_11);
             double *p = NULL;
@@ -426,10 +426,10 @@ int test_5() {
                 p = tctrl_00.req_dataptr();
                 abs_index<2> aii(dims_00);
                 do {
-                    index<2> ii(aii.get_index());
+                    libtensor::index<2> ii(aii.get_index());
                     if(ii[0] > ii[1]) continue;
-                    index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-                    index<2> iii1(istart_00), iii2(istart_00);
+                    libtensor::index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+                    libtensor::index<2> iii1(istart_00), iii2(istart_00);
                     for(size_t j = 0; j < 2; j++) {
                         iii1[j] += ii1[j];
                         iii2[j] += ii2[j];
@@ -450,10 +450,10 @@ int test_5() {
                 p = tctrl_11.req_dataptr();
                 abs_index<2> aii(dims_11);
                 do {
-                    index<2> ii(aii.get_index());
+                    libtensor::index<2> ii(aii.get_index());
                     if(ii[0] > ii[1]) continue;
-                    index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-                    index<2> iii1(istart_11), iii2(istart_11);
+                    libtensor::index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+                    libtensor::index<2> iii1(istart_11), iii2(istart_11);
                     for(size_t j = 0; j < 2; j++) {
                         iii1[j] += ii1[j];
                         iii2[j] += ii2[j];
@@ -509,7 +509,7 @@ int test_6() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -536,11 +536,11 @@ int test_6() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_01, i_10;
+            libtensor::index<2> i_01, i_10;
             i_01[0] = 0; i_01[1] = 1;
             i_10[0] = 1; i_10[1] = 1;
-            index<2> istart_01 = bis.get_block_start(i_01);
-            index<2> istart_10 = bis.get_block_start(i_10);
+            libtensor::index<2> istart_01 = bis.get_block_start(i_01);
+            libtensor::index<2> istart_10 = bis.get_block_start(i_10);
             dimensions<2> dims_01 = bis.get_block_dims(i_01);
             dimensions<2> dims_10 = bis.get_block_dims(i_10);
             double *p = NULL;
@@ -552,7 +552,7 @@ int test_6() {
                 p = tctrl_01.req_dataptr();
                 abs_index<2> aii(dims_01);
                 do {
-                    index<2> ii(aii.get_index()), iii(istart_01);
+                    libtensor::index<2> ii(aii.get_index()), iii(istart_01);
                     for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
                     abs_index<2> aiii(iii, dims);
                     pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] = drand48();
@@ -567,7 +567,7 @@ int test_6() {
                 p = tctrl_10.req_dataptr();
                 abs_index<2> aii(dims_10);
                 do {
-                    index<2> ii(aii.get_index()), iii(istart_10);
+                    libtensor::index<2> ii(aii.get_index()), iii(istart_10);
                     for(size_t j = 0; j < 2; j++) iii[j] += ii[j];
                     abs_index<2> aiii(iii, dims);
                     pt_ref[aiii.get_abs_index()] = p[aii.get_abs_index()] = drand48();
@@ -616,7 +616,7 @@ int test_7() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -648,11 +648,11 @@ int test_7() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_01, i_10;
+            libtensor::index<2> i_01, i_10;
             i_01[0] = 0; i_01[1] = 1;
             i_10[0] = 1; i_10[1] = 0;
-            index<2> istart_01 = bis.get_block_start(i_01);
-            index<2> istart_10 = bis.get_block_start(i_10);
+            libtensor::index<2> istart_01 = bis.get_block_start(i_01);
+            libtensor::index<2> istart_10 = bis.get_block_start(i_10);
             dimensions<2> dims_01 = bis.get_block_dims(i_01);
             double *p = NULL;
             permutation<2> perm; perm.permute(0, 1);
@@ -663,9 +663,9 @@ int test_7() {
                 p = tctrl_01.req_dataptr();
                 abs_index<2> aii(dims_01);
                 do {
-                    index<2> ii(aii.get_index());
-                    index<2> iii1(istart_01), iii2(istart_10);
-                    index<2> ii2(ii); ii2.permute(perm);
+                    libtensor::index<2> ii(aii.get_index());
+                    libtensor::index<2> iii1(istart_01), iii2(istart_10);
+                    libtensor::index<2> ii2(ii); ii2.permute(perm);
                     for(size_t j = 0; j < 2; j++) {
                         iii1[j] += ii[j];
                         iii2[j] += ii2[j];
@@ -719,7 +719,7 @@ int test_8() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bis(dims);
@@ -751,14 +751,14 @@ int test_8() {
                 pt_ref[i] = 0.0;
             }
 
-            index<2> i_00, i_01, i_10, i_11;
+            libtensor::index<2> i_00, i_01, i_10, i_11;
             i_01[0] = 0; i_01[1] = 1;
             i_10[0] = 1; i_10[1] = 0;
             i_11[0] = 1; i_11[1] = 1;
-            index<2> istart_00 = bis.get_block_start(i_00);
-            index<2> istart_01 = bis.get_block_start(i_01);
-            index<2> istart_10 = bis.get_block_start(i_10);
-            index<2> istart_11 = bis.get_block_start(i_11);
+            libtensor::index<2> istart_00 = bis.get_block_start(i_00);
+            libtensor::index<2> istart_01 = bis.get_block_start(i_01);
+            libtensor::index<2> istart_10 = bis.get_block_start(i_10);
+            libtensor::index<2> istart_11 = bis.get_block_start(i_11);
             dimensions<2> dims_00 = bis.get_block_dims(i_00);
             dimensions<2> dims_01 = bis.get_block_dims(i_01);
             dimensions<2> dims_11 = bis.get_block_dims(i_11);
@@ -771,10 +771,10 @@ int test_8() {
                 p = tctrl_00.req_dataptr();
                 abs_index<2> aii(dims_00);
                 do {
-                    index<2> ii(aii.get_index());
+                    libtensor::index<2> ii(aii.get_index());
                     if(ii[0] > ii[1]) continue;
-                    index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-                    index<2> iii1(istart_00), iii2(istart_00);
+                    libtensor::index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+                    libtensor::index<2> iii1(istart_00), iii2(istart_00);
                     for(size_t j = 0; j < 2; j++) {
                         iii1[j] += ii1[j];
                         iii2[j] += ii2[j];
@@ -796,9 +796,9 @@ int test_8() {
                 p = tctrl_01.req_dataptr();
                 abs_index<2> aii(dims_01);
                 do {
-                    index<2> ii(aii.get_index());
-                    index<2> iii1(istart_01), iii2(istart_10);
-                    index<2> ii2(ii); ii2.permute(perm);
+                    libtensor::index<2> ii(aii.get_index());
+                    libtensor::index<2> iii1(istart_01), iii2(istart_10);
+                    libtensor::index<2> ii2(ii); ii2.permute(perm);
                     for(size_t j = 0; j < 2; j++) {
                         iii1[j] += ii[j];
                         iii2[j] += ii2[j];
@@ -818,10 +818,10 @@ int test_8() {
                 p = tctrl_11.req_dataptr();
                 abs_index<2> aii(dims_11);
                 do {
-                    index<2> ii(aii.get_index());
+                    libtensor::index<2> ii(aii.get_index());
                     if(ii[0] > ii[1]) continue;
-                    index<2> ii1(ii), ii2(ii); ii2.permute(perm);
-                    index<2> iii1(istart_11), iii2(istart_11);
+                    libtensor::index<2> ii1(ii), ii2(ii); ii2.permute(perm);
+                    libtensor::index<2> iii1(istart_11), iii2(istart_11);
                     for(size_t j = 0; j < 2; j++) {
                         iii1[j] += ii1[j];
                         iii2[j] += ii2[j];
@@ -877,7 +877,7 @@ int test_9() {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bis(dims);
@@ -913,12 +913,12 @@ int test_9() {
                 pt_ref[i] = 0.0;
             }
 
-            index<4> i_0001, i_0010, i_0100, i_1000;
+            libtensor::index<4> i_0001, i_0010, i_0100, i_1000;
             i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
             i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
             i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
             i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
-            index<4> istart_0001 = bis.get_block_start(i_0001);
+            libtensor::index<4> istart_0001 = bis.get_block_start(i_0001);
             dimensions<4> dims_0001 = bis.get_block_dims(i_0001);
             double *p = NULL;
             permutation<4> perm; perm.permute(0, 1).permute(1, 2).permute(2, 3);
@@ -936,17 +936,17 @@ int test_9() {
 
                 abs_index<4> aii(dims_0001);
                 do {
-                    index<4> ii(aii.get_index());
+                    libtensor::index<4> ii(aii.get_index());
                     if(ii[0] > ii[1] || ii[1] > ii[2]) continue;
-                    index<4> ii1(ii), ii2(ii), ii3(ii), ii4(ii), ii5(ii);
+                    libtensor::index<4> ii1(ii), ii2(ii), ii3(ii), ii4(ii), ii5(ii);
                     ii1.permute(perm1);
                     ii2.permute(perm2);
                     ii3.permute(perm3);
                     ii4.permute(perm4);
                     ii5.permute(perm5);
                     double d = drand48();
-                    index<4> iii(istart_0001);
-                    index<4> iii0, iii1, iii2, iii3, iii4, iii5;
+                    libtensor::index<4> iii(istart_0001);
+                    libtensor::index<4> iii0, iii1, iii2, iii3, iii4, iii5;
                     for(size_t k = 0; k < 4; k++) {
                         iii0[k] = iii[k] + ii[k];
                         iii1[k] = iii[k] + ii1[k];
@@ -1020,7 +1020,7 @@ int test_10() {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bis(dims);
@@ -1047,12 +1047,12 @@ int test_10() {
                 pt_ref[i] = 0.0;
             }
 
-            index<4> i_0001, i_0010, i_0100, i_1000;
+            libtensor::index<4> i_0001, i_0010, i_0100, i_1000;
             i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
             i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
             i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
             i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
-            index<4> istart_0010 = bis.get_block_start(i_0010);
+            libtensor::index<4> istart_0010 = bis.get_block_start(i_0010);
             dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
             double *p = NULL;
             permutation<4> perm; perm.permute(0, 2);
@@ -1064,8 +1064,8 @@ int test_10() {
 
                 abs_index<4> aii(dims_0010);
                 do {
-                    index<4> ii(aii.get_index()), iii(istart_0010);
-                    index<4> iii0;
+                    libtensor::index<4> ii(aii.get_index()), iii(istart_0010);
+                    libtensor::index<4> iii0;
                     for(size_t k = 0; k < 4; k++) iii0[k] = iii[k] + ii[k];
                     double d = drand48();
                     abs_index<4> aiii0(iii0, dims);
@@ -1115,7 +1115,7 @@ int test_11() {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 10; i2[1] = 9; i2[2] = 10; i2[3] = 9;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bis(dims);
@@ -1153,12 +1153,12 @@ int test_11() {
                 pt_ref[i] = 0.0;
             }
 
-            index<4> i_0001, i_0010, i_0100, i_1000;
+            libtensor::index<4> i_0001, i_0010, i_0100, i_1000;
             i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
             i_0010[0] = 0; i_0010[1] = 0; i_0010[2] = 1; i_0010[3] = 0;
             i_0100[0] = 0; i_0100[1] = 1; i_0100[2] = 0; i_0100[3] = 0;
             i_1000[0] = 1; i_1000[1] = 0; i_1000[2] = 0; i_1000[3] = 0;
-            index<4> istart_0010 = bis.get_block_start(i_0010);
+            libtensor::index<4> istart_0010 = bis.get_block_start(i_0010);
             dimensions<4> dims_0010 = bis.get_block_dims(i_0010);
             double *p = NULL;
             permutation<4> perm; perm.permute(0, 2);
@@ -1171,13 +1171,13 @@ int test_11() {
 
                 abs_index<4> aii(dims_0010);
                 do {
-                    index<4> ii(aii.get_index());
+                    libtensor::index<4> ii(aii.get_index());
                     if(ii[1] > ii[3]) continue;
-                    index<4> ii1(ii);
+                    libtensor::index<4> ii1(ii);
                     ii1.permute(perm1);
                     double d = drand48();
-                    index<4> iii(istart_0010);
-                    index<4> iii0, iii1;
+                    libtensor::index<4> iii(istart_0010);
+                    libtensor::index<4> iii0, iii1;
                     for(size_t k = 0; k < 4; k++) {
                         iii0[k] = iii[k] + ii[k];
                         iii1[k] = iii[k] + ii1[k];
@@ -1232,7 +1232,7 @@ int test_12() {
 
     try {
 
-        index<3> i1, i2;
+        libtensor::index<3> i1, i2;
         i2[0] = 10; i2[1] = 10; i2[2] = 10;
         dimensions<3> dims(index_range<3>(i1, i2));
         block_index_space<3> bis(dims);
@@ -1244,7 +1244,7 @@ int test_12() {
         block_tensor<3, double, allocator_t> bta(bis), btb(bis);
         block_tensor_ctrl<3, double> ctrla(bta), ctrlb(btb);
 
-        index<3> i012, i021, i022, i102, i111, i120, i201, i202, i210, i220;
+        libtensor::index<3> i012, i021, i022, i102, i111, i120, i201, i202, i210, i220;
         i012[0] = 0; i012[1] = 1; i012[2] = 2;
         i021[0] = 0; i021[1] = 2; i021[2] = 1;
         i022[0] = 0; i022[1] = 2; i022[2] = 2;

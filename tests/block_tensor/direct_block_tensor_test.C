@@ -49,7 +49,7 @@ void direct_block_tensor_test::test_op_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -105,7 +105,7 @@ void direct_block_tensor_test::test_op_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -116,7 +116,7 @@ void direct_block_tensor_test::test_op_2() {
     block_tensor<2, double, allocator_type> bta(bis);
     btod_random<2>().perform(bta);
     block_tensor_ctrl<2, double> ctrl(bta);
-    index<2> i01, i10;
+    libtensor::index<2> i01, i10;
     i01[0] = 0; i01[1] = 1;
     i10[0] = 1; i10[1] = 0;
     ctrl.req_zero_block(i01);
@@ -175,7 +175,7 @@ void direct_block_tensor_test::test_op_3() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -239,7 +239,7 @@ void direct_block_tensor_test::test_op_4() {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 9; i2b[1] = 9;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     block_index_space<2> bis2(dims2);
@@ -249,7 +249,7 @@ void direct_block_tensor_test::test_op_4() {
     bis2.split(m2, 6);
     bis2.split(m2, 8);
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 9; i4b[1] = 9; i4b[2] = 9; i4b[3] = 9;
     dimensions<4> dims4(index_range<4>(i4a, i4b));
     block_index_space<4> bis4(dims4);
@@ -323,7 +323,7 @@ void direct_block_tensor_test::test_op_5() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -380,7 +380,7 @@ void direct_block_tensor_test::test_op_6() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);

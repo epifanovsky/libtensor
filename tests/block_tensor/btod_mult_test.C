@@ -101,7 +101,7 @@ void btod_mult_test::test_1(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -163,7 +163,7 @@ void btod_mult_test::test_2(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -227,7 +227,7 @@ void btod_mult_test::test_3(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -262,7 +262,7 @@ void btod_mult_test::test_3(
 
     { // set zero blocks
     block_tensor_ctrl<2, double> cbta(bta);
-    index<2> idxa;
+    libtensor::index<2> idxa;
     idxa[0] = 0; idxa[1] = 2;
     orbit<2, double> oa(cbta.req_const_symmetry(), idxa);
     abs_index<2> cidxa(oa.get_acindex(), bidims);
@@ -316,7 +316,7 @@ void btod_mult_test::test_4(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 7; i2[3] = 7;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -352,7 +352,7 @@ void btod_mult_test::test_4(
 
     {
     block_tensor_ctrl<4, double> cbta(bta);
-    index<4> idxa;
+    libtensor::index<4> idxa;
     idxa[0] = 0; idxa[1] = 1; idxa[2] = 1; idxa[3] = 0;
     orbit<4, double> oa(cbta.req_const_symmetry(), idxa);
     abs_index<4> cidxa(oa.get_acindex(), bidims);
@@ -406,7 +406,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -454,7 +454,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
             fail_test(testname.str().c_str(), __FILE__, __LINE__,
                     "Permutational symmetry missing.");
 
-        index<2> idx;
+        libtensor::index<2> idx;
         tensor_transf<2, double> tr;
         for (symmetry_element_set<2, double>::const_iterator iss =
                 set.begin(); iss != set.end(); iss++) {
@@ -507,7 +507,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 7; i2[3] = 7;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -559,7 +559,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
             fail_test(testname.str().c_str(), __FILE__, __LINE__,
                     "Permutational symmetry missing.");
 
-        index<4> idx;
+        libtensor::index<4> idx;
         tensor_transf<4, double> tr;
         for (symmetry_element_set<4, double>::const_iterator iss =
                 set.begin(); iss != set.end(); iss++) {
@@ -622,7 +622,7 @@ void btod_mult_test::test_7(bool label, bool part,
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 7; i2[3] = 7;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -719,7 +719,7 @@ void btod_mult_test::test_7(bool label, bool part,
 
     if (part) {
         se_part<4, double> sp1(bis, msk, 2), sp2(bis, msk, 2);
-        index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+        libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
             i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
         i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
@@ -832,7 +832,7 @@ void btod_mult_test::test_8a(bool label, bool part)
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -877,7 +877,7 @@ void btod_mult_test::test_8a(bool label, bool part)
 
     if (part) {
         se_part<2, double> spa(bis, m, 2), spb(bis, m, 2);
-        index<2> i00, i11, i01, i10;
+        libtensor::index<2> i00, i11, i01, i10;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
 
@@ -957,7 +957,7 @@ void btod_mult_test::test_8b(bool label, bool part)
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 5; i2[1] = 5; i2[2] = 7; i2[3] = 7;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -1010,7 +1010,7 @@ void btod_mult_test::test_8b(bool label, bool part)
 
     if (part) {
         se_part<4, double> spa(bis, m, 2), spb(bis, m, 2);
-        index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+        libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
             i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
         i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;

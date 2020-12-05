@@ -21,7 +21,7 @@ int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -85,7 +85,7 @@ int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -145,7 +145,7 @@ int test_pq_qp(bool recip, double coeff) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -211,7 +211,7 @@ int test_qp_pq(bool recip, double coeff) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -277,7 +277,7 @@ int test_qp_qp(bool recip, double coeff) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -345,7 +345,7 @@ int test_pqrs_qprs(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = nl - 1;
     index_range<4> ir(i1, i2);
     dimensions<4> dima(ir), dimb(ir);
@@ -427,7 +427,7 @@ int test_pqrs_qrps(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = nl - 1;
     index_range<4> ir(i1, i2);
     dimensions<4> dima(ir), dimb(ir);
@@ -508,7 +508,7 @@ int test_pqsr_pqrs(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = nl - 1;
     index_range<4> ir(i1, i2);
     dimensions<4> dima(ir), dimb(ir);
@@ -591,7 +591,7 @@ int test_prsq_qrps(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = nl - 1;
     index_range<4> ir(i1, i2);
     dimensions<4> dims(ir), dima(ir), dimb(ir);

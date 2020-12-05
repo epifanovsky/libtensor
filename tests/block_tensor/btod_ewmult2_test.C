@@ -58,9 +58,9 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
 
     try {
 
-    index<1> ia1, ia2;
-    index<1> ib1, ib2;
-    index<1> ic1, ic2;
+    libtensor::index<1> ia1, ia2;
+    libtensor::index<1> ib1, ib2;
+    libtensor::index<1> ic1, ic2;
     ia2[0] = 9;
     ib2[0] = 9;
     ic2[0] = 9;
@@ -134,9 +134,9 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 
     try {
 
-    index<2> ia1, ia2;
-    index<2> ib1, ib2;
-    index<2> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<2> ib1, ib2;
+    libtensor::index<2> ic1, ic2;
     ia2[0] = 9; ia2[1] = 5;
     ib2[0] = 9; ib2[1] = 5;
     ic2[0] = 9; ic2[1] = 5;
@@ -218,9 +218,9 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 
     try {
 
-    index<2> ia1, ia2;
-    index<2> ib1, ib2;
-    index<2> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<2> ib1, ib2;
+    libtensor::index<2> ic1, ic2;
     ia2[0] = 9; ia2[1] = 5;
     ib2[0] = 5; ib2[1] = 9;
     ic2[0] = 9; ic2[1] = 5;
@@ -302,9 +302,9 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 
     try {
 
-    index<2> ia1, ia2;
-    index<3> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<3> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = 9; ia2[1] = 5;
     ib2[0] = 5; ib2[1] = 9; ib2[2] = 9;
     ic2[0] = 5; ic2[1] = 5; ic2[2] = 9; ic2[3] = 9;
@@ -394,9 +394,9 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 
     try {
 
-    index<3> ia1, ia2;
-    index<3> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<3> ia1, ia2;
+    libtensor::index<3> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = 9; ia2[1] = 9; ia2[2] = 5;
     ib2[0] = 9; ib2[1] = 5; ib2[2] = 9;
     ic2[0] = 5; ic2[1] = 9; ic2[2] = 5; ic2[3] = 9;
@@ -491,9 +491,9 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
     try {
 
     size_t ni = 10, nj = 10, nk = 8, nl = 8;
-    index<3> ia1, ia2;
-    index<3> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<3> ia1, ia2;
+    libtensor::index<3> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = ni - 1; ia2[1] = nk - 1; ia2[2] = nl - 1;
     ib2[0] = nj - 1; ib2[1] = nk - 1; ib2[2] = nl - 1;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
@@ -625,9 +625,9 @@ void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
     try {
 
     size_t ni = 10, nj = 9, nk = 8;
-    index<2> ia1, ia2;
-    index<2> ib1, ib2;
-    index<3> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<2> ib1, ib2;
+    libtensor::index<3> ic1, ic2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
     ib2[0] = ni - 1; ib2[1] = nk - 1;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;

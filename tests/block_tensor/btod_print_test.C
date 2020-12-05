@@ -53,7 +53,7 @@ void btod_print_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 4; i2[1] = 5;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -87,7 +87,7 @@ void btod_print_test::test_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 4; i2[1] = 5;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -125,7 +125,7 @@ void btod_print_test::test_3() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 4; i2[1] = 5;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -157,7 +157,7 @@ void btod_print_test::test_4() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 4; i2[1] = 5;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -168,7 +168,7 @@ void btod_print_test::test_4() throw(libtest::test_exception) {
 
     block_tensor<2, double, allocator_t> bt(bis), bt_ref(bis);
 
-    index<2> ii;
+    libtensor::index<2> ii;
     btod_random<2> rand;
     rand.perform(bt, ii);
     ii[0] = 1; ii[1] = 1;
@@ -199,7 +199,7 @@ void btod_print_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 4; i2[1] = 5; i2[2] = 4; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -232,7 +232,7 @@ void btod_print_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 4; i2[1] = 5; i2[2] = 4; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -271,7 +271,7 @@ void btod_print_test::test_7() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 1; i2[1] = 1;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -309,7 +309,7 @@ void btod_print_test::test_8() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -345,7 +345,7 @@ void btod_print_test::test_9() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -389,7 +389,7 @@ void btod_print_test::test_10() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 4; i2[1] = 4; i2[2] = 5; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);

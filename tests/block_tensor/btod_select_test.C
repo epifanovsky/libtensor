@@ -104,7 +104,7 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2; i2[0] = 3; i2[1] = 4;
+    libtensor::index<2> i1, i2; i2[0] = 3; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     block_tensor<2, double, allocator_t> bt(bis);
@@ -135,8 +135,8 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        index<2> idx = bis.get_block_start(ibt->get_block_index());
-        const index<2> &iblidx = ibt->get_in_block_index();
+        libtensor::index<2> idx = bis.get_block_start(ibt->get_block_index());
+        const libtensor::index<2> &iblidx = ibt->get_in_block_index();
         idx[0] += iblidx[0];
         idx[1] += iblidx[1];
         if (! idx.equals(it->get_index())) {
@@ -168,7 +168,7 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2; i2[0] = 5; i2[1] = 8;
+    libtensor::index<2> i1, i2; i2[0] = 5; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m01, m10; m01[1] = true; m10[0] = true;
@@ -200,8 +200,8 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
             fail_test(testname, __FILE__, __LINE__, oss.str().c_str());
         }
 
-        index<2> idx = bis.get_block_start(ibt->get_block_index());
-        const index<2> &iblidx = ibt->get_in_block_index();
+        libtensor::index<2> idx = bis.get_block_start(ibt->get_block_index());
+        const libtensor::index<2> &iblidx = ibt->get_in_block_index();
         idx[0] += iblidx[0];
         idx[1] += iblidx[1];
         if (! idx.equals(it->get_index())) {
@@ -237,7 +237,7 @@ void btod_select_test::test_3a(size_t n,
 
     try {
 
-    index<2> i1, i2; i2[0] = 8; i2[1] = 8;
+    libtensor::index<2> i1, i2; i2[0] = 8; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[0] = true; m11[1] = true;
@@ -285,8 +285,8 @@ void btod_select_test::test_3a(size_t n,
 
         while (it != tlist.end() && it->get_value() == ibt->get_value()) {
 
-            index<2> idx = bis.get_block_start(ibt->get_block_index());
-            const index<2> &iblidx = ibt->get_in_block_index();
+            libtensor::index<2> idx = bis.get_block_start(ibt->get_block_index());
+            const libtensor::index<2> &iblidx = ibt->get_in_block_index();
             idx[0] += iblidx[0];
             idx[1] += iblidx[1];
             if (idx.equals(it->get_index())) break;
@@ -332,7 +332,7 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2; i2[0] = 8; i2[1] = 8;
+    libtensor::index<2> i1, i2; i2[0] = 8; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[0] = true; m11[1] = true;
@@ -384,8 +384,8 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
 
         while (it != tlist.end() && it->get_value() == ibt->get_value()) {
 
-            index<2> idx = bis.get_block_start(ibt->get_block_index());
-            const index<2> &iblidx = ibt->get_in_block_index();
+            libtensor::index<2> idx = bis.get_block_start(ibt->get_block_index());
+            const libtensor::index<2> &iblidx = ibt->get_in_block_index();
             idx[0] += iblidx[0];
             idx[1] += iblidx[1];
             if (idx.equals(it->get_index())) break;
@@ -432,7 +432,7 @@ void btod_select_test::test_3c(size_t n,
 
     try {
 
-    index<2> i1, i2; i2[0] = 9; i2[1] = 9;
+    libtensor::index<2> i1, i2; i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[0] = true; m11[1] = true;
@@ -440,7 +440,7 @@ void btod_select_test::test_3c(size_t n,
     block_tensor<2, double, allocator_t> bt(bis);
     dense_tensor<2, double, allocator_t> t_ref(dims);
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
 
@@ -501,8 +501,8 @@ void btod_select_test::test_3c(size_t n,
 
         while (it != tlist.end() && it->get_value() == ibt->get_value()) {
 
-            index<2> idx = bis.get_block_start(ibt->get_block_index());
-            const index<2> &iblidx = ibt->get_in_block_index();
+            libtensor::index<2> idx = bis.get_block_start(ibt->get_block_index());
+            const libtensor::index<2> &iblidx = ibt->get_in_block_index();
             idx[0] += iblidx[0];
             idx[1] += iblidx[1];
             if (idx.equals(it->get_index())) break;
@@ -549,7 +549,7 @@ void btod_select_test::test_4a(size_t n,
 
     try {
 
-    index<2> i1, i2; i2[0] = 8; i2[1] = 8;
+    libtensor::index<2> i1, i2; i2[0] = 8; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[1] = true; m11[0] = true;
@@ -626,7 +626,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2; i2[0] = 8; i2[1] = 8;
+    libtensor::index<2> i1, i2; i2[0] = 8; i2[1] = 8;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[1] = true; m11[0] = true;
@@ -708,7 +708,7 @@ void btod_select_test::test_4c(size_t n,
 
     try {
 
-    index<2> i1, i2; i2[0] = 7; i2[1] = 7;
+    libtensor::index<2> i1, i2; i2[0] = 7; i2[1] = 7;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[1] = true; m11[0] = true;
@@ -718,7 +718,7 @@ void btod_select_test::test_4c(size_t n,
 
     { // Setup symmetries
         se_part<2, double> sp(bis, m11, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         scalar_transf<double> tr0, tr1(-1.);
@@ -790,7 +790,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2; i2[0] = 9; i2[1] = 9;
+    libtensor::index<2> i1, i2; i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
     mask<2> m11; m11[1] = true; m11[0] = true;
@@ -813,7 +813,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
         bl.assign(m11, 3, 1);
         sl.set_rule(1);
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         sp1.add_map(i00, i01, tr1);
@@ -840,7 +840,7 @@ void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
         for (orbit_list<2, double>::iterator it = ol.begin();
                 it != ol.end(); it++) {
 
-            index<2> ib;
+            libtensor::index<2> ib;
             ol.get_index(it, ib);
             orbit<2, double> oa(ca.req_const_symmetry(), ib);
             if (! oa.is_allowed()) continue;

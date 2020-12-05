@@ -62,7 +62,7 @@ void so_reduce_se_label_test::test_empty_1(
 
     mask<4> msk; msk[2] = msk[3] = true;
     sequence<4, size_t> seq(0);
-    index<4> ia, ib; ib[2] = ib[3] = 2;
+    libtensor::index<4> ia, ib; ib[2] = ib[3] = 2;
     index_range<4> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -93,7 +93,7 @@ void so_reduce_se_label_test::test_empty_2(
 
     mask<5> msk; msk[0] = msk[1] = msk[2] = msk[3] = true;
     sequence<5, size_t> seq(0); seq[2] = seq[3] = 1;
-    index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = 2;
+    libtensor::index<5> ia, ib; ib[0] = ib[1] = ib[2] = ib[3] = 2;
     index_range<5> ir(ia, ib);
     symmetry_operation_params<so_reduce_t> params(set1, msk, seq, ir, ir, set2);
 
@@ -119,7 +119,7 @@ void so_reduce_se_label_test::test_nm1_1(
     typedef so_reduce<3, 2, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se1_t> so_reduce_se_t;
 
-    index<3> i1a, i1b;
+    libtensor::index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
     dimensions<3> bidims1(index_range<3>(i1a, i1b));
     se3_t el1(bidims1, table_id);
@@ -180,7 +180,7 @@ void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
     typedef so_reduce<4, 2, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
 
@@ -257,7 +257,7 @@ void so_reduce_se_label_test::test_nm1_3(const std::string &table_id,
     typedef so_reduce<4, 2, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
 
@@ -327,7 +327,7 @@ void so_reduce_se_label_test::test_nm1_4(
     typedef so_reduce<6, 2, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se4_t> so_reduce_se_t;
 
-    index<6> i1a, i1b;
+    libtensor::index<6> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 0; i1b[3] = 3; i1b[4] = 3; i1b[5] = 0;
     dimensions<6> bidims1(index_range<6>(i1a, i1b));
 
@@ -413,7 +413,7 @@ void so_reduce_se_label_test::test_nm1_5(
     typedef so_reduce<3, 2, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se1_t> so_reduce_se_t;
 
-    index<3> i1a, i1b;
+    libtensor::index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
     dimensions<3> bidims1(index_range<3>(i1a, i1b));
     se3_t el1(bidims1, table_id);
@@ -477,7 +477,7 @@ void so_reduce_se_label_test::test_nm1_6() throw(libtest::test_exception) {
 
     try {
 
-    index<6> i1a, i1b;
+    libtensor::index<6> i1a, i1b;
     i1b[0] = 1; i1b[1] = 1; i1b[2] = 1; i1b[3] = 7; i1b[4] = 1; i1b[5] = 1;
     dimensions<6> bidims1(index_range<6>(i1a, i1b));
     se6_t el1(bidims1, pg);
@@ -502,7 +502,7 @@ void so_reduce_se_label_test::test_nm1_6() throw(libtest::test_exception) {
     set1.insert(el1);
     mask<6> m; m[4] = m[5] = true;
     sequence<6, size_t> seq(0);
-    index<6> i2a, i2b;
+    libtensor::index<6> i2a, i2b;
     i2b[0] = 4; i2b[1] = 4; i2b[2] = 4; i2b[3] = 0; i2b[4] = 4; i2b[5] = 4;
     index_range<6> bir(i1a, i1b), ir(i2a, i2b);
     symmetry_operation_params<so_reduce_t> params(set1, m, seq, bir, ir, set2);
@@ -556,7 +556,7 @@ void so_reduce_se_label_test::test_nm1_7() throw(libtest::test_exception) {
 
     try {
  
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[2] = 5; i1b[3] = 5;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
     se4_t el1(bidims1, pg);
@@ -584,7 +584,7 @@ void so_reduce_se_label_test::test_nm1_7() throw(libtest::test_exception) {
     set1.insert(el1);
     mask<4> m; m[2] = m[3] = true;
     sequence<4, size_t> seq(0);
-    index<4> i2a, i2b;
+    libtensor::index<4> i2a, i2b;
     index_range<4> bir(i1a, i1b), ir(i2a, i2b);
     symmetry_operation_params<so_reduce_t> params(set1, m, seq, bir, ir, set2);
 
@@ -631,7 +631,7 @@ void so_reduce_se_label_test::test_nmk_1(
     typedef so_reduce<6, 4, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
-    index<6> i1a, i1b;
+    libtensor::index<6> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3; i1b[5] = 3;
     dimensions<6> bidims1(index_range<6>(i1a, i1b));
 
@@ -693,7 +693,7 @@ void so_reduce_se_label_test::test_nmk_2(const std::string &table_id,
     typedef so_reduce<6, 4, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se2_t> so_reduce_se_t;
 
-    index<6> i1a, i1b;
+    libtensor::index<6> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3; i1b[5] = 3;
     dimensions<6> bidims1(index_range<6>(i1a, i1b));
 
@@ -772,7 +772,7 @@ void so_reduce_se_label_test::test_nmk_3(
     typedef so_reduce<6, 3, double> so_reduce_t;
     typedef symmetry_operation_impl<so_reduce_t, se3_t> so_reduce_se_t;
 
-    index<6> i1a, i1b;
+    libtensor::index<6> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3; i1b[4] = 3; i1b[5] = 3;
     dimensions<6> bidims1(index_range<6>(i1a, i1b));
 
@@ -838,7 +838,7 @@ void so_reduce_se_label_test::test_nmk_4() throw(libtest::test_exception) {
 
     try {
 
-    index<7> i1a, i1b;
+    libtensor::index<7> i1a, i1b;
     i1b[0] = i1b[1] = i1b[2] = i1b[3] = i1b[4] = i1b[5] = i1b[6] = 3;
     dimensions<7> bidims1(index_range<7>(i1a, i1b));
 

@@ -25,7 +25,6 @@ set(TESTS
     symmetry_element_set_test
     symmetry_test
     transf_list_test
-    version_test
 )
 
 libtensor_add_tests(core ${TESTS})

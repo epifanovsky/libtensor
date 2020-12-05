@@ -7,20 +7,42 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-10.15]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
+    - name: Install dependencies on Linux
       run: |
-        sudo apt-get install libopenblas-dev
+        sudo apt-get install libopenblas-dev ninja-build ccache
+      if: contains( matrix.os, 'ubuntu')
+    - name: Install dependencies on macOS
+      run: |
+        brew install ninja ccache libomp
+        brew install coreutils || true
+      if: contains( matrix.os, 'macos')
+    - uses: actions/cache@v1
+      env:
+        cache-name: cache-artifacts
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-deploy-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-deploy-
+          ${{ runner.os }}-
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
 
     - name: Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: |
+        export PATH="/usr/local/opt/ccache/libexec:$PATH"
+        export PATH="/usr/lib/ccache:$PATH"
+        cmake $GITHUB_WORKSPACE -GNinja -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/build

@@ -37,7 +37,7 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        index<2> ix;
+        libtensor::index<2> ix;
         tensor_transf<2, double> tr;
         elem.apply(ix, tr);
 
@@ -50,7 +50,7 @@ void se_perm_test::test_sym_ab_ba() throw(libtest::test_exception) {
                     "Incorrect transformation coefficient.");
         }
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 5; i2[1] = 5;
         dimensions<2> dims1(index_range<2>(i1, i2));
         block_index_space<2> bis1(dims1);
@@ -105,7 +105,7 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        index<2> ix;
+        libtensor::index<2> ix;
         tensor_transf<2, double> tr;
         elem.apply(ix, tr);
 
@@ -118,7 +118,7 @@ void se_perm_test::test_asym_ab_ba() throw(libtest::test_exception) {
                     "Incorrect transformation coefficient.");
         }
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 5; i2[1] = 5;
         dimensions<2> dims1(index_range<2>(i1, i2));
         block_index_space<2> bis1(dims1);
@@ -173,7 +173,7 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        index<3> ix;
+        libtensor::index<3> ix;
         tensor_transf<3, double> tr;
         elem.apply(ix, tr);
 
@@ -186,7 +186,7 @@ void se_perm_test::test_sym_abc_bca() throw(libtest::test_exception) {
                     "tr.get_coeff() != 1.0");
         }
 
-        index<3> i1, i2;
+        libtensor::index<3> i1, i2;
         i2[0] = 5; i2[1] = 5; i2[2] = 5;
         dimensions<3> dims1(index_range<3>(i1, i2));
         block_index_space<3> bis1(dims1);
@@ -266,7 +266,7 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        index<4> ix;
+        libtensor::index<4> ix;
         tensor_transf<4, double> tr;
         elem.apply(ix, tr);
 
@@ -279,7 +279,7 @@ void se_perm_test::test_sym_abcd_badc() throw(libtest::test_exception) {
                     "tr.get_coeff() != 1.0");
         }
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 5; i2[1] = 5; i2[2] = 5; i2[3] = 5;
         dimensions<4> dims1(index_range<4>(i1, i2));
         block_index_space<4> bis1(dims1);
@@ -343,7 +343,7 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
                     "!elem.get_perm().equals(perm)");
         }
 
-        index<4> ix;
+        libtensor::index<4> ix;
         tensor_transf<4, double> tr;
         elem.apply(ix, tr);
 
@@ -356,7 +356,7 @@ void se_perm_test::test_asym_abcd_badc() throw(libtest::test_exception) {
                     "tr.get_coeff() != -1.0");
         }
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 5; i2[1] = 5; i2[2] = 5; i2[3] = 5;
         dimensions<4> dims1(index_range<4>(i1, i2));
         block_index_space<4> bis1(dims1);

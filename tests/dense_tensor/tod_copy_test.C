@@ -244,8 +244,8 @@ int test_perm(const dimensions<N> &dims, const permutation<N> &perm) {
 
             abs_index<N> aida(dimsa);
             do {
-                index<N> ida(aida.get_index());
-                index<N> idb(ida);
+                libtensor::index<N> ida(aida.get_index());
+                libtensor::index<N> idb(ida);
                 idb.permute(perm);
                 abs_index<N> aidb(idb, dimsb);
                 size_t i, j;
@@ -305,8 +305,8 @@ int test_perm_additive(const dimensions<N> &dims, const permutation<N> &perm,
 
             abs_index<N> aida(dimsa);
             do {
-                index<N> ida(aida.get_index());
-                index<N> idb(ida);
+                libtensor::index<N> ida(aida.get_index());
+                libtensor::index<N> idb(ida);
                 idb.permute(perm);
                 abs_index<N> aidb(idb, dimsb);
                 size_t i, j;
@@ -367,7 +367,7 @@ int test_perm_scaled(const dimensions<N> &dims, const permutation<N> &perm,
 
             abs_index<N> aida(dimsa);
             do {
-                index<N> idb(aida.get_index());
+                libtensor::index<N> idb(aida.get_index());
                 idb.permute(perm);
                 abs_index<N> aidb(idb, dimsb);
                 size_t i, j;
@@ -430,7 +430,7 @@ int test_perm_scaled_additive(const dimensions<N> &dims,
 
             abs_index<N> aida(dimsa);
             do {
-                index<N> idb(aida.get_index());
+                libtensor::index<N> idb(aida.get_index());
                 idb.permute(perm);
                 abs_index<N> aidb(idb, dimsb);
                 size_t i, j;
@@ -470,7 +470,7 @@ int test_perm_scaled_additive(const dimensions<N> &dims,
 
 int test_exc() {
 
-    index<4> i1, i2, i3;
+    libtensor::index<4> i1, i2, i3;
     i2[0] = 2;
     i2[1] = 2;
     i2[2] = 2;
@@ -499,7 +499,7 @@ int test_exc() {
 
 int main() {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10;
     i2b[1] = 12;
     index_range<2> ir2(i2a, i2b);
@@ -507,7 +507,7 @@ int main() {
     permutation<2> perm2, perm2t;
     perm2t.permute(0, 1);
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 4;
     i4b[1] = 5;
     i4b[2] = 6;

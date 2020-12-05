@@ -127,17 +127,17 @@ void btod_contract2_xm_test::test_bis_1() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
 
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 9; ib2[1] = 3;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
         block_index_space<2> bisb(dimsb);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);
@@ -179,7 +179,7 @@ void btod_contract2_xm_test::test_bis_2() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -187,7 +187,7 @@ void btod_contract2_xm_test::test_bis_2() throw(libtest::test_exception) {
         ma1[2] = true;
         bisa.split(ma1, 4);
 
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 9; ib2[1] = 3;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
         block_index_space<2> bisb(dimsb);
@@ -195,7 +195,7 @@ void btod_contract2_xm_test::test_bis_2() throw(libtest::test_exception) {
         mb1[0] = true;
         bisb.split(mb1, 4);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);
@@ -240,7 +240,7 @@ void btod_contract2_xm_test::test_bis_3() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 4; ia2[1] = 4; ia2[2] = 9; ia2[3] = 3;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -250,7 +250,7 @@ void btod_contract2_xm_test::test_bis_3() throw(libtest::test_exception) {
         bisa.split(ma1, 2);
         bisa.split(ma2, 4);
 
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 9; ib2[1] = 3;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
         block_index_space<2> bisb(dimsb);
@@ -258,7 +258,7 @@ void btod_contract2_xm_test::test_bis_3() throw(libtest::test_exception) {
         mb1[0] = true;
         bisb.split(mb1, 4);
 
-        index<4> ic1, ic2;
+        libtensor::index<4> ic1, ic2;
         ic2[0] = 4; ic2[1] = 4; ic2[2] = 9; ic2[3] = 9;
         dimensions<4> dimsc(index_range<4>(ic1, ic2));
         block_index_space<4> bisc_ref(dimsc);
@@ -302,7 +302,7 @@ void btod_contract2_xm_test::test_bis_4() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 10; ia2[3] = 10;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -349,7 +349,7 @@ void btod_contract2_xm_test::test_bis_5() throw(libtest::test_exception) {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 10; ia2[1] = 10; ia2[2] = 10; ia2[3] = 10;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
         block_index_space<4> bisa(dimsa);
@@ -358,7 +358,7 @@ void btod_contract2_xm_test::test_bis_5() throw(libtest::test_exception) {
         bisa.split(ma1, 3);
         bisa.split(ma1, 5);
 
-        index<5> ib1, ib2;
+        libtensor::index<5> ib1, ib2;
         ib2[0] = 10; ib2[1] = 10; ib2[2] = 10; ib2[3] = 10; ib2[4] = 8;
         dimensions<5> dimsb(index_range<5>(ib1, ib2));
         block_index_space<5> bisb(dimsb);
@@ -369,7 +369,7 @@ void btod_contract2_xm_test::test_bis_5() throw(libtest::test_exception) {
         bisb.split(mb1, 5);
         bisb.split(mb2, 4);
 
-        index<3> ic1, ic2;
+        libtensor::index<3> ic1, ic2;
         ic2[0] = 10; ic2[1] = 10; ic2[2] = 8;
         dimensions<3> dimsc(index_range<3>(ic1, ic2));
         block_index_space<3> bisc_ref(dimsc);
@@ -414,7 +414,7 @@ void btod_contract2_xm_test::test_zeroblk_1() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         dimensions<2> dimsb(index_range<2>(i21, i22));
@@ -428,7 +428,7 @@ void btod_contract2_xm_test::test_zeroblk_1() throw(libtest::test_exception) {
 
         //  Load random data for input
 
-        index<2> i_00;
+        libtensor::index<2> i_00;
         btod_random<2>().perform(btb, i_00);
         bta.set_immutable();
         btb.set_immutable();
@@ -467,7 +467,7 @@ void btod_contract2_xm_test::test_zeroblk_2() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         dimensions<2> dimsb(index_range<2>(i21, i22));
@@ -481,7 +481,7 @@ void btod_contract2_xm_test::test_zeroblk_2() throw(libtest::test_exception) {
 
         //  Load random data for input
 
-        index<2> i_00;
+        libtensor::index<2> i_00;
         btod_random<2>().perform(btb, i_00);
         btod_random<2>().perform(btc);
         bta.set_immutable();
@@ -521,7 +521,7 @@ void btod_contract2_xm_test::test_zeroblk_3() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         dimensions<2> dimsb(index_range<2>(i21, i22));
@@ -535,7 +535,7 @@ void btod_contract2_xm_test::test_zeroblk_3() throw(libtest::test_exception) {
 
         //  Load random data for input
 
-        index<2> i_00;
+        libtensor::index<2> i_00;
         btod_random<2>().perform(bta, i_00);
         bta.set_immutable();
         btb.set_immutable();
@@ -574,7 +574,7 @@ void btod_contract2_xm_test::test_zeroblk_4() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         dimensions<2> dimsb(index_range<2>(i21, i22));
@@ -588,7 +588,7 @@ void btod_contract2_xm_test::test_zeroblk_4() throw(libtest::test_exception) {
 
         //  Load random data for input
 
-        index<2> i_00;
+        libtensor::index<2> i_00;
         btod_random<2>().perform(bta, i_00);
         btod_random<2>().perform(btc);
         bta.set_immutable();
@@ -629,7 +629,7 @@ void btod_contract2_xm_test::test_zeroblk_5() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         dimensions<2> dimsb(index_range<2>(i21, i22));
@@ -645,7 +645,7 @@ void btod_contract2_xm_test::test_zeroblk_5() throw(libtest::test_exception) {
 
         //  Load random data for input
 
-        index<2> i_00, i_01, i_10, i_11;
+        libtensor::index<2> i_00, i_01, i_10, i_11;
         i_01[1] = 1; i_10[0] = 1;
         i_11[0] = 1; i_11[1] = 1;
         btod_random<2>().perform(bta, i_00);
@@ -702,7 +702,7 @@ void btod_contract2_xm_test::test_zeroblk_6() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         dimensions<2> dimsb(index_range<2>(i21, i22));
@@ -718,7 +718,7 @@ void btod_contract2_xm_test::test_zeroblk_6() throw(libtest::test_exception) {
 
         //  Load random data for input
 
-        index<2> i_00, i_01, i_10, i_11;
+        libtensor::index<2> i_00, i_01, i_10, i_11;
         i_01[1] = 1; i_10[0] = 1;
         i_11[0] = 1; i_11[1] = 1;
         btod_random<2>().perform(bta, i_00);
@@ -774,7 +774,7 @@ void btod_contract2_xm_test::test_mat_1() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 10;
         dimensions<2> dims(index_range<2>(i1, i2));
         block_index_space<2> bisa(dims);
@@ -841,7 +841,7 @@ void btod_contract2_xm_test::test_mat_2() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 11; i2[1] = 11;
         dimensions<2> dimsa(index_range<2>(i1, i2));
         dimensions<2> dimsb(dimsa), dimsc(dimsa);
@@ -925,7 +925,7 @@ void btod_contract2_xm_test::test_mat_3() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 7; i2[1] = 7;
         dimensions<2> dimsa(index_range<2>(i1, i2));
         dimensions<2> dimsb(dimsa), dimsc(dimsa);
@@ -1005,7 +1005,7 @@ void btod_contract2_xm_test::test_contr_1() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims);
@@ -1074,7 +1074,7 @@ void btod_contract2_xm_test::test_contr_1a() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims);
@@ -1094,7 +1094,7 @@ void btod_contract2_xm_test::test_contr_1a() throw(libtest::test_exception) {
             m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
 //            se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
             se_part<4, double> sp(bisa, m1111, 2);
-            index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+            libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
                      i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
             i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
             i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
@@ -1181,7 +1181,7 @@ void btod_contract2_xm_test::test_contr_1b() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims);
@@ -1202,7 +1202,7 @@ void btod_contract2_xm_test::test_contr_1b() throw(libtest::test_exception) {
             se_perm<4, double> sp10(permutation<4>().permute(0, 1), tr0);
             se_perm<4, double> sp32(permutation<4>().permute(2, 3), tr0);
             se_part<4, double> sp(bisa, m1111, 2);
-            index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+            libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
                      i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
             i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
             i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
@@ -1292,7 +1292,7 @@ void btod_contract2_xm_test::test_contr_2() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims);
@@ -1362,7 +1362,7 @@ void btod_contract2_xm_test::test_contr_3() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
         dimensions<4> dimsa(index_range<4>(i1, i2));
         i2[0] = 5; i2[1] = 5; i2[2] = 11; i2[3] = 11;
@@ -1444,7 +1444,7 @@ void btod_contract2_xm_test::test_contr_4() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
         dimensions<4> dimsa(index_range<4>(i1, i2));
         i2[0] = 11; i2[1] = 11; i2[2] = 11; i2[3] = 11;
@@ -1538,7 +1538,7 @@ void btod_contract2_xm_test::test_contr_5() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
         dimensions<4> dimsa(index_range<4>(i1, i2));
         i2[0] = 5; i2[1] = 5; i2[2] = 11; i2[3] = 11;
@@ -1640,7 +1640,7 @@ void btod_contract2_xm_test::test_contr_6() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
         dimensions<4> dimsa(index_range<4>(i1, i2));
         i2[0] = 5; i2[1] = 5; i2[2] = 11; i2[3] = 11;
@@ -1740,10 +1740,10 @@ void btod_contract2_xm_test::test_contr_7() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 5; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 9; i42[1] = 9; i42[2] = 9; i42[3] = 5;
         dimensions<4> dimsb(index_range<4>(i41, i42));
         i42[0] = 9; i42[1] = 9; i42[2] = 9; i42[3] = 9;
@@ -1818,10 +1818,10 @@ void btod_contract2_xm_test::test_contr_8() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 19;
         dimensions<2> dimsa(index_range<2>(i21, i22));
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 19; i42[1] = 19; i42[2] = 19; i42[3] = 9;
         dimensions<4> dimsb(index_range<4>(i41, i42));
         i42[0] = 19; i42[1] = 19; i42[2] = 19; i42[3] = 19;
@@ -1886,10 +1886,10 @@ void btod_contract2_xm_test::test_contr_9() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 19;
         dimensions<2> dimsa(index_range<2>(i21, i22));
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 19; i42[1] = 19; i42[2] = 19; i42[3] = 9;
         dimensions<4> dimsb(index_range<4>(i41, i42));
         i42[0] = 19; i42[1] = 19; i42[2] = 19; i42[3] = 19;
@@ -1954,10 +1954,10 @@ void btod_contract2_xm_test::test_contr_10() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 19;
         dimensions<2> dimsa(index_range<2>(i21, i22));
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 19; i42[1] = 19; i42[2] = 19; i42[3] = 9;
         dimensions<4> dimsb(index_range<4>(i41, i42));
         i42[0] = 19; i42[1] = 19; i42[2] = 19; i42[3] = 19;
@@ -2011,12 +2011,12 @@ void btod_contract2_xm_test::test_contr_11() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         i22[0] = 19; i22[1] = 19;
         dimensions<2> dimsb(index_range<2>(i21, i22));
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 9; i42[1] = 9; i42[2] = 19; i42[3] = 19;
         dimensions<4> dimsc(index_range<4>(i41, i42));
         block_index_space<2> bisa(dimsa), bisb(dimsb);
@@ -2073,12 +2073,12 @@ void btod_contract2_xm_test::test_contr_12() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 9; i22[1] = 9;
         dimensions<2> dimsa(index_range<2>(i21, i22));
         i22[0] = 19; i22[1] = 19;
         dimensions<2> dimsb(index_range<2>(i21, i22));
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 9; i42[1] = 9; i42[2] = 19; i42[3] = 19;
         dimensions<4> dimsc(index_range<4>(i41, i42));
         block_index_space<2> bisa(dimsa), bisb(dimsb);
@@ -2137,10 +2137,10 @@ void btod_contract2_xm_test::test_contr_13() throw(libtest::test_exception) {
 
     try {
 
-        index<4> i41, i42;
+        libtensor::index<4> i41, i42;
         i42[0] = 19; i42[1] = 9; i42[2] = 9; i42[3] = 19;
         dimensions<4> dimsa(index_range<4>(i41, i42));
-        index<2> i21, i22;
+        libtensor::index<2> i21, i22;
         i22[0] = 19; i22[1] = 19;
         dimensions<2> dimsb(index_range<2>(i21, i22));
         i22[0] = 9; i22[1] = 9;
@@ -2207,7 +2207,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 14; i2[1] = 14; i2[2] = 14; i2[3] = 14;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims);
@@ -2283,7 +2283,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 14; i2[1] = 14; i2[2] = 14; i2[3] = 14;
         dimensions<4> dims(index_range<4>(i1, i2));
         block_index_space<4> bisa(dims);
@@ -2302,7 +2302,7 @@ throw(libtest::test_exception) {
         //  Load random data for input
 
         for(size_t i = 0; i < 3; i++) {
-            index<4> blkidx;
+            libtensor::index<4> blkidx;
             blkidx[0] = i; blkidx[1] = i; blkidx[2] = i;
             btod_random<4>().perform(bta, blkidx);
             btod_random<4>().perform(btb, blkidx);
@@ -2362,7 +2362,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
         dimensions<4> dims_iiaa(index_range<4>(i1, i2));
         i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
@@ -2450,10 +2450,10 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
         dimensions<4> dims_iiaa(index_range<4>(i1, i2));
-        index<2> i3, i4;
+        libtensor::index<2> i3, i4;
         i4[0] = 12; i4[1] = 12;
         dimensions<2> dims_ii(index_range<2>(i3, i4));
         block_index_space<4> bis_iiaa(dims_iiaa);
@@ -2547,12 +2547,12 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
         dimensions<4> dims_iiaa(index_range<4>(i1, i2));
         i2[0] = 12; i2[1] = 6; i2[2] = 12; i2[3] = 6;
         dimensions<4> dims_iaia(index_range<4>(i1, i2));
-        index<2> i3, i4;
+        libtensor::index<2> i3, i4;
         i4[0] = 12; i4[1] = 12;
         dimensions<2> dims_ii(index_range<2>(i3, i4));
         block_index_space<4> bis_iiaa(dims_iiaa), bis_iaia(dims_iaia);
@@ -2645,7 +2645,7 @@ throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1a, i2a, i1b, i2b;
+    libtensor::index<4> i1a, i2a, i1b, i2b;
     i2a[0] = 9; i2a[1] = 9; i2a[2] = 9; i2a[3] = 9;
     i2b[0] = 9; i2b[1] = 9; i2b[2] = 15; i2b[3] = 15;
     dimensions<4> dims_iiii(index_range<4>(i1a, i2a));
@@ -2768,7 +2768,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1a, i2a, i1b, i2b;
+        libtensor::index<2> i1a, i2a, i1b, i2b;
         i2a[0] = 9; i2a[1] = 15;
         i2b[0] = 15; i2b[1] = 15;
 
@@ -2792,7 +2792,7 @@ throw(libtest::test_exception) {
             scalar_transf<double> tr0;
             se_perm<2, double> sp10(permutation<2>().permute(0, 1), tr0);
             se_part<2, double> spa(bisa, m10, 2);
-            index<2> i00, i10; i10[0] = 1;
+            libtensor::index<2> i00, i10; i10[0] = 1;
             spa.add_map(i00, i10, tr0);
 
             block_tensor_ctrl<2, double> ca(bta), cb(btb);
@@ -2850,7 +2850,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1a, i2a, i1b, i2b;
+        libtensor::index<2> i1a, i2a, i1b, i2b;
         i2a[0] = 9; i2a[1] = 15;
         i2b[0] = 15; i2b[1] = 15;
 
@@ -2884,7 +2884,7 @@ throw(libtest::test_exception) {
             scalar_transf<double> tr0;
             se_perm<2, double> sp10(permutation<2>().permute(0, 1), tr0);
             se_part<2, double> spa(bisa, m11, 2), spb(bisb, m11, 2);
-            index<2> i00, i01, i10, i11;
+            libtensor::index<2> i00, i01, i10, i11;
             i10[0] = 1; i01[1] = 1;
             i11[0] = 1; i11[1] = 1;
             spa.add_map(i00, i11, tr0);
@@ -2955,7 +2955,7 @@ throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1a, i2a, i1b, i2b;
+        libtensor::index<2> i1a, i2a, i1b, i2b;
         i2a[0] = 9; i2a[1] = 15;
         i2b[0] = 15; i2b[1] = 15;
 
@@ -2989,7 +2989,7 @@ throw(libtest::test_exception) {
             scalar_transf<double> tr0;
             se_perm<2, double> sp10(permutation<2>().permute(0, 1), tr0);
             se_part<2, double> spa(bisa, m01, 2), spb(bisb, m11, 2);
-            index<2> i00, i01, i10, i11;
+            libtensor::index<2> i00, i01, i10, i11;
             i10[0] = 1; i01[1] = 1;
             i11[0] = 1; i11[1] = 1;
             spa.add_map(i00, i01, tr0);
@@ -3056,10 +3056,10 @@ void btod_contract2_xm_test::test_contr_21() throw(libtest::test_exception) {
 
     try {
 
-        index<2> i1a, i2a, i1c, i2c;
+        libtensor::index<2> i1a, i2a, i1c, i2c;
         i2a[0] = 9; i2a[1] = 11;
         i2c[0] = 9; i2c[1] = 9;
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
 
@@ -3148,18 +3148,18 @@ void btod_contract2_xm_test::test_contr_22() {
 
         size_t ni = 5, nj = ni, nk = 9, nl = nk, np = nk, nq = nk, nr = 11;
 
-        index<3> ia;
+        libtensor::index<3> ia;
         ia[0] = nk - 1; ia[1] = np - 1; ia[2] = nr - 1;
-        dimensions<3> dimsa(index_range<3>(index<3>(), ia));
-        index<4> ib;
+        dimensions<3> dimsa(index_range<3>(libtensor::index<3>(), ia));
+        libtensor::index<4> ib;
         ib[0] = ni - 1; ib[1] = nj - 1; ib[2] = np - 1; ib[3] = nq - 1;
-        dimensions<4> dimsb(index_range<4>(index<4>(), ib));
-        index<4> ic;
+        dimensions<4> dimsb(index_range<4>(libtensor::index<4>(), ib));
+        libtensor::index<4> ic;
         ic[0] = ni - 1; ic[1] = nj - 1; ic[2] = nk - 1; ic[3] = nl - 1;
-        dimensions<4> dimsc(index_range<4>(index<4>(), ic));
-        index<4> ii;
+        dimensions<4> dimsc(index_range<4>(libtensor::index<4>(), ic));
+        libtensor::index<4> ii;
         ii[0] = nk - 1; ii[1] = nl - 1; ii[2] = np - 1; ii[3] = nq - 1;
-        dimensions<4> dimsi(index_range<4>(index<4>(), ii));
+        dimensions<4> dimsi(index_range<4>(libtensor::index<4>(), ii));
 
         block_index_space<3> bisa(dimsa);
         mask<3> m110, m001;
@@ -3281,7 +3281,7 @@ void btod_contract2_xm_test::test_contr_23() {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 9; i4b[1] = 9; i4b[2] = 10; i4b[3] = 19;
     dimensions<4> dims_ijka(index_range<4>(i4a, i4b));
     i4b[0] = 10; i4b[1] = 9; i4b[2] = 9; i4b[3] = 19;
@@ -3394,12 +3394,12 @@ void btod_contract2_xm_test::test_contr_24() {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 15; i3b[1] = 15; i3b[2] = 5;
     dimensions<3> dimsa(index_range<3>(i3a, i3b));
     i3b[0] = 31; i3b[1] = 31; i3b[2] = 5;
     dimensions<3> dimsb(index_range<3>(i3a, i3b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 15; i4b[1] = 31; i4b[2] = 15; i4b[3] = 31;
     dimensions<4> dimsc(index_range<4>(i4a, i4b));
 
@@ -3444,7 +3444,7 @@ void btod_contract2_xm_test::test_contr_24() {
 
     se_part<3, double> se4(bisa, m110, 2);
     se_part<3, double> se5(bisb, m110, 2);
-    index<3> i000, i010, i100, i110;
+    libtensor::index<3> i000, i010, i100, i110;
     i100[0] = 1; i010[1] = 1;
     i110[0] = 1; i110[1] = 1;
     se4.add_map(i000, i110, scalar_transf<double>(1.0));
@@ -3559,12 +3559,12 @@ void btod_contract2_xm_test::test_contr_25() {
 
     try {
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 15; i3b[1] = 15; i3b[2] = 5;
     dimensions<3> dimsa(index_range<3>(i3a, i3b));
     i3b[0] = 31; i3b[1] = 31; i3b[2] = 5;
     dimensions<3> dimsb(index_range<3>(i3a, i3b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 15; i4b[1] = 31; i4b[2] = 15; i4b[3] = 31;
     dimensions<4> dimsc(index_range<4>(i4a, i4b));
 
@@ -3609,7 +3609,7 @@ void btod_contract2_xm_test::test_contr_25() {
 
     se_part<3, double> se4(bisa, m110, 2);
     se_part<3, double> se5(bisb, m110, 2);
-    index<3> i000, i010, i100, i110;
+    libtensor::index<3> i000, i010, i100, i110;
     i100[0] = 1; i010[1] = 1;
     i110[0] = 1; i110[1] = 1;
     se4.add_map(i000, i110, scalar_transf<double>(1.0));
@@ -3724,12 +3724,12 @@ void btod_contract2_xm_test::test_contr_26() {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 15; i2b[1] = 15;;
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
     i2b[0] = 31; i2b[1] = 31;
     dimensions<2> dimsb(index_range<2>(i2a, i2b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 15; i4b[1] = 31; i4b[2] = 15; i4b[3] = 31;
     dimensions<4> dimsc(index_range<4>(i4a, i4b));
 
@@ -3772,7 +3772,7 @@ void btod_contract2_xm_test::test_contr_26() {
 
     se_part<2, double> se4(bisa, m11, 2);
     se_part<2, double> se5(bisb, m11, 2);
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
     se4.add_map(i00, i11, scalar_transf<double>(1.0));
@@ -3850,7 +3850,7 @@ void btod_contract2_xm_test::test_contr_27() {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 15; i2b[1] = 15;
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
     i2b[1] = 13;
@@ -3882,7 +3882,7 @@ void btod_contract2_xm_test::test_contr_27() {
 
         se_part<2, double> pa(bisa, ma, 2);
         se_part<2, double> pb(bisb, mb, 2);
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
         pa.add_map(i00, i11, scalar_transf<double>(1.0));
@@ -3971,11 +3971,11 @@ void btod_contract2_xm_test::test_contr_28() {
 
     try {
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 9; i4b[1] = 15; i4b[2] = 9; i4b[3] = 15;
     dimensions<4> dimsa(index_range<4>(i4a, i4b));
 
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = 9; i3b[1] = 15; i3b[2] = 15;
     dimensions<3> dimsb(index_range<3>(i3a, i3b)), dimsc(dimsb);
 
@@ -4089,10 +4089,10 @@ void btod_contract2_xm_test::test_self_1() {
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 10; i2b[1] = 20;
         dimensions<2> dims_ia(index_range<2>(i2a, i2b));
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 10; i4b[1] = 10; i4b[2] = 20; i4b[3] = 20;
         dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
         block_index_space<2> bis_ia(dims_ia);
@@ -4164,10 +4164,10 @@ void btod_contract2_xm_test::test_self_2() {
 
     try {
 
-        index<3> i3a, i3b;
+        libtensor::index<3> i3a, i3b;
         i3b[0] = 10; i3b[1] = 20; i3b[2] = 20;
         dimensions<3> dims_iac(index_range<3>(i3a, i3b));
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 10; i4b[1] = 10; i4b[2] = 20; i4b[3] = 20;
         dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
         block_index_space<3> bis_iac(dims_iac);
@@ -4241,10 +4241,10 @@ void btod_contract2_xm_test::test_self_3() {
 
     try {
 
-        index<3> i3a, i3b;
+        libtensor::index<3> i3a, i3b;
         i3b[0] = 10; i3b[1] = 20; i3b[2] = 20;
         dimensions<3> dims_iac(index_range<3>(i3a, i3b));
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 10; i4b[1] = 10; i4b[2] = 20; i4b[3] = 20;
         dimensions<4> dims_ijab(index_range<4>(i4a, i4b));
         block_index_space<3> bis_iac(dims_iac);
@@ -4328,11 +4328,11 @@ void btod_contract2_xm_test::test_batch_1() {
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 19; i2b[1] = 19;
         dimensions<2> dims2(index_range<2>(i2a, i2b));
         block_index_space<2> bis2(dims2);
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 19; i4b[1] = 19; i4b[2] = 19; i4b[3] = 19;
         dimensions<4> dims4(index_range<4>(i4a, i4b));
         block_index_space<4> bis4(dims4);
@@ -4396,11 +4396,11 @@ void btod_contract2_xm_test::test_batch_2() {
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 19; i2b[1] = 19;
         dimensions<2> dims2(index_range<2>(i2a, i2b));
         block_index_space<2> bis2(dims2);
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 19; i4b[1] = 19; i4b[2] = 19; i4b[3] = 19;
         dimensions<4> dims4(index_range<4>(i4a, i4b));
         block_index_space<4> bis4(dims4);
@@ -4468,11 +4468,11 @@ void btod_contract2_xm_test::test_batch_3() {
 
     try {
 
-        index<2> i2a, i2b;
+        libtensor::index<2> i2a, i2b;
         i2b[0] = 19; i2b[1] = 19;
         dimensions<2> dims2(index_range<2>(i2a, i2b));
         block_index_space<2> bis2(dims2);
-        index<4> i4a, i4b;
+        libtensor::index<4> i4a, i4b;
         i4b[0] = 19; i4b[1] = 19; i4b[2] = 19; i4b[3] = 19;
         dimensions<4> dims4(index_range<4>(i4a, i4b));
         block_index_space<4> bis4(dims4);

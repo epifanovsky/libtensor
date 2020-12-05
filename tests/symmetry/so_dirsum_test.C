@@ -34,11 +34,11 @@ void so_dirsum_test::test_empty_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
+    libtensor::index<2> i2a, i2b; i2b[0] = 5; i2b[1] = 5;
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
-    index<1> i1a, i1b; i1b[0] = 10;
+    libtensor::index<1> i1a, i1b; i1b[0] = 10;
     dimensions<1> dimsb(index_range<1>(i1a, i1b));
-    index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
+    libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 10;
     dimensions<3> dimsc(index_range<3>(i3a, i3b));
 
     block_index_space<2> bisa(dimsa);
@@ -100,10 +100,10 @@ void so_dirsum_test::test_se_1(bool s1,
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 5;
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;
     dimensions<4> dimsc(index_range<4>(i4a, i4b));
 
@@ -165,10 +165,10 @@ void so_dirsum_test::test_se_2(bool s1,
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 5; i2b[1] = 5;
     dimensions<2> dimsa(index_range<2>(i2a, i2b));
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;
     dimensions<4> dimsc(index_range<4>(i4a, i4b));
 
@@ -194,7 +194,7 @@ void so_dirsum_test::test_se_2(bool s1,
 
     scalar_transf<double> tra(s1 ? 1.0 : -1.0), trb(s2 ? 1.0 : -1.0);
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i01[1] = 1; i10[0] = 1;
     i11[1] = 1; i11[0] = 1;
 
@@ -204,7 +204,7 @@ void so_dirsum_test::test_se_2(bool s1,
     spb.add_map(i00, i11, trb);
     spb.add_map(i01, i10, trb);
 
-    index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+    libtensor::index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
         i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
     i1110[0] = i1110[1] = i1110[2] = i0001[3] = 1;
     i1101[0] = i1101[1] = i0010[2] = i1101[3] = 1;
@@ -337,9 +337,9 @@ void so_dirsum_test::test_vac_1() throw(libtest::test_exception) {
 
     try {
 
-        index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
+        libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsa(index_range<3>(i3a, i3b));
-        index<0> i0a, i0b;
+        libtensor::index<0> i0a, i0b;
         dimensions<0> dimsb(index_range<0>(i0a, i0b));
 
         block_index_space<3> bisa(dimsa);
@@ -375,9 +375,9 @@ void so_dirsum_test::test_vac_2() throw(libtest::test_exception) {
 
     try {
 
-        index<0> i0a, i0b;
+        libtensor::index<0> i0a, i0b;
         dimensions<0> dimsa(index_range<0>(i0a, i0b));
-        index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
+        libtensor::index<3> i3a, i3b; i3b[0] = 5; i3b[1] = 5; i3b[2] = 5;
         dimensions<3> dimsb(index_range<3>(i3a, i3b));
 
         block_index_space<0> bisa(dimsa);

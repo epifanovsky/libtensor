@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_import_raw_stream_test::perform() throw(libtest::test_exception) {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 9; i2b[1] = 19;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     block_index_space<2> bis2a(dims2), bis2b(dims2), bis2c(dims2);
@@ -26,7 +26,7 @@ void btod_import_raw_stream_test::perform() throw(libtest::test_exception) {
     bis2c.split(m2a, 3);
     bis2c.split(m2a, 5);
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 9; i4b[1] = 19; i4b[2] = 9; i4b[3] = 19;
     dimensions<4> dims4(index_range<4>(i4a, i4b));
     block_index_space<4> bis4a(dims4), bis4b(dims4), bis4c(dims4);

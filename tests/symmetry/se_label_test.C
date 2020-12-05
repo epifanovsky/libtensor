@@ -36,7 +36,7 @@ void se_label_test::test_basic_1(
     tnss << "se_label_test::test_basic_1(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 1; i2[1] = 1; i2[2] = 1;
     dimensions<3> bidims(index_range<3>(i1, i2));
 
@@ -141,7 +141,7 @@ void se_label_test::test_allowed_1(
     tnss << "se_label_test::test_allowed_1(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 3;
     dimensions<2> bidims(index_range<2>(i1, i2));
     se_label<2, double> el1(bidims, table_id);
@@ -191,7 +191,7 @@ void se_label_test::test_allowed_2(
     tnss << "se_label_test::test_allowed_2(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 3;
     dimensions<2> bidims(index_range<2>(i1, i2));
     se_label<2, double> el1(bidims, table_id);
@@ -233,7 +233,7 @@ void se_label_test::test_allowed_3(
     tnss << "se_label_test::test_allowed_3(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 3;
     dimensions<2> bidims(index_range<2>(i1, i2));
     se_label<2, double> el1(bidims, table_id);
@@ -287,7 +287,7 @@ void se_label_test::test_permute_1(
     tnss << "se_label_test::test_permute_1(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 3; i2[1] = 3; i2[2] = 3;
     dimensions<3> bidims(index_range<3>(i1, i2));
     se_label<3, double> el1(bidims, table_id);
@@ -360,7 +360,7 @@ void se_label_test::test_permute_2(
     tnss << "se_label_test::test_permute_2(" << table_id << ")";
     std::string tns = tnss.str();
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 3;
     dimensions<2> bidims(index_range<2>(i1, i2));
     se_label<2, double> el1(bidims, table_id);

@@ -10,7 +10,7 @@ int main() {
 
     typedef allocator<double> allocator_t;
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0]=3; i2[1]=3; i2[2]=4; i2[3]=4;
     index_range<4> ir(i1, i2);
     dimensions<4> dim(ir);

@@ -18,7 +18,7 @@
 #define XM_BITMAP_H_INCLUDED
 
 static inline void
-bitmap_set(void *p, unsigned int b)
+bitmap_set(void *p, unsigned long long b)
 {
 	unsigned char *ptr = p;
 
@@ -26,7 +26,7 @@ bitmap_set(void *p, unsigned int b)
 }
 
 static inline void
-bitmap_clear(void *p, unsigned int b)
+bitmap_clear(void *p, unsigned long long b)
 {
 	unsigned char *ptr = p;
 
@@ -34,7 +34,7 @@ bitmap_clear(void *p, unsigned int b)
 }
 
 static inline int
-bitmap_test(void *p, unsigned int b)
+bitmap_test(void *p, unsigned long long b)
 {
 	unsigned char *ptr = p;
 

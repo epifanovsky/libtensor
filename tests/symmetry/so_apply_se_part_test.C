@@ -61,14 +61,14 @@ void so_apply_se_part_test::test_1(bool keep_zero,
             "!set2.is_empty() (1).");
     }
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 5;
     block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
     mask<2> m11;
     m11[0] = true; m11[1] = true;
     bis.split(m11, 3);
 
-    index<2> i00, i11;
+    libtensor::index<2> i00, i11;
     i11[0] = 1; i11[1] = 1;
     se_t elem(bis, m11, 2);
     elem.add_map(i00, i11, tr0);
@@ -101,14 +101,14 @@ void so_apply_se_part_test::test_2(bool keep_zero,
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 5;
     block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
     mask<2> m11;
     m11[0] = true; m11[1] = true;
     bis.split(m11, 3);
 
-    index<2> i00, i11, i01, i10;
+    libtensor::index<2> i00, i11, i01, i10;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
     scalar_transf<double> tr0, tr1(-1.);
@@ -194,14 +194,14 @@ void so_apply_se_part_test::test_3(bool keep_zero,
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 5;
     block_index_space<2> bis(dimensions<2>(index_range<2>(i1, i2)));
     mask<2> m11;
     m11[0] = true; m11[1] = true;
     bis.split(m11, 3);
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
     scalar_transf<double> tr0, tr1(-1.);

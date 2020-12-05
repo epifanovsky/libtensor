@@ -49,7 +49,7 @@ void btod_trace_test::test_zero_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -91,7 +91,7 @@ void btod_trace_test::test_nosym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -139,7 +139,7 @@ void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -151,7 +151,7 @@ void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
     dense_tensor<2, double, allocator_t> ta(dims);
 
     //  Fill in random data
-    index<2> i00, i12, i22;
+    libtensor::index<2> i00, i12, i22;
     i12[0] = 1; i12[1] = 2;
     i22[0] = 2; i22[1] = 2;
     btod_random<2>().perform(bta, i00);
@@ -192,7 +192,7 @@ void btod_trace_test::test_nosym_2() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -243,7 +243,7 @@ void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
 
     size_t ni = 10, nj = 11;
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -294,7 +294,7 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
 
     size_t ni = 10, nj = 11;
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = ni - 1; i2[2] = nj - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -344,7 +344,7 @@ void btod_trace_test::test_nosym_5() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -393,7 +393,7 @@ void btod_trace_test::test_nosym_6() throw(libtest::test_exception) {
 
     size_t ni = 3, nj = 2;
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -444,7 +444,7 @@ void btod_trace_test::test_nosym_7() throw(libtest::test_exception) {
 
     size_t ni = 10, nj = 10;
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -492,7 +492,7 @@ void btod_trace_test::test_permsym_1() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -550,7 +550,7 @@ void btod_trace_test::test_permsym_2() throw(libtest::test_exception) {
 
     size_t ni = 10, nj = 11;
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);

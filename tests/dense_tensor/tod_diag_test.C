@@ -20,9 +20,9 @@ int test_1() {
 
     try {
 
-    index<1> i1a, i1b;
+    libtensor::index<1> i1a, i1b;
     i1b[0] = 10;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = 10; i2b[1] = 10;
     dimensions<1> dims1(index_range<1>(i1a, i1b));
     dimensions<2> dims2(index_range<2>(i2a, i2b));
@@ -43,8 +43,8 @@ int test_1() {
     for(size_t i = 0; i < szb; i++) pb[i] = drand48();
 
     for(size_t i = 0; i < szb; i++) {
-        index<2> idxa; idxa[0] = i; idxa[1] = i;
-        index<1> idxb; idxb[0] = i;
+        libtensor::index<2> idxa; idxa[0] = i; idxa[1] = i;
+        libtensor::index<1> idxb; idxb[0] = i;
         abs_index<2> aidxa(idxa, dims2);
         abs_index<1> aidxb(idxb, dims1);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -80,9 +80,9 @@ int test_2() {
     try {
 
     size_t ni = 6, nj = 11;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = ni - 1; i2b[1] = nj - 1;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = ni - 1; i3b[1] = ni - 1; i3b[2] = nj - 1;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -104,8 +104,8 @@ int test_2() {
 
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
-        index<3> idxa; idxa[0] = i; idxa[1] = i; idxa[2] = j;
-        index<2> idxb; idxb[0] = i; idxb[1] = j;
+        libtensor::index<3> idxa; idxa[0] = i; idxa[1] = i; idxa[2] = j;
+        libtensor::index<2> idxb; idxb[0] = i; idxb[1] = j;
         abs_index<3> aidxa(idxa, dims3);
         abs_index<2> aidxb(idxb, dims2);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -142,9 +142,9 @@ int test_3() {
     try {
 
     size_t ni = 6, nj = 11;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = ni - 1; i2b[1] = nj - 1;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = ni - 1; i3b[1] = nj - 1; i3b[2] = ni - 1;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -166,8 +166,8 @@ int test_3() {
 
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
-        index<3> idxa; idxa[0] = i; idxa[1] = j; idxa[2] = i;
-        index<2> idxb; idxb[0] = i; idxb[1] = j;
+        libtensor::index<3> idxa; idxa[0] = i; idxa[1] = j; idxa[2] = i;
+        libtensor::index<2> idxb; idxb[0] = i; idxb[1] = j;
         abs_index<3> aidxa(idxa, dims3);
         abs_index<2> aidxb(idxb, dims2);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -204,9 +204,9 @@ int test_4() {
     try {
 
     size_t ni = 6, nj = 11;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = nj - 1; i2b[1] = ni - 1;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = nj - 1; i3b[1] = ni - 1; i3b[2] = ni - 1;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -228,8 +228,8 @@ int test_4() {
 
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
-        index<3> idxa; idxa[0] = j; idxa[1] = i; idxa[2] = i;
-        index<2> idxb; idxb[0] = j; idxb[1] = i;
+        libtensor::index<3> idxa; idxa[0] = j; idxa[1] = i; idxa[2] = i;
+        libtensor::index<2> idxb; idxb[0] = j; idxb[1] = i;
         abs_index<3> aidxa(idxa, dims3);
         abs_index<2> aidxb(idxb, dims2);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -266,9 +266,9 @@ int test_5() {
     try {
 
     size_t ni = 6, nj = 11;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = ni - 1; i2b[1] = nj - 1;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = nj - 1; i3b[1] = ni - 1; i3b[2] = ni - 1;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -290,8 +290,8 @@ int test_5() {
 
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
-        index<3> idxa; idxa[0] = j; idxa[1] = i; idxa[2] = i;
-        index<2> idxb; idxb[0] = i; idxb[1] = j;
+        libtensor::index<3> idxa; idxa[0] = j; idxa[1] = i; idxa[2] = i;
+        libtensor::index<2> idxb; idxb[0] = i; idxb[1] = j;
         abs_index<3> aidxa(idxa, dims3);
         abs_index<2> aidxb(idxb, dims2);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -329,9 +329,9 @@ int test_6() {
     try {
 
     size_t ni = 2, nj = 3, nk = 5;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = nj - 1; i3b[1] = ni - 1; i3b[2] = nk - 1;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = ni - 1; i4b[1] = nk - 1; i4b[2] = nj - 1; i4b[3] = nk - 1;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -354,8 +354,8 @@ int test_6() {
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {
-        index<4> idxa; idxa[0] = i; idxa[1] = k; idxa[2] = j; idxa[3] = k;
-        index<3> idxb; idxb[0] = j; idxb[1] = i; idxb[2] = k;
+        libtensor::index<4> idxa; idxa[0] = i; idxa[1] = k; idxa[2] = j; idxa[3] = k;
+        libtensor::index<3> idxb; idxb[0] = j; idxb[1] = i; idxb[2] = k;
         abs_index<4> aidxa(idxa, dims4);
         abs_index<3> aidxb(idxb, dims3);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -395,9 +395,9 @@ int test_7() {
     try {
 
     size_t ni = 2, nj = 3;
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
     i2b[0] = nj - 1; i2b[1] = ni - 1;
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = ni - 1; i4b[1] = nj - 1; i4b[2] = ni - 1; i4b[3] = nj - 1;
     dimensions<2> dims2(index_range<2>(i2a, i2b));
     dimensions<4> dims4(index_range<4>(i4a, i4b));
@@ -419,8 +419,8 @@ int test_7() {
 
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
-        index<4> idxa; idxa[0] = i; idxa[1] = j; idxa[2] = i; idxa[3] = j;
-        index<2> idxb; idxb[0] = j; idxb[1] = i;
+        libtensor::index<4> idxa; idxa[0] = i; idxa[1] = j; idxa[2] = i; idxa[3] = j;
+        libtensor::index<2> idxb; idxb[0] = j; idxb[1] = i;
         abs_index<4> aidxa(idxa, dims4);
         abs_index<2> aidxb(idxb, dims2);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -459,9 +459,9 @@ int test_8() {
     try {
 
     size_t ni = 2, nj = 3, nk = 5;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = nk - 1; i3b[1] = nj - 1; i3b[2] = ni - 1;
-    index<6> i6a, i6b;
+    libtensor::index<6> i6a, i6b;
     i6b[0] = ni - 1; i6b[1] = nk - 1; i6b[2] = nj - 1;
     i6b[3] = ni - 1; i6b[4] = ni - 1; i6b[5] = nj - 1;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -485,10 +485,10 @@ int test_8() {
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {
-        index<6> idxa;
+        libtensor::index<6> idxa;
         idxa[0] = i; idxa[1] = k; idxa[2] = j;
         idxa[3] = i; idxa[4] = i; idxa[5] = j;
-        index<3> idxb; idxb[0] = k; idxb[1] = j; idxb[2] = i;
+        libtensor::index<3> idxb; idxb[0] = k; idxb[1] = j; idxb[2] = i;
         abs_index<6> aidxa(idxa, dims6);
         abs_index<3> aidxb(idxb, dims3);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];
@@ -529,9 +529,9 @@ int test_9() {
     try {
 
     size_t ni = 2, nj = 3, nk = 5;
-    index<3> i3a, i3b;
+    libtensor::index<3> i3a, i3b;
     i3b[0] = ni - 1; i3b[1] = nj - 1; i3b[2] = nk - 1;
-    index<5> i5a, i5b;
+    libtensor::index<5> i5a, i5b;
     i5b[0] = nk - 1; i5b[1] = ni - 1; i5b[2] = ni - 1;
     i5b[3] = nj - 1; i5b[4] = nj - 1;
     dimensions<3> dims3(index_range<3>(i3a, i3b));
@@ -555,9 +555,9 @@ int test_9() {
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {
-        index<5> idxa; idxa[0] = k; idxa[1] = i; idxa[2] = i;
+        libtensor::index<5> idxa; idxa[0] = k; idxa[1] = i; idxa[2] = i;
         idxa[3] = j; idxa[4] = j;
-        index<3> idxb; idxb[0] = i; idxb[1] = j; idxb[2] = k;
+        libtensor::index<3> idxb; idxb[0] = i; idxb[1] = j; idxb[2] = k;
         abs_index<5> aidxa(idxa, dims5);
         abs_index<3> aidxb(idxb, dims3);
         pb_ref[aidxb.get_abs_index()] = pa[aidxa.get_abs_index()];

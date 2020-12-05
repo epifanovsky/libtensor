@@ -81,7 +81,7 @@ void so_symmetrize_se_label_test::test_sym2_1(
 
     try {
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
     se4_t el1(bidims1, table_id);
@@ -141,7 +141,7 @@ void so_symmetrize_se_label_test::test_sym2_1(
     do {
 
         if (el1.is_allowed(ai.get_index())) {
-            index<4> idx(ai.get_index());
+            libtensor::index<4> idx(ai.get_index());
             std::swap(idx[2], idx[3]);
 
             rx[ai.get_abs_index()] = true;
@@ -172,7 +172,7 @@ void so_symmetrize_se_label_test::test_sym2_2(
 
     try {
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
     se4_t el1(bidims1, table_id);
@@ -222,7 +222,7 @@ void so_symmetrize_se_label_test::test_sym2_2(
 
     abs_index<4> ai(bidims2);
     do {
-        const index<4> &idx = ai.get_index();
+        const libtensor::index<4> &idx = ai.get_index();
         bool xij = (idx[0] == 0 && idx[1] == 1) ||
                 (idx[0] == 1 && idx[1] == 0) ||
                 (idx[0] == 1 && idx[1] == 1) ||
@@ -271,7 +271,7 @@ void so_symmetrize_se_label_test::test_sym2_3(
 
     try {
 
-    index<4> i1a, i1b;
+    libtensor::index<4> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3; i1b[3] = 3;
     dimensions<4> bidims1(index_range<4>(i1a, i1b));
     se4_t el1(bidims1, table_id);
@@ -330,10 +330,10 @@ void so_symmetrize_se_label_test::test_sym2_3(
 
     abs_index<4> ai(bidims);
     do {
-        const index<4> &idx = ai.get_index();
+        const libtensor::index<4> &idx = ai.get_index();
         if (el1.is_allowed(idx)) {
             rx2[ai.get_abs_index()] = rx3[ai.get_abs_index()] = true;
-            index<4> idx2(idx);
+            libtensor::index<4> idx2(idx);
             std::swap(idx2[0], idx2[1]);
             rx2[abs_index<4>(idx2, bidims).get_abs_index()] = true;
             rx3[abs_index<4>(idx2, bidims).get_abs_index()] = true;
@@ -369,7 +369,7 @@ void so_symmetrize_se_label_test::test_sym3_1(
 
     try {
 
-    index<3> i1a, i1b;
+    libtensor::index<3> i1a, i1b;
     i1b[0] = 3; i1b[1] = 3; i1b[2] = 3;
     dimensions<3> bidims1(index_range<3>(i1a, i1b));
 
@@ -420,7 +420,7 @@ void so_symmetrize_se_label_test::test_sym3_1(
     std::vector<bool> rx(bidims2.get_size(), false);
     abs_index<3> ai(bidims2);
     do {
-        const index<3> &idx = ai.get_index();
+        const libtensor::index<3> &idx = ai.get_index();
         bool x011 = (idx[1] == idx[2]);
         bool x101 = (idx[0] == idx[2]);
         bool x110 = (idx[0] == idx[1]);

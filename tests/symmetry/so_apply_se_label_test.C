@@ -45,7 +45,7 @@ void so_apply_se_label_test::test_1(
     typedef so_apply<2, double> so_t;
     typedef symmetry_operation_impl<so_t, se2_t> so_se_t;
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = i2[1] = 3;
 
     dimensions<2> bidims(index_range<2>(i1, i2));

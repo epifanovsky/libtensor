@@ -121,7 +121,7 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
         if(!ol.contains(ol_ref.get_abs_index(io_ref))) {
             std::ostringstream ss;
-            index<N> idx;
+            libtensor::index<N> idx;
             ol_ref.get_index(io_ref, idx);
             ss << "In " << test << ": Canonical index " << idx
                 << " is absent from result.";
@@ -133,7 +133,7 @@ void compare_ref<N>::compare(const char *test, const symmetry<N, double> &s,
 
         if(!ol_ref.contains(ol.get_abs_index(io))) {
             std::ostringstream ss;
-            index<N> idx;
+            libtensor::index<N> idx;
             ol.get_index(io, idx);
             ss << "In " << test << ": Canonical index " << idx
                 << " is absent from reference.";

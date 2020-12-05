@@ -45,7 +45,7 @@ void gen_bto_aux_copy_test::test_1a() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -57,7 +57,7 @@ void gen_bto_aux_copy_test::test_1a() {
 
     symmetry<2, double> syma(bis), symb(bis);
 
-    index<2> i00, i12;
+    libtensor::index<2> i00, i12;
     i12[0] = 1; i12[1] = 2;
 
     block_tensor<2, double, allocator_type> bta(bis), btb(bis), btb_ref(bis);
@@ -135,7 +135,7 @@ void gen_bto_aux_copy_test::test_1b() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -147,7 +147,7 @@ void gen_bto_aux_copy_test::test_1b() {
 
     symmetry<2, double> syma(bis), symb(bis);
 
-    index<2> i00, i12;
+    libtensor::index<2> i00, i12;
     i12[0] = 1; i12[1] = 2;
 
     block_tensor<2, double, allocator_type> bta1(bis), bta2(bis), btb(bis),
@@ -244,7 +244,7 @@ void gen_bto_aux_copy_test::test_1c() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -256,7 +256,7 @@ void gen_bto_aux_copy_test::test_1c() {
 
     symmetry<2, double> syma(bis), symb(bis);
 
-    index<2> i00, i12;
+    libtensor::index<2> i00, i12;
     i12[0] = 1; i12[1] = 2;
 
     block_tensor<2, double, allocator_type> bta1(bis), bta2(bis), btb(bis),
@@ -351,7 +351,7 @@ void gen_bto_aux_copy_test::test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -367,7 +367,7 @@ void gen_bto_aux_copy_test::test_2() {
     syma.insert(se1);
     symb.insert(se1);
 
-    index<2> i00, i12;
+    libtensor::index<2> i00, i12;
     i12[0] = 1; i12[1] = 2;
 
     block_tensor<2, double, allocator_type> bta(bis), btb(bis), btb_ref(bis);
@@ -450,7 +450,7 @@ void gen_bto_aux_copy_test::test_exc_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 11; i2[1] = 11;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -462,7 +462,7 @@ void gen_bto_aux_copy_test::test_exc_1() {
 
     symmetry<2, double> symb(bis);
 
-    index<2> i00, i12;
+    libtensor::index<2> i00, i12;
     i12[0] = 1; i12[1] = 2;
 
     tensor_transf<2, double> tr0;

@@ -40,7 +40,7 @@ void so_dirsum_se_perm_test::test_empty_1() throw(libtest::test_exception) {
 
     try {
 
-        index<5> i1, i2;
+        libtensor::index<5> i1, i2;
         i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2; i2[4] = 2;
         block_index_space<5> bis(dimensions<5>(index_range<5>(i1, i2)));
         mask<5> m;
@@ -88,7 +88,7 @@ void so_dirsum_se_perm_test::test_empty_2(
 
     try {
 
-        index<5> i1, i2;
+        libtensor::index<5> i1, i2;
         i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2; i2[4] = 2;
         block_index_space<5> bis(dimensions<5>(index_range<5>(i1, i2)));
         mask<5> m;
@@ -157,7 +157,7 @@ void so_dirsum_se_perm_test::test_empty_3(
 
     try {
 
-        index<5> i1, i2;
+        libtensor::index<5> i1, i2;
         i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2; i2[4] = 2;
         block_index_space<5> bis(dimensions<5>(index_range<5>(i1, i2)));
         mask<5> m;
@@ -219,7 +219,7 @@ void so_dirsum_se_perm_test::test_nn_1(
 
     try {
 
-        index<5> i1, i2;
+        libtensor::index<5> i1, i2;
         i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2; i2[4] = 2;
         block_index_space<5> bis(dimensions<5>(index_range<5>(i1, i2)));
         mask<5> m;
@@ -286,7 +286,7 @@ void so_dirsum_se_perm_test::test_nn_2(
 
     try {
 
-        index<5> i1, i2;
+        libtensor::index<5> i1, i2;
         i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2; i2[4] = 2;
         block_index_space<5> bis(dimensions<5>(index_range<5>(i1, i2)));
         mask<5> m;

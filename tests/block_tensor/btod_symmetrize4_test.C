@@ -46,7 +46,7 @@ void btod_symmetrize4_test::test_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);

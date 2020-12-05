@@ -56,7 +56,7 @@ void btod_mult1_test::test_1(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -113,7 +113,7 @@ void btod_mult1_test::test_2(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -172,7 +172,7 @@ void btod_mult1_test::test_3(
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -201,7 +201,7 @@ void btod_mult1_test::test_3(
 
     //  Add zero blocks
 
-    index<2> idx;
+    libtensor::index<2> idx;
     idx[0] = 1; idx[1] = 2;
     cbta.req_zero_block(idx);
 
@@ -247,7 +247,7 @@ void btod_mult1_test::test_4(
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -278,7 +278,7 @@ void btod_mult1_test::test_4(
 
     //  Add zero blocks
 
-    index<4> idx;
+    libtensor::index<4> idx;
     idx[0] = 1; idx[1] = 2; idx[2] = 0; idx[3] = 0;
     cbta.req_zero_block(idx);
     idx[0] = 0; idx[1] = 0; idx[2] = 1; idx[3] = 2;
@@ -325,7 +325,7 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     mask<2> m11;
     m11[0] = true; m11[1] = true;
@@ -342,7 +342,7 @@ void btod_mult1_test::test_5(bool recip, bool doadd)
 
     //  Install symmetry
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1; i11[0] = 1; i11[1] = 1;
     scalar_transf<double> tr0, tr1(-1.);
     se_part<2, double> separta(bis, m11, 2), separtb(bis, m11, 2);

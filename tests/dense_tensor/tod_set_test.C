@@ -18,7 +18,7 @@ int test_1(double d) {
 
     try {
 
-        index<1> i1, i2;
+        libtensor::index<1> i1, i2;
         i2[0] = 10;
         dimensions<1> dims(index_range<1>(i1, i2));
         size_t sz = dims.get_size();
@@ -67,7 +67,7 @@ int test_2(double d) {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 10; i2[1] = 3;
         dimensions<2> dims(index_range<2>(i1, i2));
         size_t sz = dims.get_size();
@@ -116,7 +116,7 @@ int test_3(double d) {
 
     try {
 
-        index<3> i1, i2;
+        libtensor::index<3> i1, i2;
         i2[0] = 10; i2[1] = 2; i2[2] = 21;
         dimensions<3> dims(index_range<3>(i1, i2));
         size_t sz = dims.get_size();
@@ -165,7 +165,7 @@ int test_4(double d) {
 
     try {
 
-        index<4> i1, i2;
+        libtensor::index<4> i1, i2;
         i2[0] = 1; i2[1] = 4; i2[2] = 9; i2[3] = 1;
         dimensions<4> dims(index_range<4>(i1, i2));
         size_t sz = dims.get_size();

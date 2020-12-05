@@ -52,7 +52,7 @@ void btod_compare_test::test_1() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -88,7 +88,7 @@ void btod_compare_test::test_2a() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -131,7 +131,7 @@ void btod_compare_test::test_2b() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -175,7 +175,7 @@ void btod_compare_test::test_3a() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -203,7 +203,7 @@ void btod_compare_test::test_3a() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "kind != diff::DIFF_ORBIT");
     }
-    index<4> bidx_ref;
+    libtensor::index<4> bidx_ref;
     bidx_ref[0] = 0; bidx_ref[1] = 0; bidx_ref[2] = 1; bidx_ref[3] = 0;
     if(!cmp.get_diff().bidx.equals(bidx_ref)) {
         fail_test(testname, __FILE__, __LINE__, "bidx != bidx_ref");
@@ -232,7 +232,7 @@ void btod_compare_test::test_3b() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -260,7 +260,7 @@ void btod_compare_test::test_3b() throw(libtest::test_exception) {
         fail_test(testname, __FILE__, __LINE__,
             "kind != diff::DIFF_ORBIT");
     }
-    index<4> bidx_ref;
+    libtensor::index<4> bidx_ref;
     bidx_ref[0] = 1; bidx_ref[1] = 0; bidx_ref[2] = 0; bidx_ref[3] = 0;
     if(!cmp.get_diff().bidx.equals(bidx_ref)) {
         fail_test(testname, __FILE__, __LINE__, "bidx != bidx_ref");
@@ -289,7 +289,7 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -350,7 +350,7 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -411,7 +411,7 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -470,7 +470,7 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -529,7 +529,7 @@ void btod_compare_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 5;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -580,7 +580,7 @@ void btod_compare_test::test_7() throw(libtest::test_exception) {
 
     try {
 
-    index<6> i1, i2;
+    libtensor::index<6> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 9; i2[3] = 5; i2[4] = 5; i2[5] = 5;
     dimensions<6> dims(index_range<6>(i1, i2));
     block_index_space<6> bis(dims);
@@ -625,7 +625,7 @@ void btod_compare_test::test_7() throw(libtest::test_exception) {
 
 
 void btod_compare_test::test_exc() throw(libtest::test_exception) {
-    typedef index<2> index_t;
+    typedef libtensor::index<2> index_t;
     typedef index_range<2> index_range_t;
     typedef dimensions<2> dimensions_t;
     typedef mask<2> mask_t;
@@ -688,7 +688,7 @@ void btod_compare_test::test_operation() throw(libtest::test_exception) {
 
     static const char *testname = "btod_compare_test::test_operation()";
 
-    typedef index<2> index_t;
+    typedef libtensor::index<2> index_t;
     typedef index_range<2> index_range_t;
     typedef dimensions<2> dimensions_t;
     typedef mask<2> mask_t;

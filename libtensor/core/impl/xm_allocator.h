@@ -3,6 +3,7 @@
 
 #include <new>
 #include <map>
+#include <string>
 #include <stdexcept>
 #include <libutil/singleton.h>
 #include <libutil/threads/auto_lock.h>

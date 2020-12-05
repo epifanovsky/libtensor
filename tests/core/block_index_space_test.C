@@ -11,7 +11,7 @@ int test_ctor_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -39,14 +39,14 @@ int test_split_1() {
 
     try {
 
-    index<1> i_0;
-    index<1> i_1; i_1[0] = 1;
-    index<1> i_2; i_2[0] = 2;
-    index<1> i_3; i_3[0] = 3;
-    index<1> i_4; i_4[0] = 4;
-    index<1> i_5; i_5[0] = 5;
-    index<1> i_7; i_7[0] = 7;
-    index<1> i_9; i_9[0] = 9;
+    libtensor::index<1> i_0;
+    libtensor::index<1> i_1; i_1[0] = 1;
+    libtensor::index<1> i_2; i_2[0] = 2;
+    libtensor::index<1> i_3; i_3[0] = 3;
+    libtensor::index<1> i_4; i_4[0] = 4;
+    libtensor::index<1> i_5; i_5[0] = 5;
+    libtensor::index<1> i_7; i_7[0] = 7;
+    libtensor::index<1> i_9; i_9[0] = 9;
 
     dimensions<1> d_1(index_range<1>(i_0, i_0));
     dimensions<1> d_2(index_range<1>(i_0, i_1));
@@ -172,10 +172,10 @@ int test_split_2() {
 
     try {
 
-    index<1> i_0;
-    index<1> i_1; i_1[0] = 1;
-    index<1> i_2; i_2[0] = 2;
-    index<1> i_3; i_3[0] = 3;
+    libtensor::index<1> i_0;
+    libtensor::index<1> i_1; i_1[0] = 1;
+    libtensor::index<1> i_2; i_2[0] = 2;
+    libtensor::index<1> i_3; i_3[0] = 3;
 
     dimensions<1> d_1(index_range<1>(i_0, i_0));
     dimensions<1> d_2(index_range<1>(i_0, i_1));
@@ -239,23 +239,23 @@ int test_split_3() {
 
     try {
 
-    index<2> i_00;
-    index<2> i_01; i_01[1] = 1;
-    index<2> i_02; i_02[1] = 2;
-    index<2> i_03; i_03[1] = 3;
-    index<2> i_10; i_10[0] = 1;
-    index<2> i_11; i_11[0] = 1; i_11[1] = 1;
-    index<2> i_12; i_12[0] = 1; i_12[1] = 2;
-    index<2> i_13; i_13[0] = 1; i_13[1] = 3;
-    index<2> i_20; i_20[0] = 2;
-    index<2> i_21; i_21[0] = 2; i_21[1] = 1;
-    index<2> i_22; i_22[0] = 2; i_22[1] = 2;
-    index<2> i_23; i_23[0] = 2; i_23[1] = 3;
-    index<2> i_30; i_30[0] = 3;
-    index<2> i_31; i_31[0] = 3; i_31[1] = 1;
-    index<2> i_32; i_32[0] = 3; i_32[1] = 2;
-    index<2> i_33; i_33[0] = 3; i_33[1] = 3;
-    index<2> i_55; i_55[0] = 5; i_55[1] = 5;
+    libtensor::index<2> i_00;
+    libtensor::index<2> i_01; i_01[1] = 1;
+    libtensor::index<2> i_02; i_02[1] = 2;
+    libtensor::index<2> i_03; i_03[1] = 3;
+    libtensor::index<2> i_10; i_10[0] = 1;
+    libtensor::index<2> i_11; i_11[0] = 1; i_11[1] = 1;
+    libtensor::index<2> i_12; i_12[0] = 1; i_12[1] = 2;
+    libtensor::index<2> i_13; i_13[0] = 1; i_13[1] = 3;
+    libtensor::index<2> i_20; i_20[0] = 2;
+    libtensor::index<2> i_21; i_21[0] = 2; i_21[1] = 1;
+    libtensor::index<2> i_22; i_22[0] = 2; i_22[1] = 2;
+    libtensor::index<2> i_23; i_23[0] = 2; i_23[1] = 3;
+    libtensor::index<2> i_30; i_30[0] = 3;
+    libtensor::index<2> i_31; i_31[0] = 3; i_31[1] = 1;
+    libtensor::index<2> i_32; i_32[0] = 3; i_32[1] = 2;
+    libtensor::index<2> i_33; i_33[0] = 3; i_33[1] = 3;
+    libtensor::index<2> i_55; i_55[0] = 5; i_55[1] = 5;
 
     dimensions<2> d_11(index_range<2>(i_00, i_00));
     dimensions<2> d_12(index_range<2>(i_00, i_01));
@@ -380,9 +380,9 @@ int test_split_4() {
 
     try {
 
-    index<2> i_00;
-    index<2> i_11; i_11[0] = 1; i_11[1] = 1;
-    index<2> i_55; i_55[0] = 5; i_55[1] = 5;
+    libtensor::index<2> i_00;
+    libtensor::index<2> i_11; i_11[0] = 1; i_11[1] = 1;
+    libtensor::index<2> i_55; i_55[0] = 5; i_55[1] = 5;
     dimensions<2> d_22(index_range<2>(i_00, i_11));
     dimensions<2> d_66(index_range<2>(i_00, i_55));
     mask<2> msk1, msk2;
@@ -416,8 +416,8 @@ int test_equals_1() {
 
     try {
 
-    index<1> i_0;
-    index<1> i_9; i_9[0] = 9;
+    libtensor::index<1> i_0;
+    libtensor::index<1> i_9; i_9[0] = 9;
 
     dimensions<1> d_10(index_range<1>(i_0, i_9));
 
@@ -500,8 +500,8 @@ int test_equals_2() {
 
     try {
 
-    index<2> i_00;
-    index<2> i_99; i_99[0] = 9; i_99[1] = 9;
+    libtensor::index<2> i_00;
+    libtensor::index<2> i_99; i_99[0] = 9; i_99[1] = 9;
 
     dimensions<2> dims(index_range<2>(i_00, i_99));
 
@@ -595,8 +595,8 @@ int test_equals_3() {
 
     permutation<4> perm;
     perm.permute(0, 2).permute(1, 3);
-    index<4> i_00;
-    index<4> i_89;
+    libtensor::index<4> i_00;
+    libtensor::index<4> i_89;
     i_89[0] = 8; i_89[1] = 8; i_89[2] = 9; i_89[3] = 9;
     mask<4> msk1, msk2;
     msk1[0] = true; msk1[1] = true;
@@ -662,7 +662,7 @@ int test_equals_4() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
     mask<4> m1100, m0011, m0010, m0001;
     m1100[0] = true; m1100[1] = true;
@@ -710,7 +710,7 @@ int test_equals_5() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
     mask<4> m1100, m0011, m0010, m0001;
     m1100[0] = true; m1100[1] = true;
@@ -758,7 +758,7 @@ int test_match_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims), bis_ref(dims);
@@ -783,7 +783,7 @@ int test_match_2() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 9; i2[2] = 10; i2[3] = 11;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims), bis_ref(dims);
@@ -819,7 +819,7 @@ int test_match_3() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims), bis_ref(dims);
@@ -852,7 +852,7 @@ int test_match_4() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 9; i2[3] = 9;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims), bis_ref(dims);
@@ -888,7 +888,7 @@ int test_match_5() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 8; i2[3] = 8;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims), bis_ref(dims);
@@ -923,7 +923,7 @@ int test_permute_1() {
     try {
 
     permutation<4> perm; perm.permute(1, 2);
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 11; i2[3] = 11;
     dimensions<4> dimsa(index_range<4>(i1, i2));
     block_index_space<4> bisa(dimsa);
@@ -984,14 +984,14 @@ int test_exc_1() {
 
     try {
 
-    index<1> i_0;
-    index<1> i_1; i_1[0] = 1;
-    index<1> i_2; i_2[0] = 2;
-    index<1> i_3; i_3[0] = 3;
-    index<1> i_4; i_4[0] = 4;
-    index<1> i_5; i_5[0] = 5;
-    index<1> i_7; i_7[0] = 7;
-    index<1> i_9; i_9[0] = 9;
+    libtensor::index<1> i_0;
+    libtensor::index<1> i_1; i_1[0] = 1;
+    libtensor::index<1> i_2; i_2[0] = 2;
+    libtensor::index<1> i_3; i_3[0] = 3;
+    libtensor::index<1> i_4; i_4[0] = 4;
+    libtensor::index<1> i_5; i_5[0] = 5;
+    libtensor::index<1> i_7; i_7[0] = 7;
+    libtensor::index<1> i_9; i_9[0] = 9;
 
     dimensions<1> d_1(index_range<1>(i_0, i_0));
     dimensions<1> d_2(index_range<1>(i_0, i_1));
@@ -1112,25 +1112,25 @@ int test_exc_2() {
 
     try {
 
-    index<2> i_00;
-    index<2> i_01; i_01[1] = 1;
-    index<2> i_02; i_02[1] = 2;
-    index<2> i_03; i_03[1] = 3;
-    index<2> i_10; i_10[0] = 1;
-    index<2> i_11; i_11[0] = 1; i_11[1] = 1;
-    index<2> i_12; i_12[0] = 1; i_12[1] = 2;
-    index<2> i_13; i_13[0] = 1; i_13[1] = 3;
-    index<2> i_14; i_14[0] = 1; i_14[1] = 4;
-    index<2> i_20; i_20[0] = 2;
-    index<2> i_21; i_21[0] = 2; i_21[1] = 1;
-    index<2> i_22; i_22[0] = 2; i_22[1] = 2;
-    index<2> i_23; i_23[0] = 2; i_23[1] = 3;
-    index<2> i_30; i_30[0] = 3;
-    index<2> i_31; i_31[0] = 3; i_31[1] = 1;
-    index<2> i_32; i_32[0] = 3; i_32[1] = 2;
-    index<2> i_33; i_33[0] = 3; i_33[1] = 3;
-    index<2> i_41; i_41[0] = 4; i_41[1] = 1;
-    index<2> i_55; i_55[0] = 5; i_55[1] = 5;
+    libtensor::index<2> i_00;
+    libtensor::index<2> i_01; i_01[1] = 1;
+    libtensor::index<2> i_02; i_02[1] = 2;
+    libtensor::index<2> i_03; i_03[1] = 3;
+    libtensor::index<2> i_10; i_10[0] = 1;
+    libtensor::index<2> i_11; i_11[0] = 1; i_11[1] = 1;
+    libtensor::index<2> i_12; i_12[0] = 1; i_12[1] = 2;
+    libtensor::index<2> i_13; i_13[0] = 1; i_13[1] = 3;
+    libtensor::index<2> i_14; i_14[0] = 1; i_14[1] = 4;
+    libtensor::index<2> i_20; i_20[0] = 2;
+    libtensor::index<2> i_21; i_21[0] = 2; i_21[1] = 1;
+    libtensor::index<2> i_22; i_22[0] = 2; i_22[1] = 2;
+    libtensor::index<2> i_23; i_23[0] = 2; i_23[1] = 3;
+    libtensor::index<2> i_30; i_30[0] = 3;
+    libtensor::index<2> i_31; i_31[0] = 3; i_31[1] = 1;
+    libtensor::index<2> i_32; i_32[0] = 3; i_32[1] = 2;
+    libtensor::index<2> i_33; i_33[0] = 3; i_33[1] = 3;
+    libtensor::index<2> i_41; i_41[0] = 4; i_41[1] = 1;
+    libtensor::index<2> i_55; i_55[0] = 5; i_55[1] = 5;
 
     dimensions<2> d_11(index_range<2>(i_00, i_00));
     dimensions<2> d_12(index_range<2>(i_00, i_01));

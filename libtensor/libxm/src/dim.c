@@ -208,15 +208,22 @@ xm_dim_offset(const xm_dim_t *idx, const xm_dim_t *dim)
 	switch (idx->n) {
 	case 8: ret += idx->i[7] * dim->i[6] * dim->i[5] * dim->i[4] *
 		       dim->i[3] * dim->i[2] * dim->i[1] * dim->i[0];
+	/* FALLTHRU */
 	case 7: ret += idx->i[6] * dim->i[5] * dim->i[4] * dim->i[3] *
 		       dim->i[2] * dim->i[1] * dim->i[0];
+	/* FALLTHRU */
 	case 6: ret += idx->i[5] * dim->i[4] * dim->i[3] * dim->i[2] *
 		       dim->i[1] * dim->i[0];
+	/* FALLTHRU */
 	case 5: ret += idx->i[4] * dim->i[3] * dim->i[2] * dim->i[1] *
 		       dim->i[0];
+	/* FALLTHRU */
 	case 4: ret += idx->i[3] * dim->i[2] * dim->i[1] * dim->i[0];
+	/* FALLTHRU */
 	case 3: ret += idx->i[2] * dim->i[1] * dim->i[0];
+	/* FALLTHRU */
 	case 2: ret += idx->i[1] * dim->i[0];
+	/* FALLTHRU */
 	case 1: ret += idx->i[0];
 	}
 	return (ret);
@@ -235,26 +242,33 @@ xm_dim_from_offset(size_t offset, const xm_dim_t *dim)
 		    dim->i[2] * dim->i[1] * dim->i[0];
 		ret.i[7] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 7: p = dim->i[5] * dim->i[4] * dim->i[3] * dim->i[2] *
 		    dim->i[1] * dim->i[0];
 		ret.i[6] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 6: p = dim->i[4] * dim->i[3] * dim->i[2] * dim->i[1] *
 		    dim->i[0];
 		ret.i[5] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 5: p = dim->i[3] * dim->i[2] * dim->i[1] * dim->i[0];
 		ret.i[4] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 4: p = dim->i[2] * dim->i[1] * dim->i[0];
 		ret.i[3] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 3: p = dim->i[1] * dim->i[0];
 		ret.i[2] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 2: p = dim->i[0];
 		ret.i[1] = offset / p;
 		offset %= p;
+	/* FALLTHRU */
 	case 1: ret.i[0] = offset;
 	}
 	return (ret);
@@ -342,13 +356,13 @@ xm_dim_permute(const xm_dim_t *idx, const xm_dim_t *permutation)
 
 	ret.n = idx->n;
 	switch (ret.n) {
-	case 8: ret.i[permutation->i[7]] = idx->i[7];
-	case 7: ret.i[permutation->i[6]] = idx->i[6];
-	case 6: ret.i[permutation->i[5]] = idx->i[5];
-	case 5: ret.i[permutation->i[4]] = idx->i[4];
-	case 4: ret.i[permutation->i[3]] = idx->i[3];
-	case 3: ret.i[permutation->i[2]] = idx->i[2];
-	case 2: ret.i[permutation->i[1]] = idx->i[1];
+	case 8: ret.i[permutation->i[7]] = idx->i[7]; /* FALLTHRU */
+	case 7: ret.i[permutation->i[6]] = idx->i[6]; /* FALLTHRU */
+	case 6: ret.i[permutation->i[5]] = idx->i[5]; /* FALLTHRU */
+	case 5: ret.i[permutation->i[4]] = idx->i[4]; /* FALLTHRU */
+	case 4: ret.i[permutation->i[3]] = idx->i[3]; /* FALLTHRU */
+	case 3: ret.i[permutation->i[2]] = idx->i[2]; /* FALLTHRU */
+	case 2: ret.i[permutation->i[1]] = idx->i[1]; /* FALLTHRU */
 	case 1: ret.i[permutation->i[0]] = idx->i[0];
 	}
 	return (ret);

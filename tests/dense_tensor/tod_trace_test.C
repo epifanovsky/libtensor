@@ -20,7 +20,7 @@ int test_1(size_t ni) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = ni - 1; i2[1] = ni - 1;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sza = dims.get_size();
@@ -36,7 +36,7 @@ int test_1(size_t ni) {
         for(size_t i = 0; i < sza; i++) pa[i] = drand48();
 
         for(size_t i = 0; i < ni; i++) {
-            index<2> ia; ia[0] = i; ia[1] = i;
+            libtensor::index<2> ia; ia[0] = i; ia[1] = i;
             abs_index<2> aia(ia, dims);
             d_ref += pa[aia.get_abs_index()];
         }
@@ -74,7 +74,7 @@ int test_2(size_t ni) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = ni - 1; i2[1] = ni - 1;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sza = dims.get_size();
@@ -90,7 +90,7 @@ int test_2(size_t ni) {
         for(size_t i = 0; i < sza; i++) pa[i] = drand48();
 
         for(size_t i = 0; i < ni; i++) {
-            index<2> ia; ia[0] = i; ia[1] = i;
+            libtensor::index<2> ia; ia[0] = i; ia[1] = i;
             abs_index<2> aia(ia, dims);
             d_ref += pa[aia.get_abs_index()];
         }
@@ -129,7 +129,7 @@ int test_3(size_t ni, size_t nj) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = ni - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     size_t sza = dims.get_size();
@@ -146,7 +146,7 @@ int test_3(size_t ni, size_t nj) {
 
         for(size_t i = 0; i < ni; i++) {
         for(size_t j = 0; j < nj; j++) {
-            index<4> ia;
+            libtensor::index<4> ia;
             ia[0] = i; ia[1] = j; ia[2] = i; ia[3] = j;
             abs_index<4> aia(ia, dims);
             d_ref += pa[aia.get_abs_index()];
@@ -186,7 +186,7 @@ int test_4(size_t ni, size_t nj) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = ni - 1; i2[2] = nj - 1; i2[3] = nj - 1;
     dimensions<4> dims(index_range<4>(i1, i2));
     size_t sza = dims.get_size();
@@ -203,7 +203,7 @@ int test_4(size_t ni, size_t nj) {
 
         for(size_t i = 0; i < ni; i++) {
         for(size_t j = 0; j < nj; j++) {
-            index<4> ia;
+            libtensor::index<4> ia;
             ia[0] = i; ia[1] = i; ia[2] = j; ia[3] = j;
             abs_index<4> aia(ia, dims);
             d_ref += pa[aia.get_abs_index()];
@@ -245,7 +245,7 @@ int test_5(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-    index<6> i1, i2;
+    libtensor::index<6> i1, i2;
     i2[0] = ni - 1; i2[1] = nj - 1; i2[2] = nk - 1; i2[3] = ni - 1;
     i2[4] = nj - 1; i2[5] = nk - 1;
     dimensions<6> dims(index_range<6>(i1, i2));
@@ -264,7 +264,7 @@ int test_5(size_t ni, size_t nj, size_t nk) {
         for(size_t i = 0; i < ni; i++) {
         for(size_t j = 0; j < nj; j++) {
         for(size_t k = 0; k < nk; k++) {
-            index<6> ia;
+            libtensor::index<6> ia;
             ia[0] = i; ia[1] = j; ia[2] = k;
             ia[3] = i; ia[4] = j; ia[5] = k;
             abs_index<6> aia(ia, dims);
@@ -307,7 +307,7 @@ int test_6(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-    index<6> i1, i2;
+    libtensor::index<6> i1, i2;
     i2[0] = nk - 1; i2[1] = nk - 1; i2[2] = nj - 1; i2[3] = nj - 1;
     i2[4] = ni - 1; i2[5] = ni - 1;
     dimensions<6> dims(index_range<6>(i1, i2));
@@ -326,7 +326,7 @@ int test_6(size_t ni, size_t nj, size_t nk) {
         for(size_t i = 0; i < ni; i++) {
         for(size_t j = 0; j < nj; j++) {
         for(size_t k = 0; k < nk; k++) {
-            index<6> ia;
+            libtensor::index<6> ia;
             ia[0] = k; ia[1] = k; ia[2] = j;
             ia[3] = j; ia[4] = i; ia[5] = i;
             abs_index<6> aia(ia, dims);

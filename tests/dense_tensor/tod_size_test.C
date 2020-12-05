@@ -15,7 +15,7 @@ int test_1() {
 
     try {
 
-        index<1> i1, i2;
+        libtensor::index<1> i1, i2;
         i2[0] = 10;
         dimensions<1> dims(index_range<1>(i1, i2));
 

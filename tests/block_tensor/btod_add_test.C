@@ -75,7 +75,7 @@ void btod_add_test::test_1(double ca1, double ca2)
 
     try {
 
-    index<2> i0, i1, i2;
+    libtensor::index<2> i0, i1, i2;
     i2[0] = 10; i2[1] = 20;
     dimensions<2> dims_ia(index_range<2>(i1, i2));
     i2[0] = 20; i2[1] = 10;
@@ -139,7 +139,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
 
     try {
 
-    index<2> i0, i1, i2;
+    libtensor::index<2> i0, i1, i2;
     i2[0] = 10; i2[1] = 20;
     dimensions<2> dims_ia(index_range<2>(i1, i2));
     i2[0] = 20; i2[1] = 10;
@@ -203,7 +203,7 @@ void btod_add_test::test_3(double ca1, double ca2)
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -220,7 +220,7 @@ void btod_add_test::test_3(double ca1, double ca2)
     ctrl_bta2.req_symmetry().insert(cycle);
     ctrl_btb.req_symmetry().insert(cycle);
 
-    index<2> i_00, i_01, i_11;
+    libtensor::index<2> i_00, i_01, i_11;
     i_01[0] = 0; i_01[1] = 1;
     i_11[0] = 1; i_11[1] = 1;
 
@@ -280,7 +280,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 10; i2[1] = 10; i2[2] = 10; i2[3] = 10;
     dimensions<4> dims(index_range<4>(i1, i2));
     block_index_space<4> bis(dims);
@@ -308,7 +308,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
     ctrl_btb.req_symmetry().insert(cycle1);
     ctrl_btb.req_symmetry().insert(cycle2);
 
-    index<4> i_0000, i_0001, i_0011, i_0111, i_1111;
+    libtensor::index<4> i_0000, i_0001, i_0011, i_0111, i_1111;
     i_0001[0] = 0; i_0001[1] = 0; i_0001[2] = 0; i_0001[3] = 1;
     i_0011[0] = 0; i_0011[1] = 0; i_0011[2] = 1; i_0011[3] = 1;
     i_0111[0] = 0; i_0111[1] = 1; i_0111[2] = 1; i_0111[3] = 1;
@@ -378,7 +378,7 @@ void btod_add_test::test_5() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -413,7 +413,7 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -449,7 +449,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
     try {
 
     size_t ni = 13, na = 7;
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = na - 1; i2[1] = na - 1; i2[2] = ni - 1; i2[3] = na - 1;
     dimensions<4> dims_caib(index_range<4>(i1, i2));
     block_index_space<4> bis_caib(dims_caib);
@@ -513,7 +513,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
     try {
 
     size_t ni = 10, na = 4;
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = na - 1; i2[2] = ni - 1; i2[3] = na - 1;
     dimensions<4> dims_iajb(index_range<4>(i1, i2));
     block_index_space<4> bis_iajb(dims_iajb);
@@ -583,7 +583,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
     try {
 
     size_t ni = 10, na = 4;
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = ni - 1; i2[1] = na - 1; i2[2] = ni - 1; i2[3] = na - 1;
     dimensions<4> dims_iajb(index_range<4>(i1, i2));
     block_index_space<4> bis_iajb(dims_iajb);
@@ -646,7 +646,7 @@ void btod_add_test::test_10(double d) throw(libtest::test_exception) {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 12; i2[1] = 12; i2[2] = 6; i2[3] = 6;
     dimensions<4> dims_iiaa(index_range<4>(i1, i2));
     i2[0] = 12; i2[1] = 6; i2[2] = 6; i2[3] = 6;
@@ -731,7 +731,7 @@ void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 6; i2[1] = 12;
     dimensions<2> dims(index_range<2>(i1, i2));
     block_index_space<2> bis(dims);
@@ -750,7 +750,7 @@ void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
     block_tensor_wr_ctrl<2, double> ca(bta), cb(btb);
     mask<2> m; m[0] = m[1] = true;
     se_part<2, double> sp1(bis, m, 2), sp2(bis, m, 2);
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1; i11[0] = 1; i11[1] = 1;
     scalar_transf<double> tr(sign ? 1. : -1.);
     sp1.add_map(i00, i11, tr);
@@ -803,7 +803,7 @@ void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
 
 void btod_add_test::test_exc() throw(libtest::test_exception) {
     /*
-    index<2> i1, i2; i2[0] = 1; i2[1] = 2;
+    libtensor::index<2> i1, i2; i2[0] = 1; i2[1] = 2;
     dimensions<2> dims_ia(index_range<2>(i1, i2));
     i2[0] = 2; i2[1] = 1;
     dimensions<2> dims_ai(index_range<2>(i1, i2));

@@ -427,7 +427,7 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
         mask<2> m11;
         m11[0] = true; m11[1] = true;
 
-        index<2> i00, i01, i10, i11;
+        libtensor::index<2> i00, i01, i10, i11;
         i10[0] = 1; i01[1] = 1;
         i11[0] = 1; i11[1] = 1;
 
@@ -443,7 +443,7 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
         mask<4> m1111;
         m1111[0] = true; m1111[1] = true; m1111[2] = true; m1111[3] = true;
 
-        index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
+        libtensor::index<4> i0000, i1111, i0001, i1110, i0010, i1101, i0011, i1100,
             i0100, i1011, i0101, i1010, i0110, i1001, i0111, i1000;
         i1111[0] = 1; i1111[1] = 1; i1111[2] = 1; i1111[3] = 1;
         i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;

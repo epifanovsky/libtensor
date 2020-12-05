@@ -1,8 +1,8 @@
-# libxm 2.0 (beta)
+# libxm 2.0
 
 Libxm is a distributed-parallel C/C++ library that provides routines for
 efficient operations (e.g., contractions) on very large (terabytes in size)
-disk-based block-tensors.
+disk-backed block-tensors.
 
 With libxm tensors can be stored on hard disks which allows for virtually
 unlimited data size. Data are asynchronously prefetched to main memory for fast
@@ -23,25 +23,21 @@ can be used:
 
     cd src && CC=mpicc CFLAGS="-O3 -fopenmp -DXM_USE_MPI" make
 
-To use libxm in your project, include the `xm.h` file and link with the
-compiled static `libxm.a` library.
+To use libxm in your project, include `xm.h` file and link with the
+compiled static library `libxm.a`.
 
-### Source code overview
+### Documentation
 
-For detailed documentation, see individual header files in `src` directory.
-
-- example.c - sample code with comments - start here
-- src/xm.h - main libxm include header file
-- src/tensor.c - block-tensor manipulation routines
-- src/alloc.c - MPI-aware thread-safe disk-backed memory allocator
-- src/blockspace.c - operations on block-spaces
-- src/dim.c - operations on multidimensional indices
+Step-by-step tutorial on how to use libxm can be found in the
+[example.c](example.c) file.
+Full API documentation is available
+[here](https://ilyak.github.io/libxm/doxygen_html/files.html).
 
 ### Parallel scaling
 
 The table below shows parallel scalability of some libxm operations on the
-NERSC Cori Cray XC40 supercomputer. The total tensor data size was over 2 Tb.
-Burst Buffer was used in all tests. Table shows time in seconds with speedup
+NERSC Cori Cray XC40 supercomputer with BurstBuffer enabled. Total tensor data
+size is over 2 Tb in all tests. Table shows time in seconds with speedup
 relative to 1 node shown in parenthesis.
 
 |      Nodes      |  xm\_contract  |   xm\_add   |   xm\_set   |
@@ -55,9 +51,9 @@ relative to 1 node shown in parenthesis.
 
 ### Journal reference
 
-[I.A. Kaliman and A.I. Krylov, JCC 2017](https://dx.doi.org/10.1002/jcc.24713)
+Please reference the following paper when using libxm:
 
-The older code described in the paper can be found in the **xm1** branch.
+[I.A. Kaliman and A.I. Krylov, JCC 2017](https://dx.doi.org/10.1002/jcc.24713)
 
 ### Libxm users
 
