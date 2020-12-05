@@ -1,7 +1,7 @@
 set(SRC_CORE
     defs.C
     exception.C
-    version.C
+    metadata.C
     core/impl/batching_policy_base.C
     core/impl/abs_index.C
     core/impl/allocator.C
@@ -13,6 +13,12 @@ set(SRC_CORE
     core/impl/short_orbit.C
     core/impl/subgroup_orbits.C
 )
+set_property(SOURCE metadata.C
+             APPEND PROPERTY COMPILE_DEFINITIONS BLA_VENDOR="${BLA_VENDOR}")
+if (WITH_MPI)
+    set_property(SOURCE metadata.C
+                 APPEND PROPERTY COMPILE_DEFINITIONS WITH_MPI=1)
+endif()
 
 set(SRC_LINALG
     linalg/linalg_generic_level1.C
@@ -21,7 +27,17 @@ set(SRC_LINALG
     linalg/linalg_cblas_level1.C
     linalg/linalg_cblas_level2.C
     linalg/linalg_cblas_level3.C
+    linalg/BlasSequential.C
 )
+if (BLA_VENDOR STREQUAL "OpenBLAS")
+    set_property(SOURCE linalg/BlasSequential.C
+        APPEND PROPERTY COMPILE_DEFINITIONS HAVE_OPENBLAS=1
+    )
+elseif (BLA_VENDOR MATCHES "Intel")
+    set_property(SOURCE linalg/BlasSequential.C
+        APPEND PROPERTY COMPILE_DEFINITIONS HAVE_MKL=1
+    )
+endif()
 
 set(SRC_KERNELS
     kernels/dadd1/kern_dadd1.C
@@ -225,7 +241,7 @@ set(SRC_EXPR
 )
 
 if(WITH_LIBXM)
-    set(SRC_XM
+    set(SRC_XM_RAW
         libxm/src/alloc.c
         libxm/src/blockspace.c
         libxm/src/contract.c
@@ -234,6 +250,9 @@ if(WITH_LIBXM)
         libxm/src/tensor.c
         libxm/src/util.c
         libxm/src/xm.c
+    )
+    set(SRC_XM
+        ${SRC_XM_RAW}
         block_tensor/impl/btod_contract2_1_xm.C
         block_tensor/impl/btod_contract2_2_xm.C
         block_tensor/impl/btod_contract2_3_xm.C
@@ -244,15 +263,29 @@ if(WITH_LIBXM)
         block_tensor/impl/btod_contract2_8_xm.C
         block_tensor/impl/btod_copy_xm.C
     )
+
+    if (WITH_MPI)
+        set_property(SOURCE ${SRC_XM_RAW}
+                     APPEND PROPERTY COMPILE_DEFINITIONS XM_USE_MPI=1)
+        set_property(SOURCE ${SRC_XM_RAW}
+                     APPEND PROPERTY INCLUDE_DIRECTORIES ${MPI_C_INCLUDE_PATH})
+        set_property(SOURCE ${SRC_XM_RAW}
+                     APPEND PROPERTY COMPILE_OPTIONS ${MPI_C_COMPILE_FLAGS})
+    endif()
 else()
     set(SRC_XM "")
 endif()
 
 set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
-    ${SRC_INST} ${SRC_EXPR} ${SRC_XM})
+    ${SRC_INST} ${SRC_EXPR} ${SRC_XM}
+)
 
 add_library(tensorlight ${SRC} ${SRC_CORE})
 target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}")
 target_link_libraries(tensorlight PUBLIC ${BLAS_LAPACK_LIBRARIES} util)
 target_compile_definitions(tensorlight PUBLIC
 	$<$<CONFIG:Debug>:libtensorlight_DEBUG> PRIVATE WITHOUT_LIBVMM)
+
+if (WITH_MPI)
+    target_link_libraries(tensorlight PUBLIC ${MPI_C_LIBRARIES} ${MPI_C_LINK_FLAGS})
+endif()

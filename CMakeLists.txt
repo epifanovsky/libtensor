@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.0)
-project(libtensorlight VERSION 3.0.0 LANGUAGES CXX)
+project(libtensorlight VERSION 3.0.0 LANGUAGES C CXX)
 enable_testing()
 
 set(CMAKE_CXX_STANDARD 11)
@@ -11,9 +11,7 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
-
-option(CMAKE_BUILD_TYPE "Build type (Release or Debug)" Release)
-option(BUILD_SHARED_LIBS "Build shared libraries instead of static ones" ON)
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type (Release or Debug)")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(GNUInstallDirs)
@@ -61,20 +59,30 @@ elseif(BLA_VENDOR STREQUAL "Intel10_64lp_seq" OR BLA_VENDOR STREQUAL "Intel10_64
 	find_file(MKLINCLUDE mkl.h HINTS "${BLAS_DIR}/../include" "${BLAS_DIR}/../../include")
 	get_filename_component(BLAS_INCLUDE_DIR ${MKLINCLUDE} DIRECTORY)
 else()
-	message(WARNING "BLAS vendor ${BLA_VENDOR} has not been tested with adccore")
+	# TODO If more blas vendors are supported do not forget to add them to
+	#      libtensor/linalg/BlasSequential.C and libtensor/CMakeLists.txt
+	message(WARNING "BLAS vendor ${BLA_VENDOR} has not been tested with libtensorlight")
 endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
+
+# Libxm setup
+option(WITH_LIBXM "Compile libxm support into libtensor" ON)
+option(WITH_MPI   "Compile MPI support into libtensor" OFF)
+if (WITH_LIBXM)
+    add_definitions(-DWITH_LIBXM)
+    if (WITH_MPI)
+        find_package(MPI REQUIRED)
+    endif()
+else()
+    if(WITH_MPI)
+        message(FATAL_ERROR "Can't use MPI if WITH_LIBXM is off.")
+    endif()
+endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 set(LIBUTIL_SOURCE_DIR ${libtensorlight_SOURCE_DIR})
 add_subdirectory(libutil)
 add_subdirectory(libtensor)
-
-# Libxm
-option(WITH_LIBXM "Compile libxm support into libtensor" ON)
-if (WITH_LIBXM)
-    add_definitions(-DWITH_LIBXM)
-endif()
 
 option(LIBTENSOR_TESTS "Build libtensor tests" ON)
 if (LIBTENSOR_TESTS)
@@ -82,47 +90,44 @@ if (LIBTENSOR_TESTS)
 endif()
 
 # TODO: needs to be optimized, taking almost everything for now
-set(PN "libtensorlight")
 #### Installation ####
-option(INSTALL_DEVEL_HEADERS "Install devel headers" ON)
-if (INSTALL_DEVEL_HEADERS)
-    install(DIRECTORY "libtensor/core"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/btod"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/block_tensor"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/gen_block_tensor"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/dense_tensor"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/symmetry"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/expr"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/kernels"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "libtensor/linalg"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN}
-            FILES_MATCHING PATTERN "*.h")
-endif()
+install(DIRECTORY "libtensor/core"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/btod"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/block_tensor"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/gen_block_tensor"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/dense_tensor"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/symmetry"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/expr"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/kernels"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "libtensor/linalg"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
+    FILES_MATCHING PATTERN "*.h")
 
 install(DIRECTORY "libutil"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             FILES_MATCHING PATTERN "*.h")
 
 install(FILES libtensor/libtensor.h libtensor/defs.h libtensor/exception.h
-        libtensor/version.h libtensor/timings.h libtensor/not_implemented.h
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PN})
+        libtensor/metadata.h libtensor/timings.h libtensor/not_implemented.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor)
 
+set(PN "libtensorlight")
 set(CMAKE_INSTALL_LIBDIR lib CACHE STRING "Directory to which libraries installed")
 install(TARGETS tensorlight util
         EXPORT "${PN}Targets"
