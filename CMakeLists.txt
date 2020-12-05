@@ -159,21 +159,6 @@ install(TARGETS tensorlight util
 target_compile_definitions(tensorlight INTERFACE USING_${PN})
 target_include_directories(tensorlight INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-set(CMAKECONFIG_INSTALL_DIR "share/cmake/${PN}")
-configure_package_config_file(cmake/${PN}Config.cmake.in
-                         "${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake"
-                         INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR})
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${PN}ConfigVersion.cmake
-                            VERSION ${${PN}_VERSION}
-                            COMPATIBILITY AnyNewerVersion)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/${PN}ConfigVersion.cmake
-        DESTINATION ${CMAKECONFIG_INSTALL_DIR})
-
-install(EXPORT "${PN}Targets"
-        NAMESPACE "${PN}::"
-        DESTINATION ${CMAKECONFIG_INSTALL_DIR})
-
 get_directory_property(LIBTENSOR_COMPILE_DEFINITIONS_RAW COMPILE_DEFINITIONS)
 list(JOIN LIBTENSOR_COMPILE_DEFINITIONS_RAW " -D" LIBTENSOR_COMPILE_DEFINITIONS)
 configure_file("${libtensorlight_SOURCE_DIR}/libtensor/libtensorlight.pc.in" "libtensorlight.pc" @ONLY)
