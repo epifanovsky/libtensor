@@ -7,13 +7,22 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-10.15]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
+    - name: Install dependencies on Linux
       run: |
         sudo apt-get install libopenblas-dev ninja-build ccache
+      if: contains( matrix.os, 'ubuntu')
+    - name: Install dependencies on macOS
+      run: |
+        brew install ninja ccache
+        brew install coreutils || true
+      if: contains( matrix.os, 'macos')
     - uses: actions/cache@v1
       env:
         cache-name: cache-artifacts
