@@ -20,7 +20,7 @@ jobs:
       if: contains( matrix.os, 'ubuntu')
     - name: Install dependencies on macOS
       run: |
-        brew install ninja ccache
+        brew install ninja ccache libomp
         brew install coreutils || true
       if: contains( matrix.os, 'macos')
     - uses: actions/cache@v1
