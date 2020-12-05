@@ -70,6 +70,12 @@ set(LIBUTIL_SOURCE_DIR ${libtensorlight_SOURCE_DIR})
 add_subdirectory(libutil)
 add_subdirectory(libtensor)
 
+# Libxm
+option(WITH_LIBXM "Compile libxm support into libtensor" ON)
+if (WITH_LIBXM)
+    add_definitions(-DWITH_LIBXM)
+endif()
+
 option(LIBTENSOR_TESTS "Build libtensor tests" ON)
 if (LIBTENSOR_TESTS)
     add_subdirectory(tests)

@@ -224,28 +224,32 @@ set(SRC_EXPR
     expr/opt/opt_merge_equiv_ident.C
 )
 
-# set(SRC_XM
-#     libxm/src/alloc.c
-#     libxm/src/blockspace.c
-#     libxm/src/contract.c
-#     libxm/src/dim.c
-#     libxm/src/scalar.c
-#     libxm/src/tensor.c
-#     libxm/src/util.c
-#     libxm/src/xm.c
-#     block_tensor/impl/btod_contract2_1_xm.C
-#     block_tensor/impl/btod_contract2_2_xm.C
-#     block_tensor/impl/btod_contract2_3_xm.C
-#     block_tensor/impl/btod_contract2_4_xm.C
-#     block_tensor/impl/btod_contract2_5_xm.C
-#     block_tensor/impl/btod_contract2_6_xm.C
-#     block_tensor/impl/btod_contract2_7_xm.C
-#     block_tensor/impl/btod_contract2_8_xm.C
-#     block_tensor/impl/btod_copy_xm.C
-# )
+if(WITH_LIBXM)
+    set(SRC_XM
+        libxm/src/alloc.c
+        libxm/src/blockspace.c
+        libxm/src/contract.c
+        libxm/src/dim.c
+        libxm/src/scalar.c
+        libxm/src/tensor.c
+        libxm/src/util.c
+        libxm/src/xm.c
+        block_tensor/impl/btod_contract2_1_xm.C
+        block_tensor/impl/btod_contract2_2_xm.C
+        block_tensor/impl/btod_contract2_3_xm.C
+        block_tensor/impl/btod_contract2_4_xm.C
+        block_tensor/impl/btod_contract2_5_xm.C
+        block_tensor/impl/btod_contract2_6_xm.C
+        block_tensor/impl/btod_contract2_7_xm.C
+        block_tensor/impl/btod_contract2_8_xm.C
+        block_tensor/impl/btod_copy_xm.C
+    )
+else()
+    set(SRC_XM "")
+endif()
 
 set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
-    ${SRC_INST} ${SRC_EXPR})
+    ${SRC_INST} ${SRC_EXPR} ${SRC_XM})
 
 add_library(tensorlight ${SRC} ${SRC_CORE})
 target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}")
