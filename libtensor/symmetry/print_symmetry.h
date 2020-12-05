@@ -77,7 +77,6 @@ std::ostream &operator<<(std::ostream &os,
     typedef symmetry_element_set_adapter<N, T, se3_t> adapter3_t;
 
     const std::string &id = set.get_id();
-    std::cout << "Set " << id << std::endl;
     if (id.compare(se1_t::k_sym_type) == 0) {
         adapter1_t g(set);
         for (typename adapter1_t::iterator its = g.begin();
