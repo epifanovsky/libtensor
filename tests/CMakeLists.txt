@@ -1,32 +1,3 @@
-set(SRC_DIAG_TENSOR
-    diag_tensor/libtensor_diag_tensor_tests.C
-    diag_tensor/libtensor_diag_tensor_suite.C
-    diag_tensor/diag_tensor_test.C
-    diag_tensor/diag_tensor_space_test.C
-    diag_tensor/diag_tensor_subspace_test.C
-    diag_tensor/diag_to_add_space_test.C
-    diag_tensor/diag_to_contract2_space_test.C
-    diag_tensor/diag_tod_adjust_space_test.C
-    diag_tensor/diag_tod_contract2_test.C
-    diag_tensor/diag_tod_contract2_part_test.C
-    diag_tensor/diag_tod_copy_test.C
-    diag_tensor/diag_tod_dotprod_test.C
-    diag_tensor/diag_tod_mult1_test.C
-    diag_tensor/diag_tod_random_test.C
-    diag_tensor/diag_tod_set_test.C
-    diag_tensor/tod_conv_diag_tensor_test.C
-)
-
-set(SRC_DIAG_BLOCK_TENSOR
-    diag_block_tensor/libtensor_diag_block_tensor_tests.C
-    diag_block_tensor/libtensor_diag_block_tensor_suite.C
-    diag_block_tensor/diag_block_tensor_test.C
-    diag_block_tensor/diag_btod_contract2_test.C
-    diag_block_tensor/diag_btod_copy_test.C
-    diag_block_tensor/diag_btod_random_test.C
-    diag_block_tensor/tod_conv_diag_block_tensor_test.C
-)
-
 set(SRC_SYMMETRY
     symmetry/adjacency_list_test.C
     symmetry/block_labeling_test.C
@@ -174,44 +145,11 @@ set(SRC_IFACE
     iface/trace_test.C
 )
 
-set(SRC_BLOCK_SPARSE
-    block_sparse/libtensor_block_sparse_tests.C
-    block_sparse/libtensor_block_sparse_suite.C
-    block_sparse/sparse_bispace_test.C
-    block_sparse/sparse_btensor_test.C
-    block_sparse/block_kernels_test.C
-    block_sparse/block_loop_test.C
-    block_sparse/sparse_loop_list_test.C
-    block_sparse/sparsity_fuser_test.C
-    block_sparse/sparse_loop_grouper_test.C
-    block_sparse/sparse_block_tree_iterator_test.C
-    block_sparse/sparse_block_tree_test.C
-    block_sparse/direct_sparse_btensor_test.C
-    block_sparse/blas_isomorphism_test.C
-    block_sparse/batch_kernels_test.C
-    block_sparse/batch_list_builder_test.C
-    block_sparse/subspace_iterator_test.C
-    block_sparse/batch_provider_test.C
-
-    block_sparse/test_fixtures/permute_3d_sparse_120_test_f.C
-    block_sparse/test_fixtures/contract2_test_f.C
-)
-
-set(SRC_BLOCK_SPARSE_BENCHMARK
-    block_sparse/libtensor_block_sparse_benchmark.C
-    block_sparse/timer.C
-)
-
 set(TARGETS
-    # libtensor_diag_tensor_tests
-    # libtensor_diag_block_tensor_tests
     # libtensor_block_tensor_tests
     libtensor_expr_tests
     libtensor_iface_tests
     libtensor_symmetry_tests
-#    libtensor_block_sparse_benchmark
-#    libtensor_block_sparse_tests
-#    sparse_block_tree_benchmark
 )
 
 
@@ -219,7 +157,7 @@ macro(libtensor_add_tests SUITE)
     foreach(TEST ${ARGN})
         add_executable(${TEST} ${TEST}.C)
         target_link_libraries(${TEST} tensorlight)
-	target_include_directories(${TEST} PRIVATE ${libtensorlight_SOURCE_DIR})
+        target_include_directories(${TEST} PRIVATE ${libtensorlight_SOURCE_DIR})
         add_test(NAME "libtensor/${SUITE}/${TEST}" COMMAND ${TEST})
     endforeach()
 endmacro()

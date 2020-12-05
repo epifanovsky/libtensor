@@ -176,52 +176,6 @@ set(SRC_BTOD
     block_tensor/impl/btod_vmpriority.C
 )
 
-# set(SRC_BLOCK_SPARSE
-#     block_sparse/sparsity_data.C
-#     block_sparse/subspace.C
-#     block_sparse/sparse_bispace_impl.C
-#     block_sparse/block_loop.C
-#     block_sparse/sparse_loop_list.C
-#     block_sparse/sparsity_fuser.C
-#     block_sparse/sparse_loop_grouper.C
-#     block_sparse/range.C
-#     block_sparse/batch_list_builder.C
-#     block_sparse/subspace_iterator.C
-#     block_sparse/connectivity.C
-#     block_sparse/memory_reserve.C
-# )
-
-
-# set(SRC_DIAG_TENSOR
-#     diag_block_tensor/impl/diag_block_tensor.C
-#     diag_block_tensor/impl/diag_btod_addition_schedule.C
-#     diag_block_tensor/impl/diag_btod_aux_add.C
-#     diag_block_tensor/impl/diag_btod_aux_copy.C
-#     diag_block_tensor/impl/diag_btod_contract2.C
-#     diag_block_tensor/impl/diag_btod_contract2_clst_builder.C
-#     diag_block_tensor/impl/diag_btod_copy.C
-#     diag_block_tensor/impl/diag_btod_dotprod.C
-#     diag_block_tensor/impl/diag_btod_random.C
-#     diag_block_tensor/impl/diag_btod_unfold_block_list.C
-#     diag_block_tensor/impl/tod_conv_diag_block_tensor.C
-#     diag_tensor/impl/diag_tensor_space.C
-#     diag_tensor/impl/diag_tensor.C
-#     diag_tensor/impl/tod_conv_diag_tensor.C
-#     diag_tensor/impl/diag_to_add_space.C
-#     diag_tensor/impl/diag_to_contract2_space.C
-#     diag_tensor/impl/diag_tod_adjust_space.C
-#     diag_tensor/impl/diag_tod_aux_constr_add.C
-#     diag_tensor/impl/diag_tod_aux_constr_base.C
-#     diag_tensor/impl/diag_tod_aux_dotprod.C
-#     diag_tensor/impl/diag_tod_contract2.C
-#     diag_tensor/impl/diag_tod_contract2s.C
-#     diag_tensor/impl/diag_tod_copy.C
-#     diag_tensor/impl/diag_tod_dotprod.C
-#     diag_tensor/impl/diag_tod_mult1.C
-#     diag_tensor/impl/diag_tod_random.C
-#     diag_tensor/impl/diag_tod_set.C
-# )
-
 set(SRC_EXPR
     expr/btensor/impl/eval_btensor_double.C
     expr/btensor/impl/eval_btensor_double_add.C
