@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.2.0)
 project(libtensorlight VERSION 3.0.0 LANGUAGES C CXX)
 enable_testing()
 
+#
+# Compiler
+#
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -19,29 +22,18 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(SetupCompiler)
 
-if(UNIX)
-    add_definitions(-DPOSIX)
-endif(UNIX)
-
-# OpenMP
-option(ENABLE_OPENMP "Enables OpenMP parallelization" ON)
-if(ENABLE_OPENMP)
-    find_package(OpenMP REQUIRED)
-    if (OPENMP_FOUND)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    endif()
+#
+# Threading
+#
+add_definitions(-DPOSIX)
+if(NOT UNIX)
+    message(FATAL_ERROR "Only unix platforms are supported.")
 endif()
+include(InspectThreads)
 
-# pthreads
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-find_package(Threads)
-if (NOT CMAKE_USE_PTHREADS_INIT)
-	message(FATAL_ERROR "We need pthreads as the threading backend at the moment")
-endif()
-add_definitions(-DUSE_PTHREADS)
-
+#
 # BLAS
+#
 option(BLA_STATIC "Statically link to BLAS and LAPACK" OFF)
 if (UNIX AND NOT APPLE)
 	set(BLA_VENDOR "OpenBLAS" CACHE STRING "BLAS Vendor to use (see CMake documentation)")
@@ -66,11 +58,35 @@ else()
 endif()
 set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 
-# Libxm setup
+#
+# Random-number generator
+#
+check_cxx_source_compiles("
+#include<cstdlib>
+int main() {
+  double d = drand48();
+  return 0;
+}
+" HAVE_DRAND48)
+if(HAVE_DRAND48)
+    add_definitions(-DHAVE_DRAND48)
+endif(HAVE_DRAND48)
+
+#
+# Libxm
+#
+add_definitions(-DWITHOUT_LIBVMM)
 option(WITH_LIBXM "Compile libxm support into libtensor" ON)
 option(WITH_MPI   "Compile MPI support into libtensor" OFF)
 if (WITH_LIBXM)
     add_definitions(-DWITH_LIBXM)
+
+    find_package(OpenMP REQUIRED)
+    if (OPENMP_FOUND)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    endif()
+
     if (WITH_MPI)
         find_package(MPI REQUIRED)
     endif()
@@ -80,6 +96,9 @@ else()
     endif()
 endif()
 
+#
+# Pass to subdirectories
+#
 set(CMAKE_POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 set(LIBUTIL_SOURCE_DIR ${libtensorlight_SOURCE_DIR})
 add_subdirectory(libutil)
@@ -90,8 +109,10 @@ if (LIBTENSOR_TESTS)
     add_subdirectory(tests)
 endif()
 
+#
+# Installation
+#
 # TODO: needs to be optimized, taking almost everything for now
-#### Installation ####
 install(DIRECTORY "libtensor/core"
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libtensor
     FILES_MATCHING PATTERN "*.h")
@@ -153,6 +174,8 @@ install(EXPORT "${PN}Targets"
         NAMESPACE "${PN}::"
         DESTINATION ${CMAKECONFIG_INSTALL_DIR})
 
+get_directory_property(LIBTENSOR_COMPILE_DEFINITIONS_RAW COMPILE_DEFINITIONS)
+list(JOIN LIBTENSOR_COMPILE_DEFINITIONS_RAW " -D" LIBTENSOR_COMPILE_DEFINITIONS)
 configure_file("${libtensorlight_SOURCE_DIR}/libtensor/libtensorlight.pc.in" "libtensorlight.pc" @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtensorlight.pc
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

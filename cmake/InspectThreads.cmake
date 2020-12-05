@@ -1,0 +1,161 @@
+include(CheckCXXSourceCompiles)
+
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+find_package(Threads)
+if (NOT CMAKE_USE_PTHREADS_INIT)
+    message(FATAL_ERROR "We need pthreads as the threading backend at the moment")
+endif()
+add_definitions(-DUSE_PTHREADS)
+
+if(CMAKE_USE_PTHREADS_INIT)
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+
+    check_cxx_source_compiles("
+#include <pthread.h>
+int main() {
+    pthread_spinlock_t l;
+    pthread_spin_init(&l, 0);
+    pthread_spin_lock(&l);
+    pthread_spin_unlock(&l);
+    pthread_spin_destroy(&l);
+    return 0;
+}
+" HAVE_PTHREADS_SPINLOCK)
+
+    check_cxx_source_compiles("
+#include <pthread.h>
+int main() {
+    pthread_mutexattr_t attr;
+    pthread_mutex_t mtx;
+    if(pthread_mutexattr_init(&attr) != 0) return 1;
+    if(pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ADAPTIVE_NP) != 0) return 1;
+    if(pthread_mutex_init(&mtx, &attr) != 0) return 1;
+    if(pthread_mutex_lock(&mtx) != 0) return 1;
+    if(pthread_mutex_unlock(&mtx) != 0) return 1;
+    if(pthread_mutex_destroy(&mtx) != 0) return 1;
+    if(pthread_mutexattr_destroy(&attr) != 0) return 1;
+    return 0;
+}
+" HAVE_PTHREADS_ADAPTIVE_MUTEX)
+
+    if(HAVE_PTHREADS_SPINLOCK)
+        add_definitions(-DHAVE_PTHREADS_SPINLOCK)
+    endif(HAVE_PTHREADS_SPINLOCK)
+
+    if(HAVE_PTHREADS_ADAPTIVE_MUTEX)
+        add_definitions(-DHAVE_PTHREADS_ADAPTIVE_MUTEX)
+    endif(HAVE_PTHREADS_ADAPTIVE_MUTEX)
+
+    if(NOT HAVE_PTHREADS_SPINLOCK AND APPLE)
+
+        check_cxx_source_compiles("
+#include <libkern/OSAtomic.h>
+int main() {
+    OSSpinLock l = OS_SPINLOCK_INIT;
+    OSSpinLockLock(&l);
+    OSSpinLockUnlock(&l);
+    return 0;
+}
+" HAVE_MACOS_SPINLOCK)
+
+        if(HAVE_MACOS_SPINLOCK)
+            add_definitions(-DHAVE_MACOS_SPINLOCK)
+        endif(HAVE_MACOS_SPINLOCK)
+    endif(NOT HAVE_PTHREADS_SPINLOCK AND APPLE)
+
+endif()
+
+
+#   Test built-in thread-local storage
+
+#    Test Intel-style TLS
+check_cxx_source_compiles("
+int main() {
+    __declspec(thread) static int a;
+    return 0;
+}
+" HAVE_CPP_DECLSPEC_THREAD)
+
+#    Test GCC-style TLS
+#    Intel 11.0 compiler has a bug that doesn't allow static
+#    thread-local members in templates
+check_cxx_source_compiles("
+int main() {
+    static __thread int a;
+    return 0;
+}
+template<typename T> class C { static __thread int a; };
+template<typename T> __thread int C<T>::a;
+" HAVE_GCC_THREAD_LOCAL)
+
+#if(HAVE_CPP_DECLSPEC_THREAD)
+#    add_definitions(-DHAVE_CPP_DECLSPEC_THREAD -DUSE_BUILTIN_TLS)
+#elseif(HAVE_GCC_THREAD_LOCAL)
+if(HAVE_GCC_THREAD_LOCAL)
+    add_definitions(-DHAVE_GCC_THREAD_LOCAL -DUSE_BUILTIN_TLS)
+endif(HAVE_GCC_THREAD_LOCAL)
+
+
+#
+#   Timer functions
+#
+check_cxx_source_compiles("
+#include <sys/time.h>
+int main() {
+    struct timeval t;
+    gettimeofday(&t, 0);
+    return 0;
+}
+" HAVE_GETTIMEOFDAY)
+
+if(HAVE_GETTIMEOFDAY)
+    add_definitions(-DHAVE_GETTIMEOFDAY)
+endif(HAVE_GETTIMEOFDAY)
+
+check_cxx_source_compiles("
+#include <sys/times.h>
+int main() {
+    struct tms t;
+    clock_t c = times(&t);
+    return 0;
+}
+" HAVE_SYS_TIMES)
+
+if(HAVE_SYS_TIMES)
+    add_definitions(-DHAVE_SYS_TIMES)
+endif(HAVE_SYS_TIMES)
+
+check_cxx_source_compiles("
+#include <ctime>
+int main() {
+    struct timespec t;
+    t.tv_sec = 0; t.tv_nsec = 10;
+    nanosleep(&t, 0);
+    return 0;
+}
+" HAVE_NANOSLEEP)
+
+if(HAVE_NANOSLEEP)
+    add_definitions(-DHAVE_NANOSLEEP)
+endif(HAVE_NANOSLEEP)
+
+#
+#   Test stack tracing capability
+#
+
+check_cxx_source_compiles("
+#include <cstdlib>
+#include <execinfo.h>
+int main() {
+    void *array[100];
+    int size;
+    char **symbols;
+    size = backtrace(array, 100);
+    symbols = backtrace_symbols(array, size);
+    free(symbols);
+}
+" HAVE_EXECINFO_BACKTRACE)
+
+if(HAVE_EXECINFO_BACKTRACE)
+    add_definitions(-DHAVE_EXECINFO_BACKTRACE)
+endif(HAVE_EXECINFO_BACKTRACE)
