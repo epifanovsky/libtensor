@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.0)
-project(libtensorlight VERSION 3.0.0 LANGUAGES C CXX)
+project(libtensorlight VERSION 2.9.9 LANGUAGES C CXX)
 enable_testing()
 
 #
