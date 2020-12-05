@@ -5,6 +5,7 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+option(BUILD_SHARED_LIBS "Build shared instead of static libraries" ON)
 
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
