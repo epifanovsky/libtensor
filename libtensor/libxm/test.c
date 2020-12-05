@@ -29,13 +29,13 @@
 #include "xm.h"
 #include "util.h"
 
-typedef void (*test_fn)(const char *, int);
+typedef void (*test_fn)(const char *, xm_scalar_type_t);
 typedef void (*make_ab_fn)(xm_allocator_t *, xm_tensor_t **,
-    xm_tensor_t **, int);
+    xm_tensor_t **, xm_scalar_type_t);
 typedef void (*make_abc_fn)(xm_allocator_t *, xm_tensor_t **, xm_tensor_t **,
-    xm_tensor_t **, int);
+    xm_tensor_t **, xm_scalar_type_t);
 
-struct add_test {
+struct two_tensor_test {
 	make_ab_fn make_ab;
 	const char *idxa, *idxb;
 };
@@ -46,7 +46,7 @@ struct contract_test {
 };
 
 static int
-scalar_eq(xm_scalar_t a, xm_scalar_t b, int type)
+scalar_eq(xm_scalar_t a, xm_scalar_t b, xm_scalar_type_t type)
 {
 	switch (type) {
 	case XM_SCALAR_FLOAT: {
@@ -70,7 +70,7 @@ scalar_eq(xm_scalar_t a, xm_scalar_t b, int type)
 }
 
 static xm_scalar_t
-random_scalar(int type)
+random_scalar(xm_scalar_type_t type)
 {
 	if (type == XM_SCALAR_FLOAT || type == XM_SCALAR_DOUBLE)
 		return (drand48() - 0.5);
@@ -83,7 +83,8 @@ fill_random(xm_tensor_t *t)
 	xm_dim_t idx, nblocks;
 	size_t i, blksize;
 	void *buf;
-	int blocktype, type;
+	xm_block_type_t blocktype;
+	xm_scalar_type_t type;
 
 	type = xm_tensor_get_scalar_type(t);
 	buf = malloc(xm_tensor_get_largest_block_bytes(t));
@@ -166,36 +167,77 @@ check_add(xm_tensor_t *aa, xm_scalar_t alpha, xm_tensor_t *a, xm_scalar_t beta,
 		    beta * xm_tensor_get_element(b, ib);
 		eaa = xm_tensor_get_element(aa, ia);
 		if (!scalar_eq(eaa, ref, xm_tensor_get_scalar_type(aa)))
-			fatal("result != ref");
+			fatal("result != reference");
 		xm_dim_inc(&ia, &absdimsa);
 	}
 }
 
 static void
-test_add(const struct add_test *test, const char *path, int type,
-    xm_scalar_t alpha, xm_scalar_t beta)
+check_mul(xm_tensor_t *aa, xm_tensor_t *a, xm_tensor_t *b, const char *idxa,
+    const char *idxb)
 {
-	xm_allocator_t *allocator;
-	xm_tensor_t *a, *b, *aa;
+	xm_dim_t absdimsa, absdimsb, cidxa, cidxb, ia, ib;
+	xm_scalar_t eaa, ref;
 
-	allocator = xm_allocator_create(path);
-	assert(allocator);
-	test->make_ab(allocator, &a, &b, type);
-	assert(a);
-	assert(b);
-	fill_random(a);
-	fill_random(b);
-	aa = xm_tensor_create_structure(a, type, allocator);
-	xm_copy(aa, 1, a, test->idxa, test->idxa);
-	xm_add(alpha, aa, beta, b, test->idxa, test->idxb);
-	check_add(aa, alpha, a, beta, b, test->idxa, test->idxb);
-	xm_tensor_free_block_data(a);
-	xm_tensor_free_block_data(b);
-	xm_tensor_free_block_data(aa);
-	xm_tensor_free(a);
-	xm_tensor_free(b);
-	xm_tensor_free(aa);
-	xm_allocator_destroy(allocator);
+	xm_make_masks(idxa, idxb, &cidxa, &cidxb);
+	absdimsa = xm_tensor_get_abs_dims(a);
+	absdimsb = xm_tensor_get_abs_dims(b);
+	ia = xm_dim_zero(absdimsa.n);
+	ib = xm_dim_zero(absdimsb.n);
+	while (xm_dim_ne(&ia, &absdimsa)) {
+		xm_dim_set_mask(&ib, &cidxb, &ia, &cidxa);
+		ref = xm_tensor_get_element(a, ia) *
+		      xm_tensor_get_element(b, ib);
+		eaa = xm_tensor_get_element(aa, ia);
+		if (!scalar_eq(eaa, ref, xm_tensor_get_scalar_type(aa)))
+			fatal("result != reference");
+		xm_dim_inc(&ia, &absdimsa);
+	}
+}
+
+static void
+check_div(xm_tensor_t *aa, xm_tensor_t *a, xm_tensor_t *b, const char *idxa,
+    const char *idxb)
+{
+	xm_dim_t absdimsa, absdimsb, cidxa, cidxb, ia, ib;
+	xm_scalar_t eaa, ref;
+
+	xm_make_masks(idxa, idxb, &cidxa, &cidxb);
+	absdimsa = xm_tensor_get_abs_dims(a);
+	absdimsb = xm_tensor_get_abs_dims(b);
+	ia = xm_dim_zero(absdimsa.n);
+	ib = xm_dim_zero(absdimsb.n);
+	while (xm_dim_ne(&ia, &absdimsa)) {
+		xm_dim_set_mask(&ib, &cidxb, &ia, &cidxa);
+		ref = xm_tensor_get_element(a, ia) /
+		      xm_tensor_get_element(b, ib);
+		eaa = xm_tensor_get_element(aa, ia);
+		if (!scalar_eq(eaa, ref, xm_tensor_get_scalar_type(aa)))
+			fatal("result != reference");
+		xm_dim_inc(&ia, &absdimsa);
+	}
+}
+
+static void
+check_dot(xm_scalar_t res, xm_tensor_t *a, xm_tensor_t *b, const char *idxa,
+    const char *idxb)
+{
+	xm_dim_t absdimsa, absdimsb, cidxa, cidxb, ia, ib;
+	xm_scalar_t ref = 0;
+
+	xm_make_masks(idxa, idxb, &cidxa, &cidxb);
+	absdimsa = xm_tensor_get_abs_dims(a);
+	absdimsb = xm_tensor_get_abs_dims(b);
+	ia = xm_dim_zero(absdimsa.n);
+	ib = xm_dim_zero(absdimsb.n);
+	while (xm_dim_ne(&ia, &absdimsa)) {
+		xm_dim_set_mask(&ib, &cidxb, &ia, &cidxa);
+		ref += xm_tensor_get_element(a, ia) *
+		       xm_tensor_get_element(b, ib);
+		xm_dim_inc(&ia, &absdimsa);
+	}
+	if (!scalar_eq(res, ref, xm_tensor_get_scalar_type(a)))
+		fatal("result != reference");
 }
 
 static void
@@ -231,14 +273,119 @@ check_contract(xm_tensor_t *cc, xm_scalar_t alpha, xm_tensor_t *a,
 		}
 		ecc = xm_tensor_get_element(cc, ic);
 		if (!scalar_eq(ecc, ref, xm_tensor_get_scalar_type(cc)))
-			fatal("result != ref");
+			fatal("result != reference");
 		xm_dim_inc(&ic, &absdimsc);
 	}
 }
 
 static void
-test_contract(const struct contract_test *test, const char *path, int type,
-    xm_scalar_t alpha, xm_scalar_t beta)
+test_add(const struct two_tensor_test *test, const char *path,
+    xm_scalar_type_t type, xm_scalar_t alpha, xm_scalar_t beta)
+{
+	xm_allocator_t *allocator;
+	xm_tensor_t *a, *b, *aa;
+
+	allocator = xm_allocator_create(path);
+	assert(allocator);
+	test->make_ab(allocator, &a, &b, type);
+	assert(a);
+	assert(b);
+	fill_random(a);
+	fill_random(b);
+	aa = xm_tensor_create_structure(a, type, allocator);
+	xm_copy(aa, 1, a, test->idxa, test->idxa);
+	xm_add(alpha, aa, beta, b, test->idxa, test->idxb);
+	check_add(aa, alpha, a, beta, b, test->idxa, test->idxb);
+	xm_tensor_free_block_data(a);
+	xm_tensor_free_block_data(b);
+	xm_tensor_free_block_data(aa);
+	xm_tensor_free(a);
+	xm_tensor_free(b);
+	xm_tensor_free(aa);
+	xm_allocator_destroy(allocator);
+}
+
+static void
+test_mul(const struct two_tensor_test *test, const char *path,
+    xm_scalar_type_t type)
+{
+	xm_allocator_t *allocator;
+	xm_tensor_t *a, *b, *aa;
+
+	allocator = xm_allocator_create(path);
+	assert(allocator);
+	test->make_ab(allocator, &a, &b, type);
+	assert(a);
+	assert(b);
+	fill_random(a);
+	fill_random(b);
+	aa = xm_tensor_create_structure(a, type, allocator);
+	xm_copy(aa, 1, a, test->idxa, test->idxa);
+	xm_mul(aa, b, test->idxa, test->idxb);
+	check_mul(aa, a, b, test->idxa, test->idxb);
+	xm_tensor_free_block_data(a);
+	xm_tensor_free_block_data(b);
+	xm_tensor_free_block_data(aa);
+	xm_tensor_free(a);
+	xm_tensor_free(b);
+	xm_tensor_free(aa);
+	xm_allocator_destroy(allocator);
+}
+
+static void
+test_div(const struct two_tensor_test *test, const char *path,
+    xm_scalar_type_t type)
+{
+	xm_allocator_t *allocator;
+	xm_tensor_t *a, *b, *aa;
+
+	allocator = xm_allocator_create(path);
+	assert(allocator);
+	test->make_ab(allocator, &a, &b, type);
+	assert(a);
+	assert(b);
+	fill_random(a);
+	fill_random(b);
+	aa = xm_tensor_create_structure(a, type, allocator);
+	xm_copy(aa, 1, a, test->idxa, test->idxa);
+	xm_div(aa, b, test->idxa, test->idxb);
+	check_div(aa, a, b, test->idxa, test->idxb);
+	xm_tensor_free_block_data(a);
+	xm_tensor_free_block_data(b);
+	xm_tensor_free_block_data(aa);
+	xm_tensor_free(a);
+	xm_tensor_free(b);
+	xm_tensor_free(aa);
+	xm_allocator_destroy(allocator);
+}
+
+static void
+test_dot(const struct two_tensor_test *test, const char *path,
+    xm_scalar_type_t type)
+{
+	xm_allocator_t *allocator;
+	xm_tensor_t *a, *b;
+	xm_scalar_t res;
+
+	allocator = xm_allocator_create(path);
+	assert(allocator);
+	test->make_ab(allocator, &a, &b, type);
+	assert(a);
+	assert(b);
+	fill_random(a);
+	fill_random(b);
+	res = xm_dot(a, b, test->idxa, test->idxb);
+	check_dot(res, a, b, test->idxa, test->idxb);
+	xm_tensor_free_block_data(a);
+	xm_tensor_free_block_data(b);
+	xm_tensor_free(a);
+	xm_tensor_free(b);
+	xm_allocator_destroy(allocator);
+}
+
+static void
+test_contract(const struct contract_test *test, const char *path,
+    xm_scalar_type_t type, xm_scalar_t alpha, xm_scalar_t beta)
 {
 	xm_allocator_t *allocator;
 	xm_tensor_t *a, *b, *c, *cc;
@@ -270,7 +417,7 @@ test_contract(const struct contract_test *test, const char *path, int type,
 
 static void
 make_ab_1(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    int type)
+    xm_scalar_type_t type)
 {
 	xm_block_space_t *bs;
 	xm_tensor_t *a, *b;
@@ -290,7 +437,7 @@ make_ab_1(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_ab_2(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    int type)
+    xm_scalar_type_t type)
 {
 	xm_block_space_t *bs;
 	xm_tensor_t *a, *b;
@@ -309,7 +456,7 @@ make_ab_2(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_ab_3(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    int type)
+    xm_scalar_type_t type)
 {
 	xm_block_space_t *bs;
 	xm_tensor_t *a, *b;
@@ -330,7 +477,7 @@ make_ab_3(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_ab_4(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    int type)
+    xm_scalar_type_t type)
 {
 	xm_block_space_t *bs;
 	xm_tensor_t *a, *b;
@@ -351,8 +498,31 @@ make_ab_4(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 }
 
 static void
+make_ab_5(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
+    xm_scalar_type_t type)
+{
+	xm_block_space_t *bs;
+	xm_tensor_t *a, *b;
+
+	bs = xm_block_space_create(xm_dim_2(17, 31));
+	xm_block_space_split(bs, 0, 11);
+	xm_block_space_split(bs, 1, 15);
+	a = xm_tensor_create(bs, type, allocator);
+	xm_tensor_set_canonical_block(a, xm_dim_2(0, 0));
+	xm_tensor_set_canonical_block(a, xm_dim_2(1, 1));
+	b = xm_tensor_create(bs, type, allocator);
+	xm_tensor_set_canonical_block(b, xm_dim_2(0, 0));
+	xm_tensor_set_canonical_block(b, xm_dim_2(1, 1));
+	xm_tensor_set_canonical_block(b, xm_dim_2(0, 1));
+	xm_tensor_set_canonical_block(b, xm_dim_2(1, 0));
+	xm_block_space_free(bs);
+	*aa = a;
+	*bb = b;
+}
+
+static void
 make_abc_1(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx;
 	xm_block_space_t *bsa;
@@ -374,7 +544,7 @@ make_abc_1(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_2(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx, nblocks;
 	xm_block_space_t *bsa;
@@ -404,7 +574,7 @@ make_abc_2(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_3(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_block_space_t *bsa, *bsc;
 	xm_tensor_t *a, *b, *c;
@@ -423,7 +593,7 @@ make_abc_3(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_4(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_block_space_t *bsa;
 	xm_tensor_t *a, *b, *c;
@@ -440,7 +610,7 @@ make_abc_4(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_5(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx;
 	xm_block_space_t *bsa;
@@ -472,7 +642,7 @@ make_abc_5(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_6(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_block_space_t *bsa, *bsb, *bsc;
 	xm_tensor_t *a, *b, *c;
@@ -507,7 +677,7 @@ make_abc_6(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_7(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx, nblocks;
 	xm_block_space_t *bsa, *bsb, *bsc;
@@ -568,7 +738,7 @@ make_abc_7(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_8(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_block_space_t *bsa, *bsb, *bsc;
 	xm_tensor_t *a, *b, *c;
@@ -607,7 +777,7 @@ make_abc_8(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_9(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx, idx2, perm;
 	xm_block_space_t *bsa, *bsb;
@@ -727,7 +897,7 @@ make_abc_9(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_10(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx, idx2, perm;
 	xm_block_space_t *bsa, *bsb;
@@ -831,7 +1001,7 @@ make_abc_10(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_11(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx, idx2, perm;
 	xm_block_space_t *bsa, *bsb;
@@ -918,7 +1088,7 @@ make_abc_11(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 
 static void
 make_abc_12(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
-    xm_tensor_t **cc, int type)
+    xm_tensor_t **cc, xm_scalar_type_t type)
 {
 	xm_dim_t idx, idx2, perm, nblocks;
 	xm_block_space_t *bsa, *bsc;
@@ -1020,7 +1190,7 @@ make_abc_12(xm_allocator_t *allocator, xm_tensor_t **aa, xm_tensor_t **bb,
 }
 
 static void
-test_unfold_1(const char *path, int type)
+test_unfold_1(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_block_space_t *bs;
@@ -1069,7 +1239,7 @@ test_unfold_1(const char *path, int type)
 }
 
 static void
-test_unfold_2(const char *path, int type)
+test_unfold_2(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_block_space_t *bs;
@@ -1159,7 +1329,7 @@ test_unfold_2(const char *path, int type)
 }
 
 static void
-test_unfold_3(const char *path, int type)
+test_unfold_3(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_block_space_t *bs;
@@ -1281,7 +1451,7 @@ test_unfold_3(const char *path, int type)
 }
 
 static void
-test_copy_1(const char *path, int type)
+test_copy_1(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_tensor_t *a, *b, *c;
@@ -1330,7 +1500,7 @@ test_copy_1(const char *path, int type)
 }
 
 static void
-test_copy_2(const char *path, int type)
+test_copy_2(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_tensor_t *a, *b;
@@ -1375,7 +1545,7 @@ test_copy_2(const char *path, int type)
 }
 
 static void
-test_copy_3(const char *path, int type)
+test_copy_3(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_tensor_t *a, *b;
@@ -1426,7 +1596,7 @@ test_copy_3(const char *path, int type)
 }
 
 static void
-test_copy_4(const char *path, int type)
+test_copy_4(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_block_space_t *bsa, *bsb;
@@ -1475,7 +1645,7 @@ test_copy_4(const char *path, int type)
 }
 
 static void
-test_copy_5(const char *path, int type)
+test_copy_5(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_block_space_t *bsa;
@@ -1491,6 +1661,49 @@ test_copy_5(const char *path, int type)
 	xm_block_space_split(bsa, 2, 3);
 	a = xm_tensor_create(bsa, type, allocator);
 	b = xm_tensor_create_canonical(bsa, type, allocator);
+	xm_block_space_free(bsa);
+
+	xm_tensor_set_canonical_block(a, xm_dim_4(0, 0, 0, 0));
+	xm_tensor_set_derivative_block(a, xm_dim_4(1, 1, 3, 0),
+	    xm_dim_4(0, 0, 0, 0), xm_dim_4(0, 1, 2, 3), -3);
+	xm_tensor_set_canonical_block(a, xm_dim_4(0, 1, 1, 0));
+	xm_tensor_set_canonical_block(a, xm_dim_4(1, 2, 0, 0));
+	xm_tensor_set_canonical_block(a, xm_dim_4(1, 2, 2, 0));
+
+	fill_random(a);
+	fill_random(b);
+	xm_copy(b, 1, a, "abcd", "abcd");
+	compare_tensors(a, b);
+
+	xm_tensor_free_block_data(a);
+	xm_tensor_free_block_data(b);
+	xm_tensor_free(a);
+	xm_tensor_free(b);
+	xm_allocator_destroy(allocator);
+}
+
+static void
+test_copy_6(const char *path, xm_scalar_type_t typea)
+{
+	xm_allocator_t *allocator;
+	xm_block_space_t *bsa;
+	xm_tensor_t *a, *b;
+	xm_scalar_type_t typeb = typea;
+
+	if (typea == XM_SCALAR_FLOAT)
+		typeb = XM_SCALAR_DOUBLE;
+	if (typea == XM_SCALAR_FLOAT_COMPLEX)
+		typeb = XM_SCALAR_DOUBLE_COMPLEX;
+	allocator = xm_allocator_create(path);
+	bsa = xm_block_space_create(xm_dim_4(2, 9, 11, 3));
+	xm_block_space_split(bsa, 0, 1);
+	xm_block_space_split(bsa, 1, 2);
+	xm_block_space_split(bsa, 1, 4);
+	xm_block_space_split(bsa, 2, 8);
+	xm_block_space_split(bsa, 2, 4);
+	xm_block_space_split(bsa, 2, 3);
+	a = xm_tensor_create(bsa, typea, allocator);
+	b = xm_tensor_create_canonical(bsa, typeb, allocator);
 	xm_block_space_free(bsa);
 
 	xm_tensor_set_canonical_block(a, xm_dim_4(0, 0, 0, 0));
@@ -1611,7 +1824,7 @@ test_blockspace(void)
 }
 
 static void
-test_set(const char *path, int type)
+test_set(const char *path, xm_scalar_type_t type)
 {
 	xm_allocator_t *allocator;
 	xm_block_space_t *bs;
@@ -1659,9 +1872,10 @@ static const test_fn copy_tests[] = {
 	test_copy_3,
 	test_copy_4,
 	test_copy_5,
+	test_copy_6,
 };
 
-static const struct add_test add_tests[] = {
+static const struct two_tensor_test add_tests[] = {
 	{ make_ab_1, "abcdefgh", "abcdefgh" },
 	{ make_ab_2, "ijkl", "ijkl" },
 	{ make_ab_2, "ijkl", "ijlk" },
@@ -1671,6 +1885,28 @@ static const struct add_test add_tests[] = {
 	{ make_ab_3, "ji", "ij" },
 	{ make_ab_4, "ij", "ij" },
 	{ make_ab_4, "ij", "ji" },
+};
+
+static const struct two_tensor_test mul_div_tests[] = {
+	{ make_ab_1, "abcdefgh", "abcdefgh" },
+	{ make_ab_2, "ijkl", "ijkl" },
+	{ make_ab_2, "ijkl", "ijlk" },
+	{ make_ab_2, "ijkl", "jkil" },
+	{ make_ab_2, "ijkl", "lkji" },
+	{ make_ab_5, "ij", "ij" },
+};
+
+static const struct two_tensor_test dot_tests[] = {
+	{ make_ab_1, "abcdefgh", "abcdefgh" },
+	{ make_ab_2, "ijkl", "ijkl" },
+	{ make_ab_2, "ijkl", "ijlk" },
+	{ make_ab_2, "ijkl", "jkil" },
+	{ make_ab_2, "ijkl", "lkji" },
+	{ make_ab_3, "ij", "ij" },
+	{ make_ab_3, "ji", "ij" },
+	{ make_ab_4, "ij", "ij" },
+	{ make_ab_4, "ij", "ji" },
+	{ make_ab_5, "ij", "ij" },
 };
 
 static const struct contract_test contract_tests[] = {
@@ -1723,7 +1959,7 @@ static const struct contract_test contract_tests[] = {
 };
 
 static void
-run_tests(const char *path, int type)
+run_tests(const char *path, xm_scalar_type_t type)
 {
 	size_t i;
 
@@ -1762,6 +1998,24 @@ run_tests(const char *path, int type)
 		test_add(&add_tests[i], path, type, random_scalar(type), 0);
 		test_add(&add_tests[i], path, type, random_scalar(type),
 		    random_scalar(type));
+		printf("success\n");
+	}
+	for (i = 0; i < sizeof mul_div_tests / sizeof *mul_div_tests; i++) {
+		printf("mul test %zu... ", i+1);
+		fflush(stdout);
+		test_mul(&mul_div_tests[i], path, type);
+		printf("success\n");
+	}
+	for (i = 0; i < sizeof mul_div_tests / sizeof *mul_div_tests; i++) {
+		printf("div test %zu... ", i+1);
+		fflush(stdout);
+		test_div(&mul_div_tests[i], path, type);
+		printf("success\n");
+	}
+	for (i = 0; i < sizeof dot_tests / sizeof *dot_tests; i++) {
+		printf("dot test %zu... ", i+1);
+		fflush(stdout);
+		test_dot(&dot_tests[i], path, type);
 		printf("success\n");
 	}
 	for (i = 0; i < sizeof contract_tests / sizeof *contract_tests; i++) {

@@ -1,21 +1,7 @@
+#include <stdio.h>
 #include "xm.h"
 
-#include <stdio.h>
-
-static void
-print_tensor(const xm_tensor_t *t)
-{
-	xm_dim_t absdims = xm_tensor_get_abs_dims(t);
-	xm_dim_t idx = xm_dim_zero(2);
-	for (idx.i[0] = 0; idx.i[0] < absdims.i[0]; idx.i[0]++) {
-		for (idx.i[1] = 0; idx.i[1] < absdims.i[1]; idx.i[1]++) {
-			xm_scalar_t el;
-			el = xm_tensor_get_element(t, idx);
-			printf(" % 6.2lf", (double)el);
-		}
-		printf("\n");
-	}
-}
+static void print_tensor(const xm_tensor_t *);
 
 int
 main(void)
@@ -106,4 +92,19 @@ main(void)
 	xm_tensor_free(c);
 	xm_allocator_destroy(allocator);
 	return 0;
+}
+
+static void
+print_tensor(const xm_tensor_t *t)
+{
+	xm_dim_t absdims = xm_tensor_get_abs_dims(t);
+	xm_dim_t idx = xm_dim_zero(2);
+	for (idx.i[0] = 0; idx.i[0] < absdims.i[0]; idx.i[0]++) {
+		for (idx.i[1] = 0; idx.i[1] < absdims.i[1]; idx.i[1]++) {
+			xm_scalar_t el;
+			el = xm_tensor_get_element(t, idx);
+			printf(" % 6.2lf", (double)el);
+		}
+		printf("\n");
+	}
 }

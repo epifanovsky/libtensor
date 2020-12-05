@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017 Ilya Kaliman
+ * Copyright (c) 2014-2018 Ilya Kaliman
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -38,6 +38,7 @@
 
 /* Data is allocated in 512 KiB chunks. */
 #define XM_PAGE_SIZE (512ULL * 1024)
+
 /* Pagefile growth when no more space is available. */
 #define XM_GROW_SIZE (256ULL * 1024 * 1024 * 1024)
 
@@ -52,26 +53,25 @@ struct xm_allocator {
 #endif
 };
 
-/* 64-bit data_ptr handle: 16-bit size in number of pages + 48-bit file offset
- * in bytes. */
+/* 64-bit data_ptr handle: 32-bit size in number of pages + 32-bit file offset
+ * in page size. */
 static uint64_t
 make_data_ptr(uint64_t offset, uint64_t npages)
 {
-	if (npages >= 65536)
-		fatal("allocation size is too large");
-	return (offset | (npages << 48));
+	return (offset | (npages << 32));
 }
 
+/* Return block offset in bytes. */
 static size_t
 get_block_offset(uint64_t data_ptr)
 {
-	return (data_ptr & ((1ULL << 48) - 1));
+	return (data_ptr & ((1ULL << 32) - 1)) * XM_PAGE_SIZE;
 }
 
 static size_t
 get_block_npages(uint64_t data_ptr)
 {
-	return (data_ptr >> 48);
+	return (data_ptr >> 32);
 }
 
 static int
@@ -104,7 +104,7 @@ extend_file(xm_allocator_t *allocator)
 static uint64_t
 find_pages(xm_allocator_t *allocator, size_t n_pages)
 {
-	unsigned int i, n_free, n_total, start;
+	size_t i, n_free, n_total, start;
 
 	assert(n_pages > 0);
 
@@ -120,7 +120,7 @@ find_pages(xm_allocator_t *allocator, size_t n_pages)
 			uint64_t offset;
 			for (offset = i + 1 - n_free; offset <= i; offset++)
 				bitmap_set(allocator->pages, offset);
-			offset = (uint64_t)(i + 1 - n_free) * XM_PAGE_SIZE;
+			offset = (uint64_t)(i + 1 - n_free);
 			return make_data_ptr(offset, n_pages);
 		}
 	}
@@ -150,10 +150,11 @@ xm_allocator_create(const char *path)
 	xm_allocator_t *allocator;
 
 #ifdef XM_USE_MPI
-	assert(path); /* data must be on a shared filesystem */
+	if (path == NULL)
+		fatal("data must be on a shared filesystem when using MPI");
 #endif
 	if ((allocator = calloc(1, sizeof(*allocator))) == NULL) {
-		perror("malloc");
+		perror("calloc");
 		return (NULL);
 	}
 #ifdef XM_USE_MPI
@@ -161,7 +162,7 @@ xm_allocator_create(const char *path)
 #endif
 	if (path) {
 		allocator->file_bytes = XM_PAGE_SIZE;
-		if ((allocator->pages = calloc(1,1)) == NULL)
+		if ((allocator->pages = calloc(1, 1)) == NULL)
 			fatal("out of memory");
 		if (allocator->mpirank == 0) {
 			if ((allocator->fd = open(path, O_CREAT|O_RDWR,
@@ -192,7 +193,7 @@ xm_allocator_create(const char *path)
 			}
 		}
 		if ((allocator->path = strdup(path)) == NULL) {
-			perror("malloc");
+			perror("strdup");
 			if (close(allocator->fd))
 				perror("close");
 			free(allocator);
@@ -245,6 +246,9 @@ xm_allocator_allocate(xm_allocator_t *allocator, size_t size_bytes)
 	return (data_ptr);
 }
 
+/* Maximum size for single pread/pwrite. */
+#define MAXSIZE (1<<30)
+
 void
 xm_allocator_read(xm_allocator_t *allocator, uint64_t data_ptr,
     void *mem, size_t size_bytes)
@@ -252,16 +256,22 @@ xm_allocator_read(xm_allocator_t *allocator, uint64_t data_ptr,
 	ssize_t read_bytes;
 	off_t offset;
 
-	assert(data_ptr != XM_NULL_PTR);
-
+	if (data_ptr == XM_NULL_PTR)
+		fatal("data pointer is NULL");
 	if (allocator->path == NULL) {
 		memcpy(mem, (const void *)data_ptr, size_bytes);
 		return;
 	}
 	offset = (off_t)get_block_offset(data_ptr);
-	read_bytes = pread(allocator->fd, mem, size_bytes, offset);
-	if (read_bytes != (ssize_t)size_bytes)
-		fatal("pread");
+	while (size_bytes > 0) {
+		size_t size = size_bytes > MAXSIZE ? MAXSIZE : size_bytes;
+		read_bytes = pread(allocator->fd, mem, size, offset);
+		if (read_bytes != (ssize_t)size)
+			fatal("pread");
+		mem = (char *)mem + size;
+		offset += size;
+		size_bytes -= size;
+	}
 }
 
 void
@@ -271,16 +281,22 @@ xm_allocator_write(xm_allocator_t *allocator, uint64_t data_ptr,
 	ssize_t write_bytes;
 	off_t offset;
 
-	assert(data_ptr != XM_NULL_PTR);
-
+	if (data_ptr == XM_NULL_PTR)
+		fatal("data pointer is NULL");
 	if (allocator->path == NULL) {
 		memcpy((void *)data_ptr, mem, size_bytes);
 		return;
 	}
 	offset = (off_t)get_block_offset(data_ptr);
-	write_bytes = pwrite(allocator->fd, mem, size_bytes, offset);
-	if (write_bytes != (ssize_t)size_bytes)
-		fatal("pwrite");
+	while (size_bytes > 0) {
+		size_t size = size_bytes > MAXSIZE ? MAXSIZE : size_bytes;
+		write_bytes = pwrite(allocator->fd, mem, size, offset);
+		if (write_bytes != (ssize_t)size)
+			fatal("pwrite");
+		mem = (const char *)mem + size;
+		offset += size;
+		size_bytes -= size;
+	}
 }
 
 void

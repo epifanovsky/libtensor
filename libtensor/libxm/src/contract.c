@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017 Ilya Kaliman
+ * Copyright (c) 2014-2018 Ilya Kaliman
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -53,30 +53,65 @@ xgemm(char transa, char transb, long int m, long int n, long int k,
 {
 	switch (type) {
 	case XM_SCALAR_FLOAT: {
-		float al = alpha, bt = beta;
+		float al = (float)alpha;
+		float bt = (float)beta;
 		sgemm_(&transa, &transb, &m, &n, &k, &al, a, &lda, b, &ldb,
 		    &bt, c, &ldc);
 		return;
 	}
 	case XM_SCALAR_FLOAT_COMPLEX: {
-		float complex al = alpha, bt = beta;
+		float complex al = (float complex)alpha;
+		float complex bt = (float complex)beta;
 		cgemm_(&transa, &transb, &m, &n, &k, &al, a, &lda, b, &ldb,
 		    &bt, c, &ldc);
 		return;
 	}
 	case XM_SCALAR_DOUBLE: {
-		double al = alpha, bt = beta;
+		double al = (double)alpha;
+		double bt = (double)beta;
 		dgemm_(&transa, &transb, &m, &n, &k, &al, a, &lda, b, &ldb,
 		    &bt, c, &ldc);
 		return;
 	}
 	case XM_SCALAR_DOUBLE_COMPLEX: {
-		double complex al = alpha, bt = beta;
+		double complex al = (double complex)alpha;
+		double complex bt = (double complex)beta;
 		zgemm_(&transa, &transb, &m, &n, &k, &al, a, &lda, b, &ldb,
 		    &bt, c, &ldc);
 		return;
 	}
 	}
+}
+
+static int
+same_contraction(const struct blockpair *pairs, size_t i, size_t j,
+    xm_dim_t aidxa, xm_dim_t aidxb, const xm_tensor_t *a, const xm_tensor_t *b)
+{
+	xm_dim_t dia, dja, dib, djb, pia, pja, pib, pjb;
+	size_t ii;
+
+	dia = pairs[i].blkidxa;
+	dja = pairs[j].blkidxa;
+	dib = pairs[i].blkidxb;
+	djb = pairs[j].blkidxb;
+	if (xm_tensor_get_block_data_ptr(a, dia) !=
+	    xm_tensor_get_block_data_ptr(a, dja) ||
+	    xm_tensor_get_block_data_ptr(b, dib) !=
+	    xm_tensor_get_block_data_ptr(b, djb))
+		return 0;
+	pia = xm_tensor_get_block_permutation(a, dia);
+	pja = xm_tensor_get_block_permutation(a, dja);
+	pib = xm_tensor_get_block_permutation(b, dib);
+	pjb = xm_tensor_get_block_permutation(b, djb);
+	for (ii = 0; ii < aidxa.n; ii++) {
+		if (pia.i[aidxa.i[ii]] != pja.i[aidxa.i[ii]])
+			return 0;
+	}
+	for (ii = 0; ii < aidxb.n; ii++) {
+		if (pib.i[aidxb.i[ii]] != pjb.i[aidxb.i[ii]])
+			return 0;
+	}
+	return 1;
 }
 
 static void
@@ -89,9 +124,10 @@ compute_block(xm_scalar_t alpha, const xm_tensor_t *a, const xm_tensor_t *b,
 	size_t maxblockbytesb = xm_tensor_get_largest_block_bytes(b);
 	size_t maxblockbytesc = xm_tensor_get_largest_block_bytes(c);
 	xm_dim_t dims, blkidxa, blkidxb, nblocksa, nblocksb;
+	xm_scalar_t al;
 	void *bufa1, *bufa2, *bufb1, *bufb2, *bufc1, *bufc2;
 	size_t i, j, m, n, k, nblkk, blksize;
-	int type;
+	xm_scalar_type_t type;
 
 	bufa1 = buf;
 	bufa2 = (char *)bufa1 + maxblockbytesa;
@@ -116,7 +152,10 @@ compute_block(xm_scalar_t alpha, const xm_tensor_t *a, const xm_tensor_t *b,
 		xm_tensor_unfold_block(c, blkidxc, cidxc, aidxc,
 		    bufc2, bufc1, m);
 	blksize = xm_tensor_get_block_size(c, blkidxc);
-	xm_scalar_mul(bufc1, blksize, type, beta);
+	if (beta == 0)
+		xm_scalar_set(bufc1, 0, blksize, type);
+	else
+		xm_scalar_scale(bufc1, beta, blksize, type);
 	if (alpha == 0)
 		goto done;
 	blkidxa = xm_dim_zero(nblocksa.n);
@@ -133,7 +172,7 @@ compute_block(xm_scalar_t alpha, const xm_tensor_t *a, const xm_tensor_t *b,
 		    blktypeb != XM_BLOCK_TYPE_ZERO) {
 			xm_scalar_t sa = xm_tensor_get_block_scalar(a, blkidxa);
 			xm_scalar_t sb = xm_tensor_get_block_scalar(b, blkidxb);
-			pairs[i].alpha = sa * sb;
+			pairs[i].alpha = xm_scalar_mul(sa, sb, type);
 		}
 		xm_dim_inc_mask(&blkidxa, &nblocksa, &cidxa);
 		xm_dim_inc_mask(&blkidxb, &nblocksb, &cidxb);
@@ -142,33 +181,11 @@ compute_block(xm_scalar_t alpha, const xm_tensor_t *a, const xm_tensor_t *b,
 		if (pairs[i].alpha == 0)
 			continue;
 		for (j = i+1; j < nblkk; j++) {
-			xm_dim_t dia, dja, dib, djb, pia, pja, pib, pjb;
-			size_t ii, good = 1;
 			if (pairs[j].alpha == 0)
 				continue;
-			dia = pairs[i].blkidxa;
-			dja = pairs[j].blkidxa;
-			dib = pairs[i].blkidxb;
-			djb = pairs[j].blkidxb;
-			if (xm_tensor_get_block_data_ptr(a, dia) !=
-			    xm_tensor_get_block_data_ptr(a, dja) ||
-			    xm_tensor_get_block_data_ptr(b, dib) !=
-			    xm_tensor_get_block_data_ptr(b, djb))
-				continue;
-			pia = xm_tensor_get_block_permutation(a, dia);
-			pja = xm_tensor_get_block_permutation(a, dja);
-			pib = xm_tensor_get_block_permutation(b, dib);
-			pjb = xm_tensor_get_block_permutation(b, djb);
-			for (ii = 0; ii < aidxa.n && good; ii++) {
-				if (pia.i[aidxa.i[ii]] != pja.i[aidxa.i[ii]])
-					good = 0;
-			}
-			for (ii = 0; ii < aidxb.n && good; ii++) {
-				if (pib.i[aidxb.i[ii]] != pjb.i[aidxb.i[ii]])
-					good = 0;
-			}
-			if (good) {
-				pairs[i].alpha += pairs[j].alpha;
+			if (same_contraction(pairs, i, j, aidxa, aidxb, a, b)) {
+				pairs[i].alpha = xm_scalar_add(pairs[i].alpha,
+				    pairs[j].alpha, type);
 				pairs[j].alpha = 0;
 			}
 		}
@@ -187,14 +204,15 @@ compute_block(xm_scalar_t alpha, const xm_tensor_t *a, const xm_tensor_t *b,
 			xm_tensor_unfold_block(b, blkidxb, cidxb,
 			    aidxb, bufb1, bufb2, k);
 
+			al = xm_scalar_mul(alpha, pairs[i].alpha, type);
 			if (aidxc.n > 0 && aidxc.i[0] == 0) {
-				xgemm('T', 'N', (int)n, (int)m, (int)k,
-				    alpha*pairs[i].alpha, bufb2, (int)k, bufa2,
-				    (int)k, 1.0, bufc1, (int)n, type);
+				xgemm('T', 'N', (int)n, (int)m, (int)k, al,
+				    bufb2, (int)k, bufa2, (int)k, 1, bufc1,
+				    (int)n, type);
 			} else {
-				xgemm('T', 'N', (int)m, (int)n, (int)k,
-				    alpha*pairs[i].alpha, bufa2, (int)k, bufb2,
-				    (int)k, 1.0, bufc1, (int)m, type);
+				xgemm('T', 'N', (int)m, (int)n, (int)k, al,
+				    bufa2, (int)k, bufb2, (int)k, 1, bufc1,
+				    (int)m, type);
 			}
 		}
 	}
