@@ -1,7 +1,6 @@
 #ifndef LIBTENSOR_LINALG_GENERIC_LEVEL1_H
 #define LIBTENSOR_LINALG_GENERIC_LEVEL1_H
 
-#include "linalg_timings.h"
 #include <cstdlib>  // for size_t
 
 namespace libtensor {
@@ -10,12 +9,9 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_generic_level1 : public linalg_timings<linalg_generic_level1> {
+class linalg_generic_level1 {
  public:
   static const char k_clazz[];  //!< Class name
-
- private:
-  typedef linalg_timings<linalg_generic_level1> timings_base;
 
  public:
   /** \brief \f$ c_i = c_i + (a_i + b) d \f$
