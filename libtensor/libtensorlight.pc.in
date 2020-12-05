@@ -8,4 +8,4 @@ Description: Libtensor tensor library
 Version: @libtensorlight_VERSION@
 Cflags: -isystem ${includedir} -D@LIBTENSOR_COMPILE_DEFINITIONS@
 Requires:
-Libs: -L${libdir} -llibtensorlight
+Libs: -L${libdir} -ltensorlight
