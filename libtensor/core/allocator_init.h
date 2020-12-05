@@ -2,9 +2,7 @@
 #define LIBTENSOR_ALLOCATOR_INIT_H
 
 #include "allocator.h"
-#include "allocator_init.h"
 #include "batching_policy_base.h"
-#include "impl/std_allocator.h"
 
 namespace libtensor {
 
@@ -32,9 +30,24 @@ void allocator<T>::shutdown() {
     m_aimpl = make_default_allocator();
 }
 
+} // namespace libtensor
+
+#include "allocator_init.h"
+#include "impl/std_allocator.h"
+#ifdef WITH_LIBXM
+#include "impl/xm_allocator.h"
+#endif
+
+namespace libtensor {
 
 template void allocator<double>::init<std_allocator<double> >(const std_allocator<double> &aimpl, size_t base_sz,
         size_t min_sz, size_t max_sz, size_t mem_limit, const char *pfprefix);
+
+#ifdef WITH_LIBXM
+template void allocator<double>::init<lt_xm_allocator::lt_xm_allocator<double> >(const lt_xm_allocator::lt_xm_allocator<double> &aimpl, size_t base_sz,
+    size_t min_sz, size_t max_sz, size_t mem_limit, const char *pfprefix);
+#endif
+
 
 } // namespace libtensor
 #endif // LIBTENSOR_ALLOCATOR_INIT_H
