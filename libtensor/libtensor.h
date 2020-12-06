@@ -3,21 +3,20 @@
 
 #include "defs.h"
 #include "exception.h"
-#include "version.h"
+#include "metadata.h"
 
-
-#include "core/sequence.h"
-#include "core/index.h"
-#include "core/mask.h"
-#include "core/index_range.h"
-#include "core/dimensions.h"
 #include "core/abs_index.h"
+#include "core/dimensions.h"
+#include "core/index.h"
+#include "core/index_range.h"
+#include "core/mask.h"
 #include "core/permutation.h"
 #include "core/permutation_builder.h"
+#include "core/sequence.h"
 
-#include "dense_tensor/dense_tensor_i.h"
-#include "dense_tensor/dense_tensor_ctrl.h"
 #include "dense_tensor/dense_tensor.h"
+#include "dense_tensor/dense_tensor_ctrl.h"
+#include "dense_tensor/dense_tensor_i.h"
 
 #include "core/contraction2.h"
 #include "core/scalar_transf.h"
@@ -26,8 +25,8 @@
 
 #include "core/orbit.h"
 #include "core/orbit_list.h"
-#include "core/symmetry_element_i.h"
 #include "core/symmetry.h"
+#include "core/symmetry_element_i.h"
 
 #include "btod/btod_import_raw.h"
 #include "btod/btod_print.h"
@@ -44,5 +43,5 @@
 #include "expr/iface/expr_tensor.h"
 #include "expr/operators/operators.h"
 
-#endif // LIBTENSOR_H
+#endif  // LIBTENSOR_H
 

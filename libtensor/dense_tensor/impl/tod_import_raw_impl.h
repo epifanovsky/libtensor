@@ -1,12 +1,13 @@
 #ifndef LIBTENSOR_TOD_IMPORT_RAW_IMPL_H
 #define LIBTENSOR_TOD_IMPORT_RAW_IMPL_H
 
+#include "../dense_tensor_ctrl.h"
+#include "../tod_import_raw.h"
+#include <libtensor/core/abs_index.h>
 #include <libtensor/kernels/kern_dcopy.h>
 #include <libtensor/kernels/loop_list_runner.h>
 #include <libtensor/linalg/linalg.h>
-#include <libtensor/core/abs_index.h>
-#include "../dense_tensor_ctrl.h"
-#include "../tod_import_raw.h"
+#include <memory>
 
 namespace libtensor {
 
