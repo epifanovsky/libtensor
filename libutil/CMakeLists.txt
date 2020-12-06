@@ -13,6 +13,10 @@ set(SRC
     timings/timings_store.C
     timings/timer.C
 )
+if(HAVE_EXECINFO_BACKTRACE)
+    set_property(SOURCE exceptions/backtrace.C
+                 APPEND PROPERTY COMPILE_DEFINITIONS HAVE_EXECINFO_BACKTRACE=1)
+endif()
 
 set(SRC_THREADS_POSIX
     threads/posix/cond_posix.C
@@ -30,8 +34,11 @@ set(SRC_THREADS ${SRC_THREADS} threads/macos/spinlock_macos.C)
 endif()
 
 add_library(util OBJECT ${SRC} ${SRC_THREADS})
+target_include_directories(util PUBLIC ${PROJECT_SOURCE_DIR})
 
-include_directories(${LIBUTIL_SOURCE_DIR})
+if (HAVE_PTHREADS_ADAPTIVE_MUTEX)
+    target_compile_definitions(util PRIVATE HAVE_PTHREADS_ADAPTIVE_MUTEX=1)
+endif()
 
 set_target_properties(util PROPERTIES
     COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBUTIL_DEBUG>)

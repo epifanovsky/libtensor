@@ -70,7 +70,6 @@ set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 ##########################################################################
 # Libxm dependencies
 
-add_definitions(-DWITHOUT_LIBVMM)
 option(WITH_LIBXM "Compile libxm support into libtensor" OFF)
 option(WITH_MPI   "Compile MPI support into libtensor" OFF)
 if (WITH_LIBXM)
@@ -94,7 +93,6 @@ endif()
 ##########################################################################
 # Pass on to subdirectories
 
-set(LIBUTIL_SOURCE_DIR ${libtensorlight_SOURCE_DIR})
 add_subdirectory(libutil)
 add_subdirectory(libtensor)
 

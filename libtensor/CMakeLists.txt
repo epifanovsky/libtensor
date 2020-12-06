@@ -38,6 +38,10 @@ elseif (BLA_VENDOR MATCHES "Intel")
         APPEND PROPERTY COMPILE_DEFINITIONS HAVE_MKL=1
     )
 endif()
+if(HAVE_DRAND48)
+    set_property(SOURCE linalg/linalg_generic_level1.C
+                 APPEND PROPERTY COMPILE_DEFINITIONS HAVE_DRAND48=1)
+endif()
 
 set(SRC_KERNELS
     kernels/dadd1/kern_dadd1.C
@@ -284,8 +288,7 @@ add_library(tensorlight ${SRC} ${SRC_CORE})
 target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}")
 target_link_libraries(tensorlight PUBLIC ${BLAS_LAPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} util)
 target_compile_definitions(tensorlight PUBLIC
-	$<$<CONFIG:Debug>:libtensorlight_DEBUG> PRIVATE WITHOUT_LIBVMM)
-target_compile_definitions(tensorlight PRIVATE LIBDIVIDE_HAS_STDINT_TYPES)
+	$<$<CONFIG:Debug>:libtensorlight_DEBUG>)
 
 if (WITH_MPI)
     target_link_libraries(tensorlight PUBLIC ${MPI_C_LIBRARIES} ${MPI_C_LINK_FLAGS})

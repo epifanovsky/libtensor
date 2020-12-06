@@ -42,10 +42,6 @@ int main() {
         add_definitions(-DHAVE_PTHREADS_SPINLOCK)
     endif(HAVE_PTHREADS_SPINLOCK)
 
-    if(HAVE_PTHREADS_ADAPTIVE_MUTEX)
-        add_definitions(-DHAVE_PTHREADS_ADAPTIVE_MUTEX)
-    endif(HAVE_PTHREADS_ADAPTIVE_MUTEX)
-
     if(NOT HAVE_PTHREADS_SPINLOCK AND APPLE)
 
         check_cxx_source_compiles("
