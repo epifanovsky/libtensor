@@ -3,8 +3,8 @@ exec_prefix=${prefix}
 includedir=${prefix}/include
 libdir=${exec_prefix}/lib
 
-Name: libtensor
-Description: Libtensor tensor library
+Name: libtensorlight
+Description: Light version of the libtensor tensor library
 Version: @libtensorlight_VERSION@
 Cflags: -isystem ${includedir} -D@LIBTENSOR_COMPILE_DEFINITIONS@
 Requires:
