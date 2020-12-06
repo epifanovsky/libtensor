@@ -3,12 +3,9 @@
 
 #include "allocator_wrapper.h"
 #include "std_allocator.h"
+//
 #include "../allocator.h"
 #include "../allocator_init.h"
-
-#if !defined(WITHOUT_LIBVMM)
-#include "vm_allocator.h"
-#endif
 
 #if defined(WITH_LIBXM)
 #include "xm_allocator.h"
@@ -56,14 +53,10 @@ template<typename T>
 void allocator<T>::init(size_t base_sz, size_t min_sz, size_t max_sz,
     size_t mem_limit, const char *pfprefix) {
 
-#if defined(WITHOUT_LIBVMM)
 #if defined(WITH_LIBXM)
     typedef lt_xm_allocator::lt_xm_allocator<T> allocator_impl;
 #else
     typedef std_allocator<T> allocator_impl;
-#endif
-#else
-    typedef vm_allocator<T> allocator_impl;
 #endif
 
     init(allocator_impl(), base_sz, min_sz, max_sz, mem_limit, pfprefix);

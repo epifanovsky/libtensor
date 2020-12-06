@@ -2,8 +2,9 @@
 #define LIBTENSOR_MAGIC_DIMENSIONS_IMPL_H
 
 #include <stdint.h> // required for libdivide
-#include "libdivide.h"
+#define LIBDIVIDE_HAS_STDINT_TYPES 1
 #include "../magic_dimensions.h"
+#include "libdivide.h"
 
 namespace libtensor {
 
