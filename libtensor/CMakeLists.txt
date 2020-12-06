@@ -285,6 +285,7 @@ target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}")
 target_link_libraries(tensorlight PUBLIC ${BLAS_LAPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} util)
 target_compile_definitions(tensorlight PUBLIC
 	$<$<CONFIG:Debug>:libtensorlight_DEBUG> PRIVATE WITHOUT_LIBVMM)
+target_compile_definitions(tensorlight PRIVATE LIBDIVIDE_HAS_STDINT_TYPES)
 
 if (WITH_MPI)
     target_link_libraries(tensorlight PUBLIC ${MPI_C_LIBRARIES} ${MPI_C_LINK_FLAGS})

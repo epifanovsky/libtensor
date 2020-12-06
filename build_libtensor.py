@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-import shutil
 import argparse
 import subprocess
 
@@ -104,8 +103,8 @@ def main():
                         help="Run make in verbose mode.")
     parser.add_argument("--directory", "-d",  default="build", metavar="DIR",
                         help="The directory in which files are built.")
-    parser.add_argument("--install", default="/tmp/libtensor", metavar="DIR",
-                        help="The directory where files are installed.")
+    parser.add_argument("--install", default=os.path.expanduser("~/.local/"),
+                        metavar="DIR", help="The directory where files are installed.")
     parser.add_argument("--jobs", "-j", default=NCPU, metavar="N",
                         help="Number of jobs to use during build.")
     parser.add_argument("--type", "-t", default=None, metavar="BUILD_TYPE",
