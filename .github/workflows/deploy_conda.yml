@@ -1,0 +1,34 @@
+name: Conda Deployment
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install deps on macos
+      if: contains( matrix.os, 'macos')
+      run: brew install coreutils || true
+
+    - name: Setup Conda and adccore checkout
+      env:
+        OS_NAME: ${{ matrix.os }}
+      run: |
+        bash ci/setup_conda.sh
+    - name: Build and Deploy
+      env:
+        ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+      run: |
+        source $HOME/miniconda/bin/activate
+        bash scripts/upload_to_anaconda.sh
+
