@@ -5,23 +5,9 @@ find_package(Threads)
 if (NOT CMAKE_USE_PTHREADS_INIT)
     message(FATAL_ERROR "We need pthreads as the threading backend.")
 endif()
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
-if(CMAKE_USE_PTHREADS_INIT)
-    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
-
-    check_cxx_source_compiles("
-#include <pthread.h>
-int main() {
-    pthread_spinlock_t l;
-    pthread_spin_init(&l, 0);
-    pthread_spin_lock(&l);
-    pthread_spin_unlock(&l);
-    pthread_spin_destroy(&l);
-    return 0;
-}
-" HAVE_PTHREADS_SPINLOCK)
-
-    check_cxx_source_compiles("
+check_cxx_source_compiles("
 #include <pthread.h>
 int main() {
     pthread_mutexattr_t attr;
@@ -37,30 +23,9 @@ int main() {
 }
 " HAVE_PTHREADS_ADAPTIVE_MUTEX)
 
-    if(HAVE_PTHREADS_SPINLOCK)
-        add_definitions(-DHAVE_PTHREADS_SPINLOCK)
-    endif(HAVE_PTHREADS_SPINLOCK)
-
-    if(NOT HAVE_PTHREADS_SPINLOCK AND APPLE)
-
-        check_cxx_source_compiles("
-#include <libkern/OSAtomic.h>
-int main() {
-    OSSpinLock l = OS_SPINLOCK_INIT;
-    OSSpinLockLock(&l);
-    OSSpinLockUnlock(&l);
-    return 0;
-}
-" HAVE_MACOS_SPINLOCK)
-
-        if(HAVE_MACOS_SPINLOCK)
-            add_definitions(-DHAVE_MACOS_SPINLOCK)
-        endif(HAVE_MACOS_SPINLOCK)
-    endif(NOT HAVE_PTHREADS_SPINLOCK AND APPLE)
-
-endif()
-
+#
 #   Test built-in thread-local storage
+#
 
 #    Test Intel-style TLS
 check_cxx_source_compiles("

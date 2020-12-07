@@ -26,10 +26,10 @@ set(SRC_THREADS
     threads/posix/tls_posix.C
 )
 
-if(HAVE_PTHREADS_SPINLOCK)
-set(SRC_THREADS ${SRC_THREADS} threads/posix/spinlock_posix.C)
-elseif(HAVE_MACOS_SPINLOCK)
-set(SRC_THREADS ${SRC_THREADS} threads/macos/spinlock_macos.C)
+if(APPLE)
+    set(SRC_THREADS ${SRC_THREADS} threads/macos/spinlock_macos.C)
+else()
+    set(SRC_THREADS ${SRC_THREADS} threads/posix/spinlock_posix.C)
 endif()
 
 add_library(util OBJECT ${SRC} ${SRC_THREADS})

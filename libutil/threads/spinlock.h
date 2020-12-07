@@ -20,16 +20,7 @@ class spinlock;
 
 } // namespace libutil
 
-
-#if defined(HAVE_PTHREADS_SPINLOCK)
-
-#include "posix/spinlock_posix.h"
-namespace libutil {
-class spinlock : public mutex_base<spinlock_posix> { };
-} // namespace libutil
-
-
-#elif defined(HAVE_MACOS_SPINLOCK)
+#ifdef __APPLE__
 
 #include "macos/spinlock_macos.h"
 namespace libutil {
@@ -38,9 +29,11 @@ class spinlock : public mutex_base<spinlock_macos> { };
 
 #else
 
-#error "No spinlock found."
+#include "posix/spinlock_posix.h"
+namespace libutil {
+class spinlock : public mutex_base<spinlock_posix> { };
+} // namespace libutil
 
 #endif
-
 
 #endif // LIBUTIL_SPINLOCK_H
