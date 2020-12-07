@@ -2,6 +2,7 @@
 #define LIBUTIL_COND_H
 
 #include "base/cond_base.h"
+#include "posix/cond_posix.h"
 
 namespace libutil {
 
@@ -26,28 +27,9 @@ namespace libutil {
 
     \ingroup libutil_threads
  **/
-class cond;
-
-
-} // namespace libutil
-
-
-#if defined(USE_PTHREADS)
-
-#include "posix/cond_posix.h"
-namespace libutil {
 class cond : public cond_base<cond_posix> { };
+
+
 } // namespace libutil
-
-
-#elif defined(USE_WIN32_THREADS)
-
-#include "windows/cond_windows.h"
-namespace libutil {
-class cond : public cond_base<cond_windows> { };
-} // namespace libutil
-
-#endif
-
 
 #endif // LIBUTIL_COND_H

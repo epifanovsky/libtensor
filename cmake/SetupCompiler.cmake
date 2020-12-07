@@ -5,14 +5,14 @@ macro(enable_if_cxx_compiles VARIABLE FLAG)
         # adds it to the variable provided.
         #
         string(REGEX REPLACE "[^a-zA-Z0-9]" "" FLAG_CLEAN "${FLAG}")
-        CHECK_CXX_COMPILER_FLAG("-Werror ${FLAG}" DRB_HAVE_FLAG_${FLAG_CLEAN})
+        CHECK_CXX_COMPILER_FLAG("-Werror ${FLAG}" HAVE_FLAG_${FLAG_CLEAN})
         if (DRB_HAVE_FLAG_${FLAG_CLEAN})
                 set(${VARIABLE} "${${VARIABLE}} ${FLAG}")
         endif()
         unset(FLAG_CLEAN)
 endmacro(enable_if_cxx_compiles)
 
-# Standard flags, used without check
+# Standard flags for building libtensor, used without check
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-error -Wno-unused-parameter")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-deprecated -Wno-unused-but-set-variable")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-array-bounds -Wno-maybe-uninitialized")

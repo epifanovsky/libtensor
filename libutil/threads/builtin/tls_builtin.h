@@ -18,10 +18,8 @@ class tls_builtin : public singleton< tls_builtin<T> > {
 private:
 #if defined(HAVE_CPP_DECLSPEC_THREAD)
     __declspec(thread) static T *m_t;
-#elif defined(HAVE_GCC_THREAD_LOCAL)
-    static __thread T *m_t;
 #else
-#error No built-in TLS specified
+    static __thread T *m_t;
 #endif
 
 protected:
@@ -50,7 +48,7 @@ public:
 #if defined(HAVE_CPP_DECLSPEC_THREAD)
 template<typename T>
 T *tls_builtin<T>::m_t = 0;
-#elif defined(HAVE_GCC_THREAD_LOCAL)
+#else
 template<typename T>
 __thread T *tls_builtin<T>::m_t = 0;
 #endif

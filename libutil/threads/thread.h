@@ -2,6 +2,7 @@
 #define LIBUTIL_THREAD_H
 
 #include "base/thread_base.h"
+#include "posix/thread_posix.h"
 
 namespace libutil {
 
@@ -10,28 +11,9 @@ namespace libutil {
 
     \ingroup libutil_threads
  **/
-class thread;
-
-
-} // namespace libutil
-
-
-#if defined(USE_PTHREADS)
-
-#include "posix/thread_posix.h"
-namespace libutil {
 class thread : public thread_base<thread_posix> { };
+
+
 } // namespace libutil
-
-
-#elif defined(USE_WIN32_THREADS)
-
-#include "windows/thread_windows.h"
-namespace libutil {
-class thread : public thread_base<thread_windows> { };
-} // namespace libutil
-
-#endif
-
 
 #endif // LIBUTIL_THREAD_H

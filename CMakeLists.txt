@@ -36,7 +36,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 if(NOT UNIX)
     message(FATAL_ERROR "Only unix platforms are supported.")
 endif()
-add_definitions(-DPOSIX)
 include(InspectThreads)
 include(InspectStdlib)
 
@@ -146,8 +145,14 @@ install(TARGETS tensorlight
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)
 
+# Build string of required compile definitions
 get_directory_property(LIBTENSOR_COMPILE_DEFINITIONS_RAW COMPILE_DEFINITIONS)
 list(JOIN LIBTENSOR_COMPILE_DEFINITIONS_RAW " -D" LIBTENSOR_COMPILE_DEFINITIONS)
+if (LIBTENSOR_COMPILE_DEFINITIONS)
+    set(LIBTENSOR_COMPILE_DEFINITIONS "-D${LIBTENSOR_COMPILE_DEFINITIONS}")
+endif()
+
+# Build the pkg-config file
 configure_file("${libtensorlight_SOURCE_DIR}/libtensor/libtensorlight.pc.in" "libtensorlight.pc" @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtensorlight.pc
         DESTINATION lib/pkgconfig)

@@ -20,39 +20,20 @@ class spinlock;
 
 } // namespace libutil
 
-
-#if defined(USE_PTHREADS) && defined(HAVE_PTHREADS_SPINLOCK)
-
-#include "posix/spinlock_posix.h"
-namespace libutil {
-class spinlock : public mutex_base<spinlock_posix> { };
-} // namespace libutil
-
-
-#elif defined(USE_PTHREADS) && !defined(HAVE_PTHREADS_SPINLOCK)
-
-#include "posix/mutex_posix.h"
-namespace libutil {
-class spinlock : public mutex_base<mutex_posix> { };
-} // namespace libutil
-
-
-#elif defined(USE_PTHREADS) && defined(HAVE_MACOS_SPINLOCK)
+#ifdef __APPLE__
 
 #include "macos/spinlock_macos.h"
 namespace libutil {
 class spinlock : public mutex_base<spinlock_macos> { };
 } // namespace libutil
 
+#else
 
-#elif defined(USE_WIN32_THREADS)
-
-#include "windows/spinlock_windows.h"
+#include "posix/spinlock_posix.h"
 namespace libutil {
-class spinlock : public mutex_base<spinlock_windows> { };
+class spinlock : public mutex_base<spinlock_posix> { };
 } // namespace libutil
 
 #endif
-
 
 #endif // LIBUTIL_SPINLOCK_H

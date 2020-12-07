@@ -6,6 +6,6 @@ libdir=${exec_prefix}/lib
 Name: libtensorlight
 Description: Light version of the libtensor tensor library
 Version: @libtensorlight_VERSION@
-Cflags: -isystem ${includedir} -D@LIBTENSOR_COMPILE_DEFINITIONS@
+Cflags: -isystem ${includedir} @LIBTENSOR_COMPILE_DEFINITIONS@
 Requires:
 Libs: -L${libdir} -ltensorlight
