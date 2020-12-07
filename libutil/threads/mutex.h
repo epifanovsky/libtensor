@@ -2,6 +2,7 @@
 #define LIBUTIL_MUTEX_H
 
 #include "base/mutex_base.h"
+#include "posix/mutex_posix.h"
 
 namespace libutil {
 
@@ -12,29 +13,10 @@ namespace libutil {
 
     \ingroup libutil_threads
  **/
-class mutex;
-
-
-} // namespace libutil
-
-
-#if defined(USE_PTHREADS)
-#include "posix/mutex_posix.h"
-namespace libutil {
 class mutex : public mutex_base<mutex_posix> { };
+
+
 } // namespace libutil
-
-
-#elif defined(USE_WIN32_THREADS)
-
-#include "windows/mutex_windows.h"
-namespace libutil {
-class mutex : public mutex_base<mutex_windows> { };
-} // namespace libutil
-
-#endif
-
-
 
 
 #endif // LIBUTIL_MUTEX_H
