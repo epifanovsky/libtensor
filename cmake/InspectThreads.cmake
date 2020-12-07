@@ -38,6 +38,18 @@ int main() {
 }
 " HAVE_CPP_DECLSPEC_THREAD)
 
+# Some check to disable HAVE_CPP_DECLSPEC_THREAD in case of bugs
+if(HAVE_CPP_DECLSPEC_THREAD)
+    #  Intel Composer 2013 for Mac OS has a bug, use pthreads TLS
+    if(APPLE AND (ICC13 OR ICC14))
+    #  Intel Composer 2016 + llvm for Mac OS has bugs, use pthreads TLS
+    #  (https://bugs.llvm.org/show_bug.cgi?id=25737)
+        set(HAVE_CPP_DECLSPEC_THREAD OFF CACHE BOOL "" FORCE)
+    elseif(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+        set(HAVE_CPP_DECLSPEC_THREAD OFF CACHE BOOL "" FORCE)
+    endif()
+endif()
+
 #    Test GCC-style TLS
 #    Intel 11.0 compiler has a bug that doesn't allow static
 #    thread-local members in templates
@@ -50,19 +62,9 @@ template<typename T> class C { static __thread int a; };
 template<typename T> __thread int C<T>::a;
 " HAVE_GCC_THREAD_LOCAL)
 
-if(HAVE_CPP_DECLSPEC_THREAD)
-    #  Intel Composer 2013 for Mac OS has a bug, use pthreads TLS
-    if(APPLE AND (ICC13 OR ICC14))
-    #  Intel Composer 2016 + llvm for Mac OS has bugs, use pthreads TLS
-    #  (https://bugs.llvm.org/show_bug.cgi?id=25737)
-    elseif(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    elseif(CLANG)
-        if(HAVE_GCC_THREAD_LOCAL)
-            add_definitions(-DHAVE_GCC_THREAD_LOCAL -DUSE_BUILTIN_TLS)
-        endif()
-    else()
-        add_definitions(-DHAVE_CPP_DECLSPEC_THREAD -DUSE_BUILTIN_TLS)
-    endif()
-elseif(HAVE_GCC_THREAD_LOCAL)
-    add_definitions(-DUSE_BUILTIN_TLS -DHAVE_GCC_THREAD_LOCAL)
+if(NOT HAVE_CPP_DECLSPEC_THREAD AND NOT HAVE_GCC_THREAD_LOCAL)
+    message(FATAL_ERROR "No way found to implement thread-local storage.")
+endif()
+if (HAVE_CPP_DECLSPEC_THREAD)
+    add_definitions(-DHAVE_CPP_DECLSPEC_THREAD)
 endif()
