@@ -4,7 +4,6 @@ set(SRC
     exceptions/exception.C
     exceptions/rethrowable_i.C
     thread_pool/task_source.C
-    thread_pool/task_source_mpi.C
     thread_pool/task_thief.C
     thread_pool/thread_pool.C
     thread_pool/unknown_exception.C
