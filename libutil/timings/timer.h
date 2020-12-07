@@ -1,17 +1,10 @@
 #ifndef LIBUTIL_TIMER_H
 #define LIBUTIL_TIMER_H
 
-#include <iostream>
-#include <ctime>
-#include <libutil/exceptions/util_exceptions.h>
-
-#if defined(HAVE_GETTIMEOFDAY)
-#include "timer_defs_gettimeofday.h"
-#elif defined(POSIX)
 #include "timer_defs_posix.h"
-#else
-#include "timer_defs.h"
-#endif
+#include <ctime>
+#include <iostream>
+#include <libutil/exceptions/util_exceptions.h>
 
 namespace libutil {
 

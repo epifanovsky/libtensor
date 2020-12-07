@@ -18,7 +18,7 @@ if(HAVE_EXECINFO_BACKTRACE)
                  APPEND PROPERTY COMPILE_DEFINITIONS HAVE_EXECINFO_BACKTRACE=1)
 endif()
 
-set(SRC_THREADS_POSIX
+set(SRC_THREADS
     threads/posix/cond_posix.C
     threads/posix/mutex_posix.C
     threads/posix/rwlock_posix.C
@@ -26,7 +26,6 @@ set(SRC_THREADS_POSIX
     threads/posix/tls_posix.C
 )
 
-set(SRC_THREADS ${SRC_THREADS_POSIX})
 if(HAVE_PTHREADS_SPINLOCK)
 set(SRC_THREADS ${SRC_THREADS} threads/posix/spinlock_posix.C)
 elseif(HAVE_MACOS_SPINLOCK)

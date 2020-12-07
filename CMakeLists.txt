@@ -36,7 +36,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 if(NOT UNIX)
     message(FATAL_ERROR "Only unix platforms are supported.")
 endif()
-add_definitions(-DPOSIX)
 include(InspectThreads)
 include(InspectStdlib)
 
