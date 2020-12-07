@@ -285,7 +285,7 @@ set(SRC ${SRC_LINALG} ${SRC_KERNELS} ${SRC_GEN_BTOD} ${SRC_BTOD}
 )
 
 add_library(tensorlight ${SRC} ${SRC_CORE})
-target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}")
+target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}" "${BLAS_INCLUDE_DIR}")
 target_link_libraries(tensorlight PUBLIC ${BLAS_LAPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} util)
 target_compile_definitions(tensorlight PUBLIC
 	$<$<CONFIG:Debug>:libtensorlight_DEBUG>)

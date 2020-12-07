@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import sys
 import argparse
 import subprocess
 
@@ -13,6 +14,13 @@ except ImportError:
     NCPU = 1
 
 
+def is_conda_build():
+    return (
+        os.environ.get("CONDA_BUILD", None) == "1"
+        or os.environ.get("CONDA_EXE", None)
+    )
+
+
 def is_ninja_available():
     status, _ = subprocess.getstatusoutput("ninja")
     return status in [0, 1]
@@ -21,6 +29,12 @@ def is_ninja_available():
 def configure(build_dir, source_dir, install_dir, build_type=None, features=[],
               use_ninja=is_ninja_available()):
     args = ["cmake", "-DCMAKE_INSTALL_PREFIX=" + install_dir]
+
+    if sys.platform == "darwin" and is_conda_build():
+        for flag in ("LDFLAGS_LD", "LDFLAGS"):
+            if flag in os.environ:
+                os.environ[flag] = \
+                    os.environ[flag].replace("-dead_strip_dylibs", "")
 
     if use_ninja:
         args += ["-G", "Ninja"]

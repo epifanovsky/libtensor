@@ -1,8 +1,6 @@
-{% set version = "2.5.0" %}
-
 package:
-  name: libtensor
-  version: {{ version }}
+  name: libtensorlight
+  version: @LTL_VERSION@
 
 source:
     path: ../
@@ -13,11 +11,12 @@ build:
 
 requirements:
   build:
+    - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - mkl-devel {{ mkl }}
     - cmake >=3.2
     - ninja
-    # - ccache
+    - ccache
 
   host:
     - mkl-devel {{ mkl }}
@@ -29,25 +28,22 @@ files:
   - include/libtensor
   - include/libutil
   - lib/libtensor*
-  - lib/libutil*
-  - share/cmake/libtensor
+  - lib/pkgconfig/libtensorlight.pc
 
 test:
   requires:
       - mkl {{ mkl }}
   commands:
-      - test -f $PREFIX/lib/libtensor$SHLIB_EXT
-      - test -f $PREFIX/lib/libutil$SHLIB_EXT
-      # - ldd -r -u $PREFIX/lib/libtensor$SHLIB_EXT              # [linux]
-      - ldd -v $PREFIX/lib/libtensor$SHLIB_EXT                 # [linux]
-      - otool -L $PREFIX/lib/libtensor$SHLIB_EXT               # [osx]
-      - conda inspect linkages --show-files --groupby=dependency libtensor
-      - conda inspect objects -p $PREFIX $PKG_NAME           # [osx]
+      - test -f $PREFIX/lib/libtensorlight$SHLIB_EXT
+      - ldd -v $PREFIX/lib/libtensorlight$SHLIB_EXT                 # [linux]
+      - otool -L $PREFIX/lib/libtensorlight$SHLIB_EXT               # [osx]
+      - conda inspect linkages --show-files --groupby=dependency libtensorlight
+      - conda inspect objects -p $PREFIX $PKG_NAME                  # [osx]
 
 about:
   home: https://github.com/epifanovsky/libtensor
   dev_url: https://github.com/adc-connect/libtensor
   license: BSL-1.0 License
-  license_family: BSL
+  license_family: Other
   license_file: {{ SRC_DIR }}/LICENSE
   summary: "C++ library for tensor computations"
