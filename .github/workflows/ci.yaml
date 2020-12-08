@@ -2,9 +2,6 @@ name: CI
 
 on: [push]
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -33,24 +30,71 @@ jobs:
           ${{ runner.os }}-deploy-
           ${{ runner.os }}-
 
-    - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/build
-
-    - name: Configure CMake
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      run: |
-        export PATH="/usr/local/opt/ccache/libexec:$PATH"
-        export PATH="/usr/lib/ccache:$PATH"
-        cmake $GITHUB_WORKSPACE -GNinja -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-
     - name: Build
-      working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: cmake --build . --config $BUILD_TYPE
+      run: |
+        ccache --max-size 2G
+        ./build_libtensor.py -v -d ${{runner.workspace}}/build --install ${{runner.workspace}}/install --type Release
 
     - name: Test
       working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: ctest -C $BUILD_TYPE
+      run: ctest --output-on-failure
 
+    - name: Bundle tarball
+      shell: bash
+      run: |
+        ./scripts/pack_release.py ${{runner.workspace}}/install
+
+    - name: Upload tarball as artefact
+      uses: actions/upload-artifact@v2
+      with:
+        name: libtensorlight-${{ matrix.os }}
+        path: libtensorlight-*.tar.gz
+
+  release:
+    if: startsWith(github.ref, 'refs/tags')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Glob asset paths
+        id: asset_paths
+        run: |
+          LINUX_PATH=$(ls artifacts/*/*.tar.gz | grep -i linux | head -n 1)
+          LINUX_NAME=$(basename "$LINUX_PATH")
+          MACOS_PATH=$(ls artifacts/*/*.tar.gz | grep -i macos | head -n 1)
+          MACOS_NAME=$(basename "$MACOS_PATH")
+          RELEASE_NAME=v$(echo "$LINUX_NAME" | cut -d- -f2)
+          echo "::set-output name=linux_path::$LINUX_PATH"
+          echo "::set-output name=macos_path::$MACOS_PATH"
+          echo "::set-output name=linux_name::$LINUX_NAME"
+          echo "::set-output name=macos_name::$MACOS_NAME"
+          echo "::set-output name=release_name::$RELEASE_NAME"
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ steps.asset_paths.outputs.release_name }}
+          draft: true
+          prerelease: false
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.asset_paths.outputs.linux_path }}
+          asset_name: ${{ steps.asset_paths.outputs.linux_name }}
+          asset_content_type: application/x-gtar
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.asset_paths.outputs.macos_path }}
+          asset_name: ${{ steps.asset_paths.outputs.macos_name }}
+          asset_content_type: application/x-gtar
