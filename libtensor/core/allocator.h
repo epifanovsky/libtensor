@@ -2,6 +2,7 @@
 #define LIBTENSOR_ALLOCATOR_H
 
 #include <cstdlib> // for size_t
+#include <string>
 
 namespace libtensor {
 
@@ -68,9 +69,8 @@ public:
         \param mem_limit Memory limit in data elements.
         \param pfprefix Prefix to page file path.
      **/
-    template<typename AllocatorImpl>
-    static void init(const AllocatorImpl &aimpl, size_t base_sz, size_t min_sz,
-        size_t max_sz, size_t mem_limit, const char *pfprefix = 0);
+    static void init(const std::string &implementation, size_t base_sz, size_t min_sz,
+                     size_t max_sz, size_t mem_limit, const char *pfprefix = 0);
 
     /** \brief Initializes the allocator with the default implementation
             (std_allocator)

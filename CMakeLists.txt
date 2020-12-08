@@ -72,8 +72,6 @@ set(BLAS_LAPACK_LIBRARIES ${BLAS_LIBRARIES})
 option(WITH_LIBXM "Compile libxm support into libtensor" OFF)
 option(WITH_MPI   "Compile MPI support into libtensor" OFF)
 if (WITH_LIBXM)
-    add_definitions(-DWITH_LIBXM)
-
     find_package(OpenMP REQUIRED)
     if (OPENMP_FOUND)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
