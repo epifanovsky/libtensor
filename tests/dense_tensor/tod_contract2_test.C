@@ -6948,7 +6948,7 @@ int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
 int main() {
 
     int rc = 1;
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init();
 
     try {
 

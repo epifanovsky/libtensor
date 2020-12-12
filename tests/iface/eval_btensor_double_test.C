@@ -15,7 +15,7 @@ using namespace expr;
 
 void eval_btensor_double_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init();
 
     try {
 

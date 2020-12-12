@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_copy_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(4, 16, 65536, 131072);
+    allocator<double>::init();
 
     try {
 

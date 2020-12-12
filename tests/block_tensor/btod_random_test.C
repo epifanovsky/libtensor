@@ -15,7 +15,7 @@ namespace libtensor {
 
 void btod_random_test::perform() throw(libtest::test_exception)
 {
-    allocator<double>::init(4, 16, 65536, 65536);
+    allocator<double>::init();
 
     typedef allocator<double> allocator_t;
     typedef dense_tensor<4, double, allocator_t> tensor_t;

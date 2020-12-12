@@ -15,7 +15,7 @@ namespace libtensor {
 void gen_bto_contract2_clst_builder_test::perform()
     throw(libtest::test_exception) {
 
-    allocator<double>::init(4, 16, 65536, 65536);
+    allocator<double>::init();
 
     try {
 
