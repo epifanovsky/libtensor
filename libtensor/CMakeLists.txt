@@ -267,6 +267,14 @@ if(WITH_LIBXM)
         block_tensor/impl/btod_contract2_8_xm.C
         block_tensor/impl/btod_copy_xm.C
     )
+    set_property(SOURCE
+        metadata.C
+        core/impl/allocator.C
+        expr/btensor/impl/eval_btensor_double_contract.C
+        expr/btensor/impl/eval_btensor_double_copy.C
+        expr/btensor/impl/eval_btensor_double_set.C
+        APPEND PROPERTY COMPILE_DEFINITIONS WITH_LIBXM=1
+    )
 
     if (WITH_MPI)
         set_property(SOURCE ${SRC_XM_RAW}
@@ -289,9 +297,6 @@ target_include_directories(tensorlight PRIVATE "${libtensorlight_SOURCE_DIR}" "$
 target_link_libraries(tensorlight PUBLIC ${BLAS_LAPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} util)
 target_compile_definitions(tensorlight PUBLIC $<$<CONFIG:Debug>:libtensorlight_DEBUG>)
 
-if (WITH_LIBXM)
-    target_compile_definitions(tensorlight PRIVATE WITH_LIBXM=1)
-endif()
 if (WITH_MPI)
     target_link_libraries(tensorlight PUBLIC ${MPI_C_LIBRARIES} ${MPI_C_LINK_FLAGS})
 endif()
