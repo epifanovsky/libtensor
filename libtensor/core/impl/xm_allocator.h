@@ -1,16 +1,16 @@
 #ifndef LIBTENSOR_XM_ALLOCATOR_H
 #define LIBTENSOR_XM_ALLOCATOR_H
 
-#include <new>
-#include <map>
-#include <string>
-#include <stdexcept>
+#include <libtensor/core/batching_policy_base.h>
+#include <libtensor/defs.h>
+#include <libtensor/libxm/src/alloc.h>
 #include <libutil/singleton.h>
 #include <libutil/threads/auto_lock.h>
 #include <libutil/threads/mutex.h>
-#include <libtensor/defs.h>
-#include <libtensor/core/batching_policy_base.h>
-#include <libtensor/libxm/src/alloc.h>
+#include <map>
+#include <new>
+#include <stdexcept>
+#include <string>
 
 namespace libtensor {
 namespace lt_xm_allocator {
@@ -39,15 +39,8 @@ public:
     static const pointer_type invalid_pointer; //!< Invalid pointer constant
 
 public:
-    /** \brief Initializes the virtual memory manager
-
-        \param base_sz Exponential base for block size increment.
-        \param min_sz Smallest block size in data elements.
-        \param max_sz Largest block size in data elements.
-        \param mem_limit Memory limit in data elements.
-     **/
-    static void init(size_t base_sz, size_t min_sz, size_t max_sz,
-        size_t mem_limit, const char *prefix = 0) {
+    /** \brief Initializes the virtual memory manager **/
+    static void init(const char *prefix = 0) {
 
         std::string path;
 

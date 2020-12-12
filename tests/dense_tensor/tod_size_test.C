@@ -45,7 +45,7 @@ int main() {
 
     int rc = 0;
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init();
 
     try {
 

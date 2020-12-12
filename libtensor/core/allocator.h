@@ -25,8 +25,7 @@ public:
 public:
     virtual ~allocator_wrapper_i() { }
 
-    virtual void init(size_t base_sz, size_t min_sz, size_t max_sz,
-        size_t mem_limit, const char *pfprefix) = 0;
+    virtual void init(const char *pfprefix) = 0;
     virtual void shutdown() = 0;
     virtual size_t get_block_size(size_t sz) = 0;
     virtual pointer_type allocate(size_t sz) = 0;
@@ -56,33 +55,19 @@ public:
 
 private:
     static allocator_wrapper_i<T> *m_aimpl; //!< Implementation
-    static size_t m_base_sz; //!< Exponential base of data block size
-    static size_t m_min_sz; //!< Smallest block size in data elements
-    static size_t m_max_sz; //!< Largest block size in data elements
 
 public:
     /** \brief Initializes the allocator with a given implementation
-
-        \param base_sz Exponential base of data block size.
-        \param min_sz Smallest block size in data elements.
-        \param max_sz Largest block size in data elements.
-        \param mem_limit Memory limit in data elements.
         \param pfprefix Prefix to page file path.
      **/
-    static void init(const std::string &implementation, size_t base_sz, size_t min_sz,
-                     size_t max_sz, size_t mem_limit, const char *pfprefix = 0);
+    static void init(const std::string &implementation, const char *pfprefix = 0);
 
     /** \brief Initializes the allocator with the default implementation
             (std_allocator)
-
-        \param base_sz Exponential base of data block size.
-        \param min_sz Smallest block size in data elements.
-        \param max_sz Largest block size in data elements.
-        \param mem_limit Memory limit in data elements.
         \param pfprefix Prefix to page file path.
      **/
-    static void init(size_t base_sz, size_t min_sz, size_t max_sz,
-        size_t mem_limit, const char *pfprefix = 0);
+    static void init() { init("standard", NULL); }
+
 
     /** \brief Shuts down the allocator
 

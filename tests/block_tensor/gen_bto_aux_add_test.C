@@ -18,7 +18,7 @@ namespace libtensor {
 
 void gen_bto_aux_add_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(4, 16, 65536, 65536);
+    allocator<double>::init();
 
     try {
 

@@ -33,9 +33,8 @@ public:
 
     virtual ~allocator_wrapper() { }
 
-    virtual void init(size_t base_sz, size_t min_sz, size_t max_sz,
-        size_t mem_limit, const char *pfprefix) {
-        m_impl.init(base_sz, min_sz, max_sz, mem_limit, pfprefix);
+    virtual void init(const char *pfprefix) {
+        m_impl.init(pfprefix);
     }
 
     virtual void shutdown() {

@@ -13,7 +13,7 @@ namespace libtensor {
 
 void trace_test::perform() throw(libtest::test_exception) {
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator<double>::init();
 
     try {
 
