@@ -334,8 +334,10 @@ xm_allocator_destroy(xm_allocator_t *allocator)
 		if (allocator->path) {
 			if (close(allocator->fd))
 				perror("close");
-			if (unlink(allocator->path))
-				perror("unlink");
+			if (access( allocator->path, F_OK ) == 0) {
+				if (unlink(allocator->path))
+					perror("unlink");
+			}
 		}
 	}
 #ifdef _OPENMP
