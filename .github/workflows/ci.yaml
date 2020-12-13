@@ -34,7 +34,7 @@ jobs:
       shell: bash
       run: |
         ccache --max-size 2G
-        ./build_libtensor.py -v -d ${{runner.workspace}}/build --install ${{runner.workspace}}/install --type Release
+        ./build_libtensor.py -v -d ${{runner.workspace}}/build --install ${{runner.workspace}}/install --type Release --features libxm
 
     - name: Test
       working-directory: ${{runner.workspace}}/build
