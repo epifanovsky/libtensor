@@ -68,6 +68,11 @@ public:
      **/
     static void init() { init("standard", NULL); }
 
+    /** Old init function for compatibility. Deprecated */
+    static void init(const std::string &implementation, size_t, size_t, size_t,
+                     size_t, const char *pfprefix = 0) {
+        init(implementation, pfprefix);
+    }
 
     /** \brief Shuts down the allocator
 
