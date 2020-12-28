@@ -8,7 +8,7 @@ option(BUILD_SHARED_LIBS "Build shared instead of static libraries" ON)
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type (Release or Debug)")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project(libtensorlight VERSION 2.9.9 LANGUAGES C CXX)
+project(libtensorlight VERSION 3.0.0 LANGUAGES C CXX)
 enable_testing()
 
 ##########################################################################

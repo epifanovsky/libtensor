@@ -8,7 +8,7 @@
 
 namespace libtensor {
 namespace {
-static const std::string static_version_string = "2.9.9";
+static const std::string static_version_string = "3.0.0";
 
 static const std::vector<std::string> version_split = [](const std::string& in) {
   std::vector<std::string> parts;
