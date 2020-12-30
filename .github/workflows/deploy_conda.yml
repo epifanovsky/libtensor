@@ -17,8 +17,7 @@ jobs:
 
     - name: Install deps on macos
       if: contains( matrix.os, 'macos')
-      run: |
-        brew install coreutils || true
+      run: brew install coreutils || true
 
     - name: Install macOS SDK
       if: contains( matrix.os, 'macos')
