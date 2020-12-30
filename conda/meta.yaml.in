@@ -14,6 +14,7 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - mkl-devel {{ mkl }}
+    - llvm-openmp            # [osx]
     - cmake >=3.2
     - ninja
     - ccache
@@ -23,6 +24,7 @@ requirements:
 
   run:
     - {{ pin_compatible('mkl', upper_bound='2021.0') }}
+    - intel-openmp           # [linux]
 
 files:
   - include/libtensor

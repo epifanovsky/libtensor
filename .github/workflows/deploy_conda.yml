@@ -19,7 +19,6 @@ jobs:
       if: contains( matrix.os, 'macos')
       run: |
         brew install coreutils || true
-        brew remove -f libomp
 
     - name: Install macOS SDK
       if: contains( matrix.os, 'macos')
