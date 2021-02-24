@@ -108,5 +108,6 @@ if [ -e CMakeCache.txt ]; then
     rm CMakeCache.txt
 fi
 
+set -vx
 CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" -D CMAKE_BUILD_TYPE="$BUILD_TYPE" -D WITH_BLAS="$BLAS" -D WITH_XM=$WITH_XM -D CTF_INCLUDE="$CTF_INCLUDE" -D CTF_LIB="$CTF_LIB" -D LIBTENSOR_STANDALONE=1 ..
 

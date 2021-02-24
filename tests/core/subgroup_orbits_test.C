@@ -16,7 +16,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> m11;
     m11[0] = true; m11[1] = true;
@@ -48,7 +48,7 @@ int test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> m11;
     m11[0] = true; m11[1] = true;

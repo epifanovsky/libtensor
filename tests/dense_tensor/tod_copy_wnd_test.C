@@ -18,16 +18,16 @@ int test_1() {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 5; ia2[1] = 7;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
-        index<2> ira1, ira2;
+        libtensor::index<2> ira1, ira2;
         ira2[0] = 5; ira2[1] = 7;
         index_range<2> ira(ira1, ira2);
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 5; ib2[1] = 7;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
-        index<2> irb1, irb2;
+        libtensor::index<2> irb1, irb2;
         irb2[0] = 5; irb2[1] = 7;
         index_range<2> irb(irb1, irb2);
 
@@ -51,7 +51,7 @@ int test_1() {
             for(size_t ia = ira1[0]; ia <= ira2[0]; ia++)
             for(size_t ja = ira1[1]; ja <= ira2[1]; ja++) {
 
-                index<2> idxa, idxb;
+                libtensor::index<2> idxa, idxb;
                 idxa[0] = ia;
                 idxa[1] = ja;
                 idxb[0] = ia + irb1[0] - ira1[0];
@@ -88,17 +88,17 @@ int test_2() {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 7; ia2[1] = 9;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
-        index<2> ira1, ira2;
+        libtensor::index<2> ira1, ira2;
         ira1[0] = 1; ira1[1] = 1;
         ira2[0] = 6; ira2[1] = 8;
         index_range<2> ira(ira1, ira2);
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 5; ib2[1] = 7;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
-        index<2> irb1, irb2;
+        libtensor::index<2> irb1, irb2;
         irb2[0] = 5; irb2[1] = 7;
         index_range<2> irb(irb1, irb2);
 
@@ -122,7 +122,7 @@ int test_2() {
             for(size_t ia = ira1[0]; ia <= ira2[0]; ia++)
             for(size_t ja = ira1[1]; ja <= ira2[1]; ja++) {
 
-                index<2> idxa, idxb;
+                libtensor::index<2> idxa, idxb;
                 idxa[0] = ia;
                 idxa[1] = ja;
                 idxb[0] = ia + irb1[0] - ira1[0];
@@ -159,16 +159,16 @@ int test_3() {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 5; ia2[1] = 7;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
-        index<2> ira1, ira2;
+        libtensor::index<2> ira1, ira2;
         ira2[0] = 5; ira2[1] = 7;
         index_range<2> ira(ira1, ira2);
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 7; ib2[1] = 9;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
-        index<2> irb1, irb2;
+        libtensor::index<2> irb1, irb2;
         irb1[0] = 1; irb1[1] = 2;
         irb2[0] = 6; irb2[1] = 9;
         index_range<2> irb(irb1, irb2);
@@ -193,7 +193,7 @@ int test_3() {
             for(size_t ia = ira1[0]; ia <= ira2[0]; ia++)
             for(size_t ja = ira1[1]; ja <= ira2[1]; ja++) {
 
-                index<2> idxa, idxb;
+                libtensor::index<2> idxa, idxb;
                 idxa[0] = ia;
                 idxa[1] = ja;
                 idxb[0] = ia + irb1[0] - ira1[0];
@@ -230,17 +230,17 @@ int test_4() {
 
     try {
 
-        index<2> ia1, ia2;
+        libtensor::index<2> ia1, ia2;
         ia2[0] = 5; ia2[1] = 7;
         dimensions<2> dimsa(index_range<2>(ia1, ia2));
-        index<2> ira1, ira2;
+        libtensor::index<2> ira1, ira2;
         ira1[0] = 0; ira1[1] = 3;
         ira2[0] = 3; ira2[1] = 6;
         index_range<2> ira(ira1, ira2);
-        index<2> ib1, ib2;
+        libtensor::index<2> ib1, ib2;
         ib2[0] = 5; ib2[1] = 7;
         dimensions<2> dimsb(index_range<2>(ib1, ib2));
-        index<2> irb1, irb2;
+        libtensor::index<2> irb1, irb2;
         irb1[0] = 2; irb1[1] = 1;
         irb2[0] = 5; irb2[1] = 4;
         index_range<2> irb(irb1, irb2);
@@ -265,7 +265,7 @@ int test_4() {
             for(size_t ia = ira1[0]; ia <= ira2[0]; ia++)
             for(size_t ja = ira1[1]; ja <= ira2[1]; ja++) {
 
-                index<2> idxa, idxb;
+                libtensor::index<2> idxa, idxb;
                 idxa[0] = ia;
                 idxa[1] = ja;
                 idxb[0] = ia + irb1[0] - ira1[0];
@@ -302,16 +302,16 @@ int test_5() {
 
     try {
 
-        index<4> ia1, ia2;
+        libtensor::index<4> ia1, ia2;
         ia2[0] = 5; ia2[1] = 7; ia2[2] = 5; ia2[3] = 7;
         dimensions<4> dimsa(index_range<4>(ia1, ia2));
-        index<4> ira1, ira2;
+        libtensor::index<4> ira1, ira2;
         ira2[0] = 5; ira2[1] = 7; ira2[2] = 5; ira2[3] = 7;
         index_range<4> ira(ira1, ira2);
-        index<4> ib1, ib2;
+        libtensor::index<4> ib1, ib2;
         ib2[0] = 5; ib2[1] = 7; ib2[2] = 5; ib2[3] = 7;
         dimensions<4> dimsb(index_range<4>(ib1, ib2));
-        index<4> irb1, irb2;
+        libtensor::index<4> irb1, irb2;
         irb2[0] = 5; irb2[1] = 7; irb2[2] = 5; irb2[3] = 7;
         index_range<4> irb(irb1, irb2);
 
@@ -337,7 +337,7 @@ int test_5() {
             for(size_t ka = ira1[2]; ka <= ira2[2]; ka++)
             for(size_t la = ira1[3]; la <= ira2[3]; la++) {
 
-                index<4> idxa, idxb;
+                libtensor::index<4> idxa, idxb;
                 idxa[0] = ia;
                 idxa[1] = ja;
                 idxa[2] = ka;

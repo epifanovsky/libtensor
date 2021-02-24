@@ -10,7 +10,7 @@ int test_ctor() {
 
     try {
 
-    index<2> i1a, i1b;
+    libtensor::index<2> i1a, i1b;
     i1b[0] = 1; i1b[1] = 2;
     index_range<2> ir1(i1a, i1b); // Indexes run from (0,0) to (1,2)
     dimensions<2> d1(ir1);
@@ -57,7 +57,7 @@ int test_contains() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 12;
     dimensions<2> d1(index_range<2> (i1, i2));
 
@@ -123,7 +123,7 @@ int test_comp() {
 
     try {
 
-    index<2> i1a, i1b, i2b;
+    libtensor::index<2> i1a, i1b, i2b;
     i1b[0] = 1; i1b[1] = 2; i1b[0] = 2; i1b[1] = 3;
     index_range<2> ir1(i1a, i1b), ir2(i1a, i2b);
     dimensions<2> d1(ir1), d2(d1), d3(ir2);

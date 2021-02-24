@@ -255,7 +255,7 @@ int test_perm(Functor &fn, const dimensions<N> &dims,
 
     abs_index<N> aida(dimsa);
     do {
-        index<N> idb(aida.get_index());
+        libtensor::index<N> idb(aida.get_index());
         idb.permute(perm);
         abs_index<N> aidb(idb, dimsb);
         size_t i, j;
@@ -315,7 +315,7 @@ int test_perm_additive(Functor &fn, const dimensions<N> &dims,
 
     abs_index<N> aida(dimsa);
     do {
-        index<N> idb(aida.get_index());
+        libtensor::index<N> idb(aida.get_index());
         idb.permute(perm);
         abs_index<N> aidb(idb, dimsb);
         size_t i, j;
@@ -376,7 +376,7 @@ int test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
     abs_index<N> aida(dimsa);
     do {
-        index<N> idb(aida.get_index());
+        libtensor::index<N> idb(aida.get_index());
         idb.permute(perm);
         abs_index<N> aidb(idb, dimsb);
         size_t i, j;
@@ -437,7 +437,7 @@ int test_perm_scaled_additive(Functor &fn, const dimensions<N> &dims,
 
     abs_index<N> aida(dimsa);
     do {
-        index<N> idb(aida.get_index());
+        libtensor::index<N> idb(aida.get_index());
         idb.permute(perm);
         abs_index<N> aidb(idb, dimsb);
         size_t i, j;
@@ -476,7 +476,7 @@ int test_exc() {
 
     typedef allocator<double> allocator;
 
-    index<4> i1, i2, i3;
+    libtensor::index<4> i1, i2, i3;
     i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
     i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
     index_range<4> ir1(i1,i2), ir2(i1,i3);
@@ -504,12 +504,12 @@ int test_exc() {
 int main() {
 
     sin_functor sin;
-    index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
+    libtensor::index<2> i2a, i2b; i2b[0]=10; i2b[1]=12;
     index_range<2> ir2(i2a, i2b); dimensions<2> dims2(ir2);
     permutation<2> perm2, perm2t;
     perm2t.permute(0, 1);
 
-    index<4> i4a, i4b;
+    libtensor::index<4> i4a, i4b;
     i4b[0] = 4; i4b[1] = 5; i4b[2] = 6; i4b[3] = 7;
     dimensions<4> dims4(index_range<4>(i4a, i4b));
     permutation<4> perm4, perm4c;

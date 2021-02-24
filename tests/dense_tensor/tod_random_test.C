@@ -14,7 +14,7 @@ int main() {
     typedef dense_tensor<3, double, allocator> tensor3;
     typedef dense_tensor_ctrl<3,double> tensor3_ctrl;
 
-    index<3> i3a, i3b; i3b[0]=10; i3b[1]=12; i3b[2]=11;
+    libtensor::index<3> i3a, i3b; i3b[0]=10; i3b[1]=12; i3b[2]=11;
     index_range<3> ir3(i3a, i3b); dimensions<3> dims3(ir3);
     tensor3 ta3(dims3), tb3(dims3);
 

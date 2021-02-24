@@ -21,7 +21,7 @@ std::ostream &operator<<(std::ostream &os, const tensor_transf<N, double> &tr) {
 
 
 template<size_t N, typename T>
-std::string trlist_compare(const char *testname, const index<N> &idx,
+std::string trlist_compare(const char *testname, const libtensor::index<N> &idx,
     const transf_list<N, T> &trlist,
     const std::list< tensor_transf<N, T> > &trlist_ref) {
 
@@ -80,7 +80,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -98,7 +98,7 @@ int test_1() {
 
     //  Make transformation lists
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
     transf_list<2, double> trl00(sym, i00), trl01(sym, i01),
@@ -133,7 +133,7 @@ int test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -162,7 +162,7 @@ int test_2() {
 
     //  Make transformation lists
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
     transf_list<2, double> trl00(sym, i00), trl01(sym, i01),
@@ -197,7 +197,7 @@ int test_3a() {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2;
     mask<3> msk;
     msk[0] = true; msk[1] = true; msk[2] = true;
@@ -243,7 +243,7 @@ int test_3a() {
 
     //  Make transformation lists
 
-    index<3> i000, i010;
+    libtensor::index<3> i000, i010;
     i010[1] = 1;
     transf_list<3, double> trl000(sym, i000), trl010(sym, i010);
 
@@ -272,7 +272,7 @@ int test_3b() {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2;
     mask<3> msk;
     msk[0] = true; msk[1] = true; msk[2] = true;
@@ -322,7 +322,7 @@ int test_3b() {
 
     //  Make transformation lists
 
-    index<3> i000, i010;
+    libtensor::index<3> i000, i010;
     i010[1] = 1;
     transf_list<3, double> trl000(sym, i000), trl010(sym, i010);
 
@@ -351,7 +351,7 @@ int test_3c() {
 
     try {
 
-    index<3> i1, i2;
+    libtensor::index<3> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2;
     mask<3> msk;
     msk[0] = true; msk[1] = true; msk[2] = true;
@@ -401,7 +401,7 @@ int test_3c() {
 
     //  Make transformation lists
 
-    index<3> i000, i010;
+    libtensor::index<3> i000, i010;
     i010[1] = 1;
     transf_list<3, double> trl000(sym, i000), trl010(sym, i010);
 
@@ -430,7 +430,7 @@ int test_4() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -439,7 +439,7 @@ int test_4() {
     bis.split(msk, 1);
     symmetry<2, double> sym(bis);
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
     scalar_transf<double> tr0;
@@ -494,7 +494,7 @@ int test_5a() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -506,7 +506,7 @@ int test_5a() {
 
     se_perm<2, double> se(permutation<2>().permute(0, 1), tr0);
 
-    index<2> i00, i01, i10, i11;
+    libtensor::index<2> i00, i01, i10, i11;
     i10[0] = 1; i01[1] = 1;
     i11[0] = 1; i11[1] = 1;
 
@@ -557,7 +557,7 @@ int test_5b() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -569,7 +569,7 @@ int test_5b() {
     se_perm<4, double> se1(permutation<4>().permute(0, 1), tr0);
     se_perm<4, double> se2(permutation<4>().permute(2, 3), tr0);
 
-    index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+    libtensor::index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
         i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
     i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
     i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
@@ -653,7 +653,7 @@ int test_5c() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 8; i2[1] = 8; i2[2] = 8; i2[3] = 8;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -685,7 +685,7 @@ int test_5c() {
     pr1d.add(seq, 3);
     sl.set_rule(r1);
 
-    index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
+    libtensor::index<4> i0000, i0001, i0010, i0011, i0100, i0101, i0110, i0111,
         i1000, i1001, i1010, i1011, i1100, i1101, i1110, i1111;
     i1110[0] = 1; i1110[1] = 1; i1110[2] = 1; i0001[3] = 1;
     i1101[0] = 1; i1101[1] = 1; i0010[2] = 1; i1101[3] = 1;
@@ -759,7 +759,7 @@ int test_6a() {
 
     try {
 
-    index<6> i1, i2;
+    libtensor::index<6> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 3; i2[4] = 3; i2[5] = 3;
     dimensions<6> dims(index_range<6>(i1, i2));
     block_index_space<6> bis(dims);
@@ -834,7 +834,7 @@ int test_6a() {
 
     //  Make transformation lists
 
-    index<6> i000000;
+    libtensor::index<6> i000000;
     transf_list<6, double> trl(sym, i000000);
 
     //  Check against the reference

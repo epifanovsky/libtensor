@@ -13,15 +13,15 @@ int test_ij_i_j(size_t ni, size_t nj) {
 
     try {
 
-    index<1> ia1, ia2;
+    libtensor::index<1> ia1, ia2;
     ia2[0] = ni - 1;
     dimensions<1> dimsa(index_range<1>(ia1, ia2));
 
-    index<1> ib1, ib2;
+    libtensor::index<1> ib1, ib2;
     ib2[0] = nj - 1;
     dimensions<1> dimsb(index_range<1>(ib1, ib2));
 
-    index<2> ic1, ic2;
+    libtensor::index<2> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dimsc(index_range<2>(ic1, ic2));
 
@@ -48,15 +48,15 @@ int test_ij_j_i(size_t ni, size_t nj) {
 
     try {
 
-    index<1> ia1, ia2;
+    libtensor::index<1> ia1, ia2;
     ia2[0] = nj - 1;
     dimensions<1> dimsa(index_range<1>(ia1, ia2));
 
-    index<1> ib1, ib2;
+    libtensor::index<1> ib1, ib2;
     ib2[0] = ni - 1;
     dimensions<1> dimsb(index_range<1>(ib1, ib2));
 
-    index<2> ic1, ic2;
+    libtensor::index<2> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dimsc(index_range<2>(ic1, ic2));
 
@@ -86,15 +86,15 @@ int test_ij_ik_jk(size_t ni, size_t nj, size_t nk) {
 
     try {
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nk - 1;
     dimensions<2> dimsa(index_range<2>(ia1, ia2));
 
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nj - 1; ib2[1] = nk - 1;
     dimensions<2> dimsb(index_range<2>(ib1, ib2));
 
-    index<2> ic1, ic2;
+    libtensor::index<2> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dimsc(index_range<2>(ic1, ic2));
 

@@ -16,7 +16,7 @@ int test_ctor() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2;
     i2[1] = 3;
     index_range<2> ir(i1, i2);
@@ -125,7 +125,7 @@ int test_immutable() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2;
     i2[1] = 3;
     index_range<2> ir(i1, i2);
@@ -282,7 +282,7 @@ int test_operation() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2;
     i2[1] = 3;
     index_range<2> ir(i1, i2);
@@ -328,7 +328,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5;
     i2[1] = 5;
     dimensions<2> dims(index_range<2> (i1, i2));
@@ -366,7 +366,7 @@ int test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5;
     i2[1] = 5;
     dimensions<2> dims(index_range<2> (i1, i2));
@@ -518,7 +518,7 @@ int test_mp_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -557,7 +557,7 @@ int test_mp_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -613,7 +613,7 @@ int test_mp_3() {
 
     try {
 
-    index<1> i1, i2;
+    libtensor::index<1> i1, i2;
     i2[0] = 999;
     dimensions<1> dims(index_range<1>(i1, i2));
 

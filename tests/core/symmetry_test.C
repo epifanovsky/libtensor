@@ -27,9 +27,9 @@ public:
     virtual bool is_valid_bis(const block_index_space<4>&) const {
         return true;
     }
-    virtual bool is_allowed(const index<4>&) const { throw 0; }
-    virtual void apply(index<4>&) const { throw 0; }
-    virtual void apply(index<4>&, tensor_transf<4, double>&) const { throw 0; }
+    virtual bool is_allowed(const libtensor::index<4>&) const { throw 0; }
+    virtual void apply(libtensor::index<4>&) const { throw 0; }
+    virtual void apply(libtensor::index<4>&, tensor_transf<4, double>&) const { throw 0; }
     size_t get_n() const { return n; }
 };
 
@@ -52,9 +52,9 @@ public:
     virtual bool is_valid_bis(const block_index_space<4>&) const {
         return true;
     }
-    virtual bool is_allowed(const index<4>&) const { throw 0; }
-    virtual void apply(index<4>&) const { throw 0; }
-    virtual void apply(index<4>&, tensor_transf<4, double>&) const { throw 0; }
+    virtual bool is_allowed(const libtensor::index<4>&) const { throw 0; }
+    virtual void apply(libtensor::index<4>&) const { throw 0; }
+    virtual void apply(libtensor::index<4>&, tensor_transf<4, double>&) const { throw 0; }
     size_t get_m() const { return m; }
 };
 
@@ -76,7 +76,7 @@ int test_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
@@ -105,7 +105,7 @@ int test_2() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
@@ -165,7 +165,7 @@ int test_3() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
@@ -251,7 +251,7 @@ int test_4() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 
@@ -353,7 +353,7 @@ int test_5() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 9; i2[1] = 9; i2[2] = 5; i2[3] = 5;
     block_index_space<4> bis(dimensions<4>(index_range<4>(i1, i2)));
 

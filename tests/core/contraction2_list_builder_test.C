@@ -40,11 +40,11 @@ int test_1() {
     contraction2<1, 3, 1> contr;
     contr.contract(0, 3);
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia2[0] = 5; ia2[1] = 9;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = 9; ib2[1] = 9; ib2[2] = 9; ib2[3] = 5;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = 9; ic2[1] = 9; ic2[2] = 9; ic2[3] = 9;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
