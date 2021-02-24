@@ -50,9 +50,9 @@ int test_1(const dimensions<N> &dims, const index_range<N> &ir) {
         const double *p1_ref = tc1.req_const_dataptr();
         double *p2_ref = tc2_ref.req_dataptr();
         abs_index<N> iwnd(dims_wnd);
-        const index<N> &ibeg = ir.get_begin();
+        const libtensor::index<N> &ibeg = ir.get_begin();
         do {
-            index<N> idx;
+            libtensor::index<N> idx;
             for(size_t i = 0; i < N; i++) {
                 idx[i] = ibeg[i] + iwnd.get_index().at(i);
             }
@@ -88,7 +88,7 @@ int test_1(const dimensions<N> &dims, const index_range<N> &ir) {
 
 int main() {
 
-    index<2> i2_s, i2_e, i2_m1, i2_m2;
+    libtensor::index<2> i2_s, i2_e, i2_m1, i2_m2;
     i2_e[0] = 9; i2_e[1] = 19;
     i2_m1[0] = 4; i2_m1[1] = 9;
     i2_m2[0] = 7; i2_m2[1] = 15;
@@ -96,7 +96,7 @@ int main() {
         ir2_mm(i2_m1, i2_m2);
     dimensions<2> dims2(ir2_se);
 
-    index<4> i4_s, i4_e, i4_m1, i4_m2;
+    libtensor::index<4> i4_s, i4_e, i4_m1, i4_m2;
     i4_e[0] = 9; i4_e[1] = 19; i4_e[2] = 9; i4_e[3] = 19;
     i4_m1[0] = 4; i4_m1[1] = 9; i4_m1[2] = 4; i4_m1[3] = 9;
     i4_m2[0] = 7; i4_m2[1] = 15; i4_m2[2] = 7; i4_m2[3] = 15;

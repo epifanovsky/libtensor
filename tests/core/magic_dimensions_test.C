@@ -14,13 +14,13 @@ int test_1() {
 
         for(size_t i = 0; i < 16; i++) {
 
-            index<2> i1, i2;
+            libtensor::index<2> i1, i2;
             i2[0] = i; i2[1] = i + 1;
             dimensions<2> dims(index_range<2>(i1, i2));
             magic_dimensions<2> mdims(dims, true);
 
             size_t aj = i * (i + 2) + i;
-            index<2> j, j_ref;
+            libtensor::index<2> j, j_ref;
             j_ref[0] = aj / (i + 2);
             j_ref[1] = aj - j_ref[0] * (i + 2);
             j[0] = mdims.divide(aj, 0);
@@ -48,13 +48,13 @@ int test_2() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 5; i2[1] = 9;
         dimensions<2> dims1(index_range<2>(i1, i2));
         i2[0] = 9; i2[1] = 5;
         dimensions<2> dims2(index_range<2>(i1, i2));
 
-        index<2> i, i_ref;
+        libtensor::index<2> i, i_ref;
 
         magic_dimensions<2> mdims1(dims1, true);
         if(!mdims1.get_dims().equals(dims1)) {

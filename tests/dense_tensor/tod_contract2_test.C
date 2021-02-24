@@ -25,9 +25,9 @@ int test_0_p_p(size_t np, double d) {
 
     try {
 
-    index<1> ia1, ia2; ia2[0] = np - 1;
-    index<1> ib1, ib2; ib2[0] = np - 1;
-    index<0> ic1, ic2;
+    libtensor::index<1> ia1, ia2; ia2[0] = np - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = np - 1;
+    libtensor::index<0> ic1, ic2;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<0> dimc(index_range<0>(ic1, ic2));
@@ -61,7 +61,7 @@ int test_0_p_p(size_t np, double d) {
 
     // Generate reference data
 
-    index<1> ia; index<1> ib; index<0> ic;
+    libtensor::index<1> ia; libtensor::index<1> ib; libtensor::index<0> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t p = 0; p < np; p++) {
         ia[0] = p;
@@ -107,9 +107,9 @@ int test_i_p_pi(size_t ni, size_t np, double d) {
 
     try {
 
-    index<1> ia1, ia2; ia2[0] = np - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
-    index<1> ic1, ic2; ic2[0] = ni - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = np - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
+    libtensor::index<1> ic1, ic2; ic2[0] = ni - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<1> dimc(index_range<1>(ic1, ic2));
@@ -143,7 +143,7 @@ int test_i_p_pi(size_t ni, size_t np, double d) {
 
     // Generate reference data
 
-    index<1> ia; index<2> ib; index<1> ic;
+    libtensor::index<1> ia; libtensor::index<2> ib; libtensor::index<1> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t p = 0; p < np; p++) {
@@ -195,9 +195,9 @@ int test_i_p_ip(size_t ni, size_t np, double d) {
 
     try {
 
-    index<1> ia1, ia2; ia2[0] = np - 1;
-    index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
-    index<1> ic1, ic2; ic2[0] = ni - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = np - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
+    libtensor::index<1> ic1, ic2; ic2[0] = ni - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<1> dimc(index_range<1>(ic1, ic2));
@@ -231,7 +231,7 @@ int test_i_p_ip(size_t ni, size_t np, double d) {
 
     // Generate reference data
 
-    index<1> ia; index<2> ib; index<1> ic;
+    libtensor::index<1> ia; libtensor::index<2> ib; libtensor::index<1> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t p = 0; p < np; p++) {
@@ -283,9 +283,9 @@ int test_i_pi_p(size_t ni, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
-    index<1> ib1, ib2; ib2[0] = np - 1;
-    index<1> ic1, ic2; ic2[0] = ni - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = np - 1;
+    libtensor::index<1> ic1, ic2; ic2[0] = ni - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<1> dimc(index_range<1>(ic1, ic2));
@@ -319,7 +319,7 @@ int test_i_pi_p(size_t ni, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<1> ib; index<1> ic;
+    libtensor::index<2> ia; libtensor::index<1> ib; libtensor::index<1> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t p = 0; p < np; p++) {
@@ -371,9 +371,9 @@ int test_i_ip_p(size_t ni, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
-    index<1> ib1, ib2; ib2[0] = np - 1;
-    index<1> ic1, ic2; ic2[0] = ni - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = np - 1;
+    libtensor::index<1> ic1, ic2; ic2[0] = ni - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<1> dimc(index_range<1>(ic1, ic2));
@@ -407,7 +407,7 @@ int test_i_ip_p(size_t ni, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<1> ib; index<1> ic;
+    libtensor::index<2> ia; libtensor::index<1> ib; libtensor::index<1> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t p = 0; p < np; p++) {
@@ -459,9 +459,9 @@ int test_ij_i_j(size_t ni, size_t nj, double d) {
 
     try {
 
-    index<1> ia1, ia2; ia2[0] = ni - 1;
-    index<1> ib1, ib2; ib2[0] = nj - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = ni - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = nj - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -495,7 +495,7 @@ int test_ij_i_j(size_t ni, size_t nj, double d) {
 
     // Generate reference data
 
-    index<1> ia; index<1> ib; index<2> ic;
+    libtensor::index<1> ia; libtensor::index<1> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -546,9 +546,9 @@ int test_ij_j_i(size_t ni, size_t nj, double d) {
 
     try {
 
-    index<1> ia1, ia2; ia2[0] = nj - 1;
-    index<1> ib1, ib2; ib2[0] = ni - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = nj - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = ni - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -582,7 +582,7 @@ int test_ij_j_i(size_t ni, size_t nj, double d) {
 
     // Generate reference data
 
-    index<1> ia; index<1> ib; index<2> ic;
+    libtensor::index<1> ia; libtensor::index<1> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -633,9 +633,9 @@ int test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -669,7 +669,7 @@ int test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -722,9 +722,9 @@ int test_ij_pi_jp(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
-    index<2> ib1, ib2; ib2[0] = nj - 1; ib2[1] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = nj - 1; ib2[1] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -758,7 +758,7 @@ int test_ij_pi_jp(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -811,9 +811,9 @@ int test_ij_ip_pj(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -847,7 +847,7 @@ int test_ij_ip_pj(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -900,9 +900,9 @@ int test_ij_ip_jp(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
-    index<2> ib1, ib2; ib2[0] = nj - 1; ib2[1] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = nj - 1; ib2[1] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -936,7 +936,7 @@ int test_ij_ip_jp(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -989,9 +989,9 @@ int test_ij_pj_pi(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -1025,7 +1025,7 @@ int test_ij_pj_pi(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1079,9 +1079,9 @@ int test_ij_pj_ip(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
-    index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -1115,7 +1115,7 @@ int test_ij_pj_ip(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1169,9 +1169,9 @@ int test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1;
-    index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -1205,7 +1205,7 @@ int test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1259,9 +1259,9 @@ int test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -1295,7 +1295,7 @@ int test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1349,9 +1349,9 @@ int test_ij_p_pji(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<1> ia1, ia2; ia2[0] = np - 1;
-    index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = ni - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<1> ia1, ia2; ia2[0] = np - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = ni - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<1> dima(index_range<1>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -1385,7 +1385,7 @@ int test_ij_p_pji(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<1> ia; index<3> ib; index<2> ic;
+    libtensor::index<1> ia; libtensor::index<3> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1441,9 +1441,9 @@ int test_ij_pji_p(size_t ni, size_t nj, size_t np, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1; ia2[2] = ni - 1;
-    index<1> ib1, ib2; ib2[0] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1; ia2[2] = ni - 1;
+    libtensor::index<1> ib1, ib2; ib2[0] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<1> dimb(index_range<1>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -1477,7 +1477,7 @@ int test_ij_pji_p(size_t ni, size_t nj, size_t np, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<1> ib; index<2> ic;
+    libtensor::index<3> ia; libtensor::index<1> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1533,19 +1533,19 @@ int test_ij_pi_pj_qi_jq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     try {
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia1[0] = np - 1; ia1[1] = ni - 1;
     ia2[0] = nq - 1; ia2[1] = ni - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib1[0] = np - 1; ib1[1] = nj - 1;
     ib2[0] = nj - 1; ib2[1] = nq - 1;
-    index<2> ic1;
+    libtensor::index<2> ic1;
     ic1[0] = ni - 1; ic1[1] = nj - 1;
-    dimensions<2> dima1(index_range<2>(index<2>(), ia1));
-    dimensions<2> dima2(index_range<2>(index<2>(), ia2));
-    dimensions<2> dimb1(index_range<2>(index<2>(), ib1));
-    dimensions<2> dimb2(index_range<2>(index<2>(), ib2));
-    dimensions<2> dimc(index_range<2>(index<2>(), ic1));
+    dimensions<2> dima1(index_range<2>(libtensor::index<2>(), ia1));
+    dimensions<2> dima2(index_range<2>(libtensor::index<2>(), ia2));
+    dimensions<2> dimb1(index_range<2>(libtensor::index<2>(), ib1));
+    dimensions<2> dimb2(index_range<2>(libtensor::index<2>(), ib2));
+    dimensions<2> dimc(index_range<2>(libtensor::index<2>(), ic1));
     size_t sza1 = dima1.get_size(), sza2 = dima2.get_size(),
         szb1 = dimb1.get_size(), szb2 = dimb2.get_size(),
         szc = dimc.get_size();
@@ -1584,7 +1584,7 @@ int test_ij_pi_pj_qi_jq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     //  Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double k1 = (d == 0.0) ? d1 : d * d1;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1662,19 +1662,19 @@ int test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     try {
 
-    index<2> ia1, ia2;
+    libtensor::index<2> ia1, ia2;
     ia1[0] = np - 1; ia1[1] = ni - 1;
     ia2[0] = nq - 1; ia2[1] = ni - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib1[0] = np - 1; ib1[1] = nj - 1;
     ib2[0] = nq - 1; ib2[1] = nj - 1;
-    index<2> ic1;
+    libtensor::index<2> ic1;
     ic1[0] = ni - 1; ic1[1] = nj - 1;
-    dimensions<2> dima1(index_range<2>(index<2>(), ia1));
-    dimensions<2> dima2(index_range<2>(index<2>(), ia2));
-    dimensions<2> dimb1(index_range<2>(index<2>(), ib1));
-    dimensions<2> dimb2(index_range<2>(index<2>(), ib2));
-    dimensions<2> dimc(index_range<2>(index<2>(), ic1));
+    dimensions<2> dima1(index_range<2>(libtensor::index<2>(), ia1));
+    dimensions<2> dima2(index_range<2>(libtensor::index<2>(), ia2));
+    dimensions<2> dimb1(index_range<2>(libtensor::index<2>(), ib1));
+    dimensions<2> dimb2(index_range<2>(libtensor::index<2>(), ib2));
+    dimensions<2> dimc(index_range<2>(libtensor::index<2>(), ic1));
     size_t sza1 = dima1.get_size(), sza2 = dima2.get_size(),
         szb1 = dimb1.get_size(), szb2 = dimb2.get_size(),
         szc = dimc.get_size();
@@ -1713,7 +1713,7 @@ int test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     //  Generate reference data
 
-    index<2> ia; index<2> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double k1 = (d == 0.0) ? d1 : d * d1;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1791,9 +1791,9 @@ int test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
-    index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -1827,7 +1827,7 @@ int test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<3> ib; index<3> ic;
+    libtensor::index<2> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1886,9 +1886,9 @@ int test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
-    index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -1922,7 +1922,7 @@ int test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<3> ib; index<3> ic;
+    libtensor::index<2> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -1981,9 +1981,9 @@ int test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nk - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nk - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -2017,7 +2017,7 @@ int test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<2> ib; index<3> ic;
+    libtensor::index<3> ia; libtensor::index<2> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2076,9 +2076,9 @@ int test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
-    index<3> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -2112,7 +2112,7 @@ int test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<3> ib; index<3> ic;
+    libtensor::index<2> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2171,9 +2171,9 @@ int test_ijk_pj_pik(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
-    index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1; ib2[2] = nk - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<2> ia1, ia2; ia2[0] = np - 1; ia2[1] = nj - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1; ib2[2] = nk - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<2> dima(index_range<2>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -2207,7 +2207,7 @@ int test_ijk_pj_pik(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<3> ib; index<3> ic;
+    libtensor::index<2> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2266,9 +2266,9 @@ int test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
-    index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = ni - 1; ib2[1] = np - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -2302,7 +2302,7 @@ int test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<2> ib; index<3> ic;
+    libtensor::index<3> ia; libtensor::index<2> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2361,9 +2361,9 @@ int test_ijk_pkj_pi(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
-    index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
-    index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = nj - 1;
+    libtensor::index<2> ib1, ib2; ib2[0] = np - 1; ib2[1] = ni - 1;
+    libtensor::index<3> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
     dimensions<3> dimc(index_range<3>(ic1, ic2));
@@ -2397,7 +2397,7 @@ int test_ijk_pkj_pi(size_t ni, size_t nj, size_t nk, size_t np, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<2> ib; index<3> ic;
+    libtensor::index<3> ia; libtensor::index<2> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2456,9 +2456,9 @@ int test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = ni - 1;
-    index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = nq - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = ni - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = nq - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -2492,7 +2492,7 @@ int test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<2> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2548,9 +2548,9 @@ int test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nq - 1;
-    index<3> ib1, ib2; ib2[0] = nj - 1; ib2[1] = nq - 1; ib2[2] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nq - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = nj - 1; ib2[1] = nq - 1; ib2[2] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -2584,7 +2584,7 @@ int test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<2> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2640,9 +2640,9 @@ int test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     try {
 
-    index<3> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1; ia2[2] = nq - 1;
-    index<3> ib1, ib2; ib2[0] = ni - 1; ib2[1] = nq - 1; ib2[2] = np - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<3> ia1, ia2; ia2[0] = nj - 1; ia2[1] = np - 1; ia2[2] = nq - 1;
+    libtensor::index<3> ib1, ib2; ib2[0] = ni - 1; ib2[1] = nq - 1; ib2[2] = np - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -2676,7 +2676,7 @@ int test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<2> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2732,11 +2732,11 @@ int test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = nj - 1; ia2[1] = ni - 1; ia2[2] = np - 1; ia2[3] = nq - 1;
-    index<2> ib1, ib2;
+    libtensor::index<2> ib1, ib2;
     ib2[0] = nq - 1; ib2[1] = np - 1;
-    index<2> ic1, ic2;
+    libtensor::index<2> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<2> dimb(index_range<2>(ib1, ib2));
@@ -2771,7 +2771,7 @@ int test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // Generate reference data
 
-    index<4> ia; index<2> ib; index<2> ic;
+    libtensor::index<4> ia; libtensor::index<2> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -2826,9 +2826,9 @@ int test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq) {
         << ", " << np << ", " << nq << ")";
     std::string tns = tnss.str();
 
-    index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
-    index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<2> ira(ia1,ia2); dimensions<2> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -2860,7 +2860,7 @@ int test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq) {
 
     // Generate reference data
 
-    index<2> ia; index<4> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<4> ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -2911,9 +2911,9 @@ int test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq, double d) {
         << ", " << np << ", " << nq << ", " << d << ")";
     std::string tns = tnss.str();
 
-    index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
-    index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=nj-1; ib2[2]=np-1; ib2[3]=nq-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<2> ira(ia1,ia2); dimensions<2> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -2945,7 +2945,7 @@ int test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq, double d) {
 
     // Generate reference data
 
-    index<2> ia; index<4> ib; index<2> ic;
+    libtensor::index<2> ia; libtensor::index<4> ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -3000,11 +3000,11 @@ int test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = nk - 1; ia2[1] = nj - 1; ia2[2] = np - 1; ia2[3] = nq - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = nq - 1; ib2[2] = np - 1;
-    index<3> ic1, ic2;
+    libtensor::index<3> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3039,7 +3039,7 @@ int test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<3> ib; index<3> ic;
+    libtensor::index<4> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3099,11 +3099,11 @@ int test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = nk - 1; ia2[2] = ni - 1; ia2[3] = nq - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = nq - 1;
-    index<3> ic1, ic2;
+    libtensor::index<3> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3138,7 +3138,7 @@ int test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<3> ib; index<3> ic;
+    libtensor::index<4> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3200,11 +3200,11 @@ int test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = nj - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = nq - 1; ib2[2] = np - 1; ib2[3] = nk - 1;
-    index<3> ic1, ic2;
+    libtensor::index<3> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -3239,7 +3239,7 @@ int test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<4> ib; index<3> ic;
+    libtensor::index<3> ia; libtensor::index<4> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3300,11 +3300,11 @@ int test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = nj - 1; ia2[3] = ni - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = nq - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
-    index<3> ic1, ic2;
+    libtensor::index<3> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3339,7 +3339,7 @@ int test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<3> ib; index<3> ic;
+    libtensor::index<4> ia; libtensor::index<3> ib; libtensor::index<3> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3399,11 +3399,11 @@ int test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nk - 1; ia2[2] = np - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3438,7 +3438,7 @@ int test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<4> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3499,11 +3499,11 @@ int test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nk - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3538,7 +3538,7 @@ int test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<4> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3599,11 +3599,11 @@ int test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nl - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3638,7 +3638,7 @@ int test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<4> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3698,11 +3698,11 @@ int test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = nj - 1; ia2[1] = nk - 1; ia2[2] = np - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = np - 1; ib2[2] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3737,7 +3737,7 @@ int test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<4> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3798,11 +3798,11 @@ int test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = nj - 1; ia2[1] = np - 1; ia2[2] = nl - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = np - 1; ib2[2] = nk - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
     dimensions<3> dimb(index_range<3>(ib1, ib2));
@@ -3837,7 +3837,7 @@ int test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<3> ib; index<4> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -3902,23 +3902,23 @@ int test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
 
     try {
 
-    index<3> ia1, ia2, ia3;
+    libtensor::index<3> ia1, ia2, ia3;
     ia1[0] = nj - 1; ia1[1] = np - 1; ia1[2] = nl - 1;
     ia2[0] = nj - 1; ia2[1] = ni - 1; ia2[2] = nq - 1;
     ia3[0] = nj - 1; ia3[1] = nl - 1; ia3[2] = nr - 1;
-    index<3> ib1, ib2, ib3;
+    libtensor::index<3> ib1, ib2, ib3;
     ib1[0] = ni - 1; ib1[1] = np - 1; ib1[2] = nk - 1;
     ib2[0] = nk - 1; ib2[1] = nq - 1; ib2[2] = nl - 1;
     ib3[0] = ni - 1; ib3[1] = nk - 1; ib3[2] = nr - 1;
-    index<4> ic1;
+    libtensor::index<4> ic1;
     ic1[0] = ni - 1; ic1[1] = nj - 1; ic1[2] = nk - 1; ic1[3] = nl - 1;
-    dimensions<3> dima1(index_range<3>(index<3>(), ia1));
-    dimensions<3> dima2(index_range<3>(index<3>(), ia2));
-    dimensions<3> dima3(index_range<3>(index<3>(), ia3));
-    dimensions<3> dimb1(index_range<3>(index<3>(), ib1));
-    dimensions<3> dimb2(index_range<3>(index<3>(), ib2));
-    dimensions<3> dimb3(index_range<3>(index<3>(), ib3));
-    dimensions<4> dimc(index_range<4>(index<4>(), ic1));
+    dimensions<3> dima1(index_range<3>(libtensor::index<3>(), ia1));
+    dimensions<3> dima2(index_range<3>(libtensor::index<3>(), ia2));
+    dimensions<3> dima3(index_range<3>(libtensor::index<3>(), ia3));
+    dimensions<3> dimb1(index_range<3>(libtensor::index<3>(), ib1));
+    dimensions<3> dimb2(index_range<3>(libtensor::index<3>(), ib2));
+    dimensions<3> dimb3(index_range<3>(libtensor::index<3>(), ib3));
+    dimensions<4> dimc(index_range<4>(libtensor::index<4>(), ic1));
     size_t sza1 = dima1.get_size(), sza2 = dima2.get_size(),
         sza3 = dima3.get_size(), szb1 = dimb1.get_size(),
         szb2 = dimb2.get_size(), szb3 = dimb3.get_size(),
@@ -3963,7 +3963,7 @@ int test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
 
     //  Generate reference data
 
-    index<3> ia; index<3> ib; index<4> ic;
+    libtensor::index<3> ia; libtensor::index<3> ib; libtensor::index<4> ic;
     double k1 = (d == 0.0) ? d1 : d * d1;
     // \sum_{p} a^1_{jpl} b^1_{ipk}
     for(size_t i = 0; i < ni; i++) {
@@ -4087,11 +4087,11 @@ int test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = nk - 1; ia2[2] = np - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nm - 1; ib2[3] = nl - 1;
-    index<5> ic1, ic2;
+    libtensor::index<5> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     ic2[4] = nm - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
@@ -4127,7 +4127,7 @@ int test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<4> ib; index<5> ic;
+    libtensor::index<3> ia; libtensor::index<4> ib; libtensor::index<5> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4193,11 +4193,11 @@ int test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nk - 1; ia2[3] = nm - 1;
-    index<3> ib1, ib2;
+    libtensor::index<3> ib1, ib2;
     ib2[0] = nj - 1; ib2[1] = np - 1; ib2[2] = nl - 1;
-    index<5> ic1, ic2;
+    libtensor::index<5> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     ic2[4] = nm - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
@@ -4233,7 +4233,7 @@ int test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<3> ib; index<5> ic;
+    libtensor::index<4> ia; libtensor::index<3> ib; libtensor::index<5> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4299,11 +4299,11 @@ int test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<3> ia1, ia2;
+    libtensor::index<3> ia1, ia2;
     ia2[0] = nj - 1; ia2[1] = nl - 1; ia2[2] = np - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = np - 1; ib2[2] = nk - 1; ib2[3] = nm - 1;
-    index<5> ic1, ic2;
+    libtensor::index<5> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     ic2[4] = nm - 1;
     dimensions<3> dima(index_range<3>(ia1, ia2));
@@ -4339,7 +4339,7 @@ int test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia; index<4> ib; index<5> ic;
+    libtensor::index<3> ia; libtensor::index<4> ib; libtensor::index<5> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4405,11 +4405,11 @@ int test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = nk - 1; ia2[1] = nj - 1; ia2[2] = nm - 1; ia2[3] = np - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = np - 1; ib2[2] = nl - 1; ib2[3] = nn - 1;
-    index<6> ic1, ic2;
+    libtensor::index<6> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     ic2[4] = nm - 1; ic2[5] = nn - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
@@ -4445,7 +4445,7 @@ int test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<6> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<6> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4514,11 +4514,11 @@ int test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nl - 1; ia2[3] = nq - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = np - 1; ib2[2] = nj - 1; ib2[3] = nq - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -4553,7 +4553,7 @@ int test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4615,11 +4615,11 @@ int test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nl - 1; ia2[3] = nq - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1; ib2[3] = nq - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -4654,7 +4654,7 @@ int test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4716,11 +4716,11 @@ int test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nl - 1; ia2[3] = nq - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nq - 1; ib2[3] = nj - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -4755,7 +4755,7 @@ int test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4817,11 +4817,11 @@ int test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nq - 1; ia2[3] = nl - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = np - 1; ib2[2] = nq - 1; ib2[3] = nj - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -4856,7 +4856,7 @@ int test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -4918,11 +4918,11 @@ int test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nq - 1; ia2[3] = nl - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nq - 1; ib2[3] = nj - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -4957,7 +4957,7 @@ int test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5019,11 +5019,11 @@ int test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nl - 1; ia2[3] = nq - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = np - 1; ib2[2] = nj - 1; ib2[3] = nq - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -5058,7 +5058,7 @@ int test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5120,11 +5120,11 @@ int test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nl - 1; ia2[3] = nq - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nj - 1; ib2[3] = nq - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -5159,7 +5159,7 @@ int test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5221,11 +5221,11 @@ int test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nq - 1; ia2[3] = nl - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = nk - 1; ib2[1] = np - 1; ib2[2] = nq - 1; ib2[3] = nj - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -5260,7 +5260,7 @@ int test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5322,11 +5322,11 @@ int test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = ni - 1; ia2[2] = nq - 1; ia2[3] = nl - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nk - 1; ib2[2] = nq - 1; ib2[3] = nj - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -5361,7 +5361,7 @@ int test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5423,11 +5423,11 @@ int test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = nk - 1; ia2[3] = nj - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = ni - 1; ib2[1] = nq - 1; ib2[2] = np - 1; ib2[3] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -5462,7 +5462,7 @@ int test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5526,11 +5526,11 @@ int test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = np - 1; ia2[1] = nq - 1; ia2[2] = nk - 1; ia2[3] = nj - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = nq - 1; ib2[1] = ni - 1; ib2[2] = np - 1; ib2[3] = nl - 1;
-    index<4> ic1, ic2;
+    libtensor::index<4> ic1, ic2;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
@@ -5565,7 +5565,7 @@ int test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<4> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<4> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5626,9 +5626,9 @@ int test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
         << ", " << np << ", " << nq << ", " << nr << ")";
     std::string tns = tnss.str();
 
-    index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
-    index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<4> ira(ia1,ia2); dimensions<4> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -5660,7 +5660,7 @@ int test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
 
     // Generate reference data
 
-    index<4> ia, ib; index<2> ic;
+    libtensor::index<4> ia, ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -5716,9 +5716,9 @@ int test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
         << ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
     std::string tns = tnss.str();
 
-    index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
-    index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<4> ia1, ia2; ia2[0]=ni-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nq-1; ib2[3]=nr-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<4> ira(ia1,ia2); dimensions<4> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -5750,7 +5750,7 @@ int test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
 
     // Generate reference data
 
-    index<4> ia, ib; index<2> ic;
+    libtensor::index<4> ia, ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -5806,11 +5806,11 @@ int test_ij_ipqr_pjrq(size_t ni, size_t nj, size_t np, size_t nq, size_t nr,
 
     try {
 
-    index<4> ia1, ia2;
+    libtensor::index<4> ia1, ia2;
     ia2[0] = ni - 1; ia2[1] = np - 1; ia2[2] = nq - 1; ia2[3] = nr - 1;
-    index<4> ib1, ib2;
+    libtensor::index<4> ib1, ib2;
     ib2[0] = np - 1; ib2[1] = nj - 1; ib2[2] = nr - 1; ib2[3] = nq - 1;
-    index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
+    libtensor::index<2> ic1, ic2; ic2[0] = ni - 1; ic2[1] = nj - 1;
     dimensions<4> dima(index_range<4>(ia1, ia2));
     dimensions<4> dimb(index_range<4>(ib1, ib2));
     dimensions<2> dimc(index_range<2>(ic1, ic2));
@@ -5844,7 +5844,7 @@ int test_ij_ipqr_pjrq(size_t ni, size_t nj, size_t np, size_t nq, size_t nr,
 
     // Generate reference data
 
-    index<4> ia; index<4> ib; index<2> ic;
+    libtensor::index<4> ia; libtensor::index<4> ib; libtensor::index<2> ic;
     double d1 = (d == 0.0) ? 1.0 : d;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
@@ -5902,9 +5902,9 @@ int test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
         << ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
     std::string tns = tnss.str();
 
-    index<4> ia1, ia2; ia2[0]=nj-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
-    index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=np-1; ib2[2]=nr-1; ib2[3]=nq-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<4> ia1, ia2; ia2[0]=nj-1; ia2[1]=np-1; ia2[2]=nq-1; ia2[3]=nr-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=ni-1; ib2[1]=np-1; ib2[2]=nr-1; ib2[3]=nq-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<4> ira(ia1,ia2); dimensions<4> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -5936,7 +5936,7 @@ int test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
 
     // Generate reference data
 
-    index<4> ia, ib; index<2> ic;
+    libtensor::index<4> ia, ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -5995,9 +5995,9 @@ int test_ij_pqir_pqjr(size_t ni, size_t nj,
         << ", " << np << ", " << nq << ", " << nr << ")";
     std::string tns = tnss.str();
 
-    index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
-    index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<4> ira(ia1,ia2); dimensions<4> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -6029,7 +6029,7 @@ int test_ij_pqir_pqjr(size_t ni, size_t nj,
 
     // Generate reference data
 
-    index<4> ia, ib; index<2> ic;
+    libtensor::index<4> ia, ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -6084,9 +6084,9 @@ int test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
         << ", " << np << ", " << nq << ", " << nr << ", " << d << ")";
     std::string tns = tnss.str();
 
-    index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
-    index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
-    index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
+    libtensor::index<4> ia1, ia2; ia2[0]=np-1; ia2[1]=nq-1; ia2[2]=ni-1; ia2[3]=nr-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=np-1; ib2[1]=nq-1; ib2[2]=nj-1; ib2[3]=nr-1;
+    libtensor::index<2> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1;
     index_range<4> ira(ia1,ia2); dimensions<4> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
     index_range<2> irc(ic1,ic2); dimensions<2> dimc(irc);
@@ -6118,7 +6118,7 @@ int test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
 
     // Generate reference data
 
-    index<4> ia, ib; index<2> ic;
+    libtensor::index<4> ia, ib; libtensor::index<2> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
         ic[0]=i; ic[1]=j;
@@ -6176,9 +6176,9 @@ int test_ijkl_pi_jklp(size_t ni, size_t nj,
 
     try {
 
-    index<2> ia1, ia2;
-    index<4> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<4> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = np - 1; ia2[1] = ni - 1;
     ib2[0] = nj - 1; ib2[1] = nk - 1; ib2[2] = nl - 1; ib2[3] = np - 1;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
@@ -6218,7 +6218,7 @@ int test_ijkl_pi_jklp(size_t ni, size_t nj,
     // Generate reference data
     //
 
-    index<2> ia; index<4> ib, ic;
+    libtensor::index<2> ia; libtensor::index<4> ib, ic;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {
@@ -6285,9 +6285,9 @@ int test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
 
     try {
 
-    index<2> ia1, ia2;
-    index<4> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<4> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = np - 1; ia2[1] = ni - 1;
     ib2[0] = nj - 1; ib2[1] = nk - 1; ib2[2] = nl - 1; ib2[3] = np - 1;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
@@ -6327,7 +6327,7 @@ int test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
     // Generate reference data
     //
 
-    index<2> ia; index<4> ib, ic;
+    libtensor::index<2> ia; libtensor::index<4> ib, ic;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {
@@ -6391,9 +6391,9 @@ int test_jikl_pi_jpkl(size_t ni, size_t nj,
         << ", " << nk << ", " << nl << ", " << np << ")";
     std::string tns = tnss.str();
 
-    index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
-    index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
-    index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
+    libtensor::index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
+    libtensor::index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
 
     index_range<2> ira(ia1,ia2); dimensions<2> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
@@ -6426,7 +6426,7 @@ int test_jikl_pi_jpkl(size_t ni, size_t nj,
 
     // Generate reference data
 
-    index<2> ia; index<4> ib, ic;
+    libtensor::index<2> ia; libtensor::index<4> ib, ic;
     for(size_t j=0; j<nj; j++) {
     for(size_t i=0; i<ni; i++) {
     for(size_t k=0; k<nk; k++) {
@@ -6481,9 +6481,9 @@ int test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
         << ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
     std::string tns = tnss.str();
 
-    index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
-    index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
-    index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
+    libtensor::index<2> ia1, ia2; ia2[0]=np-1; ia2[1]=ni-1;
+    libtensor::index<4> ib1, ib2; ib2[0]=nj-1; ib2[1]=np-1; ib2[2]=nk-1; ib2[3]=nl-1;
+    libtensor::index<4> ic1, ic2; ic2[0]=nj-1; ic2[1]=ni-1; ic2[2]=nk-1; ic2[3]=nl-1;
 
     index_range<2> ira(ia1,ia2); dimensions<2> dima(ira);
     index_range<4> irb(ib1,ib2); dimensions<4> dimb(irb);
@@ -6516,7 +6516,7 @@ int test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<2> ia; index<4> ib, ic;
+    libtensor::index<2> ia; libtensor::index<4> ib, ic;
     for(size_t j=0; j<nj; j++) {
     for(size_t i=0; i<ni; i++) {
     for(size_t k=0; k<nk; k++) {
@@ -6571,9 +6571,9 @@ int test_ijkl_ijp_klp(size_t ni, size_t nj,
         << ", " << nk << ", " << nl << ", " << np << ")";
     std::string tns = tnss.str();
 
-    index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
-    index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
-    index<4> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1; ic2[2]=nk-1; ic2[3]=nl-1;
+    libtensor::index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
+    libtensor::index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
+    libtensor::index<4> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1; ic2[2]=nk-1; ic2[3]=nl-1;
     index_range<3> ira(ia1,ia2); dimensions<3> dima(ira);
     index_range<3> irb(ib1,ib2); dimensions<3> dimb(irb);
     index_range<4> irc(ic1,ic2); dimensions<4> dimc(irc);
@@ -6605,7 +6605,7 @@ int test_ijkl_ijp_klp(size_t ni, size_t nj,
 
     // Generate reference data
 
-    index<3> ia, ib; index<4> ic;
+    libtensor::index<3> ia, ib; libtensor::index<4> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
     for(size_t k=0; k<nk; k++) {
@@ -6658,9 +6658,9 @@ int test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
         << ", " << nk << ", " << nl << ", " << np << ", " << d << ")";
     std::string tns = tnss.str();
 
-    index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
-    index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
-    index<4> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1; ic2[2]=nk-1; ic2[3]=nl-1;
+    libtensor::index<3> ia1, ia2; ia2[0]=ni-1; ia2[1]=nj-1; ia2[2]=np-1;
+    libtensor::index<3> ib1, ib2; ib2[0]=nk-1; ib2[1]=nl-1; ib2[2]=np-1;
+    libtensor::index<4> ic1, ic2; ic2[0]=ni-1; ic2[1]=nj-1; ic2[2]=nk-1; ic2[3]=nl-1;
     index_range<3> ira(ia1,ia2); dimensions<3> dima(ira);
     index_range<3> irb(ib1,ib2); dimensions<3> dimb(irb);
     index_range<4> irc(ic1,ic2); dimensions<4> dimc(irc);
@@ -6692,7 +6692,7 @@ int test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
 
     // Generate reference data
 
-    index<3> ia, ib; index<4> ic;
+    libtensor::index<3> ia, ib; libtensor::index<4> ic;
     for(size_t i=0; i<ni; i++) {
     for(size_t j=0; j<nj; j++) {
     for(size_t k=0; k<nk; k++) {
@@ -6747,9 +6747,9 @@ int test_ijkl_ij_kl(size_t ni, size_t nj, size_t nk, size_t nl) {
 
     try {
 
-    index<2> ia1, ia2;
-    index<2> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<2> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
     ib2[0] = nk - 1; ib2[1] = nl - 1;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
@@ -6789,7 +6789,7 @@ int test_ijkl_ij_kl(size_t ni, size_t nj, size_t nk, size_t nl) {
     // Generate reference data
     //
 
-    index<2> ia, ib; index<4> ic;
+    libtensor::index<2> ia, ib; libtensor::index<4> ic;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {
@@ -6851,9 +6851,9 @@ int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
 
     try {
 
-    index<2> ia1, ia2;
-    index<2> ib1, ib2;
-    index<4> ic1, ic2;
+    libtensor::index<2> ia1, ia2;
+    libtensor::index<2> ib1, ib2;
+    libtensor::index<4> ic1, ic2;
     ia2[0] = ni - 1; ia2[1] = nj - 1;
     ib2[0] = nl - 1; ib2[1] = nk - 1;
     ic2[0] = ni - 1; ic2[1] = nj - 1; ic2[2] = nk - 1; ic2[3] = nl - 1;
@@ -6893,7 +6893,7 @@ int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
     // Generate reference data
     //
 
-    index<2> ia, ib; index<4> ic;
+    libtensor::index<2> ia, ib; libtensor::index<4> ic;
     for(size_t i = 0; i < ni; i++) {
     for(size_t j = 0; j < nj; j++) {
     for(size_t k = 0; k < nk; k++) {

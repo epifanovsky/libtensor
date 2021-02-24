@@ -5,7 +5,7 @@ using namespace libtensor;
 
 int test_ctor() {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     index_range<2> ir(i1, i2);
 

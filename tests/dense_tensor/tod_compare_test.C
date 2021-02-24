@@ -15,7 +15,7 @@ int test_exc() {
 
     typedef dense_tensor<4, double, allocator<double> > tensor4;
 
-    index<4> i1, i2, i3;
+    libtensor::index<4> i1, i2, i3;
     i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
     i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
     index_range<4> ir1(i1,i2), ir2(i1,i3);
@@ -38,7 +38,7 @@ int test_exc() {
 }
 
 int test_operation(const dimensions<4> &dim,
-    const index<4> &idx) {
+    const libtensor::index<4> &idx) {
 
     typedef dense_tensor<4, double, allocator<double> > tensor4;
     typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
@@ -102,7 +102,7 @@ int test_0() {
 
     try {
 
-    index<0> i1, i2;
+    libtensor::index<0> i1, i2;
     dimensions<0> dims(index_range<0>(i1, i2));
     dense_tensor<0, double, allocator> t1(dims), t2(dims), t3(dims);
 
@@ -145,7 +145,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 5;
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
@@ -185,8 +185,8 @@ int main() {
 
     srand48(time(NULL));
 
-    index<4> i1, i2; i2[0]=2; i2[1]=3; i2[2]=4; i2[3]=5;
-    index<4> idiff; idiff[0]=0; idiff[1]=1; idiff[2]=2; idiff[3]=3;
+    libtensor::index<4> i1, i2; i2[0]=2; i2[1]=3; i2[2]=4; i2[3]=5;
+    libtensor::index<4> idiff; idiff[0]=0; idiff[1]=1; idiff[2]=2; idiff[3]=3;
     index_range<4> ir(i1,i2);
     dimensions<4> dim(ir);
 

@@ -10,10 +10,10 @@ int test_ctor_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
-    index<2> i;
+    libtensor::index<2> i;
     i[0] = 0; i[1] = 0;
     abs_index<2> ai(i, dims);
 
@@ -36,10 +36,10 @@ int test_ctor_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
-    index<2> i;
+    libtensor::index<2> i;
     i[0] = 1; i[1] = 0;
     abs_index<2> ai(i, dims);
 
@@ -62,10 +62,10 @@ int test_ctor_3() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 9; i2[1] = 9;
     dimensions<2> dims(index_range<2>(i1, i2));
-    index<2> i;
+    libtensor::index<2> i;
     i[0] = 9; i[1] = 9;
     abs_index<2> ai(i, dims);
 
@@ -88,10 +88,10 @@ int test_ctor_4() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 1; i2[1] = 4; i2[2] = 1; i2[3] = 13;
     dimensions<4> dims(index_range<4>(i1, i2));
-    index<4> i;
+    libtensor::index<4> i;
     i[0] = 1; i[1] = 0; i[2] = 1; i[3] = 0;
     abs_index<4> ai(154, dims);
 
@@ -114,10 +114,10 @@ int test_ctor_5() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
     dimensions<4> dims(index_range<4>(i1, i2));
-    index<4> i;
+    libtensor::index<4> i;
     i[0] = 2; i[1] = 2; i[2] = 2; i[3] = 2;
 
     bool ok = false;
@@ -144,10 +144,10 @@ int test_inc_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
     dimensions<4> dims(index_range<4>(i1, i2));
-    index<4> i;
+    libtensor::index<4> i;
     abs_index<4> ai(i, dims);
 
     if(!ai.inc()) {
@@ -178,10 +178,10 @@ int test_inc_2() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
     dimensions<4> dims(index_range<4>(i1, i2));
-    index<4> i;
+    libtensor::index<4> i;
     i[0] = 1; i[1] = 1; i[2] = 0; i[3] = 0;
     abs_index<4> ai(i, dims);
 
@@ -251,10 +251,10 @@ int test_inc_3() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 10; i2[1] = 12;
     dimensions<2> dims(index_range<2>(i1, i2));
-    index<2> i;
+    libtensor::index<2> i;
     i[0] = 0; i[1] = 11;
     abs_index<2> ai(i, dims);
 
@@ -299,10 +299,10 @@ int test_inc_4() {
 
     try {
 
-    index<1> i1, i2;
+    libtensor::index<1> i1, i2;
     i2[0] = 5;
     dimensions<1> dims(index_range<1>(i1, i2));
-    index<1> i;
+    libtensor::index<1> i;
     abs_index<1> ai(i, dims);
 
     if(!ai.inc()) {
@@ -333,10 +333,10 @@ int test_inc_5() {
 
     try {
 
-    index<1> i1, i2;
+    libtensor::index<1> i1, i2;
     i2[0] = 5;
     dimensions<1> dims(index_range<1>(i1, i2));
-    index<1> i;
+    libtensor::index<1> i;
     i[0] = 4;
     abs_index<1> ai(i, dims);
 
@@ -380,7 +380,7 @@ int test_last_1() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 1; i2[1] = 1; i2[2] = 1; i2[3] = 1;
     dimensions<4> dims(index_range<4>(i1, i2));
 
@@ -414,12 +414,12 @@ int test_get_index_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 5; i2[1] = 10;
     dimensions<2> dims(index_range<2>(i1, i2));
     magic_dimensions<2> mdims(dims, true);
 
-    index<2> i_ref;
+    libtensor::index<2> i_ref;
     i_ref[0] = 2; i_ref[1] = 3;
     abs_index<2>::get_index(25, dims, i1);
     abs_index<2>::get_index(25, mdims, i2);
@@ -445,13 +445,13 @@ int test_get_index_2() {
 
     try {
 
-        index<2> i1, i2;
+        libtensor::index<2> i1, i2;
         i2[0] = 5; i2[1] = 9;
         dimensions<2> dims1(index_range<2>(i1, i2));
         i2[0] = 9; i2[1] = 5;
         dimensions<2> dims2(index_range<2>(i1, i2));
 
-        index<2> i, i_ref;
+        libtensor::index<2> i, i_ref;
 
         magic_dimensions<2> mdims1(dims1, true);
         if(!mdims1.get_dims().equals(dims1)) {

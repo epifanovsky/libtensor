@@ -8,7 +8,7 @@ using namespace libtensor;
 
 int test_ctor() {
 
-    index<2> i1;
+    libtensor::index<2> i1;
     return 0;
 }
 
@@ -17,7 +17,7 @@ int test_less() {
 
     static const char testname[] = "index_test::test_less()";
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
 
     i1[0] = 1; i1[1] = 1;
     i2[0] = 2; i2[1] = 2;
@@ -65,7 +65,7 @@ int test_print() {
     static const char testname[] = "index_test::test_print()";
 
     std::ostringstream ss1;
-    index<1> i1;
+    libtensor::index<1> i1;
     ss1 << i1;
     if(ss1.str().compare("[0]")!=0) {
         std::ostringstream err;
@@ -85,7 +85,7 @@ int test_print() {
     }
 
     std::ostringstream ss3;
-    index<1> i1a; i1a[0]=3;
+    libtensor::index<1> i1a; i1a[0]=3;
     ss3 << i1a << i1;
     if(ss3.str().compare("[3][25]")!=0) {
         std::ostringstream err;
@@ -95,7 +95,7 @@ int test_print() {
     }
 
     std::ostringstream ss4;
-    index<2> i2;
+    libtensor::index<2> i2;
     ss4 << i2;
     if(ss4.str().compare("[0,0]")!=0) {
         std::ostringstream err;
@@ -121,7 +121,7 @@ int test_op() {
 
     static const char testname[] = "index_test::test_op()";
 
-    index<2> i1, i2, i3, i4;
+    libtensor::index<2> i1, i2, i3, i4;
     i1[0] = 3; i1[1] = 5;
     i2[0] = 3; i2[1] = 5;
     i3[0] = 0; i3[1] = 0;

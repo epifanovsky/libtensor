@@ -19,7 +19,7 @@ int test_1() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -41,11 +41,11 @@ int test_1() {
 
     abs_index<2> aio(dims);
     do {
-        const index<2> &io = aio.get_index();
+        const libtensor::index<2> &io = aio.get_index();
         bool can = false, can_ref = true;
         orbit_list<2, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<2> idx;
+            libtensor::index<2> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -81,7 +81,7 @@ int test_2() {
 
     try {
 
-    index<2> i1, i2;
+    libtensor::index<2> i1, i2;
     i2[0] = 2; i2[1] = 2;
     mask<2> msk;
     msk[0] = true; msk[1] = true;
@@ -107,12 +107,12 @@ int test_2() {
 
     abs_index<2> aio(dims);
     do {
-        const index<2> &io = aio.get_index();
+        const libtensor::index<2> &io = aio.get_index();
         bool can_ref = io[0] <= io[1];
         bool can = false;
         orbit_list<2, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<2> idx;
+            libtensor::index<2> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -148,7 +148,7 @@ int test_3() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -174,12 +174,12 @@ int test_3() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref = io[0] <= io[1];
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -215,7 +215,7 @@ int test_4() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -241,12 +241,12 @@ int test_4() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref = io[1] <= io[2];
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -282,7 +282,7 @@ int test_5() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -308,13 +308,13 @@ int test_5() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref = (io[0] == io[1] && io[0] <= io[2]) ||
             (io[0] < io[1] && io[0] < io[2]);
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -350,7 +350,7 @@ int test_6() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -380,12 +380,12 @@ int test_6() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref = (io[0] <= io[1] && io[2] <= io[3]);
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -421,7 +421,7 @@ int test_7() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -451,12 +451,12 @@ int test_7() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref = (io[0] <= io[1] && io[1] <= io[2]);
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -492,7 +492,7 @@ int test_8() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 2; i2[2] = 2; i2[3] = 2;
     mask<4> msk;
     msk[0] = true; msk[1] = true; msk[2] = true; msk[3] = true;
@@ -522,13 +522,13 @@ int test_8() {
 
     abs_index<4> aio(dims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref =
             (io[0] <= io[1] && io[1] <= io[2] && io[2] <= io[3]);
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;
@@ -564,7 +564,7 @@ int test_9() {
 
     try {
 
-    index<4> i1, i2;
+    libtensor::index<4> i1, i2;
     i2[0] = 2; i2[1] = 5; i2[2] = 2; i2[3] = 5;
     mask<4> msk1, msk2;
     msk1[0] = true; msk1[1] = false; msk1[2] = true; msk1[3] = false;
@@ -598,12 +598,12 @@ int test_9() {
 
     abs_index<4> aio(bdims);
     do {
-        const index<4> &io = aio.get_index();
+        const libtensor::index<4> &io = aio.get_index();
         bool can_ref = (io[0] <= io[2] && io[1] <= io[3]);
         bool can = false;
         orbit_list<4, double>::iterator i = orblst.begin();
         while(i != orblst.end()) {
-            index<4> idx;
+            libtensor::index<4> idx;
             orblst.get_index(i, idx);
             if(io.equals(idx)) {
                 can = true;

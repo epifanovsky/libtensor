@@ -14,7 +14,7 @@ int test_0() {
 
     try {
 
-    index<2> i2a, i2b;
+    libtensor::index<2> i2a, i2b;
 
     i2b[0] = 5; i2b[1] = 5;
 
@@ -54,8 +54,8 @@ int test_1() {
 
     try {
 
-    index<2> i2a, i2b;
-    index<1> i1a, i1b;
+    libtensor::index<2> i2a, i2b;
+    libtensor::index<1> i1a, i1b;
 
     i2b[0] = 5; i2b[1] = 5;
     i1b[0] = 5;
@@ -92,8 +92,8 @@ int test_2() {
 
     try {
 
-    index<2> i2a, i2b;
-    index<1> i1a, i1b;
+    libtensor::index<2> i2a, i2b;
+    libtensor::index<1> i1a, i1b;
 
     i2b[0] = 5; i2b[1] = 9;
     i1b[0] = 5;
@@ -130,8 +130,8 @@ int test_3() {
 
     try {
 
-    index<4> i4a, i4b;
-    index<2> i2a, i2b;
+    libtensor::index<4> i4a, i4b;
+    libtensor::index<2> i2a, i2b;
 
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;
     i2b[0] = 5; i2b[1] = 5;
@@ -177,8 +177,8 @@ int test_4() {
 
     try {
 
-    index<4> i4a, i4b;
-    index<2> i2a, i2b;
+    libtensor::index<4> i4a, i4b;
+    libtensor::index<2> i2a, i2b;
 
     i4b[0] = 5; i4b[1] = 5; i4b[2] = 5; i4b[3] = 5;
     i2b[0] = 5; i2b[1] = 5;
