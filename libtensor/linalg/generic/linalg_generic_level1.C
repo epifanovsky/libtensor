@@ -1,20 +1,23 @@
 #include <ctime>
 #include <cstdlib>
 #include "linalg_generic_level1.h"
+#include <iostream>
 
 namespace libtensor {
 
 
-const char linalg_generic_level1::k_clazz[] = "generic";
+template<typename T>
+const char linalg_generic_level1<T>::k_clazz[] = "generic";
 
 
-void linalg_generic_level1::add_i_i_x_x(
+template<typename T>
+void linalg_generic_level1<T>::add_i_i_x_x(
     void*,
     size_t ni,
-    const double *a, size_t sia, double ka,
-    double b, double kb,
-    double *c, size_t sic,
-    double d) {
+    const T *a, size_t sia, T ka,
+    T b, T kb,
+    T *c, size_t sic,
+    T d) {
 
     timings_base::start_timer("add_i_i_x_x");
     for(size_t i = 0; i < ni; i++) {
@@ -24,11 +27,12 @@ void linalg_generic_level1::add_i_i_x_x(
 }
 
 
-void linalg_generic_level1::copy_i_i(
+template<typename T>
+void linalg_generic_level1<T>::copy_i_i(
     void*,
     size_t ni,
-    const double *a, size_t sia,
-    double *c, size_t sic) {
+    const T *a, size_t sia,
+    T *c, size_t sic) {
 
     timings_base::start_timer("copy_i_i");
     for(size_t i = 0; i < ni; i++) c[i * sic] = a[i * sia];
@@ -36,12 +40,13 @@ void linalg_generic_level1::copy_i_i(
 }
 
 
-void linalg_generic_level1::div1_i_i_x(
+template<typename T>
+void linalg_generic_level1<T>::div1_i_i_x(
     void *,
     size_t ni,
-    const double *a, size_t sia,
-    double *c, size_t sic,
-    double d) {
+    const T *a, size_t sia,
+    T *c, size_t sic,
+    T d) {
 
     timings_base::start_timer("div1_i_i_x");
     for(size_t i = 0; i < ni; i++) c[i * sic] = c[i * sic] * d / a[i * sia];
@@ -49,11 +54,12 @@ void linalg_generic_level1::div1_i_i_x(
 }
 
 
-void linalg_generic_level1::mul1_i_x(
+template<typename T>
+void linalg_generic_level1<T>::mul1_i_x(
     void*,
     size_t ni,
-    double a,
-    double *c, size_t sic) {
+    T a,
+    T *c, size_t sic) {
 
     timings_base::start_timer("mul1_i_x");
     for(size_t i = 0; i < ni; i++) c[i * sic] *= a;
@@ -61,26 +67,28 @@ void linalg_generic_level1::mul1_i_x(
 }
 
 
-double linalg_generic_level1::mul2_x_p_p(
+template<typename T>
+T linalg_generic_level1<T>::mul2_x_p_p(
     void*,
     size_t np,
-    const double *a, size_t spa,
-    const double *b, size_t spb) {
+    const T *a, size_t spa,
+    const T *b, size_t spb) {
 
     timings_base::start_timer("mul2_x_p_p");
-    double c = 0.0;
+    T c = 0.0;
     for(size_t p = 0; p < np; p++) c += a[p * spa] * b[p * spb];
     timings_base::stop_timer("mul2_x_p_p");
     return c;
 }
 
 
-void linalg_generic_level1::mul2_i_i_x(
+template<typename T>
+void linalg_generic_level1<T>::mul2_i_i_x(
     void*,
     size_t ni,
-    const double *a, size_t sia,
-    double b,
-    double *c, size_t sic) {
+    const T *a, size_t sia,
+    T b,
+    T *c, size_t sic) {
 
     timings_base::start_timer("mul2_i_i_x");
     for(size_t i = 0; i < ni; i++) c[i * sic] += a[i * sia] * b;
@@ -88,13 +96,14 @@ void linalg_generic_level1::mul2_i_i_x(
 }
 
 
-void linalg_generic_level1::mul2_i_i_i_x(
+template<typename T>
+void linalg_generic_level1<T>::mul2_i_i_i_x(
     void*,
     size_t ni,
-    const double *a, size_t sia,
-    const double *b, size_t sib,
-    double *c, size_t sic,
-    double d) {
+    const T *a, size_t sia,
+    const T *b, size_t sib,
+    T *c, size_t sic,
+    T d) {
 
     timings_base::start_timer("mul2_i_i_i_x");
     for(size_t i = 0; i < ni; i++) c[i * sic] += d * a[i * sia] * b[i * sib];
@@ -102,7 +111,8 @@ void linalg_generic_level1::mul2_i_i_i_x(
 }
 
 
-void linalg_generic_level1::rng_setup(
+template<typename T>
+void linalg_generic_level1<T>::rng_setup(
     void*) {
 
 #if defined(HAVE_DRAND48)
@@ -113,36 +123,41 @@ void linalg_generic_level1::rng_setup(
 }
 
 
-void linalg_generic_level1::rng_set_i_x(
+template<typename T>
+void linalg_generic_level1<T>::rng_set_i_x(
     void*,
     size_t ni,
-    double *a, size_t sia,
-    double c) {
+    T *a, size_t sia,
+    T c) {
 
 #if defined(HAVE_DRAND48)
     for(size_t i = 0; i < ni; i++) a[i * sia] = c * ::drand48();
 #else // HAVE_DRAND48
     for(size_t i = 0; i < ni; i++) {
-        a[i * sia] = c * double(::rand()) / double(RAND_MAX);
+        a[i * sia] = c * T(::rand()) / T(RAND_MAX);
     }
 #endif // HAVE_DRAND48
 }
 
 
-void linalg_generic_level1::rng_add_i_x(
+template<typename T>
+void linalg_generic_level1<T>::rng_add_i_x(
     void*,
     size_t ni,
-    double *a, size_t sia,
-    double c) {
+    T *a, size_t sia,
+    T c) {
 
 #if defined(HAVE_DRAND48)
     for(size_t i = 0; i < ni; i++) a[i * sia] += c * ::drand48();
 #else // HAVE_DRAND48
     for(size_t i = 0; i < ni; i++) {
-        a[i * sia] += c * double(::rand()) / double(RAND_MAX);
+        a[i * sia] += c * T(::rand()) / T(RAND_MAX);
     }
 #endif // HAVE_DRAND48
 }
 
+
+template class linalg_generic_level1<double>; 
+template class linalg_generic_level1<float>; 
 
 } // namespace libtensor

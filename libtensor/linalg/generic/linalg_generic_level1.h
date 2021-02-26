@@ -11,12 +11,13 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_generic_level1 : public linalg_timings<linalg_generic_level1> {
+template<typename T>
+class linalg_generic_level1 : public linalg_timings<linalg_generic_level1<T> > {
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    typedef linalg_timings<linalg_generic_level1> timings_base;
+    typedef linalg_timings<linalg_generic_level1<T> > timings_base;
 
 public:
     /** \brief \f$ c_i = c_i + (a_i + b) d \f$
@@ -32,10 +33,10 @@ public:
     static void add_i_i_x_x(
         void *ctx,
         size_t ni,
-        const double *a, size_t sia, double ka,
-        double b, double kb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia, T ka,
+        T b, T kb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_i = a_i \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -48,8 +49,8 @@ public:
     static void copy_i_i(
         void *ctx,
         size_t ni,
-        const double *a, size_t sia,
-        double *c, size_t sic);
+        const T *a, size_t sia,
+        T *c, size_t sic);
 
     /** \brief \f$ c_i = d c_i / a_i \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -63,9 +64,9 @@ public:
     static void div1_i_i_x(
         void *ctx,
         size_t ni,
-        const double *a, size_t sia,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_i = c_i a \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -77,8 +78,8 @@ public:
     static void mul1_i_x(
         void *ctx,
         size_t ni,
-        double a,
-        double *c, size_t sic);
+        T a,
+        T *c, size_t sic);
 
     /** \brief \f$ c = \sum_p a_p b_p \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -88,11 +89,11 @@ public:
         \param b Pointer to b.
         \param spb Step of p in b.
      **/
-    static double mul2_x_p_p(
+    static T mul2_x_p_p(
         void *ctx,
         size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t spb);
+        const T *a, size_t spa,
+        const T *b, size_t spb);
 
     /** \brief \f$ c_i = c_i + a_i b \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -106,9 +107,9 @@ public:
     static void mul2_i_i_x(
         void *ctx,
         size_t ni,
-        const double *a, size_t sia,
-        double b,
-        double *c, size_t sic);
+        const T *a, size_t sia,
+        T b,
+        T *c, size_t sic);
 
     /** \brief \f$ c_i = c_i + d a_i b_i \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -124,10 +125,10 @@ public:
     static void mul2_i_i_i_x(
         void *ctx,
         size_t ni,
-        const double *a, size_t sia,
-        const double *b, size_t sib,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t sib,
+        T *c, size_t sic,
+        T d);
 
     /** \brief Sets up the random number generator
         \param ctx Context of computational device (unused for CPUs).
@@ -145,8 +146,8 @@ public:
     static void rng_set_i_x(
         void *ctx,
         size_t ni,
-        double *a, size_t sia,
-        double c);
+        T *a, size_t sia,
+        T c);
 
     /** \brief Adds an array of random numbers in [0, 1]
         \param ctx Context of computational device (unused for CPUs).
@@ -158,8 +159,8 @@ public:
     static void rng_add_i_x(
         void *ctx,
         size_t ni,
-        double *a, size_t sia,
-        double c);
+        T *a, size_t sia,
+        T c);
 
 };
 

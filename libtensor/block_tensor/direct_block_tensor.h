@@ -52,7 +52,7 @@ protected:
     //!    \name Implementation of libtensor::block_tensor_rd_i<N, T>
     //@{
 
-    virtual const symmetry<N, double> &on_req_const_symmetry() {
+    virtual const symmetry<N, T> &on_req_const_symmetry() {
         return m_ctrl.req_const_symmetry();
     }
 

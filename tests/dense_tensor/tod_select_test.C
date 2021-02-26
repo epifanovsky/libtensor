@@ -5,8 +5,8 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_select.h>
-#include <libtensor/dense_tensor/impl/tod_select_impl.h>
+#include <libtensor/dense_tensor/to_select.h>
+#include <libtensor/dense_tensor/impl/to_select_impl.h>
 #include "../test_utils.h"
 
 
@@ -18,15 +18,14 @@ int test_1(size_t n, double c) {
 
     static const char testname[] = "tod_select_test::test_1()";
 
-    typedef allocator<double> allocator_t;
-    typedef typename tod_select<2, ComparePolicy>::list_type list_type;
+    typedef typename to_select<2, double, ComparePolicy>::list_type list_type;
 
     try {
 
     libtensor::index<2> i1, i2;
     i2[0] = 3; i2[1] = 4;
     dimensions<2> dims(index_range<2>(i1, i2));
-    dense_tensor<2, double, allocator_t> t(dims);
+    dense_tensor<2, double, allocator> t(dims);
 
     size_t sz;
     sz = dims.get_size();
@@ -47,7 +46,7 @@ int test_1(size_t n, double c) {
     // Perform the operation
     ComparePolicy cmp;
     list_type li;
-    tod_select<2, ComparePolicy> tsel(t, c, cmp);
+    to_select<2, double, ComparePolicy> tsel(t, c, cmp);
     tsel.perform(li, n);
 
     { // Check the resulting list
@@ -105,8 +104,7 @@ int test_2(size_t n, double c) {
 
     static const char testname[] = "tod_select_test::test_2()";
 
-    typedef allocator<double> allocator_t;
-    typedef typename tod_select<3, ComparePolicy>::list_type list_type;
+    typedef typename to_select<3, double, ComparePolicy>::list_type list_type;
 
     try {
 
@@ -115,7 +113,7 @@ int test_2(size_t n, double c) {
     libtensor::index<3> i1, i2;
     i2[0] = 3; i2[1] = 4; i2[2] = 2;
     dimensions<3> dims(index_range<3>(i1, i2));
-    dense_tensor<3, double, allocator_t> t(dims);
+    dense_tensor<3, double, allocator> t(dims);
 
     size_t sz;
     sz = dims.get_size();
@@ -136,7 +134,7 @@ int test_2(size_t n, double c) {
     // Perform the operation
     ComparePolicy cmp;
     list_type li;
-    tod_select<3, ComparePolicy> tsel(t, perm, c, cmp);
+    to_select<3, double, ComparePolicy> tsel(t, perm, c, cmp);
     tsel.perform(li, n);
 
     { // Check the resulting list
@@ -197,15 +195,15 @@ int main() {
 
     return
 
-    test_1<compare4absmax>(4, 1.0) |
-    test_1<compare4absmax>(4, -2.0) |
-    test_1<compare4min>(4, 0.5) |
-    test_1<compare4min>(4, -1.0) |
+    test_1< compare4absmax<double> >(4, 1.0) |
+    test_1< compare4absmax<double> >(4, -2.0) |
+    test_1< compare4min<double> >(4, 0.5) |
+    test_1< compare4min<double> >(4, -1.0) |
 
-    test_2<compare4absmin>(4, 1.0) |
-    test_2<compare4absmin>(4, -0.5) |
-    test_2<compare4max>(4, 2.0) |
-    test_2<compare4max>(4, -1.0) |
+    test_2< compare4absmin<double> >(4, 1.0) |
+    test_2< compare4absmin<double> >(4, -0.5) |
+    test_2< compare4max<double> >(4, 2.0) |
+    test_2< compare4max<double> >(4, -1.0) |
 
     0;
 }

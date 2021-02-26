@@ -4,7 +4,7 @@
 #include <libtensor/core/print_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_import_raw_stream.h>
+#include <libtensor/dense_tensor/to_import_raw_stream.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -18,8 +18,7 @@ int test_1(const dimensions<N> &dims, const index_range<N> &ir) {
     tnss << "tod_import_raw_stream_test::test_1(" << dims << ", "
         << ir.get_begin() << "->" << ir.get_end() << ")";
 
-    typedef allocator<double> allocator_t;
-    typedef dense_tensor<N, double, allocator_t> tensor_t;
+    typedef dense_tensor<N, double, allocator> tensor_t;
     typedef dense_tensor_ctrl<N, double> tensor_ctrl_t;
 
     try {
@@ -71,7 +70,7 @@ int test_1(const dimensions<N> &dims, const index_range<N> &ir) {
 
         // Invoke the operation
 
-        tod_import_raw_stream<N>(ss, dims, ir).perform(t2);
+        to_import_raw_stream<N, double>(ss, dims, ir).perform(t2);
     }
 
     // Compare against the reference

@@ -66,7 +66,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
 
         if (m_mergable) {
             size_t nidx = 0, nidx0 = 0;
-            for (register size_t j = 0; j < N; j++) {
+            for (size_t j = 0; j < N; j++) {
                 nidx0 += seq[j]; nidx += (seq[j] % 2);
             }
             if (nidx != 0) {
@@ -74,7 +74,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
                 else {
                     new_seq.push_back(sequence<N, size_t>());
                     sequence<N, size_t> &seq2 = new_seq.back();
-                    for (register size_t j = 0; j < N; j++)
+                    for (size_t j = 0; j < N; j++)
                         seq2[j] = seq[j] % 2;
                     seq_ptr[i] = &seq2;
                 }
@@ -82,7 +82,7 @@ void er_optimize<N>::perform(evaluation_rule<N> &to) const {
         }
         else {
             size_t nidx = 0;
-            for (register size_t j = 0; j < N; j++) nidx += seq[j];
+            for (size_t j = 0; j < N; j++) nidx += seq[j];
             if (nidx != 0) seq_ptr[i] = &seq;
         }
     }

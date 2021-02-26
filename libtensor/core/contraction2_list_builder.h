@@ -51,8 +51,7 @@ public:
     /** \brief Constructor
     	\param contr Object describing the contraction
      **/
-    contraction2_list_builder(const contraction2<N, M, K> &contr)
-        throw(bad_parameter, out_of_bounds);
+    contraction2_list_builder(const contraction2<N, M, K> &contr);
 
     /** \brief Populate the optimized list according to the tensor dimensions
     		given
@@ -64,10 +63,10 @@ public:
     template<typename ListT>
     void populate(ListT &list, const dimensions<k_ordera> &dima,
         const dimensions<k_orderb> &dimb,
-        const dimensions<k_orderc> &dimc) const throw(exception);
+        const dimensions<k_orderc> &dimc) const;
 
 private:
-    void fuse() throw(out_of_bounds);
+    void fuse();
 };
 
 
@@ -78,7 +77,7 @@ const char *contraction2_list_builder<N, M, K>::k_clazz =
 
 template<size_t N, size_t M, size_t K>
 contraction2_list_builder<N, M, K>::contraction2_list_builder(
-    const contraction2<N, M, K> &contr) throw(bad_parameter, out_of_bounds)
+    const contraction2<N, M, K> &contr)
 : m_contr(contr), m_num_nodes(0), m_nodes(0), m_nodesz(0) {
 
     static const char *method =
@@ -97,17 +96,17 @@ template<size_t N, size_t M, size_t K>
 template<typename ListT>
 void contraction2_list_builder<N, M, K>::populate(ListT &list,
     const dimensions<k_ordera> &dima, const dimensions<k_orderb> &dimb,
-    const dimensions<k_orderc> &dimc) const throw (exception) {
+    const dimensions<k_orderc> &dimc) const {
 
     const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
     sequence<k_orderc, size_t> dimc1(0);
 
     for(size_t i = k_orderc; i < k_orderc + k_ordera; i++) {
-        register size_t iconn = conn[i];
+        size_t iconn = conn[i];
         if(iconn < k_orderc) dimc1[iconn] = dima[i - k_orderc];
     }
     for(size_t i = k_orderc + k_ordera; i < k_maxconn; i++) {
-        register size_t iconn = conn[i];
+        size_t iconn = conn[i];
         if(iconn < k_orderc) {
             dimc1[iconn] = dimb[i - k_orderc - k_ordera];
         } else if(dima[iconn - k_orderc] !=
@@ -138,34 +137,34 @@ void contraction2_list_builder<N, M, K>::populate(ListT &list,
         // Here the first index from inode comes from c or a
         // If the index comes from c, make ica->c iab->a or b
         // If the index comes from a, make ica->a iab->b
-        register size_t ica = m_nodes[inode], iab = conn[ica];
+        size_t ica = m_nodes[inode], iab = conn[ica];
 
         // Calculate node weight and increments
         if(ica < k_orderc && iab < k_orderc + k_ordera) {
             // The index comes from a and goes to c
-            register size_t sz = m_nodesz[inode];
-            for(register size_t j = 0; j < sz; j++)
+            size_t sz = m_nodesz[inode];
+            for(size_t j = 0; j < sz; j++)
                 weight *= dima[iab + j - k_orderc];
             inca = dima.get_increment(iab + sz - k_orderc - 1);
             incb = 0;
             incc = 1;
-            for(register size_t j = k_orderc - 1; j >= ica + sz; j--)
+            for(size_t j = k_orderc - 1; j >= ica + sz; j--)
                 incc *= dimc[j];
         } else if(ica < k_orderc) {
             // The index comes from b and goes to c
-            register size_t sz = m_nodesz[inode];
-            for(register size_t j = 0; j < sz; j++)
+            size_t sz = m_nodesz[inode];
+            for(size_t j = 0; j < sz; j++)
                 weight *= dimb[iab + j - k_orderc - k_ordera];
             inca = 0;
             incb = dimb.get_increment(
                 iab + sz - k_orderc - k_ordera - 1);
             incc = 1;
-            for(register size_t j = k_orderc - 1; j >= ica + sz; j--)
+            for(size_t j = k_orderc - 1; j >= ica + sz; j--)
                 incc *= dimc[j];
         } else {
             // The index comes from a and b and gets contracted
-            register size_t sz = m_nodesz[inode];
-            for(register size_t j = 0; j < sz; j++)
+            size_t sz = m_nodesz[inode];
+            for(size_t j = 0; j < sz; j++)
                 weight *= dima[ica + j - k_orderc];
             inca = dima.get_increment(ica + sz - k_orderc - 1);
             incb = dimb.get_increment(
@@ -180,7 +179,7 @@ void contraction2_list_builder<N, M, K>::populate(ListT &list,
 
 
 template<size_t N, size_t M, size_t K>
-void contraction2_list_builder<N, M, K>::fuse() throw(out_of_bounds) {
+void contraction2_list_builder<N, M, K>::fuse() {
 
     const sequence<k_maxconn, size_t> &conn = m_contr.get_conn();
 

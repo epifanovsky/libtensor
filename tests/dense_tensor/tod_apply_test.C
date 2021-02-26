@@ -1,8 +1,8 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_apply.h>
-#include <libtensor/dense_tensor/impl/tod_apply_impl.h>
+#include <libtensor/dense_tensor/to_apply.h>
+#include <libtensor/dense_tensor/impl/to_apply_impl.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -21,8 +21,6 @@ template<size_t N, typename Functor>
 int test_plain(Functor &fn, const dimensions<N> &dims) {
 
     static const char testname[] = "tod_apply_test::test_plain()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -53,7 +51,7 @@ int test_plain(Functor &fn, const dimensions<N> &dims) {
 
     // Invoke the operation
 
-    tod_apply<N, Functor> cp(ta, fn);
+    to_apply<N, Functor, double> cp(ta, fn);
     cp.perform(true, tb);
 
     // Compare against the reference
@@ -71,8 +69,6 @@ template<size_t N, typename Functor>
 int test_plain_additive(Functor &fn, const dimensions<N> &dims, double d) {
 
     static const char testname[] = "tod_apply_test::test_plain_additive()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -105,7 +101,7 @@ int test_plain_additive(Functor &fn, const dimensions<N> &dims, double d) {
 
     permutation<N> p;
     tensor_transf<N, double> tr2(p, scalar_transf<double>(d));
-    tod_apply<N, Functor> cp(ta, fn, scalar_transf<double>(), tr2);
+    to_apply<N, Functor, double> cp(ta, fn, scalar_transf<double>(), tr2);
     cp.perform(false, tb);
 
     // Compare against the reference
@@ -125,8 +121,6 @@ template<size_t N, typename Functor>
 int test_scaled(Functor &fn, const dimensions<N> &dims, double c) {
 
     static const char testname[] = "tod_apply_test::test_scaled()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -157,7 +151,7 @@ int test_scaled(Functor &fn, const dimensions<N> &dims, double c) {
 
     // Invoke the operation
 
-    tod_apply<N, Functor> cp(ta, fn, c);
+    to_apply<N, Functor, double> cp(ta, fn, c);
     cp.perform(true, tb);
 
     // Compare against the reference
@@ -178,8 +172,6 @@ int test_scaled_additive(Functor &fn, const dimensions<N> &dims, double c,
     double d) {
 
     static const char testname[] = "tod_apply_test::test_scaled_additive()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -212,7 +204,7 @@ int test_scaled_additive(Functor &fn, const dimensions<N> &dims, double c,
 
     permutation<N> p;
     tensor_transf<N, double> tr2(p, scalar_transf<double>(d));
-    tod_apply<N, Functor> cp(ta, fn, scalar_transf<double>(c), tr2);
+    to_apply<N, Functor, double> cp(ta, fn, scalar_transf<double>(c), tr2);
     cp.perform(false, tb);
 
     // Compare against the reference
@@ -234,8 +226,6 @@ int test_perm(Functor &fn, const dimensions<N> &dims,
     const permutation<N> &perm) {
 
     static const char testname[] = "tod_apply_test::test_perm()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -274,7 +264,7 @@ int test_perm(Functor &fn, const dimensions<N> &dims,
 
     // Invoke the operation
 
-    tod_apply<N, Functor> cp(ta, fn, perm);
+    to_apply<N, Functor, double> cp(ta, fn, perm);
     cp.perform(true, tb);
 
     // Compare against the reference
@@ -294,8 +284,6 @@ int test_perm_additive(Functor &fn, const dimensions<N> &dims,
     const permutation<N> &perm, double d) {
 
     static const char testname[] = "tod_apply_test::test_perm_additive()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -335,7 +323,7 @@ int test_perm_additive(Functor &fn, const dimensions<N> &dims,
     // Invoke the operation
 
     tensor_transf<N, double> tr2(perm, scalar_transf<double>(d));
-    tod_apply<N, Functor> cp(ta, fn, scalar_transf<double>(), tr2);
+    to_apply<N, Functor, double> cp(ta, fn, scalar_transf<double>(), tr2);
     cp.perform(false, tb);
 
     // Compare against the reference
@@ -355,8 +343,6 @@ int test_perm_scaled(Functor &fn, const dimensions<N> &dims,
     const permutation<N> &perm, double c) {
 
     static const char testname[] = "tod_apply_test::test_perm_scaled()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -395,7 +381,7 @@ int test_perm_scaled(Functor &fn, const dimensions<N> &dims,
 
     // Invoke the operation
 
-    tod_apply<N, Functor> cp(ta, fn, perm, c);
+    to_apply<N, Functor, double> cp(ta, fn, perm, c);
     cp.perform(true, tb);
 
     // Compare against the reference
@@ -416,8 +402,6 @@ int test_perm_scaled_additive(Functor &fn, const dimensions<N> &dims,
 
     static const char testname[] =
         "tod_apply_test::test_perm_scaled_additive()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -457,7 +441,7 @@ int test_perm_scaled_additive(Functor &fn, const dimensions<N> &dims,
     // Invoke the operation
 
     tensor_transf<N, double> tr2(perm, scalar_transf<double>(d));
-    tod_apply<N, Functor> cp(ta, fn, scalar_transf<double>(c), tr2);
+    to_apply<N, Functor, double> cp(ta, fn, scalar_transf<double>(c), tr2);
     cp.perform(false, tb);
 
     // Compare against the reference
@@ -474,8 +458,6 @@ int test_perm_scaled_additive(Functor &fn, const dimensions<N> &dims,
 
 int test_exc() {
 
-    typedef allocator<double> allocator;
-
     libtensor::index<4> i1, i2, i3;
     i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
     i3[0]=3; i3[1]=3; i3[2]=3; i3[3]=3;
@@ -486,7 +468,7 @@ int test_exc() {
     bool ok = false;
     try {
         sin_functor sin;
-        tod_apply<4, sin_functor> tc(t1, sin);
+        to_apply<4, sin_functor, double> tc(t1, sin);
         tc.perform(true, t2);
     } catch(exception &e) {
         ok = true;

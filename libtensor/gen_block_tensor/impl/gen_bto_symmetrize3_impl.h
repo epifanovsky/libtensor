@@ -191,7 +191,7 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_symmetry() {
         }
     }
     scalar_transf<element_type> tr0, tr1(-1.0);
-    so_symmetrize<N, double>(m_op.get_symmetry(), idxgrp, symidx,
+    so_symmetrize<N, element_type>(m_op.get_symmetry(), idxgrp, symidx,
         m_symm ? tr0 : tr1, tr0).perform(m_sym);
 }
 
@@ -500,7 +500,7 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule_blk(
     const symmetry<N, element_type> &sym0 = m_op.get_symmetry();
     const assignment_schedule<N, element_type> &sch0 = m_op.get_schedule();
 
-    orbit<N, double> o0(sym0, idx0), o1(sym0, idx1), o2(sym0, idx2),
+    orbit<N, element_type> o0(sym0, idx0), o1(sym0, idx1), o2(sym0, idx2),
         o3(sym0, idx3), o4(sym0, idx4), o5(sym0, idx5);
 
     //  This is a temporary schedule for the formation of the block
@@ -551,8 +551,8 @@ void gen_bto_symmetrize3<N, Traits, Timed>::make_schedule_blk(
 
         typename std::list<schrec>::iterator i = sch1.begin();
         abs_index<N> aidx(i->ai, ai.get_dims());
-        double c = 0.0;
-        tensor_transf<N, double> tr0(i->tr);
+        element_type c = 0.0;
+        tensor_transf<N, element_type> tr0(i->tr);
 
         do {
             if(i->ai != aidx.get_abs_index()) {

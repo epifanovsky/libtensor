@@ -274,8 +274,7 @@ public:
 
 /** \brief Throws an exception with a given error message
  **/
-void throw_exc(const char *clazz, const char *method, const char *error)
-    throw(exception);
+void throw_exc(const char *clazz, const char *method, const char *error);
 
 } // namespace libtensor
 

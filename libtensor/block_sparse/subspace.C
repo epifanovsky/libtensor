@@ -21,7 +21,7 @@ size_t subspace::get_n_blocks() const
     return m_abs_indices.size();
 }
 
-void subspace::split(const std::vector<size_t>& split_points) throw(out_of_bounds)
+void subspace::split(const std::vector<size_t>& split_points)
 {
     m_abs_indices.resize(1,0);
     if(split_points.size() < 1 || split_points.size() > (m_dim - 1))
@@ -48,7 +48,7 @@ void subspace::split(const std::vector<size_t>& split_points) throw(out_of_bound
     }
 }
 
-size_t subspace::get_block_size(size_t block_idx) const throw(out_of_bounds)
+size_t subspace::get_block_size(size_t block_idx) const
 {
     if(block_idx > (m_abs_indices.size() - 1))
     {
@@ -66,7 +66,7 @@ size_t subspace::get_block_size(size_t block_idx) const throw(out_of_bounds)
 }
 
 
-size_t subspace::get_block_abs_index(size_t block_idx) const throw(out_of_bounds)
+size_t subspace::get_block_abs_index(size_t block_idx) const
 {
     if(block_idx > (m_abs_indices.size() - 1))
     {

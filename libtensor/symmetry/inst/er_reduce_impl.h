@@ -1,6 +1,7 @@
 #ifndef LIBTENSOR_ER_REDUCE_IMPL_H
 #define LIBTENSOR_ER_REDUCE_IMPL_H
 
+#include <algorithm> // for std::max
 #include <libtensor/core/abs_index.h>
 #include "../product_table_container.h"
 #include "../bad_symmetry.h"

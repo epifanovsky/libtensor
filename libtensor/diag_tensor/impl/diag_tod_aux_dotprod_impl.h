@@ -1,4 +1,4 @@
-#include <memory> // for auto_ptr
+#include <memory> // for unique_ptr
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dmul2.h>
 #include <libtensor/kernels/loop_list_runner.h>
@@ -60,7 +60,7 @@ double diag_tod_aux_dotprod<N>::calculate() {
 
     double d = 0.0;
 
-    loop_registers<2, 1> rmul;
+    loop_registers_x<2, 1, double> rmul;
     rmul.m_ptra[0] = m_pa;
     rmul.m_ptra[1] = m_pb;
     rmul.m_ptrb[0] = &d;
@@ -69,10 +69,10 @@ double diag_tod_aux_dotprod<N>::calculate() {
     rmul.m_ptrb_end[0] = &d + 1;
 
     {
-        std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
-            kern_dmul2<linalg>::match(1.0, lpmul1, lpmul2));
+        std::unique_ptr< kernel_base<linalg, 2, 1, double> > kern(
+            kern_mul2<linalg, double>::match(1.0, lpmul1, lpmul2));
         diag_tod_aux_dotprod::start_timer(kern->get_name());
-        loop_list_runner<linalg, 2, 1>(lpmul1).run(0, rmul, *kern);
+        loop_list_runner_x<linalg, 2, 1, double>(lpmul1).run(0, rmul, *kern);
         diag_tod_aux_dotprod::stop_timer(kern->get_name());
     }
 

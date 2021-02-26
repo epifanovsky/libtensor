@@ -59,20 +59,17 @@ public:
         \param split_points Iterable container of absolute indices where each block should start 
         \throw out_of_bounds If a split_point value exceeds the index limits, or if a zero length vector is passed 
      **/
-    void split(const std::vector<size_t> &split_points)
-        throw(out_of_bounds);
+    void split(const std::vector<size_t> &split_points);
 
     /** \brief Returns the size of the block with block index block_idx
         \throw out_of_bounds If (# of blocks  - 1) < block_idx || block_idx < 0
      **/
-    size_t get_block_size(size_t block_idx) const 
-        throw(out_of_bounds);
+    size_t get_block_size(size_t block_idx) const;
 
     /** \brief Returns the absolute starting index of the block with block index block_idx
         \throw out_of_bounds If (# of blocks  - 1) < block_idx < 0
      **/
-    size_t get_block_abs_index(size_t block_idx) const 
-        throw(out_of_bounds);
+    size_t get_block_abs_index(size_t block_idx) const;
 
     /** \brief Returns a N+1 d sparse bispace
      *         Called during resolution of sparsity expressions
@@ -87,8 +84,7 @@ public:
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
      **/
-    const sparse_bispace<1>& operator[](size_t  idx) const
-        throw(out_of_bounds);
+    const sparse_bispace<1>& operator[](size_t  idx) const;
 
     /** Stub methods for general compatibility, even though can't have sparse groups in a 1d bispace
      **/
@@ -134,7 +130,7 @@ inline size_t sparse_bispace<1>::get_n_blocks() const
     return m_abs_indices.size();
 }
 
-inline void sparse_bispace<1>::split(const std::vector<size_t> &split_points) throw(out_of_bounds)
+inline void sparse_bispace<1>::split(const std::vector<size_t> &split_points)
 {
     if(split_points.size() < 1 || split_points.size() > (m_dim - 1))
     {
@@ -159,7 +155,7 @@ inline void sparse_bispace<1>::split(const std::vector<size_t> &split_points) th
     }
 }
 
-inline size_t sparse_bispace<1>::get_block_size(size_t block_idx) const throw(out_of_bounds)
+inline size_t sparse_bispace<1>::get_block_size(size_t block_idx) const
 {
     if(block_idx > (m_abs_indices.size() - 1))
     {
@@ -177,7 +173,7 @@ inline size_t sparse_bispace<1>::get_block_size(size_t block_idx) const throw(ou
 }
 
 
-inline size_t sparse_bispace<1>::get_block_abs_index(size_t block_idx) const throw(out_of_bounds)
+inline size_t sparse_bispace<1>::get_block_abs_index(size_t block_idx) const
 {
     if(block_idx > (m_abs_indices.size() - 1))
     {
@@ -190,7 +186,7 @@ inline size_t sparse_bispace<1>::get_block_abs_index(size_t block_idx) const thr
     /** \brief Returns a copy of this object 
         \throw out_of_bounds If an inappropriate index is specified 
      **/
-inline const sparse_bispace<1>& sparse_bispace<1>::operator[](size_t idx) const throw(out_of_bounds)
+inline const sparse_bispace<1>& sparse_bispace<1>::operator[](size_t idx) const
 {
     if(idx != 0)
     {
@@ -322,8 +318,7 @@ public:
     /** \brief Retrieves the appropriate index subspace of this multidimensional space
         \throw out_of_bounds If an inappropriate index is specified 
      **/
-    const sparse_bispace<1>& operator[](size_t  idx) const
-        throw(out_of_bounds);
+    const sparse_bispace<1>& operator[](size_t  idx) const;
 
     /** \brief Returns an appropriately permuted copy of this bispace 
      **/
@@ -543,7 +538,7 @@ sparse_bispace<N+M> sparse_bispace<N>::operator|(const sparse_bispace<M>& rhs)
 
 //TODO: Should make these check (N-1) instead of m_subspaces.size()
 template<size_t N>
-const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const throw(out_of_bounds)
+const sparse_bispace<1>& sparse_bispace<N>::operator[](size_t idx) const
 {
     if(idx > (m_subspaces.size() - 1))
     {

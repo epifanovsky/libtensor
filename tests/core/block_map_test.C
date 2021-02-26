@@ -13,12 +13,11 @@ namespace {
 struct bt_traits {
 
     typedef double element_type;
-    typedef allocator<double> allocator_type;
     typedef block_tensor_i_traits<double> bti_traits;
 
     template<size_t N>
     struct block_type {
-        typedef dense_tensor< N, double, allocator<double> > type;
+        typedef dense_tensor<N, double, allocator> type;
     };
 
     template<size_t N>
@@ -114,8 +113,7 @@ int test_immutable() {
 
     static const char testname[] = "block_map_test::test_immutable()";
 
-    typedef allocator<double> allocator_t;
-    typedef dense_tensor<2, double, allocator_t> tensor_t;
+    typedef dense_tensor<2, double, allocator> tensor_t;
 
     try {
 

@@ -25,7 +25,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     const dimensions<N> &pdims = cp.get_pdims();
 
     size_t ngrp = 0, nidx = 0;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (params.idxgrp[i] == 0) continue;
 
         ngrp = std::max(ngrp, params.idxgrp[i]);
@@ -33,20 +33,20 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::do_perform(
     }
 
     sequence<N, size_t> map(N);
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (params.idxgrp[i] == 0) continue;
         map[(params.symidx[i] - 1) * ngrp + params.idxgrp[i] - 1] = i;
     }
 
     mask<N> msk;
-    for (register size_t i = ngrp; i < N; i++) msk[i] = true;
+    for (size_t i = ngrp; i < N; i++) msk[i] = true;
 
     //  If the elements are partitioned differently,
     //  the result is no symmetry 
     bool no_symmetry = false;
-    for(register size_t i = 1; i < ngrp; i++) {
+    for(size_t i = 1; i < ngrp; i++) {
         size_t in = i * nidx;
-        for(register size_t j = 0; j < nidx; j++) {
+        for(size_t j = 0; j < nidx; j++) {
             if(pdims[map[in + j]] != pdims[map[j]]) no_symmetry = true;
         }
     }
@@ -92,11 +92,11 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::is_forbidden(
     permutation_generator<N> pg(msk);
     do {
         const permutation<N> &pn = pg.get_perm();
-        register size_t i = 0;
+        size_t i = 0;
         for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
         size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
-            for (register size_t j = 0; j < ngrp; j++, i++) {
+            for (size_t j = 0; j < ngrp; j++, i++) {
                 ix[map[i]] = i1[map[pn[j] + ns]];
             }
             ns += ngrp;
@@ -117,11 +117,11 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::mark_forbidden(
     permutation_generator<N> pg(msk);
     do {
         const permutation<N> &pn = pg.get_perm();
-        register size_t i = 0;
+        size_t i = 0;
         for (; i < N && ! msk[i]; i++) ix[map[i]] = i1[map[pn[i]]];
         size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
-            for (register size_t j = 0; j < ngrp; j++, i++) {
+            for (size_t j = 0; j < ngrp; j++, i++) {
                 ix[map[i]] = i1[map[pn[j] + ns]];
             }
             ns += ngrp;
@@ -140,14 +140,14 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
     scalar_transf<T> tr;
     do {
         const permutation<N> &pn = pg.get_perm();
-        register size_t i = 0;
+        size_t i = 0;
         for (; i < N && ! msk[i]; i++) {
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
         size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
-            for (register size_t j = 0; j < ngrp; j++, i++) {
+            for (size_t j = 0; j < ngrp; j++, i++) {
                 j1[map[i]] = i1[map[pn[j] + ns]];
                 j2[map[i]] = i2[map[pn[j] + ns]];
             }
@@ -165,14 +165,14 @@ bool symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::map_exists(
 
     while (pg.next()) {
         const permutation<N> &pn = pg.get_perm();
-        register size_t i = 0;
+        size_t i = 0;
         for (; i < N && ! msk[i]; i++) {
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
         size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
-            for (register size_t j = 0; j < ngrp; j++, i++) {
+            for (size_t j = 0; j < ngrp; j++, i++) {
                 j1[map[i]] = i1[map[pn[j] + ns]];
                 j2[map[i]] = i2[map[pn[j] + ns]];
             }
@@ -200,14 +200,14 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_part<N, T> >::add_map(
     permutation_generator<N> pg(msk);
     do {
         const permutation<N> &pn = pg.get_perm();
-        register size_t i = 0;
+        size_t i = 0;
         for (; i < N && ! msk[i]; i++) {
             j1[map[i]] = i1[map[pn[i]]];
             j2[map[i]] = i2[map[pn[i]]];
         }
         size_t ngrp = i, ns = ngrp;
         while (i < N && map[i] < N) {
-            for (register size_t j = 0; j < ngrp; j++, i++) {
+            for (size_t j = 0; j < ngrp; j++, i++) {
                 j1[map[i]] = i1[map[pn[j] + ns]];
                 j2[map[i]] = i2[map[pn[j] + ns]];
             }

@@ -21,7 +21,6 @@ namespace expr {
 namespace eval_ctf_btensor_double {
 
 namespace {
-using std::auto_ptr;
 
 
 template<size_t N>
@@ -78,7 +77,7 @@ eval_set_impl<N>::eval_set_impl(const expr_tree &tree,
     const double &val = ns.get_scalar();
 
     // Create tensor
-    std::auto_ptr< ctf_btensor<N, double> > bt(
+    std::unique_ptr< ctf_btensor<N, double> > bt(
             new ctf_btensor<N, double>(op.get_bis()));
     perform_op(n, op, val, *bt);
 

@@ -167,7 +167,7 @@ void gen_bto_trace_in_orbit_task<N, Traits, Timed>::perform() {
             ia.permute(m_perm);
 
             bool skip = false;
-            for(register size_t i = 0; i < N; i++) {
+            for(size_t i = 0; i < N; i++) {
                 if(ia[i] != ia[N + i]) {
                     skip = true;
                     break;

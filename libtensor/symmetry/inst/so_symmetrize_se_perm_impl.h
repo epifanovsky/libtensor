@@ -24,7 +24,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
 
     // Number of groups and number of indexes per group
     size_t ngrp = 0, nidx = 0;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (params.idxgrp[i] == 0) continue;
         ngrp = std::max(ngrp, params.idxgrp[i]);
         nidx = std::max(nidx, params.symidx[i]);
@@ -33,7 +33,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
     // Create map and msk
     sequence<N, size_t> map(0);
     mask<N> msk;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (params.idxgrp[i] == 0) { msk[i] = true; continue; }
         map[(params.idxgrp[i] - 1) * nidx + params.symidx[i] - 1] = i;
         msk[i] = (params.symidx[i] != 1);
@@ -43,7 +43,7 @@ void symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::do_perform(
     permutation<N> pp, cp;
     for (size_t k = 1; k < ngrp; k++) {
         for (size_t i = 1 ; i <= nidx; i++) {
-            register size_t j = 0;
+            size_t j = 0;
             for (; j < N; j++) {
                 if ((params.idxgrp[j] == k) &&
                         (params.symidx[j] == i)) break;
@@ -174,9 +174,9 @@ size_t symmetry_operation_impl< so_symmetrize<N, T>, se_perm<N, T> >::encode(
 
     permutation<N> pinv(p, true);
     size_t idx = 0;
-    for (register size_t i = 0, j = N; i != N - 1; i++, j--) {
+    for (size_t i = 0, j = N; i != N - 1; i++, j--) {
         size_t ii = 0;
-        for (register size_t k = 0; k < pinv[i]; k++) {
+        for (size_t k = 0; k < pinv[i]; k++) {
             if (p[k] > i) ii++;
         }
         idx = idx * j + ii;

@@ -1,7 +1,7 @@
 #include <sstream>
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
-#include <libtensor/dense_tensor/tod_size.h>
+#include <libtensor/dense_tensor/to_size.h>
 #include "../test_utils.h"
 
 using namespace libtensor;
@@ -11,17 +11,15 @@ int test_1() {
 
     static const char testname[] = "tod_size_test::test_1()";
 
-    typedef allocator<double> allocator_t;
-
     try {
 
         libtensor::index<1> i1, i2;
         i2[0] = 10;
         dimensions<1> dims(index_range<1>(i1, i2));
 
-        dense_tensor<1, double, allocator_t> t1(dims);
+        dense_tensor<1, double, allocator> t1(dims);
 
-        size_t sz = tod_size<1>().get_size(t1);
+        size_t sz = to_size<1, double>().get_size(t1);
 /*
 #if !defined(WITHOUT_LIBVMM)
         size_t sz_ref = 16 * sizeof(double);
@@ -45,7 +43,7 @@ int main() {
 
     int rc = 0;
 
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -56,11 +54,11 @@ int main() {
         0;
 
     } catch(...) {
-        allocator<double>::shutdown();
+        allocator::shutdown();
         throw;
     }
 
-    allocator<double>::shutdown();
+    allocator::shutdown();
 
     return rc;
 }

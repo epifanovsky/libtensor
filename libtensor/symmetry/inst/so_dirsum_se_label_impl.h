@@ -80,7 +80,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
 
                 sequence<N + M, size_t> seq3(0);
                 const sequence<N, size_t> &seq1 = pr1.get_sequence(ip1);
-                for (register size_t j = 0; j < N; j++)
+                for (size_t j = 0; j < N; j++)
                     seq3[map1[j]] = seq1[j];
 
                 pr3.add(seq3, pr1.get_intrinsic(ip1));
@@ -98,7 +98,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
         if (it2 == g2.end()) {
             // Create a fake rule for non-existing e2 that allows all blocks
             sequence<N + M, size_t> seq3(0);
-            for (register size_t i = 0; i < M; i++) seq3[map2[i]] = 1;
+            for (size_t i = 0; i < M; i++) seq3[map2[i]] = 1;
 
             product_rule<N + M> &pr3 = r3.new_product();
             pr3.add(seq3, product_table_i::k_invalid);
@@ -136,7 +136,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
 
                     sequence<N + M, size_t> seq3(0);
                     const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
-                    for (register size_t j = 0; j < M; j++)
+                    for (size_t j = 0; j < M; j++)
                         seq3[map2[j]] = seq2[j];
 
                     pr3.add(seq3, pr2.get_intrinsic(ip2));
@@ -176,7 +176,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
 
         // Create a fake rule for non-existing r1
         sequence<N + M, size_t> seq3(0);
-        for (register size_t i = 0; i < N; i++) seq3[map2[i]] = 1;
+        for (size_t i = 0; i < N; i++) seq3[map2[i]] = 1;
 
         product_rule<N + M> &pr3 = r3.new_product();
         pr3.add(seq3, product_table_i::k_invalid);
@@ -198,7 +198,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_label<N + M, T> >::do_perform(
 
                 sequence<N + M, size_t> seq3(0);
                 const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
-                for (register size_t j = 0; j < M; j++)
+                for (size_t j = 0; j < M; j++)
                     seq3[map2[j]] = seq2[j];
 
                 pr3.add(seq3, pr2.get_intrinsic(ip2));

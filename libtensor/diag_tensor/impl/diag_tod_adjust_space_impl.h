@@ -168,13 +168,13 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
         iset->stepa(0) = 0;
         iset->stepb(0) = inc1;
 
-        loop_registers<1, 1> radd;
+        loop_registers_x<1, 1, double> radd;
         radd.m_ptra[0] = p1;
         radd.m_ptrb[0] = p2;
         radd.m_ptra_end[0] = p1 + sz1;
         radd.m_ptrb_end[0] = p2 + sz2;
 
-        loop_registers<1, 1> rset;
+        loop_registers_x<1, 1, double> rset;
         rset.m_ptra[0] = &zero;
         rset.m_ptrb[0] = p1;
         rset.m_ptra_end[0] = &zero + 1;
@@ -182,12 +182,12 @@ void diag_tod_adjust_space<N>::constrained_copy(const dimensions<N> &dims,
 
         {
             diag_tod_adjust_space<N>::start_timer("copy");
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_add(
-                kern_dadd1<linalg>::match(1.0, lpadd1, lpadd2));
-            loop_list_runner<linalg, 1, 1>(lpadd1).run(0, radd, *kern_add);
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_set(
-                kern_dcopy<linalg>::match(1.0, lpset1, lpset2));
-            loop_list_runner<linalg, 1, 1>(lpset1).run(0, rset, *kern_set);
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern_add(
+                kern_add1<linalg, double>::match(1.0, lpadd1, lpadd2));
+            loop_list_runner_x<linalg, 1, 1, double>(lpadd1).run(0, radd, *kern_add);
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern_set(
+                kern_copy<linalg, double>::match(1.0, lpset1, lpset2));
+            loop_list_runner_x<linalg, 1, 1, double>(lpset1).run(0, rset, *kern_set);
             diag_tod_adjust_space<N>::stop_timer("copy");
         }
 

@@ -3,7 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_mult.h>
+#include <libtensor/dense_tensor/to_mult.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -16,8 +16,6 @@ int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
     tnss << "tod_mult_test::test_pq_pq_1("
         << ni << ", " << nj << ", " << recip << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -61,7 +59,7 @@ int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
     tb.set_immutable();
     tc_ref.set_immutable();
 
-    tod_mult<2>(ta, tb, recip).perform(true, tc);
+    to_mult<2, double>(ta, tb, recip).perform(true, tc);
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -80,8 +78,6 @@ int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
     tnss << "tod_mult_test::test_pq_pq_2("
         << ni << ", " << nj << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -123,7 +119,7 @@ int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
     tb.set_immutable();
     tc_ref.set_immutable();
 
-    tod_mult<2>(ta, tb, recip, coeff).perform(false, tc);
+    to_mult<2, double>(ta, tb, recip, coeff).perform(false, tc);
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -140,8 +136,6 @@ int test_pq_qp(bool recip, double coeff) {
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_3(" << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -189,7 +183,7 @@ int test_pq_qp(bool recip, double coeff) {
 
     permutation<2> pa, pb;
     pb.permute(0, 1);
-    tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(false, tc);
+    to_mult<2, double>(ta, pa, tb, pb, recip, coeff).perform(false, tc);
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -206,8 +200,6 @@ int test_qp_pq(bool recip, double coeff) {
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_4(" << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -255,7 +247,7 @@ int test_qp_pq(bool recip, double coeff) {
 
     permutation<2> pa, pb;
     pa.permute(0, 1);
-    tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(false, tc);
+    to_mult<2, double>(ta, pa, tb, pb, recip, coeff).perform(false, tc);
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -272,8 +264,6 @@ int test_qp_qp(bool recip, double coeff) {
     std::ostringstream tnss;
     tnss << "tod_mult_test::test_5(" << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -322,7 +312,7 @@ int test_qp_qp(bool recip, double coeff) {
     permutation<2> pa, pb;
     pa.permute(0, 1);
     pb.permute(0, 1);
-    tod_mult<2>(ta, pa, tb, pb, recip, coeff).perform(false, tc);
+    to_mult<2, double>(ta, pa, tb, pb, recip, coeff).perform(false, tc);
 
     compare_ref<2>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -340,8 +330,6 @@ int test_pqrs_qprs(
     tnss << "tod_mult_test::test_pqrs_qprs(" << ni << ", " << nj << ", " << nk
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -404,7 +392,7 @@ int test_pqrs_qprs(
     tb.set_immutable();
     tc_ref.set_immutable();
 
-    tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
+    to_mult<4, double>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -422,8 +410,6 @@ int test_pqrs_qrps(
     tnss << "tod_mult_test::test_pqrs_qrps(" << ni << ", " << nj << ", " << nk
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -485,7 +471,7 @@ int test_pqrs_qrps(
     tb.set_immutable();
     tc_ref.set_immutable();
 
-    tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
+    to_mult<4, double>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -503,8 +489,6 @@ int test_pqsr_pqrs(
     tnss << "tod_mult_test::test_pqsr_pqrs(" << ni << ", " << nj << ", " << nk
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -567,7 +551,7 @@ int test_pqsr_pqrs(
     tb.set_immutable();
     tc_ref.set_immutable();
 
-    tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
+    to_mult<4, double>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 
@@ -586,8 +570,6 @@ int test_prsq_qrps(
     tnss << "tod_mult_test::test_prsq_qrps(" << ni << ", " << nj << ", " << nk
         << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -659,7 +641,7 @@ int test_prsq_qrps(
     tb.set_immutable();
     tc_ref.set_immutable();
 
-    tod_mult<4>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
+    to_mult<4, double>(ta, p1, tb, p2, recip, coeff).perform(false, tc);
 
     compare_ref<4>::compare(tns.c_str(), tc, tc_ref, 1e-15);
 

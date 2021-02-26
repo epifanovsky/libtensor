@@ -279,5 +279,279 @@ template void permutation_group<16, double>::project_down(
     const mask<16> &msk, permutation_group<15, double> &);
 
 
+template class permutation_group<1, float>;
+
+template class permutation_group<2, float>;
+template void permutation_group<2, float>::project_down(
+    const mask<2> &msk, permutation_group<1, float> &g2);
+
+template class permutation_group<3, float>;
+template void permutation_group<3, float>::project_down(
+    const mask<3> &msk, permutation_group<1, float> &);
+template void permutation_group<3, float>::project_down(
+    const mask<3> &msk, permutation_group<2, float> &);
+
+template class permutation_group<4, float>;
+template void permutation_group<4, float>::project_down(
+    const mask<4> &msk, permutation_group<1, float> &);
+template void permutation_group<4, float>::project_down(
+    const mask<4> &msk, permutation_group<2, float> &);
+template void permutation_group<4, float>::project_down(
+    const mask<4> &msk, permutation_group<3, float> &);
+
+template class permutation_group<5, float>;
+template void permutation_group<5, float>::project_down(
+    const mask<5> &msk, permutation_group<1, float> &);
+template void permutation_group<5, float>::project_down(
+    const mask<5> &msk, permutation_group<2, float> &);
+template void permutation_group<5, float>::project_down(
+    const mask<5> &msk, permutation_group<3, float> &);
+template void permutation_group<5, float>::project_down(
+    const mask<5> &msk, permutation_group<4, float> &);
+
+template class permutation_group<6, float>;
+template void permutation_group<6, float>::project_down(
+    const mask<6> &msk, permutation_group<1, float> &);
+template void permutation_group<6, float>::project_down(
+    const mask<6> &msk, permutation_group<2, float> &);
+template void permutation_group<6, float>::project_down(
+    const mask<6> &msk, permutation_group<3, float> &);
+template void permutation_group<6, float>::project_down(
+    const mask<6> &msk, permutation_group<4, float> &);
+template void permutation_group<6, float>::project_down(
+    const mask<6> &msk, permutation_group<5, float> &);
+
+template class permutation_group<7, float>;
+template void permutation_group<7, float>::project_down(
+    const mask<7> &msk, permutation_group<1, float> &);
+template void permutation_group<7, float>::project_down(
+    const mask<7> &msk, permutation_group<2, float> &);
+template void permutation_group<7, float>::project_down(
+    const mask<7> &msk, permutation_group<3, float> &);
+template void permutation_group<7, float>::project_down(
+    const mask<7> &msk, permutation_group<4, float> &);
+template void permutation_group<7, float>::project_down(
+    const mask<7> &msk, permutation_group<5, float> &);
+template void permutation_group<7, float>::project_down(
+    const mask<7> &msk, permutation_group<6, float> &);
+
+template class permutation_group<8, float>;
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<1, float> &);
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<2, float> &);
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<3, float> &);
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<4, float> &);
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<5, float> &);
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<6, float> &);
+template void permutation_group<8, float>::project_down(
+    const mask<8> &msk, permutation_group<7, float> &);
+
+template class permutation_group<9, float>;
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<1, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<2, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<3, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<4, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<5, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<6, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<7, float> &);
+template void permutation_group<9, float>::project_down(
+    const mask<9> &msk, permutation_group<8, float> &);
+
+template class permutation_group<10, float>;
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<1, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<2, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<3, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<4, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<5, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<6, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<7, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<8, float> &);
+template void permutation_group<10, float>::project_down(
+    const mask<10> &msk, permutation_group<9, float> &);
+
+template class permutation_group<11, float>;
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<1, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<2, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<3, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<4, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<5, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<6, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<7, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<8, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<9, float> &);
+template void permutation_group<11, float>::project_down(
+    const mask<11> &msk, permutation_group<10, float> &);
+
+template class permutation_group<12, float>;
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<1, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<2, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<3, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<4, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<5, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<6, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<7, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<8, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<9, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<10, float> &);
+template void permutation_group<12, float>::project_down(
+    const mask<12> &msk, permutation_group<11, float> &);
+
+template class permutation_group<13, float>;
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<1, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<2, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<3, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<4, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<5, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<6, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<7, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<8, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<9, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<10, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<11, float> &);
+template void permutation_group<13, float>::project_down(
+    const mask<13> &msk, permutation_group<12, float> &);
+
+template class permutation_group<14, float>;
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<1, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<2, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<3, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<4, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<5, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<6, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<7, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<8, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<9, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<10, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<11, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<12, float> &);
+template void permutation_group<14, float>::project_down(
+    const mask<14> &msk, permutation_group<13, float> &);
+
+template class permutation_group<15, float>;
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<1, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<2, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<3, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<4, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<5, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<6, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<7, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<8, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<9, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<10, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<11, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<12, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<13, float> &);
+template void permutation_group<15, float>::project_down(
+    const mask<15> &msk, permutation_group<14, float> &);
+
+template class permutation_group<16, float>;
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<1, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<2, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<3, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<4, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<5, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<6, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<7, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<8, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<9, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<10, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<11, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<12, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<13, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<14, float> &);
+template void permutation_group<16, float>::project_down(
+    const mask<16> &msk, permutation_group<15, float> &);
+
+
+
 } // namespace libtensor
 

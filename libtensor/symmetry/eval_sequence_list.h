@@ -84,7 +84,7 @@ size_t eval_sequence_list<N>::get_position(const eval_sequence_t &seq) const {
     for (; seqno < m_list.size(); seqno++) {
         const eval_sequence_t &ref = m_list[seqno];
 
-        register size_t i = 0;
+        size_t i = 0;
         for (; i < N; i++) {
             if (seq[i] != ref[i]) break;
         }

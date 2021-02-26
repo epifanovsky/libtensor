@@ -3,7 +3,7 @@
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_copy_wnd.h>
+#include <libtensor/dense_tensor/to_copy_wnd.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -13,8 +13,6 @@ using namespace libtensor;
 int test_1() {
 
     static const char testname[] = "tod_copy_wnd_test::test_1()";
-
-    typedef allocator<double> allocator_t;
 
     try {
 
@@ -31,7 +29,7 @@ int test_1() {
         irb2[0] = 5; irb2[1] = 7;
         index_range<2> irb(irb1, irb2);
 
-        dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<2, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -68,7 +66,7 @@ int test_1() {
             tb_ref.set_immutable();
         }
 
-        tod_copy_wnd<2>(ta, ira).perform(tb, irb);
+        to_copy_wnd<2, double>(ta, ira).perform(tb, irb);
 
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -83,8 +81,6 @@ int test_1() {
 int test_2() {
 
     static const char testname[] = "tod_copy_wnd_test::test_2()";
-
-    typedef allocator<double> allocator_t;
 
     try {
 
@@ -102,7 +98,7 @@ int test_2() {
         irb2[0] = 5; irb2[1] = 7;
         index_range<2> irb(irb1, irb2);
 
-        dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<2, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -139,7 +135,7 @@ int test_2() {
             tb_ref.set_immutable();
         }
 
-        tod_copy_wnd<2>(ta, ira).perform(tb, irb);
+        to_copy_wnd<2, double>(ta, ira).perform(tb, irb);
 
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -154,8 +150,6 @@ int test_2() {
 int test_3() {
 
     static const char testname[] = "tod_copy_wnd_test::test_3()";
-
-    typedef allocator<double> allocator_t;
 
     try {
 
@@ -173,7 +167,7 @@ int test_3() {
         irb2[0] = 6; irb2[1] = 9;
         index_range<2> irb(irb1, irb2);
 
-        dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<2, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -210,7 +204,7 @@ int test_3() {
             tb_ref.set_immutable();
         }
 
-        tod_copy_wnd<2>(ta, ira).perform(tb, irb);
+        to_copy_wnd<2, double>(ta, ira).perform(tb, irb);
 
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -225,8 +219,6 @@ int test_3() {
 int test_4() {
 
     static const char testname[] = "tod_copy_wnd_test::test_4()";
-
-    typedef allocator<double> allocator_t;
 
     try {
 
@@ -245,7 +237,7 @@ int test_4() {
         irb2[0] = 5; irb2[1] = 4;
         index_range<2> irb(irb1, irb2);
 
-        dense_tensor<2, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<2, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -282,7 +274,7 @@ int test_4() {
             tb_ref.set_immutable();
         }
 
-        tod_copy_wnd<2>(ta, ira).perform(tb, irb);
+        to_copy_wnd<2, double>(ta, ira).perform(tb, irb);
 
         compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -297,8 +289,6 @@ int test_4() {
 int test_5() {
 
     static const char testname[] = "tod_copy_wnd_test::test_5()";
-
-    typedef allocator<double> allocator_t;
 
     try {
 
@@ -315,7 +305,7 @@ int test_5() {
         irb2[0] = 5; irb2[1] = 7; irb2[2] = 5; irb2[3] = 7;
         index_range<4> irb(irb1, irb2);
 
-        dense_tensor<4, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<4, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -358,7 +348,7 @@ int test_5() {
             tb_ref.set_immutable();
         }
 
-        tod_copy_wnd<4>(ta, ira).perform(tb, irb);
+        to_copy_wnd<4, double>(ta, ira).perform(tb, irb);
 
         compare_ref<4>::compare(testname, tb, tb_ref, 1e-15);
 

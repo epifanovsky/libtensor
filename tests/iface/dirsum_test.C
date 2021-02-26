@@ -1,43 +1,19 @@
 #include <libtensor/core/scalar_transf_double.h>
-#include <libtensor/block_tensor/btod_add.h>
-#include <libtensor/block_tensor/btod_copy.h>
-#include <libtensor/block_tensor/btod_dirsum.h>
-#include <libtensor/block_tensor/btod_random.h>
-#include <libtensor/block_tensor/btod_set.h>
+#include <libtensor/block_tensor/bto_add.h>
+#include <libtensor/block_tensor/bto_copy.h>
+#include <libtensor/block_tensor/bto_dirsum.h>
+#include <libtensor/block_tensor/bto_random.h>
+#include <libtensor/block_tensor/bto_set.h>
 #include <libtensor/libtensor.h>
+#include "../test_utils.h"
 #include "../compare_ref.h"
-#include "dirsum_test.h"
 
-namespace libtensor {
-
-
-void dirsum_test::perform() throw(libtest::test_exception) {
-
-    allocator<double>::init(16, 16, 16777216, 16777216);
-
-    try {
-        test_tt_1();
-        test_tt_2();
-        test_tt_3();
-        test_tt_4();
-        test_tt_5();
-        test_tt_6();
-        test_te_1();
-        test_et_1();
-        test_ee_1();
-
-    } catch(...) {
-        allocator<double>::shutdown();
-        throw;
-    }
-
-    allocator<double>::shutdown();
-}
+using namespace libtensor;
 
 
-void dirsum_test::test_tt_1() throw(libtest::test_exception) {
+int test_tt_1() {
 
-    static const char *testname = "dirsum_test::test_tt_1()";
+    static const char testname[] = "dirsum_test::test_tt_1()";
 
     try {
 
@@ -48,12 +24,12 @@ void dirsum_test::test_tt_1() throw(libtest::test_exception) {
     btensor<1> t2(sp_a);
     btensor<2> t3(sp_ia), t3_ref(sp_ia);
 
-    btod_random<1>().perform(t1);
-    btod_random<1>().perform(t2);
+    bto_random<1, double>().perform(t1);
+    bto_random<1, double>().perform(t2);
     t1.set_immutable();
     t2.set_immutable();
 
-    btod_dirsum<1, 1>(t1, 1.0, t2, 1.0).perform(t3_ref);
+    bto_dirsum<1, 1, double>(t1, 1.0, t2, 1.0).perform(t3_ref);
 
     letter i, a;
     t3(i|a) = dirsum(t1(i), t2(a));
@@ -61,14 +37,16 @@ void dirsum_test::test_tt_1() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_tt_2() throw(libtest::test_exception) {
+int test_tt_2() {
 
-    static const char *testname = "dirsum_test::test_tt_2()";
+    static const char testname[] = "dirsum_test::test_tt_2()";
 
     try {
 
@@ -80,12 +58,12 @@ void dirsum_test::test_tt_2() throw(libtest::test_exception) {
     btensor<2> t2(sp_ab);
     btensor<4> t3(sp_ijab), t3_ref(sp_ijab);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t2);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t2);
     t1.set_immutable();
     t2.set_immutable();
 
-    btod_dirsum<2, 2>(t1, 1.0, t2, 1.0).perform(t3_ref);
+    bto_dirsum<2, 2, double>(t1, 1.0, t2, 1.0).perform(t3_ref);
 
     letter i, j, a, b;
     t3(i|j|a|b) = dirsum(t1(i|j), t2(a|b));
@@ -93,14 +71,16 @@ void dirsum_test::test_tt_2() throw(libtest::test_exception) {
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_tt_3() throw(libtest::test_exception) {
+int test_tt_3() {
 
-    static const char *testname = "dirsum_test::test_tt_3()";
+    static const char testname[] = "dirsum_test::test_tt_3()";
 
     try {
 
@@ -113,14 +93,14 @@ void dirsum_test::test_tt_3() throw(libtest::test_exception) {
     btensor<2> t2(sp_ab);
     btensor<4> t3(sp_iajb), t3_ref(sp_iajb);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t2);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t2);
     t1.set_immutable();
     t2.set_immutable();
 
     permutation<4> perm3;
     perm3.permute(1, 2); // ijab->iajb
-    btod_dirsum<2, 2>(t1, 1.0, t2, 1.0, perm3).perform(t3_ref);
+    bto_dirsum<2, 2, double>(t1, 1.0, t2, 1.0, perm3).perform(t3_ref);
 
     letter i, j, a, b;
     t3(i|a|j|b) = dirsum(t1(i|j), t2(a|b));
@@ -128,14 +108,16 @@ void dirsum_test::test_tt_3() throw(libtest::test_exception) {
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_tt_4() throw(libtest::test_exception) {
+int test_tt_4() {
 
-    static const char *testname = "dirsum_test::test_tt_4()";
+    static const char testname[] = "dirsum_test::test_tt_4()";
 
     try {
 
@@ -147,12 +129,12 @@ void dirsum_test::test_tt_4() throw(libtest::test_exception) {
     btensor<2> t2(sp_ab);
     btensor<4> t3(sp_ijab), t3_ref(sp_ijab);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t2);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t2);
     t1.set_immutable();
     t2.set_immutable();
 
-    btod_dirsum<2, 2>(t1, 2.0, t2, -1.0).perform(t3_ref);
+    bto_dirsum<2, 2, double>(t1, 2.0, t2, -1.0).perform(t3_ref);
 
     letter i, j, a, b;
     t3(i|j|a|b) = dirsum(2.0 * t1(i|j), -t2(a|b));
@@ -160,14 +142,16 @@ void dirsum_test::test_tt_4() throw(libtest::test_exception) {
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_tt_5() throw(libtest::test_exception) {
+int test_tt_5() {
 
-    static const char *testname = "dirsum_test::test_tt_5()";
+    static const char testname[] = "dirsum_test::test_tt_5()";
 
     try {
 
@@ -180,14 +164,14 @@ void dirsum_test::test_tt_5() throw(libtest::test_exception) {
     btensor<2> t2(sp_ab);
     btensor<4> t3(sp_iajb), t3_ref(sp_iajb);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t2);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t2);
     t1.set_immutable();
     t2.set_immutable();
 
     permutation<4> perm3;
     perm3.permute(1, 2); // ijab->iajb
-    btod_dirsum<2, 2>(t1, -1.5, t2, 1.0, perm3).perform(t3_ref);
+    bto_dirsum<2, 2, double>(t1, -1.5, t2, 1.0, perm3).perform(t3_ref);
 
     letter i, j, a, b;
     t3(i|a|j|b) = 0.5 * dirsum(-3.0 * t1(i|j), 2.0 * t2(a|b));
@@ -195,14 +179,16 @@ void dirsum_test::test_tt_5() throw(libtest::test_exception) {
     compare_ref<4>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_tt_6() throw(libtest::test_exception) {
+int test_tt_6() {
 
-    static const char *testname = "dirsum_test::test_tt_6()";
+    static const char testname[] = "dirsum_test::test_tt_6()";
 
     try {
 
@@ -213,10 +199,10 @@ void dirsum_test::test_tt_6() throw(libtest::test_exception) {
     btensor<1> t1(sp_i);
     btensor<2> t2(sp_ij), t2_ref(sp_ij);
 
-    btod_random<1>().perform(t1);
+    bto_random<1, double>().perform(t1);
     t1.set_immutable();
 
-    btod_dirsum<1, 1>(t1, 2.0, t1, -2.0).perform(t2_ref);
+    bto_dirsum<1, 1, double>(t1, 2.0, t1, -2.0).perform(t2_ref);
 
     letter i, j;
     t2(i|j) = dirsum(2.0 * t1(i), -2.0 * t1(j));
@@ -224,15 +210,17 @@ void dirsum_test::test_tt_6() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 
-void dirsum_test::test_te_1() throw(libtest::test_exception) {
+int test_te_1() {
 
-    static const char *testname = "dirsum_test::test_te_1()";
+    static const char testname[] = "dirsum_test::test_te_1()";
 
     try {
 
@@ -243,24 +231,22 @@ void dirsum_test::test_te_1() throw(libtest::test_exception) {
     btensor<1> t21(sp_a), t22(sp_a), t2(sp_a);
     btensor<2> t3(sp_ia), t3_ref(sp_ia);
 
-    btod_random<1>().perform(t1);
-    btod_random<1>().perform(t21);
-    btod_random<1>().perform(t22);
+    bto_random<1, double>().perform(t1);
+    bto_random<1, double>().perform(t21);
+    bto_random<1, double>().perform(t22);
     t1.set_immutable();
     t21.set_immutable();
     t22.set_immutable();
 
-    btod_add<1> add2(t21, 1.0);
+    bto_add<1, double> add2(t21, 1.0);
     add2.add_op(t22, 1.0);
     add2.perform(t2);
     t2.set_immutable();
 
-    btod_set<2>(1.0).perform(t3);
-    btod_set<2>(1.0).perform(t3_ref);
-    //~ btod_copy<2>(t3_ref, -1.0).perform(t3, 1.0);
-    //~ btod_copy<2>(t3).perform(t3_ref);
+    bto_set<2, double>(1.0).perform(t3);
+    bto_set<2, double>(1.0).perform(t3_ref);
 
-    btod_dirsum<1, 1>(t1, 1.0, t2, 1.0).perform(t3_ref);
+    bto_dirsum<1, 1, double>(t1, 1.0, t2, 1.0).perform(t3_ref);
 
     letter i, a;
     t3(i|a) = dirsum(t1(i), t21(a) + t22(a));
@@ -268,14 +254,47 @@ void dirsum_test::test_te_1() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_et_1() throw(libtest::test_exception) {
+int test_te_2() {
 
-    static const char *testname = "dirsum_test::test_et_1()";
+    static const char testname[] = "dirsum_test::test_te_2()";
+
+    try {
+
+    bispace<1> sp_i(10);
+    sp_i.split(5);
+    bispace<2> sp_ij(sp_i&sp_i);
+
+    btensor<1> t1(sp_i);
+    btensor<2> t2(sp_ij), t2_ref(sp_ij);
+
+    bto_random<1, double>().perform(t1);
+    t1.set_immutable();
+
+    bto_dirsum<1, 1, double>(t1, 1.0, t1, -1.0).perform(t2_ref);
+
+    letter i, j;
+    t2(i|j) = dirsum(t1(i), -t1(j));
+
+    compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        return fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    return 0;
+}
+
+
+int test_et_1() {
+
+    static const char testname[] = "dirsum_test::test_et_1()";
 
     try {
 
@@ -286,17 +305,17 @@ void dirsum_test::test_et_1() throw(libtest::test_exception) {
     btensor<1> t2(sp_a);
     btensor<2> t3(sp_ia), t3_ref(sp_ia);
 
-    btod_random<1>().perform(t11);
-    btod_random<1>().perform(t12);
-    btod_random<1>().perform(t2);
+    bto_random<1, double>().perform(t11);
+    bto_random<1, double>().perform(t12);
+    bto_random<1, double>().perform(t2);
     t11.set_immutable();
     t12.set_immutable();
     t2.set_immutable();
 
-    btod_add<1> add1(t11, 1.0);
+    bto_add<1, double> add1(t11, 1.0);
     add1.add_op(t12, 1.0);
     add1.perform(t1);
-    btod_dirsum<1, 1>(t1, 1.0, t2, 1.0).perform(t3_ref);
+    bto_dirsum<1, 1, double>(t1, 1.0, t2, 1.0).perform(t3_ref);
 
     letter i, a;
     t3(i|a) = dirsum(t11(i) + t12(i), t2(a));
@@ -304,14 +323,47 @@ void dirsum_test::test_et_1() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void dirsum_test::test_ee_1() throw(libtest::test_exception) {
+int test_et_2() {
 
-    static const char *testname = "dirsum_test::test_ee_1()";
+    static const char testname[] = "dirsum_test::test_et_2()";
+
+    try {
+
+    bispace<1> sp_i(10);
+    sp_i.split(5);
+    bispace<2> sp_ij(sp_i&sp_i);
+
+    btensor<1> t1(sp_i);
+    btensor<2> t2(sp_ij), t2_ref(sp_ij);
+
+    bto_random<1, double>().perform(t1);
+    t1.set_immutable();
+
+    bto_dirsum<1, 1, double>(t1, -1.0, t1, 1.0).perform(t2_ref);
+
+    letter i, j;
+    t2(i|j) = dirsum(-t1(i), t1(j));
+
+    compare_ref<2>::compare(testname, t2, t2_ref, 1e-15);
+
+    } catch(exception &e) {
+        return fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    return 0;
+}
+
+
+int test_ee_1() {
+
+    static const char testname[] = "dirsum_test::test_ee_1()";
 
     try {
 
@@ -322,22 +374,22 @@ void dirsum_test::test_ee_1() throw(libtest::test_exception) {
     btensor<1> t21(sp_a), t22(sp_a), t2(sp_a);
     btensor<2> t3(sp_ia), t3_ref(sp_ia);
 
-    btod_random<1>().perform(t11);
-    btod_random<1>().perform(t12);
-    btod_random<1>().perform(t21);
-    btod_random<1>().perform(t22);
+    bto_random<1, double>().perform(t11);
+    bto_random<1, double>().perform(t12);
+    bto_random<1, double>().perform(t21);
+    bto_random<1, double>().perform(t22);
     t11.set_immutable();
     t12.set_immutable();
     t21.set_immutable();
     t22.set_immutable();
 
-    btod_add<1> add1(t11, 1.0);
+    bto_add<1, double> add1(t11, 1.0);
     add1.add_op(t12, 1.0);
     add1.perform(t1);
-    btod_add<1> add2(t21, 1.0);
+    bto_add<1, double> add2(t21, 1.0);
     add2.add_op(t22, 1.0);
     add2.perform(t2);
-    btod_dirsum<1, 1>(t1, 1.0, t2, 1.0).perform(t3_ref);
+    bto_dirsum<1, 1, double>(t1, 1.0, t2, 1.0).perform(t3_ref);
 
     letter i, a;
     t3(i|a) = dirsum(t11(i) + t12(i), t21(a) + t22(a));
@@ -345,9 +397,32 @@ void dirsum_test::test_ee_1() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
+
+    allocator::init(16, 16, 16777216, 16777216);
+
+    int rc =
+        test_tt_1() |
+        test_tt_2() |
+        test_tt_3() |
+        test_tt_4() |
+        test_tt_5() |
+        test_tt_6() |
+        test_te_1() |
+        test_te_2() |
+        test_et_1() |
+        test_et_2() |
+        test_ee_1() |
+        0;
+
+    allocator::shutdown();
+    return rc;
+}
+

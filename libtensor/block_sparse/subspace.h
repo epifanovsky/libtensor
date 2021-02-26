@@ -37,20 +37,17 @@ public:
                If split_points begins with zero, that value is ignored
         \throw out_of_bounds If a split_point value exceeds the index limits, or if a zero length vector is passed 
      **/
-    void split(const std::vector<size_t>& split_points)
-        throw(out_of_bounds);
+    void split(const std::vector<size_t>& split_points);
 
     /** \brief Returns the size of the block with block index block_idx
         \throw out_of_bounds If (# of blocks  - 1) < block_idx || block_idx < 0
      **/
-    size_t get_block_size(size_t block_idx) const 
-        throw(out_of_bounds);
+    size_t get_block_size(size_t block_idx) const;
 
     /** \brief Returns the absolute starting index of the block with block index block_idx
         \throw out_of_bounds If (# of blocks  - 1) < block_idx < 0
      **/
-    size_t get_block_abs_index(size_t block_idx) const 
-        throw(out_of_bounds);
+    size_t get_block_abs_index(size_t block_idx) const;
 
     /** \brief Returns whether this object is equal to another. 
      *         Equality is defined to be the same dimension and block splitting pattern

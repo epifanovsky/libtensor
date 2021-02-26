@@ -59,7 +59,7 @@ void magic_dimensions<N>::divide(const index<N> &i1, index<N> &i2) const {
     typedef sequence<N, libdivide::libdivide_u64_t> seq_t;
 
     const seq_t &magic = *reinterpret_cast<const seq_t*>(m_magic);
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         i2[i] = libdivide::libdivide_u64_do(i1[i], &magic[i]);
     }
 }

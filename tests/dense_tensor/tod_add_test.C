@@ -4,7 +4,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_add.h>
+#include <libtensor/dense_tensor/to_add.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -17,8 +17,6 @@ const double k_thresh = 1e-14;
 int test_exc() {
 
     static const char testname[] = "tod_add_test::test_exc()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -33,7 +31,7 @@ int test_exc() {
     p1.permute(0, 1);
 
     dense_tensor<4, double, allocator> t1(dim), t2(dim);
-    tod_add<4> add(t1, p1, 0.4);
+    to_add<4, double> add(t1, p1, 0.4);
 
     bool ok = false;
     try {
@@ -75,8 +73,6 @@ int test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s) {
         << r << "," << s << ")";
     std::string tn = tnss.str();
 
-    typedef allocator<double> allocator;
-
     try {
 
     libtensor::index<4> i1, i2;
@@ -106,7 +102,7 @@ int test_add_to_self_pqrs(size_t p, size_t q, size_t r, size_t s) {
         ctrlc_ref.ret_dataptr(ptrc_ref); ptrc_ref = 0;
     }
 
-    tod_add<4> add(ta, 2.0);
+    to_add<4, double> add(ta, 2.0);
     add.add_op(ta, 0.5);
     add.prefetch();
     add.perform(true, tc);
@@ -127,8 +123,6 @@ int test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r, size_t s) {
     tnss << "tod_add_test::test_add_to_pqrs_pqrs(" << p << "," << q << ","
         << r << "," << s << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -164,7 +158,7 @@ int test_add_two_pqrs_pqrs(size_t p, size_t q, size_t r, size_t s) {
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
     }
 
-    tod_add<4> add(t2, 2.0);
+    to_add<4, double> add(t2, 2.0);
     add.prefetch();
     add.perform(false, t1);
 
@@ -184,8 +178,6 @@ int test_add_two_pqrs_qprs(size_t p, size_t q, size_t r, size_t s) {
     tnss << "tod_add_test::test_add_two_pqrs_qprs(" << p << "," << q << ","
         << r << "," << s << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -234,7 +226,7 @@ int test_add_two_pqrs_qprs(size_t p, size_t q, size_t r, size_t s) {
         ctrl2.ret_const_dataptr(cptr2); cptr2 = 0;
     }
 
-    tod_add<4> add(t2, p2, 0.1);
+    to_add<4, double> add(t2, p2, 0.1);
     add.prefetch();
     add.perform(false, t1);
 
@@ -254,8 +246,6 @@ int test_add_two_pqrs_prsq(size_t p, size_t q, size_t r, size_t s) {
     tnss << "tod_add_test::test_add_two_pqrs_prsq(";
     tnss << p << "," << q << "," << r << "," << s << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -304,7 +294,7 @@ int test_add_two_pqrs_prsq(size_t p, size_t q, size_t r, size_t s) {
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
     }
 
-    tod_add<4> add(t2,
+    to_add<4, double> add(t2,
             tensor_transf<4, double>(p2, scalar_transf<double>(0.1)));
     add.prefetch();
     add.perform(false, t1);
@@ -325,8 +315,6 @@ int test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r, size_t s) {
     tnss << "tod_add_test::test_add_two_pqrs_qpsr(";
     tnss << p << "," << q << "," << r << "," << s << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -376,7 +364,7 @@ int test_add_two_pqrs_qpsr(size_t p, size_t q, size_t r, size_t s) {
         ctrl1_ref.ret_dataptr(ptr1_ref); ptr1_ref = 0;
     }
 
-    tod_add<4> add(t2, p2, 0.1);
+    to_add<4, double> add(t2, p2, 0.1);
     add.prefetch();
     add.perform(false, t1);
 
@@ -397,8 +385,6 @@ int test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
     tnss << "tod_add_test::test_add_two_ijkl_kjli(" << ni << ", " << nj << ", "
         << nk << ", " << nl << ", " << c1 << ", " << c2 << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -451,7 +437,7 @@ int test_add_two_ijkl_kjli(size_t ni, size_t nj, size_t nk,
 
     // Invoke the operation
 
-    tod_add<4> op(t1, perm, c1);
+    to_add<4, double> op(t1, perm, c1);
     op.add_op(t2, c2);
     op.perform(true, t3);
 
@@ -471,8 +457,6 @@ int test_add_mult(size_t p, size_t q, size_t r, size_t s) {
     tnss << "tod_add_test::test_add_mult(" << p << "," << q << "," << r << ","
         << s << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -528,7 +512,7 @@ int test_add_mult(size_t p, size_t q, size_t r, size_t s) {
         ctrl4.ret_const_dataptr(cptr4); cptr4 = 0;
     }
 
-    tod_add<4> add(t2, 0.5);
+    to_add<4, double> add(t2, 0.5);
     add.add_op(t3, p3, -2.0);
     add.add_op(t4, tensor_transf<4, double>(permutation<4>(),
             scalar_transf<double>(0.1)));
@@ -550,8 +534,6 @@ int test_add_two_pq_qp(size_t p, size_t q) {
     std::ostringstream tnss;
     tnss << "tod_add_test::test_add_two_pq_qp(" << p << "," << q << ")";
     std::string tn = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -597,7 +579,7 @@ int test_add_two_pq_qp(size_t p, size_t q) {
         ctrl3.ret_const_dataptr(cptr3); cptr3 = 0;
     }
 
-    tod_add<2> add(t2, 1.0);
+    to_add<2, double> add(t2, 1.0);
     add.add_op(t3, p3, -0.5);
     add.prefetch();
     add.perform(false, t1);

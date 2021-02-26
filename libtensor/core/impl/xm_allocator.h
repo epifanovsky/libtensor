@@ -4,6 +4,7 @@
 #include <new>
 #include <map>
 #include <stdexcept>
+#include <string>
 #include <libutil/singleton.h>
 #include <libutil/threads/auto_lock.h>
 #include <libutil/threads/mutex.h>
@@ -83,6 +84,7 @@ public:
      **/
     static size_t get_block_size(size_t sz) {
         return sz * sizeof(T);
+        //return sz;
     }
 
     /** \brief Allocates a block of memory

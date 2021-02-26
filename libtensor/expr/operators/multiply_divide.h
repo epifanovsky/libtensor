@@ -14,7 +14,7 @@ namespace expr {
     \ingroup libtensor_expr_operators
  **/
 template<size_t N, typename T>
-expr_rhs<N, T> operator*(const T &lhs, const expr_rhs<N, T> &rhs) {
+expr_rhs<N, T> operator*(const double &lhs, const expr_rhs<N, T> &rhs) {
 
     std::vector<size_t> perm(N);
     for(size_t i = 0; i < N; i++) perm[i] = i;
@@ -24,6 +24,16 @@ expr_rhs<N, T> operator*(const T &lhs, const expr_rhs<N, T> &rhs) {
     return expr_rhs<N, T>(e, rhs.get_label());
 }
 
+template<size_t N, typename T>
+expr_rhs<N, T> operator*(const float &lhs, const expr_rhs<N, T> &rhs) {
+
+    std::vector<size_t> perm(N);
+    for(size_t i = 0; i < N; i++) perm[i] = i;
+
+    expr_tree e(node_transform<T>(perm, scalar_transf<T>(lhs)));
+    e.add(e.get_root(), rhs.get_expr());
+    return expr_rhs<N, T>(e, rhs.get_label());
+}
 
 /** \brief Multiplication of an expression by a scalar from the right
 

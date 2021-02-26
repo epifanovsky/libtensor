@@ -104,7 +104,7 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
             j->apply(idxb);
             size_t aidxb = abs_index<N>::get_abs_index(idxb, bidimsb);
 
-            tensor_transf<N, double> trb(tr);
+            tensor_transf<N, element_type> trb(tr);
             trb.transform(tra1).transform(*j);
             // There is a bug with icc 13 and -O3, need to break it down
             //symap.insert(std::make_pair(aidxb, trb));
@@ -144,7 +144,7 @@ void gen_bto_aux_symmetrize<N, Traits>::put(
                 }
             }
             if(!sum.is_zero()) {
-                tensor_transf<N, double> tr(perm, sum.get_transf());
+                tensor_transf<N, element_type> tr(perm, sum.get_transf());
                 m_out.put(idxb, blk, tr);
             }
         }

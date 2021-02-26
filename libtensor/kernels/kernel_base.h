@@ -21,7 +21,7 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-template<typename LA, size_t N, size_t M>
+template<typename LA, size_t N, size_t M, typename T>
 class kernel_base {
 public:
     //! Reference type to device context
@@ -42,7 +42,7 @@ public:
 
     /** \brief Runs the kernel
      **/
-    virtual void run(device_context_ref ctx, const loop_registers<N, M> &r) = 0;
+    virtual void run(device_context_ref ctx, const loop_registers_x<N, M, T> &r) = 0;
 
 };
 

@@ -39,7 +39,7 @@ public:
         @param tr Other transformation
         @param inverse Flag to obtain the inverse of tr (default: false)
      **/
-    tensor_transf(const tensor_transf<N, double> &tr, bool inverse = false) :
+    tensor_transf(const tensor_transf<N, T> &tr, bool inverse = false) :
         m_perm(tr.m_perm, inverse), m_st(tr.m_st) {
 
         if (inverse) m_st.invert();

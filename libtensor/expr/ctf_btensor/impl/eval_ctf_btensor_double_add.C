@@ -14,7 +14,6 @@ namespace expr {
 namespace eval_ctf_btensor_double {
 
 namespace {
-using std::auto_ptr;
 
 
 template<size_t N>
@@ -60,7 +59,7 @@ eval_add_impl<N>::eval_add_impl(const expr_tree &tree,
         m_sub.push_back(new autoselect<N>(tree, rhs, trsub));
     }
 
-    auto_ptr< ctf_btod_sum<N> > op;
+    std::unique_ptr< ctf_btod_sum<N> > op;
     for(size_t i = 0; i < m_sub.size(); i++) {
         if(i == 0) {
             op.reset(new ctf_btod_sum<N>(m_sub[0]->get_bto()));

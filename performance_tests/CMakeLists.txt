@@ -9,7 +9,8 @@ if(WITH_CTF)
     add_executable(libtensor_ctf_benchmarks libtensor_ctf_benchmarks.C)
 endif(WITH_CTF)
 
-include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+#include(${LIBTEST_DIR}/cmake/SetupLibTest.txt)
+include_directories(${LIBTEST_DIR})
 
 set_property(TARGET libtensor_performance_tests APPEND PROPERTY
     COMPILE_DEFINITIONS $<$<CONFIG:Debug>:LIBTENSOR_DEBUG>)
@@ -28,11 +29,10 @@ if(WITH_CTF)
 endif(WITH_CTF)
 
 target_link_libraries(libtensor_performance_tests
-    tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS}
-    libtest)
+    tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} util libtest)
 if(WITH_CTF)
     set_property(TARGET libtensor_ctf_benchmarks APPEND PROPERTY
         LINK_FLAGS ${OpenMP_CXX_FLAGS})
     target_link_libraries(libtensor_ctf_benchmarks
-        tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} ${LIBUTIL_LIBS})
+        tensor tensor_core ${LIBTENSOR_DEP_LIBS} ${LIBVMM_LIBS} util)
 endif(WITH_CTF)

@@ -10,7 +10,7 @@ template<size_t N>
 dimensions<N>::dimensions(const index_range<N> &ir) {
 
     const index<N> &i0 = ir.get_begin(), &i1 = ir.get_end();
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         m_dims[i] = i1[i] - i0[i] + 1;
     }
     update_increments();
@@ -28,7 +28,7 @@ dimensions<N>::dimensions(const dimensions<N> &d) :
 template<size_t N>
 bool dimensions<N>::contains(const index<N> &idx) const {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(idx[i] >= m_dims[i]) return false;
     }
     return true;
@@ -38,7 +38,7 @@ bool dimensions<N>::contains(const index<N> &idx) const {
 template<size_t N>
 bool dimensions<N>::equals(const dimensions<N> &d) const {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(m_dims[i] != d.m_dims[i]) return false;
     }
     return true;
@@ -57,8 +57,8 @@ dimensions<N> &dimensions<N>::permute(const permutation<N> &p) {
 template<size_t N>
 void dimensions<N>::update_increments() {
 
-    register size_t sz = 1;
-    register size_t i = N;
+    size_t sz = 1;
+    size_t i = N;
     while(i != 0) {
         i--;
         m_incs[i] = sz;

@@ -2,7 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_set.h>
+#include <libtensor/dense_tensor/to_set.h>
 #include "../test_utils.h"
 
 using namespace libtensor;
@@ -14,8 +14,6 @@ int test_1(double d) {
     ss << "tod_set_test::test_1(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
         libtensor::index<1> i1, i2;
@@ -23,9 +21,9 @@ int test_1(double d) {
         dimensions<1> dims(index_range<1>(i1, i2));
         size_t sz = dims.get_size();
 
-        dense_tensor<1, double, allocator_t> t1(dims), t2(dims);
+        dense_tensor<1, double, allocator> t1(dims), t2(dims);
 
-        tod_set<1>().perform(true, t1);
+        to_set<1, double>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<1, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -37,7 +35,7 @@ int test_1(double d) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<1>(d).perform(true, t2);
+        to_set<1, double>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<1, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -63,8 +61,6 @@ int test_2(double d) {
     ss << "tod_set_test::test_2(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
         libtensor::index<2> i1, i2;
@@ -72,9 +68,9 @@ int test_2(double d) {
         dimensions<2> dims(index_range<2>(i1, i2));
         size_t sz = dims.get_size();
 
-        dense_tensor<2, double, allocator_t> t1(dims), t2(dims);
+        dense_tensor<2, double, allocator> t1(dims), t2(dims);
 
-        tod_set<2>().perform(true, t1);
+        to_set<2, double>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<2, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -86,7 +82,7 @@ int test_2(double d) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<2>(d).perform(true, t2);
+        to_set<2, double>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<2, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -112,8 +108,6 @@ int test_3(double d) {
     ss << "tod_set_test::test_3(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
         libtensor::index<3> i1, i2;
@@ -121,9 +115,9 @@ int test_3(double d) {
         dimensions<3> dims(index_range<3>(i1, i2));
         size_t sz = dims.get_size();
 
-        dense_tensor<3, double, allocator_t> t1(dims), t2(dims);
+        dense_tensor<3, double, allocator> t1(dims), t2(dims);
 
-        tod_set<3>().perform(true, t1);
+        to_set<3, double>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<3, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -135,7 +129,7 @@ int test_3(double d) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<3>(d).perform(true, t2);
+        to_set<3, double>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<3, double> c2(t2);
             const double *p = c2.req_const_dataptr();
@@ -161,8 +155,6 @@ int test_4(double d) {
     ss << "tod_set_test::test_4(" << d << ")";
     std::string tnss = ss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
         libtensor::index<4> i1, i2;
@@ -170,9 +162,9 @@ int test_4(double d) {
         dimensions<4> dims(index_range<4>(i1, i2));
         size_t sz = dims.get_size();
 
-        dense_tensor<4, double, allocator_t> t1(dims), t2(dims);
+        dense_tensor<4, double, allocator> t1(dims), t2(dims);
 
-        tod_set<4>().perform(true, t1);
+        to_set<4, double>().perform(true, t1);
         {
             dense_tensor_rd_ctrl<4, double> c1(t1);
             const double *p = c1.req_const_dataptr();
@@ -184,7 +176,7 @@ int test_4(double d) {
             c1.ret_const_dataptr(p);
         }
 
-        tod_set<4>(d).perform(true, t2);
+        to_set<4, double>(d).perform(true, t2);
         {
             dense_tensor_rd_ctrl<4, double> c2(t2);
             const double *p = c2.req_const_dataptr();

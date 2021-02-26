@@ -27,8 +27,8 @@ namespace libtensor {
 template< size_t N, typename T>
 class se_perm : public symmetry_element_i<N, T> {
 public:
-    static const char *k_clazz; //!< Class name
-    static const char *k_sym_type; //!< Symmetry type
+    static const char k_clazz[]; //!< Class name
+    static const char k_sym_type[]; //!< Symmetry type
 
 private:
     tensor_transf<N, T> m_transf; //!< Block transformation
@@ -81,9 +81,7 @@ public:
 
     /** \copydoc symmetry_element_i<N, T>::get_type()
      **/
-    virtual const char *get_type() const {
-        return k_sym_type;
-    }
+    virtual const char *get_type() const;
 
     /** \copydoc symmetry_element_i<N, T>::clone()
      **/
@@ -114,6 +112,15 @@ public:
     //@}
 };
 
+
+template<size_t N, typename T>
+const char se_perm<N, T>::k_clazz[] = "se_perm<N, T>";
+
+
+template<size_t N, typename T>
+const char se_perm<N, T>::k_sym_type[] = "perm";
+
+
 template<size_t N, typename T>
 inline
 bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
@@ -123,12 +130,14 @@ bool se_perm<N, T>::is_valid_bis(const block_index_space<N> &bis) const {
     return bis2.equals(bis);
 }
 
+
 template<size_t N, typename T>
 inline
 void se_perm<N, T>::apply(index<N> &idx) const {
 
     m_transf.apply(idx);
 }
+
 
 template<size_t N, typename T>
 inline

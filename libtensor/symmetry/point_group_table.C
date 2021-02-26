@@ -44,8 +44,7 @@ point_group_table::get_label(const std::string &irrep) const {
     return i;
 }
 
-void point_group_table::add_product(label_t l1, label_t l2,
-        label_t lr) throw(bad_parameter) {
+void point_group_table::add_product(label_t l1, label_t l2, label_t lr) {
 
     const char *method = "add_product(label_t, label_t, label_t)";
 
@@ -82,11 +81,11 @@ void point_group_table::product(const label_group_t &lg,
     if (lg.empty()) return;
 
     label_group_t::const_iterator it = lg.begin();
-    register size_t pr1 = (1 << *it);
+    size_t pr1 = (1 << *it);
     it++;
     for (; it != lg.end(); it++) {
-        register size_t pr2 = 0;
-        for (register label_t i = 0, bit = 1;
+        size_t pr2 = 0;
+        for (label_t i = 0, bit = 1;
                 i < m_irreps.size(); i++, bit <<= 1) {
             if ((pr1 & bit) == bit)
                 pr2 |= m_table[*it > i ?
@@ -95,7 +94,7 @@ void point_group_table::product(const label_group_t &lg,
         pr1 = pr2;
     }
 
-    for (register label_t i = 0, bit = 1; i < m_irreps.size(); i++, bit <<= 1) {
+    for (label_t i = 0, bit = 1; i < m_irreps.size(); i++, bit <<= 1) {
         if ((pr1 & bit) == bit) prod.insert(i);
     }
 }
@@ -115,11 +114,11 @@ bool point_group_table::is_in_product(
     if (lg.empty()) return false;
 
     label_group_t::const_iterator it = lg.begin();
-    register size_t pr1 = (1 << *it);
+    size_t pr1 = (1 << *it);
     it++;
     for (; it != lg.end(); it++) {
-        register size_t pr2 = 0;
-        for (register size_t i = 0, bit = 1;
+        size_t pr2 = 0;
+        for (size_t i = 0, bit = 1;
                 i < m_irreps.size(); i++, bit <<= 1) {
             if ((pr1 & bit) == bit)
                 pr2 |= m_table[*it > i ?
@@ -128,7 +127,7 @@ bool point_group_table::is_in_product(
         pr1 = pr2;
     }
 
-    register size_t rbit = (1 << l);
+    size_t rbit = (1 << l);
     return (pr1 & rbit) == rbit;
 }
 

@@ -20,7 +20,7 @@ namespace libtensor {
 template<size_t N>
 void tod_conv_diag_block_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
 
-    typedef allocator<double> allocator_t;
+    typedef allocator allocator_t;
     typedef diag_block_tensor_i_traits<double> bti_traits;
     typedef typename diag_btod_traits::template temp_block_tensor_type<N>::type
         temp_block_tensor_type;
@@ -30,7 +30,7 @@ void tod_conv_diag_block_tensor<N>::perform(dense_tensor_wr_i<N, double> &tb) {
     dimensions<N> bidimsa = bisa.get_block_index_dims();
     const symmetry<N, double> &syma = ca.req_const_symmetry();
 
-    tod_set<N>().perform(true, tb);
+    to_set<N, double>().perform(true, tb);
 
     orbit_list<N, double> ol(syma);
     for(typename orbit_list<N, double>::iterator io = ol.begin();

@@ -9,45 +9,15 @@
 #include <libtensor/dense_tensor/tod_btconv.h>
 #include <libtensor/dense_tensor/tod_contract2.h>
 #include <libtensor/libtensor.h>
+#include "../test_utils.h"
 #include "../compare_ref.h"
-#include "expr_test.h"
 
-namespace libtensor {
-
-
-void expr_test::perform() throw(libtest::test_exception) {
-
-    allocator<double>::init(16, 16, 16777216, 16777216);
-
-    try {
-
-        test_1();
-        test_2();
-        test_3();
-        test_4();
-        test_5();
-        test_6();
-        test_7();
-        test_8();
-        test_9();
-        test_10();
-        test_11();
-        test_12();
-        test_13();
-        test_14();
-
-    } catch(...) {
-        allocator<double>::shutdown();
-        throw;
-    }
-
-    allocator<double>::shutdown();
-}
+using namespace libtensor;
 
 
-void expr_test::test_1() throw(libtest::test_exception) {
+int test_1() {
 
-    static const char *testname = "expr_test::test_1()";
+    static const char testname[] = "expr_test::test_1()";
 
     try {
 
@@ -58,12 +28,12 @@ void expr_test::test_1() throw(libtest::test_exception) {
 
     btensor<2> t1(sov), t2(sov), t3(sov), t3_ref(sov);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t2);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t2);
     t1.set_immutable();
     t2.set_immutable();
 
-    btod_add<2> op(t1);
+    bto_add<2, double> op(t1);
     op.add_op(t2, -1.0);
     op.perform(t3_ref);
 
@@ -74,14 +44,16 @@ void expr_test::test_1() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_2() throw(libtest::test_exception) {
+int test_2() {
 
-    static const char *testname = "expr_test::test_2()";
+    static const char testname[] = "expr_test::test_2()";
 
     try {
 
@@ -101,14 +73,14 @@ void expr_test::test_2() throw(libtest::test_exception) {
     btensor<4> i_ooov(sooov), i_oovv(soovv), i_ovov(sovov), i_ovvv(sovvv);
     btensor<4> i3_ovvv(sovvv), i5_vvvv(svvvv);
 
-    btod_random<2>().perform(t1);
-    btod_random<4>().perform(t2);
-    btod_random<2>().perform(f_ov);
-    btod_random<4>().perform(i_ooov);
-    btod_random<4>().perform(i_oovv);
-    btod_random<4>().perform(i_ovov);
-    btod_random<4>().perform(i_ovvv);
-    btod_random<4>().perform(i5_vvvv);
+    bto_random<2, double>().perform(t1);
+    bto_random<4, double>().perform(t2);
+    bto_random<2, double>().perform(f_ov);
+    bto_random<4, double>().perform(i_ooov);
+    bto_random<4, double>().perform(i_oovv);
+    bto_random<4, double>().perform(i_ovov);
+    bto_random<4, double>().perform(i_ovvv);
+    bto_random<4, double>().perform(i5_vvvv);
 
     letter i, j, k, a, b, c, d;
 
@@ -121,14 +93,16 @@ void expr_test::test_2() throw(libtest::test_exception) {
         - asymm(b, c, contract(k|d, i_ovvv(k|c|a|d), t2(i|k|b|d)));
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_3() throw(libtest::test_exception) {
+int test_3() {
 
-    static const char *testname = "expr_test::test_3()";
+    static const char testname[] = "expr_test::test_3()";
 
     try {
 
@@ -157,23 +131,25 @@ void expr_test::test_3() throw(libtest::test_exception) {
         so_copy<4, double>(sym_t2).perform(c_t2.req_symmetry());
     }
 
-    btod_random<2>().perform(t1);
-    btod_random<4>().perform(t2);
-    btod_random<4>().perform(i1_ovov);
+    bto_random<2, double>().perform(t1);
+    bto_random<4, double>().perform(t2);
+    bto_random<4, double>().perform(i1_ovov);
 
     letter i, k, b, c;
 
     i1_ovov(i|b|k|c) = t2(i|k|b|c) - t1(i|c) * t1(k|b);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_4() throw(libtest::test_exception) {
+int test_4() {
 
-    static const char *testname = "expr_test::test_4()";
+    static const char testname[] = "expr_test::test_4()";
 
     try {
 
@@ -210,9 +186,9 @@ void expr_test::test_4() throw(libtest::test_exception) {
         so_copy<4, double>(sym_i_ovov).perform(c_i_ovov.req_symmetry());
     }
 
-    btod_random<4>().perform(i_oovv);
-    btod_random<4>().perform(i_ovov);
-    btod_random<4>().perform(t2);
+    bto_random<4, double>().perform(i_oovv);
+    bto_random<4, double>().perform(i_ovov);
+    bto_random<4, double>().perform(t2);
 
     letter j, k, l, a, b, c;
 
@@ -220,14 +196,16 @@ void expr_test::test_4() throw(libtest::test_exception) {
         i_ovov(k|a|j|b) - contract(l|c, i_oovv(k|l|b|c), t2(j|l|a|c));
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_5() throw(libtest::test_exception) {
+int test_5() {
 
-    static const char *testname = "expr_test::test_5()";
+    static const char testname[] = "expr_test::test_5()";
 
     try {
 
@@ -250,8 +228,8 @@ void expr_test::test_5() throw(libtest::test_exception) {
             permutation<4>().permute(2, 3), tr1));
     }
 
-    btod_random<4>().perform(t1_oovv);
-    btod_random<4>().perform(t2_oovv);
+    bto_random<4, double>().perform(t1_oovv);
+    bto_random<4, double>().perform(t2_oovv);
 
     letter i, j, k, a, b;
 
@@ -261,20 +239,20 @@ void expr_test::test_5() throw(libtest::test_exception) {
     contr.contract(1, 1);
     contr.contract(2, 2);
     contr.contract(3, 3);
-    btod_contract2<1, 1, 3>(contr, t1_oovv, t2_oovv).perform(t3_oo_ref);
+    bto_contract2<1, 1, 3, double>(contr, t1_oovv, t2_oovv).perform(t3_oo_ref);
     compare_ref<2>::compare(testname, t3_oo, t3_oo_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_6() throw(libtest::test_exception) {
+int test_6() {
 
-    static const char *testname = "expr_test::test_6()";
-
-    typedef allocator<double> allocator_t;
+    static const char testname[] = "expr_test::test_6()";
 
     try {
 
@@ -314,11 +292,11 @@ void expr_test::test_6() throw(libtest::test_exception) {
             permutation<4>().permute(2, 3), tr1));
     }
 
-    btod_random<4>().perform(i_oooo);
-    btod_random<4>().perform(i_ooov);
-    btod_random<4>().perform(i_oovv);
-    btod_random<2>().perform(t1);
-    btod_random<4>().perform(t2);
+    bto_random<4, double>().perform(i_oooo);
+    bto_random<4, double>().perform(i_ooov);
+    bto_random<4, double>().perform(i_oovv);
+    bto_random<2, double>().perform(t1);
+    bto_random<4, double>().perform(t2);
 
     letter i, j, k, l, a, b;
 
@@ -328,26 +306,26 @@ void expr_test::test_6() throw(libtest::test_exception) {
         + asymm(i, j, contract(a, i_ooov(k|l|i|a), t1(j|a)))
         + contract(a|b, i_oovv(k|l|a|b), t1(i|a)*t1(j|b));
 
-    btod_copy<4> op1(i_oooo);
+    bto_copy<4, double> op1(i_oooo);
 
     contraction2<2, 2, 2> contr2;
     contr2.contract(2, 2);
     contr2.contract(3, 3);
-    btod_contract2<2, 2, 2> op2(contr2, t2, i_oovv);
+    bto_contract2<2, 2, 2, double> op2(contr2, t2, i_oovv);
 
     contraction2<3, 1, 1> contr3(permutation<4>().
         permute(0, 2).permute(1, 3));
     contr3.contract(3, 1);
-    btod_contract2<3, 1, 1> op3a(contr3, i_ooov, t1);
-    btod_symmetrize2<4> op3(op3a, 0, 1, false);
+    bto_contract2<3, 1, 1, double> op3a(contr3, i_ooov, t1);
+    bto_symmetrize2<4, double> op3(op3a, 0, 1, false);
 
     contraction2<2, 2, 0> contr4a(permutation<4>().permute(1, 2));
     btensor<4> tmp4a(soovv);
-    btod_contract2<2, 2, 0>(contr4a, t1, t1).perform(tmp4a);
+    bto_contract2<2, 2, 0, double>(contr4a, t1, t1).perform(tmp4a);
     contraction2<2, 2, 2> contr4;
     contr4.contract(2, 2);
     contr4.contract(3, 3);
-    btod_contract2<2, 2, 2> op4(contr4, tmp4a, i_oovv);
+    bto_contract2<2, 2, 2, double> op4(contr4, tmp4a, i_oovv);
 
     op1.perform(i4_oooo_ref);
     op2.perform(i4_oooo_ref, 0.5);
@@ -356,51 +334,51 @@ void expr_test::test_6() throw(libtest::test_exception) {
 
     compare_ref<4>::compare(testname, i4_oooo, i4_oooo_ref, 5e-15);
 
-    dense_tensor<4, double, allocator_t> ti_oooo(i_oooo.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> ti_ooov(i_ooov.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> ti_oovv(i_oovv.get_bis().get_dims());
-    dense_tensor<2, double, allocator_t> tt1(t1.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> tt2(t2.get_bis().get_dims());
-    tod_btconv<4>(i_oooo).perform(ti_oooo);
-    tod_btconv<4>(i_ooov).perform(ti_ooov);
-    tod_btconv<4>(i_oovv).perform(ti_oovv);
-    tod_btconv<2>(t1).perform(tt1);
-    tod_btconv<4>(t2).perform(tt2);
+    dense_tensor<4, double, allocator> ti_oooo(i_oooo.get_bis().get_dims());
+    dense_tensor<4, double, allocator> ti_ooov(i_ooov.get_bis().get_dims());
+    dense_tensor<4, double, allocator> ti_oovv(i_oovv.get_bis().get_dims());
+    dense_tensor<2, double, allocator> tt1(t1.get_bis().get_dims());
+    dense_tensor<4, double, allocator> tt2(t2.get_bis().get_dims());
+    to_btconv<4, double>(i_oooo).perform(ti_oooo);
+    to_btconv<4, double>(i_ooov).perform(ti_ooov);
+    to_btconv<4, double>(i_oovv).perform(ti_oovv);
+    to_btconv<2, double>(t1).perform(tt1);
+    to_btconv<4, double>(t2).perform(tt2);
 
-    tod_copy<4> top1(ti_oooo);
+    to_copy<4, double> top1(ti_oooo);
 
-    tod_contract2<2, 2, 2> top2(contr2, tt2, ti_oovv, 0.5);
+    to_contract2<2, 2, 2, double> top2(contr2, tt2, ti_oovv, 0.5);
 
-    dense_tensor<4, double, allocator_t> ttmp3a(i_oooo.get_bis().get_dims());
-    tod_contract2<3, 1, 1>(contr3, ti_ooov, tt1).perform(true, ttmp3a);
-    tod_add<4> top3(ttmp3a);
+    dense_tensor<4, double, allocator> ttmp3a(i_oooo.get_bis().get_dims());
+    to_contract2<3, 1, 1, double>(contr3, ti_ooov, tt1).perform(true, ttmp3a);
+    to_add<4, double> top3(ttmp3a);
     top3.add_op(ttmp3a, permutation<4>().permute(0, 1), -1.0);
 
-    dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-    tod_contract2<2, 2, 0>(contr4a, tt1, tt1).perform(true, ttmp4a);
-    tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv);
+    dense_tensor<4, double, allocator> ttmp4a(i_oovv.get_bis().get_dims());
+    to_contract2<2, 2, 0, double>(contr4a, tt1, tt1).perform(true, ttmp4a);
+    to_contract2<2, 2, 2, double> top4(contr4, ttmp4a, ti_oovv);
 
-    dense_tensor<4, double, allocator_t> ti4_oooo(i4_oooo.get_bis().get_dims()),
+    dense_tensor<4, double, allocator> ti4_oooo(i4_oooo.get_bis().get_dims()),
         ti4_oooo_ref(i4_oooo.get_bis().get_dims());
     top1.perform(true, ti4_oooo_ref);
     top2.perform(false, ti4_oooo_ref);
     top3.perform(false, ti4_oooo_ref);
     top4.perform(false, ti4_oooo_ref);
-    tod_btconv<4>(i4_oooo).perform(ti4_oooo);
+    to_btconv<4, double>(i4_oooo).perform(ti4_oooo);
 
     compare_ref<4>::compare(testname, ti4_oooo, ti4_oooo_ref, 5e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_7() throw(libtest::test_exception) {
+int test_7() {
 
-    static const char *testname = "expr_test::test_7()";
-
-    typedef allocator<double> allocator_t;
+    static const char testname[] = "expr_test::test_7()";
 
     try {
 
@@ -418,12 +396,12 @@ void expr_test::test_7() throw(libtest::test_exception) {
     btensor<4> t2(soovv);
     btensor<4> i1_ovov(sovov), i1_ovov_ref(sovov);
 
-    btod_random<4>().perform(i_ooov);
-    btod_random<4>().perform(i_oovv);
-    btod_random<4>().perform(i_ovov);
-    btod_random<4>().perform(i_ovvv);
-    btod_random<2>().perform(t1);
-    btod_random<4>().perform(t2);
+    bto_random<4, double>().perform(i_ooov);
+    bto_random<4, double>().perform(i_oovv);
+    bto_random<4, double>().perform(i_ovov);
+    bto_random<4, double>().perform(i_ovvv);
+    bto_random<2, double>().perform(t1);
+    bto_random<4, double>().perform(t2);
 
     letter i, j, k, a, b, c;
 
@@ -435,26 +413,26 @@ void expr_test::test_7() throw(libtest::test_exception) {
                           t2(j|k|c|a) + 2.0 * t1(j|c)*t1(k|a),
                                i_oovv(i|k|b|c));
 
-    btod_copy<4> op1(i_ovov);
+    bto_copy<4, double> op1(i_ovov);
 
     contraction2<3, 1, 1> contr2(permutation<4>().permute(2, 3));
     contr2.contract(3, 1);
-    btod_contract2<3, 1, 1> op2(contr2, i_ovvv, t1);
+    bto_contract2<3, 1, 1, double> op2(contr2, i_ovvv, t1);
 
     contraction2<3, 1, 1> contr3(permutation<4>().
         permute(1, 3).permute(2, 3));
     contr3.contract(1, 0);
-    btod_contract2<3, 1, 1> op3(contr3, i_ooov, t1);
+    bto_contract2<3, 1, 1, double> op3(contr3, i_ooov, t1);
 
     contraction2<2, 2, 0> contr4a(permutation<4>().permute(1, 2));
     btensor<4> tmp4a(soovv);
-    btod_copy<4>(t2).perform(tmp4a);
-    btod_contract2<2, 2, 0>(contr4a, t1, t1).perform(tmp4a, 2.0);
+    bto_copy<4, double>(t2).perform(tmp4a);
+    bto_contract2<2, 2, 0, double>(contr4a, t1, t1).perform(tmp4a, 2.0);
 
     contraction2<2, 2, 2> contr4(permutation<4>().permute(0, 2));
     contr4.contract(1, 1);
     contr4.contract(2, 3);
-    btod_contract2<2, 2, 2> op4(contr4, tmp4a, i_oovv);
+    bto_contract2<2, 2, 2, double> op4(contr4, tmp4a, i_oovv);
 
     op1.perform(i1_ovov_ref);
     op2.perform(i1_ovov_ref, -1.0);
@@ -463,49 +441,51 @@ void expr_test::test_7() throw(libtest::test_exception) {
 
     compare_ref<4>::compare(testname, i1_ovov, i1_ovov_ref, 5e-15);
 
-    dense_tensor<4, double, allocator_t> ti_ooov(i_ooov.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> ti_oovv(i_oovv.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> ti_ovov(i_ovov.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> ti_ovvv(i_ovvv.get_bis().get_dims());
-    dense_tensor<2, double, allocator_t> tt1(t1.get_bis().get_dims());
-    dense_tensor<4, double, allocator_t> tt2(t2.get_bis().get_dims());
-    tod_btconv<4>(i_ooov).perform(ti_ooov);
-    tod_btconv<4>(i_oovv).perform(ti_oovv);
-    tod_btconv<4>(i_ovov).perform(ti_ovov);
-    tod_btconv<4>(i_ovvv).perform(ti_ovvv);
-    tod_btconv<2>(t1).perform(tt1);
-    tod_btconv<4>(t2).perform(tt2);
+    dense_tensor<4, double, allocator> ti_ooov(i_ooov.get_bis().get_dims());
+    dense_tensor<4, double, allocator> ti_oovv(i_oovv.get_bis().get_dims());
+    dense_tensor<4, double, allocator> ti_ovov(i_ovov.get_bis().get_dims());
+    dense_tensor<4, double, allocator> ti_ovvv(i_ovvv.get_bis().get_dims());
+    dense_tensor<2, double, allocator> tt1(t1.get_bis().get_dims());
+    dense_tensor<4, double, allocator> tt2(t2.get_bis().get_dims());
+    to_btconv<4, double>(i_ooov).perform(ti_ooov);
+    to_btconv<4, double>(i_oovv).perform(ti_oovv);
+    to_btconv<4, double>(i_ovov).perform(ti_ovov);
+    to_btconv<4, double>(i_ovvv).perform(ti_ovvv);
+    to_btconv<2, double>(t1).perform(tt1);
+    to_btconv<4, double>(t2).perform(tt2);
 
-    tod_copy<4> top1(ti_ovov);
+    to_copy<4, double> top1(ti_ovov);
 
-    tod_contract2<3, 1, 1> top2(contr2, ti_ovvv, tt1, -1.0);
+    to_contract2<3, 1, 1, double> top2(contr2, ti_ovvv, tt1, -1.0);
 
-    tod_contract2<3, 1, 1> top3(contr3, ti_ooov, tt1, -1.0);
+    to_contract2<3, 1, 1, double> top3(contr3, ti_ooov, tt1, -1.0);
 
-    dense_tensor<4, double, allocator_t> ttmp4a(i_oovv.get_bis().get_dims());
-    tod_copy<4>(tt2).perform(true, ttmp4a);
-    tod_contract2<2, 2, 0>(contr4a, tt1, tt1, 2.0).perform(false, ttmp4a);
-    tod_contract2<2, 2, 2> top4(contr4, ttmp4a, ti_oovv, 0.5);
+    dense_tensor<4, double, allocator> ttmp4a(i_oovv.get_bis().get_dims());
+    to_copy<4, double>(tt2).perform(true, ttmp4a);
+    to_contract2<2, 2, 0, double>(contr4a, tt1, tt1, 2.0).perform(false, ttmp4a);
+    to_contract2<2, 2, 2, double> top4(contr4, ttmp4a, ti_oovv, 0.5);
 
-    dense_tensor<4, double, allocator_t> ti1_ovov(i1_ovov.get_bis().get_dims()),
+    dense_tensor<4, double, allocator> ti1_ovov(i1_ovov.get_bis().get_dims()),
         ti1_ovov_ref(i1_ovov.get_bis().get_dims());
     top1.perform(true, ti1_ovov_ref);
     top2.perform(false, ti1_ovov_ref);
     top3.perform(false, ti1_ovov_ref);
     top4.perform(false, ti1_ovov_ref);
-    tod_btconv<4>(i1_ovov).perform(ti1_ovov);
+    to_btconv<4, double>(i1_ovov).perform(ti1_ovov);
 
     compare_ref<4>::compare(testname, ti1_ovov, ti1_ovov_ref, 5e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_8() throw(libtest::test_exception) {
+int test_8() {
 
-    static const char *testname = "expr_test::test_8()";
+    static const char testname[] = "expr_test::test_8()";
 
     bool need_erase = true;
     const char *pgtid = "point_group_cs";
@@ -577,9 +557,9 @@ void expr_test::test_8() throw(libtest::test_exception) {
         so_copy<4, double>(sym_t2).perform(c_i_oovv.req_symmetry());
     }
 
-    btod_random<2>().perform(f_oo);
-    btod_random<4>().perform(i_oovv);
-    btod_random<4>().perform(t2);
+    bto_random<2, double>().perform(f_oo);
+    bto_random<4, double>().perform(i_oovv);
+    bto_random<4, double>().perform(t2);
 
     letter i, j, k, a, b;
 
@@ -594,14 +574,16 @@ void expr_test::test_8() throw(libtest::test_exception) {
         if(need_erase) {
             product_table_container::get_instance().erase(pgtid);
         }
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_9() throw(libtest::test_exception) {
+int test_9() {
 
-    static const char *testname = "expr_test::test_9()";
+    static const char testname[] = "expr_test::test_9()";
 
     bool need_erase = true;
     const char *pgtid = "point_group_cs";
@@ -644,9 +626,9 @@ void expr_test::test_9() throw(libtest::test_exception) {
         so_copy<2, double>(sym_f_oo).perform(c_f_oo.req_symmetry());
     }
 
-    btod_copy<2>(f_oo).perform(d1_oo);
-    btod_set_diag<2>(1.0).perform(d1_oo);
-    btod_random<2>().perform(f_oo);
+    bto_copy<2, double>(f_oo).perform(d1_oo);
+    bto_set_diag<2, double>(1.0).perform(d1_oo);
+    bto_random<2, double>().perform(f_oo);
 
     letter i, j;
 
@@ -662,14 +644,16 @@ void expr_test::test_9() throw(libtest::test_exception) {
         if(need_erase) {
             product_table_container::get_instance().erase(pgtid);
         }
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_10() throw(libtest::test_exception) {
+int test_10() {
 
-    static const char *testname = "expr_test::test_10()";
+    static const char testname[] = "expr_test::test_10()";
 
     bool need_erase = true;
     const char *pgtid = "point_group_cs";
@@ -715,7 +699,7 @@ void expr_test::test_10() throw(libtest::test_exception) {
         so_copy<3, double>(sym_l_oox).perform(c_b_oox.req_symmetry());
     }
 
-    btod_random<3>().perform(b_oox);
+    bto_random<3, double>().perform(b_oox);
 
     letter p, q, r, s, P;
 
@@ -730,14 +714,16 @@ void expr_test::test_10() throw(libtest::test_exception) {
         if(need_erase) {
             product_table_container::get_instance().erase(pgtid);
         }
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_11() throw(libtest::test_exception) {
+int test_11() {
 
-    static const char *testname = "expr_test::test_11()";
+    static const char testname[] = "expr_test::test_11()";
 
     try {
 
@@ -751,11 +737,11 @@ void expr_test::test_11() throw(libtest::test_exception) {
     btensor<4, double> i_oooo(soooo), i_ovov(sovov), i_vvvv(svvvv);
     btensor<4, double> t_oovv(soovv), td2(soovv);
 
-    btod_random<2>().perform(df_ov);
-    btod_random<4>().perform(i_oooo);
-    btod_random<4>().perform(i_ovov);
-    btod_random<4>().perform(i_vvvv);
-    btod_random<4>().perform(t_oovv);
+    bto_random<2, double>().perform(df_ov);
+    bto_random<4, double>().perform(i_oooo);
+    bto_random<4, double>().perform(i_ovov);
+    bto_random<4, double>().perform(i_vvvv);
+    bto_random<4, double>().perform(t_oovv);
 
     letter i, j, k, l, a, b, c, d;
 
@@ -768,14 +754,16 @@ void expr_test::test_11() throw(libtest::test_exception) {
 
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_12() throw(libtest::test_exception) {
+int test_12() {
 
-    static const char *testname = "expr_test::test_12()";
+    static const char testname[] = "expr_test::test_12()";
 
     try {
 
@@ -786,12 +774,12 @@ void expr_test::test_12() throw(libtest::test_exception) {
 
     btensor<2> t1(sov), t3(sov), t3_ref(sov);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t3_ref);
-    btod_copy<2>(t3_ref).perform(t3);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t3_ref);
+    bto_copy<2, double>(t3_ref).perform(t3);
     t1.set_immutable();
 
-    btod_copy<2>(t1).perform(t3_ref, 1.0);
+    bto_copy<2, double>(t1).perform(t3_ref, 1.0);
 
     letter i, a;
 
@@ -800,14 +788,16 @@ void expr_test::test_12() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_13() throw(libtest::test_exception) {
+int test_13() {
 
-    static const char *testname = "expr_test::test_13()";
+    static const char testname[] = "expr_test::test_13()";
 
     try {
 
@@ -818,16 +808,16 @@ void expr_test::test_13() throw(libtest::test_exception) {
 
     btensor<2> t1(sov), t2(svv), t3(sov), t3_ref(sov);
 
-    btod_random<2>().perform(t1);
-    btod_random<2>().perform(t2);
-    btod_random<2>().perform(t3_ref);
-    btod_copy<2>(t3_ref).perform(t3);
+    bto_random<2, double>().perform(t1);
+    bto_random<2, double>().perform(t2);
+    bto_random<2, double>().perform(t3_ref);
+    bto_copy<2, double>(t3_ref).perform(t3);
     t1.set_immutable();
     t2.set_immutable();
 
     contraction2<1, 1, 1> contr;
     contr.contract(1, 1);
-    btod_contract2<1, 1, 1>(contr, t1, t2).perform(t3_ref, 1.0);
+    bto_contract2<1, 1, 1, double>(contr, t1, t2).perform(t3_ref, 1.0);
 
     letter i, a, b;
 
@@ -836,14 +826,16 @@ void expr_test::test_13() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t3, t3_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-void expr_test::test_14() throw(libtest::test_exception) {
+int test_14() {
 
-    static const char *testname = "expr_test::test_14()";
+    static const char testname[] = "expr_test::test_14()";
 
     try {
 
@@ -854,10 +846,10 @@ void expr_test::test_14() throw(libtest::test_exception) {
 
     btensor<2> t1(sov), t1_ref(sov);
 
-    btod_random<2>().perform(t1);
+    bto_random<2, double>().perform(t1);
 
-    btod_copy<2>(t1).perform(t1_ref);
-    btod_scale<2>(t1_ref, 0.4).perform();
+    bto_copy<2, double>(t1).perform(t1_ref);
+    bto_scale<2, double>(t1_ref, 0.4).perform();
 
     letter i, a;
 
@@ -866,9 +858,112 @@ void expr_test::test_14() throw(libtest::test_exception) {
     compare_ref<2>::compare(testname, t1, t1_ref, 1e-15);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int test_15a() {
+
+    static const char testname[] = "expr_test::test_15a()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> soo(so&so), sov(so|sv), svv(sv&sv);
+
+    btensor<1> fdo(so), fdv(sv);
+    btensor<2> foo(soo), fvv(svv);
+    btensor<2> t1(sov), t1_ref(sov);
+
+    bto_random<2, double>().perform(foo);
+    bto_random<2, double>().perform(fvv);
+    sequence<2, size_t> m11; m11[0] = 1; m11[1] = 1;
+    bto_diag<2, 1, double>(foo, m11, -1.0).perform(fdo);
+    bto_diag<2, 1, double>(fvv, m11).perform(fdv);
+    bto_dirsum<1, 1, double>(fdo, 1.0, fdv, 1.0).perform(t1_ref);
+
+    letter i, j, a, b;
+
+    t1(i|a) = dirsum(-diag(i, i|j, foo(i|j)), diag(a, a|b, fvv(a|b)));
+
+    compare_ref<2>::compare(testname, t1, t1_ref, 1e-15);
+
+    } catch(exception &e) {
+        return fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    return 0;
+}
+
+
+int test_15b() {
+
+    static const char testname[] = "expr_test::test_15b()";
+
+    try {
+
+    bispace<1> so(13); so.split(3).split(7).split(10);
+    bispace<1> sv(7); sv.split(2).split(3).split(5);
+
+    bispace<2> soo(so&so), sov(so|sv), svv(sv&sv);
+
+    btensor<1> fdo(so), fdv(sv);
+    btensor<2> foo(soo), fvv(svv);
+    btensor<2> t1(sov), t1_ref(sov);
+
+    bto_random<2, double>().perform(foo);
+    bto_random<2, double>().perform(fvv);
+    sequence<2, size_t> m11; m11[0] = 1; m11[1] = 1;
+    bto_diag<2, 1, double>(foo, m11).perform(fdo);
+    bto_diag<2, 1, double>(fvv, m11, -1.0).perform(fdv);
+    bto_dirsum<1, 1, double>(fdo, 1.0, fdv, 1.0).perform(t1_ref);
+
+    letter i, j, a, b;
+
+    t1(i|a) = dirsum(diag(i, i|j, foo(i|j)), -diag(a, a|b, fvv(a|b)));
+
+    compare_ref<2>::compare(testname, t1, t1_ref, 1e-15);
+
+    } catch(exception &e) {
+        return fail_test(testname, __FILE__, __LINE__, e.what());
+    }
+
+    return 0;
+}
+
+
+int main() {
+
+    allocator::init(16, 16, 16777216, 16777216);
+
+    int rc =
+
+        test_1() |
+        test_2() |
+        test_3() |
+        test_4() |
+        test_5() |
+        test_6() |
+        test_7() |
+        test_8() |
+        test_9() |
+        test_10() |
+        test_11() |
+        test_12() |
+        test_13() |
+        test_14() |
+        test_15a() |
+        test_15b() |
+
+        0;
+
+    allocator::shutdown();
+    return rc;
+}
+
+

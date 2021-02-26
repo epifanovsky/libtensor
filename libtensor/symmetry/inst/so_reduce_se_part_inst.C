@@ -205,6 +205,206 @@ template class symmetry_operation_impl< so_reduce<16, 15, double>,
     se_part<1, double> >;
 
 
+template class symmetry_operation_impl< so_reduce<2, 1, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<3, 1, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<3, 2, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<4, 1, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<4, 2, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<4, 3, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<5, 1, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<5, 2, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<5, 3, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<5, 4, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<6, 1, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<6, 2, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<6, 3, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<6, 4, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<6, 5, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<7, 1, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<7, 2, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<7, 3, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<7, 4, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<7, 5, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<7, 6, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<8, 1, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<8, 2, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<8, 3, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<8, 4, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<8, 5, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<8, 6, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<8, 7, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<9, 1, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<9, 2, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<9, 3, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<9, 4, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<9, 5, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<9, 6, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<9, 7, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<9, 8, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<10, 2, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<10, 3, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<10, 4, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<10, 5, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<10, 6, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<10, 7, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<10, 8, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<10, 9, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<11, 3, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<11, 4, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<11, 5, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<11, 6, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<11, 7, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<11, 8, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<11, 9, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<11, 10, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<12, 4, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<12, 5, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<12, 6, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<12, 7, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<12, 8, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<12, 9, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<12, 10, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<12, 11, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<13, 5, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<13, 6, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<13, 7, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<13, 8, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<13, 9, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<13, 10, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<13, 11, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<13, 12, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<14, 6, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<14, 7, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<14, 8, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<14, 9, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<14, 10, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<14, 11, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<14, 12, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<14, 13, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<15, 7, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<15, 8, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<15, 9, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<15, 10, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<15, 11, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<15, 12, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<15, 13, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<15, 14, float>,
+    se_part<1, float> >;
+
+template class symmetry_operation_impl< so_reduce<16, 8, float>,
+    se_part<8, float> >;
+template class symmetry_operation_impl< so_reduce<16, 9, float>,
+    se_part<7, float> >;
+template class symmetry_operation_impl< so_reduce<16, 10, float>,
+    se_part<6, float> >;
+template class symmetry_operation_impl< so_reduce<16, 11, float>,
+    se_part<5, float> >;
+template class symmetry_operation_impl< so_reduce<16, 12, float>,
+    se_part<4, float> >;
+template class symmetry_operation_impl< so_reduce<16, 13, float>,
+    se_part<3, float> >;
+template class symmetry_operation_impl< so_reduce<16, 14, float>,
+    se_part<2, float> >;
+template class symmetry_operation_impl< so_reduce<16, 15, float>,
+    se_part<1, float> >;
+
+
 } // namespace libtensor
 
 

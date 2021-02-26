@@ -22,7 +22,7 @@ so_reduce<N, M, T>::so_reduce(const symmetry<N, T> &sym1,
     size_t m = 0;
     mask<M> rsets;
     index<M> rbia, rbib, ria, rib;
-    register size_t i = 0;
+    size_t i = 0;
     for (; i < N; i++) {
         if (! msk[i]) continue;
         if (rseq[i] > M) break;
@@ -44,7 +44,7 @@ so_reduce<N, M, T>::so_reduce(const symmetry<N, T> &sym1,
     }
 
     for (i = 0; i < M && rsets[i]; i++) {
-        register size_t j = 0;
+        size_t j = 0;
         for (; j < N; j++) {
             if (! msk[j] || rseq[j] != i) continue;
             if (rblrange.get_begin()[j] != rbia[i] ||

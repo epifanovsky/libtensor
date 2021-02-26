@@ -7,16 +7,24 @@
 namespace libtensor {
 
 
-typedef block_tensor_traits< double, allocator<double> > bt_traits;
+//typedef block_tensor_traits< double, allocator<double> > bt_traits;
 
-template class gen_block_tensor<1, bt_traits>;
-template class gen_block_tensor<2, bt_traits>;
-template class gen_block_tensor<3, bt_traits>;
-template class gen_block_tensor<4, bt_traits>;
-template class gen_block_tensor<5, bt_traits>;
-template class gen_block_tensor<6, bt_traits>;
-template class gen_block_tensor<7, bt_traits>;
-template class gen_block_tensor<8, bt_traits>;
+template class gen_block_tensor<1, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<2, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<3, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<4, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<5, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<6, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<7, block_tensor_traits< double, allocator > >;
+template class gen_block_tensor<8, block_tensor_traits< double, allocator > >;
 
+template class gen_block_tensor<1, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<2, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<3, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<4, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<5, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<6, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<7, block_tensor_traits< float, allocator > >;
+template class gen_block_tensor<8, block_tensor_traits< float, allocator > >;
 
 } // namespace libtensor

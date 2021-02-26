@@ -6,12 +6,11 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_contract2.h>
+#include <libtensor/dense_tensor/to_contract2.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
 using namespace libtensor;
-typedef allocator<double> allocator_t;
 const double k_thresh = 5e-14;
 
 #if 0
@@ -34,10 +33,10 @@ int test_0_p_p(size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<1, double, allocator_t> ta(dima);
-    dense_tensor<1, double, allocator_t> tb(dimb);
-    dense_tensor<0, double, allocator_t> tc(dimc);
-    dense_tensor<0, double, allocator_t> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<0, double, allocator> tc(dimc);
+    dense_tensor<0, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -82,8 +81,8 @@ int test_0_p_p(size_t np, double d) {
 
     contraction2<0, 0, 1> contr;
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<0, 0, 1>(contr, ta, tb).perform(true, tc);
-    else tod_contract2<0, 0, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<0, 0, 1, double>(contr, ta, tb).perform(true, tc);
+    else to_contract2<0, 0, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -116,10 +115,10 @@ int test_i_p_pi(size_t ni, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<1, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<1, double, allocator_t> tc(dimc);
-    dense_tensor<1, double, allocator_t> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<1, double, allocator> tc(dimc);
+    dense_tensor<1, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -169,8 +168,8 @@ int test_i_p_pi(size_t ni, size_t np, double d) {
 
     contraction2<0, 1, 1> contr;
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(true, tc);
-    else tod_contract2<0, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<0, 1, 1, double>(contr, ta, tb).perform(true, tc);
+    else to_contract2<0, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -204,10 +203,10 @@ int test_i_p_ip(size_t ni, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<1, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<1, double, allocator_t> tc(dimc);
-    dense_tensor<1, double, allocator_t> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<1, double, allocator> tc(dimc);
+    dense_tensor<1, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -257,8 +256,8 @@ int test_i_p_ip(size_t ni, size_t np, double d) {
 
     contraction2<0, 1, 1> contr;
     contr.contract(0, 1);
-    if(d == 0.0) tod_contract2<0, 1, 1>(contr, ta, tb).perform(true, tc);
-    else tod_contract2<0, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<0, 1, 1, double>(contr, ta, tb).perform(true, tc);
+    else to_contract2<0, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -292,10 +291,10 @@ int test_i_pi_p(size_t ni, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<1, double, allocator_t> tb(dimb);
-    dense_tensor<1, double, allocator_t> tc(dimc);
-    dense_tensor<1, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<1, double, allocator> tc(dimc);
+    dense_tensor<1, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -345,8 +344,8 @@ int test_i_pi_p(size_t ni, size_t np, double d) {
 
     contraction2<1, 0, 1> contr;
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb).perform(true, tc);
-    else tod_contract2<1, 0, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 0, 1, double>(contr, ta, tb).perform(true, tc);
+    else to_contract2<1, 0, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -380,10 +379,10 @@ int test_i_ip_p(size_t ni, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<1, double, allocator_t> tb(dimb);
-    dense_tensor<1, double, allocator_t> tc(dimc);
-    dense_tensor<1, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<1, double, allocator> tc(dimc);
+    dense_tensor<1, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -433,8 +432,8 @@ int test_i_ip_p(size_t ni, size_t np, double d) {
 
     contraction2<1, 0, 1> contr;
     contr.contract(1, 0);
-    if(d == 0.0) tod_contract2<1, 0, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 0, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 0, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 0, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -468,10 +467,10 @@ int test_ij_i_j(size_t ni, size_t nj, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<1, double, allocator_t> ta(dima);
-    dense_tensor<1, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -520,8 +519,8 @@ int test_ij_i_j(size_t ni, size_t nj, double d) {
     // Invoke the contraction routine
 
     contraction2<1, 1, 0> contr;
-    if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 0>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 0, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 0, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -555,10 +554,10 @@ int test_ij_j_i(size_t ni, size_t nj, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<1, double, allocator_t> ta(dima);
-    dense_tensor<1, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -607,8 +606,8 @@ int test_ij_j_i(size_t ni, size_t nj, double d) {
     // Invoke the contraction routine
 
     contraction2<1, 1, 0> contr(permutation<2>().permute(0, 1));
-    if(d == 0.0) tod_contract2<1, 1, 0>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 0>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 0, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 0, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -642,10 +641,10 @@ int test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -696,8 +695,8 @@ int test_ij_pi_pj(size_t ni, size_t nj, size_t np, double d) {
 
     contraction2<1, 1, 1> contr;
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -731,10 +730,10 @@ int test_ij_pi_jp(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -785,8 +784,8 @@ int test_ij_pi_jp(size_t ni, size_t nj, size_t np, double d) {
 
     contraction2<1, 1, 1> contr;
     contr.contract(0, 1);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -820,10 +819,10 @@ int test_ij_ip_pj(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -874,8 +873,8 @@ int test_ij_ip_pj(size_t ni, size_t nj, size_t np, double d) {
 
     contraction2<1, 1, 1> contr;
     contr.contract(1, 0);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -909,10 +908,10 @@ int test_ij_ip_jp(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -963,8 +962,8 @@ int test_ij_ip_jp(size_t ni, size_t nj, size_t np, double d) {
 
     contraction2<1, 1, 1> contr;
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -998,10 +997,10 @@ int test_ij_pj_pi(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1053,8 +1052,8 @@ int test_ij_pj_pi(size_t ni, size_t nj, size_t np, double d) {
     permutation<2> permc; permc.permute(0, 1);
     contraction2<1, 1, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1088,10 +1087,10 @@ int test_ij_pj_ip(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1143,8 +1142,8 @@ int test_ij_pj_ip(size_t ni, size_t nj, size_t np, double d) {
     permutation<2> permc; permc.permute(0, 1);
     contraction2<1, 1, 1> contr(permc);
     contr.contract(0, 1);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1178,10 +1177,10 @@ int test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1233,8 +1232,8 @@ int test_ij_jp_ip(size_t ni, size_t nj, size_t np, double d) {
     permutation<2> permc; permc.permute(0, 1);
     contraction2<1, 1, 1> contr(permc);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1268,10 +1267,10 @@ int test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1323,8 +1322,8 @@ int test_ij_jp_pi(size_t ni, size_t nj, size_t np, double d) {
     permutation<2> permc; permc.permute(0, 1);
     contraction2<1, 1, 1> contr(permc);
     contr.contract(1, 0);
-    if(d == 0.0) tod_contract2<1, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1358,10 +1357,10 @@ int test_ij_p_pji(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<1, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<1, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1415,8 +1414,8 @@ int test_ij_p_pji(size_t ni, size_t nj, size_t np, double d) {
     permutation<2> permc; permc.permute(0, 1);
     contraction2<0, 2, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<0, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<0, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<0, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<0, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1450,10 +1449,10 @@ int test_ij_pji_p(size_t ni, size_t nj, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<1, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<1, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1507,8 +1506,8 @@ int test_ij_pji_p(size_t ni, size_t nj, size_t np, double d) {
     permutation<2> permc; permc.permute(0, 1);
     contraction2<2, 0, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<2, 0, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 0, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 0, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 0, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1550,10 +1549,10 @@ int test_ij_pi_pj_qi_jq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
         szb1 = dimb1.get_size(), szb2 = dimb2.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta1(dima1), ta2(dima2);
-    dense_tensor<2, double, allocator_t> tb1(dimb1), tb2(dimb2);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta1(dima1), ta2(dima2);
+    dense_tensor<2, double, allocator> tb1(dimb1), tb2(dimb2);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
     double d1, d2;
 
     double cij_max = 0.0;
@@ -1635,7 +1634,7 @@ int test_ij_pi_pj_qi_jq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     } else {
         zero = false; k = d;
     }
-    tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1 * k);
+    to_contract2<1, 1, 1, double> op(contr1, ta1, tb1, d1 * k);
     op.add_args(contr2, ta2, tb2, d2 * k);
     op.perform(zero, tc);
 
@@ -1679,10 +1678,10 @@ int test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq, double d) {
         szb1 = dimb1.get_size(), szb2 = dimb2.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta1(dima1), ta2(dima2);
-    dense_tensor<2, double, allocator_t> tb1(dimb1), tb2(dimb2);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta1(dima1), ta2(dima2);
+    dense_tensor<2, double, allocator> tb1(dimb1), tb2(dimb2);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
     double d1, d2;
 
     double cij_max = 0.0;
@@ -1764,7 +1763,7 @@ int test_ij_pi_pj_qi_qj(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     } else {
         zero = false; k = d;
     }
-    tod_contract2<1, 1, 1> op(contr1, ta1, tb1, d1 * k);
+    to_contract2<1, 1, 1, double> op(contr1, ta1, tb1, d1 * k);
     op.add_args(contr2, ta2, tb2, d2 * k);
     op.perform(zero, tc);
 
@@ -1800,10 +1799,10 @@ int test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1860,8 +1859,8 @@ int test_ijk_ip_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(1, 2); // ikj -> ijk
     contraction2<1, 2, 1> contr(permc);
     contr.contract(1, 0);
-    if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1895,10 +1894,10 @@ int test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -1955,8 +1954,8 @@ int test_ijk_pi_pkj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(1, 2); // ikj -> ijk
     contraction2<1, 2, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -1990,10 +1989,10 @@ int test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2050,8 +2049,8 @@ int test_ijk_pik_pj(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(1, 2); // ikj -> ijk
     contraction2<2, 1, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2085,10 +2084,10 @@ int test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2145,8 +2144,8 @@ int test_ijk_pj_ipk(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(0, 1); // jik -> ijk
     contraction2<1, 2, 1> contr(permc);
     contr.contract(0, 1);
-    if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2180,10 +2179,10 @@ int test_ijk_pj_pik(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2240,8 +2239,8 @@ int test_ijk_pj_pik(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(0, 1); // jik -> ijk
     contraction2<1, 2, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<1, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2275,10 +2274,10 @@ int test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2335,8 +2334,8 @@ int test_ijk_pkj_ip(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(0, 2); // kji -> ijk
     contraction2<2, 1, 1> contr(permc);
     contr.contract(0, 1);
-    if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2370,10 +2369,10 @@ int test_ijk_pkj_pi(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2430,8 +2429,8 @@ int test_ijk_pkj_pi(size_t ni, size_t nj, size_t nk, size_t np, double d) {
     permc.permute(0, 2); // kji -> ijk
     contraction2<2, 1, 1> contr(permc);
     contr.contract(0, 0);
-    if(d == 0.0) tod_contract2<2, 1, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 1, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 1, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 1, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2465,10 +2464,10 @@ int test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2523,8 +2522,8 @@ int test_ij_pqi_pjq(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     contraction2<1, 1, 2> contr;
     contr.contract(0, 0);
     contr.contract(1, 2);
-    if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2557,10 +2556,10 @@ int test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2615,8 +2614,8 @@ int test_ij_ipq_jqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     contraction2<1, 1, 2> contr;
     contr.contract(1, 2);
     contr.contract(2, 1);
-    if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2649,10 +2648,10 @@ int test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2707,8 +2706,8 @@ int test_ij_jpq_iqp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     contraction2<1, 1, 2> contr(permutation<2>().permute(0, 1));
     contr.contract(1, 2);
     contr.contract(2, 1);
-    if(d == 0.0) tod_contract2<1, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2744,10 +2743,10 @@ int test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2803,8 +2802,8 @@ int test_ij_jipq_qp(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     contraction2<2, 0, 2> contr(permutation<2>().permute(0, 1));
     contr.contract(2, 1);
     contr.contract(3, 0);
-    if(d == 0.0) tod_contract2<2, 0, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 0, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 0, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 0, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -2835,10 +2834,10 @@ int test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2893,7 +2892,7 @@ int test_ij_pq_ijpq(size_t ni, size_t nj, size_t np, size_t nq) {
     contr.contract(0, 2);
     contr.contract(1, 3);
 
-    tod_contract2<0, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<0, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     // Compare against the reference
 
@@ -2920,10 +2919,10 @@ int test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -2978,7 +2977,7 @@ int test_ij_pq_ijpq_a(size_t ni, size_t nj, size_t np, size_t nq, double d) {
     contr.contract(0, 2);
     contr.contract(1, 3);
 
-    tod_contract2<0, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    to_contract2<0, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3012,10 +3011,10 @@ int test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3072,8 +3071,8 @@ int test_ijk_kjpq_iqp(size_t ni, size_t nj, size_t nk,
     contraction2<2, 1, 2> contr(permutation<3>().permute(0, 2));
     contr.contract(2, 2);
     contr.contract(3, 1);
-    if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 1, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 1, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 1, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3111,10 +3110,10 @@ int test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3173,8 +3172,8 @@ int test_ijk_pkiq_pjq(size_t ni, size_t nj, size_t nk,
     contraction2<2, 1, 2> contr(permc);
     contr.contract(0, 0);
     contr.contract(3, 2);
-    if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 1, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 1, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 1, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3212,10 +3211,10 @@ int test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3273,8 +3272,8 @@ int test_ijk_pqj_iqpk(size_t ni, size_t nj, size_t nk,
     contraction2<1, 2, 2> contr(permutation<3>().permute(0, 1));
     contr.contract(0, 2);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<1, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3312,10 +3311,10 @@ int test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<3, double, allocator_t> tc(dimc);
-    dense_tensor<3, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<3, double, allocator> tc(dimc);
+    dense_tensor<3, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3372,8 +3371,8 @@ int test_ijk_pqji_qpk(size_t ni, size_t nj, size_t nk,
     contraction2<2, 1, 2> contr(permutation<3>().permute(0, 1));
     contr.contract(0, 1);
     contr.contract(1, 0);
-    if(d == 0.0) tod_contract2<2, 1, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 1, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 1, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 1, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3411,10 +3410,10 @@ int test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3472,8 +3471,8 @@ int test_ijkl_ikp_jpl(size_t ni, size_t nj, size_t nk,
     permc.permute(1, 2); // ikjl -> ijkl
     contraction2<2, 2, 1> contr(permc);
     contr.contract(2, 1);
-    if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3511,10 +3510,10 @@ int test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3572,8 +3571,8 @@ int test_ijkl_ipk_jpl(size_t ni, size_t nj, size_t nk,
     permc.permute(1, 2); // ikjl -> ijkl
     contraction2<2, 2, 1> contr(permc);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3611,10 +3610,10 @@ int test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3671,8 +3670,8 @@ int test_ijkl_ipl_jpk(size_t ni, size_t nj, size_t nk,
     permutation<4> permc; permc.permute(1, 2).permute(2, 3); // iljk->ijkl
     contraction2<2, 2, 1> contr(permc);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3710,10 +3709,10 @@ int test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3771,8 +3770,8 @@ int test_ijkl_jkp_ipl(size_t ni, size_t nj, size_t nk,
     permc.permute(0, 2).permute(1, 2); // jkil -> ijkl
     contraction2<2, 2, 1> contr(permc);
     contr.contract(2, 1);
-    if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3810,10 +3809,10 @@ int test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -3872,8 +3871,8 @@ int test_ijkl_jpl_ipk(size_t ni, size_t nj, size_t nk,
     permc.permute(0, 2).permute(1, 2).permute(2, 3);
     contraction2<2, 2, 1> contr(permc);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -3924,10 +3923,10 @@ int test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
         szb2 = dimb2.get_size(), szb3 = dimb3.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta1(dima1), ta2(dima2), ta3(dima3);
-    dense_tensor<3, double, allocator_t> tb1(dimb1), tb2(dimb2), tb3(dimb3);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta1(dima1), ta2(dima2), ta3(dima3);
+    dense_tensor<3, double, allocator> tb1(dimb1), tb2(dimb2), tb3(dimb3);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
     double d1, d2, d3;
 
     double cij_max = 0.0;
@@ -4057,7 +4056,7 @@ int test_ijkl_jpl_ipk_jiq_kql_jlr_ikr(size_t ni, size_t nj,
         zero = false;
         k = d;
     }
-    tod_contract2<2, 2, 1> op(contr1, ta1, tb1, d1 * k);
+    to_contract2<2, 2, 1, double> op(contr1, ta1, tb1, d1 * k);
     op.add_args(contr2, ta2, tb2, d2 * k);
     op.add_args(contr3, ta3, tb3, d3 * k);
     op.perform(zero, tc);
@@ -4100,10 +4099,10 @@ int test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<5, double, allocator_t> tc(dimc);
-    dense_tensor<5, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<5, double, allocator> tc(dimc);
+    dense_tensor<5, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4165,8 +4164,8 @@ int test_ijklm_ikp_jpml(size_t ni, size_t nj, size_t nk,
     permc.permute(1, 2).permute(3, 4);
     contraction2<2, 3, 1> contr(permc);
     contr.contract(2, 1);
-    if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 3, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 3, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 3, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4206,10 +4205,10 @@ int test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<5, double, allocator_t> tc(dimc);
-    dense_tensor<5, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<5, double, allocator> tc(dimc);
+    dense_tensor<5, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4271,8 +4270,8 @@ int test_ijklm_ipkm_jpl(size_t ni, size_t nj, size_t nk,
     permc.permute(1, 3).permute(2, 3).permute(3, 4);
     contraction2<3, 2, 1> contr(permc);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<3, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<3, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<3, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<3, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4312,10 +4311,10 @@ int test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<5, double, allocator_t> tc(dimc);
-    dense_tensor<5, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<5, double, allocator> tc(dimc);
+    dense_tensor<5, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4377,8 +4376,8 @@ int test_ijklm_jlp_ipkm(size_t ni, size_t nj, size_t nk,
     permc.permute(0, 2).permute(1, 2).permute(2, 3);
     contraction2<2, 3, 1> contr(permc);
     contr.contract(2, 1);
-    if(d == 0.0) tod_contract2<2, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 3, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 3, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 3, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4418,10 +4417,10 @@ int test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<6, double, allocator_t> tc(dimc);
-    dense_tensor<6, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<6, double, allocator> tc(dimc);
+    dense_tensor<6, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4486,8 +4485,8 @@ int test_ijklmn_kjmp_ipln(size_t ni, size_t nj, size_t nk,
     permc.permute(0, 3).permute(2, 3).permute(3, 4);
     contraction2<3, 3, 1> contr(permc);
     contr.contract(3, 1);
-    if(d == 0.0) tod_contract2<3, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<3, 3, 1>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<3, 3, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<3, 3, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4526,10 +4525,10 @@ int test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4587,8 +4586,8 @@ int test_ijkl_iplq_kpjq(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(1, 1);
     contr.contract(3, 3);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4627,10 +4626,10 @@ int test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4688,8 +4687,8 @@ int test_ijkl_iplq_pkjq(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(1, 0);
     contr.contract(3, 3);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4728,10 +4727,10 @@ int test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4789,8 +4788,8 @@ int test_ijkl_iplq_pkqj(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(1, 0);
     contr.contract(3, 2);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4829,10 +4828,10 @@ int test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4890,8 +4889,8 @@ int test_ijkl_ipql_kpqj(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(1, 1);
     contr.contract(2, 2);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -4930,10 +4929,10 @@ int test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -4991,8 +4990,8 @@ int test_ijkl_ipql_pkqj(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(1, 0);
     contr.contract(2, 2);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5031,10 +5030,10 @@ int test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5092,8 +5091,8 @@ int test_ijkl_pilq_kpjq(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(0, 1);
     contr.contract(3, 3);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5132,10 +5131,10 @@ int test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5193,8 +5192,8 @@ int test_ijkl_pilq_pkjq(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(0, 0);
     contr.contract(3, 3);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5233,10 +5232,10 @@ int test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5294,8 +5293,8 @@ int test_ijkl_piql_kpqj(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(0, 1);
     contr.contract(2, 2);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5334,10 +5333,10 @@ int test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5395,8 +5394,8 @@ int test_ijkl_piql_pkqj(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permutation<4>().permute(1, 3));
     contr.contract(0, 0);
     contr.contract(2, 2);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5435,10 +5434,10 @@ int test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5498,8 +5497,8 @@ int test_ijkl_pqkj_iqpl(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permc);
     contr.contract(0, 2);
     contr.contract(1, 1);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5538,10 +5537,10 @@ int test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5601,8 +5600,8 @@ int test_ijkl_pqkj_qipl(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 2> contr(permc);
     contr.contract(0, 2);
     contr.contract(1, 0);
-    if(d == 0.0) tod_contract2<2, 2, 2>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<2, 2, 2>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<2, 2, 2, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<2, 2, 2, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5635,10 +5634,10 @@ int test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5696,7 +5695,7 @@ int test_ij_ipqr_jpqr(size_t ni, size_t nj, size_t np,
     contr.contract(2, 2);
     contr.contract(3, 3);
 
-    tod_contract2<1, 1, 3>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<1, 1, 3, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     // Compare against the reference
 
@@ -5725,10 +5724,10 @@ int test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5785,7 +5784,7 @@ int test_ij_ipqr_jpqr_a(size_t ni, size_t nj, size_t np,
     contr.contract(2, 2);
     contr.contract(3, 3);
 
-    tod_contract2<1, 1, 3>(contr, ta, tb, d).perform(false, tc);
+    to_contract2<1, 1, 3, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5817,10 +5816,10 @@ int test_ij_ipqr_pjrq(size_t ni, size_t nj, size_t np, size_t nq, size_t nr,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5878,8 +5877,8 @@ int test_ij_ipqr_pjrq(size_t ni, size_t nj, size_t np, size_t nq, size_t nr,
     contr.contract(1, 0);
     contr.contract(2, 3);
     contr.contract(3, 2);
-    if(d == 0.0) tod_contract2<1, 1, 3>(contr, ta, tb, 1.0).perform(true, tc);
-    else tod_contract2<1, 1, 3>(contr, ta, tb, d).perform(false, tc);
+    if(d == 0.0) to_contract2<1, 1, 3, double>(contr, ta, tb, 1.0).perform(true, tc);
+    else to_contract2<1, 1, 3, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -5911,10 +5910,10 @@ int test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -5972,8 +5971,8 @@ int test_ij_jpqr_iprq(size_t ni, size_t nj, size_t np,
     contr.contract(2, 3);
     contr.contract(3, 2);
 
-    //~ tod_contract2<1, 1, 3> op(contr, ta, tb);
-    tod_contract2<1, 1, 3> op(contr, tb, ta, (d != 0 ? d : 1.0));
+    //~ to_contract2<1, 1, 3, double> op(contr, ta, tb);
+    to_contract2<1, 1, 3, double> op(contr, tb, ta, (d != 0 ? d : 1.0));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -6004,10 +6003,10 @@ int test_ij_pqir_pqjr(size_t ni, size_t nj,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -6064,7 +6063,7 @@ int test_ij_pqir_pqjr(size_t ni, size_t nj,
     contr.contract(1, 1);
     contr.contract(3, 3);
 
-    tod_contract2<1, 1, 3>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<1, 1, 3, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     // Compare against the reference
 
@@ -6093,10 +6092,10 @@ int test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<2, double, allocator_t> tc(dimc);
-    dense_tensor<2, double, allocator_t> tc_ref(dimc);
+    dense_tensor<4, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<2, double, allocator> tc(dimc);
+    dense_tensor<2, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -6153,7 +6152,7 @@ int test_ij_pqir_pqjr_a(size_t ni, size_t nj, size_t np,
     contr.contract(1, 1);
     contr.contract(3, 3);
 
-    tod_contract2<1, 1, 3>(contr, ta, tb, d).perform(false, tc);
+    to_contract2<1, 1, 3, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -6189,10 +6188,10 @@ int test_ijkl_pi_jklp(size_t ni, size_t nj,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cijkl_max = 0.0;
 
@@ -6255,7 +6254,7 @@ int test_ijkl_pi_jklp(size_t ni, size_t nj,
     contraction2<1, 3, 1> contr;
     contr.contract(0, 3);
 
-    tod_contract2<1, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<1, 3, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     //
     // Compare against the reference
@@ -6298,10 +6297,10 @@ int test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cijkl_max = 0.0;
 
@@ -6364,7 +6363,7 @@ int test_ijkl_pi_jklp_a(size_t ni, size_t nj, size_t nk,
     contraction2<1, 3, 1> contr;
     contr.contract(0, 3);
 
-    tod_contract2<1, 3, 1>(contr, ta, tb, d).perform(false, tc);
+    to_contract2<1, 3, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     //
     // Compare against the reference
@@ -6401,10 +6400,10 @@ int test_jikl_pi_jpkl(size_t ni, size_t nj,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -6461,7 +6460,7 @@ int test_jikl_pi_jpkl(size_t ni, size_t nj,
     contraction2<1, 3, 1> contr(permc);
     contr.contract(0, 1);
 
-    tod_contract2<1, 3, 1>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<1, 3, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     // Compare against the reference
 
@@ -6491,10 +6490,10 @@ int test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<4, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<4, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -6551,7 +6550,7 @@ int test_jikl_pi_jpkl_a(size_t ni, size_t nj, size_t nk,
     contraction2<1, 3, 1> contr(permc);
     contr.contract(0, 1);
 
-    tod_contract2<1, 3, 1>(contr, ta, tb, d).perform(false, tc);
+    to_contract2<1, 3, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -6580,10 +6579,10 @@ int test_ijkl_ijp_klp(size_t ni, size_t nj,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -6638,7 +6637,7 @@ int test_ijkl_ijp_klp(size_t ni, size_t nj,
     contraction2<2, 2, 1> contr(permc);
     contr.contract(2, 2);
 
-    tod_contract2<2, 2, 1>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<2, 2, 1, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     // Compare against the reference
 
@@ -6667,10 +6666,10 @@ int test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<3, double, allocator_t> ta(dima);
-    dense_tensor<3, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<3, double, allocator> ta(dima);
+    dense_tensor<3, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cij_max = 0.0;
 
@@ -6725,7 +6724,7 @@ int test_ijkl_ijp_klp_a(size_t ni, size_t nj, size_t nk,
     contraction2<2, 2, 1> contr(permc);
     contr.contract(2, 2);
 
-    tod_contract2<2, 2, 1>(contr, ta, tb, d).perform(false, tc);
+    to_contract2<2, 2, 1, double>(contr, ta, tb, d).perform(false, tc);
 
     // Compare against the reference
 
@@ -6760,10 +6759,10 @@ int test_ijkl_ij_kl(size_t ni, size_t nj, size_t nk, size_t nl) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cijkl_max = 0.0;
 
@@ -6822,7 +6821,7 @@ int test_ijkl_ij_kl(size_t ni, size_t nj, size_t nk, size_t nl) {
 
     contraction2<2, 2, 0> contr;
 
-    tod_contract2<2, 2, 0>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<2, 2, 0, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     //
     // Compare against the reference
@@ -6864,10 +6863,10 @@ int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
     size_t sza = dima.get_size(), szb = dimb.get_size(),
         szc = dimc.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dima);
-    dense_tensor<2, double, allocator_t> tb(dimb);
-    dense_tensor<4, double, allocator_t> tc(dimc);
-    dense_tensor<4, double, allocator_t> tc_ref(dimc);
+    dense_tensor<2, double, allocator> ta(dima);
+    dense_tensor<2, double, allocator> tb(dimb);
+    dense_tensor<4, double, allocator> tc(dimc);
+    dense_tensor<4, double, allocator> tc_ref(dimc);
 
     double cijkl_max = 0.0;
 
@@ -6928,7 +6927,7 @@ int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
     permc.permute(2, 3);
     contraction2<2, 2, 0> contr(permc);
 
-    tod_contract2<2, 2, 0>(contr, ta, tb, 1.0).perform(true, tc);
+    to_contract2<2, 2, 0, double>(contr, ta, tb, 1.0).perform(true, tc);
 
     //
     // Compare against the reference
@@ -6948,7 +6947,7 @@ int test_ijkl_ij_lk(size_t ni, size_t nj, size_t nk, size_t nl) {
 int main() {
 
     int rc = 1;
-    allocator<double>::init(16, 16, 16777216, 16777216);
+    allocator::init(16, 16, 16777216, 16777216);
 
     try {
 
@@ -8008,11 +8007,11 @@ int main() {
 
 
     } catch(...) {
-        allocator<double>::shutdown();
+        allocator::shutdown();
         throw;
     }
 
-    allocator<double>::shutdown();
+    allocator::shutdown();
 
     return rc;
 }

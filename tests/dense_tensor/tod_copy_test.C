@@ -2,14 +2,13 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_copy.h>
+#include <libtensor/dense_tensor/to_copy.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
 using namespace libtensor;
 
-typedef allocator<double> allocator_t;
-typedef dense_tensor<4, double, allocator_t> tensor4;
+typedef dense_tensor<4, double, allocator> tensor4;
 typedef dense_tensor_ctrl<4, double> tensor4_ctrl;
 
 
@@ -20,7 +19,7 @@ int test_plain(const dimensions<N> &dims) {
 
     try {
 
-        dense_tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+        dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
         {
             dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -49,7 +48,7 @@ int test_plain(const dimensions<N> &dims) {
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta).perform(true, tb);
+        to_copy<N, double>(ta).perform(true, tb);
 
         // Compare against the reference
 
@@ -70,7 +69,7 @@ int test_plain_additive(const dimensions<N> &dims, double d) {
 
     try {
 
-        dense_tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+        dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
         {
             dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -100,7 +99,7 @@ int test_plain_additive(const dimensions<N> &dims, double d) {
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, d).perform(false, tb);
+        to_copy<N, double>(ta, d).perform(false, tb);
 
         // Compare against the reference
 
@@ -121,7 +120,7 @@ int test_scaled(const dimensions<N> &dims, double c) {
 
     try {
 
-        dense_tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+        dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
         {
             dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -151,7 +150,7 @@ int test_scaled(const dimensions<N> &dims, double c) {
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, c).perform(true, tb);
+        to_copy<N, double>(ta, c).perform(true, tb);
 
         // Compare against the reference
 
@@ -174,7 +173,7 @@ int test_scaled_additive(const dimensions<N> &dims, double c, double d) {
 
     try {
 
-        dense_tensor<N, double, allocator_t> ta(dims), tb(dims), tb_ref(dims);
+        dense_tensor<N, double, allocator> ta(dims), tb(dims), tb_ref(dims);
 
         {
             dense_tensor_ctrl<N, double> tca(ta), tcb(tb), tcb_ref(tb_ref);
@@ -204,7 +203,7 @@ int test_scaled_additive(const dimensions<N> &dims, double c, double d) {
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, c * d).perform(false, tb);
+        to_copy<N, double>(ta, c * d).perform(false, tb);
 
         // Compare against the reference
 
@@ -230,7 +229,7 @@ int test_perm(const dimensions<N> &dims, const permutation<N> &perm) {
         dimensions<N> dimsa(dims), dimsb(dims);
         dimsb.permute(perm);
 
-        dense_tensor<N, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -266,7 +265,7 @@ int test_perm(const dimensions<N> &dims, const permutation<N> &perm) {
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, perm).perform(true, tb);
+        to_copy<N, double>(ta, perm).perform(true, tb);
 
         // Compare against the reference
 
@@ -291,7 +290,7 @@ int test_perm_additive(const dimensions<N> &dims, const permutation<N> &perm,
         dimensions<N> dimsa(dims), dimsb(dims);
         dimsb.permute(perm);
 
-        dense_tensor<N, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -328,7 +327,7 @@ int test_perm_additive(const dimensions<N> &dims, const permutation<N> &perm,
 
         // Invoke the copy operation
 
-        tod_copy<N>(ta, perm, d).perform(false, tb);
+        to_copy<N, double>(ta, perm, d).perform(false, tb);
 
         // Compare against the reference
 
@@ -353,7 +352,7 @@ int test_perm_scaled(const dimensions<N> &dims, const permutation<N> &perm,
         dimensions<N> dimsa(dims), dimsb(dims);
         dimsb.permute(perm);
 
-        dense_tensor<N, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -390,7 +389,7 @@ int test_perm_scaled(const dimensions<N> &dims, const permutation<N> &perm,
         // Invoke the copy operation
 
         tensor_transf<N, double> tr(perm, scalar_transf<double>(c));
-        tod_copy<N> cp(ta, tr);
+        to_copy<N, double> cp(ta, tr);
         cp.perform(true, tb);
 
         // Compare against the reference
@@ -416,7 +415,7 @@ int test_perm_scaled_additive(const dimensions<N> &dims,
         dimensions<N> dimsa(dims), dimsb(dims);
         dimsb.permute(perm);
 
-        dense_tensor<N, double, allocator_t> ta(dimsa), tb(dimsb),
+        dense_tensor<N, double, allocator> ta(dimsa), tb(dimsb),
             tb_ref(dimsb);
 
         {
@@ -453,7 +452,7 @@ int test_perm_scaled_additive(const dimensions<N> &dims,
         // Invoke the copy operation
 
         tensor_transf<N, double> tr(perm, scalar_transf<double>(c * d));
-        tod_copy<N> cp(ta, tr);
+        to_copy<N, double> cp(ta, tr);
         cp.perform(false, tb);
 
         // Compare against the reference
@@ -485,7 +484,7 @@ int test_exc() {
 
     bool ok = false;
     try {
-        tod_copy<4>(t1).perform(true, t2);
+        to_copy<4, double>(t1).perform(true, t2);
     } catch(exception &e) {
         ok = true;
     }
@@ -494,6 +493,8 @@ int test_exc() {
         return fail_test("tod_copy_test::test_exc()", __FILE__, __LINE__,
             "Expected an exception with heterogeneous arguments");
     }
+
+    return 0;
 }
 
 

@@ -3,15 +3,23 @@
 namespace libtensor {
 
 
-template class btod_export_arma<1>;
-template class btod_export_arma<2>;
-template class btod_export_arma<3>;
-template class btod_export_arma<4>;
-template class btod_export_arma<5>;
-template class btod_export_arma<6>;
-template class btod_export_arma<7>;
-template class btod_export_arma<8>;
+template class bto_export_arma<1, double>;
+template class bto_export_arma<2, double>;
+template class bto_export_arma<3, double>;
+template class bto_export_arma<4, double>;
+template class bto_export_arma<5, double>;
+template class bto_export_arma<6, double>;
+template class bto_export_arma<7, double>;
+template class bto_export_arma<8, double>;
 
+template class bto_export_arma<1, float>;
+template class bto_export_arma<2, float>;
+template class bto_export_arma<3, float>;
+template class bto_export_arma<4, float>;
+template class bto_export_arma<5, float>;
+template class bto_export_arma<6, float>;
+template class bto_export_arma<7, float>;
+template class bto_export_arma<8, float>;
 
 } // namespace libtensor
 

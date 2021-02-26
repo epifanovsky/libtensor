@@ -2,7 +2,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_scale.h>
+#include <libtensor/dense_tensor/to_scale.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -12,11 +12,9 @@ using namespace libtensor;
 template<size_t N>
 int test_generic(const char *testname, const dimensions<N> &d, double c) {
 
-    typedef allocator<double> allocator_t;
-
     try {
 
-    dense_tensor<N, double, allocator_t> t(d), t_ref(d);
+    dense_tensor<N, double, allocator> t(d), t_ref(d);
 
     {
     dense_tensor_ctrl<N, double> tc(t), tc_ref(t_ref);
@@ -33,7 +31,7 @@ int test_generic(const char *testname, const dimensions<N> &d, double c) {
     tc_ref.ret_dataptr(p_ref); p_ref = 0;
     }
 
-    tod_scale<N>(c).perform(t);
+    to_scale<N, double>(c).perform(t);
 
     compare_ref<N>::compare(testname, t, t_ref, 1e-15);
 

@@ -78,7 +78,7 @@ const T *diag_tensor<N, T, Alloc>::on_req_const_dataptr(
         return pr.const_dataptr;
     }
 
-    pr.const_dataptr = Alloc::lock_ro(pr.vptr);
+    pr.const_dataptr = (T*)Alloc::lock_ro(pr.vptr);
     pr.const_ptrcnt = 1;
     return pr.const_dataptr;
 }
@@ -201,7 +201,7 @@ T *diag_tensor<N, T, Alloc>::on_req_dataptr(const session_handle_type &h,
         throw 0;
     }
 
-    pr.dataptr = Alloc::lock_rw(pr.vptr);
+    pr.dataptr = (T*)Alloc::lock_rw(pr.vptr);
     pr.ptrcnt = 1;
     return pr.dataptr;
 }

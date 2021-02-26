@@ -296,8 +296,8 @@ matmul_isomorphism_params<T>::matmul_isomorphism_params(const sparse_loop_list& 
         }
         //  The loop above generates the inverse of the permutation
         idx_list idx_cp(N);
-        for(register size_t i = 0; i < N; i++) idx_cp[i] = perm[i];
-        for(register size_t i = 0; i < N; i++) perm[idx_cp[i]] = i;
+        for(size_t i = 0; i < N; i++) idx_cp[i] = perm[i];
+        for(size_t i = 0; i < N; i++) perm[idx_cp[i]] = i;
     }
 
     //Look at what our tensors look like after they are permuted to see what matrix multiply function we should use

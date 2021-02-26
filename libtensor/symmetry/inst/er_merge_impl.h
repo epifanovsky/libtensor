@@ -53,12 +53,12 @@ void er_merge<N, M>::perform(evaluation_rule<M> &to) const {
         const sequence<N, size_t> &seq1 = slist1[i];
         sequence<M, size_t> seq2(0);
 
-        for (register size_t j = 0; j < N; j++) {
+        for (size_t j = 0; j < N; j++) {
             seq2[m_mmap[j]] += seq1[j];
         }
 
         size_t nidx = 0;
-        for (register size_t j = 0; j < M; j++) {
+        for (size_t j = 0; j < M; j++) {
             if (m_smsk[j]) seq2[j] = seq2[j] % 2;
 
             nidx += seq2[j];

@@ -12,8 +12,6 @@ int test_ctor() {
 
     static const char testname[] = "dense_tensor_test::test_ctor()";
 
-    typedef allocator<double> allocator;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -120,8 +118,6 @@ public:
 int test_immutable() {
 
     static const char testname[] = "dense_tensor_test::test_immutable()";
-
-    typedef allocator<int> allocator;
 
     try {
 
@@ -278,8 +274,6 @@ int test_operation() {
 
     static const char testname[] = "dense_tensor_test::test_operation()";
 
-    typedef allocator<int> allocator;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -324,8 +318,6 @@ int test_1() {
 
     static const char testname[] = "dense_tensor_test::test_1()";
 
-    typedef allocator<double> allocator;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -361,8 +353,6 @@ int test_1() {
 int test_2() {
 
     static const char testname[] = "dense_tensor_test::test_2()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -514,8 +504,6 @@ int test_mp_1() {
 
     static const char testname[] = "dense_tensor_test::test_mp_1()";
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -523,7 +511,7 @@ int test_mp_1() {
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
 
-    dense_tensor<2, double, allocator_t> t1(dims);
+    dense_tensor<2, double, allocator> t1(dims);
     dense_tensor_ctrl<2, double> c1(t1);
 
     c1.req_prefetch();
@@ -553,8 +541,6 @@ int test_mp_2() {
 
     static const char testname[] = "dense_tensor_test::test_mp_2()";
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -562,7 +548,7 @@ int test_mp_2() {
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sz = dims.get_size();
 
-    dense_tensor<2, double, allocator_t> t1(dims);
+    dense_tensor<2, double, allocator> t1(dims);
     dense_tensor_ctrl<2, double> c1(t1), c2(t1);
 
     c1.req_prefetch();
@@ -609,15 +595,13 @@ int test_mp_3() {
 
     static const char testname[] = "dense_tensor_test::test_mp_3()";
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<1> i1, i2;
     i2[0] = 999;
     dimensions<1> dims(index_range<1>(i1, i2));
 
-    dense_tensor<1, double, allocator_t> t1(dims), t2(dims), t3a(dims),
+    dense_tensor<1, double, allocator> t1(dims), t2(dims), t3a(dims),
         t3b(dims), t3c(dims), t3d(dims);
     thread_1 thra(t1, t2, t3a, 50);
     thread_1 thrb(t1, t2, t3b, 20);

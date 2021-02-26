@@ -11,12 +11,13 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_generic_level3 : public linalg_timings<linalg_generic_level3> {
+template<typename T>
+class linalg_generic_level3 : public linalg_timings<linalg_generic_level3<T> > {
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    typedef linalg_timings<linalg_generic_level3> timings_base;
+    typedef linalg_timings<linalg_generic_level3<T> > timings_base;
 
 public:
     /** \brief \f$ c_i = \sum_{pq} a_{ipq} b_{qp} d \f$
@@ -36,10 +37,10 @@ public:
     static void mul2_i_ipq_qp_x(
         void *ctx,
         size_t ni, size_t np, size_t nq,
-        const double *a, size_t spa, size_t sia,
-        const double *b, size_t sqb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t spa, size_t sia,
+        const T *b, size_t sqb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{jp} d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -57,10 +58,10 @@ public:
     static void mul2_ij_ip_jp_x(
         void *ctx,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t sia,
-        const double *b, size_t sjb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t sjb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{ip} b_{pj} d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -78,10 +79,10 @@ public:
     static void mul2_ij_ip_pj_x(
         void *ctx,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t sia,
-        const double *b, size_t spb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t spb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{pi} b_{jp} d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -99,10 +100,10 @@ public:
     static void mul2_ij_pi_jp_x(
         void *ctx,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t sjb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t spa,
+        const T *b, size_t sjb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_{ij} = c_{ij} + \sum_p a_{pi} b_{pj} d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -120,10 +121,10 @@ public:
     static void mul2_ij_pi_pj_x(
         void *ctx,
         size_t ni, size_t nj, size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t spb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t spa,
+        const T *b, size_t spb,
+        T *c, size_t sic,
+        T d);
 
 };
 

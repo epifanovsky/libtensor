@@ -20,7 +20,7 @@ so_merge<N, M, T>::so_merge(const symmetry<N, T> &sym1,
     // Check the mask, and the sequence
     size_t m = 0;
     mask<M> msets;
-    register size_t i = 0;
+    size_t i = 0;
     for (; i < N; i++) {
         if (! msk[i]) continue;
         if (mseq[i] > M) break;

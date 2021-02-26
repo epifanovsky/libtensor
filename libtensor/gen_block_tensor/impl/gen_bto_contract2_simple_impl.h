@@ -83,7 +83,7 @@ template<size_t N, size_t M, size_t K, typename Traits, typename Timed>
 void gen_bto_contract2_simple<N, M, K, Traits, Timed>::compute_block(
     bool zero,
     const index<NC> &idxc,
-    const tensor_transf<NC, double> &trc,
+    const tensor_transf<NC, element_type> &trc,
     wr_block_type &blkc) {
 
     dimensions<NA> bidimsa = m_bta.get_bis().get_block_index_dims();

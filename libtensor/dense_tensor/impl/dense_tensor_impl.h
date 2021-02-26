@@ -17,8 +17,8 @@ template<size_t N, typename T, typename Alloc>
 dense_tensor<N, T, Alloc>::dense_tensor(const dimensions<N> &dims) :
 
     m_dims(dims), m_data(Alloc::invalid_pointer), m_dataptr(0),
-    m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),
-    m_session_ptrcount(8, 0) {
+    m_const_dataptr(0), m_ptrcount(0), m_sessions(sizeof(T), 0),
+    m_session_ptrcount(sizeof(T), 0) {
 
     static const char *method = "dense_tensor(const dimensions<N>&)";
 
@@ -36,8 +36,8 @@ template<size_t N, typename T, typename Alloc>
 dense_tensor<N, T, Alloc>::dense_tensor(const dense_tensor_i<N, T> &t) :
 
     m_dims(t.get_dims()), m_data(Alloc::invalid_pointer), m_dataptr(0),
-    m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),
-    m_session_ptrcount(8, 0) {
+    m_const_dataptr(0), m_ptrcount(0), m_sessions(sizeof(T), 0),
+    m_session_ptrcount(sizeof(T), 0) {
 
     m_data = Alloc::allocate(m_dims.get_size());
 }
@@ -47,8 +47,8 @@ template<size_t N, typename T, typename Alloc>
 dense_tensor<N, T, Alloc>::dense_tensor(const dense_tensor<N, T, Alloc> &t) :
 
     m_dims(t.m_dims), m_data(Alloc::invalid_pointer), m_dataptr(0),
-    m_const_dataptr(0), m_ptrcount(0), m_sessions(8, 0),
-    m_session_ptrcount(8, 0) {
+    m_const_dataptr(0), m_ptrcount(0), m_sessions(sizeof(T), 0),
+    m_session_ptrcount(sizeof(T), 0) {
 
     m_data = Alloc::allocate(m_dims.get_size());
 }
@@ -83,7 +83,7 @@ dense_tensor<N, T, Alloc>::on_req_open_session() {
 
     size_t sz = m_sessions.size();
 
-    for(register size_t i = 0; i < sz; i++) {
+    for(size_t i = 0; i < sz; i++) {
         if(m_sessions[i] == 0) {
             m_sessions[i] = 1;
             m_session_ptrcount[i] = 0;
@@ -169,7 +169,7 @@ T *dense_tensor<N, T, Alloc>::on_req_dataptr(const handle_t &h) {
     }
 
     dense_tensor::start_timer("lock_rw");
-    m_dataptr = Alloc::lock_rw(m_data);
+    m_dataptr = (T*)Alloc::lock_rw(m_data);
     dense_tensor::stop_timer("lock_rw");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;
@@ -221,7 +221,7 @@ const T *dense_tensor<N, T, Alloc>::on_req_const_dataptr(const handle_t &h) {
     }
 
     dense_tensor::start_timer("lock_ro");
-    m_const_dataptr = Alloc::lock_ro(m_data);
+    m_const_dataptr = (T*)Alloc::lock_ro(m_data);
     dense_tensor::stop_timer("lock_ro");
     m_session_ptrcount[h] = 1;
     m_ptrcount = 1;

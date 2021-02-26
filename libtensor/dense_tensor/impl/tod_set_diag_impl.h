@@ -79,13 +79,13 @@ void tod_set_diag<N>::perform(bool zero, dense_tensor_wr_i<N, double> &t) {
     regs.m_ptra_end[0] = &m_v + 1;
     regs.m_ptrb_end[0] = ptr + dims.get_size();
     {
-        std::auto_ptr< kernel_base<linalg, 1, 1> > kern(0);
+        std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern(0);
         if (zero) {
-            kern = std::auto_ptr< kernel_base<linalg, 1, 1> >(
+            kern = std::unique_ptr< kernel_base<linalg, 1, 1, double> >(
                     kern_dcopy<linalg>::match(1.0, loop_in, loop_out));
         }
         else {
-            kern = std::auto_ptr< kernel_base<linalg, 1, 1> >(
+            kern = std::unique_ptr< kernel_base<linalg, 1, 1, double> >(
                     kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
         }
         loop_list_runner<linalg, 1, 1>(loop_in).run(0, regs, *kern);

@@ -56,7 +56,7 @@ bool abs_index<N>::inc() {
     do {
         if(m_idx[n] < m_dims[n] - 1) {
             m_idx[n]++;
-            for(register size_t i = n + 1; i != N; i++) m_idx[i] = 0;
+            for(size_t i = n + 1; i != N; i++) m_idx[i] = 0;
             done = true;
             ok = true;
         } else {
@@ -86,7 +86,7 @@ size_t abs_index<N>::get_abs_index(const index<N> &idx,
 #endif // LIBTENSOR_DEBUG
 
     size_t aidx = 0;
-    for(register size_t i = 0; i != N; i++) {
+    for(size_t i = 0; i != N; i++) {
         aidx += dims.get_increment(i) * idx[i];
     }
 
@@ -109,7 +109,7 @@ void abs_index<N>::get_index(size_t aidx, const dimensions<N> &dims,
 
     size_t a = aidx;
     size_t imax = N - 1;
-    for(register size_t i = 0; i < imax; i++) {
+    for(size_t i = 0; i < imax; i++) {
         idx[i] = a / dims.get_increment(i);
         a %= dims.get_increment(i);
     }
@@ -131,7 +131,7 @@ void abs_index<N>::get_index(size_t aidx, const magic_dimensions<N> &mdims,
 #endif // LIBTENSOR_DEBUG
 
     uint64_t a = aidx;
-    for(register size_t i = 0; i != N - 1; i++) {
+    for(size_t i = 0; i != N - 1; i++) {
         idx[i] = mdims.divide(a, i);
         a -= idx[i] * mdims.get_dims().get_increment(i);
     }

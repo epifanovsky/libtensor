@@ -3,7 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_mult1.h>
+#include <libtensor/dense_tensor/to_mult1.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -16,8 +16,6 @@ int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
     tnss << "tod_mult1_test::test_pq_pq_1(" << ni << ", " << nj << ", "
         << recip << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -57,7 +55,7 @@ int test_pq_pq_1(size_t ni, size_t nj, bool recip) {
     tb.set_immutable();
     ta_ref.set_immutable();
 
-    tod_mult1<2>(tb, recip).perform(true, ta);
+    to_mult1<2, double>(tb, recip).perform(true, ta);
 
     compare_ref<2>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
@@ -74,8 +72,6 @@ int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
     tnss << "tod_mult1_test::test_pq_pq_2(" << ni << ", " << nj << ", "
         << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -115,7 +111,7 @@ int test_pq_pq_2(size_t ni, size_t nj, bool recip, double coeff) {
     tb.set_immutable();
     ta_ref.set_immutable();
 
-    tod_mult1<2>(tb, recip, coeff).perform(false, ta);
+    to_mult1<2, double>(tb, recip, coeff).perform(false, ta);
 
     compare_ref<2>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 
@@ -133,8 +129,6 @@ int test_pqrs_qrps(
     tnss << "tod_mult1_test::test_pqrs_qrps(" << ni << ", " << nj << ", "
         << nk << ", " << nl << ", " << recip << ", " << coeff << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -194,7 +188,7 @@ int test_pqrs_qrps(
     tb.set_immutable();
     ta_ref.set_immutable();
 
-    tod_mult1<4>(tb, p, recip, coeff).perform(false, ta);
+    to_mult1<4, double>(tb, p, recip, coeff).perform(false, ta);
 
     compare_ref<4>::compare(tns.c_str(), ta, ta_ref, 1e-15);
 

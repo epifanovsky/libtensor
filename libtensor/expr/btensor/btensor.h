@@ -28,15 +28,15 @@ template<size_t N, typename T = double>
 class btensor :
     public btensor_i<N, T>,
     public expr_lhs<N, T>,
-    virtual public block_tensor< N, T, allocator<T> > {
+    virtual public block_tensor< N, T, allocator > {
 
 public:
     btensor(const bispace<N> &bi) :
-        block_tensor< N, T, allocator<T> >(bi.get_bis())
+        block_tensor< N, T, allocator >(bi.get_bis())
     { }
 
     btensor(const block_index_space<N> &bis) :
-        block_tensor< N, T, allocator<T> >(bis)
+        block_tensor< N, T, allocator >(bis)
     { }
 
     virtual ~btensor() { }

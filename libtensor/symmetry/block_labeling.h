@@ -27,7 +27,7 @@ namespace libtensor {
 template<size_t N>
 class block_labeling {
 public:
-    static const char *k_clazz;
+    static const char k_clazz[];
 
     typedef product_table_i::label_t label_t;
 
@@ -101,14 +101,14 @@ public:
         \param type Dimension type.
         \throw bad_parameter If the dimension type is invalid.
      **/
-    size_t get_dim(size_t type) const throw(out_of_bounds);
+    size_t get_dim(size_t type) const;
 
     /** \brief Returns the label of a block of a dimension type.
         \param type Dimension type.
         \param pos Block position.
         \throw out_of_bounds If the dimension type is out of bounds.
      **/
-    label_t get_label(size_t type, size_t pos) const throw(out_of_bounds);
+    label_t get_label(size_t type, size_t pos) const;
     
     //@}
 };
@@ -137,11 +137,15 @@ void transfer_labeling(const block_labeling<N> &from,
 
 
 template<size_t N>
+const char block_labeling<N>::k_clazz[] = "block_labeling<N>";
+
+
+template<size_t N>
 inline
 block_labeling<N>::block_labeling(const block_labeling<N> &bl) :
     m_bidims(bl.m_bidims), m_type(bl.m_type), m_labels(0) {
 
-    for (register size_t i = 0; i < N && bl.m_labels[i] != 0; i++) {
+    for (size_t i = 0; i < N && bl.m_labels[i] != 0; i++) {
 
         m_labels[i] = new blk_label_t(*(bl.m_labels[i]));
     }
@@ -152,7 +156,7 @@ template<size_t N>
 inline
 block_labeling<N>::~block_labeling() {
 
-    for (register size_t i = 0; i < N && m_labels[i] != 0; i++) {
+    for (size_t i = 0; i < N && m_labels[i] != 0; i++) {
         delete m_labels[i]; m_labels[i] = 0;
     }
 }
@@ -183,7 +187,7 @@ size_t block_labeling<N>::get_dim_type(size_t dim) const {
 
 template<size_t N>
 inline
-size_t block_labeling<N>::get_dim(size_t type) const throw(out_of_bounds) {
+size_t block_labeling<N>::get_dim(size_t type) const {
 
 #ifdef LIBTENSOR_DEBUG
     if (type > N || m_labels[type] == 0)
@@ -199,7 +203,7 @@ size_t block_labeling<N>::get_dim(size_t type) const throw(out_of_bounds) {
 template<size_t N>
 inline
 typename block_labeling<N>::label_t block_labeling<N>::get_label(size_t type,
-        size_t blk) const throw (out_of_bounds) {
+        size_t blk) const {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "get_label(size_t, size_t)";

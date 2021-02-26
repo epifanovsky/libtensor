@@ -75,16 +75,16 @@ void tod_conv_diag_tensor<N>::perform(
         }
 
         double zero = 0.0;
-        loop_registers<1, 1> r;
+        loop_registers_x<1, 1, double> r;
         r.m_ptra[0] = &zero;
         r.m_ptrb[0] = pb + aoff;
         r.m_ptra_end[0] = &zero + 1;
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
-                kern_dcopy<linalg>::match(1.0, loop_in, loop_out));
-            loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> >kern(
+                kern_copy<linalg, double>::match(1.0, loop_in, loop_out));
+            loop_list_runner_x<linalg, 1, 1, double>(loop_in).run(0, r, *kern);
         }
     }
 
@@ -140,16 +140,16 @@ void tod_conv_diag_tensor<N>::perform(
 
         const double *pa = ca.req_const_dataptr(ssn);
 
-        loop_registers<1, 1> r;
+        loop_registers_x<1, 1, double> r;
         r.m_ptra[0] = pa;
         r.m_ptrb[0] = pb + aoff;
         r.m_ptra_end[0] = pa + dtsa.get_subspace_size(ssn);
         r.m_ptrb_end[0] = pb + dimsb.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
-                kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
-            loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> >kern(
+                kern_add1<linalg, double>::match(1.0, loop_in, loop_out));
+            loop_list_runner_x<linalg, 1, 1, double>(loop_in).run(0, r, *kern);
         }
 
         ca.ret_const_dataptr(ssn, pa); pa = 0;

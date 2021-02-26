@@ -134,13 +134,19 @@ set(SRC_BLOCK_TENSOR
     block_tensor/btod_apply_test.C
     block_tensor/btod_compare_test.C
     block_tensor/btod_contract2_test.C
+    block_tensor/bto_contract2_test.C
     block_tensor/btod_contract3_test.C
     block_tensor/btod_copy_test.C
+    block_tensor/bto_copy_test.C
     block_tensor/btod_diag_test.C
+    block_tensor/bto_diag_test.C
     block_tensor/btod_diagonalize_test.C
     block_tensor/btod_dirsum_test.C
+    block_tensor/bto_dirsum_test.C
     block_tensor/btod_dotprod_test.C
+    block_tensor/bto_dotprod_test.C
     block_tensor/btod_ewmult2_test.C
+    block_tensor/bto_ewmult2_test.C
     block_tensor/btod_extract_test.C
     block_tensor/btod_import_raw_test.C
     block_tensor/btod_import_raw_stream_test.C
@@ -148,16 +154,21 @@ set(SRC_BLOCK_TENSOR
     block_tensor/btod_mult1_test.C
     block_tensor/btod_print_test.C
     block_tensor/btod_random_test.C
+    block_tensor/bto_random_test.C
     block_tensor/btod_read_test.C
     block_tensor/btod_scale_test.C
+    block_tensor/bto_scale_test.C
     block_tensor/btod_select_test.C
     block_tensor/btod_set_diag_test.C
     block_tensor/btod_set_elem_test.C
+    block_tensor/btod_get_elem_test.C
     block_tensor/btod_set_test.C
+    block_tensor/bto_set_test.C
     block_tensor/btod_shift_diag_test.C
     block_tensor/btod_sum_test.C
     block_tensor/btod_symcontract3_test.C
     block_tensor/btod_symmetrize2_test.C
+    block_tensor/bto_symmetrize2_test.C
     block_tensor/btod_symmetrize3_test.C
     block_tensor/btod_symmetrize4_test.C
     block_tensor/btod_trace_test.C
@@ -210,6 +221,7 @@ set(SRC_IFACE
     iface/eval_register_test.C
     iface/ewmult_test.C
     iface/expr_test.C
+    iface/expr_test_float_double.C
     iface/expr_tensor_test.C
     iface/letter_expr_test.C
     iface/letter_test.C
@@ -333,14 +345,19 @@ endif(LIBTENSOR_PACKAGE)
 
 macro(libtensor_add_tests SUITE)
     foreach(TEST ${ARGN})
-        add_executable(${TEST} ${TEST}.C)
-        target_link_libraries(${TEST} tensor)
-        add_test(NAME "libtensor/${SUITE}/${TEST}" COMMAND ${TEST})
+        set(TEST_TGT "tensor_${SUITE}_${TEST}")
+        list(APPEND TEST_TGTS_0 ${TEST_TGT})
+        add_executable(${TEST_TGT} ${TEST}.C)
+        target_link_libraries(${TEST_TGT} tensor)
+        add_test(NAME "libtensor/${SUITE}/${TEST}" COMMAND ${TEST_TGT})
     endforeach()
+    set(TEST_TGTS ${TEST_TGTS} ${TEST_TGTS_0} PARENT_SCOPE)
 endmacro()
 
 add_subdirectory(linalg)
 add_subdirectory(core)
 add_subdirectory(symmetry)
 add_subdirectory(dense_tensor)
+add_subdirectory(iface)
 
+add_custom_target(tensor_tests DEPENDS ${TEST_TGTS})

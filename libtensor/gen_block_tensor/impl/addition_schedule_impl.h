@@ -40,7 +40,7 @@ addition_schedule<N, Traits>::addition_schedule(
 
     mask<N + N> msk;
     sequence<N + N, size_t> seq(0);
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         msk[i] = msk[i + N] = true;
         seq[i] = seq[i + N] = i;
     }
@@ -225,7 +225,7 @@ public:
             size_t acic = m_batch[i];
 
             combined_orbits<N, element_type> co(m_syma, m_symb, m_symc, acic);
-            std::auto_ptr<schedule_group> grp(new schedule_group);
+            std::unique_ptr<schedule_group> grp(new schedule_group);
             bool first = true, already_visited = false;
             for(typename combined_orbits<N, element_type>::iterator i =
                 co.begin(); i != co.end(); ++i) {

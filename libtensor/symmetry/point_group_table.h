@@ -126,7 +126,7 @@ public:
         \param lr Result label
         \throw out_of_bounds If l1, l2 or lr are not valid.
      **/
-    void add_product(label_t l1, label_t l2, label_t lr) throw(bad_parameter);
+    void add_product(label_t l1, label_t l2, label_t lr);
 
     /** \brief Reset the product table
      **/

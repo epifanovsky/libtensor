@@ -43,7 +43,7 @@ double tod_trace<N>::calculate() {
         ca.req_prefetch();
 
         sequence<k_ordera, size_t> map(0);
-        for(register size_t i = 0; i < k_ordera; i++) map[i] = i;
+        for(size_t i = 0; i < k_ordera; i++) map[i] = i;
         permutation<k_ordera> pinv(m_perm, true);
         pinv.apply(map);
 
@@ -69,7 +69,7 @@ double tod_trace<N>::calculate() {
         r.m_ptrb_end[0] = &tr + 1;
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern(
                     kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
             tod_trace<N>::start_timer(kern->get_name());
             loop_list_runner<linalg, 1, 1>(loop_in).run(0, r, *kern);
@@ -95,7 +95,7 @@ void tod_trace<N>::check_dims() {
     static const char *method = "check_dims()";
 
     sequence<k_ordera, size_t> map(0);
-    for(register size_t i = 0; i < k_ordera; i++) map[i] = i;
+    for(size_t i = 0; i < k_ordera; i++) map[i] = i;
     permutation<k_ordera> pinv(m_perm, true);
     pinv.apply(map);
 

@@ -28,7 +28,7 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
     params.g2.clear();
 
     size_t ngrp = 0, nidx = 0;
-     for (register size_t i = 0; i < N; i++) {
+     for (size_t i = 0; i < N; i++) {
          ngrp = std::max(ngrp, params.idxgrp[i]);
          nidx = std::max(nidx, params.symidx[i]);
      }
@@ -36,11 +36,11 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
 
      // Mask for permutation generator: permuted are only index groups
      mask<N> msk;
-     for (register size_t i = ngrp; i < N; i++) msk[i] = true;
+     for (size_t i = ngrp; i < N; i++) msk[i] = true;
 
      // Maps for symmetrization and transfer of block labels.
      sequence<N, size_t> map, idmap;
-     for (register size_t i = 0; i < N; i++) {
+     for (size_t i = 0; i < N; i++) {
          idmap[i] = i;
          if (params.idxgrp[i] == 0) continue;
          map[(params.idxgrp[i] - 1) * nidx + params.symidx[i] - 1] = i;
@@ -52,11 +52,11 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
          const block_labeling<N> &bl1 = e1.get_labeling();
          const evaluation_rule<N> &r1 = e1.get_rule();
 
-         for (register size_t i = 0; i < nidx; i++) {
+         for (size_t i = 0; i < nidx; i++) {
 
              size_t typei = bl1.get_dim_type(map[i]);
              size_t k = i + nidx;
-             for (register size_t j = 1; j < ngrp; j++) {
+             for (size_t j = 1; j < ngrp; j++) {
                  if (bl1.get_dim_type(map[k]) != typei)
                      throw bad_symmetry(g_ns, k_clazz, method,
                              __FILE__, __LINE__, "Incompatible dimensions.");
@@ -79,10 +79,10 @@ symmetry_operation_impl< so_symmetrize<N, T>, se_label<N, T> >::do_perform(
              do {
                  const permutation<N> &p = pg.get_perm();
                  sequence<N, size_t> seq1(0), seq2(0);
-                 for (register size_t i = 0; i < N; i++) seq1[i] = seq2[i] = i;
+                 for (size_t i = 0; i < N; i++) seq1[i] = seq2[i] = i;
 
-                 for (register size_t i = 0, k = 0; i < ngrp; i++) {
-                     for (register size_t j = 0, kk = p[i] * nidx;
+                 for (size_t i = 0, k = 0; i < ngrp; i++) {
+                     for (size_t j = 0, kk = p[i] * nidx;
                              j < nidx; j++, k++, kk++) {
                          seq2[map[kk]] = seq1[map[k]];
                      }

@@ -12,16 +12,12 @@ namespace libtensor {
 
     \ingroup libtensor_core
  **/
-template<typename T, typename AllocatorImpl>
-class allocator_wrapper : public allocator_wrapper_i<T> {
+template<typename AllocatorImpl>
+class allocator_wrapper : public allocator_wrapper_i {
 public:
-    typedef typename allocator_wrapper_i<T>::pointer_type pointer_type;
-
-private:
-    union pointer {
-        pointer_type p1;
-        typename AllocatorImpl::pointer_type p2;
-    };
+    typedef typename allocator_wrapper_i::pointer_type internal_pointer_type;
+    typedef typename AllocatorImpl::pointer_type external_pointer_type;
+    typedef internal_pointer_type pointer_type;
 
 private:
     AllocatorImpl m_impl;
@@ -47,9 +43,8 @@ public:
     }
 
     virtual pointer_type allocate(size_t sz) {
-        pointer ptr;
-        ptr.p2 = m_impl.allocate(sz);
-        return ptr.p1;
+        external_pointer_type p2 = m_impl.allocate(sz);
+        return reinterpret_cast<const internal_pointer_type&>(p2);
     }
 
     virtual void deallocate(const pointer_type &p) throw () {
@@ -60,11 +55,11 @@ public:
         m_impl.prefetch(convp(p));
     }
 
-    virtual T *lock_rw(const pointer_type &p) {
+    virtual void *lock_rw(const pointer_type &p) {
         return m_impl.lock_rw(convp(p));
     }
 
-    virtual const T *lock_ro(const pointer_type &p) {
+    virtual const void *lock_ro(const pointer_type &p) {
         return m_impl.lock_ro(convp(p));
     }
 
@@ -86,16 +81,15 @@ public:
 
 public:
     static pointer_type make_invalid_pointer() {
-        pointer ptr;
-        ptr.p2 = AllocatorImpl::invalid_pointer;
-        return ptr.p1;
+        external_pointer_type p2 = AllocatorImpl::invalid_pointer;
+        return reinterpret_cast<const internal_pointer_type&>(p2);
     }
 
 private:
-    static typename AllocatorImpl::pointer_type convp(const pointer_type &p) {
-        pointer ptr;
-        ptr.p1 = p;
-        return ptr.p2;
+    static external_pointer_type convp(const internal_pointer_type &p1) {
+        const external_pointer_type &p2 =
+            reinterpret_cast<const external_pointer_type&>(p1);
+        return p2;
     }
 
 };

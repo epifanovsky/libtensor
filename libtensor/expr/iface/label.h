@@ -37,7 +37,7 @@ public:
     /** \brief Returns the %index of a %letter in the expression
         \throw exception If the expression doesn't contain the %letter.
      **/
-    size_t index_of(const letter &let) const throw(exception) {
+    size_t index_of(const letter &let) const {
         if(&m_let == &let) return N - 1;
         return m_expr.index_of(let);
     }
@@ -45,7 +45,7 @@ public:
     /** \brief Returns the %letter at a given position
         \throw out_of_bounds If the %index is out of bounds.
      **/
-    const letter &letter_at(size_t i) const throw(out_of_bounds) {
+    const letter &letter_at(size_t i) const {
         if(i == N - 1) return m_let;
         return m_expr.letter_at(i);
     }
@@ -55,8 +55,7 @@ public:
             expression
         \param e2 Second expression.
      **/
-    permutation<N> permutation_of(const label<N> &expr) const
-        throw(exception) {
+    permutation<N> permutation_of(const label<N> &expr) const {
 
         const letter *seq1[N], *seq2[N];
         unfold(seq1);
@@ -95,7 +94,7 @@ public:
     /** \brief Returns the %index of a %letter in the expression
         \throw exception If the expression doesn't contain the %letter.
      **/
-    size_t index_of(const letter &let) const throw(exception) {
+    size_t index_of(const letter &let) const {
         if(&m_let != &let) {
             throw_exc("letter_expr<1>", "index_of()",
                 "Expression doesn't contain the letter.");
@@ -106,7 +105,7 @@ public:
     /** \brief Returns the %letter at a given position
         \throw exception If the %index is out of bounds.
      **/
-    const letter &letter_at(size_t i) const throw(out_of_bounds) {
+    const letter &letter_at(size_t i) const {
         if(i != 0) {
             throw out_of_bounds(g_ns, "letter_expr<1>",
                 "letter_at(size_t)", __FILE__, __LINE__,

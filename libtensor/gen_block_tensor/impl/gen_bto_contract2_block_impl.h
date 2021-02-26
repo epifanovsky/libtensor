@@ -118,7 +118,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
     cobb_map cobb;
 
     //  Tensor contraction operation
-    std::auto_ptr<to_contract2> op;
+    std::unique_ptr<to_contract2> op;
 
     //  Go through the contraction list and prepare the contraction
     for(typename contr_list_type::const_iterator i = clst.begin();
@@ -177,7 +177,7 @@ void gen_bto_contract2_block<N, M, K, Traits, Timed>::compute_block(
         kc.transform(trc.get_scalar_tr());
 
         if(op.get() == 0) {
-            op = std::auto_ptr<to_contract2>(
+            op = std::unique_ptr<to_contract2>(
                 new to_contract2(contr, blka, ka, blkb, kb, kc));
         } else {
             op->add_args(contr, blka, ka, blkb, kb, kc);

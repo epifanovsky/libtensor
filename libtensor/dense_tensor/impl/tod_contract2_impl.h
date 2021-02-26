@@ -212,7 +212,7 @@ void tod_contract2<N, M, K>::perform(bool zero,
                 r.m_ptrb_end[0] = pc + dimsc.get_size();
 
                 {
-                    std::auto_ptr< kernel_base<linalg, 1, 1> > kern(
+                    std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern(
                         zero1 ?
                             kern_dcopy<linalg>::match(1.0, loop_in, loop_out) :
                             kern_dadd1<linalg>::match(1.0, loop_in, loop_out));
@@ -293,7 +293,7 @@ void tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         r.m_ptrb_end[0] = pa1 + dimsa1.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> >kern(
                 kern_dcopy<linalg>::match(1.0, loop_in, loop_out));
             tod_contract2<N, M, K>::start_timer("perma");
             tod_contract2<N, M, K>::start_timer(kern->get_name());
@@ -339,7 +339,7 @@ void tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         r.m_ptrb_end[0] = pb1 + dimsb1.get_size();
 
         {
-            std::auto_ptr< kernel_base<linalg, 1, 1> >kern(
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> >kern(
                 kern_dcopy<linalg>::match(1.0, loop_in, loop_out));
             tod_contract2<N, M, K>::start_timer("permb");
             tod_contract2<N, M, K>::start_timer(kern->get_name());
@@ -370,7 +370,7 @@ void tod_contract2<N, M, K>::perform_internal(aligned_args &ar,
         r.m_ptra_end[1] = pb2 + dimsb1.get_size();
         r.m_ptrb_end[0] = pc + dimsc.get_size();
 
-        std::auto_ptr< kernel_base<linalg, 2, 1> > kern(
+        std::unique_ptr< kernel_base<linalg, 2, 1, double> > kern(
             kern_dmul2<linalg>::match(ar.d, loop_in, loop_out));
         tod_contract2<N, M, K>::start_timer("kernel");
         tod_contract2<N, M, K>::start_timer(kern->get_name());

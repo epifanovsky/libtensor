@@ -7,7 +7,7 @@
 #include <libtensor/core/print_dimensions.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_set_diag.h>
+#include <libtensor/dense_tensor/to_set_diag.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -21,11 +21,9 @@ int run_test1(const dimensions<N> &dims, double d, bool zero) {
     tnss << "tod_set_diag_test::run_test1(" << dims << ", " << d << ","
             << (zero ? "t" : "f") << ")";
 
-    typedef allocator<double> allocator_t;
-
     try {
 
-    dense_tensor<N, double, allocator_t> t(dims), t_ref(dims);
+    dense_tensor<N, double, allocator> t(dims), t_ref(dims);
 
     {
     dense_tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
@@ -63,7 +61,7 @@ int run_test1(const dimensions<N> &dims, double d, bool zero) {
 
     // Run the operation
 
-    tod_set_diag<N>(d).perform(zero, t);
+    to_set_diag<N, double>(d).perform(zero, t);
 
     // Compare against the reference
 
@@ -87,11 +85,9 @@ int run_test2(
     for (size_t i = 0; i < N - 1; i++) tnss << msk[i] << ", ";
     tnss << msk[N - 1] << "], " << d << ")";
 
-    typedef allocator<double> allocator_t;
-
     try {
 
-    dense_tensor<N, double, allocator_t> t(dims), t_ref(dims);
+    dense_tensor<N, double, allocator> t(dims), t_ref(dims);
 
     {
     dense_tensor_ctrl<N, double> ctrl(t), ctrl_ref(t_ref);
@@ -132,7 +128,7 @@ int run_test2(
 
     // Run the operation
 
-    tod_set_diag<N>(msk, d).perform(zero, t);
+    to_set_diag<N, double>(msk, d).perform(zero, t);
 
     // Compare against the reference
 

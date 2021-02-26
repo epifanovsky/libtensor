@@ -133,11 +133,11 @@ template<size_t N, typename Traits, typename Timed>
 void gen_bto_symmetrize2<N, Traits, Timed>::make_symmetry() {
 
     sequence<N, size_t> seq2(0), idxgrp(0), symidx(0);
-    for(register size_t i = 0; i < N; i++) seq2[i] = i;
+    for(size_t i = 0; i < N; i++) seq2[i] = i;
     m_perm1.apply(seq2);
 
     size_t idx = 1;
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(seq2[i] <= i) continue;
         idxgrp[i] = 1;
         idxgrp[seq2[i]] = 2;

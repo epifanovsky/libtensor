@@ -5,7 +5,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_scatter.h>
+#include <libtensor/dense_tensor/to_scatter.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -20,8 +20,6 @@ int test_ij_j(size_t ni, size_t nj, double d) {
     tnss << "tod_scatter_test::test_ij_j(" << ni << ", " << nj << ", "
         << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -71,8 +69,8 @@ int test_ij_j(size_t ni, size_t nj, double d) {
 
     // Invoke the contraction routine
 
-    if(d == 0.0) tod_scatter<1, 1>(ta, 1.0).perform(true, tc);
-    else tod_scatter<1, 1>(ta, d).perform(false, tc);
+    if(d == 0.0) to_scatter<1, 1, double>(ta, 1.0).perform(true, tc);
+    else to_scatter<1, 1, double>(ta, d).perform(false, tc);
 
     // Compare against the reference
 

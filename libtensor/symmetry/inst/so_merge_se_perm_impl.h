@@ -43,7 +43,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::do_perform(
     // Create the stabilizing sequence for permutation group
     mask<k_order1> msteps, mm;
     sequence<k_order1, size_t> sseq(0);
-    for (register size_t i = 0; i < k_order1; i++) {
+    for (size_t i = 0; i < k_order1; i++) {
         if (! params.msk[i]) continue;
 
         if (msteps[params.mseq[i]])
@@ -71,7 +71,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_perm<N - M, T> >::do_perform(
         sequence<k_order1, size_t> seq1a(0), seq2a(0);
         sequence<k_order2, size_t> seq1b(0), seq2b(0);
 
-        for (register size_t i = 0; i < k_order1; i++)
+        for (size_t i = 0; i < k_order1; i++)
             seq1a[i] = seq2a[i] = i;
         e2.get_perm().apply(seq2a);
 

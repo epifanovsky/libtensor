@@ -90,7 +90,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
                         ip1 != pr1.end(); ip1++) {
 
                     const sequence<N, size_t> &seq1 = pr1.get_sequence(ip1);
-                    for (register size_t j = 0; j < N; j++)
+                    for (size_t j = 0; j < N; j++)
                         seq3[map1[j]] = seq1[j];
 
                     pr3.add(seq3, ip1->second);
@@ -139,7 +139,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
 
                         sequence<N + M, size_t> seq3(0);
                         const sequence<N, size_t> &seq1 = pr1.get_sequence(ip1);
-                        for (register size_t j = 0; j < N; j++)
+                        for (size_t j = 0; j < N; j++)
                             seq3[map1[j]] = seq1[j];
 
                         pr3.add(seq3, ip1->second);
@@ -151,7 +151,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
 
                         sequence<N + M, size_t> seq3(0);
                         const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
-                        for (register size_t j = 0; j < M; j++)
+                        for (size_t j = 0; j < M; j++)
                             seq3[map2[j]] = seq2[j];
 
                         pr3.add(seq3, ip2->second);
@@ -209,7 +209,7 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_label<N + M, T> >::do_perform(
                     ip2 != pr2.end(); ip2++) {
 
                 const sequence<M, size_t> &seq2 = pr2.get_sequence(ip2);
-                for (register size_t j = 0; j < M; j++)
+                for (size_t j = 0; j < M; j++)
                     seq3[map2[j]] = seq2[j];
 
                 pr3.add(seq3, ip2->second);

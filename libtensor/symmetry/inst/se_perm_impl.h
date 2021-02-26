@@ -6,12 +6,6 @@
 namespace libtensor {
 
 template<size_t N, typename T>
-const char *se_perm<N, T>::k_clazz = "se_perm<N, T>";
-
-template<size_t N, typename T>
-const char *se_perm<N, T>::k_sym_type = "perm";
-
-template<size_t N, typename T>
 se_perm<N, T>::se_perm(const permutation<N> &perm,
         const scalar_transf<T> &tr) :
         m_transf(perm, tr), m_orderp(1), m_orderc(1) {
@@ -40,6 +34,11 @@ se_perm<N, T>::se_perm(const permutation<N> &perm,
         throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
                 "perm and tr do not agree.");
     }
+}
+
+template<size_t N, typename T>
+const char *se_perm<N, T>::get_type() const {
+    return k_sym_type;
 }
 
 } // namespace libtensor

@@ -1,4 +1,5 @@
 #include <cstring>
+#include <algorithm> // for std::min
 #include <mkl.h>
 #ifdef HAVE_MKL_VML
 #include <mkl_vml_functions.h>
@@ -10,10 +11,14 @@
 namespace libtensor {
 
 
-const char linalg_mkl_level1::k_clazz[] = "mkl";
+template<>
+const char linalg_mkl_level1<double>::k_clazz[] = "mkl";
+template<>
+const char linalg_mkl_level1<float>::k_clazz[] = "mkl";
 
 
-void linalg_mkl_level1::add_i_i_x_x(
+template<>
+void linalg_mkl_level1<double>::add_i_i_x_x(
     void*,
     size_t ni,
     const double *a, size_t sia, double ka,
@@ -33,7 +38,8 @@ void linalg_mkl_level1::add_i_i_x_x(
 }
 
 
-void linalg_mkl_level1::copy_i_i(
+template<>
+void linalg_mkl_level1<double>::copy_i_i(
     void*,
     size_t ni,
     const double *a, size_t sia,
@@ -51,7 +57,8 @@ void linalg_mkl_level1::copy_i_i(
 }
 
 
-void linalg_mkl_level1::div1_i_i_x(
+template<>
+void linalg_mkl_level1<double>::div1_i_i_x(
     void *,
     size_t ni,
     const double *a, size_t sia,
@@ -76,12 +83,13 @@ void linalg_mkl_level1::div1_i_i_x(
     } else
 #endif
     {
-        linalg_generic_level1::div1_i_i_x(0, ni, a, sia, c, sic, d);
+        linalg_generic_level1<double>::div1_i_i_x(0, ni, a, sia, c, sic, d);
     }
 }
 
 
-void linalg_mkl_level1::mul1_i_x(
+template<>
+void linalg_mkl_level1<double>::mul1_i_x(
     void*,
     size_t ni,
     double a,
@@ -93,7 +101,8 @@ void linalg_mkl_level1::mul1_i_x(
 }
 
 
-double linalg_mkl_level1::mul2_x_p_p(
+template<>
+double linalg_mkl_level1<double>::mul2_x_p_p(
     void*,
     size_t np,
     const double *a, size_t spa,
@@ -106,7 +115,8 @@ double linalg_mkl_level1::mul2_x_p_p(
 }
 
 
-void linalg_mkl_level1::mul2_i_i_x(
+template<>
+void linalg_mkl_level1<double>::mul2_i_i_x(
     void*,
     size_t ni,
     const double *a, size_t sia,
@@ -118,8 +128,8 @@ void linalg_mkl_level1::mul2_i_i_x(
     timings_base::stop_timer("daxpy");
 }
 
-
-void linalg_mkl_level1::mul2_i_i_i_x(
+template<>
+void linalg_mkl_level1<double>::mul2_i_i_i_x(
     void*,
     size_t ni,
     const double *a, size_t sia,
@@ -170,14 +180,16 @@ struct rng_stream {
 } // unnamed namespace
 
 
-void linalg_mkl_level1::rng_setup(
+template<>
+void linalg_mkl_level1<double>::rng_setup(
     void*) {
 
     rng_stream_count.n = 0;
 }
 
 
-void linalg_mkl_level1::rng_set_i_x(
+template<>
+void linalg_mkl_level1<double>::rng_set_i_x(
     void*,
     size_t ni,
     double *a, size_t sia,
@@ -217,13 +229,14 @@ void linalg_mkl_level1::rng_set_i_x(
 
 #else // HAVE_MKL_VSL
 
-    linalg_generic_level1::rng_set_i_x(0, ni, a, sia, c);
+    linalg_generic_level1<double>::rng_set_i_x(0, ni, a, sia, c);
 
 #endif // HAVE_MKL_VSL
 }
 
 
-void linalg_mkl_level1::rng_add_i_x(
+template<>
+void linalg_mkl_level1<double>::rng_add_i_x(
     void*,
     size_t ni,
     double *a, size_t sia,
@@ -260,10 +273,273 @@ void linalg_mkl_level1::rng_add_i_x(
 
 #else // HAVE_MKL_VSL
 
-    linalg_generic_level1::rng_add_i_x(0, ni, a, sia, c);
+    linalg_generic_level1<double>::rng_add_i_x(0, ni, a, sia, c);
 
 #endif // HAVE_MKL_VSL
 }
+//////////////////////////////////
+//
+template<>
+void linalg_mkl_level1<float>::add_i_i_x_x(
+    void*,
+    size_t ni,
+    const float *a, size_t sia, float ka,
+    float b, float kb,
+    float *c, size_t sic,
+    float d) {
+
+    timings_base::start_timer("saxpy");
+    cblas_saxpy(ni, d * ka, a, sia, c, sic);
+    float db = d * kb * b;
+    if(sic == 1) {
+        for(size_t i = 0; i < ni; i++) c[i] += db;
+    } else {
+        for(size_t i = 0; i < ni; i++) c[i * sic] += db;
+    }
+    timings_base::stop_timer("saxpy");
+}
+
+
+template<>
+void linalg_mkl_level1<float>::copy_i_i(
+    void*,
+    size_t ni,
+    const float *a, size_t sia,
+    float *c, size_t sic) {
+
+    if(sia == 1 && sic == 1) {
+        timings_base::start_timer("memcpy");
+        ::memcpy(c, a, ni * sizeof(float));
+        timings_base::stop_timer("memcpy");
+    } else {
+        timings_base::start_timer("scopy");
+        cblas_scopy(ni, a, sia, c, sic);
+        timings_base::stop_timer("scopy");
+    }
+}
+
+
+template<>
+void linalg_mkl_level1<float>::div1_i_i_x(
+    void *,
+    size_t ni,
+    const float *a, size_t sia,
+    float *c, size_t sic,
+    float d) {
+
+#if defined(HAVE_MKL_VML)
+    if(sia == 1 && sic == 1) {
+        timings_base::start_timer("vddiv");
+        float buf[256];
+        size_t len = 256;
+        while(ni > 0) {
+            if(ni < len) len = ni;
+            vsDiv(len, c, a, buf);
+            cblas_sscal(len, d, buf, 1);
+            ::memcpy(c, buf, len * sizeof(float));
+            ni -= len;
+            a += len;
+            c += len;
+        }
+        timings_base::stop_timer("vddiv");
+    } else
+#endif
+    {
+        linalg_generic_level1<float>::div1_i_i_x(0, ni, a, sia, c, sic, d);
+    }
+}
+
+
+template<>
+void linalg_mkl_level1<float>::mul1_i_x(
+    void*,
+    size_t ni,
+    float a,
+    float *c, size_t sic) {
+
+    timings_base::start_timer("sscal");
+    cblas_sscal(ni, a, c, sic);
+    timings_base::stop_timer("sscal");
+}
+
+
+template<>
+float linalg_mkl_level1<float>::mul2_x_p_p(
+    void*,
+    size_t np,
+    const float *a, size_t spa,
+    const float *b, size_t spb) {
+
+    timings_base::start_timer("sdot");
+    float d = cblas_sdot(np, a, spa, b, spb);
+    timings_base::stop_timer("sdot");
+    return d;
+}
+
+
+template<>
+void linalg_mkl_level1<float>::mul2_i_i_x(
+    void*,
+    size_t ni,
+    const float *a, size_t sia,
+    float b,
+    float *c, size_t sic) {
+
+    timings_base::start_timer("saxpy");
+    cblas_saxpy(ni, b, a, sia, c, sic);
+    timings_base::stop_timer("saxpy");
+}
+
+template<>
+void linalg_mkl_level1<float>::mul2_i_i_i_x(
+    void*,
+    size_t ni,
+    const float *a, size_t sia,
+    const float *b, size_t sib,
+    float *c, size_t sic,
+    float d) {
+
+#if defined(HAVE_MKL_VML)
+    if(sia == 1 && sib == 1) {
+        timings_base::start_timer("vdmul+saxpy");
+        float buf[256];
+        size_t len = 256;
+        while(ni > 0) {
+            if(ni < len) len = ni;
+            vsMul(len, a, b, buf);
+            cblas_saxpy(len, d, buf, 1, c, sic);
+            ni -= len;
+            a += len;
+            b += len;
+            c += len * sic;
+        }
+        timings_base::stop_timer("vdmul+saxpy");
+    } else
+#endif
+    {
+        timings_base::start_timer("nonblas");
+        for(size_t i = 0; i < ni; i++) {
+            c[i * sic] += d * a[i * sia] * b[i * sib];
+        }
+        timings_base::stop_timer("nonblas");
+    }
+}
+
+/*
+namespace {
+
+static struct {
+    libutil::spinlock lock;
+    unsigned n;
+} rng_stream_count;
+
+struct rng_stream {
+    bool init;
+    VSLStreamStatePtr stream;
+    rng_stream() : init(false) { }
+};
+
+} // unnamed namespace
+*/
+
+template<>
+void linalg_mkl_level1<float>::rng_setup(
+    void*) {
+
+    rng_stream_count.n = 0;
+}
+
+
+template<>
+void linalg_mkl_level1<float>::rng_set_i_x(
+    void*,
+    size_t ni,
+    float *a, size_t sia,
+    float c) {
+
+#ifdef HAVE_MKL_VSL
+
+    rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
+    if(!rs.init) {
+        unsigned count = 0;
+        rng_stream_count.lock.lock();
+        count = rng_stream_count.n++;
+        rng_stream_count.lock.unlock();
+        vslNewStream(&rs.stream, VSL_BRNG_MT2203 + count, 162);
+        rs.init = true;
+    }
+
+    if(sia == 1) {
+        if(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+            ni, a, 0.0, c) != VSL_STATUS_OK) {
+            throw 0;
+        }
+    } else {
+        float buf[256];
+        size_t ni1 = ni, off = 0;
+        while(ni1 > 0) {
+            size_t batsz = std::min(ni1, size_t(256));
+            if(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+                batsz, buf, 0.0, c) != VSL_STATUS_OK) {
+                throw 0;
+            }
+            for(size_t i = 0; i < batsz; i++) a[(off + i) * sia] = buf[i];
+            off += batsz;
+            ni1 -= batsz;
+        }
+    }
+
+#else // HAVE_MKL_VSL
+
+    linalg_generic_level1<float>::rng_set_i_x(0, ni, a, sia, c);
+
+#endif // HAVE_MKL_VSL
+}
+
+
+template<>
+void linalg_mkl_level1<float>::rng_add_i_x(
+    void*,
+    size_t ni,
+    float *a, size_t sia,
+    float c) {
+
+#ifdef HAVE_MKL_VSL
+
+    rng_stream &rs = libutil::tls<rng_stream>::get_instance().get();
+    if(!rs.init) {
+        unsigned count = 0;
+        rng_stream_count.lock.lock();
+        count = rng_stream_count.n++;
+        rng_stream_count.lock.unlock();
+        vslNewStream(&rs.stream, VSL_BRNG_MT2203 + count, 162);
+        rs.init = true;
+    }
+
+    float buf[256];
+    size_t ni1 = ni, off = 0;
+    while(ni1 > 0) {
+        size_t batsz = std::min(ni1, size_t(256));
+        if(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, rs.stream,
+            batsz, buf, 0.0, c) != VSL_STATUS_OK) {
+            throw 0;
+        }
+        if(sia == 1) {
+            for(size_t i = 0; i < batsz; i++) a[off + i] += buf[i];
+        } else {
+            for(size_t i = 0; i < batsz; i++) a[(off + i) * sia] += buf[i];
+        }
+        off += batsz;
+        ni1 -= batsz;
+    }
+
+#else // HAVE_MKL_VSL
+
+    linalg_generic_level1<float>::rng_add_i_x(0, ni, a, sia, c);
+
+#endif // HAVE_MKL_VSL
+}
+
 
 
 } // namespace libtensor

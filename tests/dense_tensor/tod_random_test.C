@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_random.h>
+#include <libtensor/dense_tensor/to_random.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -10,7 +10,6 @@ using namespace libtensor;
 
 int main() {
 
-    typedef allocator<double> allocator;
     typedef dense_tensor<3, double, allocator> tensor3;
     typedef dense_tensor_ctrl<3,double> tensor3_ctrl;
 
@@ -18,7 +17,7 @@ int main() {
     index_range<3> ir3(i3a, i3b); dimensions<3> dims3(ir3);
     tensor3 ta3(dims3), tb3(dims3);
 
-    tod_random<3> randr;
+    to_random<3, double> randr;
     bool test_ok = false;
     try {
         randr.perform(ta3);
@@ -36,7 +35,7 @@ int main() {
             "Two identical random number sequences.");
     }
 
-    tod_random<3>(2.0).perform(false, ta3);
+    to_random<3, double>(2.0).perform(false, ta3);
     dense_tensor_ctrl<3,double> ctrla(ta3);
     const double *cptra=ctrla.req_const_dataptr();
     for (size_t i=0; i<ta3.get_dims().get_size(); i++ ) {

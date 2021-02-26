@@ -214,6 +214,14 @@ private:
 
 
 template<size_t N, typename T>
+const char se_part<N, T>::k_clazz[] = "se_part<N, T>";
+
+
+template<size_t N, typename T>
+const char se_part<N, T>::k_sym_type[] = "part";
+
+
+template<size_t N, typename T>
 inline bool se_part<N, T>::is_forbidden(const index<N> &idx) const {
 
     return (m_fmap[abs_index<N>::get_abs_index(idx, m_pdims)] == size_t(-1));

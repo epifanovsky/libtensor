@@ -19,7 +19,7 @@ public:
     static const char *k_clazz; //!< Class name
 
 private:
-    gen_bto_vmpriority< N, btod_traits> m_gbto;
+    gen_bto_vmpriority< N, bto_traits<double> > m_gbto;
 
 public:
     /** \brief Initializes the operation

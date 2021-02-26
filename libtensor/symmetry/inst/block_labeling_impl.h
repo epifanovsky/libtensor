@@ -6,21 +6,18 @@
 namespace libtensor {
 
 template<size_t N>
-const char *block_labeling<N>::k_clazz = "block_labeling<N>";
-
-template<size_t N>
 block_labeling<N>::block_labeling(const dimensions<N> &bidims) :
     m_bidims(bidims), m_type((size_t) -1), m_labels(0) {
 
     size_t cur_type = 0;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (m_type[i] != (size_t) -1) continue;
 
         m_type[i] = cur_type;
         m_labels[cur_type] =
                 new blk_label_t(m_bidims[i], product_table_i::k_invalid);
 
-        for (register size_t j = i + 1; j < N; j++) {
+        for (size_t j = i + 1; j < N; j++) {
 
             if (m_bidims[i] == m_bidims[j]) m_type[j] = cur_type;
         }
@@ -34,7 +31,7 @@ void block_labeling<N>::assign(const mask<N> &msk, size_t blk, label_t l) {
 
     static const char *method = "assign(const mask<N> &, size_t, label_t)";
 
-    register size_t i = 0;
+    size_t i = 0;
     for (; i < N; i++)  if (msk[i]) break;
     if (i == N) return; // mask has no true component
 
@@ -47,7 +44,7 @@ void block_labeling<N>::assign(const mask<N> &msk, size_t blk, label_t l) {
     }
 
     // Test if all masked indexes are of the same type
-    for (register size_t j = i + 1; j < N; j++) {
+    for (size_t j = i + 1; j < N; j++) {
         if (! msk[j]) continue;
         if (m_type[j] == type) continue;
 
@@ -94,7 +91,7 @@ void block_labeling<N>::match() {
     }
 
     size_t cur_type = 0;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
 
         size_t itype = types[i];
         if (labels[itype] == 0) continue;
@@ -136,7 +133,7 @@ void block_labeling<N>::match() {
 template<size_t N>
 void block_labeling<N>::clear() {
 
-    for (register size_t i = 0; i < N && m_labels[i] != 0; i++) {
+    for (size_t i = 0; i < N && m_labels[i] != 0; i++) {
         blk_label_t &lg = *(m_labels[i]);
         for (size_t j = 0; j < lg.size(); j++)
             lg[j] = product_table_i::k_invalid;
@@ -151,10 +148,10 @@ bool operator==(const block_labeling<N> &a, const block_labeling<N> &b) {
 
     if (a.get_block_index_dims() != b.get_block_index_dims()) return false;
 
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         size_t ta = a.get_dim_type(i), tb = b.get_dim_type(i);
 
-        for (register size_t j = 0; j < a.get_dim(ta); j++) {
+        for (size_t j = 0; j < a.get_dim(ta); j++) {
             if (a.get_label(ta, j) != b.get_label(tb, j)) return false;
         }
     }
@@ -172,14 +169,14 @@ void transfer_labeling(const block_labeling<N> &from,
             "const sequence<N> &, block_labeling<M> &)";
 
 #ifdef LIBTENSOR_DEBUG
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (map[i] == (size_t) -1) continue;
         if (map[i] >= M) {
             throw bad_symmetry(g_ns, "", method,
                     __FILE__, __LINE__, "Invalid map.");
         }
 
-        for (register size_t j = i + 1; j < N; j++) {
+        for (size_t j = i + 1; j < N; j++) {
             if (map[i] == map[j])
                 throw bad_symmetry(g_ns, "", method,
                         __FILE__, __LINE__, "Invalid map.");
@@ -188,14 +185,14 @@ void transfer_labeling(const block_labeling<N> &from,
 #endif
 
     mask<N> done;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (map[i] == (size_t) -1 || done[i]) continue;
 
         size_t typei = from.get_dim_type(i);
         mask<M> m; m[map[i]] = true;
 
         // Find dimensions that can be transferred together with i.
-        for (register size_t j = i + 1; j < N; j++) {
+        for (size_t j = i + 1; j < N; j++) {
             if (done[j]) continue;
             if (map[j] == (size_t) -1) { done[j] = true; continue; }
             if (from.get_dim_type(j) != typei) continue;

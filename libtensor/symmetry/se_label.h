@@ -36,8 +36,8 @@ namespace libtensor {
 template<size_t N, typename T>
 class se_label : public symmetry_element_i<N, T> {
 public:
-    static const char *k_clazz; //!< Class name
-    static const char *k_sym_type; //!< Symmetry type
+    static const char k_clazz[]; //!< Class name
+    static const char k_sym_type[]; //!< Symmetry type
 
     typedef product_table_i::label_t label_t;
     typedef product_table_i::label_set_t label_set_t;
@@ -168,6 +168,14 @@ public:
     //@}
 
 };
+
+
+template<size_t N, typename T>
+const char se_label<N, T>::k_clazz[] = "se_label<N, T>";
+
+
+template<size_t N, typename T>
+const char se_label<N, T>::k_sym_type[] = "label";
 
 
 template<size_t N, typename T>

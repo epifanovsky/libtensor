@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-typedef diag_block_tensor_traits< double, allocator<double> > bt_traits;
+typedef diag_block_tensor_traits< double, allocator > bt_traits;
 
 template class gen_block_tensor<1, bt_traits>;
 template class gen_block_tensor<2, bt_traits>;

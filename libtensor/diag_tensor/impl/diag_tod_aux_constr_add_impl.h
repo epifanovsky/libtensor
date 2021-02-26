@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIAG_TOD_AUX_CONSTR_ADD_IMPL_H
 #define LIBTENSOR_DIAG_TOD_AUX_CONSTR_ADD_IMPL_H
 
-#include <memory> // for auto_ptr
+#include <memory> // for unique_ptr
 #include <libtensor/linalg/linalg.h>
 #include <libtensor/kernels/kern_dadd1.h>
 #include <libtensor/kernels/loop_list_runner.h>
@@ -59,7 +59,7 @@ void diag_tod_aux_constr_add<N>::perform(
         mdone |= m01;
     }
 
-    loop_registers<1, 1> radd;
+    loop_registers_x<1, 1, double> radd;
     radd.m_ptra[0] = m_pa;
     radd.m_ptrb[0] = pb;
     radd.m_ptra_end[0] = m_pa + m_sza;
@@ -67,9 +67,9 @@ void diag_tod_aux_constr_add<N>::perform(
 
     {
         diag_tod_aux_constr_add::start_timer("copy");
-        std::auto_ptr< kernel_base<linalg, 1, 1> > kern_add(
-            kern_dadd1<linalg>::match(d, lpadd1, lpadd2));
-        loop_list_runner<linalg, 1, 1>(lpadd1).run(0, radd, *kern_add);
+        std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern_add(
+            kern_add1<linalg, double>::match(d, lpadd1, lpadd2));
+        loop_list_runner_x<linalg, 1, 1, double>(lpadd1).run(0, radd, *kern_add);
         diag_tod_aux_constr_add::stop_timer("copy");
     }
 }

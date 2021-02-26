@@ -5,7 +5,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_compare.h>
+#include <libtensor/dense_tensor/to_compare.h>
 #include "../test_utils.h"
 
 using namespace libtensor;
@@ -13,7 +13,7 @@ using namespace libtensor;
 
 int test_exc() {
 
-    typedef dense_tensor<4, double, allocator<double> > tensor4;
+    typedef dense_tensor<4, double, allocator> tensor4;
 
     libtensor::index<4> i1, i2, i3;
     i2[0]=2; i2[1]=2; i2[2]=2; i2[3]=2;
@@ -24,7 +24,7 @@ int test_exc() {
 
     bool ok = false;
     try {
-        tod_compare<4> tc(t1, t2, 0);
+        to_compare<4, double> tc(t1, t2, 0);
     } catch(exception &e) {
         ok = true;
     }
@@ -40,7 +40,7 @@ int test_exc() {
 int test_operation(const dimensions<4> &dim,
     const libtensor::index<4> &idx) {
 
-    typedef dense_tensor<4, double, allocator<double> > tensor4;
+    typedef dense_tensor<4, double, allocator> tensor4;
     typedef dense_tensor_ctrl<4,double> tensor4_ctrl;
 
     tensor4 t1(dim), t2(dim);
@@ -66,7 +66,7 @@ int test_operation(const dimensions<4> &dim,
         tctrl2.ret_dataptr(p2);
     }
 
-    tod_compare<4> op1(t1, t2, 1e-7);
+    to_compare<4, double> op1(t1, t2, 1e-7);
     if(op1.compare()) {
         return fail_test("tod_compare_test::test_operation()", __FILE__,
         __LINE__, "tod_compare failed to find the difference");
@@ -81,7 +81,7 @@ int test_operation(const dimensions<4> &dim,
         "element value");
     }
 
-    tod_compare<4> op2(t1, t2, 1e-5);
+    to_compare<4, double> op2(t1, t2, 1e-5);
     if(!op2.compare()) {
         return fail_test("tod_compare_test::test_operation()", __FILE__,
         __LINE__, "tod_compare found a difference below "
@@ -92,13 +92,11 @@ int test_operation(const dimensions<4> &dim,
 }
 
 
-/** \test Tests tod_compare<0>
+/** \test Tests to_compare<0, double>
  **/
 int test_0() {
 
     static const char testname[] = "tod_compare_test::test_0()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -118,11 +116,11 @@ int test_0() {
         tc3.ret_dataptr(p3); p3 = 0;
     }
 
-    tod_compare<0> comp1(t1, t2, 0.0);
+    to_compare<0, double> comp1(t1, t2, 0.0);
     if(!comp1.compare()) {
         return fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
     }
-    tod_compare<0> comp2(t1, t3, 0.0);
+    to_compare<0, double> comp2(t1, t3, 0.0);
     if(comp2.compare()) {
         return fail_test(testname, __FILE__, __LINE__, "comp2.compare()");
     }
@@ -135,13 +133,11 @@ int test_0() {
 }
 
 
-/** \test Tests tod_compare<2>
+/** \test Tests to_compare<2, double>
  **/
 int test_1() {
 
     static const char testname[] = "tod_compare_test::test_1()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -168,7 +164,7 @@ int test_1() {
         tc2.ret_dataptr(p2); p2 = 0;
     }
 
-    tod_compare<2> comp1(t1, t2, 1e-10);
+    to_compare<2, double> comp1(t1, t2, 1e-10);
     if(!comp1.compare()) {
         return fail_test(testname, __FILE__, __LINE__, "!comp1.compare()");
     }

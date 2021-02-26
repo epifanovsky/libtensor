@@ -10,60 +10,60 @@ namespace libtensor {
 
     \ingroup libtensor_kernels
  **/
-template<typename LA, size_t N, size_t M>
-class loop_list_runner {
+template<typename LA, size_t N, size_t M, typename T>
+class loop_list_runner_x {
 public:
-    typedef typename kernel_base<LA, N, M>::device_context_ref
+    typedef typename kernel_base<LA, N, M, T>::device_context_ref
         device_context_ref;
-    typedef typename kernel_base<LA, N, M>::list_t list_t;
-    typedef typename kernel_base<LA, N, M>::iterator_t iterator_t;
-    typedef typename kernel_base<LA, N, M>::const_iterator_t const_iterator_t;
+    typedef typename kernel_base<LA, N, M, T>::list_t list_t;
+    typedef typename kernel_base<LA, N, M, T>::iterator_t iterator_t;
+    typedef typename kernel_base<LA, N, M, T>::const_iterator_t const_iterator_t;
 
 private:
     const list_t &m_list;
 
 public:
-    loop_list_runner(const list_t &list) : m_list(list) { }
+    loop_list_runner_x(const list_t &list) : m_list(list) { }
 
     void run(
         device_context_ref ctx,
-        const loop_registers<N, M> &r,
-        kernel_base<LA, N, M> &k);
+        const loop_registers_x<N, M, T> &r,
+        kernel_base<LA, N, M, T> &k);
 
 private:
     void run_loop(
         device_context_ref ctx,
         const const_iterator_t &i,
-        const loop_registers<N, M> &r,
-        kernel_base<LA, N, M> &k);
+        const loop_registers_x<N, M, T> &r,
+        kernel_base<LA, N, M, T> &k);
 
 };
 
 
-template<typename LA, size_t N, size_t M>
-void loop_list_runner<LA, N, M>::run(
+template<typename LA, size_t N, size_t M, typename T>
+void loop_list_runner_x<LA, N, M, T>::run(
     device_context_ref ctx,
-    const loop_registers<N, M> &r,
-    kernel_base<LA, N, M> &k) {
+    const loop_registers_x<N, M, T> &r,
+    kernel_base<LA, N, M, T> &k) {
 
     const_iterator_t i = m_list.begin();
     run_loop(ctx, i, r, k);
 }
 
 
-template<typename LA, size_t N, size_t M>
-void loop_list_runner<LA, N, M>::run_loop(
+template<typename LA, size_t N, size_t M, typename T>
+void loop_list_runner_x<LA, N, M, T>::run_loop(
     device_context_ref ctx,
     const const_iterator_t &i,
-    const loop_registers<N, M> &r,
-    kernel_base<LA, N, M> &k) {
+    const loop_registers_x<N, M, T> &r,
+    kernel_base<LA, N, M, T> &k) {
 
     if(i == m_list.end()) {
         k.run(ctx, r);
         return;
     }
 
-    loop_registers<N, M> r1(r);
+    loop_registers_x<N, M, T> r1(r);
     for(size_t j = 0; j < i->weight(); j++) {
         const_iterator_t ii = i; ii++;
         run_loop(ctx, ii, r1, k);

@@ -14,11 +14,12 @@ namespace libtensor {
 
     \ingroup libtensor_core
  **/
-template<typename T>
+//template<typename T>
 class allocator_wrapper_i {
 public:
     typedef struct pointer {
-        private: T *x;
+        //private: T *x;
+        private: void *x;
     } pointer_type;
 
 public:
@@ -31,8 +32,10 @@ public:
     virtual pointer_type allocate(size_t sz) = 0;
     virtual void deallocate(const pointer_type &p) throw () = 0;
     virtual void prefetch(const pointer_type &p) = 0;
-    virtual T *lock_rw(const pointer_type &p) = 0;
-    virtual const T *lock_ro(const pointer_type &p) = 0;
+    //virtual T *lock_rw(const pointer_type &p) = 0;
+    virtual void *lock_rw(const pointer_type &p) = 0;
+    //virtual const T *lock_ro(const pointer_type &p) = 0;
+    virtual const void *lock_ro(const pointer_type &p) = 0;
     virtual void unlock_rw(const pointer_type &p) = 0;
     virtual void unlock_ro(const pointer_type &p) = 0;
     virtual void set_priority(const pointer_type &p) = 0;
@@ -45,16 +48,15 @@ public:
 
     \ingroup libtensor_core
  **/
-template<typename T>
 class allocator {
 public:
-    typedef typename allocator_wrapper_i<T>::pointer_type pointer_type;
+    typedef allocator_wrapper_i::pointer_type pointer_type;
 
 public:
     static const pointer_type invalid_pointer; //!< Invalid pointer constant
 
 private:
-    static allocator_wrapper_i<T> *m_aimpl; //!< Implementation
+    static allocator_wrapper_i *m_aimpl; //!< Implementation
     static size_t m_base_sz; //!< Exponential base of data block size
     static size_t m_min_sz; //!< Smallest block size in data elements
     static size_t m_max_sz; //!< Largest block size in data elements
@@ -129,7 +131,7 @@ public:
         \param p Virtual memory pointer.
         \return Physical pointer.
      **/
-    static T *lock_rw(const pointer_type &p) {
+    static void *lock_rw(const pointer_type &p) {
         return m_aimpl->lock_rw(p);
     }
 
@@ -138,7 +140,7 @@ public:
         \param p Virtual memory pointer.
         \return Constant physical pointer.
      **/
-    static const T *lock_ro(const pointer_type &p) {
+    static const void *lock_ro(const pointer_type &p) {
         return m_aimpl->lock_ro(p);
     }
 
@@ -172,7 +174,7 @@ public:
 
 private:
     static pointer_type make_invalid_pointer();
-    static allocator_wrapper_i<T> *make_default_allocator();
+    static allocator_wrapper_i *make_default_allocator();
 
 };
 

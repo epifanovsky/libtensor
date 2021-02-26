@@ -21,7 +21,7 @@ so_symmetrize<N, T>::so_symmetrize(const symmetry<N, T> &sym1,
 
     size_t ngrp = 0, nidx = 0;
     sequence<N, size_t> nidxs(0), ngrps(0);
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (m_idxgrp[i] == 0 || m_symidx[i] == 0) {
             if (m_idxgrp[i] != m_symidx[i]) {
                 throw bad_symmetry(g_ns, k_clazz, method,
@@ -46,7 +46,7 @@ so_symmetrize<N, T>::so_symmetrize(const symmetry<N, T> &sym1,
         ngrps[m_symidx[i] - 1]++;
     }
 
-    register size_t j = 0;
+    size_t j = 0;
     for (; j < N && (ngrps[j] != 0); j++) {
         if (ngrps[j] != ngrp) {
             throw bad_parameter(g_ns, k_clazz, method,
@@ -88,7 +88,7 @@ template<size_t N, typename T>
 void so_symmetrize<N, T>::perform(symmetry<N, T> &sym2) {
 
     size_t ngrp = 0;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (m_idxgrp[i] == 0) continue;
         ngrp = std::max(ngrp, m_idxgrp[i]);
     }

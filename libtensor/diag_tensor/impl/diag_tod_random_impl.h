@@ -1,7 +1,7 @@
 #ifndef LIBTENSOR_DIAG_TOD_RANDOM_IMPL_H
 #define LIBTENSOR_DIAG_TOD_RANDOM_IMPL_H
 
-#include <cstdlib>
+#include <libtensor/linalg/linalg.h>
 #include <libtensor/diag_tensor/diag_tensor_ctrl.h>
 #include "../diag_tod_random.h"
 
@@ -29,7 +29,7 @@ void diag_tod_random<N>::perform(diag_tensor_wr_i<N, double> &ta) {
             size_t ssn = ssl[ssi];
             size_t sz = dtsa.get_subspace_size(ssn);
             double *pa = ca.req_dataptr(ssn);
-            for(size_t i = 0; i < sz; i++) pa[i] = drand48();
+            linalg::rng_set_i_x(0, sz, pa, 1, 1.0);
             ca.ret_dataptr(ssn, pa);
         }
 

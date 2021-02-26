@@ -88,7 +88,7 @@ public:
         Checks that the product of any label with the identity label yields the
         respective label and that all products yield a non-empty set.
      **/
-    void check() const throw(bad_symmetry);
+    void check() const;
 
 protected:
     /** \brief Perform additional consistency check

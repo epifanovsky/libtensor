@@ -37,7 +37,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_label<N - M, T> >::do_perform(
     // Create a map of remaining indexes
     sequence<k_order1, size_t> map(0), rmap(0);
     size_t nrsteps = 0;
-    for (register size_t i = 0, j = 0; i < k_order1; i++) {
+    for (size_t i = 0, j = 0; i < k_order1; i++) {
         if (params.msk[i]) {
             map[i] = size_t(-1);
             rmap[i] = params.rseq[i] + k_order2;

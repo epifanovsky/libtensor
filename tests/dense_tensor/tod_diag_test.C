@@ -3,7 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_diag.h>
+#include <libtensor/dense_tensor/to_diag.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -15,8 +15,6 @@ using namespace libtensor;
 int test_1() {
 
     static const char testname[] = "tod_diag_test::test_1()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -56,7 +54,7 @@ int test_1() {
     }
 
     sequence<2, size_t> m; m[0] = 1; m[1] = 1;
-    tod_diag<2, 1>(ta, m).perform(true, tb);
+    to_diag<2, 1, double>(ta, m).perform(true, tb);
 
     compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -74,8 +72,6 @@ int test_1() {
 int test_2() {
 
     static const char testname[] = "tod_diag_test::test_2()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -118,7 +114,7 @@ int test_2() {
     }
 
     sequence<3, size_t> m; m[0] = 1; m[1] = 1; m[2] = 0;
-    tod_diag<3, 2>(ta, m).perform(true, tb);
+    to_diag<3, 2, double>(ta, m).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -136,8 +132,6 @@ int test_2() {
 int test_3() {
 
     static const char testname[] = "tod_diag_test::test_3()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -180,7 +174,7 @@ int test_3() {
     }
 
     sequence<3, size_t> m; m[0] = 1; m[1] = 0; m[2] = 1;
-    tod_diag<3, 2>(ta, m).perform(true, tb);
+    to_diag<3, 2, double>(ta, m).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -198,8 +192,6 @@ int test_3() {
 int test_4() {
 
     static const char testname[] = "tod_diag_test::test_4()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -242,7 +234,7 @@ int test_4() {
     }
 
     sequence<3, size_t> m; m[0] = 0; m[1] = 1; m[2] = 1;
-    tod_diag<3, 2>(ta, m).perform(true, tb);
+    to_diag<3, 2, double>(ta, m).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -260,8 +252,6 @@ int test_4() {
 int test_5() {
 
     static const char testname[] = "tod_diag_test::test_5()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -306,7 +296,7 @@ int test_5() {
     sequence<3, size_t> m; m[0] = 0; m[1] = 1; m[2] = 1;
     permutation<2> permb; permb.permute(0, 1);
     tensor_transf<2, double> tr(permb);
-    tod_diag<3, 2>(ta, m, tr).perform(true, tb);
+    to_diag<3, 2, double>(ta, m, tr).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -323,8 +313,6 @@ int test_5() {
 int test_6() {
 
     static const char testname[] = "tod_diag_test::test_6()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -371,7 +359,7 @@ int test_6() {
     sequence<4, size_t> m; m[0] = 0; m[1] = 1; m[2] = 0; m[3] = 1;
     permutation<3> permb; permb.permute(0, 1).permute(0, 2);
     tensor_transf<3, double> tr(permb);
-    tod_diag<4, 3>(ta, m, tr).perform(true, tb);
+    to_diag<4, 3, double>(ta, m, tr).perform(true, tb);
 
     compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -389,8 +377,6 @@ int test_6() {
 int test_7() {
 
     static const char testname[] = "tod_diag_test::test_7()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -435,7 +421,7 @@ int test_7() {
     sequence<4, size_t> m; m[0] = 1; m[1] = 2; m[2] = 1; m[3] = 2;
     permutation<2> permb; permb.permute(0, 1);
     tensor_transf<2, double> tr(permb);
-    tod_diag<4, 2>(ta, m, tr).perform(true, tb);
+    to_diag<4, 2, double>(ta, m, tr).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -453,8 +439,6 @@ int test_7() {
 int test_8() {
 
     static const char testname[] = "tod_diag_test::test_8()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -505,7 +489,7 @@ int test_8() {
     m[0] = 1; m[1] = 0; m[2] = 2; m[3] = 1; m[4] = 1; m[5] = 2;
     permutation<3> permb; permb.permute(0, 1).permute(1, 2);
     tensor_transf<3, double> tr(permb);
-    tod_diag<6, 3>(ta, m, tr).perform(true, tb);
+    to_diag<6, 3, double>(ta, m, tr).perform(true, tb);
 
     compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -523,8 +507,6 @@ int test_8() {
 int test_9() {
 
     static const char testname[] = "tod_diag_test::test_9()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -573,7 +555,7 @@ int test_9() {
     sequence<5, size_t> m; m[0] = 0; m[1] = 1; m[2] = 1; m[3] = 2; m[4] = 2;
     permutation<3> permb; permb.permute(0, 1).permute(1, 2);
     tensor_transf<3, double> tr(permb);
-    tod_diag<5, 3>(ta, m, tr).perform(true, tb);
+    to_diag<5, 3, double>(ta, m, tr).perform(true, tb);
 
     compare_ref<3>::compare(testname, tb, tb_ref, 1e-15);
 

@@ -67,7 +67,7 @@ template<size_t N>
 permutation_generator<N>::permutation_generator() :
     m_map(0), m_p(0), m_done(false), m_n(N) {
 
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         m_map[i] = i;
         m_d[i] = true;
     }
@@ -78,8 +78,8 @@ template<size_t N>
 permutation_generator<N>::permutation_generator(const mask<N> &msk) :
     m_map(N), m_p(0), m_done(false) {
 
-    register size_t j = 0;
-    for (register size_t i = 0; i < N; i++) {
+    size_t j = 0;
+    for (size_t i = 0; i < N; i++) {
         if (! msk[i]) m_map[j++] = i;
         m_d[i] = true;
     }
@@ -94,7 +94,7 @@ bool permutation_generator<N>::next() {
 
     if (m_done) return false;
 
-    register size_t i = m_n - 1, k = 0;
+    size_t i = m_n - 1, k = 0;
     for (; i > 0; i--) {
         if (m_d[i]) { m_p[i]++; } else { m_p[i]--; }
         if (m_p[i] == (i + 1)) {

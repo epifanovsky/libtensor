@@ -1,7 +1,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_trace.h>
+#include <libtensor/dense_tensor/to_trace.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -16,8 +16,6 @@ int test_1(size_t ni) {
     tnss << "tod_trace_test::test_1(" << ni << ")";
     std::string tns = tnss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -25,7 +23,7 @@ int test_1(size_t ni) {
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sza = dims.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dims);
+    dense_tensor<2, double, allocator> ta(dims);
 
     double d_ref = 0.0;
     {
@@ -44,7 +42,7 @@ int test_1(size_t ni) {
         tca.ret_dataptr(pa); pa = 0;
     }
 
-    double d = tod_trace<1>(ta).calculate();
+    double d = to_trace<1, double>(ta).calculate();
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
         std::ostringstream ss;
@@ -70,8 +68,6 @@ int test_2(size_t ni) {
     tnss << "tod_trace_test::test_2(" << ni << ")";
     std::string tns = tnss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<2> i1, i2;
@@ -79,7 +75,7 @@ int test_2(size_t ni) {
     dimensions<2> dims(index_range<2>(i1, i2));
     size_t sza = dims.get_size();
 
-    dense_tensor<2, double, allocator_t> ta(dims);
+    dense_tensor<2, double, allocator> ta(dims);
 
     double d_ref = 0.0;
     {
@@ -99,7 +95,7 @@ int test_2(size_t ni) {
     }
 
     permutation<2> perm; perm.permute(0, 1);
-    double d = tod_trace<1>(ta, perm).calculate();
+    double d = to_trace<1, double>(ta, perm).calculate();
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-15)) {
         std::ostringstream ss;
@@ -125,8 +121,6 @@ int test_3(size_t ni, size_t nj) {
     tnss << "tod_trace_test::test_3(" << ni << ", " << nj << ")";
     std::string tns = tnss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<4> i1, i2;
@@ -134,7 +128,7 @@ int test_3(size_t ni, size_t nj) {
     dimensions<4> dims(index_range<4>(i1, i2));
     size_t sza = dims.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dims);
+    dense_tensor<4, double, allocator> ta(dims);
 
     double d_ref = 0.0;
     {
@@ -156,7 +150,7 @@ int test_3(size_t ni, size_t nj) {
         tca.ret_dataptr(pa); pa = 0;
     }
 
-    double d = tod_trace<2>(ta).calculate();
+    double d = to_trace<2, double>(ta).calculate();
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;
@@ -182,8 +176,6 @@ int test_4(size_t ni, size_t nj) {
     tnss << "tod_trace_test::test_4(" << ni << ", " << nj << ")";
     std::string tns = tnss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<4> i1, i2;
@@ -191,7 +183,7 @@ int test_4(size_t ni, size_t nj) {
     dimensions<4> dims(index_range<4>(i1, i2));
     size_t sza = dims.get_size();
 
-    dense_tensor<4, double, allocator_t> ta(dims);
+    dense_tensor<4, double, allocator> ta(dims);
 
     double d_ref = 0.0;
     {
@@ -214,7 +206,7 @@ int test_4(size_t ni, size_t nj) {
     }
 
     permutation<4> perm; perm.permute(1, 2);
-    double d = tod_trace<2>(ta, perm).calculate();
+    double d = to_trace<2, double>(ta, perm).calculate();
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;
@@ -241,8 +233,6 @@ int test_5(size_t ni, size_t nj, size_t nk) {
         << nk << ")";
     std::string tns = tnss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<6> i1, i2;
@@ -251,7 +241,7 @@ int test_5(size_t ni, size_t nj, size_t nk) {
     dimensions<6> dims(index_range<6>(i1, i2));
     size_t sza = dims.get_size();
 
-    dense_tensor<6, double, allocator_t> ta(dims);
+    dense_tensor<6, double, allocator> ta(dims);
 
     double d_ref = 0.0;
     {
@@ -276,7 +266,7 @@ int test_5(size_t ni, size_t nj, size_t nk) {
         tca.ret_dataptr(pa); pa = 0;
     }
 
-    double d = tod_trace<3>(ta).calculate();
+    double d = to_trace<3, double>(ta).calculate();
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;
@@ -303,8 +293,6 @@ int test_6(size_t ni, size_t nj, size_t nk) {
         << nk << ")";
     std::string tns = tnss.str();
 
-    typedef allocator<double> allocator_t;
-
     try {
 
     libtensor::index<6> i1, i2;
@@ -313,7 +301,7 @@ int test_6(size_t ni, size_t nj, size_t nk) {
     dimensions<6> dims(index_range<6>(i1, i2));
     size_t sza = dims.get_size();
 
-    dense_tensor<6, double, allocator_t> ta(dims);
+    dense_tensor<6, double, allocator> ta(dims);
 
     double d_ref = 0.0;
     {
@@ -341,7 +329,7 @@ int test_6(size_t ni, size_t nj, size_t nk) {
     permutation<6> perm;
     perm.permute(0, 5).permute(1, 2); // kkjjii -> ijkjik
     perm.permute(3, 4); // ijkjik -> ijkijk
-    double d = tod_trace<3>(ta, perm).calculate();
+    double d = to_trace<3, double>(ta, perm).calculate();
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;

@@ -3,7 +3,7 @@
 #include <libtensor/core/allocator.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_extract.h>
+#include <libtensor/dense_tensor/to_extract.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -15,8 +15,6 @@ using namespace libtensor;
 int test_1() {
 
     static const char testname[] = "tod_extract_test::test_1()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -57,7 +55,7 @@ int test_1() {
 
     mask<2> m; m[0] = true; m[1] = false;
     libtensor::index<2> idx; idx[0] = 0; idx[1] = 2;
-    tod_extract<2, 1>(ta, m, idx).perform(true, tb);
+    to_extract<2, 1, double>(ta, m, idx).perform(true, tb);
 
     compare_ref<1>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -75,8 +73,6 @@ int test_1() {
 int test_2() {
 
     static const char testname[] = "tod_extract_test::test_2()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -120,7 +116,7 @@ int test_2() {
 
     mask<3> m; m[0] = true; m[1] = false; m[2] = true;
     libtensor::index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
-    tod_extract<3, 1>(ta, m, idx).perform(true, tb);
+    to_extract<3, 1, double>(ta, m, idx).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -138,8 +134,6 @@ int test_2() {
 int test_3() {
 
     static const char testname[] = "tod_extract_test::test_3()";
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -186,7 +180,7 @@ int test_3() {
 
     mask<3> m; m[0] = true; m[1] = false; m[2] = true;
     libtensor::index<3> idx; idx[0] = 0; idx[1] = 0; idx[2] = 0;
-    tod_extract<3, 1>(ta, m,idx, perm).perform(true, tb);
+    to_extract<3, 1, double>(ta, m,idx, perm).perform(true, tb);
 
     compare_ref<2>::compare(testname, tb, tb_ref, 1e-15);
 
@@ -202,8 +196,6 @@ int test_4() {
 
     static const char testname[] = "tod_extract_test::test_4()";
 
-    typedef allocator<double> allocator;
-
     try {
 
 
@@ -218,8 +210,6 @@ int test_4() {
 int test_5() {
 
     static const char testname[] = "tod_extract_test::test_5()";
-
-    typedef allocator<double> allocator;
 
     try {
 

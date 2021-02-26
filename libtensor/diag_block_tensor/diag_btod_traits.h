@@ -25,7 +25,7 @@ struct diag_btod_traits {
     //! Type of temporary block tensor
     template<size_t N>
     struct temp_block_tensor_type {
-        typedef diag_block_tensor< N, double, allocator<double> > type;
+        typedef diag_block_tensor< N, double, allocator > type;
     };
 
     //! Type of block of block tensors
@@ -48,7 +48,7 @@ struct diag_btod_traits {
     template<size_t N, size_t M, size_t K>
     struct to_contract2_type {
         typedef diag_tod_contract2s<N, M, K> type;
-        typedef btod_contract2_clst_optimize<N, M, K> clst_optimize_type;
+        typedef bto_contract2_clst_optimize<N, M, K, double> clst_optimize_type;
     };
 
     template<size_t N>

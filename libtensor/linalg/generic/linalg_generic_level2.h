@@ -11,12 +11,13 @@ namespace libtensor {
 
     \ingroup libtensor_linalg
  **/
-class linalg_generic_level2 : public linalg_timings<linalg_generic_level2> {
+template<typename T>
+class linalg_generic_level2 : public linalg_timings<linalg_generic_level2<T> > {
 public:
     static const char k_clazz[]; //!< Class name
 
 private:
-    typedef linalg_timings<linalg_generic_level2> timings_base;
+    typedef linalg_timings<linalg_generic_level2<T> > timings_base;
 
 public:
     /** \brief \f$ c_{ij} = c_{ij} + a_{ij} b \f$
@@ -32,9 +33,9 @@ public:
     static void add1_ij_ij_x(
         void *ctx,
         size_t ni, size_t nj,
-        const double *a, size_t sia,
-        double b,
-        double *c, size_t sic);
+        const T *a, size_t sia,
+        T b,
+        T *c, size_t sic);
 
     /** \brief \f$ c_{ij} = c_{ij} + a_{ji} b \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -49,9 +50,9 @@ public:
     static void add1_ij_ji_x(
         void *ctx,
         size_t ni, size_t nj,
-        const double *a, size_t sja,
-        double b,
-        double *c, size_t sic);
+        const T *a, size_t sja,
+        T b,
+        T *c, size_t sic);
 
     /** \brief \f$ c_{ij} = a_{ij} b \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -66,9 +67,9 @@ public:
     static void copy_ij_ij_x(
         void *ctx,
         size_t ni, size_t nj,
-        const double *a, size_t sia,
-        double b,
-        double *c, size_t sic);
+        const T *a, size_t sia,
+        T b,
+        T *c, size_t sic);
 
     /** \brief \f$ c_{ij} = a_{ji} \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -82,8 +83,8 @@ public:
     static void copy_ij_ji(
         void *ctx,
         size_t ni, size_t nj,
-        const double *a, size_t sja,
-        double *c, size_t sic);
+        const T *a, size_t sja,
+        T *c, size_t sic);
 
     /** \brief \f$ c_{ij} = a_{ji} b \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -98,9 +99,9 @@ public:
     static void copy_ij_ji_x(
         void *ctx,
         size_t ni, size_t nj,
-        const double *a, size_t sja,
-        double b,
-        double *c, size_t sic);
+        const T *a, size_t sja,
+        T b,
+        T *c, size_t sic);
 
     /** \brief \f$ c_i = c_i + \sum_p a_{ip} b_p d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -117,10 +118,10 @@ public:
     static void mul2_i_ip_p_x(
         void *ctx,
         size_t ni, size_t np,
-        const double *a, size_t sia,
-        const double *b, size_t spb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t spb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_i = c_i + \sum_p a_{pi} b_p d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -137,10 +138,10 @@ public:
     static void mul2_i_pi_p_x(
         void *ctx,
         size_t ni, size_t np,
-        const double *a, size_t spa,
-        const double *b, size_t spb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t spa,
+        const T *b, size_t spb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c_{ij} = c_{ij} + a_i b_j d \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -157,10 +158,10 @@ public:
     static void mul2_ij_i_j_x(
         void *ctx,
         size_t ni, size_t nj,
-        const double *a, size_t sia,
-        const double *b, size_t sjb,
-        double *c, size_t sic,
-        double d);
+        const T *a, size_t sia,
+        const T *b, size_t sjb,
+        T *c, size_t sic,
+        T d);
 
     /** \brief \f$ c = \sum_{pq} a_{pq} b_{pq} \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -172,11 +173,11 @@ public:
         \param sqb Step of p in b (spb >= nq).
         \return c.
      **/
-    static double mul2_x_pq_pq(
+    static T mul2_x_pq_pq(
         void *ctx,
         size_t np, size_t nq,
-        const double *a, size_t spa,
-        const double *b, size_t spb);
+        const T *a, size_t spa,
+        const T *b, size_t spb);
 
     /** \brief \f$ c = \sum_{pq} a_{pq} b_{qp} \f$
         \param ctx Context of computational device (unused for CPUs).
@@ -188,11 +189,11 @@ public:
         \param sqb Step of q in b (sqb >= np).
         \return c.
      **/
-    static double mul2_x_pq_qp(
+    static T mul2_x_pq_qp(
         void *ctx,
         size_t np, size_t nq,
-        const double *a, size_t spa,
-        const double *b, size_t sqb);
+        const T *a, size_t spa,
+        const T *b, size_t sqb);
 
 };
 

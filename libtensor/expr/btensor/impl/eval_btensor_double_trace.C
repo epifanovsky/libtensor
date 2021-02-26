@@ -1,4 +1,4 @@
-#include <libtensor/block_tensor/btod_trace.h>
+#include <libtensor/block_tensor/bto_trace.h>
 #include <libtensor/expr/common/metaprog.h>
 #include <libtensor/expr/dag/node_trace.h>
 #include <libtensor/expr/dag/node_scalar.h>
@@ -11,11 +11,11 @@ namespace eval_btensor_double {
 
 namespace {
 
-
+template<typename T>
 class eval_trace_impl {
 private:
     enum {
-        Nmax = trace::Nmax
+        Nmax = trace<T>::Nmax
     };
 
 private:
@@ -51,7 +51,8 @@ public:
 };
 
 
-void eval_trace_impl::evaluate(expr_tree::node_id_t lhs) {
+template<typename T>
+void eval_trace_impl<T>::evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
@@ -65,8 +66,9 @@ void eval_trace_impl::evaluate(expr_tree::node_id_t lhs) {
 }
 
 
+template<typename T>
 template<size_t N>
-void eval_trace_impl::do_evaluate(expr_tree::node_id_t lhs) {
+void eval_trace_impl<T>::do_evaluate(expr_tree::node_id_t lhs) {
 
     const expr_tree::edge_list_t &e = m_tree.get_edges_out(m_id);
     const node &n = m_tree.get_vertex(m_id);
@@ -76,7 +78,7 @@ void eval_trace_impl::do_evaluate(expr_tree::node_id_t lhs) {
         NA = 2 * N
     };
 
-    btensor_from_node<NA, double> bta(m_tree, e[0]);
+    btensor_from_node<NA, T> bta(m_tree, e[0]);
 
     sequence<NA, size_t> seqa1, seqa2;
     for(size_t i = 0; i < NA; i++) seqa1[i] = i;
@@ -93,17 +95,18 @@ void eval_trace_impl::do_evaluate(expr_tree::node_id_t lhs) {
     permutation<NA> perma(bta.get_transf().get_perm());
     perma.permute(pb.get_perm());
 
-    double d = btod_trace<N>(bta.get_btensor(), perma).calculate();
+    T d = bto_trace<N, T>(bta.get_btensor(), perma).calculate();
     d *= bta.get_transf().get_scalar_tr().get_coeff();
 
-    const node_scalar<double> &ns =
-        m_tree.get_vertex(lhs).template recast_as< node_scalar<double> >();
+    const node_scalar<T> &ns =
+        m_tree.get_vertex(lhs).template recast_as< node_scalar<T> >();
     ns.get_scalar() = d;
 }
 
 
+template<typename T>
 template<size_t NA>
-void eval_trace_impl::dispatch_trace::dispatch() {
+void eval_trace_impl<T>::dispatch_trace::dispatch() {
 
     eval.template do_evaluate<NA/2>(lhs);
 }
@@ -112,11 +115,14 @@ void eval_trace_impl::dispatch_trace::dispatch() {
 } // unnamed namespace
 
 
-void trace::evaluate(node_id_t lhs) {
+template<typename T>
+void trace<T>::evaluate(node_id_t lhs) {
 
-    eval_trace_impl(m_tree, m_id).evaluate(lhs);
+    eval_trace_impl<T>(m_tree, m_id).evaluate(lhs);
 }
 
+template class trace<double>;
+template class trace<float>;
 
 } // namespace eval_btensor_double
 } // namespace expr

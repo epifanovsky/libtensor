@@ -6,7 +6,7 @@
 #include <libtensor/core/abs_index.h>
 #include <libtensor/dense_tensor/dense_tensor.h>
 #include <libtensor/dense_tensor/dense_tensor_ctrl.h>
-#include <libtensor/dense_tensor/tod_ewmult2.h>
+#include <libtensor/dense_tensor/to_ewmult2.h>
 #include "../compare_ref.h"
 #include "../test_utils.h"
 
@@ -22,8 +22,6 @@ int test_i_i_i(size_t ni, double d) {
     std::stringstream tnss;
     tnss << "tod_ewmult2_test::test_i_i_i(" << ni << ", " << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -83,7 +81,7 @@ int test_i_i_i(size_t ni, double d) {
 
     // Invoke the routine
 
-    tod_ewmult2<0, 0, 1> op(ta, tb, (d == 0 ? 1.0 : d));
+    to_ewmult2<0, 0, 1, double> op(ta, tb, (d == 0 ? 1.0 : d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -107,8 +105,6 @@ int test_ij_ij_ij(size_t ni, size_t nj, double d) {
     tnss << "tod_ewmult2_test::test_ij_ij_ij(" << ni << ", " << nj << ", "
         << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -171,7 +167,7 @@ int test_ij_ij_ij(size_t ni, size_t nj, double d) {
 
     // Invoke the routine
 
-    tod_ewmult2<0, 0, 2> op(ta, tb, (d == 0.0 ? d2 : d2 * d));
+    to_ewmult2<0, 0, 2, double> op(ta, tb, (d == 0.0 ? d2 : d2 * d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -195,8 +191,6 @@ int test_ij_ij_ji(size_t ni, size_t nj, double d) {
     tnss << "tod_ewmult2_test::test_ij_ij_ji(" << ni << ", " << nj << ", "
         << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -262,7 +256,7 @@ int test_ij_ij_ji(size_t ni, size_t nj, double d) {
     permutation<2> perma;
     permutation<2> permb; permb.permute(0, 1);
     permutation<2> permc;
-    tod_ewmult2<0, 0, 2> op(ta, perma, tb, permb, permc, (d == 0 ? d2 : d2 * d));
+    to_ewmult2<0, 0, 2, double> op(ta, perma, tb, permb, permc, (d == 0 ? d2 : d2 * d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -286,8 +280,6 @@ int test_ijk_jki_kij(size_t ni, size_t nj, size_t nk, double d) {
     tnss << "tod_ewmult2_test::test_ijk_jki_kij(" << ni << ", "
         << nj << ", " << nk << ", " << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -355,7 +347,7 @@ int test_ijk_jki_kij(size_t ni, size_t nj, size_t nk, double d) {
     permutation<3> perma; perma.permute(0, 1).permute(1, 2); // jki->kij
     permutation<3> permb; // kij
     permutation<3> permc; permc.permute(0, 1).permute(1, 2); // kij->ijk
-    tod_ewmult2<0, 0, 3> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
+    to_ewmult2<0, 0, 3, double> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -379,8 +371,6 @@ int test_ijk_ik_kj(size_t ni, size_t nj, size_t nk, double d) {
     tnss << "tod_ewmult2_test::test_ijk_ik_kj(" << ni << ", "
         << nj << ", " << nk << ", " << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -449,7 +439,7 @@ int test_ijk_ik_kj(size_t ni, size_t nj, size_t nk, double d) {
     permutation<2> perma; // ik
     permutation<2> permb; permb.permute(0, 1); // kj->jk
     permutation<3> permc; // ijk
-    tod_ewmult2<1, 1, 1> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
+    to_ewmult2<1, 1, 1, double> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -473,8 +463,6 @@ int test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
     tnss << "tod_ewmult2_test::test_ijkl_kj_ikl(" << ni << ", "
         << nj << ", " << nk << ", " << nl << ", " << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -547,7 +535,7 @@ int test_ijkl_kj_ikl(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
     permutation<2> perma; perma.permute(0, 1); // kj->jk
     permutation<3> permb; permb.permute(1, 2); // ikl->ilk
     permutation<4> permc; permc.permute(0, 1).permute(2, 3); // jilk->ijkl
-    tod_ewmult2<1, 2, 1> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
+    to_ewmult2<1, 2, 1, double> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 
@@ -571,8 +559,6 @@ int test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
     tnss << "tod_ewmult2_test::test_ijkl_ljk_jil(" << ni << ", "
         << nj << ", " << nk << ", " << nl << ", " << d << ")";
     std::string tns = tnss.str();
-
-    typedef allocator<double> allocator;
 
     try {
 
@@ -646,7 +632,7 @@ int test_ijkl_ljk_jil(size_t ni, size_t nj, size_t nk, size_t nl, double d) {
     permutation<3> permb; permb.permute(0, 1).permute(1, 2); // jil->ilj
     permutation<4> permc;
     permc.permute(2, 3).permute(1, 2).permute(0, 2); // kilj->ijkl
-    tod_ewmult2<1, 1, 2> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
+    to_ewmult2<1, 1, 2, double> op(ta, perma, tb, permb, permc, (d == 0.0 ? d2 : d2 * d));
     if(d == 0.0) op.perform(true, tc);
     else op.perform(false, tc);
 

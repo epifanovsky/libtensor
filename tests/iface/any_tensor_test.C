@@ -1,16 +1,8 @@
 #include <libtensor/exception.h>
 #include <libtensor/expr/iface/any_tensor_impl.h>
-#include "any_tensor_test.h"
+#include "../test_utils.h"
 
-namespace libtensor {
-
-
-void any_tensor_test::perform() throw(libtest::test_exception) {
-
-    test_1();
-    test_2();
-}
-
+using namespace libtensor;
 
 namespace {
 
@@ -21,8 +13,17 @@ public:
     }
 };
 
-class tensor : public tensor_i {
+class tensor_impl : public tensor_i {
 
+};
+
+template<size_t N, typename T>
+class tensor : public any_tensor<N, T> {
+public:
+    tensor_impl t;
+
+public:
+    tensor() : any_tensor<N, T>((tensor_i&)t) { }
 };
 
 } // unnamed namespace
@@ -30,57 +31,66 @@ class tensor : public tensor_i {
 
 /** \test Tests a one-dimensional any_tensor
  **/
-void any_tensor_test::test_1() {
+int test_1() {
 
-    static const char testname[] = "any_tensor_test::test_1()";
+    static const char testname[] = "test_1()";
 
     try {
 
-    tensor t;
-    tensor_i &ti = t;
-    any_tensor<1, int> any(ti);
+    tensor<1, int> t;
+    any_tensor<1, int> &any = t;
 
-    if(!t.equals(any.get_tensor<tensor_i>())) {
-        fail_test(testname, __FILE__, __LINE__, "Equality test failed.");
+    if(!t.t.equals(any.get_tensor<tensor_i>())) {
+        return fail_test(testname, __FILE__, __LINE__, "Equality test failed.");
     }
 
     letter i;
     any(i);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     } catch(std::exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
 /** \test Tests a multi-dimensional any_tensor
  **/
-void any_tensor_test::test_2() {
+int test_2() {
 
-    static const char testname[] = "any_tensor_test::test_2()";
+    static const char testname[] = "test_2()";
 
     try {
 
-    tensor t;
-    tensor_i &ti = t;
-    any_tensor<4, int> any(ti);
+    tensor<4, int> t;
+    any_tensor<4, int> &any = t;
 
-    if(!t.equals(any.get_tensor<tensor_i>())) {
-        fail_test(testname, __FILE__, __LINE__, "Equality test failed.");
+    if(!t.t.equals(any.get_tensor<tensor_i>())) {
+        return fail_test(testname, __FILE__, __LINE__, "Equality test failed.");
     }
 
     letter i, j, k, l;
     any(i|j|k|l);
 
     } catch(exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     } catch(std::exception &e) {
-        fail_test(testname, __FILE__, __LINE__, e.what());
+        return fail_test(testname, __FILE__, __LINE__, e.what());
     }
+
+    return 0;
 }
 
 
-} // namespace libtensor
+int main() {
 
+    return
+
+    test_1() |
+    test_2() |
+
+    0;
+}

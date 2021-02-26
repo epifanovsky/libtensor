@@ -1,4 +1,4 @@
-#include <memory> // for auto_ptr
+#include <memory> // for unique_ptr
 #include <libtensor/kernels/kern_ddiv1.h>
 #include <libtensor/kernels/kern_ddivadd1.h>
 #include <libtensor/kernels/kern_dmul1.h>
@@ -73,22 +73,22 @@ void diag_tod_mult1<N>::perform(bool zero, diag_tensor_wr_i<N, double> &dta) {
             imul->stepa(0) = 1;
             imul->stepb(0) = 1;
 
-            loop_registers<1, 1> rmul;
+            loop_registers_x<1, 1, double> rmul;
             rmul.m_ptra[0] = pa0;
             rmul.m_ptrb[0] = pa;
             rmul.m_ptra_end[0] = pa0 + sza0;
             rmul.m_ptrb_end[0] = pa + sza0;
 
-            std::auto_ptr< kernel_base<linalg, 1, 1> > kern_mul(
+            std::unique_ptr< kernel_base<linalg, 1, 1, double> > kern_mul(
                 m_recip ?
                     (zero ?
-                        kern_ddiv1<linalg>::match(1.0, lpmul1, lpmul2) :
-                        kern_ddivadd1::match(1.0, lpmul1, lpmul2)) :
+                        kern_div1<linalg, double>::match(1.0, lpmul1, lpmul2) :
+                        kern_divadd1<double>::match(1.0, lpmul1, lpmul2)) :
                     (zero ?
-                        kern_dmul1::match(1.0, lpmul1, lpmul2) :
-                        kern_dmuladd1::match(1.0, lpmul1, lpmul2)));
+                        kern_mul1<double>::match(1.0, lpmul1, lpmul2) :
+                        kern_muladd1<double>::match(1.0, lpmul1, lpmul2)));
             diag_tod_mult1::start_timer(kern_mul->get_name());
-            loop_list_runner<linalg, 1, 1>(lpmul1).run(0, rmul, *kern_mul);
+            loop_list_runner_x<linalg, 1, 1, double>(lpmul1).run(0, rmul, *kern_mul);
             diag_tod_mult1::stop_timer(kern_mul->get_name());
 
             ca.ret_dataptr(ssla[ssia], pa); pa = 0;

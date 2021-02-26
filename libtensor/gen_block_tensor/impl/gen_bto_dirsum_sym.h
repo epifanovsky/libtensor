@@ -67,7 +67,7 @@ public:
         return m_bisc.get_bis();
     }
 
-    const symmetry<NC, double> &get_symmetry() const {
+    const symmetry<NC, element_type> &get_symmetry() const {
         return m_symc;
     }
 };
@@ -131,7 +131,7 @@ public:
         return m_bisc.get_bis();
     }
 
-    const symmetry<NC, double> &get_symmetry() const {
+    const symmetry<NC, element_type> &get_symmetry() const {
         return m_symc;
     }
 

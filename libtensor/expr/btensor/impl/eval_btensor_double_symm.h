@@ -9,24 +9,24 @@ namespace expr {
 namespace eval_btensor_double {
 
 
-template<size_t N>
-class symm : public eval_btensor_evaluator_i<N, double> {
+template<size_t N, typename T>
+class symm : public eval_btensor_evaluator_i<N, T> {
 public:
     enum {
-        Nmax = eval_btensor<double>::Nmax
+        Nmax = eval_btensor<T>::Nmax
     };
 
-    typedef typename eval_btensor_evaluator_i<N, double>::bti_traits bti_traits;
+    typedef typename eval_btensor_evaluator_i<N, T>::bti_traits bti_traits;
     typedef expr_tree::node_id_t node_id_t; //!< Node ID type
 
 private:
-    eval_btensor_evaluator_i<N, double> *m_impl;
+    eval_btensor_evaluator_i<N, T> *m_impl;
 
 public:
     /** \brief Initializes the evaluator
      **/
     symm(const expr_tree &tree, node_id_t &id,
-        const tensor_transf<N, double> &tr);
+        const tensor_transf<N, T> &tr);
 
     /** \brief Virtual destructor
      **/
@@ -41,7 +41,7 @@ public:
 };
 
 
-} // namespace eval_btensor_double
+} // namespace eval_btensor_T
 } // namespace expr
 } // namespace libtensor
 

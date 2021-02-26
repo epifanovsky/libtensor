@@ -24,5 +24,23 @@ template class se_part<15, double>;
 template class se_part<16, double>;
 
 
+template class se_part<1, float>;
+template class se_part<2, float>;
+template class se_part<3, float>;
+template class se_part<4, float>;
+template class se_part<5, float>;
+template class se_part<6, float>;
+template class se_part<7, float>;
+template class se_part<8, float>;
+template class se_part<9, float>;
+template class se_part<10, float>;
+template class se_part<11, float>;
+template class se_part<12, float>;
+template class se_part<13, float>;
+template class se_part<14, float>;
+template class se_part<15, float>;
+template class se_part<16, float>;
+
+
 } // namespace libtensor
 
