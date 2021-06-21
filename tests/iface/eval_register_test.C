@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void eval_register_test::perform() throw(libtest::test_exception) {
+void eval_register_test::perform() {
 
     test_1();
 }

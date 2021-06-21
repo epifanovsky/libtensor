@@ -5,7 +5,7 @@
 
 namespace libtensor {
 
-void so_dirsum_se_label_test::perform() throw(libtest::test_exception) {
+void so_dirsum_se_label_test::perform() {
 
     static const char *testname = "so_dirsum_se_label_test::perform()";
 
@@ -36,7 +36,7 @@ void so_dirsum_se_label_test::perform() throw(libtest::test_exception) {
         group of a higher order
  **/
 void so_dirsum_se_label_test::test_empty_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_label_test::test_empty_1(" << table_id << ")";
@@ -78,7 +78,7 @@ void so_dirsum_se_label_test::test_empty_1(
         group (1-space) forming a 3-space.
  **/
 void so_dirsum_se_label_test::test_empty_2(const std::string &table_id,
-        bool perm) throw(libtest::test_exception) {
+        bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_label_test::test_empty_2("
@@ -148,7 +148,7 @@ void so_dirsum_se_label_test::test_empty_2(const std::string &table_id,
         in 2-space forming a 3-space.
  **/
 void so_dirsum_se_label_test::test_empty_3(const std::string &table_id,
-        bool perm) throw(libtest::test_exception) {
+        bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_label_test::test_empty_3("
@@ -219,7 +219,7 @@ void so_dirsum_se_label_test::test_empty_3(const std::string &table_id,
         with Eu symmetry in 2-space.
  **/
 void so_dirsum_se_label_test::test_nn_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_label_test::test_nn_1(" << table_id << ")";
@@ -325,7 +325,7 @@ void so_dirsum_se_label_test::test_nn_1(
         2-space with Au symmetry. The result is permuted with [012->120].
  **/
 void so_dirsum_se_label_test::test_nn_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_label_test::test_nn_2(" << table_id << ")";
@@ -428,7 +428,7 @@ void so_dirsum_se_label_test::test_nn_2(
 /** \test Direct sum of two groups in 2-space one with composite rule.
  **/
 void so_dirsum_se_label_test::test_nn_3(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_label_test::test_nn_3(" << table_id << ")";

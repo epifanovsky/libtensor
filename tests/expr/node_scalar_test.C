@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void node_scalar_test::perform() throw(libtest::test_exception) {
+void node_scalar_test::perform() {
 
     test_1();
 }

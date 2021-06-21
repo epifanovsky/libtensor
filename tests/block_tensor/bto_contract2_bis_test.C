@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void bto_contract2_bis_test::perform() throw(libtest::test_exception) {
+void bto_contract2_bis_test::perform() {
 
     test_1();
     test_2();
@@ -16,7 +16,7 @@ void bto_contract2_bis_test::perform() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_bis_test::test_1() throw(libtest::test_exception) {
+void bto_contract2_bis_test::test_1() {
 
     //
     //  c_ijkl = a_ijkp b_lp
@@ -63,7 +63,7 @@ void bto_contract2_bis_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_bis_test::test_2() throw(libtest::test_exception) {
+void bto_contract2_bis_test::test_2() {
 
     //
     //  c_ijkl = a_ijkp b_lp
@@ -120,7 +120,7 @@ void bto_contract2_bis_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_bis_test::test_3() throw(libtest::test_exception) {
+void bto_contract2_bis_test::test_3() {
 
     //
     //  c_ijkl = a_ijkp b_lp
@@ -181,7 +181,7 @@ void bto_contract2_bis_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_bis_test::test_4() throw(libtest::test_exception) {
+void bto_contract2_bis_test::test_4() {
 
     //
     //  c_ijkl = a_ijpq b_klpq
@@ -223,7 +223,7 @@ void bto_contract2_bis_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
+void bto_contract2_bis_test::test_5() {
 
     //
     //  c_ijk = a_ipqr b_jpqrk
@@ -288,7 +288,7 @@ void bto_contract2_bis_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_bis_test::test_6() throw(libtest::test_exception) {
+void bto_contract2_bis_test::test_6() {
 
     //
     //  c_{ijab} = a_{ia} a_{jb}

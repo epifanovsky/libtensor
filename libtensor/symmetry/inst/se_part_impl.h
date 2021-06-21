@@ -370,7 +370,7 @@ void se_part<N, T>::apply(index<N> &idx) const {
 
     //  Construct a mapped block index
     //
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         idx[i] -= (pidx1[i] - pidx2[i]) * m_bipdims[i];
     }
 }
@@ -392,7 +392,7 @@ void se_part<N, T>::apply(index<N> &idx, tensor_transf<N, T> &tr) const {
 
     //  Construct a mapped block index
     //
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         idx[i] -= (pidx1[i] - pidx2[i]) * m_bipdims[i];
     }
 
@@ -415,7 +415,7 @@ dimensions<N> se_part<N, T>::make_pdims(
 
     index<N> i1, i2;
     size_t m = 0;
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(msk[i]) {
             i2[i] = npart - 1;
             m++;
@@ -451,7 +451,7 @@ dimensions<N> se_part<N, T>::make_bipdims(
         "const dimensions<N>&)";
 
     index<N> i1, i2;
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
 #ifdef LIBTENSOR_DEBUG
         if(bidims[i] % pdims[i] != 0) {
             throw bad_symmetry(g_ns, k_clazz, method, __FILE__, __LINE__,
@@ -527,7 +527,7 @@ void se_part<N, T>::add_to_loop(size_t a, size_t b,
 template<size_t N, typename T>
 bool se_part<N, T>::is_valid_pidx(const index<N> &idx) {
 
-    for(register size_t i = 0; i < N; i++)
+    for(size_t i = 0; i < N; i++)
         if(idx[i] >= m_pdims[i]) return false;
     return true;
 }

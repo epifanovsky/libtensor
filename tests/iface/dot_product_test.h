@@ -11,17 +11,17 @@ namespace libtensor {
 **/
 class dot_product_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_tt_ij_ij_1() throw(libtest::test_exception);
-    void test_tt_ij_ji_1() throw(libtest::test_exception);
-    void test_te_ij_ij_1() throw(libtest::test_exception);
-    void test_te_ij_ji_1() throw(libtest::test_exception);
-    void test_et_1() throw(libtest::test_exception);
+    void test_tt_ij_ij_1();
+    void test_tt_ij_ji_1();
+    void test_te_ij_ij_1();
+    void test_te_ij_ji_1();
+    void test_et_1();
 
     void check_ref(const char *testname, double d, double d_ref)
-        throw(libtest::test_exception);
+       ;
 };
 
 } // namespace libtensor

@@ -3,7 +3,7 @@
 
 namespace libtensor {
 
-void letter_test::perform() throw(libtest::test_exception) {
+void letter_test::perform() {
     letter i, j, k, l;
     letter &i_ref(i);
 

@@ -66,7 +66,7 @@ void tod_mult1<N>::perform(bool zero, dense_tensor_wr_i<N, double> &ta) {
     const dimensions<N> &dimsb = m_tb.get_dims();
 
     sequence<N, size_t> mapb(0);
-    for(register size_t i = 0; i < N; i++) mapb[i] = i;
+    for(size_t i = 0; i < N; i++) mapb[i] = i;
     m_permb.apply(mapb);
 
     std::list< loop_list_node<1, 1> > loop_in, loop_out;

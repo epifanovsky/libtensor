@@ -12,16 +12,16 @@ namespace libtensor {
  **/
 class btod_import_raw_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     template<size_t N>
     void test_1(const block_index_space<N> &bis)
-    throw(libtest::test_exception);
+   ;
 
     template<size_t N>
     void test_2(const block_index_space<N> &bis)
-        throw(libtest::test_exception);
+       ;
 };
 
 } // namespace libtensor

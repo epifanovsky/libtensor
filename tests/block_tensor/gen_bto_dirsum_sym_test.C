@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void gen_bto_dirsum_sym_test::perform() throw(libtest::test_exception) {
+void gen_bto_dirsum_sym_test::perform() {
 
     test_1();
     test_2();
@@ -20,7 +20,7 @@ void gen_bto_dirsum_sym_test::perform() throw(libtest::test_exception) {
 }
 
 
-void gen_bto_dirsum_sym_test::test_1() throw(libtest::test_exception) {
+void gen_bto_dirsum_sym_test::test_1() {
 
     static const char *testname = "gen_bto_dirsum_sym_test::test_1()";
 
@@ -75,7 +75,7 @@ void gen_bto_dirsum_sym_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void gen_bto_dirsum_sym_test::test_2() throw(libtest::test_exception) {
+void gen_bto_dirsum_sym_test::test_2() {
 
     //
     //  c_ijkl = a_ij + b_kl
@@ -133,7 +133,7 @@ void gen_bto_dirsum_sym_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void gen_bto_dirsum_sym_test::test_3() throw(libtest::test_exception) {
+void gen_bto_dirsum_sym_test::test_3() {
 
     //
     //  c_ijkl = a_ijk + b_l
@@ -202,7 +202,7 @@ void gen_bto_dirsum_sym_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void gen_bto_dirsum_sym_test::test_4() throw(libtest::test_exception) {
+void gen_bto_dirsum_sym_test::test_4() {
 
     //
     //  c_ij = a_i - a_j

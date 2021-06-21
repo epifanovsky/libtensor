@@ -29,7 +29,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
     permutation_group<k_order1, T> group2;
 
     sequence<k_order1, size_t> seq(0);
-    for (register size_t i = 0; i < k_order1; i++) {
+    for (size_t i = 0; i < k_order1; i++) {
         if (params.msk[i]) seq[i] = params.rseq[i] + 1;
     }
     group1.stabilize(seq, group2);
@@ -57,7 +57,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
         ia2.permute(e2.get_perm());
         ib2.permute(e2.get_perm());
 
-        register size_t j = 0;
+        size_t j = 0;
         for (; j < k_order1; j++) {
             if (! params.msk[j]) continue;
             if (bia2[j] != bia[j] || bib2[j] != bib[j] ||
@@ -70,7 +70,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_perm<N - M, T> >::do_perform(
         for (j = 0; j < k_order1; j++) seq1a[j] = seq2a[j] = j;
         e2.get_perm().apply(seq2a);
 
-        for (register size_t j = 0, k = 0; j < k_order1; j++) {
+        for (size_t j = 0, k = 0; j < k_order1; j++) {
             if (params.msk[j]) continue;
 
             seq1b[k] = seq1a[j];

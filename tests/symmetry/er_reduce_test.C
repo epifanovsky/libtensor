@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void er_reduce_test::perform() throw(libtest::test_exception) {
+void er_reduce_test::perform() {
 
     std::string s6 = "S6", c2v = "C2v";
     setup_pg_table(s6);
@@ -48,7 +48,7 @@ void er_reduce_test::perform() throw(libtest::test_exception) {
 /** \brief Reduce of two dimensions in one step (complete dim)
  **/
 void er_reduce_test::test_1(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
     static const char *testname = "er_reduce_test::test_1()";
 
@@ -129,7 +129,7 @@ void er_reduce_test::test_1(
 /** \brief Reduction of four dimensions in two steps (complete dim)
  **/
 void er_reduce_test::test_2(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
 
     static const char *testname = "er_reduce_test::test_2()";
@@ -216,7 +216,7 @@ void er_reduce_test::test_2(
 /** \brief Reduction of six dimensions in three steps (complete dims)
  **/
 void er_reduce_test::test_3(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
 
     static const char *testname = "er_reduce_test::test_3()";
@@ -293,7 +293,7 @@ void er_reduce_test::test_3(
 /** \brief Reduction of four dimensions in two steps (one complete dims)
  **/
 void er_reduce_test::test_4(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
 
     static const char *testname = "er_reduce_test::test_4()";
@@ -412,7 +412,7 @@ void er_reduce_test::test_4(
 /** \brief Reduction of two dimensions in one step (complete dims)
  **/
 void er_reduce_test::test_5(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
     static const char *testname = "er_reduce_test::test_5()";
 
@@ -494,7 +494,7 @@ void er_reduce_test::test_5(
 /** \brief Reduction of four dimensions in two steps (non-complete dims)
  **/
 void er_reduce_test::test_6(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
 
     static const char *testname = "er_reduce_test::test_6()";
@@ -600,7 +600,7 @@ void er_reduce_test::test_6(
 /** \brief Reduction of two dimensions in one steps
  **/
 void er_reduce_test::test_7(
-        const std::string &id) throw(libtest::test_exception) {
+        const std::string &id) {
 
 
     static const char *testname = "er_reduce_test::test_7()";

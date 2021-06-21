@@ -29,8 +29,8 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
     permutation<N + M> pinv(params.perm, true);
     sequence<N, size_t> map1(0);
     sequence<M, size_t> map2(0);
-    for (register size_t i = 0; i < N; i++) map1[i] = pinv[i];
-    for (register size_t i = 0; i < M; i++) map2[i] = pinv[i + N];
+    for (size_t i = 0; i < N; i++) map1[i] = pinv[i];
+    for (size_t i = 0; i < M; i++) map2[i] = pinv[i + N];
 
     // First set is empty
     if (params.g1.is_empty()) {
@@ -67,7 +67,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
             while (i2a < i2b) {
                 scalar_transf<T> tr = se2.get_transf(i2a, i2b);
                 if (tr.is_identity()) {
-                    for (register size_t i = 0; i < M; i++) {
+                    for (size_t i = 0; i < M; i++) {
                         i3a[map2[i]] = i2a[i];
                         i3b[map2[i]] = i2b[i];
                     }
@@ -116,7 +116,7 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
             while (i1a < i1b) {
                 scalar_transf<T> tr = se1.get_transf(i1a, i1b);
                 if (tr.is_identity()) {
-                    for (register size_t i = 0; i < N; i++) {
+                    for (size_t i = 0; i < N; i++) {
                         i3a[map1[i]] = i1a[i];
                         i3b[map1[i]] = i1b[i];
                     }
@@ -157,9 +157,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
             const index<N + M> &i3 = ai3.get_index();
 
             index<N> i1a;
-            for (register size_t i = 0; i < N; i++) i1a[i] = i3[map1[i]];
+            for (size_t i = 0; i < N; i++) i1a[i] = i3[map1[i]];
             index<M> i2a;
-            for (register size_t i = 0; i < M; i++) i2a[i] = i3[map2[i]];
+            for (size_t i = 0; i < M; i++) i2a[i] = i3[map2[i]];
 
             bool fb1 = se1.is_forbidden(i1a);
             bool fb2 = se2.is_forbidden(i2a);
@@ -172,9 +172,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                 // Try to create a map leaving se1 indexes fixed
                 index<M> i2b = se2.get_direct_map(i2a);
                 if (i2a < i2b) {
-                    for (register size_t i = 0; i < N; i++)
+                    for (size_t i = 0; i < N; i++)
                         i3b[map1[i]] = i1a[i];
-                    for (register size_t i = 0; i < M; i++)
+                    for (size_t i = 0; i < M; i++)
                         i3b[map2[i]] = i2b[i];
                     se3.add_map(i3, i3b, se2.get_transf(i2a, i2b));
                     continue;
@@ -189,9 +189,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
 
                     if (se1.is_forbidden(ai1b.get_index())) {
                         const index<N> &i1b = ai1b.get_index();
-                        for (register size_t i = 0; i < N; i++)
+                        for (size_t i = 0; i < N; i++)
                             i3b[map1[i]] = i1b[i];
-                        for (register size_t i = 0; i < M; i++)
+                        for (size_t i = 0; i < M; i++)
                             i3b[map2[i]] = i2a[i];
                         se3.add_map(i3, i3b, tr0);
                     }
@@ -207,9 +207,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
 
                     if (se2.is_forbidden(ai2b.get_index())) {
                         const index<M> &i2b = ai2b.get_index();
-                        for (register size_t i = 0; i < N; i++)
+                        for (size_t i = 0; i < N; i++)
                             i3b[map1[i]] = i1a[i];
-                        for (register size_t i = 0; i < M; i++)
+                        for (size_t i = 0; i < M; i++)
                             i3b[map2[i]] = i2b[i];
                         se3.add_map(i3, i3b, tr0);
                         continue;
@@ -218,9 +218,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                 // Otherwise, try to create a map leaving se2 indexes fixed
                 index<N> i1b = se1.get_direct_map(i1a);
                 if (i1a < i1b) {
-                    for (register size_t i = 0; i < N; i++)
+                    for (size_t i = 0; i < N; i++)
                         i3b[map1[i]] = i1b[i];
-                    for (register size_t i = 0; i < M; i++)
+                    for (size_t i = 0; i < M; i++)
                         i3b[map2[i]] = i2a[i];
                     se3.add_map(i3, i3b, se1.get_transf(i1a, i1b));
                 }
@@ -234,9 +234,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                     tr2 = se2.get_transf(i2a, i2b);
                 }
                 if (i2a < i2b) {
-                    for (register size_t i = 0; i < N; i++)
+                    for (size_t i = 0; i < N; i++)
                         i3b[map1[i]] = i1a[i];
-                    for (register size_t i = 0; i < M; i++)
+                    for (size_t i = 0; i < M; i++)
                         i3b[map2[i]] = i2b[i];
                     se3.add_map(i3, i3b, tr2);
                     continue;
@@ -249,9 +249,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                     scalar_transf<T> tr1 = se1.get_transf(i1a, i1b);
                     // This can either be changing only indexes of 1
                     if (tr1.is_identity()) {
-                        for (register size_t i = 0; i < N; i++)
+                        for (size_t i = 0; i < N; i++)
                             i3b[map1[i]] = i1b[i];
-                        for (register size_t i = 0; i < M; i++)
+                        for (size_t i = 0; i < M; i++)
                             i3b[map2[i]] = i2a[i];
                         se3.add_map(i3, i3b, tr1);
                         break;
@@ -263,9 +263,9 @@ symmetry_operation_impl< so_dirsum<N, M, T>, se_part<N + M, T> >::do_perform(
                         i2b = se2.get_direct_map(i2b);
                     }
                     if (i2a != i2b) {
-                        for (register size_t i = 0; i < N; i++)
+                        for (size_t i = 0; i < N; i++)
                             i3b[map1[i]] = i1b[i];
-                        for (register size_t i = 0; i < M; i++)
+                        for (size_t i = 0; i < M; i++)
                             i3b[map2[i]] = i2b[i];
                         se3.add_map(i3, i3b, tr1);
                         break;

@@ -3,7 +3,7 @@
 namespace libutil {
 
 
-rethrowable_i::~rethrowable_i() throw() {
+rethrowable_i::~rethrowable_i() noexcept {
 
 }
 

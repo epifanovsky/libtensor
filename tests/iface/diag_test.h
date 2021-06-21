@@ -11,18 +11,18 @@ namespace libtensor {
  **/
 class diag_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_t_1() throw(libtest::test_exception);
-    void test_t_2() throw(libtest::test_exception);
-    void test_t_3() throw(libtest::test_exception);
-    void test_t_4() throw(libtest::test_exception);
-    void test_t_5() throw(libtest::test_exception);
-    void test_t_6() throw(libtest::test_exception);
-    void test_t_7() throw(libtest::test_exception);
-    void test_e_1() throw(libtest::test_exception);
-    void test_x_1() throw(libtest::test_exception);
+    void test_t_1();
+    void test_t_2();
+    void test_t_3();
+    void test_t_4();
+    void test_t_5();
+    void test_t_6();
+    void test_t_7();
+    void test_e_1();
+    void test_x_1();
 
 };
 

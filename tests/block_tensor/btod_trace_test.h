@@ -11,20 +11,20 @@ namespace libtensor {
  **/
 class btod_trace_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_zero_1() throw(libtest::test_exception);
-    void test_nosym_1() throw(libtest::test_exception);
-    void test_nosym_1_sp() throw(libtest::test_exception);
-    void test_nosym_2() throw(libtest::test_exception);
-    void test_nosym_3() throw(libtest::test_exception);
-    void test_nosym_4() throw(libtest::test_exception);
-    void test_nosym_5() throw(libtest::test_exception);
-    void test_nosym_6() throw(libtest::test_exception);
-    void test_nosym_7() throw(libtest::test_exception);
-    void test_permsym_1() throw(libtest::test_exception);
-    void test_permsym_2() throw(libtest::test_exception);
+    void test_zero_1();
+    void test_nosym_1();
+    void test_nosym_1_sp();
+    void test_nosym_2();
+    void test_nosym_3();
+    void test_nosym_4();
+    void test_nosym_5();
+    void test_nosym_6();
+    void test_nosym_7();
+    void test_permsym_1();
+    void test_permsym_2();
 };
 
 } // namespace libtensor

@@ -11,26 +11,26 @@ namespace libtensor {
 **/
 class mult_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_tt_1a() throw(libtest::test_exception);
-    void test_tt_1b() throw(libtest::test_exception);
-    void test_tt_2() throw(libtest::test_exception);
-    void test_tt_3() throw(libtest::test_exception);
-    void test_tt_4() throw(libtest::test_exception);
-    void test_tt_5() throw(libtest::test_exception);
-    void test_tt_6a() throw(libtest::test_exception);
-    void test_tt_6b() throw(libtest::test_exception);
-    void test_te_1() throw(libtest::test_exception);
-    void test_te_2() throw(libtest::test_exception);
-    void test_te_3() throw(libtest::test_exception);
-    void test_et_1() throw(libtest::test_exception);
-    void test_et_2() throw(libtest::test_exception);
-    void test_et_3() throw(libtest::test_exception);
-    void test_ee_1a() throw(libtest::test_exception);
-    void test_ee_1b() throw(libtest::test_exception);
-    void test_ee_2() throw(libtest::test_exception);
+    void test_tt_1a();
+    void test_tt_1b();
+    void test_tt_2();
+    void test_tt_3();
+    void test_tt_4();
+    void test_tt_5();
+    void test_tt_6a();
+    void test_tt_6b();
+    void test_te_1();
+    void test_te_2();
+    void test_te_3();
+    void test_et_1();
+    void test_et_2();
+    void test_et_3();
+    void test_ee_1a();
+    void test_ee_1b();
+    void test_ee_2();
 
 };
 

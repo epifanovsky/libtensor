@@ -12,7 +12,7 @@
 namespace libtensor {
 
 
-void gen_bto_symcontract2_sym_test::perform() throw(libtest::test_exception) {
+void gen_bto_symcontract2_sym_test::perform() {
 
     test_1();
     test_2();

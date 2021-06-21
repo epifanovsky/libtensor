@@ -81,7 +81,7 @@ mask<N>::mask(const mask<N> &msk) : sequence<N, bool>(msk) {
 template<size_t N>
 bool mask<N>::equals(const mask<N> &msk) const {
 
-    for(register size_t i = 0; i < N; i++)
+    for(size_t i = 0; i < N; i++)
         if(sequence<N, bool>::at_nothrow(i) !=
             msk.sequence<N, bool>::at_nothrow(i)) return false;
     return true;
@@ -99,7 +99,7 @@ mask<N> &mask<N>::permute(const permutation<N> &perm) {
 template<size_t N>
 mask<N> &mask<N>::operator|=(const mask<N> &other) {
 
-    for(register size_t i = 0; i != N; i++) {
+    for(size_t i = 0; i != N; i++) {
         sequence<N, bool>::at_nothrow(i) =
             sequence<N, bool>::at_nothrow(i) ||
                 other.sequence<N, bool>::at_nothrow(i);
@@ -112,7 +112,7 @@ template<size_t N>
 mask<N> mask<N>::operator|(const mask<N> &other) const {
 
     mask<N> m;
-    for(register size_t i = 0; i != N; i++) {
+    for(size_t i = 0; i != N; i++) {
         m.sequence<N, bool>::at_nothrow(i) =
             sequence<N, bool>::at_nothrow(i) ||
             other.sequence<N, bool>::at_nothrow(i);
@@ -124,7 +124,7 @@ mask<N> mask<N>::operator|(const mask<N> &other) const {
 template<size_t N>
 mask<N> &mask<N>::operator&=(const mask<N> &other) {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         sequence<N, bool>::at_nothrow(i) =
             sequence<N, bool>::at_nothrow(i) &&
                 other.sequence<N, bool>::at_nothrow(i);
@@ -137,7 +137,7 @@ template<size_t N>
 mask<N> mask<N>::operator&(const mask<N> &other) const {
 
     mask<N> m;
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         m.sequence<N, bool>::at_nothrow(i) =
             sequence<N, bool>::at_nothrow(i) &&
             other.sequence<N, bool>::at_nothrow(i);

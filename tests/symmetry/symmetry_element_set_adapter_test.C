@@ -5,7 +5,7 @@ namespace libtensor {
 
 
 void symmetry_element_set_adapter_test::perform()
-    throw(libtest::test_exception) {
+    {
 
     test_1();
     test_2();
@@ -50,7 +50,7 @@ using namespace symmetry_element_set_adapter_test_ns;
 /** \test Tests the construction and iterators on the empty set
  **/
 void symmetry_element_set_adapter_test::test_1()
-    throw(libtest::test_exception) {
+    {
 
     static const char *testname =
         "symmetry_element_set_adapter_test::test_1()";
@@ -83,7 +83,7 @@ void symmetry_element_set_adapter_test::test_1()
 /** \test Tests the type conversion by the adapter
  **/
 void symmetry_element_set_adapter_test::test_2()
-    throw(libtest::test_exception) {
+    {
 
     static const char *testname =
         "symmetry_element_set_adapter_test::test_2()";

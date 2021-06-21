@@ -12,21 +12,21 @@ namespace libtensor {
  **/
 class se_label_test : public se_label_test_base {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     void test_basic_1(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
     void test_allowed_1(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
     void test_allowed_2(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
     void test_allowed_3(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
     void test_permute_1(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
     void test_permute_2(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
 
     using se_label_test_base::setup_pg_table;
     using se_label_test_base::check_allowed;

@@ -31,7 +31,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_label<N - M, T> >::do_perform(
     sequence<N, size_t> mmap, lmap((size_t) -1);
     {
         sequence<M, size_t> msteps((size_t) -1);
-        for (register size_t i = 0, j = 0; i < N; i++) {
+        for (size_t i = 0, j = 0; i < N; i++) {
             if (params.msk[i]) {
                 if (msteps[params.mseq[i]] == (size_t) -1) {
                     lmap[i] = msteps[params.mseq[i]] = j++;

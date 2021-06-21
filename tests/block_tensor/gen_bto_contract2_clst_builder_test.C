@@ -13,7 +13,7 @@ namespace libtensor {
 
 
 void gen_bto_contract2_clst_builder_test::perform()
-    throw(libtest::test_exception) {
+    {
 
     allocator<double>::init();
 

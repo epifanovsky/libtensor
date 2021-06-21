@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void letter_expr_test::perform() throw(libtest::test_exception) {
+void letter_expr_test::perform() {
 
     test_contains();
     test_permutation();

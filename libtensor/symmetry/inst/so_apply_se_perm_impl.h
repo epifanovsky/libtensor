@@ -23,7 +23,7 @@ void symmetry_operation_impl< so_apply<N, T>, se_perm<N, T> >::do_perform(
     typedef std::list<transf_pair_t> transf_list_t;
 
     scalar_transf<T> tr(params.s2);
-    for (register size_t i = 1; i < N && ! tr.is_identity(); i++) {
+    for (size_t i = 1; i < N && ! tr.is_identity(); i++) {
         tr.transform(params.s2);
     }
     bool is_cyclic = tr.is_identity();

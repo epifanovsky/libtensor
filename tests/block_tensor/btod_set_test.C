@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void btod_set_test::perform() throw(libtest::test_exception) {
+void btod_set_test::perform() {
 
     allocator<double>::init();
     try {
@@ -29,7 +29,7 @@ void btod_set_test::perform() throw(libtest::test_exception) {
 
 /** \test Sets all elements of an empty block %tensor to 1.0.
  **/
-void btod_set_test::test_1() throw(libtest::test_exception) {
+void btod_set_test::test_1() {
 
     static const char *testname = "btod_set_test::test_1()";
 
@@ -67,7 +67,7 @@ void btod_set_test::test_1() throw(libtest::test_exception) {
 
 /** \test Sets all elements of a non-empty block %tensor to 1.0.
  **/
-void btod_set_test::test_2() throw(libtest::test_exception) {
+void btod_set_test::test_2() {
 
     static const char *testname = "btod_set_test::test_2()";
 

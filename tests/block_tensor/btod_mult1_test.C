@@ -16,7 +16,7 @@
 namespace libtensor {
 
 
-void btod_mult1_test::perform() throw(libtest::test_exception) {
+void btod_mult1_test::perform() {
 
     allocator<double>::init();
 
@@ -45,7 +45,7 @@ void btod_mult1_test::perform() throw(libtest::test_exception) {
         and no zero blocks.
  **/
 void btod_mult1_test::test_1(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     std::ostringstream oss;
     oss << "btod_mult1_test::test_1("
@@ -102,7 +102,7 @@ void btod_mult1_test::test_1(
         with no symmetry and no zero blocks, second tensor permuted.
  **/
 void btod_mult1_test::test_2(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     std::ostringstream oss;
     oss << "btod_mult1_test::test_2("
@@ -161,7 +161,7 @@ void btod_mult1_test::test_2(
         and zero blocks (scaled)
  **/
 void btod_mult1_test::test_3(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     std::ostringstream oss;
     oss << "btod_mult1_test::test_3("
@@ -236,7 +236,7 @@ void btod_mult1_test::test_3(
         with symmetry and zero blocks, second tensor permuted
  **/
 void btod_mult1_test::test_4(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     std::ostringstream oss;
     oss << "btod_mult1_test::test_4("
@@ -314,7 +314,7 @@ void btod_mult1_test::test_4(
         symmetry no zero blocks.
  **/
 void btod_mult1_test::test_5(bool recip, bool doadd)
-    throw(libtest::test_exception) {
+    {
 
     std::ostringstream oss;
     oss << "btod_mult1_test::test_5("

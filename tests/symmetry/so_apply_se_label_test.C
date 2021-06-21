@@ -7,7 +7,7 @@
 
 namespace libtensor {
 
-void so_apply_se_label_test::perform() throw(libtest::test_exception) {
+void so_apply_se_label_test::perform() {
 
     std::string table_id = "S6";
     setup_pg_table(table_id);
@@ -35,7 +35,7 @@ void so_apply_se_label_test::perform() throw(libtest::test_exception) {
  **/
 void so_apply_se_label_test::test_1(
         const std::string &table_id, bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_se_label_test::test_1(" << table_id << ", "

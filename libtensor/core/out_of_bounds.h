@@ -19,13 +19,13 @@ public:
      **/
     out_of_bounds(const char *ns, const char *clazz, const char *method,
         const char *file, unsigned int line, const char *message)
-        throw()
+        noexcept
         : exception_base<out_of_bounds>(ns, clazz, method, file, line,
             "out_of_bounds", message) { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~out_of_bounds() throw() { };
+    virtual ~out_of_bounds() noexcept { };
 
     //@}
 };

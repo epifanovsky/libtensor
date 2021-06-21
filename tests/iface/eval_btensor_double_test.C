@@ -13,7 +13,7 @@ namespace libtensor {
 using namespace expr;
 
 
-void eval_btensor_double_test::perform() throw(libtest::test_exception) {
+void eval_btensor_double_test::perform() {
 
     allocator<double>::init();
 

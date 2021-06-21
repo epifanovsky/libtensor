@@ -11,12 +11,12 @@ namespace libtensor {
  **/
 class er_optimize_test : public se_label_test_base {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1(const std::string &id) throw(libtest::test_exception);
-    void test_2(const std::string &id) throw(libtest::test_exception);
-    void test_3(const std::string &id) throw(libtest::test_exception);
+    void test_1(const std::string &id);
+    void test_2(const std::string &id);
+    void test_3(const std::string &id);
 };
 
 } // namespace libtensor

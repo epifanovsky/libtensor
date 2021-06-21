@@ -18,7 +18,7 @@
 namespace libtensor {
 
 
-void btod_dotprod_test::perform() throw(libtest::test_exception) {
+void btod_dotprod_test::perform() {
 
     allocator<double>::init();
     try {
@@ -50,7 +50,7 @@ void btod_dotprod_test::perform() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_1() throw(libtest::test_exception) {
+void btod_dotprod_test::test_1() {
 
     //
     //  Single block, both arguments are non-zero
@@ -99,7 +99,7 @@ void btod_dotprod_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_2() throw(libtest::test_exception) {
+void btod_dotprod_test::test_2() {
 
     //
     //  Single block, one of the arguments is zero
@@ -141,7 +141,7 @@ void btod_dotprod_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_3() throw(libtest::test_exception) {
+void btod_dotprod_test::test_3() {
 
     //
     //  Two blocks in each dimension, both arguments are non-zero
@@ -194,7 +194,7 @@ void btod_dotprod_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_4() throw(libtest::test_exception) {
+void btod_dotprod_test::test_4() {
 
     //
     //  Two blocks in each dimension, off-diagonal blocks of one of
@@ -251,7 +251,7 @@ void btod_dotprod_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_5() throw(libtest::test_exception) {
+void btod_dotprod_test::test_5() {
 
     //
     //  Two blocks in each dimension, multiple non-zero arguments
@@ -324,7 +324,7 @@ void btod_dotprod_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_6() throw(libtest::test_exception) {
+void btod_dotprod_test::test_6() {
 
     //
     //  Two blocks in each dimension, multiple non-zero arguments
@@ -405,7 +405,7 @@ void btod_dotprod_test::test_6() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_7() throw(libtest::test_exception) {
+void btod_dotprod_test::test_7() {
 
     //
     //  Three blocks in each dimension, both arguments are non-zero,
@@ -472,7 +472,7 @@ void btod_dotprod_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_8() throw(libtest::test_exception) {
+void btod_dotprod_test::test_8() {
 
     //
     //  Three blocks in each dimension, multiple non-zero arguments,
@@ -589,7 +589,7 @@ void btod_dotprod_test::test_8() throw(libtest::test_exception) {
     }
 }
 
-void btod_dotprod_test::test_9() throw(libtest::test_exception) {
+void btod_dotprod_test::test_9() {
 
     //
     //  Four blocks in each dimension, multiple non-zero arguments,
@@ -657,7 +657,7 @@ void btod_dotprod_test::test_9() throw(libtest::test_exception) {
     }
 }
 
-void btod_dotprod_test::test_10a() throw(libtest::test_exception) {
+void btod_dotprod_test::test_10a() {
 
     //
     //  Four blocks in each dimension, multiple non-zero arguments,
@@ -748,7 +748,7 @@ void btod_dotprod_test::test_10a() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_10b() throw(libtest::test_exception) {
+void btod_dotprod_test::test_10b() {
 
     //
     //  Four blocks in each dimension, multiple non-zero arguments,
@@ -852,7 +852,7 @@ void btod_dotprod_test::test_10b() throw(libtest::test_exception) {
 
 
 void btod_dotprod_test::test_10c(
-        bool both) throw(libtest::test_exception) {
+        bool both) {
 
     //
     //  Two blocks in each dimension, multiple non-zero arguments,
@@ -930,7 +930,7 @@ void btod_dotprod_test::test_10c(
 }
 
 
-void btod_dotprod_test::test_11() throw(libtest::test_exception) {
+void btod_dotprod_test::test_11() {
 
     //
     //  Two blocks in each dimension, subtle splitting differences
@@ -986,7 +986,7 @@ void btod_dotprod_test::test_11() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_12() throw(libtest::test_exception) {
+void btod_dotprod_test::test_12() {
 
     //
     //  Two blocks in each dimension, subtle splitting differences
@@ -1044,7 +1044,7 @@ void btod_dotprod_test::test_12() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_13a() throw(libtest::test_exception) {
+void btod_dotprod_test::test_13a() {
 
     //  3-dim tensor, four blocks in each dimension,
     //  permutational anti-symmetry
@@ -1116,7 +1116,7 @@ void btod_dotprod_test::test_13a() throw(libtest::test_exception) {
 }
 
 
-void btod_dotprod_test::test_13b() throw(libtest::test_exception) {
+void btod_dotprod_test::test_13b() {
 
     //  3-dim tensor, four blocks in each dimension,
     //  permutational anti-symmetry

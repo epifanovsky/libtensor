@@ -22,7 +22,7 @@
 namespace libtensor {
 
 
-void btod_select_test::perform() throw(libtest::test_exception) {
+void btod_select_test::perform() {
 
     allocator<double>::init();
 
@@ -94,7 +94,7 @@ void btod_select_test::perform() throw(libtest::test_exception) {
 /** \test Selecting elements from random block tensor (1 block)
  **/
 template<typename ComparePolicy>
-void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
+void btod_select_test::test_1(size_t n) {
 
     static const char *testname = "btod_select_test::test_1(size_t)";
 
@@ -158,7 +158,7 @@ void btod_select_test::test_1(size_t n) throw(libtest::test_exception) {
 /** \test Selecting elements from random block tensor (multiple blocks)
  **/
 template<typename ComparePolicy>
-void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
+void btod_select_test::test_2(size_t n) {
 
     static const char *testname = "btod_select_test::test_2(size_t)";
 
@@ -227,7 +227,7 @@ void btod_select_test::test_2(size_t n) throw(libtest::test_exception) {
  **/
 template<typename ComparePolicy>
 void btod_select_test::test_3a(size_t n,
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     static const char *testname = "btod_select_test::test_3a(size_t)";
 
@@ -322,7 +322,7 @@ void btod_select_test::test_3a(size_t n,
 /** \test Selecting elements from random block tensor with label symmetry
  **/
 template<typename ComparePolicy>
-void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
+void btod_select_test::test_3b(size_t n) {
 
     static const char *testname = "btod_select_test::test_3b(size_t)";
 
@@ -422,7 +422,7 @@ void btod_select_test::test_3b(size_t n) throw(libtest::test_exception) {
  **/
 template<typename ComparePolicy>
 void btod_select_test::test_3c(size_t n,
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     static const char *testname = "btod_select_test::test_3c(size_t, bool)";
 
@@ -540,7 +540,7 @@ void btod_select_test::test_3c(size_t n,
  **/
 template<typename ComparePolicy>
 void btod_select_test::test_4a(size_t n,
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     static const char *testname = "btod_select_test::test_4a(size_t, bool)";
 
@@ -617,7 +617,7 @@ void btod_select_test::test_4a(size_t n,
       but label symmetry imposed.
  **/
 template<typename ComparePolicy>
-void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
+void btod_select_test::test_4b(size_t n) {
 
     static const char *testname = "btod_select_test::test_4(size_t)";
 
@@ -699,7 +699,7 @@ void btod_select_test::test_4b(size_t n) throw(libtest::test_exception) {
  **/
 template<typename ComparePolicy>
 void btod_select_test::test_4c(size_t n,
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     static const char *testname = "btod_select_test::test_4c(size_t, bool)";
 
@@ -781,7 +781,7 @@ void btod_select_test::test_4c(size_t n,
       and different symmetry imposed.
  **/
 template<typename ComparePolicy>
-void btod_select_test::test_5(size_t n) throw(libtest::test_exception) {
+void btod_select_test::test_5(size_t n) {
 
     static const char *testname = "btod_select_test::test_5(size_t)";
 

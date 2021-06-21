@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void btod_set_elem_test::perform() throw(libtest::test_exception) {
+void btod_set_elem_test::perform() {
 
     allocator<double>::init();
     try {
@@ -30,7 +30,7 @@ void btod_set_elem_test::perform() throw(libtest::test_exception) {
 }
 
 
-void btod_set_elem_test::test_1() throw(libtest::test_exception) {
+void btod_set_elem_test::test_1() {
 
     static const char *testname = "btod_set_elem_test::test_1()";
 
@@ -72,7 +72,7 @@ void btod_set_elem_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void btod_set_elem_test::test_2() throw(libtest::test_exception) {
+void btod_set_elem_test::test_2() {
 
     static const char *testname = "btod_set_elem_test::test_2()";
 
@@ -138,7 +138,7 @@ void btod_set_elem_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void btod_set_elem_test::test_3() throw(libtest::test_exception) {
+void btod_set_elem_test::test_3() {
 
     static const char *testname = "btod_set_elem_test::test_3()";
 

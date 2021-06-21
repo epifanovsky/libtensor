@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void btod_diagonalize_test::perform() throw(libtest::test_exception) {
+void btod_diagonalize_test::perform() {
 
     allocator<double>::init();
 
@@ -34,7 +34,7 @@ void btod_diagonalize_test::perform() throw(libtest::test_exception) {
 
 /** \diagonalize matrix 3x3
  **/
-void btod_diagonalize_test::test_1() throw(libtest::test_exception) {
+void btod_diagonalize_test::test_1() {
 
     static const char *testname = "btod_diagonalize_test::test_1()";
 
@@ -108,7 +108,7 @@ void btod_diagonalize_test::test_1() throw(libtest::test_exception) {
 
 /** \diagonalize matrix 4x4 with fragmentation
  **/
-void btod_diagonalize_test::test_2() throw(libtest::test_exception) {
+void btod_diagonalize_test::test_2() {
 
     static const char *testname = "btod_diagonalize_test::test_2()";
 
@@ -188,7 +188,7 @@ void btod_diagonalize_test::test_2() throw(libtest::test_exception) {
 
 /** \diagonalize matrix 3x3
  **/
-void btod_diagonalize_test::test_3() throw(libtest::test_exception) {
+void btod_diagonalize_test::test_3() {
 
     static const char *testname = "btod_diagonalize_test::test_3()";
 
@@ -264,7 +264,7 @@ void btod_diagonalize_test::test_3() throw(libtest::test_exception) {
 
 /** \diagonalize matrix 4x4 with fragmentation
  **/
-void btod_diagonalize_test::test_4() throw(libtest::test_exception) {
+void btod_diagonalize_test::test_4() {
 
     static const char *testname = "btod_diagonalize_test::test_4()";
 
@@ -342,7 +342,7 @@ void btod_diagonalize_test::test_4() throw(libtest::test_exception) {
 
 /** \diagonalize matrix 5x5 with fragmentation
  **/
-void btod_diagonalize_test::test_5() throw(libtest::test_exception) {
+void btod_diagonalize_test::test_5() {
 
     static const char *testname = "btod_diagonalize_test::test_5()";
 

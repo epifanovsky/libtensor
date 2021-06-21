@@ -86,7 +86,7 @@ void tod_copy<N>::perform(bool zero, dense_tensor_wr_i<N, double> &tb) {
         const dimensions<N> &dimsb = tb.get_dims();
 
         sequence<N, size_t> seqa(0);
-        for(register size_t i = 0; i < N; i++) seqa[i] = i;
+        for(size_t i = 0; i < N; i++) seqa[i] = i;
         m_perm.apply(seqa);
 
         std::list< loop_list_node<1, 1> > loop_in, loop_out;

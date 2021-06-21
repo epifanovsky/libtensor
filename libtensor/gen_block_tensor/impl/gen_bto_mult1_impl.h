@@ -150,7 +150,7 @@ void gen_bto_mult1<N, Traits, Timed>::perform(
                 cb.req_const_symmetry(), pbb.get_perm()).perform(symx);
             mask<N + N> msk;
             sequence<N + N, size_t> seq;
-            for(register size_t i = 0; i < N; i++) {
+            for(size_t i = 0; i < N; i++) {
                 msk[i] = msk[i + N] = true;
                 seq[i] = seq[i + N] = i;
             }

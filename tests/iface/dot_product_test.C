@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void dot_product_test::perform() throw(libtest::test_exception) {
+void dot_product_test::perform() {
 
     allocator<double>::init();
 
@@ -34,7 +34,7 @@ void dot_product_test::perform() throw(libtest::test_exception) {
 }
 
 
-void dot_product_test::test_tt_ij_ij_1() throw(libtest::test_exception) {
+void dot_product_test::test_tt_ij_ij_1() {
 
     static const char *testname = "dot_product_test::test_tt_ij_ij_1()";
 
@@ -59,7 +59,7 @@ void dot_product_test::test_tt_ij_ij_1() throw(libtest::test_exception) {
 }
 
 
-void dot_product_test::test_tt_ij_ji_1() throw(libtest::test_exception) {
+void dot_product_test::test_tt_ij_ji_1() {
 
     static const char *testname = "dot_product_test::test_tt_ij_ji_1()";
 
@@ -85,7 +85,7 @@ void dot_product_test::test_tt_ij_ji_1() throw(libtest::test_exception) {
 }
 
 
-void dot_product_test::test_te_ij_ij_1() throw(libtest::test_exception) {
+void dot_product_test::test_te_ij_ij_1() {
 
     static const char *testname = "dot_product_test::test_te_ij_ij_1()";
 
@@ -113,7 +113,7 @@ void dot_product_test::test_te_ij_ij_1() throw(libtest::test_exception) {
 }
 
 
-void dot_product_test::test_te_ij_ji_1() throw(libtest::test_exception) {
+void dot_product_test::test_te_ij_ji_1() {
 
     static const char *testname = "dot_product_test::test_te_ij_ji_1()";
 
@@ -142,7 +142,7 @@ void dot_product_test::test_te_ij_ji_1() throw(libtest::test_exception) {
 }
 
 
-void dot_product_test::test_et_1() throw(libtest::test_exception) {
+void dot_product_test::test_et_1() {
 
     static const char *testname = "dot_product_test::test_et_1()";
 
@@ -177,7 +177,7 @@ void dot_product_test::test_et_1() throw(libtest::test_exception) {
 
 
 void dot_product_test::check_ref(const char *testname, double d, double d_ref)
-    throw(libtest::test_exception) {
+    {
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;

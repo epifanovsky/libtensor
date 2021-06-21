@@ -4,7 +4,7 @@
 namespace libtensor {
 
 
-void btensor_test::perform() throw(libtest::test_exception) {
+void btensor_test::perform() {
 
     test_1();
     test_2();
@@ -14,7 +14,7 @@ using expr::label;
 
 /** \test Checks the dimensions of a new btensor
  **/
-void btensor_test::test_1() throw(libtest::test_exception) {
+void btensor_test::test_1() {
 
     static const char *testname = "btensor_test::test_1()";
 
@@ -44,7 +44,7 @@ void btensor_test::test_1() throw(libtest::test_exception) {
 
 /** \test Checks operator() with various letter labels
  **/
-void btensor_test::test_2() throw(libtest::test_exception) {
+void btensor_test::test_2() {
 
     static const char *testname = "btensor_test::test_2()";
 

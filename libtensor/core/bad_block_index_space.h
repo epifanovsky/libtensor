@@ -20,13 +20,13 @@ public:
      **/
     bad_block_index_space(const char *ns, const char *clazz,
         const char *method, const char *file, unsigned int line,
-        const char *message) throw() :
+        const char *message) noexcept :
         exception_base<bad_block_index_space>(ns, clazz, method,
             file, line, "bad_block_index_space", message) { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~bad_block_index_space() throw() { };
+    virtual ~bad_block_index_space() noexcept { };
 
     //@}
 };

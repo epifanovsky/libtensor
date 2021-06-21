@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void btod_import_raw_stream_test::perform() throw(libtest::test_exception) {
+void btod_import_raw_stream_test::perform() {
 
     libtensor::index<2> i2a, i2b;
     i2b[0] = 9; i2b[1] = 19;
@@ -48,7 +48,7 @@ void btod_import_raw_stream_test::perform() throw(libtest::test_exception) {
 
 template<size_t N>
 void btod_import_raw_stream_test::test_1(const block_index_space<N> &bis)
-    throw(libtest::test_exception) {
+    {
 
     std::ostringstream tnss;
     tnss << "btod_import_raw_stream_test::test_1(" << bis << ")";
@@ -96,7 +96,7 @@ void btod_import_raw_stream_test::test_1(const block_index_space<N> &bis)
 
 template<size_t N>
 void btod_import_raw_stream_test::test_2(const block_index_space<N> &bis)
-    throw(libtest::test_exception) {
+    {
 
     std::ostringstream tnss;
     tnss << "btod_import_raw_stream_test::test_2(" << bis << ")";

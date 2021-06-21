@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void expr_tree_test::perform() throw(libtest::test_exception) {
+void expr_tree_test::perform() {
 
     test_1();
     test_2();

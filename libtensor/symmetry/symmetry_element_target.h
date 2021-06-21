@@ -14,8 +14,7 @@ public:
     //!    \name Implementation of
     //!        libtensor::symmetry_element_target_i<N, T>
     //@{
-    virtual void accept_default(const symmetry_element_i<N, T> &elem)
-    throw(exception) { };
+    virtual void accept_default(const symmetry_element_i<N, T> &elem) { };
     //@}
 
 };
@@ -26,7 +25,7 @@ class symmetry_element_target :
     virtual public symmetry_element_target_base<N, T> {
 
     public:
-        virtual void accept(const ElemT &elem) throw(exception) { };
+        virtual void accept(const ElemT &elem) { };
     };
 
 
@@ -35,8 +34,7 @@ class symmetry_element_target :
     virtual public symmetry_element_target_base<N, T> {
 
     public:
-        virtual void accept(const symmetry_element_i<N, T> &elem)
-        throw(exception) {
+        virtual void accept(const symmetry_element_i<N, T> &elem) {
 
             accept_default(elem);
         };

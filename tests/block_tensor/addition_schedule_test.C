@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-void addition_schedule_test::perform() throw(libtest::test_exception) {
+void addition_schedule_test::perform() {
 
     test_1();
     test_2();
@@ -129,7 +129,7 @@ using namespace addition_schedule_test_ns;
 /** \test Tests the addition schedule for Sym(A) = Sym(B) = Sym(C) = 0.
         Order-two block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_1() throw(libtest::test_exception) {
+void addition_schedule_test::test_1() {
 
 //	static const char *testname = "addition_schedule_test::test_1()";
 
@@ -186,7 +186,7 @@ void addition_schedule_test::test_1() throw(libtest::test_exception) {
         S(+)2 = Sym(A) > Sym(B) = Sym(C) = 0.
         Order-two block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_2() throw(libtest::test_exception) {
+void addition_schedule_test::test_2() {
 
 //    static const char *testname = "addition_schedule_test::test_2()";
 
@@ -251,7 +251,7 @@ void addition_schedule_test::test_2() throw(libtest::test_exception) {
         0 = Sym(C) = Sym(A) < Sym(B) = Perm(+, 01).
         Order-two block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_3() throw(libtest::test_exception) {
+void addition_schedule_test::test_3() {
 
 //    static const char *testname = "addition_schedule_test::test_3()";
 
@@ -315,7 +315,7 @@ void addition_schedule_test::test_3() throw(libtest::test_exception) {
         Sym(A) = S(+)2, Sym(B) = S(-)2, Sym(C) = 0.
         Order-two block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_4() throw(libtest::test_exception) {
+void addition_schedule_test::test_4() {
 
 //    static const char *testname = "addition_schedule_test::test_4()";
 
@@ -382,7 +382,7 @@ void addition_schedule_test::test_4() throw(libtest::test_exception) {
 /** \test Tests the addition schedule for Sym(A) = Sym(B) = Sym(C) = S4.
         Order-four block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_5() throw(libtest::test_exception) {
+void addition_schedule_test::test_5() {
 
 //    static const char *testname = "addition_schedule_test::test_5()";
 
@@ -443,7 +443,7 @@ void addition_schedule_test::test_5() throw(libtest::test_exception) {
         S(+)4 = Sym(A) > Sym(B) = Sym(C) = S(+)2 * S(+)2.
         Order-four block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_6() throw(libtest::test_exception) {
+void addition_schedule_test::test_6() {
 
 //    static const char *testname = "addition_schedule_test::test_6()";
 
@@ -506,7 +506,7 @@ void addition_schedule_test::test_6() throw(libtest::test_exception) {
         S(+)4 = Sym(B) > Sym(A) = Sym(C) = S(+)2 * S(+)2.
         Order-four block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_7() throw(libtest::test_exception) {
+void addition_schedule_test::test_7() {
 
 //    static const char *testname = "addition_schedule_test::test_7()";
 
@@ -569,7 +569,7 @@ void addition_schedule_test::test_7() throw(libtest::test_exception) {
         S(+)4 = Sym(B) > Sym(C) = A4 < Sym(A) = S(-)4.
         Order-four block tensors with two blocks along each dimension.
  **/
-void addition_schedule_test::test_8() throw(libtest::test_exception) {
+void addition_schedule_test::test_8() {
 
 //    static const char *testname = "addition_schedule_test::test_8()";
 

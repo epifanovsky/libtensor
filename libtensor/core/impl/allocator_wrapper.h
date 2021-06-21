@@ -51,7 +51,7 @@ public:
         return ptr.p1;
     }
 
-    virtual void deallocate(const pointer_type &p) throw () {
+    virtual void deallocate(const pointer_type &p) noexcept {
         m_impl.deallocate(convp(p));
     }
 

@@ -18,7 +18,7 @@
 namespace libtensor {
 
 
-void btod_ewmult2_test::perform() throw(libtest::test_exception) {
+void btod_ewmult2_test::perform() {
 
     allocator<double>::init();
 
@@ -49,7 +49,7 @@ void btod_ewmult2_test::perform() throw(libtest::test_exception) {
 
 /** \test $c_{i} = a_{i} b_{i}$
  **/
-void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
+void btod_ewmult2_test::test_1(bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_1(" << doadd << ")";
@@ -125,7 +125,7 @@ void btod_ewmult2_test::test_1(bool doadd) throw(libtest::test_exception) {
 
 /** \test $c_{ij} = a_{ij} b_{ij}$
  **/
-void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
+void btod_ewmult2_test::test_2(bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_2(" << doadd << ")";
@@ -209,7 +209,7 @@ void btod_ewmult2_test::test_2(bool doadd) throw(libtest::test_exception) {
 
 /** \test $c_{ij} = a_{ij} b_{ji}$
  **/
-void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
+void btod_ewmult2_test::test_3(bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_3(" << doadd << ")";
@@ -293,7 +293,7 @@ void btod_ewmult2_test::test_3(bool doadd) throw(libtest::test_exception) {
 
 /** \test $c_{ijkl} = a_{kj} b_{ikl}$
  **/
-void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
+void btod_ewmult2_test::test_4(bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_4(" << doadd << ")";
@@ -385,7 +385,7 @@ void btod_ewmult2_test::test_4(bool doadd) throw(libtest::test_exception) {
 
 /** \test $c_{ijkl} = a_{ljk} b_{jil}$
  **/
-void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
+void btod_ewmult2_test::test_5(bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_5(" << doadd << ")";
@@ -481,7 +481,7 @@ void btod_ewmult2_test::test_5(bool doadd) throw(libtest::test_exception) {
 
 /** \test $c_{ijkl} = a_{ikl} b_{jkl}$, perm symmetry
  **/
-void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
+void btod_ewmult2_test::test_6(bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_6(" << doadd << ")";
@@ -606,7 +606,7 @@ void btod_ewmult2_test::test_6(bool doadd) throw(libtest::test_exception) {
 
 /** \test $c_{ijk} = a_{ij} b_{ik}$, label symmetry
  **/
-void btod_ewmult2_test::test_7() throw(libtest::test_exception) {
+void btod_ewmult2_test::test_7() {
 
     std::ostringstream tnss;
     tnss << "btod_ewmult2_test::test_7()";

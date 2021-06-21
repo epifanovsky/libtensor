@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void mult_test::perform() throw(libtest::test_exception) {
+void mult_test::perform() {
 
     allocator<double>::init();
 
@@ -43,7 +43,7 @@ void mult_test::perform() throw(libtest::test_exception) {
 }
 
 
-void mult_test::test_tt_1a() throw(libtest::test_exception) {
+void mult_test::test_tt_1a() {
 
     static const char *testname = "mult_test::test_tt_1a()";
 
@@ -71,7 +71,7 @@ void mult_test::test_tt_1a() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_tt_1b() throw(libtest::test_exception) {
+void mult_test::test_tt_1b() {
 
     static const char *testname = "mult_test::test_tt_1b()";
 
@@ -100,7 +100,7 @@ void mult_test::test_tt_1b() throw(libtest::test_exception) {
 }
 
 
-void mult_test::test_tt_2() throw(libtest::test_exception) {
+void mult_test::test_tt_2() {
 
     static const char *testname = "mult_test::test_tt_2()";
 
@@ -132,7 +132,7 @@ void mult_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
-void mult_test::test_tt_3() throw(libtest::test_exception) {
+void mult_test::test_tt_3() {
 
     static const char *testname = "mult_test::test_tt_3()";
 
@@ -164,7 +164,7 @@ void mult_test::test_tt_3() throw(libtest::test_exception) {
 }
 
 
-void mult_test::test_tt_4() throw(libtest::test_exception) {
+void mult_test::test_tt_4() {
 
     static const char *testname = "mult_test::test_tt_4()";
 
@@ -197,7 +197,7 @@ void mult_test::test_tt_4() throw(libtest::test_exception) {
 }
 
 
-void mult_test::test_tt_5() throw(libtest::test_exception) {
+void mult_test::test_tt_5() {
 
     static const char *testname = "mult_test::test_tt_5()";
 
@@ -225,7 +225,7 @@ void mult_test::test_tt_5() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_tt_6a() throw(libtest::test_exception) {
+void mult_test::test_tt_6a() {
 
     static const char *testname = "mult_test::test_tt_6a()";
 
@@ -253,7 +253,7 @@ void mult_test::test_tt_6a() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_tt_6b() throw(libtest::test_exception) {
+void mult_test::test_tt_6b() {
 
     static const char *testname = "mult_test::test_tt_6b()";
 
@@ -281,7 +281,7 @@ void mult_test::test_tt_6b() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_te_1() throw(libtest::test_exception) {
+void mult_test::test_te_1() {
 
     static const char *testname = "mult_test::test_te_1()";
 
@@ -323,7 +323,7 @@ void mult_test::test_te_1() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_te_2() throw(libtest::test_exception) {
+void mult_test::test_te_2() {
 
     static const char *testname = "mult_test::test_te_2()";
 
@@ -361,7 +361,7 @@ void mult_test::test_te_2() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_te_3() throw(libtest::test_exception) {
+void mult_test::test_te_3() {
 
     static const char *testname = "mult_test::test_te_3()";
 
@@ -400,7 +400,7 @@ void mult_test::test_te_3() throw(libtest::test_exception) {
 }
 
 
-void mult_test::test_et_1() throw(libtest::test_exception) {
+void mult_test::test_et_1() {
 
     static const char *testname = "mult_test::test_et_1()";
 
@@ -437,7 +437,7 @@ void mult_test::test_et_1() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_et_2() throw(libtest::test_exception) {
+void mult_test::test_et_2() {
 
     static const char *testname = "mult_test::test_et_2()";
 
@@ -475,7 +475,7 @@ void mult_test::test_et_2() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_et_3() throw(libtest::test_exception) {
+void mult_test::test_et_3() {
 
     static const char *testname = "mult_test::test_et_3()";
 
@@ -514,7 +514,7 @@ void mult_test::test_et_3() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_ee_1a() throw(libtest::test_exception) {
+void mult_test::test_ee_1a() {
 
     static const char *testname = "mult_test::test_ee_1a()";
 
@@ -554,7 +554,7 @@ void mult_test::test_ee_1a() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_ee_1b() throw(libtest::test_exception) {
+void mult_test::test_ee_1b() {
 
     static const char *testname = "mult_test::test_ee_1b()";
 
@@ -594,7 +594,7 @@ void mult_test::test_ee_1b() throw(libtest::test_exception) {
     }
 }
 
-void mult_test::test_ee_2() throw(libtest::test_exception) {
+void mult_test::test_ee_2() {
 
     static const char *testname = "mult_test::test_ee_2()";
 

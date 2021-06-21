@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void btod_shift_diag_test::perform() throw(libtest::test_exception) {
+void btod_shift_diag_test::perform() {
 
     allocator<double>::init();
 
@@ -35,7 +35,7 @@ void btod_shift_diag_test::perform() throw(libtest::test_exception) {
 }
 
 
-void btod_shift_diag_test::test_1() throw(libtest::test_exception) {
+void btod_shift_diag_test::test_1() {
 
     static const char *testname = "btod_shift_diag_test::test_1()";
 
@@ -51,7 +51,7 @@ void btod_shift_diag_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void btod_shift_diag_test::test_2() throw(libtest::test_exception) {
+void btod_shift_diag_test::test_2() {
 
     static const char *testname = "btod_shift_diag_test::test_2()";
 
@@ -72,7 +72,7 @@ void btod_shift_diag_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void btod_shift_diag_test::test_3() throw(libtest::test_exception) {
+void btod_shift_diag_test::test_3() {
 
     static const char *testname = "btod_shift_diag_test::test_3()";
 
@@ -94,7 +94,7 @@ void btod_shift_diag_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void btod_shift_diag_test::test_4() throw(libtest::test_exception) {
+void btod_shift_diag_test::test_4() {
 
     static const char *testname = "btod_shift_diag_test::test_4()";
 
@@ -122,7 +122,7 @@ void btod_shift_diag_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void btod_shift_diag_test::test_5() throw(libtest::test_exception) {
+void btod_shift_diag_test::test_5() {
 
     static const char *testname = "btod_shift_diag_test::test_5()";
 
@@ -154,7 +154,7 @@ void btod_shift_diag_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void btod_shift_diag_test::test_6() throw(libtest::test_exception) {
+void btod_shift_diag_test::test_6() {
 
     static const char *testname = "btod_shift_diag_test::test_6()";
 
@@ -183,7 +183,7 @@ void btod_shift_diag_test::test_6() throw(libtest::test_exception) {
 template<size_t N>
 void btod_shift_diag_test::test_generic(const char *testname,
     const block_index_space<N> &bis, const symmetry<N, double> &sym,
-    const sequence<N, size_t> &msk, double d) throw(libtest::test_exception) {
+    const sequence<N, size_t> &msk, double d) {
 
     typedef allocator<double> allocator_t;
 

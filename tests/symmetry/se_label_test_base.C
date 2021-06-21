@@ -7,7 +7,7 @@
 namespace libtensor {
 
 void se_label_test_base::setup_pg_table(
-        const std::string &id) throw(libtest::test_exception){
+        const std::string &id){
 
     if (id == "Cs" || id == "cs") {
 
@@ -101,7 +101,7 @@ void se_label_test_base::setup_pg_table(
 }
 
 void se_label_test_base::clear_pg_table(
-        const std::string &id) throw(libtest::test_exception){
+        const std::string &id){
 
     if (product_table_container::get_instance().table_exists(id)) {
         product_table_container::get_instance().erase(id);

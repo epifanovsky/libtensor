@@ -16,7 +16,7 @@ namespace libtensor {
 typedef allocator<double> allocator_t;
 
 
-void btod_scale_test::perform() throw(libtest::test_exception) {
+void btod_scale_test::perform() {
 
     allocator<double>::init();
     try {
@@ -39,7 +39,7 @@ void btod_scale_test::perform() throw(libtest::test_exception) {
 template<size_t N>
 void btod_scale_test::test_generic(
     const char *testname, block_tensor_i<N, double> &bt, double c)
-    throw(libtest::test_exception) {
+    {
 
     try {
 
@@ -61,7 +61,7 @@ void btod_scale_test::test_generic(
 
 /** \test Checks that scaling by zero results in all zero blocks
  **/
-void btod_scale_test::test_0() throw(libtest::test_exception) {
+void btod_scale_test::test_0() {
 
     static const char *testname = "btod_scale_test::test_0()";
 
@@ -113,7 +113,7 @@ void btod_scale_test::test_0() throw(libtest::test_exception) {
 /** \test Checks the scaling and the zero-block structure of one-dim
         tensors
  **/
-void btod_scale_test::test_i(size_t i) throw(libtest::test_exception) {
+void btod_scale_test::test_i(size_t i) {
 
     std::ostringstream ss;
     ss << "btod_scale_test::test_i(" << i << ")";
@@ -194,7 +194,7 @@ void btod_scale_test::test_i(size_t i) throw(libtest::test_exception) {
 /** \test Tests proper scaling in block tensors with permutational
         %symmetry and anti-symmetry.
  **/
-void btod_scale_test::test_1() throw(libtest::test_exception) {
+void btod_scale_test::test_1() {
 
     static const char *testname = "btod_scale_test::test_1()";
 

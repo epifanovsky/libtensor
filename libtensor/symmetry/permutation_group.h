@@ -44,10 +44,10 @@ private:
         gen_perm_t m_tau[N]; //!< Vertex labels (permutation + n)
         size_t m_edges[N]; //!< Edge sources
         branching() {
-            for(register size_t i = 0; i < N; i++) m_edges[i] = N;
+            for(size_t i = 0; i < N; i++) m_edges[i] = N;
         }
         void reset() {
-            for(register size_t i = 0; i < N; i++) {
+            for(size_t i = 0; i < N; i++) {
                 m_edges[i] = N;
                 m_sigma[i].first.reset();
                 m_tau[i].first.reset();

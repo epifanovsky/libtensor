@@ -20,13 +20,13 @@ public:
      **/
     bad_dimensions(const char *ns, const char *clazz, const char *method,
         const char *file, unsigned int line, const char *message)
-        throw() :
+        noexcept :
         exception_base<bad_dimensions>(ns, clazz, method, file, line,
             "bad_dimensions", message) { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~bad_dimensions() throw() { };
+    virtual ~bad_dimensions() noexcept { };
 
     //@}
 };

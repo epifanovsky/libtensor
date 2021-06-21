@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void node_add_test::perform() throw(libtest::test_exception) {
+void node_add_test::perform() {
 
     test_1();
 }
@@ -16,7 +16,7 @@ void node_add_test::perform() throw(libtest::test_exception) {
 using namespace expr;
 
 
-void node_add_test::test_1() throw(libtest::test_exception) {
+void node_add_test::test_1() {
 
     static const char testname[] = "node_add_test::test_1()";
 

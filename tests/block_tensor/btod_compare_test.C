@@ -15,7 +15,7 @@
 namespace libtensor {
 
 
-void btod_compare_test::perform() throw(libtest::test_exception) {
+void btod_compare_test::perform() {
 
     allocator<double>::init();
     try {
@@ -44,7 +44,7 @@ void btod_compare_test::perform() throw(libtest::test_exception) {
 
 /** \test Comparison of a block %tensor with itself
  **/
-void btod_compare_test::test_1() throw(libtest::test_exception) {
+void btod_compare_test::test_1() {
 
     static const char *testname = "btod_compare_test::test_1()";
 
@@ -80,7 +80,7 @@ void btod_compare_test::test_1() throw(libtest::test_exception) {
 
 /** \test Comparison of two block %tensors with different number of orbits
  **/
-void btod_compare_test::test_2a() throw(libtest::test_exception) {
+void btod_compare_test::test_2a() {
 
     static const char *testname = "btod_compare_test::test_2a()";
 
@@ -123,7 +123,7 @@ void btod_compare_test::test_2a() throw(libtest::test_exception) {
 
 /** \test Comparison of two block %tensors with different number of orbits
  **/
-void btod_compare_test::test_2b() throw(libtest::test_exception) {
+void btod_compare_test::test_2b() {
 
     static const char *testname = "btod_compare_test::test_2b()";
 
@@ -167,7 +167,7 @@ void btod_compare_test::test_2b() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same number of orbits,
         but different set of canonical indexes
  **/
-void btod_compare_test::test_3a() throw(libtest::test_exception) {
+void btod_compare_test::test_3a() {
 
     static const char *testname = "btod_compare_test::test_3a()";
 
@@ -224,7 +224,7 @@ void btod_compare_test::test_3a() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same number of orbits,
         but different set of canonical indexes
  **/
-void btod_compare_test::test_3b() throw(libtest::test_exception) {
+void btod_compare_test::test_3b() {
 
     static const char *testname = "btod_compare_test::test_3b()";
 
@@ -281,7 +281,7 @@ void btod_compare_test::test_3b() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same number of orbits,
         but different set of canonical indexes
  **/
-void btod_compare_test::test_4a() throw(libtest::test_exception) {
+void btod_compare_test::test_4a() {
 
     static const char *testname = "btod_compare_test::test_4a()";
 
@@ -342,7 +342,7 @@ void btod_compare_test::test_4a() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same number of orbits,
         but different set of canonical indexes
  **/
-void btod_compare_test::test_4b() throw(libtest::test_exception) {
+void btod_compare_test::test_4b() {
 
     static const char *testname = "btod_compare_test::test_4b()";
 
@@ -403,7 +403,7 @@ void btod_compare_test::test_4b() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same number of orbits,
         same canonical indexes, but different block transformations
  **/
-void btod_compare_test::test_5a() throw(libtest::test_exception) {
+void btod_compare_test::test_5a() {
 
     static const char *testname = "btod_compare_test::test_5a()";
 
@@ -462,7 +462,7 @@ void btod_compare_test::test_5a() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same number of orbits,
         same canonical indexes, but different block transformations
  **/
-void btod_compare_test::test_5b() throw(libtest::test_exception) {
+void btod_compare_test::test_5b() {
 
     static const char *testname = "btod_compare_test::test_5b()";
 
@@ -521,7 +521,7 @@ void btod_compare_test::test_5b() throw(libtest::test_exception) {
 /** \test Comparison of two block %tensors with the same orbits and
         transformations, but symmetries set up differently
  **/
-void btod_compare_test::test_6() throw(libtest::test_exception) {
+void btod_compare_test::test_6() {
 
     static const char *testname = "btod_compare_test::test_6()";
 
@@ -572,7 +572,7 @@ void btod_compare_test::test_6() throw(libtest::test_exception) {
 /** \test Comparison of two block tensors with the same orbits and
         transformations, but symmetries set up differently
  **/
-void btod_compare_test::test_7() throw(libtest::test_exception) {
+void btod_compare_test::test_7() {
 
     static const char *testname = "btod_compare_test::test_7()";
 
@@ -624,7 +624,7 @@ void btod_compare_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void btod_compare_test::test_exc() throw(libtest::test_exception) {
+void btod_compare_test::test_exc() {
     typedef libtensor::index<2> index_t;
     typedef index_range<2> index_range_t;
     typedef dimensions<2> dimensions_t;
@@ -684,7 +684,7 @@ void btod_compare_test::test_exc() throw(libtest::test_exception) {
 }
 
 
-void btod_compare_test::test_operation() throw(libtest::test_exception) {
+void btod_compare_test::test_operation() {
 
     static const char *testname = "btod_compare_test::test_operation()";
 

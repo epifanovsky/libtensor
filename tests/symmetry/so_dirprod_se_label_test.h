@@ -13,19 +13,19 @@ namespace libtensor {
  **/
 class so_dirprod_se_label_test : public se_label_test_base {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     void test_empty_1(
-            const std::string &table_id) throw(libtest::test_exception);
+            const std::string &table_id);
     void test_empty_2(const std::string &table_id,
-            bool perm) throw(libtest::test_exception);
+            bool perm);
     void test_empty_3(const std::string &table_id,
-            bool perm) throw(libtest::test_exception);
-    void test_nn_1(const std::string &table_id) throw(libtest::test_exception);
-    void test_nn_2(const std::string &table_id) throw(libtest::test_exception);
-    void test_nn_3(const std::string &table_id) throw(libtest::test_exception);
-    void test_nn_4() throw(libtest::test_exception);
+            bool perm);
+    void test_nn_1(const std::string &table_id);
+    void test_nn_2(const std::string &table_id);
+    void test_nn_3(const std::string &table_id);
+    void test_nn_4();
 
     using se_label_test_base::setup_pg_table;
     using se_label_test_base::check_allowed;

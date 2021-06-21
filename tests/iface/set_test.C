@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void set_test::perform() throw(libtest::test_exception) {
+void set_test::perform() {
 
     allocator<double>::init();
 

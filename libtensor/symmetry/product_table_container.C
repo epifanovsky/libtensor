@@ -15,7 +15,7 @@ product_table_container::~product_table_container() {
 }
 
 void product_table_container::add(
-        const product_table_i &pt) throw(bad_parameter) {
+        const product_table_i &pt) {
 
     static const char *method = "add(product_table_i &)";
 
@@ -39,7 +39,7 @@ void product_table_container::add(
 }
 
 void product_table_container::erase(
-        const std::string &id) throw(bad_parameter, generic_exception) {
+        const std::string &id) {
 
     const char *method = "erase(const id_t &)";
 
@@ -58,7 +58,7 @@ void product_table_container::erase(
 }
 
 product_table_i &product_table_container::req_table(
-        const std::string &id) throw(bad_parameter, exception) {
+        const std::string &id) {
 
     const char *method = "req_table(const id_t&)";
 
@@ -77,7 +77,7 @@ product_table_i &product_table_container::req_table(
 }
 
 const product_table_i &product_table_container::req_const_table(
-        const std::string &id) throw(bad_parameter, exception) {
+        const std::string &id) {
 
     const char *method = "req_table(const id_t&)";
 
@@ -96,7 +96,7 @@ const product_table_i &product_table_container::req_const_table(
 }
 
 void product_table_container::ret_table(
-        const std::string &id) throw(bad_parameter) {
+        const std::string &id) {
 
     const char *method = "ret_table(const id_t&)";
 

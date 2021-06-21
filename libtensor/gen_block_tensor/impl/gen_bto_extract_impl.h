@@ -101,7 +101,7 @@ gen_bto_extract<N, M, Traits, Timed>::gen_bto_extract(
 
     sequence<NA, size_t> seq(0);
     mask<NA> invmsk;
-    for (register size_t i = 0, j = 0; i < NA; i++) {
+    for (size_t i = 0, j = 0; i < NA; i++) {
         invmsk[i] = !m_msk[i];
         if (invmsk[i]) seq[i] = j++;
     }
@@ -198,9 +198,9 @@ void gen_bto_extract<N, M, Traits, Timed>::compute_block_untimed(
 
     sequence<NA, size_t> seqa1(0), seqa2(0);
     sequence<NB, size_t> seqb1(0), seqb2(0);
-    for(register size_t i = 0; i < NA; i++) seqa2[i] = seqa1[i] = i;
+    for(size_t i = 0; i < NA; i++) seqa2[i] = seqa1[i] = i;
     tra.get_perm().apply(seqa2);
-    for(register size_t i = 0, j1 = 0, j2 = 0; i < NA; i++) {
+    for(size_t i = 0, j1 = 0, j2 = 0; i < NA; i++) {
         if(msk1[i]) seqb1[j1++] = seqa1[i];
         if(msk2[i]) seqb2[j2++] = seqa2[i];
     }
@@ -283,7 +283,7 @@ block_index_space<N - M> gen_bto_extract<N, M, Traits, Timed>::mk_bis(
             if(bis.get_type(map[k]) == typ) msk_typ[k] = true;
         }
         size_t npts = splits.get_num_points();
-        for(register size_t k = 0; k < npts; k++) {
+        for(size_t k = 0; k < npts; k++) {
             obis.split(msk_typ, splits[k]);
         }
         msk_done |= msk_typ;

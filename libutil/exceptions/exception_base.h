@@ -29,25 +29,25 @@ public:
 	 **/
 	exception_base(const char *ns, const char *clazz, const char *method,
 		const char *file, unsigned int line, const char *type,
-		const char *message) throw() :
+		const char *message) noexcept :
 		exception(ns, clazz, method, file, line, type, message) {
 	}
 
 	/**	\brief Copy constructor
 	 **/
-	exception_base(const exception_base<Exc> &e) throw() :
+	exception_base(const exception_base<Exc> &e) noexcept :
 	    exception(e) {
 	}
 
 	/**	\brief Virtual destructor
 	 **/
-	virtual ~exception_base() throw() { };
+	virtual ~exception_base() noexcept { };
 
 	//@}
 
 	/**	\brief Clones the object
 	 **/
-	virtual rethrowable_i *clone() const throw() {
+	virtual rethrowable_i *clone() const noexcept {
 		try {
 			const Exc &e = dynamic_cast<const Exc&>(*this);
 			return new Exc(e);

@@ -15,7 +15,7 @@
 namespace libtensor {
 
 
-void expr_test::perform() throw(libtest::test_exception) {
+void expr_test::perform() {
 
     allocator<double>::init();
 
@@ -45,7 +45,7 @@ void expr_test::perform() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_1() throw(libtest::test_exception) {
+void expr_test::test_1() {
 
     static const char *testname = "expr_test::test_1()";
 
@@ -79,7 +79,7 @@ void expr_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_2() throw(libtest::test_exception) {
+void expr_test::test_2() {
 
     static const char *testname = "expr_test::test_2()";
 
@@ -126,7 +126,7 @@ void expr_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_3() throw(libtest::test_exception) {
+void expr_test::test_3() {
 
     static const char *testname = "expr_test::test_3()";
 
@@ -171,7 +171,7 @@ void expr_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_4() throw(libtest::test_exception) {
+void expr_test::test_4() {
 
     static const char *testname = "expr_test::test_4()";
 
@@ -225,7 +225,7 @@ void expr_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_5() throw(libtest::test_exception) {
+void expr_test::test_5() {
 
     static const char *testname = "expr_test::test_5()";
 
@@ -270,7 +270,7 @@ void expr_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_6() throw(libtest::test_exception) {
+void expr_test::test_6() {
 
     static const char *testname = "expr_test::test_6()";
 
@@ -396,7 +396,7 @@ void expr_test::test_6() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_7() throw(libtest::test_exception) {
+void expr_test::test_7() {
 
     static const char *testname = "expr_test::test_7()";
 
@@ -503,7 +503,7 @@ void expr_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_8() throw(libtest::test_exception) {
+void expr_test::test_8() {
 
     static const char *testname = "expr_test::test_8()";
 
@@ -599,7 +599,7 @@ void expr_test::test_8() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_9() throw(libtest::test_exception) {
+void expr_test::test_9() {
 
     static const char *testname = "expr_test::test_9()";
 
@@ -667,7 +667,7 @@ void expr_test::test_9() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_10() throw(libtest::test_exception) {
+void expr_test::test_10() {
 
     static const char *testname = "expr_test::test_10()";
 
@@ -735,7 +735,7 @@ void expr_test::test_10() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_11() throw(libtest::test_exception) {
+void expr_test::test_11() {
 
     static const char *testname = "expr_test::test_11()";
 
@@ -773,7 +773,7 @@ void expr_test::test_11() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_12() throw(libtest::test_exception) {
+void expr_test::test_12() {
 
     static const char *testname = "expr_test::test_12()";
 
@@ -805,7 +805,7 @@ void expr_test::test_12() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_13() throw(libtest::test_exception) {
+void expr_test::test_13() {
 
     static const char *testname = "expr_test::test_13()";
 
@@ -841,7 +841,7 @@ void expr_test::test_13() throw(libtest::test_exception) {
 }
 
 
-void expr_test::test_14() throw(libtest::test_exception) {
+void expr_test::test_14() {
 
     static const char *testname = "expr_test::test_14()";
 

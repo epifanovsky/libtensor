@@ -17,7 +17,7 @@
 namespace libtensor {
 
 
-void btod_diag_test::perform() throw(libtest::test_exception) {
+void btod_diag_test::perform() {
 
     allocator<double>::init();
 
@@ -81,7 +81,7 @@ void btod_diag_test::perform() throw(libtest::test_exception) {
 
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, one block
  **/
-void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
+void btod_diag_test::test_zero_1() {
 
     static const char *testname = "btod_diag_test::test_zero_1()";
 
@@ -129,7 +129,7 @@ void btod_diag_test::test_zero_1() throw(libtest::test_exception) {
 
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, zero tensor, multiple blocks
  **/
-void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
+void btod_diag_test::test_zero_2() {
 
     static const char *testname = "btod_diag_test::test_zero_2()";
 
@@ -184,7 +184,7 @@ void btod_diag_test::test_zero_2() throw(libtest::test_exception) {
 
 /** \test Extract diagonal: \f$ b_ij = a_{ijji} \f$, zero tensor, multiple blocks
  **/
-void btod_diag_test::test_zero_3() throw(libtest::test_exception) {
+void btod_diag_test::test_zero_3() {
 
     static const char *testname = "btod_diag_test::test_zero_3()";
 
@@ -240,7 +240,7 @@ void btod_diag_test::test_zero_3() throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, non-zero tensor,
      single block
  **/
-void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_1(bool add) {
 
     static const char *testname = "btod_diag_test::test_nosym_1(bool)";
 
@@ -304,7 +304,7 @@ void btod_diag_test::test_nosym_1(bool add) throw(libtest::test_exception) {
 
 /** \test Extract a single diagonal: \f$ b_{ija} = a_{iajb} \f$
  **/
-void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_2(bool add) {
 
     static const char *testname = "btod_diag_test::test_nosym_2(bool)";
 
@@ -381,7 +381,7 @@ void btod_diag_test::test_nosym_2(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, non-zero tensor,
      multiple blocks
  **/
-void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_3(bool add) {
 
     static const char *testname = "btod_diag_test::test_nosym_3(bool)";
 
@@ -454,7 +454,7 @@ void btod_diag_test::test_nosym_3(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ija} = a_{iaja} \f$, non-zero tensor,
      multiple blocks with permutation
  **/
-void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_4(bool add) {
 
     static const char *testname = "btod_diag_test::test_nosym_4(bool)";
 
@@ -534,7 +534,7 @@ void btod_diag_test::test_nosym_4(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ia} = a_{iiaa} \f$, non-zero tensor,
      multiple blocks
  **/
-void btod_diag_test::test_nosym_5(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_5(bool add) {
 
     static const char *testname = "btod_diag_test::test_nosym_5(bool)";
 
@@ -610,7 +610,7 @@ void btod_diag_test::test_nosym_5(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ija} = a_{iaija} \f$, non-zero tensor,
      multiple blocks with permutation
  **/
-void btod_diag_test::test_nosym_6(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_nosym_6(bool add) {
 
     static const char *testname = "btod_diag_test::test_nosym_6(bool)";
 
@@ -689,7 +689,7 @@ void btod_diag_test::test_nosym_6(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, permutational symmetry,
      multiple blocks
  **/
-void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_1(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_1(bool)";
 
@@ -768,7 +768,7 @@ void btod_diag_test::test_sym_1(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ia} = a_{iia} \f$, permutational symmetry,
      multiple blocks
  **/
-void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_2(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_2(bool)";
 
@@ -856,7 +856,7 @@ void btod_diag_test::test_sym_2(bool add) throw(libtest::test_exception) {
 
     TODO: Remove this test!!!
  **/
-void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_3(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_3(bool)";
 
@@ -936,7 +936,7 @@ void btod_diag_test::test_sym_3(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ija} = a_{iaja} \f$, permutational anti-symmetry,
      multiple blocks
  **/
-void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_4(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_4(bool)";
 
@@ -1023,7 +1023,7 @@ void btod_diag_test::test_sym_4(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{iaj} = a_{iaja} \f$,
         permutational symmetry, multiple blocks
  **/
-void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_5(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_5(bool)";
 
@@ -1112,7 +1112,7 @@ void btod_diag_test::test_sym_5(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ijk} = a_{ikjk} \f$,
         permutational anti-symmetry, multiple blocks
  **/
-void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_6(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_6(bool)";
 
@@ -1188,7 +1188,7 @@ void btod_diag_test::test_sym_6(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_i = a_{ii} \f$, non-zero tensor,
         multiple blocks, label symmetry
  **/
-void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_7(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_7(bool)";
 
@@ -1296,7 +1296,7 @@ void btod_diag_test::test_sym_7(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_ijk = a_{ijkj} \f$, non-zero tensor,
         multiple blocks, perm and partition symmetry
  **/
-void btod_diag_test::test_sym_8(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_8(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_8(bool)";
 
@@ -1422,7 +1422,7 @@ void btod_diag_test::test_sym_8(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ij} = a_{ijij} \f$,
         permutational anti-symmetry, multiple blocks
  **/
-void btod_diag_test::test_sym_9(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_9(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_9(bool)";
 
@@ -1508,7 +1508,7 @@ void btod_diag_test::test_sym_9(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ia} = a_{aaii} \f$, non-zero tensor,
         multiple blocks, label symmetry
  **/
-void btod_diag_test::test_sym_10(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_10(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_10(bool)";
 
@@ -1653,7 +1653,7 @@ void btod_diag_test::test_sym_10(bool add) throw(libtest::test_exception) {
 /** \test Extract diagonal: \f$ b_{ij} = a_{ijji} \f$, non-zero tensor,
         multiple blocks, perm and partition symmetry
  **/
-void btod_diag_test::test_sym_11(bool add) throw(libtest::test_exception) {
+void btod_diag_test::test_sym_11(bool add) {
 
     static const char *testname = "btod_diag_test::test_sym_11(bool)";
 

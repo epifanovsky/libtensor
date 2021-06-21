@@ -11,21 +11,21 @@ namespace libtensor {
 **/
 class btod_sum_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6(bool do_add) throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
-    void test_8() throw(libtest::test_exception);
-    void test_9a() throw(libtest::test_exception);
-    void test_9b() throw(libtest::test_exception);
-    void test_10a() throw(libtest::test_exception);
-    void test_10b() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
+    void test_6(bool do_add);
+    void test_7();
+    void test_8();
+    void test_9a();
+    void test_9b();
+    void test_10a();
+    void test_10b();
 };
 
 } // namespace libtensor

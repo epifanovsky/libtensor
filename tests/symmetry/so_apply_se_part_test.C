@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void so_apply_se_part_test::perform() throw(libtest::test_exception) {
+void so_apply_se_part_test::perform() {
 
     test_1(false,  true, false);
     test_1(false, false, false);
@@ -32,7 +32,7 @@ void so_apply_se_part_test::perform() throw(libtest::test_exception) {
 /** \test Tests that application on an empty set yields an empty set
  **/
 void so_apply_se_part_test::test_1(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss <<  "so_apply_se_part_test::test_1(" << keep_zero << ", "
@@ -88,7 +88,7 @@ void so_apply_se_part_test::test_1(bool keep_zero,
 /** \test Tests application on a non-empty set.
  **/
 void so_apply_se_part_test::test_2(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss <<  "so_apply_se_part_test::test_2(" << keep_zero << ", "
@@ -181,7 +181,7 @@ void so_apply_se_part_test::test_2(bool keep_zero,
 /** \test Tests application on non-empty set with permutation
  **/
 void so_apply_se_part_test::test_3(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss <<  "so_apply_se_part_test::test_3(" << keep_zero << ", "

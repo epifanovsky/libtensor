@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-void se_label_test::perform() throw(libtest::test_exception) {
+void se_label_test::perform() {
 
     std::string s6("S6");
     setup_pg_table(s6);
@@ -30,7 +30,7 @@ void se_label_test::perform() throw(libtest::test_exception) {
 /** \test Tests setting evaluation rules
  **/
 void se_label_test::test_basic_1(
-    const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "se_label_test::test_basic_1(" << table_id << ")";
@@ -135,7 +135,7 @@ void se_label_test::test_basic_1(
 /** \test Four blocks, all labeled, different index types, basic rules only
  **/
 void se_label_test::test_allowed_1(
-    const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) {
     
     std::ostringstream tnss;
     tnss << "se_label_test::test_allowed_1(" << table_id << ")";
@@ -185,7 +185,7 @@ void se_label_test::test_allowed_1(
         unlabeled dimension
  **/
 void se_label_test::test_allowed_2(
-    const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) {
     
     std::ostringstream tnss;
     tnss << "se_label_test::test_allowed_2(" << table_id << ")";
@@ -227,7 +227,7 @@ void se_label_test::test_allowed_2(
 /** \test Four blocks, all dims labeled, composite rules
  **/
 void se_label_test::test_allowed_3(
-    const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) {
     
     std::ostringstream tnss;
     tnss << "se_label_test::test_allowed_3(" << table_id << ")";
@@ -281,7 +281,7 @@ void se_label_test::test_allowed_3(
         permute
  **/
 void se_label_test::test_permute_1(
-    const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) {
     
     std::ostringstream tnss;
     tnss << "se_label_test::test_permute_1(" << table_id << ")";
@@ -354,7 +354,7 @@ void se_label_test::test_permute_1(
 /** \test Four blocks, all dims labeled, composite rules, permuted
  **/
 void se_label_test::test_permute_2(
-    const std::string &table_id) throw(libtest::test_exception) {
+    const std::string &table_id) {
     
     std::ostringstream tnss;
     tnss << "se_label_test::test_permute_2(" << table_id << ")";

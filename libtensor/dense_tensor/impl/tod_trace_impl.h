@@ -43,7 +43,7 @@ double tod_trace<N>::calculate() {
         ca.req_prefetch();
 
         sequence<k_ordera, size_t> map(0);
-        for(register size_t i = 0; i < k_ordera; i++) map[i] = i;
+        for(size_t i = 0; i < k_ordera; i++) map[i] = i;
         permutation<k_ordera> pinv(m_perm, true);
         pinv.apply(map);
 
@@ -95,7 +95,7 @@ void tod_trace<N>::check_dims() {
     static const char *method = "check_dims()";
 
     sequence<k_ordera, size_t> map(0);
-    for(register size_t i = 0; i < k_ordera; i++) map[i] = i;
+    for(size_t i = 0; i < k_ordera; i++) map[i] = i;
     permutation<k_ordera> pinv(m_perm, true);
     pinv.apply(map);
 

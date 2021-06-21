@@ -12,7 +12,7 @@
 namespace libtensor {
 
 
-void btod_extract_test::perform() throw(libtest::test_exception) {
+void btod_extract_test::perform() {
 
     allocator<double>::init();
 
@@ -45,7 +45,7 @@ void btod_extract_test::perform() throw(libtest::test_exception) {
 
 /** \test Extract a single column b_j = a_ij where i is constant
  **/
-void btod_extract_test::test_1() throw(libtest::test_exception) {
+void btod_extract_test::test_1() {
 
     static const char *testname = "btod_extract_test::test_1()";
 
@@ -100,7 +100,7 @@ void btod_extract_test::test_1() throw(libtest::test_exception) {
 
 /** \test Extract a matrix from the 3rd order tensor \f$ b_{ia} = a_{iba} \f$
  **/
-void btod_extract_test::test_2() throw(libtest::test_exception) {
+void btod_extract_test::test_2() {
 
     static const char *testname = "btod_extract_test::test_2()";
 
@@ -157,7 +157,7 @@ void btod_extract_test::test_2() throw(libtest::test_exception) {
  * \f$ b_{jkm} = a_{ijklm} \f$
  **/
 
-void btod_extract_test::test_3() throw(libtest::test_exception) {
+void btod_extract_test::test_3() {
 
     static const char *testname = "btod_extract_test::test_3()";
 
@@ -213,7 +213,7 @@ void btod_extract_test::test_3() throw(libtest::test_exception) {
 /** \test Extract a matrix from the 5rd order tensor
  * \f$ b_{jl} = a_{ijklm} \f$
  **/
-void btod_extract_test::test_4() throw(libtest::test_exception) {
+void btod_extract_test::test_4() {
 
     static const char *testname = "btod_extract_test::test_4()";
 
@@ -271,7 +271,7 @@ void btod_extract_test::test_4() throw(libtest::test_exception) {
 /** \test Extract a vector from the matrix with splitting
  * \f$ b_{j} = a_{ij} \f$
  **/
-void btod_extract_test::test_5() throw(libtest::test_exception) {
+void btod_extract_test::test_5() {
 
     static const char *testname = "btod_extract_test::test_5()";
 
@@ -334,7 +334,7 @@ void btod_extract_test::test_5() throw(libtest::test_exception) {
 /** \test Extract a matrix from the 3rd order tensor with splitting
  * \f$ b_{ik} = a_{ijk} \f$
  **/
-void btod_extract_test::test_6() throw(libtest::test_exception) {
+void btod_extract_test::test_6() {
 
     static const char *testname = "btod_extract_test::test_6()";
 
@@ -405,7 +405,7 @@ void btod_extract_test::test_6() throw(libtest::test_exception) {
  **/
 
 
-void btod_extract_test::test_7() throw(libtest::test_exception) {
+void btod_extract_test::test_7() {
 
     static const char *testname = "btod_extract_test::test_7()";
 
@@ -476,7 +476,7 @@ void btod_extract_test::test_7() throw(libtest::test_exception) {
 /** \test Extract a matrix from the 4rd order tensor with splitting
  * \f$ b_{il} = a_{ijkl} \f$
  **/
-void btod_extract_test::test_8() throw(libtest::test_exception) {
+void btod_extract_test::test_8() {
 
     static const char *testname = "btod_extract_test::test_8()";
 
@@ -548,7 +548,7 @@ void btod_extract_test::test_8() throw(libtest::test_exception) {
 /** \test Extract a matrix from the 3rd order tensor with splitting and
  * permutation \f$ b_{ki} = a_{ijk} \f$
  **/
-void btod_extract_test::test_9() throw(libtest::test_exception) {
+void btod_extract_test::test_9() {
 
     static const char *testname = "btod_extract_test::test_9()";
 
@@ -608,7 +608,7 @@ void btod_extract_test::test_9() throw(libtest::test_exception) {
 /** \test Extract a matrix from the 4rd order tensor with splitting and symmetry
         \f$ b_{il} = a_{ijkl} \f$
  **/
-void btod_extract_test::test_10() throw(libtest::test_exception) {
+void btod_extract_test::test_10() {
 
     static const char *testname = "btod_extract_test::test_10()";
 
@@ -700,7 +700,7 @@ void btod_extract_test::test_10() throw(libtest::test_exception) {
 /** \test Extract a matrix from the 3rd order tensor with splitting,
  * permutation, and symmetry \f$ b_{ki} = a_{ijk} \f$
  **/
-void btod_extract_test::test_11() throw(libtest::test_exception) {
+void btod_extract_test::test_11() {
 
     static const char *testname = "btod_extract_test::test_11()";
 
@@ -771,7 +771,7 @@ void btod_extract_test::test_11() throw(libtest::test_exception) {
         and perm symmetry
           \f$ b_{jl} = a_{ijkl} \qquad a_{ijkl} = a_{klij} \f$
  **/
-void btod_extract_test::test_12a() throw(libtest::test_exception) {
+void btod_extract_test::test_12a() {
 
     static const char *testname = "btod_extract_test::test_12a()";
 
@@ -858,7 +858,7 @@ void btod_extract_test::test_12a() throw(libtest::test_exception) {
         and perm symmetry (additive, b has perm symmetry)
           \f$ b_{jl} = b_{jl} + a_{ijkl} \qquad a_{ijkl} = a_{klij} \f$
  **/
-void btod_extract_test::test_12b() throw(libtest::test_exception) {
+void btod_extract_test::test_12b() {
 
     static const char *testname = "btod_extract_test::test_12b()";
 
@@ -951,7 +951,7 @@ void btod_extract_test::test_12b() throw(libtest::test_exception) {
         and perm symmetry (additive, b has no symmetry)
           \f$ b_{jl} = b_{jl} + a_{ijkl} \qquad a_{ijkl} = a_{klij} \f$
  **/
-void btod_extract_test::test_12c() throw(libtest::test_exception) {
+void btod_extract_test::test_12c() {
 
     static const char *testname = "btod_extract_test::test_12c()";
 
@@ -1040,7 +1040,7 @@ void btod_extract_test::test_12c() throw(libtest::test_exception) {
         and perm symmetry
           \f$ b_{ak} = a_{ijka} \qquad a_{ijka} = -a_{jika} \f$
  **/
-void btod_extract_test::test_13a() throw(libtest::test_exception) {
+void btod_extract_test::test_13a() {
 
     static const char *testname = "btod_extract_test::test_13a()";
 

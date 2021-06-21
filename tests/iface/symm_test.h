@@ -11,34 +11,34 @@ namespace libtensor {
 **/
 class symm_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_symm2_contr_tt_1() throw(libtest::test_exception);
-    void test_symm2_contr_tt_2() throw(libtest::test_exception);
-    void test_symm2_contr_ee_1() throw(libtest::test_exception);
-    void test_asymm2_contr_tt_1() throw(libtest::test_exception);
-    void test_asymm2_contr_tt_2() throw(libtest::test_exception);
-    void test_asymm2_contr_tt_3() throw(libtest::test_exception);
-    void test_asymm2_contr_tt_4() throw(libtest::test_exception);
-    void test_asymm2_contr_tt_5() throw(libtest::test_exception);
-    void test_asymm2_contr_tt_6() throw(libtest::test_exception);
-    void test_asymm2_contr_et_1() throw(libtest::test_exception);
-    void test_asymm2_contr_ee_1() throw(libtest::test_exception);
-    void test_asymm2_contr_ee_2() throw(libtest::test_exception);
+    void test_symm2_contr_tt_1();
+    void test_symm2_contr_tt_2();
+    void test_symm2_contr_ee_1();
+    void test_asymm2_contr_tt_1();
+    void test_asymm2_contr_tt_2();
+    void test_asymm2_contr_tt_3();
+    void test_asymm2_contr_tt_4();
+    void test_asymm2_contr_tt_5();
+    void test_asymm2_contr_tt_6();
+    void test_asymm2_contr_et_1();
+    void test_asymm2_contr_ee_1();
+    void test_asymm2_contr_ee_2();
 
-    void test_symm22_t_1() throw(libtest::test_exception);
-    void test_asymm22_t_1() throw(libtest::test_exception);
-    void test_symm22_t_2() throw(libtest::test_exception);
-    void test_asymm22_t_2() throw(libtest::test_exception);
+    void test_symm22_t_1();
+    void test_asymm22_t_1();
+    void test_symm22_t_2();
+    void test_asymm22_t_2();
 
-    void test_symm22_e_1() throw(libtest::test_exception);
-    void test_asymm22_e_1() throw(libtest::test_exception);
-    void test_symm22_e_2() throw(libtest::test_exception);
-    void test_asymm22_e_2() throw(libtest::test_exception);
+    void test_symm22_e_1();
+    void test_asymm22_e_1();
+    void test_symm22_e_2();
+    void test_asymm22_e_2();
 
-    void test_symm3_t_1() throw(libtest::test_exception);
-    void test_asymm3_e_1() throw(libtest::test_exception);
+    void test_symm3_t_1();
+    void test_asymm3_e_1();
 };
 
 } // namespace libtensor

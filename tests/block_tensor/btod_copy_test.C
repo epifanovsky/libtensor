@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void btod_copy_test::perform() throw(libtest::test_exception) {
+void btod_copy_test::perform() {
 
     allocator<double>::init();
 
@@ -69,7 +69,7 @@ void btod_copy_test::perform() throw(libtest::test_exception) {
 
 /** \test \f$ b_{ij} = a_{ij} \f$, zero tensor
  **/
-void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
+void btod_copy_test::test_zero_1() {
 
     static const char *testname = "btod_copy_test::test_zero_1()";
 
@@ -117,7 +117,7 @@ void btod_copy_test::test_zero_1() throw(libtest::test_exception) {
 
 /** \test \f$ b_{ij} = a_{ij} \f$, zero tensor
  **/
-void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
+void btod_copy_test::test_zero_2() {
 
     static const char *testname = "btod_copy_test::test_zero_2()";
 
@@ -169,7 +169,7 @@ void btod_copy_test::test_zero_2() throw(libtest::test_exception) {
 
 /** \test \f$ b_{ij} = a_{ij} \f$, no symmetry, no blocks
  **/
-void btod_copy_test::test_nosym_1() throw(libtest::test_exception) {
+void btod_copy_test::test_nosym_1() {
 
     static const char *testname = "btod_copy_test::test_nosym_1()";
 
@@ -208,7 +208,7 @@ void btod_copy_test::test_nosym_1() throw(libtest::test_exception) {
 
 /** \test \f$ b_{ij} = 2 a_{ji} \f$, no symmetry, no blocks
  **/
-void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
+void btod_copy_test::test_nosym_2() {
 
     static const char *testname = "btod_copy_test::test_nosym_2()";
 
@@ -253,7 +253,7 @@ void btod_copy_test::test_nosym_2() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = a_{ij} \f$, no symmetry, 3 blocks along each
         direction
  **/
-void btod_copy_test::test_nosym_3() throw(libtest::test_exception) {
+void btod_copy_test::test_nosym_3() {
 
     static const char *testname = "btod_copy_test::test_nosym_3()";
 
@@ -296,7 +296,7 @@ void btod_copy_test::test_nosym_3() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = 2 a_{ji} \f$, no symmetry, 3 blocks along each
         direction
  **/
-void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
+void btod_copy_test::test_nosym_4() {
 
     static const char *testname = "btod_copy_test::test_nosym_4()";
 
@@ -345,7 +345,7 @@ void btod_copy_test::test_nosym_4() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = a_{ij} \f$, perm symmetry, 3 blocks along each
         direction
  **/
-void btod_copy_test::test_sym_1() throw(libtest::test_exception) {
+void btod_copy_test::test_sym_1() {
 
     static const char *testname = "btod_copy_test::test_sym_1()";
 
@@ -394,7 +394,7 @@ void btod_copy_test::test_sym_1() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = -2 a_{ji} \f$, perm antisymmetry,
         3 blocks along each direction
  **/
-void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
+void btod_copy_test::test_sym_2() {
 
     static const char *testname = "btod_copy_test::test_sym_2()";
 
@@ -444,7 +444,7 @@ void btod_copy_test::test_sym_2() throw(libtest::test_exception) {
 /** \test \f$ b_{ijk} = 0.3 a_{kji} \f$, perm symmetry, 3 blocks along each
         direction
  **/
-void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
+void btod_copy_test::test_sym_3() {
 
     static const char *testname = "btod_copy_test::test_sym_3()";
 
@@ -508,7 +508,7 @@ void btod_copy_test::test_sym_3() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = -a_{ijkl} \f$, perm symmetry,
         dim(ij)=10, dim(kl)=12, blocks, non-zero initial B
  **/
-void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
+void btod_copy_test::test_sym_4() {
 
     static const char *testname = "btod_copy_test::test_sym_4()";
 
@@ -574,7 +574,7 @@ void btod_copy_test::test_sym_4() throw(libtest::test_exception) {
 
 /** \test \f$ b_{ij} = b_{ij} + a_{ij} \f$, no symmetry, no blocks
  **/
-void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nosym_1() {
 
     static const char *testname = "btod_copy_test::test_add_nosym_1()";
 
@@ -617,7 +617,7 @@ void btod_copy_test::test_add_nosym_1() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = b_{ij} + 2 a_{ji} \f$, no symmetry,
         3 blocks along each direction
  **/
-void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nosym_2() {
 
     static const char *testname = "btod_copy_test::test_add_nosym_2()";
 
@@ -667,7 +667,7 @@ void btod_copy_test::test_add_nosym_2() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = b_{ijkl} + 2 a_{ijkl} \f$, no symmetry,
         dim(ij)=10, dim(kl)=12, blocks
  **/
-void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nosym_3() {
 
     static const char *testname = "btod_copy_test::test_add_nosym_3()";
 
@@ -721,7 +721,7 @@ void btod_copy_test::test_add_nosym_3() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = b_{ij} + 2 a_{ji} \f$, no symmetry,
         3 blocks along each direction, empty initial B
  **/
-void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nosym_4() {
 
     static const char *testname = "btod_copy_test::test_add_nosym_4()";
 
@@ -770,7 +770,7 @@ void btod_copy_test::test_add_nosym_4() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = b_{ij} + a_{ij} \f$, equal perm symmetry,
         3 blocks along each direction
  **/
-void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
+void btod_copy_test::test_add_eqsym_1() {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_1()";
 
@@ -823,7 +823,7 @@ void btod_copy_test::test_add_eqsym_1() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = b_{ij} - a_{ji} \f$, equal perm antisymmetry,
         3 blocks along each direction
  **/
-void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
+void btod_copy_test::test_add_eqsym_2() {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_2()";
 
@@ -878,7 +878,7 @@ void btod_copy_test::test_add_eqsym_2() throw(libtest::test_exception) {
 /** \test \f$ b_{ijk} = b_{ijk} + 0.75 a_{kji} \f$, equal perm symmetry,
         3 blocks along each direction
  **/
-void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
+void btod_copy_test::test_add_eqsym_3() {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_3()";
 
@@ -947,7 +947,7 @@ void btod_copy_test::test_add_eqsym_3() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = b_{ijkl} + 2 a_{ijkl} \f$, equal perm symmetry,
         dim(ij)=10, dim(kl)=12, blocks
  **/
-void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
+void btod_copy_test::test_add_eqsym_4() {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_4()";
 
@@ -1014,7 +1014,7 @@ void btod_copy_test::test_add_eqsym_4() throw(libtest::test_exception) {
 /** \test \f$ b_{ikjl} = b_{ikjl} + 0.5 a_{ijkl} \f$,
         equal perm antisymmetry, dim(ij)=10, dim(kl)=12, blocks
  **/
-void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
+void btod_copy_test::test_add_eqsym_5() {
 
     static const char *testname = "btod_copy_test::test_add_eqsym_5()";
 
@@ -1083,7 +1083,7 @@ void btod_copy_test::test_add_eqsym_5() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = b_{ij} + a_{ij} \f$, unequal perm symmetry,
         Sym(A) > Sym(B) = Sym(B') = Sym(0), blocks
  **/
-void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_1() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_1()";
 
@@ -1135,7 +1135,7 @@ void btod_copy_test::test_add_nesym_1() throw(libtest::test_exception) {
 /** \test \f$ b_{ij} = b_{ij} + a_{ij} \f$, unequal perm symmetry,
         Sym(B) > Sym(A) = Sym(B') = Sym(0), blocks
  **/
-void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_2() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_2()";
 
@@ -1187,7 +1187,7 @@ void btod_copy_test::test_add_nesym_2() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
         Sym(A) > Sym(B) = Sym(B') != Sym(0), blocks
  **/
-void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_3() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_3()";
 
@@ -1253,7 +1253,7 @@ void btod_copy_test::test_add_nesym_3() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
         Sym(B) > Sym(A) = Sym(B') != Sym(0), blocks
  **/
-void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_4() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_4()";
 
@@ -1319,7 +1319,7 @@ void btod_copy_test::test_add_nesym_4() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
         blocks
  **/
-void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_5() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_5()";
 
@@ -1385,7 +1385,7 @@ void btod_copy_test::test_add_nesym_5() throw(libtest::test_exception) {
 /** \test \f$ b_{ijkl} = b_{ijkl} + 1.5 a_{ijkl} \f$, unequal perm symmetry,
         sparse block structure
  **/
-void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_5_sp() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_5_sp()";
 
@@ -1466,7 +1466,7 @@ void btod_copy_test::test_add_nesym_5_sp() throw(libtest::test_exception) {
 /** \test \f$ b_{lkji} = b_{lkji} - 0.1 a_{ijkl} \f$, unequal mixed perm
         symmetry and antisymmetry, blocks
  **/
-void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_6() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_6()";
 
@@ -1538,7 +1538,7 @@ void btod_copy_test::test_add_nesym_6() throw(libtest::test_exception) {
         C[0,1,2,0] = A[0,1,2,0] + B[0,1,0,2],
         A[0,0,1,2] = 0
  **/
-void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_7_sp1() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_7_sp1()";
 
@@ -1611,7 +1611,7 @@ void btod_copy_test::test_add_nesym_7_sp1() throw(libtest::test_exception) {
         C[0,1,0,2] = B[0,1,0,2],
         C[0,1,2,0] = B[0,1,0,2],
  **/
-void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_7_sp2() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_7_sp2()";
 
@@ -1684,7 +1684,7 @@ void btod_copy_test::test_add_nesym_7_sp2() throw(libtest::test_exception) {
         C[0,1,2,0] = A[0,1,0,2] + B[0,1,2,0],
         B[0,0,1,2] = 0
  **/
-void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
+void btod_copy_test::test_add_nesym_7_sp3() {
 
     static const char *testname = "btod_copy_test::test_add_nesym_7_sp3()";
 
@@ -1750,7 +1750,7 @@ void btod_copy_test::test_add_nesym_7_sp3() throw(libtest::test_exception) {
 }
 
 
-void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
+void btod_copy_test::test_dir_1() {
 
 	/*
     static const char *testname = "btod_copy_test::test_dir_1()";
@@ -1790,7 +1790,7 @@ void btod_copy_test::test_dir_1() throw(libtest::test_exception) {
 }
 
 
-void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
+void btod_copy_test::test_dir_2() {
 
 	/*
     static const char *testname = "btod_copy_test::test_dir_2()";
@@ -1840,7 +1840,7 @@ void btod_copy_test::test_dir_2() throw(libtest::test_exception) {
 }
 
 
-void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
+void btod_copy_test::test_dir_3() {
 
     //
     //  b_ijkl = 2.0 * a_ijkl
@@ -1914,7 +1914,7 @@ void btod_copy_test::test_dir_3() throw(libtest::test_exception) {
 }
 
 
-void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
+void btod_copy_test::test_dir_4() {
 
 	/*
     //
@@ -1995,7 +1995,7 @@ void btod_copy_test::test_dir_4() throw(libtest::test_exception) {
 
 /** \test Test for a bug with incorrect combination of transformations
  **/
-void btod_copy_test::test_bug_1() throw(libtest::test_exception) {
+void btod_copy_test::test_bug_1() {
 
     static const char *testname = "btod_copy_test::test_bug_1()";
 

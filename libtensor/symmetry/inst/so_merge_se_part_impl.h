@@ -26,7 +26,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
     // Determine index map N -> N - M
     mask<N> mm;
     sequence<N, size_t> map, mmap(N);
-    for (register size_t i = 0, j = 0; i < N; i++) {
+    for (size_t i = 0, j = 0; i < N; i++) {
         if (params.msk[i]) {
             if (mmap[params.mseq[i]] != N) {
                 map[i] = mmap[params.mseq[i]];
@@ -47,7 +47,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
 
     // Create result partition dimensions
     index<N - M> ia, ib;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (params.msk[i] && (! mm[i])) {
 
             size_t d1 = (ib[map[i]] + 1), d2 = pdims1[i];
@@ -63,7 +63,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
     if (pdims2.get_size() == 1) return;
 
     index<N> ja, jb1, jb2;
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         if (pdims2[map[i]] == 0) {
             jb1[i] = pdims1[i];
         }
@@ -80,7 +80,7 @@ symmetry_operation_impl< so_merge<N, M, T>, se_part<N - M, T> >::do_perform(
     // Merge the partitions
     abs_index<N - M> ai(pdims2);
     do {
-        register size_t i;
+        size_t i;
 
         const index<N - M> &i2a = ai.get_index();
         // Create pre-merge index
@@ -143,7 +143,7 @@ is_forbidden(const el1_t &el, const index<N> &idx,
     while (aix.inc()) {
         const index<N> &ix = aix.get_index();
         index<N> ia;
-        for (register size_t i = 0; i < N; i++)
+        for (size_t i = 0; i < N; i++)
             ia[i] = idx[i] + ix[i];
 
         if (! el.is_forbidden(ia)) { forbidden = false; break; }
@@ -167,7 +167,7 @@ map_exists(const el1_t &el, const index<N> &ia,
     while (aix.inc() && exists) {
         const index<N> &ix = aix.get_index();
         index<N> i1a, i1b;
-        for (register size_t i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++) {
             i1a[i] = ia[i] + ix[i];
             i1b[i] = ib[i] + ix[i];
         }

@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void eval_sequence_list_test::perform() throw(libtest::test_exception) {
+void eval_sequence_list_test::perform() {
 
     test_1();
 }
@@ -13,7 +13,7 @@ void eval_sequence_list_test::perform() throw(libtest::test_exception) {
 
 /** \test Add sequences to the list of sequences + try accessing them.
  **/
-void eval_sequence_list_test::test_1() throw(libtest::test_exception) {
+void eval_sequence_list_test::test_1() {
 
     static const char *testname = "eval_sequence_list_test::test_1()";
 

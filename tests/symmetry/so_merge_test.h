@@ -11,14 +11,14 @@ namespace libtensor {
 **/
 class so_merge_test : public se_label_test_base {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
 
 };
 

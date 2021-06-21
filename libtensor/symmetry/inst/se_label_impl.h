@@ -92,7 +92,7 @@ bool se_label<N, T>::is_allowed(const index<N> &idx) const {
             const sequence<N, size_t> &seq = pr.get_sequence(ip);
 
             lg.clear();
-            register size_t i = 0;
+            size_t i = 0;
             for(; i < N; i++) {
                 if(seq[i] == 0) continue;
                 label_t l = m_blk_labels.get_label(m_blk_labels.get_dim_type(i),

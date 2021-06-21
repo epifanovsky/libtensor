@@ -11,29 +11,29 @@ namespace libtensor {
 **/
 class btod_diag_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_zero_1() throw(libtest::test_exception);
-    void test_zero_2() throw(libtest::test_exception);
-    void test_zero_3() throw(libtest::test_exception);
-    void test_nosym_1(bool add) throw(libtest::test_exception);
-    void test_nosym_2(bool add) throw(libtest::test_exception);
-    void test_nosym_3(bool add) throw(libtest::test_exception);
-    void test_nosym_4(bool add) throw(libtest::test_exception);
-    void test_nosym_5(bool add) throw(libtest::test_exception);
-    void test_nosym_6(bool add) throw(libtest::test_exception);
-    void test_sym_1(bool add) throw(libtest::test_exception);
-    void test_sym_2(bool add) throw(libtest::test_exception);
-    void test_sym_3(bool add) throw(libtest::test_exception);
-    void test_sym_4(bool add) throw(libtest::test_exception);
-    void test_sym_5(bool add) throw(libtest::test_exception);
-    void test_sym_6(bool add) throw(libtest::test_exception);
-    void test_sym_7(bool add) throw(libtest::test_exception);
-    void test_sym_8(bool add) throw(libtest::test_exception);
-    void test_sym_9(bool add) throw(libtest::test_exception);
-    void test_sym_10(bool add) throw(libtest::test_exception);
-    void test_sym_11(bool add) throw(libtest::test_exception);
+    void test_zero_1();
+    void test_zero_2();
+    void test_zero_3();
+    void test_nosym_1(bool add);
+    void test_nosym_2(bool add);
+    void test_nosym_3(bool add);
+    void test_nosym_4(bool add);
+    void test_nosym_5(bool add);
+    void test_nosym_6(bool add);
+    void test_sym_1(bool add);
+    void test_sym_2(bool add);
+    void test_sym_3(bool add);
+    void test_sym_4(bool add);
+    void test_sym_5(bool add);
+    void test_sym_6(bool add);
+    void test_sym_7(bool add);
+    void test_sym_8(bool add);
+    void test_sym_9(bool add);
+    void test_sym_10(bool add);
+    void test_sym_11(bool add);
 
 };
 

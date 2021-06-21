@@ -20,13 +20,13 @@ public:
      **/
     eval_exception(const char *file, unsigned int line, const char *ns,
         const char *clazz, const char *method, const char *message)
-        throw() :
+        noexcept :
         exception_base<eval_exception>(ns, clazz, method, file, line,
             "eval_exception", message) { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~eval_exception() throw() { }
+    virtual ~eval_exception() noexcept { }
 
     //@}
 };

@@ -27,7 +27,7 @@ public:
     btod_print(std::ostream &stream, size_t pre = 16, bool sci = true) :
         m_stream(stream), m_precision(pre), m_sci(sci) { }
 
-    void perform(block_tensor_rd_i<N,double> &bt) throw(exception);
+    void perform(block_tensor_rd_i<N,double> &bt);
 };
 
 template<size_t N, typename Alloc>
@@ -35,8 +35,7 @@ const char *btod_print<N, Alloc>::k_clazz = "btod_print<N, Alloc>";
 
 
 template<size_t N, typename Alloc>
-void btod_print<N, Alloc>::perform(
-        block_tensor_rd_i<N, double> &bt) throw(exception)
+void btod_print<N, Alloc>::perform(block_tensor_rd_i<N, double> &bt)
 {
     static const char *method = "perform(block_tensor_rd_i<N, double>&)";
 

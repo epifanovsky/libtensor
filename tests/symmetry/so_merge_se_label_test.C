@@ -4,7 +4,7 @@
 
 namespace libtensor {
 
-void so_merge_se_label_test::perform() throw(libtest::test_exception) {
+void so_merge_se_label_test::perform() {
 
     std::string table_id = "S6";
     setup_pg_table(table_id);
@@ -36,7 +36,7 @@ void so_merge_se_label_test::perform() throw(libtest::test_exception) {
         empty group of lower order
  **/
 void so_merge_se_label_test::test_empty_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_empty_1(" << table_id << ")";
@@ -65,7 +65,7 @@ void so_merge_se_label_test::test_empty_1(
         yields an empty group of lower order
  **/
 void so_merge_se_label_test::test_empty_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_empty_2(" << table_id << ")";
@@ -94,7 +94,7 @@ void so_merge_se_label_test::test_empty_2(
 /** \test Merge of 2 dim of a 3-space on a 1-space in one step.
  **/
 void so_merge_se_label_test::test_nm1_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_nm1_1(" << table_id << ")";
@@ -163,7 +163,7 @@ void so_merge_se_label_test::test_nm1_1(
 /** \test Single merge of 3 dim of a 3-space on a 1-space.
  **/
 void so_merge_se_label_test::test_nm1_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_nm1_2(" << table_id << ")";
@@ -220,7 +220,7 @@ void so_merge_se_label_test::test_nm1_2(
 /** \test Double merge of 4 dim of a 4-space on a 2-space (simple rule)
  **/
 void so_merge_se_label_test::test_2n2nn_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_2n2nn_1(" << table_id << ")";
@@ -277,7 +277,7 @@ void so_merge_se_label_test::test_2n2nn_1(
 /** \test Double merge of 4 dim of a 4-space on a 2-space (complex rule)
  **/
 void so_merge_se_label_test::test_2n2nn_2(const std::string &table_id,
-        bool product) throw(libtest::test_exception) {
+        bool product) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_2n2nn_2("
@@ -348,7 +348,7 @@ void so_merge_se_label_test::test_2n2nn_2(const std::string &table_id,
 /** \test Double merge of 4 dim of a 5-space on a 3-space.
  **/
 void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
-        bool product) throw(libtest::test_exception) {
+        bool product) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_nmk_1("
@@ -435,7 +435,7 @@ void so_merge_se_label_test::test_nmk_1(const std::string &table_id,
 /** \test Double merge of 4 dim of a 5-space on a 3-space.
  **/
 void so_merge_se_label_test::test_nmk_2(const std::string &table_id,
-        bool product) throw(libtest::test_exception) {
+        bool product) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_label_test::test_nmk_2("

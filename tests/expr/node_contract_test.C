@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void node_contract_test::perform() throw(libtest::test_exception) {
+void node_contract_test::perform() {
 
     test_1();
     test_2();
@@ -17,7 +17,7 @@ void node_contract_test::perform() throw(libtest::test_exception) {
 using namespace expr;
 
 
-void node_contract_test::test_1() throw(libtest::test_exception) {
+void node_contract_test::test_1() {
 
     static const char testname[] = "node_contract_test::test_1()";
 
@@ -49,7 +49,7 @@ void node_contract_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void node_contract_test::test_2() throw(libtest::test_exception) {
+void node_contract_test::test_2() {
 
     static const char testname[] = "node_contract_test::test_2()";
 

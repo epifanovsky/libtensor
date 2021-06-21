@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void bispace_expr_test::perform() throw(libtest::test_exception) {
+void bispace_expr_test::perform() {
 
     test_sym_1();
     test_sym_2();
@@ -40,7 +40,7 @@ void bispace_expr_test::perform() throw(libtest::test_exception) {
 
 using namespace expr;
 
-void bispace_expr_test::test_sym_1() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_1() {
 
     static const char *testname = "bispace_expr_test::test_sym_1()";
 
@@ -63,7 +63,7 @@ void bispace_expr_test::test_sym_1() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_2() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_2() {
 
     static const char *testname = "bispace_expr_test::test_sym_2()";
 
@@ -100,7 +100,7 @@ void bispace_expr_test::test_sym_2() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_3() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_3() {
 
     static const char *testname = "bispace_expr_test::test_sym_3()";
 
@@ -132,7 +132,7 @@ void bispace_expr_test::test_sym_3() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_4() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_4() {
 
     static const char *testname = "bispace_expr_test::test_sym_4()";
 
@@ -182,7 +182,7 @@ void bispace_expr_test::test_sym_4() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_5() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_5() {
 
     static const char *testname = "bispace_expr_test::test_sym_5()";
 
@@ -232,7 +232,7 @@ void bispace_expr_test::test_sym_5() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_6() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_6() {
 
     static const char *testname = "bispace_expr_test::test_sym_6()";
 
@@ -282,7 +282,7 @@ void bispace_expr_test::test_sym_6() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_7() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_7() {
 
     static const char *testname = "bispace_expr_test::test_sym_7()";
 
@@ -350,7 +350,7 @@ void bispace_expr_test::test_sym_7() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_8() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_8() {
 
     static const char *testname = "bispace_expr_test::test_sym_8()";
 
@@ -418,7 +418,7 @@ void bispace_expr_test::test_sym_8() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_9() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_9() {
 
     static const char *testname = "bispace_expr_test::test_sym_9()";
 
@@ -469,7 +469,7 @@ void bispace_expr_test::test_sym_9() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_sym_10() throw(libtest::test_exception) {
+void bispace_expr_test::test_sym_10() {
 
     static const char *testname = "bispace_expr_test::test_sym_10()";
 
@@ -514,7 +514,7 @@ void bispace_expr_test::test_sym_10() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_contains_1() throw(libtest::test_exception) {
+void bispace_expr_test::test_contains_1() {
 
     static const char *testname = "bispace_expr_test::test_contains_1()";
 
@@ -548,7 +548,7 @@ void bispace_expr_test::test_contains_1() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_contains_2() throw(libtest::test_exception) {
+void bispace_expr_test::test_contains_2() {
 
     static const char *testname = "bispace_expr_test::test_contains_2()";
 
@@ -582,7 +582,7 @@ void bispace_expr_test::test_contains_2() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_contains_3() throw(libtest::test_exception) {
+void bispace_expr_test::test_contains_3() {
 
     static const char *testname = "bispace_expr_test::test_contains_3()";
 
@@ -628,7 +628,7 @@ void bispace_expr_test::test_contains_3() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_contains_4() throw(libtest::test_exception) {
+void bispace_expr_test::test_contains_4() {
 
     static const char *testname = "bispace_expr_test::test_contains_4()";
 
@@ -669,7 +669,7 @@ void bispace_expr_test::test_contains_4() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_locate_1() throw(libtest::test_exception) {
+void bispace_expr_test::test_locate_1() {
 
     static const char *testname = "bispace_expr_test::test_locate_1()";
 
@@ -699,7 +699,7 @@ void bispace_expr_test::test_locate_1() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_locate_2() throw(libtest::test_exception) {
+void bispace_expr_test::test_locate_2() {
 
     static const char *testname = "bispace_expr_test::test_locate_2()";
 
@@ -729,7 +729,7 @@ void bispace_expr_test::test_locate_2() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_locate_3() throw(libtest::test_exception) {
+void bispace_expr_test::test_locate_3() {
 
     static const char *testname = "bispace_expr_test::test_locate_3()";
 
@@ -780,7 +780,7 @@ void bispace_expr_test::test_locate_3() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_locate_4() throw(libtest::test_exception) {
+void bispace_expr_test::test_locate_4() {
 
     static const char *testname = "bispace_expr_test::test_locate_4()";
 
@@ -811,7 +811,7 @@ void bispace_expr_test::test_locate_4() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_perm_1() throw(libtest::test_exception) {
+void bispace_expr_test::test_perm_1() {
 
     static const char *testname = "bispace_expr_test::test_perm_1()";
 
@@ -833,7 +833,7 @@ void bispace_expr_test::test_perm_1() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_perm_2() throw(libtest::test_exception) {
+void bispace_expr_test::test_perm_2() {
 
     static const char *testname = "bispace_expr_test::test_perm_2()";
 
@@ -856,7 +856,7 @@ void bispace_expr_test::test_perm_2() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_perm_3() throw(libtest::test_exception) {
+void bispace_expr_test::test_perm_3() {
 
     static const char *testname = "bispace_expr_test::test_perm_3()";
 
@@ -879,7 +879,7 @@ void bispace_expr_test::test_perm_3() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_perm_4() throw(libtest::test_exception) {
+void bispace_expr_test::test_perm_4() {
 
     static const char *testname = "bispace_expr_test::test_perm_4()";
 
@@ -902,7 +902,7 @@ void bispace_expr_test::test_perm_4() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_perm_5() throw(libtest::test_exception) {
+void bispace_expr_test::test_perm_5() {
 
     static const char *testname = "bispace_expr_test::test_perm_5()";
 
@@ -926,7 +926,7 @@ void bispace_expr_test::test_perm_5() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_perm_6() throw(libtest::test_exception) {
+void bispace_expr_test::test_perm_6() {
 
     static const char *testname = "bispace_expr_test::test_perm_6()";
 
@@ -950,7 +950,7 @@ void bispace_expr_test::test_perm_6() throw(libtest::test_exception) {
 }
 
 
-void bispace_expr_test::test_exc_1() throw(libtest::test_exception) {
+void bispace_expr_test::test_exc_1() {
 
     static const char *testname = "bispace_expr_test::test_exc_1()";
 

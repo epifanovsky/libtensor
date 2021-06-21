@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-void so_apply_test::perform() throw(libtest::test_exception) {
+void so_apply_test::perform() {
 
     test_1( true, true, false);
     test_1(false, true, false);
@@ -34,7 +34,7 @@ void so_apply_test::perform() throw(libtest::test_exception) {
 /** \test Empty %symmetry in 4-space.
  **/
 void so_apply_test::test_1(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_test::test_1(" << keep_zero << ", " << is_asym << ", "
@@ -68,7 +68,7 @@ void so_apply_test::test_1(bool keep_zero,
 /** \test Non-empty perm %symmetry in 4-space.
  **/
 void so_apply_test::test_2(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_test::test_2(" << keep_zero << ", " << is_asym << ", "
@@ -109,7 +109,7 @@ void so_apply_test::test_2(bool keep_zero,
 /** \test Non-empty perm %symmetry in 4-space with permutation.
  **/
 void so_apply_test::test_3(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_test::test_3(" << keep_zero << ", "

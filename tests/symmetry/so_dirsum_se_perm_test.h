@@ -13,14 +13,14 @@ namespace libtensor {
  **/
 class so_dirsum_se_perm_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_empty_1() throw(libtest::test_exception);
-    void test_empty_2(bool perm) throw(libtest::test_exception);
-    void test_empty_3(bool perm) throw(libtest::test_exception);
-    void test_nn_1(bool symm1, bool symm2) throw(libtest::test_exception);
-    void test_nn_2(bool symm1, bool symm2) throw(libtest::test_exception);
+    void test_empty_1();
+    void test_empty_2(bool perm);
+    void test_empty_3(bool perm);
+    void test_nn_1(bool symm1, bool symm2);
+    void test_nn_2(bool symm1, bool symm2);
 
 };
 

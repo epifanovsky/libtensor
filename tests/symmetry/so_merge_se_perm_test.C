@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void so_merge_se_perm_test::perform() throw(libtest::test_exception) {
+void so_merge_se_perm_test::perform() {
 
     test_empty_1();
     test_empty_2();
@@ -26,7 +26,7 @@ void so_merge_se_perm_test::perform() throw(libtest::test_exception) {
 /** \test Tests that a merge of 2 dims of an empty group yields an empty group
         of a lower order
  **/
-void so_merge_se_perm_test::test_empty_1() throw(libtest::test_exception) {
+void so_merge_se_perm_test::test_empty_1() {
 
     static const char *testname = "so_merge_se_perm_test::test_empty_1()";
 
@@ -60,7 +60,7 @@ void so_merge_se_perm_test::test_empty_1() throw(libtest::test_exception) {
 /** \test Tests that a merge of all dims of an empty group yields an empty
         group of dim 1
  **/
-void so_merge_se_perm_test::test_empty_2() throw(libtest::test_exception) {
+void so_merge_se_perm_test::test_empty_2() {
 
     static const char *testname = "so_merge_se_perm_test::test_empty_2()";
 
@@ -94,7 +94,7 @@ void so_merge_se_perm_test::test_empty_2() throw(libtest::test_exception) {
 /** \test Tests that multiple merges of 2 dims of an empty group yield an
         empty group of lower order
  **/
-void so_merge_se_perm_test::test_empty_3() throw(libtest::test_exception) {
+void so_merge_se_perm_test::test_empty_3() {
 
     static const char *testname = "so_merge_se_perm_test::test_empty_3()";
 
@@ -129,7 +129,7 @@ void so_merge_se_perm_test::test_empty_3() throw(libtest::test_exception) {
         result: C1 in 1-space. Symmetric elements.
  **/
 void so_merge_se_perm_test::test_nn1(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_nn1(" << symm << ")";
@@ -188,7 +188,7 @@ void so_merge_se_perm_test::test_nn1(
         the masks. Expected result: 2-cycle in 3-space.
  **/
 void so_merge_se_perm_test::test_nm1_1(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_nm1_1(" << symm << ")";
@@ -249,7 +249,7 @@ void so_merge_se_perm_test::test_nm1_1(
         dimension out. Expected result: C1 in 4-space.
  **/
 void so_merge_se_perm_test::test_nm1_2(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_nm1_2(" << symm << ")";
@@ -291,7 +291,7 @@ void so_merge_se_perm_test::test_nm1_2(
 /** \test Merge of 2 dim of a group in a 4-space onto a 3-space.
  **/
 void so_merge_se_perm_test::test_nm1_3(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_nm1_3(" << symm << ")";
@@ -352,7 +352,7 @@ void so_merge_se_perm_test::test_nm1_3(
 /** \test Double merge of a group in a 4-space onto a 2-space.
  **/
 void so_merge_se_perm_test::test_2n2nn_1(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_2n2nn_1(" <<
@@ -415,7 +415,7 @@ void so_merge_se_perm_test::test_2n2nn_1(
 /** \test Double merge of a group in a 4-space onto a 2-space.
  **/
 void so_merge_se_perm_test::test_2n2nn_2(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_2n2nn_1(" << symm << ")";
@@ -474,7 +474,7 @@ void so_merge_se_perm_test::test_2n2nn_2(
 /** \test Double merge of a group in a 6-space onto 4-space.
  **/
 void so_merge_se_perm_test::test_nmk_1(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_nmk_1(" << symm << ")";
@@ -539,7 +539,7 @@ void so_merge_se_perm_test::test_nmk_1(
 /** \test Triple merge of a group in a 8-space onto 4-space.
  **/
 void so_merge_se_perm_test::test_nmk_2(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_perm_test::test_nmk_2(" << symm << ")";

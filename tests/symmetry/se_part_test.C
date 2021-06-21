@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void se_part_test::perform() throw(libtest::test_exception) {
+void se_part_test::perform() {
 
     test_1();
     test_2();
@@ -27,7 +27,7 @@ void se_part_test::perform() throw(libtest::test_exception) {
 
 /** \test Two partitions, one block in each partition (2-dim)
  **/
-void se_part_test::test_1() throw(libtest::test_exception) {
+void se_part_test::test_1() {
 
     static const char *testname = "se_part_test::test_1()";
 
@@ -142,7 +142,7 @@ void se_part_test::test_1() throw(libtest::test_exception) {
 
 /** \test Two partitions, two blocks in each partition (2-dim)
  **/
-void se_part_test::test_2() throw(libtest::test_exception) {
+void se_part_test::test_2() {
 
     static const char *testname = "se_part_test::test_2()";
 
@@ -256,7 +256,7 @@ void se_part_test::test_2() throw(libtest::test_exception) {
 /** \test Two partitions, two or three blocks in each partition (4-dim),
         block sizes vary for different dimensions
  **/
-void se_part_test::test_3a() throw(libtest::test_exception) {
+void se_part_test::test_3a() {
 
     static const char *testname = "se_part_test::test_3a()";
 
@@ -347,7 +347,7 @@ void se_part_test::test_3a() throw(libtest::test_exception) {
 /** \test Two partitions, two or three blocks in each partition (4-dim),
         block sizes vary for different dimensions.
  **/
-void se_part_test::test_3b() throw(libtest::test_exception) {
+void se_part_test::test_3b() {
 
     static const char *testname = "se_part_test::test_3b()";
 
@@ -437,7 +437,7 @@ void se_part_test::test_3b() throw(libtest::test_exception) {
 /** \test Two partitions, two or three blocks in each partition (4-dim),
         block sizes vary for different dimensions.
  **/
-void se_part_test::test_4() throw(libtest::test_exception) {
+void se_part_test::test_4() {
 
     static const char *testname = "se_part_test::test_4()";
 
@@ -492,7 +492,7 @@ void se_part_test::test_4() throw(libtest::test_exception) {
 
 /** \test Two partitions, two blocks in each partition (2-dim), forbidden
  **/
-void se_part_test::test_5() throw(libtest::test_exception) {
+void se_part_test::test_5() {
 
     static const char *testname = "se_part_test::test_5()";
 
@@ -599,7 +599,7 @@ void se_part_test::test_5() throw(libtest::test_exception) {
 /** \test Test creation of maps between forbidden partitions and
         forbidden partitions in existing maps
  **/
-void se_part_test::test_6() throw(libtest::test_exception) {
+void se_part_test::test_6() {
 
     static const char *testname = "se_part_test::test_6()";
 
@@ -758,7 +758,7 @@ void se_part_test::test_6() throw(libtest::test_exception) {
 /** \test Permutation of se_part: two partitions, two or three blocks in
         each partition (4-dim), block sizes vary for different dimensions
  **/
-void se_part_test::test_perm_1() throw(libtest::test_exception) {
+void se_part_test::test_perm_1() {
 
     static const char *testname = "se_part_test::test_perm_1()";
 
@@ -819,7 +819,7 @@ void se_part_test::test_perm_1() throw(libtest::test_exception) {
 /** \test Permutation of se_part: two partitions, two or three blocks in
         each partition (4-dim), block sizes vary for different dimensions
  **/
-void se_part_test::test_perm_2() throw(libtest::test_exception) {
+void se_part_test::test_perm_2() {
 
     static const char *testname = "se_part_test::test_perm_2()";
 
@@ -882,7 +882,7 @@ void se_part_test::test_perm_2() throw(libtest::test_exception) {
 /** \test Permutation of se_part: two partitions, two or three blocks in
         each partition (4-dim), block sizes vary for different dimensions
  **/
-void se_part_test::test_perm_3() throw(libtest::test_exception) {
+void se_part_test::test_perm_3() {
 
     static const char *testname = "se_part_test::test_perm_3()";
 
@@ -944,7 +944,7 @@ void se_part_test::test_perm_3() throw(libtest::test_exception) {
 /** \test Permutation of se_part: two partitions, two or three blocks in
         each partition (4-dim), block sizes vary for different dimensions
  **/
-void se_part_test::test_perm_4() throw(libtest::test_exception) {
+void se_part_test::test_perm_4() {
 
     static const char *testname = "se_part_test::test_perm_4()";
 
@@ -1010,7 +1010,7 @@ void se_part_test::test_perm_4() throw(libtest::test_exception) {
         each partition (2-dim), block sizes vary for different dimensions,
         forbidden partitions
  **/
-void se_part_test::test_perm_5() throw(libtest::test_exception) {
+void se_part_test::test_perm_5() {
 
     static const char *testname = "se_part_test::test_perm_5()";
 
@@ -1074,7 +1074,7 @@ void se_part_test::test_perm_5() throw(libtest::test_exception) {
 
 /** \test Two partitions, blocks with unequal size in each partition (2-dim)
  **/
-void se_part_test::test_exc() throw(libtest::test_exception) {
+void se_part_test::test_exc() {
 
     static const char *testname = "se_part_test::test_exc()";
 

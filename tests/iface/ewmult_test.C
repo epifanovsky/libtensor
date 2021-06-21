@@ -9,7 +9,7 @@
 namespace libtensor {
 
 
-void ewmult_test::perform() throw(libtest::test_exception) {
+void ewmult_test::perform() {
 
     allocator<double>::init();
 
@@ -31,7 +31,7 @@ void ewmult_test::perform() throw(libtest::test_exception) {
 }
 
 
-void ewmult_test::test_tt_1() throw(libtest::test_exception) {
+void ewmult_test::test_tt_1() {
 
     const char testname[] = "ewmult_test::test_tt_1()";
 
@@ -68,7 +68,7 @@ void ewmult_test::test_tt_1() throw(libtest::test_exception) {
 }
 
 
-void ewmult_test::test_tt_2() throw(libtest::test_exception) {
+void ewmult_test::test_tt_2() {
 
     const char testname[] = "ewmult_test::test_tt_2()";
 
@@ -106,7 +106,7 @@ void ewmult_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
-void ewmult_test::test_tt_3() throw(libtest::test_exception) {
+void ewmult_test::test_tt_3() {
 
     const char testname[] = "ewmult_test::test_tt_3()";
 
@@ -143,7 +143,7 @@ void ewmult_test::test_tt_3() throw(libtest::test_exception) {
 }
 
 
-void ewmult_test::test_te_1() throw(libtest::test_exception) {
+void ewmult_test::test_te_1() {
 
     const char testname[] = "ewmult_test::test_te_1()";
 
@@ -184,7 +184,7 @@ void ewmult_test::test_te_1() throw(libtest::test_exception) {
 }
 
 
-void ewmult_test::test_et_1() throw(libtest::test_exception) {
+void ewmult_test::test_et_1() {
 
     const char testname[] = "ewmult_test::test_et_1()";
 
@@ -225,7 +225,7 @@ void ewmult_test::test_et_1() throw(libtest::test_exception) {
 }
 
 
-void ewmult_test::test_ee_1() throw(libtest::test_exception) {
+void ewmult_test::test_ee_1() {
 
     const char testname[] = "ewmult_test::test_ee_1()";
 

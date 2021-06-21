@@ -11,11 +11,11 @@ namespace libtensor {
  **/
 class evaluation_rule_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_copy_1() throw(libtest::test_exception);
+    void test_1();
+    void test_copy_1();
 };
 
 } // namespace libtensor

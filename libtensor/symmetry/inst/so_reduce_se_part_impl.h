@@ -24,7 +24,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
 
     // Create the inverse of the mask
     mask<NA> invmsk;
-    for (register size_t i = 0; i < NA; i++)
+    for (size_t i = 0; i < NA; i++)
         invmsk[i] = !params.msk[i];
 
     params.g2.clear();
@@ -33,7 +33,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
     // Create a map of indexes and a mask of reduction steps
     sequence<NA, size_t> map(0);
     mask<NR> rsteps;
-    for (register size_t i = 0, j = 0; i < NA; i++) {
+    for (size_t i = 0, j = 0; i < NA; i++) {
         if (params.msk[i]) {
             rsteps[params.rseq[i]] = true;
             map[i] = NB + params.rseq[i];
@@ -54,9 +54,9 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
     // - partition size (rpsz == nix)
     // - partitions in reduction range (irpa == ixa, irpb, ixb)
     index<NR> rpsz, i1rp, i2rp;
-    for (register size_t i = 0; i < NR && rsteps[i]; i++) {
+    for (size_t i = 0; i < NR && rsteps[i]; i++) {
 
-        register size_t j = 0;
+        size_t j = 0;
         for (; j < NA; j++) {
             if (params.msk[j] && params.rseq[j] == i) break;
         }
@@ -83,7 +83,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
     // Determine the sizes of the remaining dimensions
     index<NB> i1, i2;
     index<NA> j1, j2;
-    for (register size_t i = 0; i < NA; i++) {
+    for (size_t i = 0; i < NA; i++) {
         if (params.msk[i]) {
             j2[i] = pdimsa[i] / rpsz[params.rseq[i]] - 1;
         }
@@ -117,7 +117,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
             const index<NR> &idx = ai1.get_index();
 
             index<NA> ia;
-            for (register size_t i = 0, j = 0; i < NA; i++) {
+            for (size_t i = 0, j = 0; i < NA; i++) {
                 if (params.msk[i]) {
                     size_t ir = params.rseq[i];
                     ia[i] = (i1rp[ir] + idx[ir]) * pdimsr[i];
@@ -180,7 +180,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::do_perform(
                 const index<NR> &idx = ai2.get_index();
 
                 index<NA> ia;
-                for (register size_t i = 0, j = 0; i < NA; i++) {
+                for (size_t i = 0, j = 0; i < NA; i++) {
                     if (params.msk[i]) {
                         size_t ir = params.rseq[i];
                         ia[i] = (i1rp[ir] + idx[ir]) * pdimsr[i];
@@ -273,7 +273,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::is_forbidden(
     while (ai.inc()) {
         const index<NA> &ix = ai.get_index();
         index<NA> ia;
-        for (register size_t i = 0; i < NA; i++) ia[i] = idx[i] + ix[i];
+        for (size_t i = 0; i < NA; i++) ia[i] = idx[i] + ix[i];
 
         if (! el.is_forbidden(ia)) { forbidden = false; break; }
     }
@@ -296,7 +296,7 @@ symmetry_operation_impl< so_reduce<N, M, T>, se_part<N - M, T> >::map_exists(
     while (ai.inc() && exists) {
         const index<NA> &ix = ai.get_index();
         index<NA> ia1, ia2;
-        for (register size_t i = 0; i < NA; i++) {
+        for (size_t i = 0; i < NA; i++) {
             ia1[i] = i1[i] + ix[i];
             ia2[i] = i2[i] + ix[i];
         }

@@ -20,7 +20,7 @@
 namespace libtensor {
 
 
-void btod_symmetrize2_test::perform() throw(libtest::test_exception) {
+void btod_symmetrize2_test::perform() {
 
     allocator<double>::init();
 
@@ -68,7 +68,7 @@ void btod_symmetrize2_test::perform() throw(libtest::test_exception) {
 
 /** \test Symmetrization of a non-symmetric 2-index block %tensor
  **/
-void btod_symmetrize2_test::test_1() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_1() {
 
     static const char *testname = "btod_symmetrize2_test::test_1()";
 
@@ -130,7 +130,7 @@ void btod_symmetrize2_test::test_1() throw(libtest::test_exception) {
 
 /** \test Anti-symmetrization of a non-symmetric 2-index block %tensor
  **/
-void btod_symmetrize2_test::test_2() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_2() {
 
     static const char *testname = "btod_symmetrize2_test::test_2()";
 
@@ -193,7 +193,7 @@ void btod_symmetrize2_test::test_2() throw(libtest::test_exception) {
 /** \test Anti-symmetrization of S(-)2*C1*C1 to S(-)2*S(-)2
         in a 4-index block %tensor
  **/
-void btod_symmetrize2_test::test_3() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_3() {
 
     static const char *testname = "btod_symmetrize2_test::test_3()";
 
@@ -265,7 +265,7 @@ void btod_symmetrize2_test::test_3() throw(libtest::test_exception) {
 
 /** \test Symmetrization of S2*S2 to S2*C1*C1 in a 4-index block %tensor
  **/
-void btod_symmetrize2_test::test_4() throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_4() {
 
     static const char *testname = "btod_symmetrize2_test::test_4()";
 
@@ -335,7 +335,7 @@ void btod_symmetrize2_test::test_4() throw(libtest::test_exception) {
 /** \test Symmetrization of two pairs of indexes in a non-symmetric
         4-index block %tensor
  **/
-void btod_symmetrize2_test::test_5(bool symm) throw(libtest::test_exception) {
+void btod_symmetrize2_test::test_5(bool symm) {
 
     static const char *testname = "btod_symmetrize2_test::test_5(bool)";
 
@@ -402,7 +402,7 @@ void btod_symmetrize2_test::test_5(bool symm) throw(libtest::test_exception) {
         2-dim block %tensor with se_label, se_part
  **/
 void btod_symmetrize2_test::test_6a(bool symm, bool label,
-        bool part, bool doadd) throw(libtest::test_exception) {
+        bool part, bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_symmetrize2_test::test_6a(" << symm << ", "
@@ -525,7 +525,7 @@ void btod_symmetrize2_test::test_6a(bool symm, bool label,
         4-dim block %tensor with se_label, se_part
  **/
 void btod_symmetrize2_test::test_6b(bool symm, bool label,
-        bool part) throw(libtest::test_exception) {
+        bool part) {
 
     std::ostringstream tnss;
     tnss << "btod_symmetrize2_test::test_6b(" << symm << ", "

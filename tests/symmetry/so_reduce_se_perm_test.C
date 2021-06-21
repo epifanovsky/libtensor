@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void so_reduce_se_perm_test::perform() throw(libtest::test_exception) {
+void so_reduce_se_perm_test::perform() {
 
     test_empty_1();
     test_empty_2();
@@ -23,7 +23,7 @@ void so_reduce_se_perm_test::perform() throw(libtest::test_exception) {
 /** \test Tests that a single reduction step on an empty group yields an empty
         group of lower order
  **/
-void so_reduce_se_perm_test::test_empty_1() throw(libtest::test_exception) {
+void so_reduce_se_perm_test::test_empty_1() {
 
     static const char *testname = "so_reduce_se_perm_test::test_empty_1()";
 
@@ -58,7 +58,7 @@ void so_reduce_se_perm_test::test_empty_1() throw(libtest::test_exception) {
 /** \test Tests that two reduction steps on an empty group yield an empty
         group of lower order
  **/
-void so_reduce_se_perm_test::test_empty_2() throw(libtest::test_exception) {
+void so_reduce_se_perm_test::test_empty_2() {
 
     static const char *testname = "so_reduce_se_perm_test::test_empty_2()";
 
@@ -95,7 +95,7 @@ void so_reduce_se_perm_test::test_empty_2() throw(libtest::test_exception) {
         result: C1 in 1-space. Symmetric elements.
  **/
 void so_reduce_se_perm_test::test_nm1_1(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_perm_test::test_nm1_1(" << symm << ")";
@@ -139,7 +139,7 @@ void so_reduce_se_perm_test::test_nm1_1(
         step. Expected result: C1 in 1-space. Symmetric elements.
  **/
 void so_reduce_se_perm_test::test_nm1_2(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_perm_test::test_nm1_2(" << symm << ")";
@@ -201,7 +201,7 @@ void so_reduce_se_perm_test::test_nm1_2(
         2-space untouched by the masks. Expected result: 2-cycle in 2-space.
  **/
 void so_reduce_se_perm_test::test_nmk_1(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_perm_test::test_nmk_1(" << symm << ")";
@@ -264,7 +264,7 @@ void so_reduce_se_perm_test::test_nmk_1(
         3-space with one dimension out. Expected result: S2(+/-) in 3-space.
  **/
 void so_reduce_se_perm_test::test_nmk_2(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_perm_test::test_nmk_2(" << symm << ")";
@@ -326,7 +326,7 @@ void so_reduce_se_perm_test::test_nmk_2(
 /** \test Projection of a group in 8-space in two reduction steps on to 4-space.
  **/
 void so_reduce_se_perm_test::test_nmk_3(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_perm_test::test_nmk_3(" <<

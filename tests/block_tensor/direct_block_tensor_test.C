@@ -16,7 +16,7 @@
 namespace libtensor {
 
 
-void direct_block_tensor_test::perform() throw(libtest::test_exception) {
+void direct_block_tensor_test::perform() {
 
     allocator<double>::init();
 

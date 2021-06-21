@@ -51,7 +51,7 @@ public:
 
         if (m_done) return false;
 
-        register size_t j = 1;
+        size_t j = 1;
         for (; j < m_seq.size(); j++) {
             if (m_seq[j] - m_seq[j - 1] > 1) break;
         }
@@ -64,7 +64,7 @@ public:
             return false;
         }
 
-        for (register size_t i = 0; i < j; i++) m_seq[i] = i;
+        for (size_t i = 0; i < j; i++) m_seq[i] = i;
         return true;
     }
 

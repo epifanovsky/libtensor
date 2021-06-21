@@ -12,7 +12,7 @@ namespace libtensor {
 **/
 class direct_block_tensor_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     void test_op_1();

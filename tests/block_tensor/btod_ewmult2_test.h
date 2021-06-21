@@ -12,16 +12,16 @@ namespace libtensor {
  **/
 class btod_ewmult2_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1(bool doadd) throw(libtest::test_exception);
-    void test_2(bool doadd) throw(libtest::test_exception);
-    void test_3(bool doadd) throw(libtest::test_exception);
-    void test_4(bool doadd) throw(libtest::test_exception);
-    void test_5(bool doadd) throw(libtest::test_exception);
-    void test_6(bool doadd) throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
+    void test_1(bool doadd);
+    void test_2(bool doadd);
+    void test_3(bool doadd);
+    void test_4(bool doadd);
+    void test_5(bool doadd);
+    void test_6(bool doadd);
+    void test_7();
 
 };
 

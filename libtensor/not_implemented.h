@@ -18,13 +18,13 @@ public:
     /** \brief Creates an exception
      **/
     not_implemented(const char *ns, const char *clazz, const char *method,
-        const char *file, unsigned int line) throw() :
+        const char *file, unsigned int line) noexcept :
         exception_base<not_implemented>(ns, clazz, method, file, line,
             "not_implemented", "NIY") { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~not_implemented() throw() { };
+    virtual ~not_implemented() noexcept { };
 
     //@}
 };

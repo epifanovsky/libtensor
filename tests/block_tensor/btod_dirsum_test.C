@@ -21,7 +21,7 @@
 namespace libtensor {
 
 
-void btod_dirsum_test::perform() throw(libtest::test_exception) {
+void btod_dirsum_test::perform() {
 
     allocator<double>::init();
 
@@ -103,7 +103,7 @@ void btod_dirsum_test::perform() throw(libtest::test_exception) {
 }
 
 void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     //  c_{ij} = a_i + b_j
 
@@ -170,7 +170,7 @@ void btod_dirsum_test::test_ij_i_j_1(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     //  c_{ij} = a_i + a_j
 
@@ -258,7 +258,7 @@ void btod_dirsum_test::test_ij_i_j_2(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     //  c_{ij} = a_i - a_j
 
@@ -346,7 +346,7 @@ void btod_dirsum_test::test_ij_i_j_3(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     // c_{ijk} = a_{ij} + b_k
 
@@ -421,7 +421,7 @@ void btod_dirsum_test::test_ijk_ij_k_1(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     //  c_{ikjl} = a_{ij} + b_{kl}
 
@@ -497,7 +497,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_1(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     //  c_{ikjl} = a_{ij} + b_{kl}
     // with splits
@@ -600,7 +600,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_2(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
-        bool rnd, double d) throw(libtest::test_exception) {
+        bool rnd, double d) {
 
     //  c_{ikjl} = a_{ij} + b_{kl}
     // with splits and se_perm i<->j, k<->l
@@ -727,7 +727,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3a(bool s1, bool s2,
 }
 
 void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
-        double d) throw(libtest::test_exception) {
+        double d) {
 
     //  c_{ikjl} = a_{ij} + b_{kl}
     // with splits and se_part
@@ -874,7 +874,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3b(bool rnd,
 }
 
 void btod_dirsum_test::test_ikjl_ij_kl_3c(
-        bool rnd, double d) throw(libtest::test_exception) {
+        bool rnd, double d) {
 
     //  c_{ikjl} = a_{ij} + b_{kl}
     // with splits and se_label
@@ -1032,7 +1032,7 @@ void btod_dirsum_test::test_ikjl_ij_kl_3c(
 }
 
 void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     //  c_{iklj} = a_{ij} + a_{kl}
     // with splits and symmetry
@@ -1166,7 +1166,7 @@ void btod_dirsum_test::test_iklj_ij_kl_1(bool rnd, double d)
 }
 
 void btod_dirsum_test::test_ikmjln_ij_kl_mn(bool rnd, double d)
-    throw(libtest::test_exception) {
+    {
 
     // b_{ijkl} = a_{ij} + a_{kl}
     // c_{ikmjln} = b_{ijkl} + a_{mn}

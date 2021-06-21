@@ -4,7 +4,7 @@
 
 namespace libtensor {
 
-void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
+void so_reduce_se_label_test::perform() {
 
     std::string id1 = "S6", id2 = "C2v";
     setup_pg_table(id1);
@@ -46,7 +46,7 @@ void so_reduce_se_label_test::perform() throw(libtest::test_exception) {
         empty group of lower order
  **/
 void so_reduce_se_label_test::test_empty_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_empty_1(" << table_id << ")";
@@ -77,7 +77,7 @@ void so_reduce_se_label_test::test_empty_1(
         yields an empty group of lower order
  **/
 void so_reduce_se_label_test::test_empty_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_empty_2(" << table_id << ")";
@@ -108,7 +108,7 @@ void so_reduce_se_label_test::test_empty_2(
 /** \test Reduction of 2 dim of a 3-space on a 1-space in one step.
  **/
 void so_reduce_se_label_test::test_nm1_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nm1_1(" << table_id << ")";
@@ -168,7 +168,7 @@ void so_reduce_se_label_test::test_nm1_1(
 /** \test Single reduction of 2 dim of a 4-space on a 2-space.
  **/
 void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
-        bool product) throw(libtest::test_exception) {
+        bool product) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nm1_2(" <<
@@ -245,7 +245,7 @@ void so_reduce_se_label_test::test_nm1_2(const std::string &table_id,
         dimensions).
  **/
 void so_reduce_se_label_test::test_nm1_3(const std::string &table_id,
-        bool product) throw(libtest::test_exception) {
+        bool product) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nm1_3(" <<
@@ -315,7 +315,7 @@ void so_reduce_se_label_test::test_nm1_3(const std::string &table_id,
 /** \test Single reduction of 2 dim of a 6-space on a 4-space.
  **/
 void so_reduce_se_label_test::test_nm1_4(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nm1_4(" <<
@@ -402,7 +402,7 @@ void so_reduce_se_label_test::test_nm1_4(
         term being all-allowed.
  **/
 void so_reduce_se_label_test::test_nm1_5(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nm1_5(" << table_id << ")";
@@ -463,7 +463,7 @@ void so_reduce_se_label_test::test_nm1_5(
 }
 
 
-void so_reduce_se_label_test::test_nm1_6() throw(libtest::test_exception) {
+void so_reduce_se_label_test::test_nm1_6() {
 
     const char testname[] = "so_reduce_se_label_test::test_nm1_6()";
 
@@ -542,7 +542,7 @@ void so_reduce_se_label_test::test_nm1_6() throw(libtest::test_exception) {
 
 /** \test Simple reduction of 2 dim of a 4-space on a 2-space
  **/
-void so_reduce_se_label_test::test_nm1_7() throw(libtest::test_exception) {
+void so_reduce_se_label_test::test_nm1_7() {
 
 	const char testname[] = "so_reduce_se_label_test::test_nm1_7()";
 
@@ -620,7 +620,7 @@ void so_reduce_se_label_test::test_nm1_7() throw(libtest::test_exception) {
 /** \test Double reduction of 4 dim of a 6-space on a 2-space (simple rule)
  **/
 void so_reduce_se_label_test::test_nmk_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nmk_1(" << table_id << ")";
@@ -681,7 +681,7 @@ void so_reduce_se_label_test::test_nmk_1(
 /** \test Double reduction of 4 dim of a 6-space on a 2-space (complex rule)
  **/
 void so_reduce_se_label_test::test_nmk_2(const std::string &table_id,
-        bool product) throw(libtest::test_exception) {
+        bool product) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nmk_2("
@@ -760,7 +760,7 @@ void so_reduce_se_label_test::test_nmk_2(const std::string &table_id,
 /** \test Triple reduction of 3 dim of a 6-space on a 3-space
  **/
 void so_reduce_se_label_test::test_nmk_3(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nmk_3("
@@ -822,7 +822,7 @@ void so_reduce_se_label_test::test_nmk_3(
 
 /** \test Double reduction of 3 dim of a 6-space on a 3-space
  **/
-void so_reduce_se_label_test::test_nmk_4() throw(libtest::test_exception) {
+void so_reduce_se_label_test::test_nmk_4() {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_label_test::test_nmk_4()";

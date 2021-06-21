@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void node_ident_any_tensor_test::perform() throw(libtest::test_exception) {
+void node_ident_any_tensor_test::perform() {
 
     test_1();
     test_2();

@@ -21,13 +21,13 @@ public:
      **/
     block_stream_exception(const char *ns, const char *clazz,
         const char *method, const char *file, unsigned int line,
-        const char *message) throw() :
+        const char *message) noexcept :
         exception_base<block_stream_exception>(ns, clazz, method, file, line,
             "block_stream_exception", message) { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~block_stream_exception() throw() { };
+    virtual ~block_stream_exception() noexcept { };
 
     //@}
 

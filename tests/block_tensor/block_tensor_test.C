@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void block_tensor_test::perform() throw(libtest::test_exception) {
+void block_tensor_test::perform() {
 
     test_nonzero_blocks_1();
     test_nonzero_blocks_2();

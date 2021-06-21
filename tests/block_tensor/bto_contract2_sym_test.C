@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void bto_contract2_sym_test::perform() throw(libtest::test_exception) {
+void bto_contract2_sym_test::perform() {
 
     test_1();
     test_2();
@@ -20,7 +20,7 @@ void bto_contract2_sym_test::perform() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_sym_test::test_1() throw(libtest::test_exception) {
+void bto_contract2_sym_test::test_1() {
 
     static const char *testname = "bto_contract2_sym_test::test_1()";
 
@@ -75,7 +75,7 @@ void bto_contract2_sym_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
+void bto_contract2_sym_test::test_2() {
 
     //
     //  c_ijk = a_ipqr b_jpqrk
@@ -153,7 +153,7 @@ void bto_contract2_sym_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_sym_test::test_3() throw(libtest::test_exception) {
+void bto_contract2_sym_test::test_3() {
 
     //
     //  c_ijpq = a_ijpr b_qr
@@ -232,7 +232,7 @@ void bto_contract2_sym_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void bto_contract2_sym_test::test_4() throw(libtest::test_exception) {
+void bto_contract2_sym_test::test_4() {
 
     //
     //  c_ijkl = a_klab b_klab

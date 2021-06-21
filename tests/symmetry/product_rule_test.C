@@ -4,7 +4,7 @@
 namespace libtensor {
 
 
-void product_rule_test::perform() throw(libtest::test_exception) {
+void product_rule_test::perform() {
 
     test_1();
     test_2();
@@ -14,7 +14,7 @@ void product_rule_test::perform() throw(libtest::test_exception) {
 
 /** \test Add terms to product rule
  **/
-void product_rule_test::test_1() throw(libtest::test_exception) {
+void product_rule_test::test_1() {
 
     static const char *testname = "product_rule_test::test_1()";
 
@@ -75,7 +75,7 @@ void product_rule_test::test_1() throw(libtest::test_exception) {
 
 /** \test Add terms with identical sequence to product rule
  **/
-void product_rule_test::test_2() throw(libtest::test_exception) {
+void product_rule_test::test_2() {
 
     static const char *testname = "product_rule_test::test_2()";
 
@@ -136,7 +136,7 @@ void product_rule_test::test_2() throw(libtest::test_exception) {
 
 /** \test Compare to product rules
  **/
-void product_rule_test::test_3() throw(libtest::test_exception) {
+void product_rule_test::test_3() {
 
     static const char *testname = "product_rule_test::test_3()";
 

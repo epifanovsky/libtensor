@@ -11,14 +11,14 @@ namespace libtensor {
 **/
 class btod_mult1_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1(bool, bool) throw(libtest::test_exception);
-    void test_2(bool, bool) throw(libtest::test_exception);
-    void test_3(bool, bool) throw(libtest::test_exception);
-    void test_4(bool, bool) throw(libtest::test_exception);
-    void test_5(bool, bool) throw(libtest::test_exception);
+    void test_1(bool, bool);
+    void test_2(bool, bool);
+    void test_3(bool, bool);
+    void test_4(bool, bool);
+    void test_5(bool, bool);
 };
 
 } // namespace libtensor

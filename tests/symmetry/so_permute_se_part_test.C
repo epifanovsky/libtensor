@@ -5,7 +5,7 @@
 
 namespace libtensor {
 
-void so_permute_se_part_test::perform() throw(libtest::test_exception) {
+void so_permute_se_part_test::perform() {
 
     test_1();
     test_2a();
@@ -17,7 +17,7 @@ void so_permute_se_part_test::perform() throw(libtest::test_exception) {
 
 /** \test Tests permutation of an empty set
  **/
-void so_permute_se_part_test::test_1() throw(libtest::test_exception) {
+void so_permute_se_part_test::test_1() {
 
     static const char *testname = "so_permute_se_part_test::test_1()";
 
@@ -67,7 +67,7 @@ void so_permute_se_part_test::test_1() throw(libtest::test_exception) {
 /** \test Tests permutation of a non-empty set. Permutation does not affect
         the mapping
  **/
-void so_permute_se_part_test::test_2a() throw(libtest::test_exception) {
+void so_permute_se_part_test::test_2a() {
 
     static const char *testname = "so_permute_se_part_test::test_2a()";
 
@@ -137,7 +137,7 @@ void so_permute_se_part_test::test_2a() throw(libtest::test_exception) {
 /** \test Tests permutation of a non-empty set. Permutation does not affect
         the mapping
  **/
-void so_permute_se_part_test::test_2b() throw(libtest::test_exception) {
+void so_permute_se_part_test::test_2b() {
 
     static const char *testname = "so_permute_se_part_test::test_2b()";
 
@@ -207,7 +207,7 @@ void so_permute_se_part_test::test_2b() throw(libtest::test_exception) {
 
 /** \test Tests permutation of a non-empty set.
  **/
-void so_permute_se_part_test::test_3() throw(libtest::test_exception) {
+void so_permute_se_part_test::test_3() {
 
     static const char *testname = "so_permute_se_part_test::test_3()";
 

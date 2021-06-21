@@ -11,27 +11,27 @@ namespace libtensor {
 **/
 class btod_select_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     template<typename ComparePolicy>
-    void test_1(size_t n) throw(libtest::test_exception);
+    void test_1(size_t n);
     template<typename ComparePolicy>
-    void test_2(size_t n) throw(libtest::test_exception);
+    void test_2(size_t n);
     template<typename ComparePolicy>
-    void test_3a(size_t n, bool symm) throw(libtest::test_exception);
+    void test_3a(size_t n, bool symm);
     template<typename ComparePolicy>
-    void test_3b(size_t n) throw(libtest::test_exception);
+    void test_3b(size_t n);
     template<typename ComparePolicy>
-    void test_3c(size_t n, bool symm) throw(libtest::test_exception);
+    void test_3c(size_t n, bool symm);
     template<typename ComparePolicy>
-    void test_4a(size_t n, bool symm) throw(libtest::test_exception);
+    void test_4a(size_t n, bool symm);
     template<typename ComparePolicy>
-    void test_4b(size_t n) throw(libtest::test_exception);
+    void test_4b(size_t n);
     template<typename ComparePolicy>
-    void test_4c(size_t n, bool symm) throw(libtest::test_exception);
+    void test_4c(size_t n, bool symm);
     template<typename ComparePolicy>
-    void test_5(size_t n) throw(libtest::test_exception);
+    void test_5(size_t n);
 };
 
 } // namespace libtensor

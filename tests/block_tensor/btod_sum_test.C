@@ -13,7 +13,7 @@
 
 namespace libtensor {
 
-void btod_sum_test::perform() throw(libtest::test_exception) {
+void btod_sum_test::perform() {
 
     allocator<double>::init();
 
@@ -42,7 +42,7 @@ void btod_sum_test::perform() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_1() throw(libtest::test_exception) {
+void btod_sum_test::test_1() {
 
     //
     //  Single operand A + B
@@ -83,7 +83,7 @@ void btod_sum_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_2() throw(libtest::test_exception) {
+void btod_sum_test::test_2() {
 
     //
     //  Two operands: A + B and C + D
@@ -134,7 +134,7 @@ void btod_sum_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_3() throw(libtest::test_exception) {
+void btod_sum_test::test_3() {
 
     //
     //  Two operands: A + B and C + D
@@ -183,7 +183,7 @@ void btod_sum_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_4() throw(libtest::test_exception) {
+void btod_sum_test::test_4() {
 
     //
     //  Two operands: A and C + D
@@ -235,7 +235,7 @@ void btod_sum_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_5() throw(libtest::test_exception) {
+void btod_sum_test::test_5() {
 
     //
     //  Single operand A * B
@@ -302,7 +302,7 @@ void btod_sum_test::test_5() throw(libtest::test_exception) {
     }
 }
 
-void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
+void btod_sum_test::test_6(bool do_add) {
 
     //
     //  Two operands A + B and C + D, symmetry
@@ -394,7 +394,7 @@ void btod_sum_test::test_6(bool do_add) throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_7() throw(libtest::test_exception) {
+void btod_sum_test::test_7() {
 
     //
     //  Single operand A + B, permutational symmetry
@@ -453,7 +453,7 @@ void btod_sum_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_8() throw(libtest::test_exception) {
+void btod_sum_test::test_8() {
 
     //
     //  Two operands with different permutational symmetry
@@ -510,7 +510,7 @@ void btod_sum_test::test_8() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_9a() throw(libtest::test_exception) {
+void btod_sum_test::test_9a() {
 
     //
     //  tt_oovv(i|j|a|b) = t2(i|j|a|b) - t1(j|a)*t1(i|b);
@@ -576,7 +576,7 @@ void btod_sum_test::test_9a() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_9b() throw(libtest::test_exception) {
+void btod_sum_test::test_9b() {
 
     //
     //  tt_oovv(i|j|a|b) = t2(i|j|a|b) - t1(j|a)*t1(i|b);
@@ -656,7 +656,7 @@ void btod_sum_test::test_9b() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_10a() throw(libtest::test_exception) {
+void btod_sum_test::test_10a() {
 
     //
     //  Two operands: A and B, uneven block index space splits
@@ -703,7 +703,7 @@ void btod_sum_test::test_10a() throw(libtest::test_exception) {
 }
 
 
-void btod_sum_test::test_10b() throw(libtest::test_exception) {
+void btod_sum_test::test_10b() {
 
     //
     //  Two operands: A and B, uneven block index space splits

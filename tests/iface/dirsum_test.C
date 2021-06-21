@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void dirsum_test::perform() throw(libtest::test_exception) {
+void dirsum_test::perform() {
 
     allocator<double>::init();
 
@@ -35,7 +35,7 @@ void dirsum_test::perform() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_tt_1() throw(libtest::test_exception) {
+void dirsum_test::test_tt_1() {
 
     static const char *testname = "dirsum_test::test_tt_1()";
 
@@ -66,7 +66,7 @@ void dirsum_test::test_tt_1() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_tt_2() throw(libtest::test_exception) {
+void dirsum_test::test_tt_2() {
 
     static const char *testname = "dirsum_test::test_tt_2()";
 
@@ -98,7 +98,7 @@ void dirsum_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_tt_3() throw(libtest::test_exception) {
+void dirsum_test::test_tt_3() {
 
     static const char *testname = "dirsum_test::test_tt_3()";
 
@@ -133,7 +133,7 @@ void dirsum_test::test_tt_3() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_tt_4() throw(libtest::test_exception) {
+void dirsum_test::test_tt_4() {
 
     static const char *testname = "dirsum_test::test_tt_4()";
 
@@ -165,7 +165,7 @@ void dirsum_test::test_tt_4() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_tt_5() throw(libtest::test_exception) {
+void dirsum_test::test_tt_5() {
 
     static const char *testname = "dirsum_test::test_tt_5()";
 
@@ -200,7 +200,7 @@ void dirsum_test::test_tt_5() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_tt_6() throw(libtest::test_exception) {
+void dirsum_test::test_tt_6() {
 
     static const char *testname = "dirsum_test::test_tt_6()";
 
@@ -230,7 +230,7 @@ void dirsum_test::test_tt_6() throw(libtest::test_exception) {
 
 
 
-void dirsum_test::test_te_1() throw(libtest::test_exception) {
+void dirsum_test::test_te_1() {
 
     static const char *testname = "dirsum_test::test_te_1()";
 
@@ -273,7 +273,7 @@ void dirsum_test::test_te_1() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_et_1() throw(libtest::test_exception) {
+void dirsum_test::test_et_1() {
 
     static const char *testname = "dirsum_test::test_et_1()";
 
@@ -309,7 +309,7 @@ void dirsum_test::test_et_1() throw(libtest::test_exception) {
 }
 
 
-void dirsum_test::test_ee_1() throw(libtest::test_exception) {
+void dirsum_test::test_ee_1() {
 
     static const char *testname = "dirsum_test::test_ee_1()";
 

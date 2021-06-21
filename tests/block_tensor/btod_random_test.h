@@ -11,7 +11,7 @@ namespace libtensor {
 **/
 class btod_random_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 };
 

@@ -83,7 +83,7 @@ dense_tensor<N, T, Alloc>::on_req_open_session() {
 
     size_t sz = m_sessions.size();
 
-    for(register size_t i = 0; i < sz; i++) {
+    for(size_t i = 0; i < sz; i++) {
         if(m_sessions[i] == 0) {
             m_sessions[i] = 1;
             m_session_ptrcount[i] = 0;

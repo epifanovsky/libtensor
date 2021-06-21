@@ -12,18 +12,18 @@ namespace libtensor {
 **/
 class btod_scale_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     template<size_t N>
     void test_generic(const char *testname,
         block_tensor_i<N, double> &bt, double c)
-        throw(libtest::test_exception);
+       ;
 
-    void test_0() throw(libtest::test_exception);
-    void test_i(size_t i) throw(libtest::test_exception);
+    void test_0();
+    void test_i(size_t i);
 
-    void test_1() throw(libtest::test_exception);
+    void test_1();
 };
 
 } // namespace libtensor

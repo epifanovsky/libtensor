@@ -18,7 +18,7 @@
 namespace libtensor {
 
 
-void btod_symmetrize3_test::perform() throw(libtest::test_exception) {
+void btod_symmetrize3_test::perform() {
 
     allocator<double>::init();
 
@@ -48,7 +48,7 @@ void btod_symmetrize3_test::perform() throw(libtest::test_exception) {
 /** \test Symmetrization of a non-symmetric 3-index block %tensor
         over three indexes
  **/
-void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_1() {
 
     static const char *testname = "btod_symmetrize3_test::test_1()";
 
@@ -121,7 +121,7 @@ void btod_symmetrize3_test::test_1() throw(libtest::test_exception) {
 /** \test Anti-symmetrization of a non-symmetric 3-index block %tensor
         over three indexes
  **/
-void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_2() {
 
     static const char *testname = "btod_symmetrize3_test::test_2()";
 
@@ -191,7 +191,7 @@ void btod_symmetrize3_test::test_2() throw(libtest::test_exception) {
 /** \test Symmetrization of a 3-index block %tensor with S(+)2*C1
         over three indexes
  **/
-void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_3() {
 
     static const char *testname = "btod_symmetrize3_test::test_3()";
 
@@ -266,7 +266,7 @@ void btod_symmetrize3_test::test_3() throw(libtest::test_exception) {
 /** \test Symmetrization of a 4-index block %tensor with S(+)2*C1
         over three indexes
  **/
-void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_4() {
 
     static const char *testname = "btod_symmetrize3_test::test_4()";
 
@@ -341,7 +341,7 @@ void btod_symmetrize3_test::test_4() throw(libtest::test_exception) {
 /** \test Symmetrization of a 3-index block %tensor with partitions
         over three indexes
  **/
-void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_5() {
 
     static const char *testname = "btod_symmetrize3_test::test_5()";
 
@@ -444,7 +444,7 @@ void btod_symmetrize3_test::test_5() throw(libtest::test_exception) {
 /** \test Double anti-symmetrization of a 6-index block %tensor with
         S(-)2*C1*C1*S(-)2 over three indexes
  **/
-void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_6() {
 
     static const char *testname = "btod_symmetrize3_test::test_6()";
 
@@ -531,7 +531,7 @@ void btod_symmetrize3_test::test_6() throw(libtest::test_exception) {
 /** \test Double anti-symmetrization of a 6-index block %tensor with
         S(-)2*C1*C1*S(-)2 over three indexes (additive)
  **/
-void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_7() {
 
     static const char *testname = "btod_symmetrize3_test::test_7()";
 
@@ -627,7 +627,7 @@ void btod_symmetrize3_test::test_7() throw(libtest::test_exception) {
 
 /** \test Anti-symmetrization of a contraction that appears in CCSD(T)
  **/
-void btod_symmetrize3_test::test_8a() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_8a() {
 
     static const char *testname = "btod_symmetrize3_test::test_8a()";
 
@@ -752,7 +752,7 @@ void btod_symmetrize3_test::test_8a() throw(libtest::test_exception) {
 /** \test Anti-symmetrization of a contraction that appears in CCSD(T),
         invoked blockwise
  **/
-void btod_symmetrize3_test::test_8b() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_8b() {
 
     static const char *testname = "btod_symmetrize3_test::test_8b()";
 
@@ -877,7 +877,7 @@ void btod_symmetrize3_test::test_8b() throw(libtest::test_exception) {
 /** \test Symmetrization of a 4-index block %tensor with S(+)2*S(+)2
         over three indexes
  **/
-void btod_symmetrize3_test::test_9() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_9() {
 
     static const char *testname = "btod_symmetrize3_test::test_9()";
 
@@ -954,7 +954,7 @@ void btod_symmetrize3_test::test_9() throw(libtest::test_exception) {
 /** \test Symmetrization of a non-symmetric 3-index block %tensor
         over three indexes specified using permutations
  **/
-void btod_symmetrize3_test::test_10() throw(libtest::test_exception) {
+void btod_symmetrize3_test::test_10() {
 
     static const char *testname = "btod_symmetrize3_test::test_10()";
 

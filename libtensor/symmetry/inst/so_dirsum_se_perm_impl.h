@@ -20,8 +20,8 @@ do_perform(symmetry_operation_params_t &params) const {
     typedef symmetry_element_set_adapter< M, T, se_perm<M, T> > adapter2_t;
 
     mask<N + M> msk1, msk2;
-    for (register size_t k = 0; k < N; k++) msk1[k] = true;
-    for (register size_t k = N; k < N + M; k++) msk2[k] = true;
+    for (size_t k = 0; k < N; k++) msk1[k] = true;
+    for (size_t k = N; k < N + M; k++) msk2[k] = true;
 
     // Simplest case: both source groups are empty!
     if (params.g1.is_empty() && params.g2.is_empty()) {
@@ -147,8 +147,8 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
     done.clear();
 
     sequence<N + M, size_t> seq2a, seq2b;
-    for (register size_t i = 0; i < N + M; i++) seq2a[i] = i;
-    for (register size_t i = 0; i < N; i++) seq2b[i] = p1[i];
+    for (size_t i = 0; i < N + M; i++) seq2a[i] = i;
+    for (size_t i = 0; i < N; i++) seq2b[i] = p1[i];
 
     // Combine all elements in p1 with all elements in p2
     if (! plst2.empty()) {
@@ -169,7 +169,7 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
                         px.permute(it2->get_perm());
                         for (; k < i; k++) px.permute(it1->get_perm());
 
-                        for (register size_t i = 0, j = N; i < M; i++, j++)
+                        for (size_t i = 0, j = N; i < M; i++, j++)
                             seq2b[j] = px[i] + N;
 
                         permutation_builder<N + M> pb(seq2b, seq2a);
@@ -184,7 +184,7 @@ combine(const permutation<N> &p1, const scalar_transf<T> &tr1,
         for (typename perm_lst_t::iterator it = plst1.begin();
                 it != plst1.end(); it++) {
 
-            for (register size_t i = 0, j = N; i < M; i++, j++)
+            for (size_t i = 0, j = N; i < M; i++, j++)
                 seq2b[j] = it->get_perm()[i] + N;
             permutation_builder<N + M> pb(seq2b, seq2a);
             grp.add_orbit(tr1, pb.get_perm());
@@ -283,8 +283,8 @@ combine(const symmetry_element_set<N, T> &set1,
     done.clear();
 
     sequence<N + M, size_t> seq2a, seq2b;
-    for (register size_t i = 0; i < N + M; i++) seq2a[i] = i;
-    for (register size_t i = 0, j = N; i < M; i++, j++) seq2b[j] = p2[i] + N;
+    for (size_t i = 0; i < N + M; i++) seq2a[i] = i;
+    for (size_t i = 0, j = N; i < M; i++, j++) seq2b[j] = p2[i] + N;
 
     // Combine all elements in p1 with all elements in p2
     if (! plst2.empty()) {
@@ -305,7 +305,7 @@ combine(const symmetry_element_set<N, T> &set1,
                         px.permute(it2->get_perm());
                         for (; k < i; k++) px.permute(it1->get_perm());
 
-                        for (register size_t i = 0; i < N; i++)
+                        for (size_t i = 0; i < N; i++)
                             seq2b[i] = px[i];
 
                         permutation_builder<N + M> pb(seq2b, seq2a);
@@ -320,7 +320,7 @@ combine(const symmetry_element_set<N, T> &set1,
         for (typename perm_lst_t::iterator it = plst1.begin();
                 it != plst1.end(); it++) {
 
-            for (register size_t i = 0; i < N; i++)
+            for (size_t i = 0; i < N; i++)
                 seq2b[i] = it->get_perm()[i];
             permutation_builder<N + M> pb(seq2b, seq2a);
             grp.add_orbit(tr2, pb.get_perm());

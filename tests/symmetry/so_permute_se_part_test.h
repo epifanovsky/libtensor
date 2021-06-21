@@ -12,13 +12,13 @@ namespace libtensor {
  **/
 class so_permute_se_part_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2a() throw(libtest::test_exception);
-    void test_2b() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
+    void test_1();
+    void test_2a();
+    void test_2b();
+    void test_3();
 
 };
 

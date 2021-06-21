@@ -13,7 +13,7 @@
 
 namespace libtensor {
 
-void btod_add_test::perform() throw(libtest::test_exception) {
+void btod_add_test::perform() {
 
     allocator<double>::init();
 
@@ -60,7 +60,7 @@ void btod_add_test::perform() throw(libtest::test_exception) {
 }
 
 void btod_add_test::test_1(double ca1, double ca2)
-    throw(libtest::test_exception) {
+    {
 
     //
     //  Arg 1: One non-zero block
@@ -123,7 +123,7 @@ void btod_add_test::test_1(double ca1, double ca2)
 
 
 void btod_add_test::test_2(double ca1, double ca2, double cs)
-    throw(libtest::test_exception) {
+    {
 
     //
     //  Arg 1: One non-zero block
@@ -189,7 +189,7 @@ void btod_add_test::test_2(double ca1, double ca2, double cs)
 
 
 void btod_add_test::test_3(double ca1, double ca2)
-    throw(libtest::test_exception) {
+    {
 
     //
     //  Arg 1: Non-zero off-diagonal blocks, permutational symmetry
@@ -262,7 +262,7 @@ void btod_add_test::test_3(double ca1, double ca2)
 
 
 void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
-    throw(libtest::test_exception) {
+    {
 
     //
     //  Arg 1: One non-zero off-diagonal block [0,0,0,1]
@@ -365,7 +365,7 @@ void btod_add_test::test_4(double ca1, double ca2, double ca3, double ca4)
 }
 
 
-void btod_add_test::test_5() throw(libtest::test_exception) {
+void btod_add_test::test_5() {
 
     //
     //  Tests addition to zero vs. overwrite (single arguments)
@@ -400,7 +400,7 @@ void btod_add_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void btod_add_test::test_6() throw(libtest::test_exception) {
+void btod_add_test::test_6() {
 
     //
     //  Tests addition to zero vs. overwrite (multiple arguments)
@@ -440,7 +440,7 @@ void btod_add_test::test_6() throw(libtest::test_exception) {
 
 /** \brief Tests a particular block %index space that is causing a problem
  **/
-void btod_add_test::test_7() throw(libtest::test_exception) {
+void btod_add_test::test_7() {
 
     static const char *testname = "btod_add_test::test_7()";
 
@@ -504,7 +504,7 @@ void btod_add_test::test_7() throw(libtest::test_exception) {
 /** \brief Tests \f$ B_{iajb} = B_{iajb} + A_{ijab} qquad
         A \in S^{-}_2 \times S^{-}_2 \f$
  **/
-void btod_add_test::test_8() throw(libtest::test_exception) {
+void btod_add_test::test_8() {
 
     static const char *testname = "btod_add_test::test_8()";
 
@@ -574,7 +574,7 @@ void btod_add_test::test_8() throw(libtest::test_exception) {
 /** \brief Tests \f$ B_{jkab} = B_{jkab} + A_{kajb} qquad
         A \in S^{-}_2 \times S^{-}_2 \f$
  **/
-void btod_add_test::test_9() throw(libtest::test_exception) {
+void btod_add_test::test_9() {
 
     static const char *testname = "btod_add_test::test_9()";
 
@@ -637,7 +637,7 @@ void btod_add_test::test_9() throw(libtest::test_exception) {
 }
 
 
-void btod_add_test::test_10(double d) throw(libtest::test_exception) {
+void btod_add_test::test_10(double d) {
 
     std::ostringstream tnss;
     tnss << "btod_add_test::test_10(" << d << ")";
@@ -722,7 +722,7 @@ void btod_add_test::test_10(double d) throw(libtest::test_exception) {
 }
 
 
-void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
+void btod_add_test::test_11(bool sign) {
 
     std::ostringstream tnss;
     tnss << "btod_add_test::test_11(" << (sign ? '+' : '-') << ")";
@@ -801,7 +801,7 @@ void btod_add_test::test_11(bool sign) throw(libtest::test_exception) {
 }
 
 
-void btod_add_test::test_exc() throw(libtest::test_exception) {
+void btod_add_test::test_exc() {
     /*
     libtensor::index<2> i1, i2; i2[0] = 1; i2[1] = 2;
     dimensions<2> dims_ia(index_range<2>(i1, i2));

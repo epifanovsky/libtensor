@@ -40,7 +40,7 @@ addition_schedule<N, Traits>::addition_schedule(
 
     mask<N + N> msk;
     sequence<N + N, size_t> seq(0);
-    for (register size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < N; i++) {
         msk[i] = msk[i + N] = true;
         seq[i] = seq[i + N] = i;
     }
@@ -415,7 +415,7 @@ void addition_schedule<N, Traits>::build(
 
 
 template<size_t N, typename Traits>
-void addition_schedule<N, Traits>::clear_schedule() throw() {
+void addition_schedule<N, Traits>::clear_schedule() noexcept {
 
     for(typename schedule_type::iterator i = m_sch.begin();
         i != m_sch.end(); ++i) delete *i;

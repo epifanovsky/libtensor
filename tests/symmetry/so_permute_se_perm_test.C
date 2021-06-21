@@ -5,7 +5,7 @@
 
 namespace libtensor {
 
-void so_permute_se_perm_test::perform() throw(libtest::test_exception) {
+void so_permute_se_perm_test::perform() {
 
     test_1();
 
@@ -14,7 +14,7 @@ void so_permute_se_perm_test::perform() throw(libtest::test_exception) {
 
 /** \test Permutes a group with one element of Au symmetry.
  **/
-void so_permute_se_perm_test::test_1() throw(libtest::test_exception) {
+void so_permute_se_perm_test::test_1() {
 
     static const char *testname = "so_permute_se_perm_test::test_1()";
 

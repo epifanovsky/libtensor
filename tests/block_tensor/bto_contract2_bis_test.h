@@ -12,15 +12,15 @@ namespace libtensor {
 **/
 class bto_contract2_bis_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
+    void test_6();
 
 };
 

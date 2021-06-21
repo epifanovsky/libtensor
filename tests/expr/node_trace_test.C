@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void node_trace_test::perform() throw(libtest::test_exception) {
+void node_trace_test::perform() {
 
     test_1();
     test_2();

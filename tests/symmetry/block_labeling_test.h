@@ -11,15 +11,15 @@ namespace libtensor {
  **/
 class block_labeling_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_basic_1() throw(libtest::test_exception);
-    void test_basic_2() throw(libtest::test_exception);
-    void test_copy_1() throw(libtest::test_exception);
-    void test_permute_1() throw(libtest::test_exception);
-    void test_transfer_1() throw(libtest::test_exception);
-    void test_transfer_2() throw(libtest::test_exception);
+    void test_basic_1();
+    void test_basic_2();
+    void test_copy_1();
+    void test_permute_1();
+    void test_transfer_1();
+    void test_transfer_2();
 };
 
 } // namespace libtensor

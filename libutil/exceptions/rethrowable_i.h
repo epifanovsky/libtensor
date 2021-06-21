@@ -12,11 +12,11 @@ class rethrowable_i {
 public:
     /** \brief Virtual destructor
      **/
-    virtual ~rethrowable_i() throw();
+    virtual ~rethrowable_i() noexcept;
 
     /** \brief Clones this exception using operator new
      **/
-    virtual rethrowable_i *clone() const throw() = 0;
+    virtual rethrowable_i *clone() const noexcept = 0;
 
     /** \brief Rethrows this exception
      **/

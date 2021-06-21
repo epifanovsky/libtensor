@@ -18,7 +18,7 @@
 namespace libtensor {
 
 
-void btod_symmetrize4_test::perform() throw(libtest::test_exception) {
+void btod_symmetrize4_test::perform() {
 
     allocator<double>::init();
 

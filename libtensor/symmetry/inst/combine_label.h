@@ -26,7 +26,7 @@ private:
 public:
     combine_label(const se_label<N, T> &el);
 
-    void add(const se_label<N, T> &el) throw(bad_parameter);
+    void add(const se_label<N, T> &el);
 
     const std::string &get_table_id() const { return m_table_id; }
     const block_labeling<N> &get_labeling() const { return m_blk_labels; }

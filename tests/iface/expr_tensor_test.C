@@ -19,7 +19,7 @@ void calculate_4(expr::expr_lhs<2, double> &t3,
 } // unnamed namespace
 
 
-void expr_tensor_test::perform() throw(libtest::test_exception) {
+void expr_tensor_test::perform() {
 
     test_1();
     test_2();

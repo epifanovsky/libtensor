@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-void so_merge_test::perform() throw(libtest::test_exception) {
+void so_merge_test::perform() {
 
     setup_pg_table("cs");
 
@@ -34,7 +34,7 @@ void so_merge_test::perform() throw(libtest::test_exception) {
 /** \test Invokes merge of 2 dimensions of C1 in 4-space onto 3-space.
         Expects C1 in 3-space.
  **/
-void so_merge_test::test_1() throw(libtest::test_exception) {
+void so_merge_test::test_1() {
 
     static const char *testname = "so_merge_test::test_1()";
 
@@ -70,7 +70,7 @@ void so_merge_test::test_1() throw(libtest::test_exception) {
 /** \test Invokes a merge of 3 dim in S5(+) in 5-space onto 3-space.
         Expects S3(+) in 3-space.
  **/
-void so_merge_test::test_2() throw(libtest::test_exception) {
+void so_merge_test::test_2() {
 
     static const char *testname = "so_merge_test::test_2()";
 
@@ -118,7 +118,7 @@ void so_merge_test::test_2() throw(libtest::test_exception) {
 
 /** \test Invokes merge of 2 dims of S2(+) onto 1-space.
  **/
-void so_merge_test::test_3() throw(libtest::test_exception) {
+void so_merge_test::test_3() {
 
     static const char *testname = "so_merge_test::test_3()";
 
@@ -146,7 +146,7 @@ void so_merge_test::test_3() throw(libtest::test_exception) {
 
 /** \test Invokes a projection of S2(+) onto 2-space.
  **/
-void so_merge_test::test_4() throw(libtest::test_exception) {
+void so_merge_test::test_4() {
 
     static const char *testname = "so_merge_test::test_4()";
 
@@ -178,7 +178,7 @@ void so_merge_test::test_4() throw(libtest::test_exception) {
 
 /** \test Computes the symmetry of the sum of two tensors
  **/
-void so_merge_test::test_5() throw(libtest::test_exception) {
+void so_merge_test::test_5() {
 
     static const char *testname = "so_merge_test::test_5()";
 

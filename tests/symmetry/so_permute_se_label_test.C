@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-void so_permute_se_label_test::perform() throw(libtest::test_exception) {
+void so_permute_se_label_test::perform() {
 
     std::string s6 = "S6";
     setup_pg_table(s6);
@@ -28,7 +28,7 @@ void so_permute_se_label_test::perform() throw(libtest::test_exception) {
 /** \test Permutes a group with one element of Au symmetry.
  **/
 void so_permute_se_label_test::test_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_permute_se_label_test::test_1(" << table_id << ")";

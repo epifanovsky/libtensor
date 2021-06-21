@@ -5,7 +5,7 @@
 
 namespace libtensor {
 
-void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
+void so_symmetrize_se_label_test::perform() {
 
     std::string table_id = "S6";
     setup_pg_table(table_id);
@@ -31,7 +31,7 @@ void so_symmetrize_se_label_test::perform() throw(libtest::test_exception) {
         empty group
  **/
 void so_symmetrize_se_label_test::test_empty(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_symmetrize_se_label_test::test_empty(" << table_id << ")";
@@ -69,7 +69,7 @@ void so_symmetrize_se_label_test::test_empty(
 /** \test Symmetrization of 2 dim of a 4-space.
  **/
 void so_symmetrize_se_label_test::test_sym2_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_symmetrize_se_label_test::test_sym2_1(" << table_id << ")";
@@ -160,7 +160,7 @@ void so_symmetrize_se_label_test::test_sym2_1(
 /** \test Symmetrization of 2 dim of a 4-space.
  **/
 void so_symmetrize_se_label_test::test_sym2_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_symmetrize_se_label_test::test_sym2_2(" << table_id << ")";
@@ -259,7 +259,7 @@ void so_symmetrize_se_label_test::test_sym2_2(
 /** \test Double symmetrization of 2 dim of a 4-space.
  **/
 void so_symmetrize_se_label_test::test_sym2_3(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_symmetrize_se_label_test::test_sym2_3(" << table_id << ")";
@@ -357,7 +357,7 @@ void so_symmetrize_se_label_test::test_sym2_3(
 /** \test Symmetrization of 3 dim of a 3-space.
  **/
 void so_symmetrize_se_label_test::test_sym3_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_symmetrize_se_label_test::test_sym3_1(" << table_id << ")";

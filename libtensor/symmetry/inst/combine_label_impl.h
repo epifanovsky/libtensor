@@ -19,7 +19,7 @@ combine_label<N, T>::combine_label(const se_label<N, T> &el) :
 
 
 template<size_t N, typename T>
-void combine_label<N, T>::add(const se_label<N, T> &el) throw(bad_parameter) {
+void combine_label<N, T>::add(const se_label<N, T> &el) {
 
     static const char *method = "add(const se_label<N, T> &)";
 

@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-void so_merge_se_part_test::perform() throw(libtest::test_exception) {
+void so_merge_se_part_test::perform() {
 
     test_empty_1();
     test_empty_2();
@@ -26,7 +26,7 @@ void so_merge_se_part_test::perform() throw(libtest::test_exception) {
 /** \test Tests that a single merge of 2 dim of an empty partition set yields
         an empty partition set of lower order
  **/
-void so_merge_se_part_test::test_empty_1() throw(libtest::test_exception) {
+void so_merge_se_part_test::test_empty_1() {
 
     static const char *testname = "so_merge_se_part_test::test_empty_1()";
 
@@ -60,7 +60,7 @@ void so_merge_se_part_test::test_empty_1() throw(libtest::test_exception) {
 /** \test Tests that a double merge of dimensions of an empty partition set
         yields an empty partition set of lower order
  **/
-void so_merge_se_part_test::test_empty_2() throw(libtest::test_exception) {
+void so_merge_se_part_test::test_empty_2() {
 
     static const char *testname = "so_merge_se_part_test::test_empty_2()";
 
@@ -93,8 +93,7 @@ void so_merge_se_part_test::test_empty_2() throw(libtest::test_exception) {
 
 /** \test Single merge of 2 dim of a 3-space on a 2-space.
  **/
-void so_merge_se_part_test::test_nm1_1(bool sign)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_nm1_1(bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_nm1_1(" << sign << ")";
@@ -175,8 +174,7 @@ throw(libtest::test_exception) {
 
 /** \test Single merge of 3 dim of a 3-space on a 1-space.
  **/
-void so_merge_se_part_test::test_nm1_2(bool sign)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_nm1_2(bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_nm1_1(" << tnss << ")";
@@ -253,8 +251,7 @@ throw(libtest::test_exception) {
 
 /** \test Double merge of 4 dim of a 4-space on a 2-space.
  **/
-void so_merge_se_part_test::test_2n2nn_1(bool s1, bool s2)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_2n2nn_1(bool s1, bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_2n2nn_1(" << s1 << ", " << s2 << ")";
@@ -345,8 +342,7 @@ throw(libtest::test_exception) {
 
 /** \test Double merge of 4 dim of a 4-space on a 2-space.
  **/
-void so_merge_se_part_test::test_2n2nn_2(bool s1, bool s2)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_2n2nn_2(bool s1, bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_2n2nn_2(" << s1 << ", " << s2 << ")";
@@ -446,8 +442,7 @@ throw(libtest::test_exception) {
 
 /** \test Double merge of 4 dim of a 4-space on a 2-space.
  **/
-void so_merge_se_part_test::test_2n2nn_3(bool sign)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_2n2nn_3(bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_2n2nn_3(" << sign << ")";
@@ -520,8 +515,7 @@ throw(libtest::test_exception) {
 
 /** \test Double merge of 4 dim of a 5-space on a 3-space.
  **/
-void so_merge_se_part_test::test_nmk_1(bool sign)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_nmk_1(bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_nmk_1(" << sign << ")";
@@ -653,8 +647,7 @@ throw(libtest::test_exception) {
     - Forbidden partitions: \c 001, \c 010, \c 100, \c 111
 
  **/
-void so_merge_se_part_test::test_nmk_2(bool s1, bool s2)
-throw(libtest::test_exception) {
+void so_merge_se_part_test::test_nmk_2(bool s1, bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_merge_se_part_test::test_nmk_2(" << s1 << ", " << s2 << ")";

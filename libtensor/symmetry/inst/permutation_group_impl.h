@@ -102,8 +102,8 @@ void permutation_group<N, T>::project_down(const mask<N> &msk,
     static const char *method =
             "project_down<M>(const mask<N>&, permutation_group<M, T>&)";
 
-    register size_t m = 0;
-    for(register size_t i = 0; i < N; i++) if(msk[i]) m++;
+    size_t m = 0;
+    for(size_t i = 0; i < N; i++) if(msk[i]) m++;
     if(m != M) {
         throw bad_parameter(g_ns, k_clazz, method, __FILE__, __LINE__, "msk");
     }
@@ -159,7 +159,7 @@ void permutation_group<N, T>::stabilize(
         const mask<N> &msk, permutation_group<N, T> &g2) {
 
     sequence<N, size_t> seq(0);
-    for (register size_t i = 0; i != N; i++) {
+    for (size_t i = 0; i != N; i++) {
         if (msk[i]) seq[i] = 1;
     }
     stabilize(seq, g2);
@@ -196,8 +196,8 @@ size_t permutation_group<N, T>::get_path(
     if(j <= i) return 0;
 
     size_t p[N];
-    register size_t k = j;
-    register size_t len = 0;
+    size_t k = j;
+    size_t len = 0;
     while(k != N && k != i) {
         p[len++] = k;
         k = br.m_edges[k];
@@ -395,7 +395,7 @@ template<size_t N, typename T>
 void permutation_group<N, T>::make_genset(
         const branching &br, perm_list_t &gs) const {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(br.m_edges[i] != N && ! br.m_sigma[i].first.is_identity()) {
             gs.push_back(br.m_sigma[i]);
         }
@@ -459,8 +459,8 @@ template<size_t N, typename T>
 void permutation_group<N, T>::make_setstabilizer(const branching &br,
         const sequence<N, size_t> &msk, perm_list_t &gs) {
 
-    register size_t m = 0;
-    for(register size_t i = 0; i < N; i++) if(msk[i] != 0) m++;
+    size_t m = 0;
+    for(size_t i = 0; i < N; i++) if(msk[i] != 0) m++;
     // Handle two special cases first:
     // 1) mask is empty -> no stabilization
     if(m == 0) {

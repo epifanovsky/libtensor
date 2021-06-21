@@ -13,21 +13,21 @@ namespace libtensor {
 **/
 class btod_shift_diag_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
+    void test_6();
 
     template<size_t N>
     void test_generic(const char *testname,
         const block_index_space<N> &bis, const symmetry<N, double> &sym,
         const sequence<N, size_t> &msk, double d)
-        throw(libtest::test_exception);
+       ;
 };
 
 } // namespace libtensor

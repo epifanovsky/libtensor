@@ -23,13 +23,13 @@ protected:
         Valid values of table ID are C2v (abelian point group) and S6.
      **/
     void setup_pg_table(
-            const std::string &id) throw(libtest::test_exception);
+            const std::string &id);
 
     /** \brief Removes point group table with given ID
         \param id to access the table
      **/
     void clear_pg_table(
-            const std::string &id) throw(libtest::test_exception);
+            const std::string &id);
 
     /** \brief Checks the allowed blocks of a symmetry element against a
             reference
@@ -47,14 +47,14 @@ protected:
     template<size_t N>
     void check_allowed(const char *testname, const char *sename, 
             const se_label<N, double> &se, const std::vector<bool> &expected)
-        throw(libtest::test_exception);
+       ;
 };
 
 template<size_t N>
 void se_label_test_base::check_allowed(
         const char *testname, const char *sename,
         const se_label<N, double> &se, const std::vector<bool> &expected)
-    throw(libtest::test_exception) {
+    {
 
     const block_labeling<N> &bl = se.get_labeling();
     const dimensions<N> &bidims = bl.get_block_index_dims();

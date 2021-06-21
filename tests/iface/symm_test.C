@@ -17,7 +17,7 @@
 namespace libtensor {
 
 
-void symm_test::perform() throw(libtest::test_exception) {
+void symm_test::perform() {
 
     allocator<double>::init();
 
@@ -58,7 +58,7 @@ void symm_test::perform() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_symm2_contr_tt_1() throw(libtest::test_exception) {
+void symm_test::test_symm2_contr_tt_1() {
 
     const char *testname = "symm_test::test_symm2_contr_tt_1()";
 
@@ -97,7 +97,7 @@ void symm_test::test_symm2_contr_tt_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_symm2_contr_tt_2() throw(libtest::test_exception) {
+void symm_test::test_symm2_contr_tt_2() {
 
     const char testname[] = "symm_test::test_symm2_contr_tt_2()";
 
@@ -138,7 +138,7 @@ void symm_test::test_symm2_contr_tt_2() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_symm2_contr_ee_1() throw(libtest::test_exception) {
+void symm_test::test_symm2_contr_ee_1() {
 
     const char *testname = "symm_test::test_symm2_contr_ee_1()";
 
@@ -194,7 +194,7 @@ void symm_test::test_symm2_contr_ee_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_tt_1() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_1() {
 
     const char *testname = "asym_contract_test::test_asymm2_contr_tt_1()";
 
@@ -233,7 +233,7 @@ void symm_test::test_asymm2_contr_tt_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_2() {
 
     const char *testname = "symm_test::test_asymm2_contr_tt_2()";
 
@@ -277,7 +277,7 @@ void symm_test::test_asymm2_contr_tt_2() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_tt_3() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_3() {
 
     const char *testname = "symm_test::test_asymm2_contr_tt_3()";
 
@@ -315,7 +315,7 @@ void symm_test::test_asymm2_contr_tt_3() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_4() {
 
     const char *testname = "symm_test::test_asymm2_contr_tt_4()";
 
@@ -354,7 +354,7 @@ void symm_test::test_asymm2_contr_tt_4() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_5() {
 
     const char *testname = "symm_test::test_asymm2_contr_tt_5()";
 
@@ -406,7 +406,7 @@ void symm_test::test_asymm2_contr_tt_5() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_tt_6() {
 
     const char *testname = "symm_test::test_asymm2_contr_tt_6()";
 
@@ -494,7 +494,7 @@ void symm_test::test_asymm2_contr_tt_6() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_et_1() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_et_1() {
 
     const char *testname = "symm_test::test_asymm2_contr_et_1()";
 
@@ -539,7 +539,7 @@ void symm_test::test_asymm2_contr_et_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_ee_1() {
 
     const char *testname = "symm_test::test_asymm2_contr_ee_1()";
 
@@ -594,7 +594,7 @@ void symm_test::test_asymm2_contr_ee_1() throw(libtest::test_exception) {
     }
 }
 
-void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
+void symm_test::test_asymm2_contr_ee_2() {
 
     const char *testname = "symm_test::test_asymm2_contr_ee_2()";
 
@@ -643,7 +643,7 @@ void symm_test::test_asymm2_contr_ee_2() throw(libtest::test_exception) {
 /** \test Tests the symmetrization over two pairs of indexes P+(ij)P+(ab)
         in a %tensor
  **/
-void symm_test::test_symm22_t_1() throw(libtest::test_exception) {
+void symm_test::test_symm22_t_1() {
 
     const char *testname = "symm_test::test_symm22_t_1()";
 
@@ -680,7 +680,7 @@ void symm_test::test_symm22_t_1() throw(libtest::test_exception) {
 /** \test Tests the anti-symmetrization over two pairs of indexes
         P-(ij)P-(ab) in a %tensor
  **/
-void symm_test::test_asymm22_t_1() throw(libtest::test_exception) {
+void symm_test::test_asymm22_t_1() {
 
     const char *testname = "symm_test::test_asymm22_t_1()";
 
@@ -717,7 +717,7 @@ void symm_test::test_asymm22_t_1() throw(libtest::test_exception) {
 /** \test Tests the symmetrization over two pairs of indexes P+(i|jk)
         in a %tensor
  **/
-void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
+void symm_test::test_symm22_t_2() {
 
     const char *testname = "symm_test::test_symm22_t_2()";
 
@@ -753,7 +753,7 @@ void symm_test::test_symm22_t_2() throw(libtest::test_exception) {
 /** \test Tests the anti-symmetrization over two pairs of indexes P-(i|jk)
         in a %tensor
  **/
-void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
+void symm_test::test_asymm22_t_2() {
 
     const char *testname = "symm_test::test_asymm22_t_2()";
 
@@ -789,7 +789,7 @@ void symm_test::test_asymm22_t_2() throw(libtest::test_exception) {
 /** \test Tests the symmetrization over two pairs of indexes P+(ij)P+(ab)
         in an expression
  **/
-void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
+void symm_test::test_symm22_e_1() {
 
     const char *testname = "symm_test::test_symm22_e_1()";
 
@@ -830,7 +830,7 @@ void symm_test::test_symm22_e_1() throw(libtest::test_exception) {
 /** \test Tests the anti-symmetrization over two pairs of indexes
         P-(ij)P-(ab) in an expression
  **/
-void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
+void symm_test::test_asymm22_e_1() {
 
     const char *testname = "symm_test::test_asymm22_e_1()";
 
@@ -871,7 +871,7 @@ void symm_test::test_asymm22_e_1() throw(libtest::test_exception) {
 /** \test Tests the symmetrization over two pairs of indexes P+(i|jk)
         in an expression
  **/
-void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
+void symm_test::test_symm22_e_2() {
 
     const char *testname = "symm_test::test_symm22_e_2()";
 
@@ -912,7 +912,7 @@ void symm_test::test_symm22_e_2() throw(libtest::test_exception) {
 /** \test Tests the anti-symmetrization over two pairs of indexes P-(i|jk)
         in an expression
  **/
-void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
+void symm_test::test_asymm22_e_2() {
 
     const char *testname = "symm_test::test_asymm22_e_2()";
 
@@ -952,7 +952,7 @@ void symm_test::test_asymm22_e_2() throw(libtest::test_exception) {
 
 /** \test Tests the symmetrization over three indexes in a %tensor
  **/
-void symm_test::test_symm3_t_1() throw(libtest::test_exception) {
+void symm_test::test_symm3_t_1() {
 
     const char *testname = "symm_test::test_symm3_t_1()";
 
@@ -993,7 +993,7 @@ void symm_test::test_symm3_t_1() throw(libtest::test_exception) {
 }
 
 
-void symm_test::test_asymm3_e_1() throw(libtest::test_exception) {
+void symm_test::test_asymm3_e_1() {
 
     const char *testname = "symm_test::test_asymm3_e_1()";
 

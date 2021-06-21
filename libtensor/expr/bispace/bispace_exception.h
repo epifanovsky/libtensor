@@ -19,14 +19,14 @@ public:
     /** \brief Creates an exception
      **/
     bispace_exception(const char *clazz, const char *method,
-        const char *file, unsigned int line, const char *message) throw() :
+        const char *file, unsigned int line, const char *message) noexcept :
         exception_base<bispace_exception>("libtensor::expr", clazz, method,
             file, line, "bispace_exception", message)
     { }
 
     /** \brief Virtual destructor
      **/
-    virtual ~bispace_exception() throw() { }
+    virtual ~bispace_exception() noexcept { }
 
     //@}
 

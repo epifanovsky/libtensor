@@ -3,7 +3,7 @@
 
 namespace libtensor {
 
-void bispace_test::perform() throw(libtest::test_exception) {
+void bispace_test::perform() {
 
     test_1();
     test_2();
@@ -16,7 +16,7 @@ void bispace_test::perform() throw(libtest::test_exception) {
     test_9();
 }
 
-void bispace_test::test_1() throw(libtest::test_exception) {
+void bispace_test::test_1() {
 
     //
     //  Simple 1-d spaces
@@ -95,7 +95,7 @@ void bispace_test::test_1() throw(libtest::test_exception) {
     }
 }
 
-void bispace_test::test_2() throw(libtest::test_exception) {
+void bispace_test::test_2() {
 
     //
     //  Simple 2-d spaces
@@ -194,7 +194,7 @@ void bispace_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_3() throw(libtest::test_exception) {
+void bispace_test::test_3() {
 
     //
     //  2-d spaces with symmetry between 1-d
@@ -292,7 +292,7 @@ void bispace_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_4() throw(libtest::test_exception) {
+void bispace_test::test_4() {
 
     //
     //  4-d spaces with symmetry between symmetric 2-d
@@ -425,7 +425,7 @@ void bispace_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_5() throw(libtest::test_exception) {
+void bispace_test::test_5() {
 
     //
     //  4-d spaces with symmetry made of 1-d
@@ -564,7 +564,7 @@ void bispace_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_6() throw(libtest::test_exception) {
+void bispace_test::test_6() {
 
     //
     //  4-d spaces with symmetry made of 2-d,
@@ -717,7 +717,7 @@ void bispace_test::test_6() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_7() throw(libtest::test_exception) {
+void bispace_test::test_7() {
 
     //
     //  4-d spaces with symmetry made of 1-d, reordered
@@ -856,7 +856,7 @@ void bispace_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_8() throw(libtest::test_exception) {
+void bispace_test::test_8() {
 
     //
     //  5-d spaces with symmetry made of mixed dims, reordered
@@ -1011,7 +1011,7 @@ void bispace_test::test_8() throw(libtest::test_exception) {
 }
 
 
-void bispace_test::test_9() throw(libtest::test_exception) {
+void bispace_test::test_9() {
 
     //
     //  4-d spaces with symmetry between 1-d

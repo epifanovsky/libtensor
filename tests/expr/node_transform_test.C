@@ -8,7 +8,7 @@
 namespace libtensor {
 
 
-void node_transform_test::perform() throw(libtest::test_exception) {
+void node_transform_test::perform() {
 
     test_1();
 }

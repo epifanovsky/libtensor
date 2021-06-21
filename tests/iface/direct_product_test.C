@@ -9,7 +9,7 @@
 namespace libtensor {
 
 
-void direct_product_test::perform() throw(libtest::test_exception) {
+void direct_product_test::perform() {
 
     allocator<double>::init();
 
@@ -33,7 +33,7 @@ void direct_product_test::perform() throw(libtest::test_exception) {
 
 
 #if 0
-void direct_product_test::test_label_1() throw(libtest::test_exception) {
+void direct_product_test::test_label_1() {
 
     static const char *testname = "direct_product_test::test_label_1()";
 
@@ -68,7 +68,7 @@ void direct_product_test::test_label_1() throw(libtest::test_exception) {
 #endif
 
 
-void direct_product_test::test_tt_1() throw(libtest::test_exception) {
+void direct_product_test::test_tt_1() {
 
     static const char *testname = "direct_product_test::test_tt_1()";
 
@@ -101,7 +101,7 @@ void direct_product_test::test_tt_1() throw(libtest::test_exception) {
 }
 
 
-void direct_product_test::test_tt_2() throw(libtest::test_exception) {
+void direct_product_test::test_tt_2() {
 
     static const char *testname = "direct_product_test::test_tt_2()";
 
@@ -135,7 +135,7 @@ void direct_product_test::test_tt_2() throw(libtest::test_exception) {
 }
 
 
-void direct_product_test::test_te_1() throw(libtest::test_exception) {
+void direct_product_test::test_te_1() {
 
     static const char *testname = "direct_product_test::test_te_1()";
 
@@ -173,7 +173,7 @@ void direct_product_test::test_te_1() throw(libtest::test_exception) {
 }
 
 
-void direct_product_test::test_et_1() throw(libtest::test_exception) {
+void direct_product_test::test_et_1() {
 
     static const char *testname = "direct_product_test::test_et_1()";
 
@@ -212,7 +212,7 @@ void direct_product_test::test_et_1() throw(libtest::test_exception) {
 }
 
 
-void direct_product_test::test_ee_1() throw(libtest::test_exception) {
+void direct_product_test::test_ee_1() {
 
     static const char *testname = "direct_product_test::test_ee_1()";
 
@@ -256,7 +256,7 @@ void direct_product_test::test_ee_1() throw(libtest::test_exception) {
 }
 
 
-void direct_product_test::test_ee_2() throw(libtest::test_exception) {
+void direct_product_test::test_ee_2() {
 
     static const char *testname = "direct_product_test::test_ee_2()";
 

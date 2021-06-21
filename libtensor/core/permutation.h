@@ -121,7 +121,7 @@ public:
         \return Reference to this %permutation.
         \throw out_of_bounds If either of the indices is out of bounds.
      **/
-    permutation<N> &permute(size_t i, size_t j) throw(out_of_bounds);
+    permutation<N> &permute(size_t i, size_t j);
 
     /** \brief Inverts the %permutation
         \return Reference to this %permutation.
@@ -212,7 +212,7 @@ const char *permutation<N>::k_clazz = "permutation<N>";
 template<size_t N>
 inline permutation<N>::permutation() {
 
-    for(register size_t i = 0; i < N; i++) m_idx[i] = i;
+    for(size_t i = 0; i < N; i++) m_idx[i] = i;
 }
 
 
@@ -220,9 +220,9 @@ template<size_t N>
 inline permutation<N>::permutation(const permutation<N> &p, bool b_inverse) {
 
     if(b_inverse) {
-        for(register size_t i = 0; i < N; i++) m_idx[p.m_idx[i]] = i;
+        for(size_t i = 0; i < N; i++) m_idx[p.m_idx[i]] = i;
     } else {
-        for(register size_t i = 0; i < N; i++) m_idx[i] = p.m_idx[i];
+        for(size_t i = 0; i < N; i++) m_idx[i] = p.m_idx[i];
     }
 }
 
@@ -231,15 +231,14 @@ template<size_t N>
 inline permutation<N> &permutation<N>::permute(const permutation<N> &p) {
 
     size_t idx_cp[N];
-    for(register size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
-    for(register size_t i = 0; i < N; i++) m_idx[i] = idx_cp[p.m_idx[i]];
+    for(size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
+    for(size_t i = 0; i < N; i++) m_idx[i] = idx_cp[p.m_idx[i]];
     return *this;
 }
 
 
 template<size_t N>
-inline permutation<N> &permutation<N>::permute(size_t i, size_t j)
-    throw(out_of_bounds) {
+inline permutation<N> &permutation<N>::permute(size_t i, size_t j) {
 
 #ifdef LIBTENSOR_DEBUG
     if(i >= N || j >= N) {
@@ -248,7 +247,7 @@ inline permutation<N> &permutation<N>::permute(size_t i, size_t j)
     }
 #endif // LIBTENSOR_DEBUG
     if(i == j) return *this;
-    register size_t i_cp = m_idx[i];
+    size_t i_cp = m_idx[i];
     m_idx[i] = m_idx[j];
     m_idx[j] = i_cp;
     return *this;
@@ -259,8 +258,8 @@ template<size_t N>
 inline permutation<N> &permutation<N>::invert() {
 
     size_t idx_cp[N];
-    for(register size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
-    for(register size_t i = 0; i < N; i++) m_idx[idx_cp[i]] = i;
+    for(size_t i = 0; i < N; i++) idx_cp[i] = m_idx[i];
+    for(size_t i = 0; i < N; i++) m_idx[idx_cp[i]] = i;
     return *this;
 }
 
@@ -268,14 +267,14 @@ inline permutation<N> &permutation<N>::invert() {
 template<size_t N>
 inline void permutation<N>::reset() {
 
-    for(register size_t i = 0; i < N; i++) m_idx[i] = i;
+    for(size_t i = 0; i < N; i++) m_idx[i] = i;
 }
 
 
 template<size_t N>
 inline void permutation<N>::apply_mask(const mask<N> &msk) {
 
-    register size_t i = 0;
+    size_t i = 0;
     while(i < N) {
         if(i != m_idx[i] && msk[i]) {
             permute(i, m_idx[i]);
@@ -301,7 +300,7 @@ inline const size_t &permutation<N>::operator[](size_t i) const {
 template<size_t N>
 inline bool permutation<N>::is_identity() const {
 
-    for(register size_t i = 0; i < N; i++)
+    for(size_t i = 0; i < N; i++)
         if(m_idx[i] != i) return false;
     return true;
 }
@@ -311,7 +310,7 @@ template<size_t N>
 inline bool permutation<N>::equals(const permutation<N> &p) const {
 
     if(&p == this) return true;
-    for(register size_t i = 0; i < N; i++)
+    for(size_t i = 0; i < N; i++)
         if(m_idx[i] != p.m_idx[i]) return false;
     return true;
 }
@@ -321,7 +320,7 @@ template<size_t N> template<typename T>
 void permutation<N>::apply(sequence<N, T> &seq) const {
 
     sequence<N, T> buf(seq);
-    for(register size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
+    for(size_t i = 0; i < N; i++) seq[i] = buf[m_idx[i]];
 }
 
 
@@ -342,7 +341,7 @@ inline bool permutation<N>::operator!=(const permutation<N> &p) const {
 template<size_t N>
 inline bool permutation<N>::operator<(const permutation<N> &p) const {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(m_idx[i] != p.m_idx[i]) return m_idx[i] < p.m_idx[i];
     }
     return false;

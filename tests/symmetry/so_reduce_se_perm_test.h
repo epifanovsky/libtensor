@@ -14,16 +14,16 @@ namespace libtensor {
  **/
 class so_reduce_se_perm_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_empty_1() throw(libtest::test_exception);
-    void test_empty_2() throw(libtest::test_exception);
-    void test_nm1_1(bool symm) throw(libtest::test_exception);
-    void test_nm1_2(bool symm) throw(libtest::test_exception);
-    void test_nmk_1(bool symm) throw(libtest::test_exception);
-    void test_nmk_2(bool symm) throw(libtest::test_exception);
-    void test_nmk_3(bool symm1, bool symm2) throw(libtest::test_exception);
+    void test_empty_1();
+    void test_empty_2();
+    void test_nm1_1(bool symm);
+    void test_nm1_2(bool symm);
+    void test_nmk_1(bool symm);
+    void test_nmk_2(bool symm);
+    void test_nmk_3(bool symm1, bool symm2);
 
 };
 

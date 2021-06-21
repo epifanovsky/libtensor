@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void so_apply_se_perm_test::perform() throw(libtest::test_exception) {
+void so_apply_se_perm_test::perform() {
 
     test_1(false, false, false);
     test_1(false, false,  true);
@@ -32,7 +32,7 @@ void so_apply_se_perm_test::perform() throw(libtest::test_exception) {
 /** \test Tests that an empty sets yields an empty set
  **/
 void so_apply_se_perm_test::test_1(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_se_perm_test::test_1(" << keep_zero << ", "
@@ -79,7 +79,7 @@ void so_apply_se_perm_test::test_1(bool keep_zero,
 /** \test Tests the application on a non-empty set
  **/
 void so_apply_se_perm_test::test_2(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_se_perm_test::test_2(" << keep_zero << ", "
@@ -137,7 +137,7 @@ void so_apply_se_perm_test::test_2(bool keep_zero,
 /** \test Tests the application on a non-empty set with permutation
  **/
 void so_apply_se_perm_test::test_3(bool keep_zero,
-        bool is_asym, bool sign) throw(libtest::test_exception) {
+        bool is_asym, bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_apply_se_perm_test::test_3(" << keep_zero << ", "

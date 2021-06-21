@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-void btod_vmpriority_test::perform() throw(libtest::test_exception) {
+void btod_vmpriority_test::perform() {
 
     allocator<double>::init();
     try {
@@ -25,7 +25,7 @@ void btod_vmpriority_test::perform() throw(libtest::test_exception) {
 }
 
 
-void btod_vmpriority_test::test_1() throw(libtest::test_exception) {
+void btod_vmpriority_test::test_1() {
 
     static const char *testname = "btod_vmpriority_test::test_1()";
 

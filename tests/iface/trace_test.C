@@ -11,7 +11,7 @@
 namespace libtensor {
 
 
-void trace_test::perform() throw(libtest::test_exception) {
+void trace_test::perform() {
 
     allocator<double>::init();
 
@@ -200,7 +200,7 @@ void trace_test::test_e_3() {
 
 
 void trace_test::check_ref(const char *testname, double d, double d_ref)
-    throw(libtest::test_exception) {
+    {
 
     if(fabs(d - d_ref) > fabs(d_ref * 1e-14)) {
         std::ostringstream ss;

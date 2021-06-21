@@ -13,7 +13,7 @@
 
 namespace libtensor {
 
-void btod_random_test::perform() throw(libtest::test_exception)
+void btod_random_test::perform()
 {
     allocator<double>::init();
 

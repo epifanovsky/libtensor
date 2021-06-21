@@ -10,7 +10,7 @@
 namespace libtensor {
 
 
-void diag_test::perform() throw(libtest::test_exception) {
+void diag_test::perform() {
 
     allocator<double>::init();
 
@@ -35,7 +35,7 @@ void diag_test::perform() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_1() throw(libtest::test_exception) {
+void diag_test::test_t_1() {
 
     static const char testname[] = "diag_test::test_t_1()";
 
@@ -66,7 +66,7 @@ void diag_test::test_t_1() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_2() throw(libtest::test_exception) {
+void diag_test::test_t_2() {
 
     static const char testname[] = "diag_test::test_t_2()";
 
@@ -98,7 +98,7 @@ void diag_test::test_t_2() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_3() throw(libtest::test_exception) {
+void diag_test::test_t_3() {
 
     static const char testname[] = "diag_test::test_t_3()";
 
@@ -131,7 +131,7 @@ void diag_test::test_t_3() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_4() throw(libtest::test_exception) {
+void diag_test::test_t_4() {
 
     static const char testname[] = "diag_test::test_t_4()";
 
@@ -162,7 +162,7 @@ void diag_test::test_t_4() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_5() throw(libtest::test_exception) {
+void diag_test::test_t_5() {
 
     static const char testname[] = "diag_test::test_t_5()";
 
@@ -196,7 +196,7 @@ void diag_test::test_t_5() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_6() throw(libtest::test_exception) {
+void diag_test::test_t_6() {
 
     static const char testname[] = "diag_test::test_t_6()";
 
@@ -227,7 +227,7 @@ void diag_test::test_t_6() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_t_7() throw(libtest::test_exception) {
+void diag_test::test_t_7() {
 
     static const char testname[] = "diag_test::test_t_7()";
 
@@ -260,7 +260,7 @@ void diag_test::test_t_7() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_e_1() throw(libtest::test_exception) {
+void diag_test::test_e_1() {
 
     static const char testname[] = "diag_test::test_e_1()";
 
@@ -297,7 +297,7 @@ void diag_test::test_e_1() throw(libtest::test_exception) {
 }
 
 
-void diag_test::test_x_1() throw(libtest::test_exception) {
+void diag_test::test_x_1() {
 
     static const char testname[] = "diag_test::test_x_1()";
 

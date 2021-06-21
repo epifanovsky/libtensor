@@ -7,7 +7,7 @@ namespace libutil {
 
 void exception::init(const char *ns, const char *clazz, const char *method,
     const char *file, unsigned int line, const char *type,
-    const char *message) throw() {
+    const char *message) noexcept {
 
     if(ns == NULL) m_ns[0] = '\0';
     else { strncpy(m_ns, ns, 128); m_ns[127] = '\0'; }
@@ -102,7 +102,7 @@ void exception::init(const char *ns, const char *clazz, const char *method,
 }
 
 
-const char *exception::what() const throw() {
+const char *exception::what() const noexcept {
 
     return m_what;
 }

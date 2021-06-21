@@ -18,7 +18,7 @@
 namespace libtensor {
 
 
-void btod_mult_test::perform() throw(libtest::test_exception) {
+void btod_mult_test::perform() {
 
     allocator<double>::init();
 
@@ -90,7 +90,7 @@ void btod_mult_test::perform() throw(libtest::test_exception) {
         and no zero blocks.
  **/
 void btod_mult_test::test_1(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     std::ostringstream oss;
     oss << "btod_mult_test::test_1("
@@ -151,7 +151,7 @@ void btod_mult_test::test_1(
         with no symmetry and no zero blocks, second tensor permuted
  **/
 void btod_mult_test::test_2(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     static const char *testname = "btod_mult_test::test_2";
     std::ostringstream oss;
@@ -215,7 +215,7 @@ void btod_mult_test::test_2(
          symmetry and zero blocks.
  **/
 void btod_mult_test::test_3(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     static const char *testname = "btod_mult_test::test_3";
     std::ostringstream oss;
@@ -304,7 +304,7 @@ void btod_mult_test::test_3(
         with symmetry and zero blocks.
  **/
 void btod_mult_test::test_4(
-        bool recip, bool doadd) throw(libtest::test_exception) {
+        bool recip, bool doadd) {
 
     static const char *testname = "btod_mult_test::test_4";
     std::ostringstream oss;
@@ -395,7 +395,7 @@ void btod_mult_test::test_4(
         with permutational symmetry and anti-symmetry.
         Test for the right result symmetry!
  **/
-void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exception) {
+void btod_mult_test::test_5(bool symm1, bool symm2) {
 
     std::ostringstream testname;
     testname << "btod_mult_test::test_5("
@@ -496,7 +496,7 @@ void btod_mult_test::test_5(bool symm1, bool symm2) throw(libtest::test_exceptio
         with permutational symmetry and anti-symmetry.
         Test for the right result symmetry!
  **/
-void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exception) {
+void btod_mult_test::test_6(bool symm1, bool symm2) {
 
     std::ostringstream testname;
     testname << "btod_mult_test::test_6("
@@ -601,7 +601,7 @@ void btod_mult_test::test_6(bool symm1, bool symm2) throw(libtest::test_exceptio
         with permutational symmetry and anti-symmetry and se_part / se_label.
  **/
 void btod_mult_test::test_7(bool label, bool part,
-        bool samesym, bool recip, bool doadd) throw(libtest::test_exception) {
+        bool samesym, bool recip, bool doadd) {
 
     std::ostringstream tnss;
     tnss << "btod_mult_test::test_7(" << label << ", " << part << ", "
@@ -811,7 +811,7 @@ void btod_mult_test::test_7(bool label, bool part,
 /** \test Elementwise division of two 2-order tensors having 1 element blocks.
  **/
 void btod_mult_test::test_8a(bool label, bool part)
-        throw(libtest::test_exception) {
+        {
 
     std::ostringstream tnss;
     tnss << "btod_mult_test::test_8a(" << label << ", " << part << ")";
@@ -936,7 +936,7 @@ void btod_mult_test::test_8a(bool label, bool part)
 /** \test Elementwise division of two 4-order tensors having 1 element blocks.
  **/
 void btod_mult_test::test_8b(bool label, bool part)
-        throw(libtest::test_exception) {
+        {
 
     std::ostringstream tnss;
     tnss << "btod_mult_test::test_8b(" << label << ", " << part << ")";

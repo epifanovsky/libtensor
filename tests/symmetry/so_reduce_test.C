@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void so_reduce_test::perform() throw(libtest::test_exception) {
+void so_reduce_test::perform() {
 
     test_1();
     test_2();
@@ -18,7 +18,7 @@ void so_reduce_test::perform() throw(libtest::test_exception) {
 /** \test Invokes a projection of C1 in 4-space onto 2-space.
         Expects C1 in 2-space.
  **/
-void so_reduce_test::test_1() throw(libtest::test_exception) {
+void so_reduce_test::test_1() {
 
     static const char *testname = "so_reduce_test::test_1()";
 
@@ -60,7 +60,7 @@ void so_reduce_test::test_1() throw(libtest::test_exception) {
 /** \test Invokes a double projection of S5(+) in 5-space onto 2-space.
         Expects S2(+) in 2-space.
  **/
-void so_reduce_test::test_2() throw(libtest::test_exception) {
+void so_reduce_test::test_2() {
 
     static const char *testname = "so_reduce_test::test_2()";
 
@@ -107,7 +107,7 @@ void so_reduce_test::test_2() throw(libtest::test_exception) {
 
 /** \test Invokes a projection of S2(+) onto 0-space.
  **/
-void so_reduce_test::test_3() throw(libtest::test_exception) {
+void so_reduce_test::test_3() {
 
     static const char *testname = "so_reduce_test::test_3()";
 
@@ -139,7 +139,7 @@ void so_reduce_test::test_3() throw(libtest::test_exception) {
 
 /** \test Invokes a projection of S2(+) onto 2-space.
  **/
-void so_reduce_test::test_4() throw(libtest::test_exception) {
+void so_reduce_test::test_4() {
 
     static const char *testname = "so_reduce_test::test_4()";
 

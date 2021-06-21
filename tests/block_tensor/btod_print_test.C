@@ -17,7 +17,7 @@
 namespace libtensor {
 
 
-void btod_print_test::perform() throw(libtest::test_exception) {
+void btod_print_test::perform() {
 
     allocator<double>::init();
     try {
@@ -41,7 +41,7 @@ void btod_print_test::perform() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_1() throw(libtest::test_exception) {
+void btod_print_test::test_1() {
 
     //
     //  Block tensor (2-dim) with one block
@@ -75,7 +75,7 @@ void btod_print_test::test_1() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_2() throw(libtest::test_exception) {
+void btod_print_test::test_2() {
 
     //
     //  Block tensor (2-dim), two blocks along each dimension
@@ -113,7 +113,7 @@ void btod_print_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_3() throw(libtest::test_exception) {
+void btod_print_test::test_3() {
 
     //
     //  Block tensor (2-dim) with one zero block
@@ -144,7 +144,7 @@ void btod_print_test::test_3() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_4() throw(libtest::test_exception) {
+void btod_print_test::test_4() {
 
     //
     //  Block tensor (2-dim), two blocks along each dimension,
@@ -187,7 +187,7 @@ void btod_print_test::test_4() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_5() throw(libtest::test_exception) {
+void btod_print_test::test_5() {
 
     //
     //  Block tensor (4-dim) with one block
@@ -220,7 +220,7 @@ void btod_print_test::test_5() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_6() throw(libtest::test_exception) {
+void btod_print_test::test_6() {
 
     //
     //  Block tensor (4-dim), two blocks along each dimension (with symmetry)
@@ -258,7 +258,7 @@ void btod_print_test::test_6() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_7() throw(libtest::test_exception) {
+void btod_print_test::test_7() {
 
     //
     //  Block tensor (2-dim), two blocks along each dimension,
@@ -296,7 +296,7 @@ void btod_print_test::test_7() throw(libtest::test_exception) {
 }
 
 
-void btod_print_test::test_8() throw(libtest::test_exception) {
+void btod_print_test::test_8() {
 
     //
     //  Block tensor (2-dim), two blocks along each dimension,
@@ -332,7 +332,7 @@ void btod_print_test::test_8() throw(libtest::test_exception) {
     }
 }
 
-void btod_print_test::test_9() throw(libtest::test_exception) {
+void btod_print_test::test_9() {
 
     //
     //  Block tensor (2-dim), two blocks along each dimension,
@@ -376,7 +376,7 @@ void btod_print_test::test_9() throw(libtest::test_exception) {
     }
 }
 
-void btod_print_test::test_10() throw(libtest::test_exception) {
+void btod_print_test::test_10() {
 
     //
     //  Block tensor (4-dim), two blocks along each dimension,

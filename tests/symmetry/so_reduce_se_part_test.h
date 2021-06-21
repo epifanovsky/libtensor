@@ -14,20 +14,20 @@ namespace libtensor {
  **/
 class so_reduce_se_part_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_empty_1() throw(libtest::test_exception);
-    void test_empty_2() throw(libtest::test_exception);
-    void test_nm1_1(bool sign) throw(libtest::test_exception);
-    void test_nm1_2(bool s1, bool s2) throw(libtest::test_exception);
-    void test_nm1_3(bool sign) throw(libtest::test_exception);
-    void test_nm1_4(bool sign) throw(libtest::test_exception);
-    void test_nm1_5(bool sign) throw(libtest::test_exception);
-    void test_nm1_6(bool sign) throw(libtest::test_exception);
-    void test_nm1_7(bool sign) throw(libtest::test_exception);
-    void test_nmk_1(bool sign) throw(libtest::test_exception);
-    void test_nmk_2(bool s1, bool s2) throw(libtest::test_exception);
+    void test_empty_1();
+    void test_empty_2();
+    void test_nm1_1(bool sign);
+    void test_nm1_2(bool s1, bool s2);
+    void test_nm1_3(bool sign);
+    void test_nm1_4(bool sign);
+    void test_nm1_5(bool sign);
+    void test_nm1_6(bool sign);
+    void test_nm1_7(bool sign);
+    void test_nmk_1(bool sign);
+    void test_nmk_2(bool s1, bool s2);
 
 };
 

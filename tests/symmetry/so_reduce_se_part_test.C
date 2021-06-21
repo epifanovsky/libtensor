@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-void so_reduce_se_part_test::perform() throw(libtest::test_exception) {
+void so_reduce_se_part_test::perform() {
 
     test_empty_1();
     test_empty_2();
@@ -28,7 +28,7 @@ void so_reduce_se_part_test::perform() throw(libtest::test_exception) {
 /** \test Tests that a projection of an empty group yields an empty group
         of a lower order
  **/
-void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
+void so_reduce_se_part_test::test_empty_1() {
 
     static const char *testname = "so_reduce_se_part_test::test_empty_1()";
 
@@ -64,7 +64,7 @@ void so_reduce_se_part_test::test_empty_1() throw(libtest::test_exception) {
 /** \test Tests that a double projection of an empty group yields an empty group
         of a lower order
  **/
-void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
+void so_reduce_se_part_test::test_empty_2() {
 
     static const char *testname = "so_reduce_se_part_test::test_empty_2()";
 
@@ -99,8 +99,7 @@ void so_reduce_se_part_test::test_empty_2() throw(libtest::test_exception) {
 
 /** \test Projection of a 2-space in a single reduction step on a 1-space.
  **/
-void so_reduce_se_part_test::test_nm1_1(bool sign)
-throw(libtest::test_exception) {
+void so_reduce_se_part_test::test_nm1_1(bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_1(" << sign << ")";
@@ -177,7 +176,7 @@ throw(libtest::test_exception) {
 /** \test Projection of a 4-space in one reduction step onto a 2-space.
  **/
 void so_reduce_se_part_test::test_nm1_2(
-        bool s1, bool s2) throw(libtest::test_exception) {
+        bool s1, bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_2(" << s1 << ", " << s2 << ")";
@@ -277,7 +276,7 @@ void so_reduce_se_part_test::test_nm1_2(
 
  **/
 void so_reduce_se_part_test::test_nm1_3(
-        bool sign) throw(libtest::test_exception) {
+        bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_3("")";
@@ -361,7 +360,7 @@ void so_reduce_se_part_test::test_nm1_3(
         partitioning (only one partitioned dim, not projected)
  **/
 void so_reduce_se_part_test::test_nm1_4(
-        bool sign) throw(libtest::test_exception) {
+        bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_4(" << sign << ")";
@@ -446,7 +445,7 @@ void so_reduce_se_part_test::test_nm1_4(
         partitioning (only one partitioned dim, projected)
  **/
 void so_reduce_se_part_test::test_nm1_5(
-        bool sign) throw(libtest::test_exception) {
+        bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_5(" << sign << ")";
@@ -531,7 +530,7 @@ void so_reduce_se_part_test::test_nm1_5(
         partitioning (only projected dims are partitioned)
  **/
 void so_reduce_se_part_test::test_nm1_6(
-        bool sign) throw(libtest::test_exception) {
+        bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_6(" << sign << ")";
@@ -621,7 +620,7 @@ void so_reduce_se_part_test::test_nm1_6(
         partitioning (only projected dims are partitioned)
  **/
 void so_reduce_se_part_test::test_nm1_7(
-        bool sign) throw(libtest::test_exception) {
+        bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nm1_7(" << (sign ? '+' : '-') << ")";
@@ -703,7 +702,7 @@ void so_reduce_se_part_test::test_nm1_7(
 /** \test Projection of a 4-space onto a 2-space in two steps.
  **/
 void so_reduce_se_part_test::test_nmk_1(
-        bool sign) throw(libtest::test_exception) {
+        bool sign) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nmk_1(" << sign << ")";
@@ -806,7 +805,7 @@ void so_reduce_se_part_test::test_nmk_1(
 /** \test Projection of a 6-space onto a 2-space in two steps.
  **/
 void so_reduce_se_part_test::test_nmk_2(
-        bool s1, bool s2) throw(libtest::test_exception) {
+        bool s1, bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_reduce_se_part_test::test_nmk_2(" << s1 << ", " << s2 << ")";

@@ -12,10 +12,10 @@ namespace libtensor {
 **/
 class node_add_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
+    void test_1();
 
 };
 

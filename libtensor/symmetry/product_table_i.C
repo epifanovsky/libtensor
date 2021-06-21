@@ -14,7 +14,7 @@ const product_table_i::label_t product_table_i::k_invalid =
 const product_table_i::label_t product_table_i::k_identity = 0;
 
 
-void product_table_i::check() const throw(bad_symmetry) {
+void product_table_i::check() const {
 
 #ifdef LIBTENSOR_DEBUG
     static const char *method = "check() const";

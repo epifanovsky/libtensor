@@ -312,42 +312,42 @@ void gen_bto_ewmult2<N, M, K, Traits, Timed>::make_symc() {
     sequence<NA, size_t> seq2a;
     sequence<NB, size_t> seq2b;
     sequence<NC, size_t> seq2c;
-    for (register size_t i = 0; i < NA; i++) seq2a[i] = i;
+    for (size_t i = 0; i < NA; i++) seq2a[i] = i;
     m_tra.get_perm().apply(seq2a);
-    for (register size_t i = 0, j = NA; i < NB; i++, j++)
+    for (size_t i = 0, j = NA; i < NB; i++, j++)
         seq2b[i] = j;
     m_trb.get_perm().apply(seq2b);
-    for (register size_t i = 0; i < NC; i++) seq2c[i] = i;
+    for (size_t i = 0; i < NC; i++) seq2c[i] = i;
     m_trc.get_perm().apply(seq2c);
 
     sequence<NC, size_t> seq2imx, seqx;
     sequence<NA + NB, size_t> seq1im, seq2im, seq;
-    for (register size_t i = 0; i != N; i++) {
+    for (size_t i = 0; i != N; i++) {
         seq1im[i] = i;
         seq2imx[i] = seq2a[i];
     }
-    for (register size_t i = 0, j = N; i != M; i++, j++) {
+    for (size_t i = 0, j = N; i != M; i++, j++) {
         seq1im[j] = j;
         seq2imx[j] = seq2b[i];
     }
 
     mask<NC> mskx;
     mask<NA + NB> msk;
-    for (register size_t i = 0, j = N + M; i != K; i++, j++) {
+    for (size_t i = 0, j = N + M; i != K; i++, j++) {
         seq1im[j] = j;
         seq2imx[j] = seq2a[i + N];
         mskx[j] = true;
         seqx[j] = i;
     }
 
-    for (register size_t i = 0, j = NC; i != K; i++, j++) {
+    for (size_t i = 0, j = NC; i != K; i++, j++) {
         seq1im[j] = j;
         seq2im[j] = seq2b[i + M];
         msk[j] = true;
         seq[j] = i;
     }
 
-    for (register size_t i = 0; i != NC; i++) {
+    for (size_t i = 0; i != NC; i++) {
         seq2im[i] = seq2imx[seq2c[i]];
         seq[i] = seqx[seq2c[i]];
         msk[i] = mskx[seq2c[i]];

@@ -15,7 +15,7 @@
 namespace libtensor {
 
 
-void gen_bto_unfold_symmetry_test::perform() throw(libtest::test_exception) {
+void gen_bto_unfold_symmetry_test::perform() {
 
     allocator<double>::init();
 

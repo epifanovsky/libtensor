@@ -29,7 +29,7 @@ public:
     virtual void shutdown() = 0;
     virtual size_t get_block_size(size_t sz) = 0;
     virtual pointer_type allocate(size_t sz) = 0;
-    virtual void deallocate(const pointer_type &p) throw () = 0;
+    virtual void deallocate(const pointer_type &p) noexcept = 0;
     virtual void prefetch(const pointer_type &p) = 0;
     virtual T *lock_rw(const pointer_type &p) = 0;
     virtual const T *lock_ro(const pointer_type &p) = 0;
@@ -102,7 +102,7 @@ public:
             allocated by allocate()
         \param p Virtual memory pointer.
      **/
-    static void deallocate(const pointer_type &p) throw () {
+    static void deallocate(const pointer_type &p) {
         m_aimpl->deallocate(p);
     }
 

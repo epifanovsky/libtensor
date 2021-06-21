@@ -6,7 +6,7 @@
 
 namespace libtensor {
 
-void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
+void so_dirprod_se_label_test::perform() {
 
     std::string table_id("S6");
     setup_pg_table(table_id);
@@ -36,7 +36,7 @@ void so_dirprod_se_label_test::perform() throw(libtest::test_exception) {
         group of a higher order
  **/
 void so_dirprod_se_label_test::test_empty_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_label_test::test_empty_1(" << table_id << ")";
@@ -79,7 +79,7 @@ void so_dirprod_se_label_test::test_empty_1(
         empty group (1-space) forming a 3-space.
  **/
 void so_dirprod_se_label_test::test_empty_2(
-        const std::string &table_id, bool perm) throw(libtest::test_exception) {
+        const std::string &table_id, bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_label_test::test_empty_2("
@@ -165,7 +165,7 @@ void so_dirprod_se_label_test::test_empty_2(
         element of Eu symmetry in 2-space forming a 3-space.
  **/
 void so_dirprod_se_label_test::test_empty_3(
-        const std::string &table_id, bool perm) throw(libtest::test_exception) {
+        const std::string &table_id, bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_label_test::test_empty_3("
@@ -257,7 +257,7 @@ void so_dirprod_se_label_test::test_empty_3(
 /** \test Direct product of a group in 1-space and a group in 2-space.
  **/
 void so_dirprod_se_label_test::test_nn_1(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_label_test::test_nn_1(" << table_id << ")";
@@ -337,7 +337,7 @@ void so_dirprod_se_label_test::test_nn_1(
         result is permuted with [012->120].
  **/
 void so_dirprod_se_label_test::test_nn_2(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_label_test::test_nn_2(" << table_id << ")";
@@ -419,7 +419,7 @@ void so_dirprod_se_label_test::test_nn_2(
         has a composite rule
  **/
 void so_dirprod_se_label_test::test_nn_3(
-        const std::string &table_id) throw(libtest::test_exception) {
+        const std::string &table_id) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_label_test::test_nn_3(" << table_id << ")";
@@ -510,7 +510,7 @@ void so_dirprod_se_label_test::test_nn_3(
 
 /** \test Direct product of two groups in 2-space.
  **/
-void so_dirprod_se_label_test::test_nn_4() throw(libtest::test_exception) {
+void so_dirprod_se_label_test::test_nn_4() {
 
     const char testname[] = "so_dirprod_se_label_test::test_nn_4()";
 

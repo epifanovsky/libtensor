@@ -7,7 +7,7 @@
 namespace libtensor {
 
 
-void so_dirsum_test::perform() throw(libtest::test_exception) {
+void so_dirsum_test::perform() {
 
     test_empty_1();
     test_empty_2();
@@ -28,7 +28,7 @@ void so_dirsum_test::perform() throw(libtest::test_exception) {
 /** \test Direct product of empty symmetry in 2-space and empty symmetry in
         1-space to form a 3-space. Expects empty symmetry in 3-space.
  **/
-void so_dirsum_test::test_empty_1() throw(libtest::test_exception) {
+void so_dirsum_test::test_empty_1() {
 
     static const char *testname = "so_dirsum_test::test_empty_1()";
 
@@ -74,7 +74,7 @@ void so_dirsum_test::test_empty_1() throw(libtest::test_exception) {
 /** \test Direct product of non-empty symmetry in 2-space and empty symmetry
         in 1-space to form a 3-space. Expects non-empty symmetry in 3-space.
  **/
-void so_dirsum_test::test_empty_2() throw(libtest::test_exception) {
+void so_dirsum_test::test_empty_2() {
 
     static const char *testname = "so_dirsum_test::test_empty_2()";
 
@@ -83,7 +83,7 @@ void so_dirsum_test::test_empty_2() throw(libtest::test_exception) {
 /** \test Direct product of empty symmetry in 1-space and non-empty symmetry in
         2-space to form a 3-space. Expects non-empty symmetry in 3-space.
  **/
-void so_dirsum_test::test_empty_3() throw(libtest::test_exception) {
+void so_dirsum_test::test_empty_3() {
 
     static const char *testname = "so_dirsum_test::test_empty_3()";
 
@@ -93,7 +93,7 @@ void so_dirsum_test::test_empty_3() throw(libtest::test_exception) {
         Expects S2*S2 in 4-space.
  **/
 void so_dirsum_test::test_se_1(bool s1,
-        bool s2) throw(libtest::test_exception) {
+        bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_test::test_se_1(" << s1 << ", " << s2 << ")";
@@ -158,7 +158,7 @@ void so_dirsum_test::test_se_1(bool s1,
         symmetry in 2-space to from a 2-space.
  **/
 void so_dirsum_test::test_se_2(bool s1,
-        bool s2) throw(libtest::test_exception) {
+        bool s2) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_test::test_se_2(" << s1 << ", " << s2 << ")";
@@ -271,7 +271,7 @@ void so_dirsum_test::test_se_2(bool s1,
 /** \test Direct product of a label symmetry in 3-space and a label symmetry
         in 3-space to form a 5-space
  **/
-void so_dirsum_test::test_se_3() throw(libtest::test_exception) {
+void so_dirsum_test::test_se_3() {
 
     static const char *testname = "so_dirsum_test::test_se_3()";
 
@@ -286,7 +286,7 @@ void so_dirsum_test::test_se_3() throw(libtest::test_exception) {
 /** \test Direct product of a symmetry with all symmetry elements in 2-space
         and a symmetry with all symmetry elements in 3-space to form a 5-space.
  **/
-void so_dirsum_test::test_se_4() throw(libtest::test_exception) {
+void so_dirsum_test::test_se_4() {
 
     static const char *testname = "so_dirsum_test::test_se_4()";
 
@@ -301,7 +301,7 @@ void so_dirsum_test::test_se_4() throw(libtest::test_exception) {
 /** \test Direct product of a symmetry in 2-space and a symmetry in 3-space
         form a 5-space with a permutation [01234->03214].
  **/
-void so_dirsum_test::test_perm_1() throw(libtest::test_exception) {
+void so_dirsum_test::test_perm_1() {
 
     static const char *testname = "so_dirsum_test::test_perm_1()";
 
@@ -316,7 +316,7 @@ void so_dirsum_test::test_perm_1() throw(libtest::test_exception) {
 /** \test Direct product of a symmetry in 3-space and a symmetry in 2-space
         form a 5-space with a permutation [01234->21304].
  **/
-void so_dirsum_test::test_perm_2() throw(libtest::test_exception) {
+void so_dirsum_test::test_perm_2() {
 
     static const char *testname = "so_dirsum_test::test_perm_2()";
 
@@ -331,7 +331,7 @@ void so_dirsum_test::test_perm_2() throw(libtest::test_exception) {
 /** \test Direct product of a symmetry in 3-space and a symmetry in 0-space
         to form a 3-space.
  **/
-void so_dirsum_test::test_vac_1() throw(libtest::test_exception) {
+void so_dirsum_test::test_vac_1() {
 
     static const char *testname = "so_dirsum_test::test_vac_1()";
 
@@ -369,7 +369,7 @@ void so_dirsum_test::test_vac_1() throw(libtest::test_exception) {
 /** \test Direct product of a symmetry in 0-space and a symmetry in 3-space
         to form a 3-space.
  **/
-void so_dirsum_test::test_vac_2() throw(libtest::test_exception) {
+void so_dirsum_test::test_vac_2() {
 
     static const char *testname = "so_dirsum_test::test_vac_2()";
 

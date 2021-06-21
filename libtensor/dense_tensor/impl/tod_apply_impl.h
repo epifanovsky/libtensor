@@ -73,7 +73,7 @@ void tod_apply<N, Functor>::perform(
     const dimensions<N> &dimsb = tb.get_dims();
 
     sequence<N, size_t> seqa;
-    for(register size_t i = 0; i < N; i++) seqa[i] = i;
+    for(size_t i = 0; i < N; i++) seqa[i] = i;
     m_permb.apply(seqa);
 
 

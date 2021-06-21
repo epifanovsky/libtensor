@@ -18,15 +18,15 @@ private:
 public:
     /** \brief Virtual destructor
      **/
-    virtual ~unknown_exception() throw();
+    virtual ~unknown_exception() noexcept;
 
     /** \brief Returns the type of exception
      **/
-    virtual const char *what() const throw();
+    virtual const char *what() const noexcept;
 
     /** \brief Clones this exception using operator new
      **/
-    virtual rethrowable_i *clone() const throw();
+    virtual rethrowable_i *clone() const noexcept;
 
     /** \brief Rethrows this exception
      **/

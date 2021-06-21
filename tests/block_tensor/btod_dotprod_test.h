@@ -11,25 +11,25 @@ namespace libtensor {
 **/
 class btod_dotprod_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
-    void test_8() throw(libtest::test_exception);
-    void test_9() throw(libtest::test_exception);
-    void test_10a() throw(libtest::test_exception);
-    void test_10b() throw(libtest::test_exception);
-    void test_10c(bool both) throw(libtest::test_exception);
-    void test_11() throw(libtest::test_exception);
-    void test_12() throw(libtest::test_exception);
-    void test_13a() throw(libtest::test_exception);
-    void test_13b() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
+    void test_6();
+    void test_7();
+    void test_8();
+    void test_9();
+    void test_10a();
+    void test_10b();
+    void test_10c(bool both);
+    void test_11();
+    void test_12();
+    void test_13a();
+    void test_13b();
 
 };
 

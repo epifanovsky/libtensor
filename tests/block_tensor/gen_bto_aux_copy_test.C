@@ -16,7 +16,7 @@
 namespace libtensor {
 
 
-void gen_bto_aux_copy_test::perform() throw(libtest::test_exception) {
+void gen_bto_aux_copy_test::perform() {
 
     allocator<double>::init::init();
 

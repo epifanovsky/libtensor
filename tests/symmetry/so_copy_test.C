@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void so_copy_test::perform() throw(libtest::test_exception) {
+void so_copy_test::perform() {
 
     test_1();
     test_2();
@@ -76,7 +76,7 @@ using namespace so_copy_test_ns;
 
 /** \test Copy of empty %symmetry in 4-space.
  **/
-void so_copy_test::test_1() throw(libtest::test_exception) {
+void so_copy_test::test_1() {
 
     static const char *testname = "so_copy_test::test_1()";
 
@@ -113,7 +113,7 @@ void so_copy_test::test_1() throw(libtest::test_exception) {
 
 /** \test Copy of %symmetry that contains one element in 4-space.
  **/
-void so_copy_test::test_2() throw(libtest::test_exception) {
+void so_copy_test::test_2() {
 
     static const char *testname = "so_copy_test::test_2()";
 
@@ -216,7 +216,7 @@ void so_copy_test::test_2() throw(libtest::test_exception) {
 }
 
 
-void so_copy_test::test_3() throw(libtest::test_exception) {
+void so_copy_test::test_3() {
 
     static const char *testname = "so_copy_test::test_3()";
 

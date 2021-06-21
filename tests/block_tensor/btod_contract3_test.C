@@ -18,7 +18,7 @@
 namespace libtensor {
 
 
-void btod_contract3_test::perform() throw(libtest::test_exception) {
+void btod_contract3_test::perform() {
 
     allocator<double>::init();
 

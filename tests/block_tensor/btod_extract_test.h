@@ -11,24 +11,24 @@ namespace libtensor {
 **/
 class btod_extract_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2() throw(libtest::test_exception);
-    void test_3() throw(libtest::test_exception);
-    void test_4() throw(libtest::test_exception);
-    void test_5() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
-    void test_8() throw(libtest::test_exception);
-    void test_9() throw(libtest::test_exception);
-    void test_10() throw(libtest::test_exception);
-    void test_11() throw(libtest::test_exception);
-    void test_12a() throw(libtest::test_exception);
-    void test_12b() throw(libtest::test_exception);
-    void test_12c() throw(libtest::test_exception);
-    void test_13a() throw(libtest::test_exception);
+    void test_1();
+    void test_2();
+    void test_3();
+    void test_4();
+    void test_5();
+    void test_6();
+    void test_7();
+    void test_8();
+    void test_9();
+    void test_10();
+    void test_11();
+    void test_12a();
+    void test_12b();
+    void test_12c();
+    void test_13a();
 };
 
 } // namespace libtensor

@@ -14,13 +14,13 @@ namespace libtensor {
  **/
 class so_symmetrize_se_part_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_empty_1() throw(libtest::test_exception);
-    void test_empty_2() throw(libtest::test_exception);
-    void test_sym2_1(bool sign) throw(libtest::test_exception);
-    void test_sym2_2() throw(libtest::test_exception);
+    void test_empty_1();
+    void test_empty_2();
+    void test_sym2_1(bool sign);
+    void test_sym2_2();
 
 };
 

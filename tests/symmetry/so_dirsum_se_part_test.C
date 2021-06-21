@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void so_dirsum_se_part_test::perform() throw(libtest::test_exception) {
+void so_dirsum_se_part_test::perform() {
 
     test_empty_1();
     test_empty_2(true);
@@ -37,7 +37,7 @@ void so_dirsum_se_part_test::perform() throw(libtest::test_exception) {
 /** \test Tests that the direct sum of two empty group yields an empty
         group of a higher order
  **/
-void so_dirsum_se_part_test::test_empty_1() throw(libtest::test_exception) {
+void so_dirsum_se_part_test::test_empty_1() {
 
     static const char *testname =
             "so_dirsum_se_part_test::test_empty_1()";
@@ -84,7 +84,7 @@ void so_dirsum_se_part_test::test_empty_1() throw(libtest::test_exception) {
         group (1-space) forming a 3-space.
  **/
 void so_dirsum_se_part_test::test_empty_2(
-        bool perm) throw(libtest::test_exception) {
+        bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_empty_2(" << perm << ")";
@@ -170,7 +170,7 @@ void so_dirsum_se_part_test::test_empty_2(
         in 2-space forming a 3-space.
  **/
 void so_dirsum_se_part_test::test_empty_3(
-        bool perm) throw(libtest::test_exception) {
+        bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_empty_3(" << perm << ")";
@@ -253,7 +253,7 @@ void so_dirsum_se_part_test::test_empty_3(
 /** \test Direct sum of a group in 1-space and a group in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_1(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_nn_1(" << symm1 << ", "
@@ -351,7 +351,7 @@ void so_dirsum_se_part_test::test_nn_1(
         result is permuted with [012->120].
  **/
 void so_dirsum_se_part_test::test_nn_2(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_nn_2(" << symm1 << ", "
@@ -449,7 +449,7 @@ void so_dirsum_se_part_test::test_nn_2(
 /** \test Direct sum of two groups in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_3(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_nn_3(" << symm1 << ", "
@@ -550,7 +550,7 @@ void so_dirsum_se_part_test::test_nn_3(
 /** \test Direct sum of two groups in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_4(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_nn_4(" << symm1 << ", "
@@ -662,7 +662,7 @@ void so_dirsum_se_part_test::test_nn_4(
 /** \test Direct sum of two groups in 2-space.
  **/
 void so_dirsum_se_part_test::test_nn_5(
-        bool symm) throw(libtest::test_exception) {
+        bool symm) {
 
     std::ostringstream tnss;
     tnss << "so_dirsum_se_part_test::test_nn_5(" << symm << ")";

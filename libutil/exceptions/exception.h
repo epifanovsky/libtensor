@@ -38,7 +38,7 @@ public:
      **/
     exception(const char *ns, const char *clazz, const char *method,
         const char *file, unsigned int line, const char *type,
-        const char *message) throw() {
+        const char *message) noexcept {
 
         init(ns, clazz, method, file, line, type, message);
     }
@@ -53,7 +53,7 @@ public:
 
     /**	\brief Virtual destructor
 	 **/
-	virtual ~exception() throw() { };
+	virtual ~exception() noexcept { };
 
 	//@}
 
@@ -63,14 +63,14 @@ public:
 
 	/**	\brief Returns the cause of the exception (message)
 	 **/
-	virtual const char *what() const throw();
+	virtual const char *what() const noexcept;
 
 	//@}
 
 private:
 	void init(const char *ns, const char *clazz, const char *method,
 	        const char *file, unsigned int line, const char *type,
-	        const char *message) throw();
+	        const char *message) noexcept;
 };
 
 

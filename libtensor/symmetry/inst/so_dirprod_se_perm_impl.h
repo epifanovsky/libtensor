@@ -37,10 +37,10 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
         //  space and form a symmetry element
         sequence<N + M, size_t> a2a(0), a2b(0);
 
-        for(register size_t k = 0; k < N; k++) {
+        for(size_t k = 0; k < N; k++) {
             a2a[map[k]] = k; a2b[map[k]] = e1.get_perm()[k];
         }
-        for(register size_t k = N; k < N + M; k++)
+        for(size_t k = N; k < N + M; k++)
             a2a[map[k]] = a2b[map[k]] = k;
 
         permutation_builder<N + M> pb(a2b, a2a);
@@ -58,9 +58,9 @@ symmetry_operation_impl< so_dirprod<N, M, T>, se_perm<N + M, T> >::do_perform(
         //  Project the permutation onto the larger
         //  space and form a symmetry element
         sequence<N + M, size_t> a2a(0), a2b(0);
-        for(register size_t k = 0; k < N; k++) a2a[map[k]] = a2b[map[k]] = k;
+        for(size_t k = 0; k < N; k++) a2a[map[k]] = a2b[map[k]] = k;
 
-        for(register size_t k = N, l = 0; k < N + M; k++, l++) {
+        for(size_t k = N, l = 0; k < N + M; k++, l++) {
             a2a[map[k]] = k; a2b[map[k]] = e2.get_perm()[l] + N;
         }
 

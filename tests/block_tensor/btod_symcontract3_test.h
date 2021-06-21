@@ -12,7 +12,7 @@ namespace libtensor {
 **/
 class btod_symcontract3_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     void test_contr_1();

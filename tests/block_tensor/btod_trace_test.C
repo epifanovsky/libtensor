@@ -13,7 +13,7 @@
 namespace libtensor {
 
 
-void btod_trace_test::perform() throw(libtest::test_exception) {
+void btod_trace_test::perform() {
 
     allocator<double>::init();
     try {
@@ -41,7 +41,7 @@ void btod_trace_test::perform() throw(libtest::test_exception) {
 /** \test Computes the trace of a square matrix: \f$ b_i = a_{ii} \f$
         (all zero blocks)
  **/
-void btod_trace_test::test_zero_1() throw(libtest::test_exception) {
+void btod_trace_test::test_zero_1() {
 
     static const char *testname = "btod_trace_test::test_zero_1()";
 
@@ -83,7 +83,7 @@ void btod_trace_test::test_zero_1() throw(libtest::test_exception) {
 /** \test Computes the trace of a square matrix: \f$ d = a_{ii} \f$,
         no symmetry
  **/
-void btod_trace_test::test_nosym_1() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_1() {
 
     static const char *testname = "btod_trace_test::test_nosym_1()";
 
@@ -131,7 +131,7 @@ void btod_trace_test::test_nosym_1() throw(libtest::test_exception) {
 /** \test Computes the trace of a square matrix: \f$ d = a_{ii} \f$,
         no symmetry, sparse blocks
  **/
-void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_1_sp() {
 
     static const char *testname = "btod_trace_test::test_nosym_1_sp()";
 
@@ -184,7 +184,7 @@ void btod_trace_test::test_nosym_1_sp() throw(libtest::test_exception) {
 /** \test Computes the trace of a square matrix (with permutation):
         \f$ d = a_{ii} \f$, no symmetry
  **/
-void btod_trace_test::test_nosym_2() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_2() {
 
     static const char *testname = "btod_trace_test::test_nosym_2()";
 
@@ -233,7 +233,7 @@ void btod_trace_test::test_nosym_2() throw(libtest::test_exception) {
 /** \test Computes the trace of a matricized 4-index tensor:
         \f$ d = a_{ijij} \f$, no symmetry
  **/
-void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_3() {
 
     static const char *testname = "btod_trace_test::test_nosym_3()";
 
@@ -284,7 +284,7 @@ void btod_trace_test::test_nosym_3() throw(libtest::test_exception) {
 /** \test Computes the trace of a matricized 4-index tensor
         (with permutation): \f$ d = a_{iijj} \f$, no symmetry
  **/
-void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_4() {
 
     static const char *testname = "btod_trace_test::test_nosym_4()";
 
@@ -336,7 +336,7 @@ void btod_trace_test::test_nosym_4() throw(libtest::test_exception) {
 /** \test Computes the trace of a square matrix: \f$ d = a_{ii} \f$,
         no symmetry, blocks with unity dimensions
  **/
-void btod_trace_test::test_nosym_5() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_5() {
 
     static const char *testname = "btod_trace_test::test_nosym_5()";
 
@@ -383,7 +383,7 @@ void btod_trace_test::test_nosym_5() throw(libtest::test_exception) {
 /** \test Computes the trace of a matricized 4-index tensor:
         \f$ d = a_{ijij} \f$, no symmetry, blocks with unity dimensions
  **/
-void btod_trace_test::test_nosym_6() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_6() {
 
     static const char *testname = "btod_trace_test::test_nosym_6()";
 
@@ -434,7 +434,7 @@ void btod_trace_test::test_nosym_6() throw(libtest::test_exception) {
 /** \test Computes the trace of a matricized 4-index tensor:
         \f$ d = a_{ijij} \f$, no symmetry, all dimensions are equal
  **/
-void btod_trace_test::test_nosym_7() throw(libtest::test_exception) {
+void btod_trace_test::test_nosym_7() {
 
     static const char *testname = "btod_trace_test::test_nosym_7()";
 
@@ -484,7 +484,7 @@ void btod_trace_test::test_nosym_7() throw(libtest::test_exception) {
 /** \test Computes the trace of a square matrix: \f$ d = a_{ii} \f$,
         perm symmetry
  **/
-void btod_trace_test::test_permsym_1() throw(libtest::test_exception) {
+void btod_trace_test::test_permsym_1() {
 
     static const char *testname = "btod_trace_test::test_permsym_1()";
 
@@ -540,7 +540,7 @@ void btod_trace_test::test_permsym_1() throw(libtest::test_exception) {
 /** \test Computes the trace of a matricized 4-index tensor:
         \f$ d = a_{ijij} \f$, perm symmetry
  **/
-void btod_trace_test::test_permsym_2() throw(libtest::test_exception) {
+void btod_trace_test::test_permsym_2() {
 
     static const char *testname = "btod_trace_test::test_permsym_2()";
 

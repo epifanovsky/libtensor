@@ -176,7 +176,7 @@ std::ostream &operator<<(std::ostream &os, const product_rule<N> &pr) {
             it != pr.end(); it++) {
         os << "([";
         const sequence<N, size_t> &seq = pr.get_sequence(it);
-        for (register size_t j = 0; j < N; j++) os << seq[j];
+        for (size_t j = 0; j < N; j++) os << seq[j];
         os << "], ";
         product_table_i::label_t l = pr.get_intrinsic(it);
         if (l == product_table_i::k_invalid) os << "*";

@@ -42,7 +42,7 @@ void combine_part<N, T>::perform(se_t &el) {
 
             // Get the respective partition index in current se_part<N, T>
             index<N> ix1;
-            for (register size_t i = 0; i < N; i++) {
+            for (size_t i = 0; i < N; i++) {
                 if (pdims[i] != 1) { ix1[i] = i1[i]; }
             }
 

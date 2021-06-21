@@ -11,15 +11,15 @@ namespace libtensor {
  **/
 class se_perm_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_sym_ab_ba() throw(libtest::test_exception);
-    void test_asym_ab_ba() throw(libtest::test_exception);
-    void test_sym_abc_bca() throw(libtest::test_exception);
-    void test_asym_abc_bca() throw(libtest::test_exception);
-    void test_sym_abcd_badc() throw(libtest::test_exception);
-    void test_asym_abcd_badc() throw(libtest::test_exception);
+    void test_sym_ab_ba();
+    void test_asym_ab_ba();
+    void test_sym_abc_bca();
+    void test_asym_abc_bca();
+    void test_sym_abcd_badc();
+    void test_asym_abcd_badc();
 };
 
 } // namespace libtensor

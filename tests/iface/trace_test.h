@@ -11,7 +11,7 @@ namespace libtensor {
  **/
 class trace_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
     void test_t_1();
@@ -22,7 +22,7 @@ private:
     void test_e_3();
 
     void check_ref(const char *testname, double d, double d_ref)
-        throw(libtest::test_exception);
+       ;
 };
 
 } // namespace libtensor

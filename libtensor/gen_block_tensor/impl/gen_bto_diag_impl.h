@@ -195,12 +195,12 @@ void gen_bto_diag<N, M, Traits, Timed>::compute_block_untimed(
 
     sequence<NB, size_t> seq1(0), seq2(0);
     sequence<NB, size_t> seqb1(0), seqb2(0);
-    for(register size_t i = 0, j1 = 0, j2 = 0; i < NA; i++) {
+    for(size_t i = 0, j1 = 0, j2 = 0; i < NA; i++) {
         if(m1[i] == 0) seq1[j1++] = map1[i];
         if(m2[i] == 0) seq2[j2++] = map2[i];
     }
     mask<NB + 1> b1, b2;
-    for(register size_t i = 0, j1 = 0, j2 = 0; i < NB; i++) {
+    for(size_t i = 0, j1 = 0, j2 = 0; i < NB; i++) {
         if (m1[i] != 0 && !b1[m1[i]]) {
             seqb1[i] = NB + m1[i]; b1[m1[i]] = true;
         }

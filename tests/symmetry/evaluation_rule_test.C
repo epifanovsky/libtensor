@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void evaluation_rule_test::perform() throw(libtest::test_exception) {
+void evaluation_rule_test::perform() {
 
     test_1();
     test_copy_1();
@@ -14,7 +14,7 @@ void evaluation_rule_test::perform() throw(libtest::test_exception) {
 
 /** \test Create product(s), traverse them, clear them
  **/
-void evaluation_rule_test::test_1() throw(libtest::test_exception) {
+void evaluation_rule_test::test_1() {
 
     static const char *testname = "evaluation_rule_test::test_1()";
 
@@ -74,7 +74,7 @@ void evaluation_rule_test::test_1() throw(libtest::test_exception) {
 
 /** \test Copy constructor, operator=
  **/
-void evaluation_rule_test::test_copy_1() throw(libtest::test_exception) {
+void evaluation_rule_test::test_copy_1() {
 
     static const char *testname = "evaluation_rule_test::test_copy_1()";
 

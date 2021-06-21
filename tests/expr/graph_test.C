@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void graph_test::perform() throw(libtest::test_exception) {
+void graph_test::perform() {
 
     test_1();
     test_2();

@@ -6,7 +6,7 @@
 namespace libtensor {
 
 
-void so_dirprod_se_perm_test::perform() throw(libtest::test_exception) {
+void so_dirprod_se_perm_test::perform() {
 
     test_empty_1();
     test_empty_2(true);
@@ -27,7 +27,7 @@ void so_dirprod_se_perm_test::perform() throw(libtest::test_exception) {
 /** \test Tests that the direct product of two empty group yields an empty
         group of a higher order
  **/
-void so_dirprod_se_perm_test::test_empty_1() throw(libtest::test_exception) {
+void so_dirprod_se_perm_test::test_empty_1() {
 
     static const char *testname =
             "so_dirprod_se_perm_test::test_empty_1()";
@@ -75,7 +75,7 @@ void so_dirprod_se_perm_test::test_empty_1() throw(libtest::test_exception) {
         a single element.
  **/
 void so_dirprod_se_perm_test::test_empty_2(
-        bool perm) throw(libtest::test_exception) {
+        bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_perm_test::test_empty_2(" << perm << ")";
@@ -153,7 +153,7 @@ void so_dirprod_se_perm_test::test_empty_2(
         contain a single element.
  **/
 void so_dirprod_se_perm_test::test_empty_3(
-        bool perm) throw(libtest::test_exception) {
+        bool perm) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_perm_test::test_empty_3(" << perm << ")";
@@ -232,7 +232,7 @@ void so_dirprod_se_perm_test::test_empty_3(
         a 5-space.
  **/
 void so_dirprod_se_perm_test::test_nn_1(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_perm_test::test_nn_1(" << symm1 << ", "
@@ -293,7 +293,7 @@ void so_dirprod_se_perm_test::test_nn_1(
         a 5-space. The result is permuted with [01234->13204].
  **/
 void so_dirprod_se_perm_test::test_nn_2(
-        bool symm1, bool symm2) throw(libtest::test_exception) {
+        bool symm1, bool symm2) {
 
     std::ostringstream tnss;
     tnss << "so_dirprod_se_perm_test::test_nn_2(" << symm1 << ", "

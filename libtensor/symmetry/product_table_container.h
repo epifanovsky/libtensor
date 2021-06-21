@@ -51,7 +51,7 @@ public:
         \param pt Product table to add
         \throw bad_parameter If table with id already exists
      **/
-    void add(const product_table_i &pt) throw(bad_parameter);
+    void add(const product_table_i &pt);
 
     /** \brief Remove product table (if it exists)
 
@@ -59,7 +59,7 @@ public:
         \throw bad_parameter If table does not exists.
         \throw exception If table has been checked out for reading or writing.
      **/
-    void erase(const std::string &id) throw(bad_parameter, generic_exception);
+    void erase(const std::string &id);
 
     /** \brief Request product table for writing
 
@@ -69,7 +69,7 @@ public:
         \throw exception If table has been checked out for reading or writing.
      **/
     product_table_i &req_table(
-            const std::string &id) throw(bad_parameter, exception);
+            const std::string &id);
 
     //@}
 
@@ -82,18 +82,18 @@ public:
         \throw exception If table has been checked out for writing.
      **/
     const product_table_i &req_const_table(
-            const std::string &id) throw (bad_parameter, exception);
+            const std::string &id);
 
 
     template<typename PTT>
-    const PTT &req_const_table(const std::string &id) throw (generic_exception);
+    const PTT &req_const_table(const std::string &id);
 
     /** \brief Return checked out product table
 
         \param id Table id.
         \throw bad_parameter If table does not exists.
      **/
-    void ret_table(const std::string &id) throw(bad_parameter);
+    void ret_table(const std::string &id);
 
     bool table_exists(const std::string &id);
 
@@ -108,7 +108,7 @@ private:
 
 template<typename PTT>
 const PTT &product_table_container::req_const_table(
-        const std::string &id) throw (generic_exception) {
+        const std::string &id) {
 
        const product_table_i &pt = req_const_table(id);
        try {

@@ -188,7 +188,7 @@ inline index<N> &index<N>::permute(const permutation<N> &perm) {
 template<size_t N>
 inline bool index<N>::equals(const index<N> &idx) const {
 
-    for(register size_t i = 0; i < N; i++)
+    for(size_t i = 0; i < N; i++)
         if(sequence<N, size_t>::at_nothrow(i) !=
             idx.sequence<N, size_t>::at_nothrow(i)) return false;
     return true;
@@ -197,7 +197,7 @@ inline bool index<N>::equals(const index<N> &idx) const {
 template<size_t N>
 inline bool index<N>::less(const index<N> &idx) const {
 
-    for(register size_t i = 0; i < N; i++) {
+    for(size_t i = 0; i < N; i++) {
         if(sequence<N, size_t>::at_nothrow(i) <
             idx.sequence<N, size_t>::at_nothrow(i)) return true;
         if(sequence<N, size_t>::at_nothrow(i) >

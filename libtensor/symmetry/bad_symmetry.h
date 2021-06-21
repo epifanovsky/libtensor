@@ -19,13 +19,13 @@ public:
      **/
     bad_symmetry(const char *ns, const char *clazz, const char *method,
             const char *file, unsigned int line, const char *message)
-    throw() :
+    noexcept :
         exception_base<bad_symmetry>(ns, clazz, method, file, line,
                 "bad_symmetry", message) { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~bad_symmetry() throw() { };
+    virtual ~bad_symmetry() noexcept { };
 
     //@}
 };

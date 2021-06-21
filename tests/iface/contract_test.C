@@ -16,7 +16,7 @@
 namespace libtensor {
 
 
-void contract_test::perform() throw(libtest::test_exception) {
+void contract_test::perform() {
 
     allocator<double>::init();
 

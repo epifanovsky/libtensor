@@ -11,29 +11,29 @@ namespace libtensor {
 **/
 class btod_compare_test : public libtest::unit_test {
 public:
-    virtual void perform() throw(libtest::test_exception);
+    virtual void perform();
 
 private:
-    void test_1() throw(libtest::test_exception);
-    void test_2a() throw(libtest::test_exception);
-    void test_2b() throw(libtest::test_exception);
-    void test_3a() throw(libtest::test_exception);
-    void test_3b() throw(libtest::test_exception);
-    void test_4a() throw(libtest::test_exception);
-    void test_4b() throw(libtest::test_exception);
-    void test_5a() throw(libtest::test_exception);
-    void test_5b() throw(libtest::test_exception);
-    void test_6() throw(libtest::test_exception);
-    void test_7() throw(libtest::test_exception);
+    void test_1();
+    void test_2a();
+    void test_2b();
+    void test_3a();
+    void test_3b();
+    void test_4a();
+    void test_4b();
+    void test_5a();
+    void test_5b();
+    void test_6();
+    void test_7();
 
     /** \brief Tests if an exception is throws when the tensors have
             different dimensions
      **/
-    void test_exc() throw(libtest::test_exception);
+    void test_exc();
 
     /** \brief Tests the operation
     **/
-    void test_operation() throw(libtest::test_exception);
+    void test_operation();
 };
 
 } // namespace libtensor

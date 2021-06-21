@@ -5,7 +5,7 @@
 namespace libtensor {
 
 
-void product_table_container_test::perform() throw(libtest::test_exception) {
+void product_table_container_test::perform() {
 
     test_1();
     test_2();
@@ -15,7 +15,7 @@ void product_table_container_test::perform() throw(libtest::test_exception) {
 
 /** \test Add tables to prodcut_table_container
  **/
-void product_table_container_test::test_1() throw(libtest::test_exception) {
+void product_table_container_test::test_1() {
 
     static const char *testname = "product_table_container_test::test_1()";
 
@@ -84,7 +84,7 @@ void product_table_container_test::test_1() throw(libtest::test_exception) {
 
 /** \test Requesting and returning tables
  **/
-void product_table_container_test::test_2() throw(libtest::test_exception) {
+void product_table_container_test::test_2() {
 
     static const char *testname = "product_table_container_test::test_2()";
 
@@ -184,7 +184,7 @@ void product_table_container_test::test_2() throw(libtest::test_exception) {
 
 /** \test Deleting tables
  **/
-void product_table_container_test::test_3() throw(libtest::test_exception) {
+void product_table_container_test::test_3() {
 
     static const char *testname = "product_table_container_test::test_3()";
 

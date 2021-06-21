@@ -20,13 +20,13 @@ public:
      **/
     expr_exception(const char *ns, const char *clazz, const char *method,
         const char *file, unsigned int line, const char *message)
-        throw() :
+        noexcept :
         exception_base<expr_exception>(ns, clazz, method, file, line,
             "expr_exception", message) { };
 
     /** \brief Virtual destructor
      **/
-    virtual ~expr_exception() throw() { };
+    virtual ~expr_exception() noexcept { };
 
     //@}
 };
