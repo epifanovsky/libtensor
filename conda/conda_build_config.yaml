@@ -19,4 +19,4 @@ c_compiler_version:
 
 # <<< Other Stuff >>>
 mkl:
-    - 2019.*
+    - 2021
